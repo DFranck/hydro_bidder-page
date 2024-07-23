@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Header } from "./ui/Header";
 import Button from "./ui/Button";
 import { HorizontalDivider } from "./ui/HorizontalDivider";
+import { Newsletter } from "./ui/Newsletter";
+import { Footer } from "./ui/Footer";
 
 const howHydroWorksTiles = [
   {
@@ -75,10 +77,10 @@ type TilesType = {
 export default function Home() {
   const renderTiles = (data: TilesType) => {
     return (
-      <div className="grid grid-cols-3 gap-4 z-10 mt-[60px]">
+      <div className={`grid grid-cols-3 gap-[60px] z-10 my-[60px] mx-[90px]`}>
         {
           data.tiles.map((tile, index) => {
-            return <div key={index} className={`flex w-[${data.size === 'small' ? '285px' : '330px'}] flex-col items-start gap-4 shrink-0 p-6 rounded-[10px]`}>
+            return <div key={index} className={`flex w-[${data.size === 'small' ? '285px' : '330px'}] flex-col items-start gap-4 shrink-0 ${data.size === 'small' ? 'p-6' : ''} rounded-[10px]`}>
               <Image src={tile.icon} alt={tile.title} width={data.size === 'small' ? 100 : 220} height={data.size === 'small' ? 100 : 220} />
               <h3>{tile.title}</h3>
               <p>{tile.description}</p>
@@ -111,10 +113,10 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col p-[60px] bg-[#080815] bg-contain bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_100px_300px_black] after:pointer-events-none after:top-[978px] after:inset-x-0" >
+    <main className="flex min-h-screen flex-col bg-[#080815] bg-contain bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_100px_300px_black] after:pointer-events-none after:top-[978px] after:inset-x-0" >
 
       <Header />
-      <div className="ml-[28px]">
+      <div className="ml-[88px]">
         <div className="mt-[155px]">
           <h1>Unlock the Power of Hydro</h1>
         </div>
@@ -136,8 +138,8 @@ export default function Home() {
         {renderTiles({ tiles: howHydroWorksTiles, size: 'small' })}
         <Button type='secondary' style='filled' title="Get Started" />
       </div>
-      <HorizontalDivider style='mt-[60px] mb-[150px]' />
-      <div className="bg-contain bg-no-repeat bg-right bg-[url('/images/AdobeStock_856949849.png')] mix-blend-screen">
+      <HorizontalDivider style='mt-[60px] mb-[150px] mx-[60px]' />
+      <div className="ml-[112px] bg-contain bg-no-repeat bg-right bg-[url('/images/AdobeStock_856949849.png')] mix-blend-screen">
         <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase">benefits</p>
         <h2>Unlock the Power of Liquidity</h2>
         <div className="text-xl not-italic font-normal leading-[150%] w-[600px]  flex justify-center">
@@ -146,18 +148,20 @@ export default function Home() {
         {renderBenefits()}
         <Button type='secondary' style='filled' title="Get Allowlisted" />
       </div>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center px-[90px]  bg-gradient-to-b from-[rgba(0,21,45,0.20)] to-[rgba(0,59,147,0.40)]">
         <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase mt-[210px]">for projects</p>
         <h2 className="mt-[14px]">How it Works for Projects</h2>
         <p className="text-xl not-italic font-normal leading-[150%] w-[700px] mt-[14px] text-center">
           Hydro provides a unique opportunity for projects to access liquidity and gain exposure, while rewarding ATOM holders for their participation through a multi-step process involving tribute auctions.
         </p>
         {renderTiles({ tiles: howItWorksForProjectsTiles, size: 'large' })}
-        <div className="flex gap-5 mt-[60px]">
+        <div className="flex gap-5 mt-[60px] mb-[80px]">
           <Button type='secondary' style='filled' title="Get Allowlisted" />
           <Button type='secondary' style='outline' title="Read Docs" />
         </div>
       </div>
+      <Newsletter />
+      <Footer />
     </main>
   );
 }

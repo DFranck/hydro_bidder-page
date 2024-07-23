@@ -1,11 +1,11 @@
+import Image from "next/image"
 import ConnectButton from "./ConnectButton"
-import { Logo } from "./Logo"
 import { NaviBurger } from "./NaviBurger"
 
 export const Header = () => {
     return (
-        <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex">
-            <Logo />
+        <div className="p-[60px] z-10 w-full items-center justify-between font-mono text-sm lg:flex">
+            <Image src={'/images/logo.svg'} alt='twitter' width={220} height={45} />
             <div className="flex flex-row items-center justify-between gap-6">
                 <ConnectButton />
                 <NaviBurger />
