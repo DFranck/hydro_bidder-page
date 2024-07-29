@@ -7,6 +7,7 @@ import { cookieToInitialState } from 'wagmi'
 
 import { config } from '@/config'
 import Web3ModalProvider from '@/context'
+import { Header } from "./ui/Header";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,7 +25,10 @@ export default function RootLayout({
   const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
     <html lang="en">
-      <body className={`${inter.className} text-white`}><Web3ModalProvider initialState={initialState}>{children}</Web3ModalProvider></body>
+      <body className={`${inter.className} text-white`}><Web3ModalProvider initialState={initialState}>
+        <Header />
+        {children}
+      </Web3ModalProvider></body>
     </html>
   );
 }

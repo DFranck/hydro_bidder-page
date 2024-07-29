@@ -115,7 +115,6 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-[#080815] bg-contain bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_100px_300px_black] after:pointer-events-none after:top-[978px] after:inset-x-0" >
 
-      <Header />
       <div className="ml-[88px]">
         <div className="mt-[155px]">
           <h1>Unlock the Power of Hydro</h1>
