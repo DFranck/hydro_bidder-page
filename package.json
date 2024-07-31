@@ -14,6 +14,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@cosmos-kit/core": "^2.13.1",
     "@cosmos-kit/cosmostation-extension": "^2.12.2",
+    "@cosmos-kit/keplr-extension": "^2.12.2",
     "@cosmos-kit/leap-extension": "^2.12.2",
     "@cosmos-kit/react": "^2.18.0",
     "@radix-ui/react-slot": "^1.1.0",
