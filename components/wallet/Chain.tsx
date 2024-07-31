@@ -21,7 +21,7 @@ export type ChainSelectProps = {
 export function ChainSelect({
   chainName,
   chains = [],
-  onChange = () => {},
+  onChange = () => { },
 }: ChainSelectProps) {
   const { themeClass } = useTheme();
   const [value, setValue] = useState<string>();
@@ -110,7 +110,7 @@ export function ChainSelect({
                 alignItems="center"
                 px="$4"
               >
-                <Skeleton width="24px" height="24px" borderRadius="$full" />
+                <Skeleton />
               </Box>
             )
           }

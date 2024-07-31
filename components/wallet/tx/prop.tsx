@@ -1,14 +1,10 @@
+import { MsgExecLegacyContent, MsgSubmitProposal } from "@/app/proto-types-gen/src/cosmos/gov/v1/tx";
+import { Duration } from "@/app/proto-types-gen/src/google/protobuf/duration";
+import { ConsumerAdditionProposal } from "@/app/proto-types-gen/src/interchain_security/ccv/provider/v1/provider";
+import { MsgOptIn, MsgOptOut } from "@/app/proto-types-gen/src/interchain_security/ccv/provider/v1/tx";
 import { ConsumerAdditionProposalJSON } from "@/app/types";
-import {
-  MsgExecLegacyContent,
-  MsgSubmitProposal,
-} from "@/proto-types-gen/src/cosmos/gov/v1/tx";
-import { Duration } from "@/proto-types-gen/src/google/protobuf/duration";
-import { ConsumerAdditionProposal } from "@/proto-types-gen/src/interchain_security/ccv/provider/v1/provider";
-import {
-  MsgOptIn,
-  MsgOptOut,
-} from "@/proto-types-gen/src/interchain_security/ccv/provider/v1/tx";
+
+
 
 export function getAccountURL(address: string) {
   return `http://localhost:3000/rpc/cosmos/auth/v1beta1/accounts/${address}`;

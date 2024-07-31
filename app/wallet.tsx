@@ -20,21 +20,21 @@ import {
   testnetAssets,
   testnetChain,
 } from "../config";
-import {
-  MsgOptIn,
-  MsgOptOut,
-} from "./proto-types-gen/src/interchain_security/ccv/provider/v1/tx";
+// import {
+//   MsgOptIn,
+//   MsgOptOut,
+// } from "./proto-types-gen/src/interchain_security/ccv/provider/v1/tx";
 
 function initRegistry(): Registry {
   const myRegistry = new Registry(defaultRegistryTypes);
-  myRegistry.register(
-    "/interchain_security.ccv.provider.v1.MsgOptIn",
-    MsgOptIn
-  );
-  myRegistry.register(
-    "/interchain_security.ccv.provider.v1.MsgOptOut",
-    MsgOptOut
-  );
+  // myRegistry.register(
+  //   "/interchain_security.ccv.provider.v1.MsgOptIn",
+  //   MsgOptIn
+  // );
+  // myRegistry.register(
+  //   "/interchain_security.ccv.provider.v1.MsgOptOut",
+  //   MsgOptOut
+  // );
   return myRegistry;
 }
 
