@@ -15,6 +15,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import Image from "next/image"
+import Button from "../ui/Button"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -33,9 +35,33 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
     })
 
+    const renderTableCell = (cell: any) => {
+        const cellContent = flexRender(cell.column.columnDef.cell, cell.getContext());
+        if (cell.column.columnDef.header === 'Lockup ID') {
+            return <div className="flex flex-row gap-2"><Image src={'/images/Lock.svg'} alt='lock' width={20} height={20} /> {cellContent}</div>
+        } else if (cell.column.columnDef.header === 'Proposal Actions') {
+            return <Button className="px-6 py-0 h-[40px]" type='primary' style="filled" title="Vote Now" onClick={() => { undefined }} />
+        } else if (cell.column.columnDef.header === 'Lockup Actions') {
+            return <Button className="px-6 py-0 h-[40px]" type='secondary' style="filled" title="Edit" onClick={() => { undefined }} />
+        }
+
+        return flexRender(cell.column.columnDef.cell, cell.getContext())
+    }
+
+    const renderHeaderCell = (cell: any) => {
+        const actionCells = ['Proposal Actions', 'Lockup Actions']
+        if (actionCells.includes(cell.column.columnDef.header)) {
+            return null
+        }
+        return flexRender(
+            cell.column.columnDef.header,
+            cell.getContext()
+        )
+    }
+
     return (
         <div >
-            <Table className={`flex flex-col w-full ${height}`}>
+            <Table className={`flex flex-col w-[calc(100%-10px)] ${height}`}>
                 <TableHeader className="w-full">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id} className="w-full table table-fixed">
@@ -44,17 +70,15 @@ export function DataTable<TData, TValue>({
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
+                                            : renderHeaderCell(header)
+                                        }
                                     </TableHead>
                                 )
                             })}
                         </TableRow>
                     ))}
                 </TableHeader>
-                <TableBody className="flex-auto block overflow-y-auto overflow-x-hidden">
+                <TableBody className="flex-auto block overflow-y-auto overflow-x-hidden pr-[10px]">
                     {table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map((row) => (
                             <TableRow
@@ -64,7 +88,7 @@ export function DataTable<TData, TValue>({
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        {renderTableCell(cell)}
                                     </TableCell>
                                 ))}
                             </TableRow>

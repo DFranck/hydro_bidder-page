@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
 import { DataTable } from "./data-table"
-import { columns as proposalsColumns } from "./proposals/columns"
+import { activeProposalColumns, deployedProposalColumns } from "./proposals/columns"
 import Image from "next/image"
 import { activeProposals } from "./proposals/data"
 import { myLockups } from "./lockups/data"
@@ -39,7 +39,7 @@ export default function Dashboard() {
                             <div>
                                 <h3>Vote Now to Earn Rewards</h3>
                                 <p className="text-xl not-italic font-normal leading-[150%]">View and vote on active proposals</p>
-                                <DataTable columns={proposalsColumns} data={activeProposals} height=" h-[200px]" />
+                                <DataTable columns={activeProposalColumns} data={activeProposals} height=" h-[200px]" />
                                 <div className="flex justify-center mt-[27px]">
                                     <Image src={'/images/Progress.svg'} alt='twitter' width={577} height={69} />
                                 </div>
@@ -47,7 +47,7 @@ export default function Dashboard() {
                             <div>
                                 <h3>Actively Deployed Proposals</h3>
                                 <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
-                                <DataTable columns={proposalsColumns} data={activeProposals} height=" h-[200px]" />
+                                <DataTable columns={deployedProposalColumns} data={activeProposals} height=" h-[200px]" />
                             </div>
                         </div>
 

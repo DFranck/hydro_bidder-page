@@ -12,7 +12,34 @@ export type Proposal = {
     votingPowerPercent: number;
 }
 
-export const columns: ColumnDef<Proposal>[] = [
+export const activeProposalColumns: ColumnDef<Proposal>[] = [
+    {
+        accessorKey: "title",
+        header: "Filter",
+    },
+    {
+        accessorKey: "tributeAmount",
+        header: "Tribute Amount",
+    },
+    {
+        accessorKey: "tributeToken",
+        header: "Tribute Token",
+    },
+    {
+        accessorKey: "currentVotingPower",
+        header: "Current Voting Power",
+    },
+    {
+        accessorKey: "votingPowerPercent",
+        header: "Voting Power %",
+    },
+    {
+        accessorKey: "activeProposalActions",
+        header: "Proposal Actions",
+    }
+]
+
+export const deployedProposalColumns: ColumnDef<Proposal>[] = [
     {
         accessorKey: "title",
         header: "Filter",

@@ -35,5 +35,9 @@ export const columns: ColumnDef<Lockups>[] = [
     {
         accessorKey: "timeRemaining",
         header: "Time Remaining",
+    },
+    {
+        accessorKey: "lockupActions",
+        header: "Lockup Actions",
     }
 ]
