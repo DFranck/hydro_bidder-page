@@ -1,3 +1,4 @@
+'use client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
 import { DataTable } from "./data-table"
@@ -8,6 +9,10 @@ import { myLockups } from "./lockups/data"
 import { columns as lockupColumns } from "./lockups/columns"
 import { totalEarnedTribute, tributeHistory } from "./tribute/data"
 import { formatAmount, total } from "./tribute/utils"
+import { HydroBaseQueryClient } from '../ts_types/HydroBase.client';
+import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { useEffect } from "react"
+
 
 export default function Dashboard() {
     const renderCard = (title: string) => (
@@ -21,6 +26,29 @@ export default function Dashboard() {
             {['Card 1', 'Card 2', 'Card 3'].map(renderCard)}
         </div>
     )
+
+    useEffect(() => {
+        async function initiateClient() {
+            const contractAdress = 'neutron1hnzz7aqup8cf0dhgn8s6yvnsdm4l80y4jzlnpyk9mng54j02ey7qva7q03';
+            const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
+
+            const client = await CosmWasmClient.connect(rpcEndpoint);
+            const queryClient = new HydroBaseQueryClient(client, contractAdress);
+            const tranches = await queryClient.tranches();
+            const currentRound = await queryClient.currentRound();
+            const roundEnd = await queryClient.roundEnd({ roundId: 77 });
+            // const totalLockedTokens = await queryClient.totalLockedTokens() // breaks
+            const constants = await queryClient.constants();
+            const contractAddressFromQC = await queryClient.contractAddress;
+            const expiredUserLockups = await queryClient.expiredUserLockups({ address: contractAddressFromQC, limit: 10, startFrom: 0 }); // need correct startFrom
+            // const proposal = await queryClient.proposal({ proposalId: 1, roundId: 77, trancheId: 0 }); // breaks
+            const roundProposals = await queryClient.roundProposals({ roundId: 77, trancheId: 1, limit: 10, startFrom: 1 });
+            console.log({ tranches, currentRound, roundEnd, constants, contractAddressFromQC, expiredUserLockups, roundProposals });
+
+        }
+        initiateClient();
+
+    }, [])
 
     const tabsBtnsClass = "inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-[#FFE1B8] text-center text-base not-italic font-normal leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8] data-[state=active]:bg-[#FFE1B8] data-[state=active]:text-foreground data-[state=active]:shadow-sm inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-center text-base not-italic data-[state=active]:font-bold leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8]"
     return (
