@@ -2,48 +2,103 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
 import { DataTable } from "./data-table"
-import { activeProposalColumns, deployedProposalColumns } from "./proposals/columns"
+import { activeProposalColumns, deployedProposalColumns, Proposal } from "./proposals/columns"
 import Image from "next/image"
 import { activeProposals } from "./proposals/data"
 import { myLockups } from "./lockups/data"
-import { columns as lockupColumns } from "./lockups/columns"
+import { Lockup, LockupColumnProps, columns as lockupColumns } from "./lockups/columns"
 import { totalEarnedTribute, tributeHistory } from "./tribute/data"
 import { formatAmount, total } from "./tribute/utils"
 import { HydroBaseQueryClient } from '../ts_types/HydroBase.client';
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { useEffect } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { TributeBaseQueryClient } from "../ts_types/TributeBase.client"
+import { Button } from "@/components/ui/button"
+// import { Proposal } from "../proto-types-gen/src/tendermint/types/types"
+// import { Proposal } from '../ts_types/HydroBase.types';
 
+
+type Tab = {
+    tab: 'voting' | 'lockups' | 'tribute',
+    title: string
+}
 
 export default function Dashboard() {
-    const renderCard = (title: string) => (
-        <div className={`flex w-[380px] h-[360px] flex-col items-center justify-center gap-4 shrink-0 bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)] p-6 rounded-[10px]`}>
+    const [tab, setTab] = useState<Tab['tab']>('voting');
+    const [roundProposals, setRoundProposals] = useState<Proposal[]>([]);
+    const [currentTranche, setCurrentTranche] = useState(1);
+    const [totalTranches, setTotalTranches] = useState(0);
+    const renderCard = ({ tab, title }: Tab) => (
+        <div key={title} onClick={() => onTabChange(tab)} className={`flex w-[380px] h-[360px] flex-col items-center justify-center gap-4 shrink-0 bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)] p-6 rounded-[10px]`}>
             {title}
         </div>
     )
 
+    const onTabChange = (value: 'voting' | 'lockups' | 'tribute') => {
+        setTab(value);
+    }
+
     const dashboardCards = () => (
         <div className='grid grid-cols-3 gap-[60px] px-[90px]'>
-            {['Card 1', 'Card 2', 'Card 3'].map(renderCard)}
+            {
+                ([{ tab: 'voting', title: 'Voting' }, { tab: 'lockups', title: 'Lockups' }, { tab: 'tribute', title: 'Tribute' }] as Tab[]).map(
+                    (item: Tab) => renderCard(item)
+                )
+            }
         </div>
     )
 
     useEffect(() => {
         async function initiateClient() {
-            const contractAdress = 'neutron1hnzz7aqup8cf0dhgn8s6yvnsdm4l80y4jzlnpyk9mng54j02ey7qva7q03';
+            const hydroContractAdress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
+            const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
             const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
-
+            const myAddress = 'neutron1cfznm042ncguprsfxzmze6xfkjft33eqw2djna';
             const client = await CosmWasmClient.connect(rpcEndpoint);
-            const queryClient = new HydroBaseQueryClient(client, contractAdress);
-            const tranches = await queryClient.tranches();
-            const currentRound = await queryClient.currentRound();
-            const roundEnd = await queryClient.roundEnd({ roundId: 77 });
-            // const totalLockedTokens = await queryClient.totalLockedTokens() // breaks
-            const constants = await queryClient.constants();
-            const contractAddressFromQC = await queryClient.contractAddress;
-            const expiredUserLockups = await queryClient.expiredUserLockups({ address: contractAddressFromQC, limit: 10, startFrom: 0 }); // need correct startFrom
-            // const proposal = await queryClient.proposal({ proposalId: 1, roundId: 77, trancheId: 0 }); // breaks
-            const roundProposals = await queryClient.roundProposals({ roundId: 77, trancheId: 1, limit: 10, startFrom: 1 });
-            console.log({ tranches, currentRound, roundEnd, constants, contractAddressFromQC, expiredUserLockups, roundProposals });
+            const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAdress);
+            const tranches = await hydroQueryClient.tranches();
+            setTotalTranches(tranches.tranches.length);
+            // const currentRound = await hydroQueryClient.currentRound();
+            // const roundEnd = await hydroQueryClient.roundEnd({ roundId: 0 });
+            // const totalLockedTokens = await hydroQueryClient.totalLockedTokens() // breaks
+            // const constants = await hydroQueryClient.constants();
+            // const contractAddressFromHQC = hydroQueryClient.contractAddress;
+            // const expiredUserLockups = await hydroQueryClient.expiredUserLockups({ address: contractAddressFromHQC, limit: 10, startFrom: 0 }); // need correct startFrom
+            // const proposal = await hydroQueryClient.proposal({ proposalId: 1, roundId: 0, trancheId: 1 }); // breaks
+            const roundProposals = await hydroQueryClient.roundProposals({ roundId: 0, trancheId: 1, limit: 10, startFrom: 0 });
+            // setRoundProposals(roundProposals.proposals);
+            // const topNProposals = await hydroQueryClient.topNProposals({ numberOfProposals: 10, roundId: 0, trancheId: 1 }); // breaks
+            // const userVotingPower = await hydroQueryClient.userVotingPower({ address: contractAddressFromHQC });
+            // const whitelist = await hydroQueryClient.whitelist();
+            // const whitelistAdmins = await hydroQueryClient.whitelistAdmins();
+            // const roundTotalVotingPower = await hydroQueryClient.roundTotalVotingPower({ roundId: 0 }); // breaks
+            const allUserLockups = await hydroQueryClient.allUserLockups({ address: myAddress, limit: 10, startFrom: 0 }); // need correct startFrom
+            // const userVote = await hydroQueryClient.userVote({ address: myAddress, roundId: 0, trancheId: 1 }); // breaks
+            console.log({
+                tranches,
+                // currentRound,
+                // roundEnd,
+                // totalLockedTokens,
+                // constants,
+                // contractAddressFromHQC,
+                // expiredUserLockups,
+                // proposal,
+                // roundProposals,
+                // topNProposals,
+                // userVotingPower,
+                // whitelist,
+                // whitelistAdmins,
+                // roundTotalVotingPower,
+                allUserLockups,
+                // userVote
+            });
+
+            const tributeQueryClient = new TributeBaseQueryClient(client, tributeContractAdress);
+            const config = await tributeQueryClient.config(); // breaks
+            const contractAddressFromTQC = tributeQueryClient.contractAddress;
+            const proposalTributes = await tributeQueryClient.proposalTributes({ limit: 10, proposalId: 1, roundId: 0, startFrom: 0, trancheId: 1 }) // breaks
+            console.log({ config, contractAddressFromTQC, proposalTributes });
+
 
         }
         initiateClient();
@@ -51,31 +106,56 @@ export default function Dashboard() {
     }, [])
 
     const tabsBtnsClass = "inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-[#FFE1B8] text-center text-base not-italic font-normal leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8] data-[state=active]:bg-[#FFE1B8] data-[state=active]:text-foreground data-[state=active]:shadow-sm inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-center text-base not-italic data-[state=active]:font-bold leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8]"
+
+    const onVoteProposal = useCallback((proposal: Proposal) => {
+        alert(`clicked VOTE on row ${proposal.id}`);
+    }, []);
+
+    const onEditLockup = useCallback((lockup: Lockup) => {
+        alert(`clicked EDIT on row ${lockup.id}`);
+    }, []);
+
+    const activeProposalsColumnsMemoized = useMemo(() => activeProposalColumns({ onVoteProposal }), [onVoteProposal]);
+
+    const locukpColumnsMemoized = useMemo(() => lockupColumns({ onEditLockup }), [onEditLockup]);
     return (
         <div className='text-3xl bg-[linear-gradient(180deg,#010006_49.9%,#001C47_100%)]'>
             {dashboardCards()}
             <div className="px-[90px] pt-[70px] pb-[90px]">
-                <Tabs defaultValue="voting">
+                <Tabs value={tab}>
                     <TabsList className="p-[unset] h-[unset] rounded-[unset] bg-transparent flex flex-row justify-start gap-[10px]">
-                        <TabsTrigger className={tabsBtnsClass} value="voting">Voting</TabsTrigger>
-                        <TabsTrigger className={tabsBtnsClass} value="tribute">Earned Tribute</TabsTrigger>
-                        <TabsTrigger className={tabsBtnsClass} value="lockups">Lockups</TabsTrigger>
+                        <TabsTrigger className={tabsBtnsClass} value="voting" onClick={() => onTabChange('voting')}>Voting</TabsTrigger>
+                        <TabsTrigger className={tabsBtnsClass} value="tribute" onClick={() => onTabChange('tribute')}>Earned Tribute</TabsTrigger>
+                        <TabsTrigger className={tabsBtnsClass} value="lockups" onClick={() => onTabChange('lockups')}>Lockups</TabsTrigger>
                     </TabsList>
                     <HorizontalDivider style="mt-[-21px]" />
                     <TabsContent value="voting">
                         <div className="flex flex-col items-start gap-[44px]">
                             <div>
-                                <h3>Vote Now to Earn Rewards</h3>
-                                <p className="text-xl not-italic font-normal leading-[150%]">View and vote on active proposals</p>
-                                <DataTable columns={activeProposalColumns} data={activeProposals} height=" h-[200px]" />
+                                <div className="flex flex-row justify-between">
+                                    <div>
+                                        <h3>Vote Now to Earn Rewards</h3>
+                                        <p className="text-xl not-italic font-normal leading-[150%]">View and vote on active proposals</p>
+                                    </div>
+                                    <div className="flex flex-row gap-[18px] justify-end items-center">
+                                        <Button variant="ghost" size="icon">
+                                            <Image src={'/images/Vector3.svg'} alt='tranches-left' width={14} height={24} />
+                                        </Button>
+                                        <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]">{`TRANCH ${currentTranche}/${totalTranches}`}</p>
+                                        <Button variant="ghost" size="icon">
+                                            <Image src={'/images/Vector4.svg'} alt='tranches-left' width={14} height={24} />
+                                        </Button>
+                                    </div>
+                                </div>
+                                <DataTable columns={activeProposalsColumnsMemoized} data={activeProposals} height=" h-[330px]" theme="light" />
                                 <div className="flex justify-center mt-[27px]">
-                                    <Image src={'/images/Progress.svg'} alt='twitter' width={577} height={69} />
+                                    <Image src={'/images/Progress.svg'} alt='progress' width={577} height={69} />
                                 </div>
                             </div>
                             <div>
                                 <h3>Actively Deployed Proposals</h3>
                                 <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
-                                <DataTable columns={deployedProposalColumns} data={activeProposals} height=" h-[200px]" />
+                                <DataTable columns={deployedProposalColumns} data={activeProposals} height=" h-[330px]" />
                             </div>
                         </div>
 
@@ -124,7 +204,7 @@ export default function Dashboard() {
 
                         <div>
                             <h3>My Lockups</h3>
-                            <DataTable columns={lockupColumns} data={myLockups} height=" h-[470px]" />
+                            <DataTable columns={locukpColumnsMemoized} data={myLockups} height=" h-[720px]" />
                         </div>
                     </TabsContent>
                 </Tabs>

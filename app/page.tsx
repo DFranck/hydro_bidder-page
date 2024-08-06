@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Header } from "./ui/Header";
 import Button from "./ui/Button";
 import { HorizontalDivider } from "./ui/HorizontalDivider";
 import { Newsletter } from "./ui/Newsletter";
@@ -119,7 +118,7 @@ export default function Home() {
         <div className="mt-[155px]">
           <h1>Unlock the Power of Hydro</h1>
         </div>
-        <p className="@apply text-xl not-italic font-normal leading-[140%] w-[736px]">
+        <p className="text-xl not-italic font-normal leading-[140%] w-[736px]">
           Hydro is a decentralized platform that allows you to lock your ATOM tokens and earn rewards. Earn passive income, participate in ICS projects, and more.
         </p>
         <div className="flex gap-5 mt-[60px]">

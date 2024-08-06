@@ -4,7 +4,7 @@ type Props = {
     type: 'primary' | 'secondary';
     style: 'outline' | 'filled';
     title: string;
-    onClick?: () => void;
+    onClick?: (row: any) => void;
     className?: string;
 };
 
@@ -16,7 +16,7 @@ const Button: FC<Props> = ({ type, style, title, onClick, className }) => {
     buttonClass += providedPy ? ` py-${providedPy[1]}` : ' py-5';
 
     if (type === 'primary' && style === 'filled') {
-        buttonClass += ' border-[#0061FF] bg-blue-500 hover:bg-blue-600';
+        buttonClass += ' border-[#0061FF] bg-blue-500 hover:bg-blue-600 text-white';
     } else if (type === 'primary' && style === 'outline') {
         buttonClass += ' border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white';
     } else if (type === 'secondary' && style === 'filled') {

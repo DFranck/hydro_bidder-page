@@ -15,19 +15,19 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import Image from "next/image"
-import Button from "../ui/Button"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    height?: string
+    height?: string,
+    theme?: 'light' | 'dark'
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    height = 'auto'
+    height = 'auto',
+    theme = 'dark'
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -35,42 +35,21 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
     })
 
-    const renderTableCell = (cell: any) => {
-        const cellContent = flexRender(cell.column.columnDef.cell, cell.getContext());
-        if (cell.column.columnDef.header === 'Lockup ID') {
-            return <div className="flex flex-row gap-2"><Image src={'/images/Lock.svg'} alt='lock' width={20} height={20} /> {cellContent}</div>
-        } else if (cell.column.columnDef.header === 'Proposal Actions') {
-            return <Button className="px-6 py-0 h-[40px]" type='primary' style="filled" title="Vote Now" onClick={() => { undefined }} />
-        } else if (cell.column.columnDef.header === 'Lockup Actions') {
-            return <Button className="px-6 py-0 h-[40px]" type='secondary' style="filled" title="Edit" onClick={() => { undefined }} />
-        }
-
-        return flexRender(cell.column.columnDef.cell, cell.getContext())
-    }
-
-    const renderHeaderCell = (cell: any) => {
-        const actionCells = ['Proposal Actions', 'Lockup Actions']
-        if (actionCells.includes(cell.column.columnDef.header)) {
-            return null
-        }
-        return flexRender(
-            cell.column.columnDef.header,
-            cell.getContext()
-        )
-    }
-
     return (
         <div >
-            <Table className={`flex flex-col w-[calc(100%-10px)] ${height}`}>
-                <TableHeader className="w-full">
+            <Table className={`flex flex-col ${height}`}>
+                <TableHeader className="w-full [&_tr]:border-b-0  pr-4">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id} className="w-full table table-fixed">
-                            {headerGroup.headers.map((header) => {
+                            {headerGroup.headers.map((header, index) => {
                                 return (
-                                    <TableHead key={header.id}>
+                                    <TableHead key={header.id} >
                                         {header.isPlaceholder
                                             ? null
-                                            : renderHeaderCell(header)
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )
                                         }
                                     </TableHead>
                                 )
@@ -78,21 +57,22 @@ export function DataTable<TData, TValue>({
                         </TableRow>
                     ))}
                 </TableHeader>
-                <TableBody className="flex-auto block overflow-y-auto overflow-x-hidden pr-[10px]">
+                <TableBody className="flex-auto block overflow-y-auto overflow-x-hidden pr-4 space-y-4">
                     {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                                className="w-full table table-fixed"
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
-                                        {renderTableCell(cell)}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))
+                        table.getRowModel().rows.map((row) => (<TableRow
+                            key={row.id}
+                            data-state={row.getIsSelected() && "selected"}
+                            className="w-full table table-fixed h-[82px] border-b-0"
+                        >
+                            {row.getVisibleCells().map((cell, index, row) => (
+                                <TableCell key={cell.id} className={`py-[14px] px-[24px] ${index === 0 ? 'rounded-[10px_0_0_10px]' : row.length === index + 1 ? 'rounded-[0_10px_10px_0]' : ''} bg-[${theme === 'light' ? '#fff' : '#303132'}] text-[${theme === 'light' ? '#080815' : '#fff'}]`}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </TableCell>
+                            )
+                            )}
+                        </TableRow>
+                        )
+                        )
                     ) : (
                         <TableRow>
                             <TableCell colSpan={columns.length} className="h-24 text-center">
