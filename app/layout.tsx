@@ -10,7 +10,7 @@ import "./globals.css";
 import { Header } from "./ui/Header";
 import { WalletHandler } from "./wallet";
 import { Toaster } from "@/components/ui/toaster";
-
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} text-white`}>
+        <Script
+          type="text/javascript"
+          src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
+          async={true}
+        />
+
         {/* <Web3ModalProvider initialState={initialState}> */}
         <WalletHandler>
           <Header />
