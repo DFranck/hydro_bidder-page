@@ -28,14 +28,13 @@ export default function RootLayout({
   // const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
     <html lang="en">
+      <GoogleTagManager gtmId="G-NZ1F6WL2PM" />
+      <Script
+        type="text/javascript"
+        src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
+        async
+      />
       <body className={`${inter.className} text-white`}>
-        <GoogleTagManager gtmId="G-NZ1F6WL2PM" />
-        <Script
-          type="text/javascript"
-          src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
-          async={true}
-        />
-
         {/* <Web3ModalProvider initialState={initialState}> */}
         <WalletHandler>
           <Header />
