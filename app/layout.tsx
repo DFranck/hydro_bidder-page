@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { GoogleTagManager } from "@next/third-parties/google";
 // import { headers } from 'next/headers'
 
 // import { cookieToInitialState } from 'wagmi'
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} text-white`}>
+        <GoogleTagManager gtmId="G-NZ1F6WL2PM" />
         <Script
           type="text/javascript"
           src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
