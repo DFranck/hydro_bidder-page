@@ -13,7 +13,6 @@ import { wallets as leap } from "@cosmos-kit/leap-extension";
 import { wallets as cosmostation } from "@cosmos-kit/cosmostation-extension";
 
 import {
-  CHAIN_NAME,
   DEFAULT_CHAIN,
   localAssets,
   localnetChain,
