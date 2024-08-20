@@ -20,21 +20,9 @@ import {
   testnetAssets,
   testnetChain,
 } from "../config";
-import {
-  MsgOptIn,
-  MsgOptOut,
-} from "./proto-types-gen/src/interchain_security/ccv/provider/v1/tx";
 
 function initRegistry(): Registry {
   const myRegistry = new Registry(defaultRegistryTypes);
-  myRegistry.register(
-    "/interchain_security.ccv.provider.v1.MsgOptIn",
-    MsgOptIn
-  );
-  myRegistry.register(
-    "/interchain_security.ccv.provider.v1.MsgOptOut",
-    MsgOptOut
-  );
   return myRegistry;
 }
 
@@ -79,8 +67,7 @@ export function WalletHandler({
       }}
     >
       <div className="mx-auto max-w-screen">
-        <div className="mx-auto flex items-center">
-        </div>
+        <div className="mx-auto flex items-center"></div>
         {children}
       </div>
     </ChainProvider>
