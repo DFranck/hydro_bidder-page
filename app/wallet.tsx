@@ -5,9 +5,8 @@ import { ChainProvider } from "@cosmos-kit/react";
 import { wallets as keplr } from "@cosmos-kit/keplr-extension";
 import { ChainName } from "@cosmos-kit/core";
 import { Chain } from "@chain-registry/types";
-import { Registry } from "@cosmjs/proto-signing";
 
-import { defaultRegistryTypes, GasPrice } from "@cosmjs/stargate";
+import { GasPrice } from "@cosmjs/stargate";
 
 import { wallets as leap } from "@cosmos-kit/leap-extension";
 import { wallets as cosmostation } from "@cosmos-kit/cosmostation-extension";
@@ -19,11 +18,6 @@ import {
   testnetAssets,
   testnetChain,
 } from "../config";
-
-function initRegistry(): Registry {
-  const myRegistry = new Registry(defaultRegistryTypes);
-  return myRegistry;
-}
 
 export function WalletHandler({
   children,
@@ -42,7 +36,6 @@ export function WalletHandler({
           switch (chainName) {
             case DEFAULT_CHAIN:
               return {
-                registry: initRegistry(),
                 gasPrice: GasPrice.fromString("0.005uatom"),
               };
             default:
