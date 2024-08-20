@@ -1,10 +1,11 @@
 "use client"
 
+import { Proposal } from "@/app/ts_types/HydroBase.types";
 // import { Proposal } from "@/app/ts_types/HydroBase.types";
 import Button from "@/app/ui/Button";
 import { ColumnDef } from "@tanstack/react-table"
 
-export type Proposal = {
+export type ProposalColumnDef = {
     id: string;
     title: string;
     description: string;
@@ -18,7 +19,7 @@ export interface ActiveProposalsColumnProps {
     onVoteProposal: (proposal: Proposal) => void;
 }
 
-export const activeProposalColumns = ({ onVoteProposal }: ActiveProposalsColumnProps): ColumnDef<Proposal>[] => [
+export const activeProposalColumns = ({ onVoteProposal }: ActiveProposalsColumnProps): ColumnDef<ProposalColumnDef>[] => [
     {
         accessorKey: "title",
         header: "Filter",
@@ -52,11 +53,11 @@ export const activeProposalColumns = ({ onVoteProposal }: ActiveProposalsColumnP
     },
     {
         id: 'actions',
-        cell: ({ row }) => <Button className="px-6 py-0 h-[40px]" type='primary' style="filled" title="Vote Now" onClick={() => onVoteProposal(row.original)} />
+        cell: ({ row }) => <Button className="px-6 py-0 h-[40px]" type='primary' style="filled" title="Vote Now" onClick={() => onVoteProposal(row.original as unknown as Proposal)} />
     }
 ]
 
-export const deployedProposalColumns: ColumnDef<Proposal>[] = [
+export const deployedProposalColumns: ColumnDef<ProposalColumnDef>[] = [
     {
         accessorKey: "title",
         header: "Filter",
