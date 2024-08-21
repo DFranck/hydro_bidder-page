@@ -1,7 +1,6 @@
 "use client"
 
 import { Proposal } from "@/app/ts_types/HydroBase.types";
-// import { Proposal } from "@/app/ts_types/HydroBase.types";
 import Button from "@/app/ui/Button";
 import { ColumnDef } from "@tanstack/react-table"
 

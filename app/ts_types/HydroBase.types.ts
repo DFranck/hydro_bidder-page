@@ -18,16 +18,16 @@ export interface LockEntry {
 export interface Coin {
   amount: Uint128;
   denom: string;
-  [k: string]: unknown;
 }
 export interface ConstantsResponse {
   constants: Constants;
 }
 export interface Constants {
-  denom: string;
   first_round_start: Timestamp;
+  hub_transfer_channel_id: string;
   lock_epoch_length: number;
   max_locked_tokens: number;
+  max_validator_shares_participating: number;
   paused: boolean;
   round_length: number;
 }
@@ -37,80 +37,72 @@ export interface CurrentRoundResponse {
 export type ExecuteMsg = {
   lock_tokens: {
     lock_duration: number;
-    [k: string]: unknown;
   };
 } | {
   refresh_lock_duration: {
     lock_duration: number;
     lock_id: number;
-    [k: string]: unknown;
   };
 } | {
-  unlock_tokens: {
-    [k: string]: unknown;
-  };
+  unlock_tokens: {};
 } | {
   create_proposal: {
-    covenant_params: CovenantParams;
     description: string;
     title: string;
     tranche_id: number;
-    [k: string]: unknown;
   };
 } | {
   vote: {
     proposal_id: number;
     tranche_id: number;
-    [k: string]: unknown;
   };
 } | {
-  add_to_whitelist: {
-    covenant_params: CovenantParams;
-    [k: string]: unknown;
+  add_account_to_whitelist: {
+    address: string;
   };
 } | {
-  remove_from_whitelist: {
-    covenant_params: CovenantParams;
-    [k: string]: unknown;
+  remove_account_from_whitelist: {
+    address: string;
   };
 } | {
   update_max_locked_tokens: {
     max_locked_tokens: number;
-    [k: string]: unknown;
   };
 } | {
-  pause: {
-    [k: string]: unknown;
+  pause: {};
+} | {
+  add_tranche: {
+    tranche: TrancheInfo;
+  };
+} | {
+  edit_tranche: {
+    tranche_id: number;
+    tranche_metadata?: string | null;
+    tranche_name?: string | null;
   };
 };
-export interface CovenantParams {
-  funding_destination_name: string;
-  outgoing_channel_id: string;
-  pool_id: string;
+export interface TrancheInfo {
+  metadata: string;
+  name: string;
 }
 export interface ExpiredUserLockupsResponse {
   lockups: LockEntry[];
 }
 export interface InstantiateMsg {
-  denom: string;
   first_round_start: Timestamp;
-  initial_whitelist: CovenantParams[];
+  hub_transfer_channel_id: string;
+  initial_whitelist: string[];
   lock_epoch_length: number;
-  max_locked_tokens: number;
+  max_locked_tokens: Uint128;
+  max_validator_shares_participating: number;
   round_length: number;
-  tranches: Tranche[];
+  tranches: TrancheInfo[];
   whitelist_admins: string[];
-  [k: string]: unknown;
-}
-export interface Tranche {
-  metadata: string;
-  tranche_id: number;
 }
 export interface ProposalResponse {
   proposal: Proposal;
 }
 export interface Proposal {
-  covenant_params: CovenantParams;
   description: string;
   percentage: Uint128;
   power: Uint128;
@@ -120,52 +112,40 @@ export interface Proposal {
   tranche_id: number;
 }
 export type QueryMsg = {
-  constants: {
-    [k: string]: unknown;
-  };
+  constants: {};
 } | {
-  tranches: {
-    [k: string]: unknown;
-  };
+  tranches: {};
 } | {
   all_user_lockups: {
     address: string;
     limit: number;
     start_from: number;
-    [k: string]: unknown;
   };
 } | {
   expired_user_lockups: {
     address: string;
     limit: number;
     start_from: number;
-    [k: string]: unknown;
   };
 } | {
   user_voting_power: {
     address: string;
-    [k: string]: unknown;
   };
 } | {
   user_vote: {
     address: string;
     round_id: number;
     tranche_id: number;
-    [k: string]: unknown;
   };
 } | {
-  current_round: {
-    [k: string]: unknown;
-  };
+  current_round: {};
 } | {
   round_end: {
     round_id: number;
-    [k: string]: unknown;
   };
 } | {
   round_total_voting_power: {
     round_id: number;
-    [k: string]: unknown;
   };
 } | {
   round_proposals: {
@@ -173,34 +153,25 @@ export type QueryMsg = {
     round_id: number;
     start_from: number;
     tranche_id: number;
-    [k: string]: unknown;
   };
 } | {
   proposal: {
     proposal_id: number;
     round_id: number;
     tranche_id: number;
-    [k: string]: unknown;
   };
 } | {
   top_n_proposals: {
     number_of_proposals: number;
     round_id: number;
     tranche_id: number;
-    [k: string]: unknown;
   };
 } | {
-  whitelist: {
-    [k: string]: unknown;
-  };
+  whitelist: {};
 } | {
-  whitelist_admins: {
-    [k: string]: unknown;
-  };
+  whitelist_admins: {};
 } | {
-  total_locked_tokens: {
-    [k: string]: unknown;
-  };
+  total_locked_tokens: {};
 };
 export interface RoundEndResponse {
   round_end: Timestamp;
@@ -220,6 +191,11 @@ export interface TotalLockedTokensResponse {
 export interface TranchesResponse {
   tranches: Tranche[];
 }
+export interface Tranche {
+  id: number;
+  metadata: string;
+  name: string;
+}
 export interface UserVoteResponse {
   vote: Vote;
 }
@@ -235,5 +211,5 @@ export interface WhitelistAdminsResponse {
   admins: Addr[];
 }
 export interface WhitelistResponse {
-  whitelist: CovenantParams[];
+  whitelist: Addr[];
 }
