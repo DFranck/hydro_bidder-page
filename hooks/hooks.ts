@@ -4,35 +4,38 @@ import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr } from '../app/ts_types/HydroBase.types';
 import { GlobalState, RoundState } from '../app/types';
 import { activeProposals } from "../app/dashboard/proposals/data"
+import { topNProposals, mockGlobalState } from "../app/mockData"
 
 const hydroContractAddress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
 const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
 const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
 const myAddress = 'neutron1cfznm042ncguprsfxzmze6xfkjft33eqw2djna';
-const numberOfProposals = 10;
+const numberOfProposals = 5;
 const staleTime = 10000;
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await CosmWasmClient.connect(rpcEndpoint);
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
-    const [constants, currentRound, totalLockedTokens, tranches, whitelistAdmins, whitelist] = await Promise.all([
-        hydroQueryClient.constants().then((response) => response.constants),
-        hydroQueryClient.currentRound().then((response) => response.round_id),
-        hydroQueryClient.totalLockedTokens().then((response) => response.total_locked_tokens),
-        hydroQueryClient.tranches().then((response) => response.tranches),
-        hydroQueryClient.whitelistAdmins().then((response) => response.admins),
-        hydroQueryClient.whitelist().then((response) => response.whitelist),
-    ]);
+    // const [constants, currentRound, totalLockedTokens, tranches, whitelistAdmins, whitelist] = await Promise.all([
+    //     hydroQueryClient.constants().then((response) => response.constants),
+    //     hydroQueryClient.currentRound().then((response) => response.round_id),
+    //     hydroQueryClient.totalLockedTokens().then((response) => response.total_locked_tokens),
+    //     hydroQueryClient.tranches().then((response) => response.tranches),
+    //     hydroQueryClient.whitelistAdmins().then((response) => response.admins),
+    //     hydroQueryClient.whitelist().then((response) => response.whitelist),
+    // ]);
 
-    return {
-        constants,
-        currentRound,
-        totalLockedTokens,
-        tranches,
-        whitelistAdmins,
-        whitelist,
-    };
+    // return {
+    //     constants,
+    //     currentRound,
+    //     totalLockedTokens,
+    //     tranches,
+    //     whitelistAdmins,
+    //     whitelist,
+    // };
+
+    return mockGlobalState;
 }
 
 export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
@@ -53,33 +56,17 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
 }
 
 export const fetchProposals = async (roundId: number, trancheId: number): Promise<Proposal[]> => {
+    console.log(`Fetching proposals for Round ID: ${roundId}, Tranche ID: ${trancheId}`);
     const client = await CosmWasmClient.connect(rpcEndpoint);
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
-    // TODO: commented this out and mocked it because it is erroring
+    // TODO: commented this out and mocked it
     // const proposals = await hydroQueryClient.topNProposals({ numberOfProposals, roundId, trancheId })
     //     .then((response) => response.proposals);
-    const proposals = await hydroQueryClient.roundProposals({ limit: numberOfProposals, roundId, startFrom: 0, trancheId }).then((response) => response.proposals)
 
-    // const proposals = activeProposals.map((proposal) => {
-    //     return {
-    //         covenant_params: {
-    //             funding_destination_name: "",
-    //             outgoing_channel_id: "",
-    //             pool_id: "",
-    //         },
-    //         description: proposal.description,
-    //         percentage: proposal.votingPowerPercent + "",
-    //         power: proposal.currentVotingPower + "",
-    //         proposal_id: parseFloat(proposal.id),
-    //         round_id: 1,
-    //         title: proposal.title,
-    //         tranche_id: 0,
-    //     }
-    // });
-    console.log({ proposals });
 
-    return proposals;
+
+    return topNProposals[roundId][trancheId].slice(0, numberOfProposals);
 };
 
 export const useProposals = (roundId: number, trancheId: number) => {
