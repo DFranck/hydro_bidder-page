@@ -2,13 +2,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
 import { DataTable } from "./data-table"
-import { activeProposalColumns, deployedProposalColumns, makeProposalColumnDef } from "./proposals/columns"
+import { proposalColumns, deployedProposalColumns, makeProposalColumnDef } from "./proposals/columns"
 import Image from "next/image"
 import { myLockups } from "./lockups/data"
 import { Lockup, columns as lockupColumns } from "./lockups/columns"
 import { totalEarnedTribute, tributeHistory } from "./tribute/data"
 import { formatAmount, total } from "./tribute/utils"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Proposal } from '../ts_types/HydroBase.types';
 import { GlobalState } from '../types';
@@ -34,9 +34,7 @@ export default function Dashboard({
     globalState: GlobalState
 }) {
     const [tab, setTab] = useState<Tab['tab']>('voting');
-    const [roundProposals, setRoundProposals] = useState<Proposal[]>([]);
-    const [currentTranche, setCurrentTranche] = useState(1);
-    const [totalTranches, setTotalTranches] = useState(0);
+    const [currentTranche, setCurrentTranche] = useState(0);
 
     const { isWalletConnected } = useChain("cosmoshubtestnet")
     const renderCard = ({ tab, title }: Tab) => (
@@ -69,9 +67,6 @@ export default function Dashboard({
         alert(`clicked EDIT on row ${lockup.id}`);
     }, []);
 
-    const activeProposalsColumnsMemoized = useMemo(() => activeProposalColumns({ onVoteProposal }), [onVoteProposal]);
-    const locukpColumnsMemoized = useMemo(() => lockupColumns({ onEditLockup }), [onEditLockup]);
-
     return (
         <div className='text-3xl bg-[linear-gradient(180deg,#010006_49.9%,#001C47_100%)]'>
             {isWalletConnected && dashboardCards()}
@@ -92,42 +87,44 @@ export default function Dashboard({
                                         <p className="text-xl not-italic font-normal leading-[150%]">View and vote on active proposals</p>
                                     </div>
                                     <div className="flex flex-row gap-[18px] justify-end items-center">
-                                        <Button variant="ghost" size="icon">
+                                        <Button variant="ghost" size="icon" onClick={() => setCurrentTranche((currentTranche - 1 + globalState.tranches.length) % globalState.tranches.length)}>
                                             <Image src={'/images/Vector3.svg'} alt='tranches-left' width={14} height={24} />
                                         </Button>
-                                        <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]">{`TRANCH ${currentTranche}/${totalTranches}`}</p>
-                                        <Button variant="ghost" size="icon">
+                                        <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]">{`TRANCH ${currentTranche + 1}/${globalState.tranches.length}`}</p>
+                                        <Button variant="ghost" size="icon" onClick={() => setCurrentTranche((currentTranche + 1) % globalState.tranches.length)}>
                                             <Image src={'/images/Vector4.svg'} alt='tranches-right' width={14} height={24} />
                                         </Button>
                                     </div>
                                 </div>
-                                <DataTable
-                                    columns={activeProposalsColumnsMemoized}
-                                    data={
-                                        // TODO: Iterate through tranches instead of just using the first one
-                                        (currentProposalTranches.get(globalState.tranches[0].id)!)
-                                            .map((proposal) => makeProposalColumnDef(proposal, currentVotingPower))
-                                    }
-                                    height=" h-[330px]"
-                                    theme="light"
-                                />
+                                {currentProposalTranches.get(currentTranche) && (
+                                    <div className="mb-8">
+                                        <h4 className="text-xl font-bold mb-4">{globalState.tranches.find(tranche => tranche.id === currentTranche)?.name || `Tranche ${currentTranche}`}</h4>
+                                        <DataTable
+                                            columns={proposalColumns({ onVoteProposal })}
+                                            data={(currentProposalTranches.get(currentTranche) || []).map((proposal) => makeProposalColumnDef(proposal, currentVotingPower))}
+                                            height="h-[330px]"
+                                            theme="light"
+                                        />
+                                    </div>
+                                )}
                                 <div className="flex justify-center mt-[27px]">
                                     <Image src={'/images/Progress.svg'} alt='progress' width={577} height={69} />
                                 </div>
                             </div>
-                            {lastProposalTranches && lastVotingPower && <div>
-                                <h3>Actively Deployed Proposals</h3>
-                                <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
-                                <DataTable
-                                    columns={deployedProposalColumns}
-                                    data={
-                                        // TODO: Iterate through tranches instead of just using the first one
-                                        (lastProposalTranches.get(globalState.tranches[0].id)!)
-                                            .map((proposal) => makeProposalColumnDef(proposal, lastVotingPower))
-                                    }
-                                    height=" h-[330px]"
-                                />
-                            </div>}
+                            {lastProposalTranches && lastProposalTranches.get(currentTranche) && (
+                                <div>
+                                    <h3>Actively Deployed Proposals</h3>
+                                    <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
+                                    <DataTable
+                                        columns={deployedProposalColumns}
+                                        data={
+                                            (lastProposalTranches.get(currentTranche) || [])
+                                                .map((proposal) => makeProposalColumnDef(proposal, lastVotingPower!))
+                                        }
+                                        height=" h-[330px]"
+                                    />
+                                </div>
+                            )}
                         </div>
 
                     </TabsContent>
@@ -174,7 +171,7 @@ export default function Dashboard({
                     <TabsContent value="lockups">
                         <div>
                             <h3>My Lockups</h3>
-                            <DataTable columns={locukpColumnsMemoized} data={myLockups} height=" h-[720px]" />
+                            <DataTable columns={lockupColumns({ onEditLockup })} data={myLockups} height=" h-[720px]" />
                         </div>
                     </TabsContent>
                 </Tabs>
