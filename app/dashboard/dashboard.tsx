@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Proposal } from '../ts_types/HydroBase.types';
 import { GlobalState } from '../types';
 import { useChain } from "@cosmos-kit/react"
-
+import { Tribute } from "../ts_types/TributeBase.types"
 
 type Tab = {
     tab: 'voting' | 'lockups' | 'tribute',
@@ -25,13 +25,17 @@ export default function Dashboard({
     currentProposalTranches,
     lastVotingPower,
     currentVotingPower,
-    globalState
+    globalState,
+    currentProposalTributes,
+    lastProposalTributes,
 }: {
-    lastProposalTranches?: Map<number, Proposal[]>,
     currentProposalTranches: Map<number, Proposal[]>,
-    lastVotingPower?: number,
     currentVotingPower: number,
-    globalState: GlobalState
+    currentProposalTributes: Map<number, Tribute[]>,
+    lastProposalTranches?: Map<number, Proposal[]>,
+    lastVotingPower?: number,
+    lastProposalTributes?: Map<number, Tribute[]>
+    globalState: GlobalState,
 }) {
     const [tab, setTab] = useState<Tab['tab']>('voting');
     const [currentTranche, setCurrentTranche] = useState(0);
@@ -178,4 +182,27 @@ export default function Dashboard({
             </div>
         </div>
     )
+}
+
+function RewardsSnapshot({ amount }: { amount: number }) {
+    return (
+        <div className="bg-[#1a1b23] rounded-lg p-4 max-w-sm">
+            <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center">
+                    <div className="bg-blue-600 rounded-full p-2 mr-2">
+                        <span className="text-white text-xl">$</span>
+                    </div>
+                    <h2 className="text-white text-lg font-semibold">Rewards<br />Snapshot</h2>
+                </div>
+                <button className="bg-[#4ade80] text-black px-4 py-2 rounded-md text-sm font-medium">
+                    Claim Rewards
+                </button>
+            </div>
+            <p className="text-gray-400 text-sm mb-2">Your ROI on your staked stATOM</p>
+            <p className="text-[#4ade80] text-3xl font-bold">
+                ${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+            <p className="text-gray-400 text-xs">USDC EQUIVALENT</p>
+        </div>
+    );
 }
