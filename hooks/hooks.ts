@@ -17,6 +17,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await CosmWasmClient.connect(rpcEndpoint);
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
+    // TODO: commented this out and mocked it
     // const [constants, currentRound, totalLockedTokens, tranches, whitelistAdmins, whitelist] = await Promise.all([
     //     hydroQueryClient.constants().then((response) => response.constants),
     //     hydroQueryClient.currentRound().then((response) => response.round_id),
@@ -42,7 +43,7 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
     const client = await CosmWasmClient.connect(rpcEndpoint);
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
-    // TODO: commented this out and mocked it because it is erroring
+    // TODO: commented this out and mocked it
     // const [roundEnd, totalVotingPower] = await Promise.all([
     //     hydroQueryClient.roundEnd({ roundId }).then((response) => response.round_end),
     //     hydroQueryClient.roundTotalVotingPower({ roundId }).then((response) => response.total_voting_power),

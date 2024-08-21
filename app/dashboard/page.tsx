@@ -4,13 +4,11 @@ import { fetchGlobalState, fetchRoundState, fetchProposals } from "../../hooks/h
 
 export default async function Page() {
     const globalState = await fetchGlobalState();
-    const currentRound = 0; // the round actually containing data
 
     const { constants,/* currentRound,*/ totalLockedTokens, tranches, whitelistAdmins, whitelist } = globalState;
-    const { roundEnd, totalVotingPower: currentTotalVotingPower } = await fetchRoundState(currentRound);
-    console.log({ currentRound });
+    const { roundEnd, totalVotingPower: currentTotalVotingPower } = await fetchRoundState(globalState.currentRound);
 
-    const lastRound = currentRound - 1;
+    const lastRound = globalState.currentRound - 1;
     const lastRoundExists = lastRound > -1;
 
 
@@ -18,9 +16,9 @@ export default async function Page() {
     const currentProposals = await Promise.all(tranches.map((tranche) => {
         console.log({ tranche });
 
-        return fetchProposals(currentRound, tranche.id)
+        return fetchProposals(globalState.currentRound, tranche.id)
     }));
-    const currentVotingPower = await fetchRoundState(currentRound).then((response) => response.totalVotingPower);
+    const currentVotingPower = await fetchRoundState(globalState.currentRound).then((response) => response.totalVotingPower);
 
     // The first round that Hydro runs, there will be no deployed proposals
     let lastProposalTranches = undefined
@@ -37,6 +35,18 @@ export default async function Page() {
     const currentProposalTranches = tranches.reduce((acc, tranche, idx) => {
         return acc.set(tranche.id, currentProposals[idx])
     }, new Map<number, Proposal[]>())
+
+    console.log('Last round:', lastRound);
+    console.log('Current round:', globalState.currentRound);
+
+
+    console.log('Dashboard parameters:', {
+        lastProposalTranches,
+        currentProposalTranches,
+        lastVotingPower,
+        currentVotingPower,
+        globalState
+    });
 
     return <Dashboard
         lastProposalTranches={lastProposalTranches}

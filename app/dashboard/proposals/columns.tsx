@@ -32,7 +32,7 @@ export interface ActiveProposalsColumnProps {
     onVoteProposal: (proposal: Proposal) => void;
 }
 
-export const activeProposalColumns = ({ onVoteProposal }: ActiveProposalsColumnProps): ColumnDef<ProposalColumnDef>[] => [
+export const proposalColumns = ({ onVoteProposal }: ActiveProposalsColumnProps): ColumnDef<ProposalColumnDef>[] => [
     {
         accessorKey: "title",
         header: "Filter",
