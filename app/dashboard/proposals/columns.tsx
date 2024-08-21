@@ -15,6 +15,20 @@ export type ProposalColumnDef = {
     votingPowerPercent: number;
 }
 
+export function makeProposalColumnDef(proposal: Proposal, totalVotingPower: number): ProposalColumnDef {
+    return {
+        id: proposal.proposal_id + "",
+        title: proposal.title,
+        description: proposal.description,
+        // TODO: fill in with tribute amount and token from tribute contract
+        tributeAmount: 0,
+        tributeToken: "",
+        // TODO: power could be a very large number (u128) and should probably be handled with a large number library
+        currentVotingPower: parseFloat(proposal.power),
+        votingPowerPercent: (parseFloat(proposal.power) / totalVotingPower) * 100,
+    }
+}
+
 export interface ActiveProposalsColumnProps {
     onVoteProposal: (proposal: Proposal) => void;
 }
