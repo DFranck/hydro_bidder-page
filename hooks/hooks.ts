@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { HydroBaseQueryClient } from '../app/ts_types/HydroBase.client';
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { Tranche, Constants, Proposal, LockEntry, CovenantParams, Timestamp, Uint128, Vote, Addr } from '../app/ts_types/HydroBase.types';
+import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr } from '../app/ts_types/HydroBase.types';
 import { GlobalState, RoundState } from '../app/types';
 import { activeProposals } from "../app/dashboard/proposals/data"
 
@@ -59,23 +59,25 @@ export const fetchProposals = async (roundId: number, trancheId: number): Promis
     // TODO: commented this out and mocked it because it is erroring
     // const proposals = await hydroQueryClient.topNProposals({ numberOfProposals, roundId, trancheId })
     //     .then((response) => response.proposals);
+    const proposals = await hydroQueryClient.roundProposals({ limit: numberOfProposals, roundId, startFrom: 0, trancheId }).then((response) => response.proposals)
 
-    const proposals = activeProposals.map((proposal) => {
-        return {
-            covenant_params: {
-                funding_destination_name: "",
-                outgoing_channel_id: "",
-                pool_id: "",
-            },
-            description: proposal.description,
-            percentage: proposal.votingPowerPercent + "",
-            power: proposal.currentVotingPower + "",
-            proposal_id: parseFloat(proposal.id),
-            round_id: 1,
-            title: proposal.title,
-            tranche_id: 0,
-        }
-    });
+    // const proposals = activeProposals.map((proposal) => {
+    //     return {
+    //         covenant_params: {
+    //             funding_destination_name: "",
+    //             outgoing_channel_id: "",
+    //             pool_id: "",
+    //         },
+    //         description: proposal.description,
+    //         percentage: proposal.votingPowerPercent + "",
+    //         power: proposal.currentVotingPower + "",
+    //         proposal_id: parseFloat(proposal.id),
+    //         round_id: 1,
+    //         title: proposal.title,
+    //         tranche_id: 0,
+    //     }
+    // });
+    console.log({ proposals });
 
     return proposals;
 };

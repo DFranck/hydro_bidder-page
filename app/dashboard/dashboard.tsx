@@ -97,7 +97,7 @@ export default function Dashboard({
                                         </Button>
                                         <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]">{`TRANCH ${currentTranche}/${totalTranches}`}</p>
                                         <Button variant="ghost" size="icon">
-                                            <Image src={'/images/Vector4.svg'} alt='tranches-left' width={14} height={24} />
+                                            <Image src={'/images/Vector4.svg'} alt='tranches-right' width={14} height={24} />
                                         </Button>
                                     </div>
                                 </div>
@@ -105,7 +105,7 @@ export default function Dashboard({
                                     columns={activeProposalsColumnsMemoized}
                                     data={
                                         // TODO: Iterate through tranches instead of just using the first one
-                                        (currentProposalTranches.get(globalState.tranches[0].tranche_id)!)
+                                        (currentProposalTranches.get(globalState.tranches[0].id)!)
                                             .map((proposal) => makeProposalColumnDef(proposal, currentVotingPower))
                                     }
                                     height=" h-[330px]"
@@ -122,7 +122,7 @@ export default function Dashboard({
                                     columns={deployedProposalColumns}
                                     data={
                                         // TODO: Iterate through tranches instead of just using the first one
-                                        (lastProposalTranches.get(globalState.tranches[0].tranche_id)!)
+                                        (lastProposalTranches.get(globalState.tranches[0].id)!)
                                             .map((proposal) => makeProposalColumnDef(proposal, lastVotingPower))
                                     }
                                     height=" h-[330px]"
