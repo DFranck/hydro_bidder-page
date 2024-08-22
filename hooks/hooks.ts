@@ -8,6 +8,7 @@ import { GlobalState, RoundState } from '../app/types';
 import { activeProposals } from "../app/dashboard/proposals/data"
 import { topNProposals, mockGlobalState, mockTributes } from "../app/mockData"
 import { setTimeout } from 'timers/promises';
+import { mockMyLockups } from "@/app/dashboard/lockups/data";
 
 const hydroContractAddress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
 const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
@@ -134,3 +135,26 @@ export const ibcDenomToToken: Record<string, string> = {
     "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858": "USDC",
     "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": "USDT"
 };
+
+export const fetchMyLockups = async () => {
+    // const client = await CosmWasmClient.connect(rpcEndpoint);
+    // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
+    // const myLockups = await hydroQueryClient.allUserLockups({ address: myAddress, limit: 10, startFrom: 0 })
+    //     .then((response) => response.lockups);
+
+    const expandedMockLockups = mockMyLockups.map((lockup, index) => ({
+        ...lockup,
+        id: index,
+        votingPower: 100,
+        get timeRemaining() {
+            const today = new Date();
+            const lock_end = new Date(lockup.lock_end);
+            const timeDifference = lock_end.getTime() - today.getTime();
+            const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+            return daysDifference + ' days';
+        }
+    }));
+
+    await setTimeout(mockTimeout);
+    return expandedMockLockups;
+}

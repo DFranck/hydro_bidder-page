@@ -60,21 +60,21 @@ export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDe
     },
     {
         accessorKey: "tribute",
-        header: () => "Tribute Amount",
-        cell: ({ row }) => <div className="text-center">{row.original.summedTributes.map(tribute =>
-            <div className="text-center">
+        header: () => <div className="text-center">Tribute Amount</div>,
+        cell: ({ row }) => <div className="text-center">{row.original.summedTributes.map((tribute, index) =>
+            <div key={index} className="text-center">
                 {`${(tribute.amount / 1000000).toFixed(2)} ${tribute.denom.length > 20 ? tribute.denom.slice(0, 17) + '...' : tribute.denom}`}
             </div>)
         }</div>,
     },
     {
         accessorKey: "power",
-        header: "Current Voting Power",
+        header: () => <div className="text-center">Current Voting Power</div>,
         cell: ({ row }) => <div className="text-center">{parseFloat(row.original.proposal.power)}</div>,
     },
     {
         accessorKey: "votingPowerPercent",
-        header: "Voting Power %",
+        header: () => <div className="text-center">Voting Power %</div>,
         cell: ({ row }) => <div className="text-center">{row.original.proposal.percentage}</div>,
     }
 ]

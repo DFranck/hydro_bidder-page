@@ -1,0 +1,26 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Wallet_Light" clip-path="url(#clip0_174_393)">
+<g id="Wallet">
+<path id="Vector" d="M64.78 35.37H5C2.23858 35.37 0 37.6086 0 40.37V80.57C0 83.3314 2.23858 85.57 5 85.57H64.78C67.5414 85.57 69.78 83.3314 69.78 80.57V40.37C69.78 37.6086 67.5414 35.37 64.78 35.37Z" fill="url(#paint0_linear_174_393)"/>
+<g id="Group">
+<path id="Vector_2" d="M75.0002 25.1499H15.2202C12.4588 25.1499 10.2202 27.3885 10.2202 30.1499V70.3499C10.2202 73.1113 12.4588 75.3499 15.2202 75.3499H75.0002C77.7616 75.3499 80.0002 73.1113 80.0002 70.3499V30.1499C80.0002 27.3885 77.7616 25.1499 75.0002 25.1499Z" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M15.3301 25.1499L67.4501 14.5099C70.1101 13.9699 72.7201 15.6499 73.3201 18.2999L74.8801 25.1499" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" d="M61.8901 44.3099H80.0001V56.1799H61.8901C58.6901 56.1799 56.0801 53.5799 56.0801 50.3699V50.1099C56.0801 46.9099 58.6801 44.2999 61.8901 44.2999V44.3099Z" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_174_393" x1="-0.560002" y1="80.94" x2="70.34" y2="40.01" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0061FF"/>
+<stop offset="0.17" stop-color="#0061FF" stop-opacity="0.78"/>
+<stop offset="0.4" stop-color="#0061FF" stop-opacity="0.5"/>
+<stop offset="0.6" stop-color="#0061FF" stop-opacity="0.29"/>
+<stop offset="0.78" stop-color="#0061FF" stop-opacity="0.13"/>
+<stop offset="0.92" stop-color="#0061FF" stop-opacity="0.04"/>
+<stop offset="1" stop-color="#0061FF" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0_174_393">
+<rect width="100" height="100" fill="white"/>
+</clipPath>
+</defs>
+</svg>
