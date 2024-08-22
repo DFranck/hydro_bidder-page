@@ -1,5 +1,6 @@
 "use client"
 
+import { LockEntry } from "@/app/ts_types/HydroBase.types";
 import Button from "@/app/ui/Button";
 import { ColumnDef } from "@tanstack/react-table"
 import Image from "next/image";
@@ -14,10 +15,10 @@ export type Lockup = {
 }
 
 export interface LockupColumnProps {
-    onEditLockup: (lockup: Lockup) => void;
+    onEditLockup: (lockup: LockEntry) => void;
 }
 
-export const columns = ({ onEditLockup }: LockupColumnProps): ColumnDef<Lockup>[] => [
+export const columns = ({ onEditLockup }: LockupColumnProps): ColumnDef<LockEntry>[] => [
     {
         accessorKey: "id",
         header: "Lockup ID",
@@ -28,15 +29,15 @@ export const columns = ({ onEditLockup }: LockupColumnProps): ColumnDef<Lockup>[
         header: "Voting Power",
     },
     {
-        accessorKey: "stATOMs",
+        accessorKey: "funds.amount",
         header: "stATOMs",
     },
     {
-        accessorKey: "startDate",
+        accessorKey: "lock_start",
         header: "Start Date",
     },
     {
-        accessorKey: "endDate",
+        accessorKey: "lock_end",
         header: "End Date",
     },
     {

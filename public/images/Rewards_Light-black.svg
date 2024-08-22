@@ -1,0 +1,32 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Rewards_Light" clip-path="url(#clip0_174_363)">
+<g id="Rewards">
+<path id="Vector" d="M30.9999 61.53C43.2496 61.53 53.1799 51.5997 53.1799 39.35C53.1799 27.1004 43.2496 17.17 30.9999 17.17C18.7503 17.17 8.81995 27.1004 8.81995 39.35C8.81995 51.5997 18.7503 61.53 30.9999 61.53Z" fill="url(#paint0_linear_174_363)"/>
+<g id="Group">
+<path id="Vector_2" d="M31 68.7C47.2096 68.7 60.35 55.5596 60.35 39.35C60.35 23.1404 47.2096 10 31 10C14.7905 10 1.65002 23.1404 1.65002 39.35C1.65002 55.5596 14.7905 68.7 31 68.7Z" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M44.8101 65.25V90L31.0001 82.11L17.1901 90V65.25" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" d="M31 82.11V68.7" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="Group_2">
+<path id="Vector_5" d="M34.11 39.3101H27.9C25.2 39.3101 23.02 37.12 23.02 34.43C23.02 31.73 25.21 29.55 27.9 29.55H37.99" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_6" d="M24.01 49.15H34.1C36.8 49.15 38.98 46.96 38.98 44.27C38.98 41.57 36.79 39.39 34.1 39.39H27.89" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_7" d="M30.5 23.4V29.55" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_8" d="M30.5 49.15V55.3" stroke="#080815" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_174_363" x1="11.7899" y1="50.44" x2="50.2099" y2="28.26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0061FF"/>
+<stop offset="0.17" stop-color="#0061FF" stop-opacity="0.78"/>
+<stop offset="0.4" stop-color="#0061FF" stop-opacity="0.5"/>
+<stop offset="0.6" stop-color="#0061FF" stop-opacity="0.29"/>
+<stop offset="0.78" stop-color="#0061FF" stop-opacity="0.13"/>
+<stop offset="0.92" stop-color="#0061FF" stop-opacity="0.04"/>
+<stop offset="1" stop-color="#0061FF" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0_174_363">
+<rect width="100" height="100" fill="white"/>
+</clipPath>
+</defs>
+</svg>

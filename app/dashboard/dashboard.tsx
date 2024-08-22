@@ -4,19 +4,21 @@ import { HorizontalDivider } from "../ui/HorizontalDivider"
 import { DataTable } from "./data-table"
 import { proposalColumns, deployedProposalColumns, makeProposalColumnDef } from "./proposals/columns"
 import Image from "next/image"
-import { myLockups } from "./lockups/data"
+import { mockMyLockups } from "./lockups/data"
 import { Lockup, columns as lockupColumns } from "./lockups/columns"
 import { totalEarnedTribute, tributeHistory } from "./tribute/data"
 import { formatAmount, total } from "./tribute/utils"
 import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Proposal } from '../ts_types/HydroBase.types';
+import { LockEntry, Proposal } from '../ts_types/HydroBase.types';
 import { GlobalState } from '../types';
 import { useChain } from "@cosmos-kit/react"
 import { Tribute } from "../ts_types/TributeBase.types"
+import TopModule, { TabLabel } from "./TopModule"
+import { topModulesConfig } from "./topModulesConfig"
 
 type Tab = {
-    tab: 'voting' | 'lockups' | 'tribute',
+    tab: TabLabel,
     title: string
 }
 
@@ -28,6 +30,7 @@ export default function Dashboard({
     globalState,
     currentProposalTributes,
     lastProposalTributes,
+    userLockups
 }: {
     currentProposalTranches: Map<number, Proposal[]>,
     currentVotingPower: number,
@@ -36,26 +39,27 @@ export default function Dashboard({
     lastVotingPower?: number,
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
+    userLockups: LockEntry[] // lockup we get from the response doesn't have id and voting power required by the UI
 }) {
-    const [tab, setTab] = useState<Tab['tab']>('voting');
+    const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
     const [currentTranche, setCurrentTranche] = useState(0);
 
     const { isWalletConnected } = useChain("cosmoshubtestnet")
-    const renderCard = ({ tab, title }: Tab) => (
-        <div key={title} onClick={() => onTabChange(tab)} className={`flex w-[380px] h-[360px] flex-col items-center justify-center gap-4 shrink-0 bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)] p-6 rounded-[10px]`}>
-            {title}
-        </div>
-    )
 
-    const onTabChange = (value: 'voting' | 'lockups' | 'tribute') => {
+    const onTabChange = (value: TabLabel) => {
         setTab(value);
     }
 
-    const dashboardCards = () => (
+    const TopModules = () => (
         <div className='grid grid-cols-3 gap-[60px] px-[90px]'>
             {
-                ([{ tab: 'voting', title: 'Voting' }, { tab: 'lockups', title: 'Lockups' }, { tab: 'tribute', title: 'Tribute' }] as Tab[]).map(
-                    (item: Tab) => renderCard(item)
+                topModulesConfig.map(
+                    (item) => <TopModule
+                        key={item.title}
+                        isActive={tab === item.tab}
+                        onTabChange={onTabChange}
+                        {...item}
+                    />
                 )
             }
         </div>
@@ -67,19 +71,25 @@ export default function Dashboard({
         alert(`clicked VOTE on row ${proposal.proposal_id}`);
     }, []);
 
-    const onEditLockup = useCallback((lockup: Lockup) => {
-        alert(`clicked EDIT on row ${lockup.id}`);
+    const onEditLockup = useCallback((lockup: LockEntry) => {
+        // alert(`clicked EDIT on row ${lockup.id}`);
     }, []);
+
+    // const sumLockupAmounts = () => {
+    //     return Array.from(userLockups).reduce((sum, lockup) => {
+    //         return sum + parseInt(lockup.funds.amount);
+    //     }, 0);
+    // }
 
     return (
         <div className='text-3xl bg-[linear-gradient(180deg,#010006_49.9%,#001C47_100%)]'>
-            {isWalletConnected && dashboardCards()}
+            {isWalletConnected && <TopModules />}
             <div className="px-[90px] pt-[70px] pb-[90px]">
                 <Tabs value={tab}>
                     <TabsList className="p-[unset] h-[unset] rounded-[unset] bg-transparent flex flex-row justify-start gap-[10px]">
-                        <TabsTrigger className={tabsBtnsClass} value="voting" onClick={() => onTabChange('voting')}>Voting</TabsTrigger>
-                        <TabsTrigger className={tabsBtnsClass} value="tribute" onClick={() => onTabChange('tribute')}>Earned Tribute</TabsTrigger>
-                        <TabsTrigger className={tabsBtnsClass} value="lockups" onClick={() => onTabChange('lockups')}>Lockups</TabsTrigger>
+                        <TabsTrigger className={tabsBtnsClass} value="voting" onClick={() => onTabChange(TabLabel.VOTING)}>Voting</TabsTrigger>
+                        <TabsTrigger className={tabsBtnsClass} value="tribute" onClick={() => onTabChange(TabLabel.TRIBUTE)}>Earned Tribute</TabsTrigger>
+                        <TabsTrigger className={tabsBtnsClass} value="lockups" onClick={() => onTabChange(TabLabel.LOCKUPS)}>Lockups</TabsTrigger>
                     </TabsList>
                     <HorizontalDivider style="mt-[-21px]" />
                     <TabsContent value="voting">
@@ -175,7 +185,7 @@ export default function Dashboard({
                     <TabsContent value="lockups">
                         <div>
                             <h3>My Lockups</h3>
-                            <DataTable columns={lockupColumns({ onEditLockup })} data={myLockups} height=" h-[720px]" />
+                            <DataTable columns={lockupColumns({ onEditLockup })} data={userLockups} height=" max-h-[720px]" />
                         </div>
                     </TabsContent>
                 </Tabs>
