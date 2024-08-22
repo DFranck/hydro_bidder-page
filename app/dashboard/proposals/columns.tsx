@@ -3,85 +3,90 @@
 import { Proposal } from "@/app/ts_types/HydroBase.types";
 import Button from "@/app/ui/Button";
 import { ColumnDef } from "@tanstack/react-table"
+import { Tribute } from "@/app/ts_types/TributeBase.types";
 
 export type ProposalColumnDef = {
-    id: string;
-    title: string;
-    description: string;
-    tributeAmount: number;
-    tributeToken: string;
-    currentVotingPower: number;
-    votingPowerPercent: number;
+    proposal: Proposal,
+    summedTributes: { denom: string, amount: number }[],
 }
 
-export function makeProposalColumnDef(proposal: Proposal, totalVotingPower: number): ProposalColumnDef {
+export function makeProposalColumnDef(proposal: Proposal, tributes: Tribute[]): ProposalColumnDef {
     return {
-        id: proposal.proposal_id + "",
-        title: proposal.title,
-        description: proposal.description,
-        // TODO: fill in with tribute amount and token from tribute contract
-        tributeAmount: 0,
-        tributeToken: "",
-        // TODO: power could be a very large number (u128) and should probably be handled with a large number library
-        currentVotingPower: parseFloat(proposal.power),
-        votingPowerPercent: (parseFloat(proposal.power) / totalVotingPower) * 100,
+        proposal: proposal,
+        summedTributes: sumTributeAmounts(tributes),
     }
 }
 
-export interface ActiveProposalsColumnProps {
-    onVoteProposal: (proposal: Proposal) => void;
+// Calculates and formats the total tribute amounts for each token in a list of tributes.
+// 
+// This function takes an array of Tribute objects and processes them to:
+// 1. Sum up the amounts for each unique token (denom).
+// 2. Preserve the order in which tokens first appear.
+// 3. Return an array of objects, each containing a token and its total amount.
+// 
+// The returned array maintains the original order of token appearance and
+// provides a clear summary of total tributes per token type.
+function sumTributeAmounts(tributes: Tribute[]): { denom: string, amount: number }[] {
+    // Sum up tributes by denom, maintaining order of first appearance
+    const denomSums = new Map<string, number>();
+    const denomOrder: string[] = [];
+
+    tributes.forEach(tribute => {
+        const { denom, amount } = tribute.funds;
+        if (!denomSums.has(denom)) {
+            denomSums.set(denom, 0);
+            denomOrder.push(denom);
+        }
+        denomSums.set(denom, denomSums.get(denom)! + parseInt(amount));
+    });
+
+    return denomOrder.map(denom => ({
+        denom,
+        amount: denomSums.get(denom)!
+    }));
 }
 
-export const proposalColumns = ({ onVoteProposal }: ActiveProposalsColumnProps): ColumnDef<ProposalColumnDef>[] => [
+export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDef<ProposalColumnDef>[] => [
     {
         accessorKey: "title",
         header: "Filter",
         cell: ({ row }) => {
             return (<div className="flex flex-col">
-                <p className="text-xl not-italic font-bold leading-[150%]">{row.original.title}</p>
-                <p className="text-base not-italic font-medium leading-[150%]">{row.original.description}</p>
+                <p className="text-xl not-italic font-bold leading-[150%]">{row.original.proposal.title}</p>
+                <p className="text-base not-italic font-medium leading-[150%]">{row.original.proposal.description}</p>
             </div>
             )
         },
     },
     {
-        accessorKey: "tributeAmount",
+        accessorKey: "tribute",
         header: () => "Tribute Amount",
-        cell: ({ row }) => <div className="text-center">{row.getValue<string>('tributeAmount')}</div>,
+        cell: ({ row }) => <div className="text-center">{row.original.summedTributes.map(tribute =>
+            <div className="text-center">
+                {`${(tribute.amount / 1000000).toFixed(2)} ${tribute.denom.length > 20 ? tribute.denom.slice(0, 17) + '...' : tribute.denom}`}
+            </div>)
+        }</div>,
     },
     {
-        accessorKey: "tributeToken",
-        header: "Tribute Token",
-        cell: ({ row }) => <div className="text-center">{row.getValue<string>('tributeToken')}</div>,
-    },
-    {
-        accessorKey: "currentVotingPower",
+        accessorKey: "power",
         header: "Current Voting Power",
-        cell: ({ row }) => <div className="text-center">{row.getValue<string>('currentVotingPower')}</div>,
+        cell: ({ row }) => <div className="text-center">{parseFloat(row.original.proposal.power)}</div>,
     },
     {
         accessorKey: "votingPowerPercent",
         header: "Voting Power %",
-        cell: ({ row }) => <div className="text-center">{row.getValue<string>('votingPowerPercent')}</div>,
-    },
-    {
-        id: 'actions',
-        cell: ({ row }) => <Button className="px-6 py-0 h-[40px]" type='primary' style="filled" title="Vote Now" onClick={() => onVoteProposal(row.original as unknown as Proposal)} />
+        cell: ({ row }) => <div className="text-center">{row.original.proposal.percentage}</div>,
     }
 ]
 
 export const deployedProposalColumns: ColumnDef<ProposalColumnDef>[] = [
     {
         accessorKey: "title",
-        header: "Filter",
+        header: "",
     },
     {
-        accessorKey: "tributeAmount",
+        accessorKey: "tribute",
         header: "Tribute Amount",
-    },
-    {
-        accessorKey: "tributeToken",
-        header: "Tribute Token",
     },
     {
         accessorKey: "currentVotingPower",

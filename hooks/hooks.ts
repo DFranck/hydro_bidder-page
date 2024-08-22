@@ -15,6 +15,7 @@ const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
 const myAddress = 'neutron1cfznm042ncguprsfxzmze6xfkjft33eqw2djna';
 const numberOfProposals = 5;
 const staleTime = 10000;
+const mockTimeout = 100;
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await CosmWasmClient.connect(rpcEndpoint);
@@ -40,7 +41,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     // };
 
     // Add a 0.5-second delay
-    await setTimeout(500);
+    await setTimeout(mockTimeout);
     return mockGlobalState;
 }
 
@@ -55,7 +56,7 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
     // ])
 
     // Add a 0.5-second delay
-    await setTimeout(500);
+    await setTimeout(mockTimeout);
     return {
         roundEnd: "",
         // TODO: This is a large number so we should use a large number library
@@ -74,7 +75,7 @@ export const fetchProposals = async (roundId: number, trancheId: number): Promis
 
 
     // Add a 0.5-second delay
-    await setTimeout(500);
+    await setTimeout(mockTimeout);
     return topNProposals[roundId][trancheId].slice(0, numberOfProposals);
 };
 
@@ -95,7 +96,7 @@ export const fetchProposalTributes = async (roundId: number, trancheId: number, 
 
     // Mock implementation for fetchProposalTributes
     // Add a 0.5-second delay
-    await setTimeout(500);
+    await setTimeout(mockTimeout);
     let tributes = mockTributes[roundId]?.[trancheId]?.[proposalId] || [];
 
     // Replace IBC denoms with token names
@@ -130,5 +131,6 @@ export const ibcDenomToToken: Record<string, string> = {
     "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4": "OSMO",
     "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9": "JUNO",
     "ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4": "SCRT",
-    "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858": "USDC"
+    "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858": "USDC",
+    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": "USDT"
 };

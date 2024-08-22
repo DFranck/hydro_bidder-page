@@ -577,7 +577,7 @@ export const mockTributes: Record<number, Record<number, Record<number, Tribute[
                 },
                 {
                     depositor: "cosmos1user3...",
-                    funds: { amount: "90000000", denom: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2" },
+                    funds: { amount: "90000000", denom: "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1" },
                     proposal_id: 21,
                     refunded: false,
                     round_id: 1,
@@ -629,10 +629,40 @@ export const mockTributes: Record<number, Record<number, Record<number, Tribute[
                 }
             ],
             26: [],
-            27: [],
-            28: [],
+            27: [
+                {
+                    depositor: "cosmos1user7...",
+                    funds: { amount: "5000000000", denom: "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1" },
+                    proposal_id: 27,
+                    refunded: false,
+                    round_id: 1,
+                    tranche_id: 0,
+                    tribute_id: 31
+                }
+            ],
+            28: [
+                {
+                    depositor: "cosmos1user8...",
+                    funds: { amount: "75000000", denom: "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E" },
+                    proposal_id: 28,
+                    refunded: false,
+                    round_id: 1,
+                    tranche_id: 0,
+                    tribute_id: 32
+                }
+            ],
             29: [],
-            30: [],
+            30: [
+                {
+                    depositor: "cosmos1user9...",
+                    funds: { amount: "3000000000", denom: "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349" },
+                    proposal_id: 30,
+                    refunded: false,
+                    round_id: 1,
+                    tranche_id: 0,
+                    tribute_id: 33
+                }
+            ],
         },
         1: {
             31: [
@@ -666,9 +696,29 @@ export const mockTributes: Record<number, Record<number, Record<number, Tribute[
                     tribute_id: 25
                 }
             ],
-            33: [],
+            33: [
+                {
+                    depositor: "cosmos1user10...",
+                    funds: { amount: "8000000000", denom: "ibc/A0CC0CF735BFB30E730C70019D4218A1244FF383503FF7579C9201AB93CA9293" },
+                    proposal_id: 33,
+                    refunded: false,
+                    round_id: 1,
+                    tranche_id: 1,
+                    tribute_id: 34
+                }
+            ],
             34: [],
-            35: [],
+            35: [
+                {
+                    depositor: "cosmos1user11...",
+                    funds: { amount: "100000000", denom: "ibc/B448C0CA358B958301D328CCDC5D5AD642FC30A6D3AE106FF721DB315F3DDE5C" },
+                    proposal_id: 35,
+                    refunded: false,
+                    round_id: 1,
+                    tranche_id: 1,
+                    tribute_id: 35
+                }
+            ],
             36: [],
             37: [],
             38: [],

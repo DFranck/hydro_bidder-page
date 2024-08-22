@@ -104,8 +104,8 @@ export default function Dashboard({
                                     <div className="mb-8">
                                         <h4 className="text-xl font-bold mb-4">{globalState.tranches.find(tranche => tranche.id === currentTranche)?.name || `Tranche ${currentTranche}`}</h4>
                                         <DataTable
-                                            columns={proposalColumns({ onVoteProposal })}
-                                            data={(currentProposalTranches.get(currentTranche) || []).map((proposal) => makeProposalColumnDef(proposal, currentVotingPower))}
+                                            columns={proposalColumns(() => { })}
+                                            data={(currentProposalTranches.get(currentTranche) || []).map((proposal) => makeProposalColumnDef(proposal, currentProposalTributes.get(proposal.proposal_id)!))}
                                             height="h-[330px]"
                                             theme="light"
                                         />
@@ -115,15 +115,15 @@ export default function Dashboard({
                                     <Image src={'/images/Progress.svg'} alt='progress' width={577} height={69} />
                                 </div>
                             </div>
-                            {lastProposalTranches && lastProposalTranches.get(currentTranche) && (
+                            {lastProposalTranches && lastProposalTributes && lastProposalTranches.get(currentTranche) && (
                                 <div>
                                     <h3>Actively Deployed Proposals</h3>
                                     <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
                                     <DataTable
-                                        columns={deployedProposalColumns}
+                                        columns={proposalColumns(() => { })}
                                         data={
                                             (lastProposalTranches.get(currentTranche) || [])
-                                                .map((proposal) => makeProposalColumnDef(proposal, lastVotingPower!))
+                                                .map((proposal) => makeProposalColumnDef(proposal, lastProposalTributes.get(proposal.proposal_id)!))
                                         }
                                         height=" h-[330px]"
                                     />
