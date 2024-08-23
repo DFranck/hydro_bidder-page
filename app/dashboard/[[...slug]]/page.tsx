@@ -21,7 +21,7 @@ export default async function Page({ params: { slug } }: { params: { slug?: stri
         globalState={globalState}
         currentProposalTributes={currentProposalTributes}
         lastProposalTributes={lastProposalTributes}
-        proposalModal={slug && slug[0] === "proposals" ? slug[1] : undefined}
+        selectedProposalId={slug && slug[0] === "proposals" ? slug[1] : undefined}
     />
 }
 
