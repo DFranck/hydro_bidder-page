@@ -26,7 +26,6 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
     columns,
     data,
-    height = 'auto',
     theme = 'dark'
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
@@ -37,7 +36,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div >
-            <Table className={`flex flex-col ${height}`}>
+            <Table className={`flex flex-col`}>
                 <TableHeader className="w-full [&_tr]:border-b-0  pr-4">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id} className="w-full table table-fixed">
@@ -57,7 +56,7 @@ export function DataTable<TData, TValue>({
                         </TableRow>
                     ))}
                 </TableHeader>
-                <TableBody className="flex-auto block overflow-y-auto overflow-x-hidden pr-4 space-y-4">
+                <TableBody className="flex-auto pr-4 space-y-4">
                     {table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map((row) => (<TableRow
                             key={row.id}

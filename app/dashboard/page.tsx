@@ -1,7 +1,7 @@
 import { Proposal, Tranche } from '../ts_types/HydroBase.types';
 import { Tribute } from '../ts_types/TributeBase.types';
 import Dashboard from "./dashboard"
-import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyLockups } from "../../hooks/hooks"
+import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../hooks/hooks"
 
 export default async function Page() {
     const globalState = await fetchGlobalState();
@@ -40,8 +40,6 @@ export default async function Page() {
 
     const currentProposalTributes = await fetchProposalTributesForRound(currentProposalTranches, globalState.currentRound);
 
-    const userLockups = await fetchMyLockups();
-
     return <Dashboard
         lastProposalTranches={lastProposalTranches}
         currentProposalTranches={currentProposalTranches}
@@ -50,7 +48,6 @@ export default async function Page() {
         globalState={globalState}
         currentProposalTributes={currentProposalTributes}
         lastProposalTributes={lastProposalTributes}
-        userLockups={userLockups}
     />
 }
 

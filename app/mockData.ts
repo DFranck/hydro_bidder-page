@@ -821,3 +821,95 @@ export const mockGlobalState: GlobalState = {
         // ... more whitelisted addresses ...
     ],
 };
+
+// export type UserState = {
+//     allUserLockups: LockEntry[];
+//     expiredUserLockups: LockEntry[];
+//     userVote: Vote;
+//     userVotingPower: Uint128;
+// };
+// export interface LockEntry {
+//     funds: Coin;
+//     lock_end: Timestamp;
+//     lock_start: Timestamp;
+// }
+// export interface Vote {
+//     power: Uint128;
+//     prop_id: number;
+//   }
+//   export interface Coin {
+//     amount: Uint128;
+//     denom: string;
+//   }
+export const mockVotes: Record<number, Vote> = {
+    0: { // ATOM Tranche
+        power: "1000000",
+        prop_id: 2
+    },
+    1: { // USDC Tranche
+        power: "500000",
+        prop_id: 1
+    }
+};
+
+export const mockAllLockEntries: LockEntry[] = [
+    {
+        funds: {
+            amount: "1000000000",
+            denom: "uatom"
+        },
+        lock_start: "1706745600000000000",
+        lock_end: "1738281600000000000"
+    },
+    {
+        funds: {
+            amount: "750000000",
+            denom: "uatom"
+        },
+        lock_start: "1714608000000000000",
+        lock_end: "1746144000000000000"
+    },
+    {
+        funds: {
+            amount: "500000000",
+            denom: "uatom"
+        },
+        lock_start: "1719878400000000000",
+        lock_end: "1751414400000000000"
+    },
+    {
+        funds: {
+            amount: "2000000000",
+            denom: "uatom"
+        },
+        lock_start: "1692662400000000000",
+        lock_end: "1708560000000000000"
+    },
+    {
+        funds: {
+            amount: "1500000000",
+            denom: "uatom"
+        },
+        lock_start: "1700006400000000000",
+        lock_end: "1715904000000000000"
+    }
+];
+
+export const mockExpiredLockEntries: LockEntry[] = [
+    {
+        funds: {
+            amount: "2000000000",
+            denom: "uatom"
+        },
+        lock_start: "2023-08-22T00:00:00Z",
+        lock_end: "2024-02-22T00:00:00Z"
+    },
+    {
+        funds: {
+            amount: "1500000000",
+            denom: "uatom"
+        },
+        lock_start: "2023-11-15T00:00:00Z",
+        lock_end: "2024-05-15T00:00:00Z"
+    }
+];

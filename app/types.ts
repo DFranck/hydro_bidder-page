@@ -23,14 +23,6 @@ export type GlobalState = {
     whitelistAdmins: Addr[];
     whitelist: Addr[];
 };
-
-export type UserState = {
-    allUserLockups: LockEntry[];
-    expiredUserLockups: LockEntry[];
-    userVote: Vote;
-    userVotingPower: Uint128;
-};
-
 export type RoundState = {
     roundEnd: Timestamp;
     // TODO: This is a large number so we should use a large number library

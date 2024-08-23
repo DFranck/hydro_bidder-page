@@ -6,17 +6,16 @@ import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr
 import { Tribute } from '../app/ts_types/TributeBase.types';
 import { GlobalState, RoundState } from '../app/types';
 import { activeProposals } from "../app/dashboard/proposals/data"
-import { topNProposals, mockGlobalState, mockTributes } from "../app/mockData"
-import { setTimeout } from 'timers/promises';
-import { mockMyLockups } from "@/app/dashboard/lockups/data";
+import { topNProposals, mockGlobalState, mockTributes, mockVotes, mockAllLockEntries, mockExpiredLockEntries } from "../app/mockData"
 
 const hydroContractAddress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
 const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
 const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
-const myAddress = 'neutron1cfznm042ncguprsfxzmze6xfkjft33eqw2djna';
 const numberOfProposals = 5;
 const staleTime = 10000;
 const mockTimeout = 100;
+const limit = 10000;
+const startFrom = 0;
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await CosmWasmClient.connect(rpcEndpoint);
@@ -42,7 +41,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     // };
 
     // Add a 0.5-second delay
-    await setTimeout(mockTimeout);
+    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return mockGlobalState;
 }
 
@@ -57,7 +56,7 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
     // ])
 
     // Add a 0.5-second delay
-    await setTimeout(mockTimeout);
+    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return {
         roundEnd: "",
         // TODO: This is a large number so we should use a large number library
@@ -76,7 +75,7 @@ export const fetchProposals = async (roundId: number, trancheId: number): Promis
 
 
     // Add a 0.5-second delay
-    await setTimeout(mockTimeout);
+    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return topNProposals[roundId][trancheId].slice(0, numberOfProposals);
 };
 
@@ -97,7 +96,7 @@ export const fetchProposalTributes = async (roundId: number, trancheId: number, 
 
     // Mock implementation for fetchProposalTributes
     // Add a 0.5-second delay
-    await setTimeout(mockTimeout);
+    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     let tributes = mockTributes[roundId]?.[trancheId]?.[proposalId] || [];
 
     // Replace IBC denoms with token names
@@ -136,25 +135,73 @@ export const ibcDenomToToken: Record<string, string> = {
     "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": "USDT"
 };
 
-export const fetchMyLockups = async () => {
+export const fetchMyVotes = async (myAddress: string, roundId: number, trancheIds: number[]) => {
+    // mock vote promises
+    const votePromises = trancheIds.map(trancheId => {
+        return {
+            vote: mockVotes[trancheId]
+        }
+    });
+
     // const client = await CosmWasmClient.connect(rpcEndpoint);
     // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
-    // const myLockups = await hydroQueryClient.allUserLockups({ address: myAddress, limit: 10, startFrom: 0 })
-    //     .then((response) => response.lockups);
+    // const votePromises = trancheIds.map(trancheId =>
+    //     hydroQueryClient.userVote({
+    //         address: myAddress,
+    //         roundId: roundId,
+    //         trancheId: trancheId
+    //     })
+    // );
 
-    const expandedMockLockups = mockMyLockups.map((lockup, index) => ({
-        ...lockup,
-        id: index,
-        votingPower: 100,
-        get timeRemaining() {
-            const today = new Date();
-            const lock_end = new Date(lockup.lock_end);
-            const timeDifference = lock_end.getTime() - today.getTime();
-            const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-            return daysDifference + ' days';
-        }
-    }));
+    const votes = await Promise.all(votePromises);
 
-    await setTimeout(mockTimeout);
-    return expandedMockLockups;
+    const votesByTranche = trancheIds.reduce(
+        (acc, trancheId, index) => acc.set(trancheId, votes[index].vote),
+        new Map<number, Vote>()
+    );
+
+    return votesByTranche;
+}
+
+export const fetchMyAllLockups = async (myAddress: string) => {
+    // const client = await CosmWasmClient.connect(rpcEndpoint);
+    // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
+    // const lockups = await hydroQueryClient.allUserLockups({ address: myAddress, limit, startFrom });
+    // return lockups.lockups;
+
+    // Mock implementation for fetchMyAllLockups
+    await new Promise(resolve => setTimeout(resolve, mockTimeout));
+    return mockAllLockEntries;
+}
+
+export const fetchMyExpiredLockups = async (myAddress: string) => {
+    // const client = await CosmWasmClient.connect(rpcEndpoint);
+    // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
+
+    // const response = await hydroQueryClient.expiredUserLockups({ 
+    //     address: myAddress, 
+    //     limit, 
+    //     startFrom 
+    // });
+    // return response.lockups;
+
+    // Mock implementation for fetchMyExpiredLockups
+    await new Promise(resolve => setTimeout(resolve, mockTimeout));
+    return mockExpiredLockEntries;
+}
+
+export const useMyVotes = (myAddress: string, roundId: number, trancheIds: number[]) => {
+    return useQuery({
+        queryKey: ["myVotes", myAddress, roundId, trancheIds],
+        queryFn: () => fetchMyVotes(myAddress, roundId, trancheIds),
+        staleTime,
+    });
+}
+
+export const useMyLockups = (myAddress: string) => {
+    return useQuery({
+        queryKey: ["myLockups", myAddress],
+        queryFn: () => fetchMyAllLockups(myAddress),
+        staleTime,
+    });
 }
