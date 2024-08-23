@@ -2,6 +2,7 @@ import Image from "next/image";
 
 export enum TabLabel {
     VOTING = 'voting',
+    DEPLOYED = 'deployed',
     LOCKUPS = 'lockups',
     TRIBUTE = 'tribute'
 };

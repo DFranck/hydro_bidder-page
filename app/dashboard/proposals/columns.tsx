@@ -68,11 +68,6 @@ export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDe
         }</div>,
     },
     {
-        accessorKey: "power",
-        header: () => <div className="text-center">Current Voting Power</div>,
-        cell: ({ row }) => <div className="text-center">{parseFloat(row.original.proposal.power)}</div>,
-    },
-    {
         accessorKey: "votingPowerPercent",
         header: () => <div className="text-center">Voting Power %</div>,
         cell: ({ row }) => <div className="text-center">{row.original.proposal.percentage}</div>,
