@@ -16,6 +16,7 @@ import TopModule, { TabLabel } from "./TopModule"
 import { topModulesConfig } from "./topModulesConfig"
 import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ProposalModal } from "./proposalModal"
 import * as Dialog from '@radix-ui/react-dialog';
 
 
@@ -32,7 +33,7 @@ export default function Dashboard({
     globalState,
     currentProposalTributes,
     lastProposalTributes,
-    proposalModal
+    selectedProposalId
 }: {
     currentProposalTranches: Map<number, Proposal[]>,
     currentVotingPower: number,
@@ -41,7 +42,7 @@ export default function Dashboard({
     lastVotingPower?: number,
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
-    proposalModal?: string
+    selectedProposalId?: string
 }) {
     const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
     const [currentTranche, setCurrentTranche] = useState(0);
@@ -65,15 +66,21 @@ export default function Dashboard({
 
     return (
         <div className='text-3xl bg-[linear-gradient(180deg,#010006_49.9%,#001C47_100%)]'>
-            {/* <Dialog.Root open={proposalModal !== undefined} onOpenChange={setOpen}>
-                <Dialog.Trigger>Open</Dialog.Trigger>
+            <Dialog.Root open={selectedProposalId !== undefined} onOpenChange={setOpen}>
                 <Dialog.Portal>
-                    <Dialog.Overlay className="fixed inset-0 bg-black/50">{proposalModal}</Dialog.Overlay>
+                    <Dialog.Overlay className="fixed inset-0 bg-black/50">
+                        {selectedProposalId && <ProposalModal proposalId={selectedProposalId} />}
+                    </Dialog.Overlay>
                 </Dialog.Portal>
-            </Dialog.Root> */}
-            {proposalModal && <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-                {proposalModal}
+            </Dialog.Root>
+            {/* 
+            NOTE: I'm not enitrely sure if the hand crafted isn't better than the radix dialog. The radix modal seems more polished,
+            for example blocking scroll behind it, but is slightly slower to load.
+            {selectedProposalId && <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+                <ProposalModal proposalId={selectedProposalId} />
             </div>}
+            
+            */}
 
             {isWalletConnected && <div className='grid grid-cols-3 gap-[60px] px-[90px]'>
                 {
