@@ -1,9 +1,9 @@
-import { Proposal, Tranche } from '../ts_types/HydroBase.types';
-import { Tribute } from '../ts_types/TributeBase.types';
+import { Proposal, Tranche } from '../../ts_types/HydroBase.types';
+import { Tribute } from '../../ts_types/TributeBase.types';
 import Dashboard from "./dashboard"
-import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../hooks/hooks"
+import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../../hooks/hooks"
 
-export default async function Page() {
+export default async function Page({ params: { slug } }: { params: { slug: string[] } }) {
     const {
         lastProposalTranches,
         currentProposalTranches,
@@ -13,6 +13,7 @@ export default async function Page() {
         currentProposalTributes,
         lastProposalTributes
     } = await fetchDashboardData();
+    console.log(slug[0] === "proposals" && slug[1])
     return <Dashboard
         lastProposalTranches={lastProposalTranches}
         currentProposalTranches={currentProposalTranches}
@@ -21,6 +22,7 @@ export default async function Page() {
         globalState={globalState}
         currentProposalTributes={currentProposalTributes}
         lastProposalTributes={lastProposalTributes}
+        proposalModal={slug[0] === "proposals" ? slug[1] : undefined}
     />
 }
 

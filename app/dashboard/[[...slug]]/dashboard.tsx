@@ -1,19 +1,22 @@
 'use client'
+
+import * as React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { HorizontalDivider } from "../ui/HorizontalDivider"
+import { HorizontalDivider } from "../../ui/HorizontalDivider"
 import { DataTable } from "./proposalTable"
 import { proposalColumns, makeProposalColumnDef } from "./proposalTable"
 import Image from "next/image"
 import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LockEntry, Proposal, Vote } from '../ts_types/HydroBase.types';
-import { GlobalState } from '../types';
+import { LockEntry, Proposal, Vote } from '../../ts_types/HydroBase.types';
+import { GlobalState } from '../../types';
 import { useChain } from "@cosmos-kit/react"
-import { Tribute } from "../ts_types/TributeBase.types"
+import { Tribute } from "../../ts_types/TributeBase.types"
 import TopModule, { TabLabel } from "./TopModule"
 import { topModulesConfig } from "./topModulesConfig"
 import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+
 
 type Tab = {
     tab: TabLabel,
@@ -28,6 +31,7 @@ export default function Dashboard({
     globalState,
     currentProposalTributes,
     lastProposalTributes,
+    proposalModal
 }: {
     currentProposalTranches: Map<number, Proposal[]>,
     currentVotingPower: number,
@@ -36,9 +40,11 @@ export default function Dashboard({
     lastVotingPower?: number,
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
+    proposalModal?: string
 }) {
     const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
     const [currentTranche, setCurrentTranche] = useState(0);
+    const [open, setOpen] = React.useState(false);
 
     const onTabChange = (value: TabLabel) => {
         setTab(value);

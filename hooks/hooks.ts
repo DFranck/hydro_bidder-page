@@ -5,7 +5,6 @@ import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr } from '../app/ts_types/HydroBase.types';
 import { Tribute } from '../app/ts_types/TributeBase.types';
 import { GlobalState, RoundState } from '../app/types';
-import { activeProposals } from "../app/dashboard/proposals/data"
 import { topNProposals, mockGlobalState, mockTributes, mockVotes, mockAllLockEntries, mockExpiredLockEntries } from "../app/mockData"
 
 const hydroContractAddress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
