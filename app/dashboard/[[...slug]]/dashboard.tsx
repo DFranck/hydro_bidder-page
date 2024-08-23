@@ -16,6 +16,7 @@ import TopModule, { TabLabel } from "./TopModule"
 import { topModulesConfig } from "./topModulesConfig"
 import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import * as Dialog from '@radix-ui/react-dialog';
 
 
 type Tab = {
@@ -64,6 +65,16 @@ export default function Dashboard({
 
     return (
         <div className='text-3xl bg-[linear-gradient(180deg,#010006_49.9%,#001C47_100%)]'>
+            {/* <Dialog.Root open={proposalModal !== undefined} onOpenChange={setOpen}>
+                <Dialog.Trigger>Open</Dialog.Trigger>
+                <Dialog.Portal>
+                    <Dialog.Overlay className="fixed inset-0 bg-black/50">{proposalModal}</Dialog.Overlay>
+                </Dialog.Portal>
+            </Dialog.Root> */}
+            {proposalModal && <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+                {proposalModal}
+            </div>}
+
             {isWalletConnected && <div className='grid grid-cols-3 gap-[60px] px-[90px]'>
                 {
                     topModulesConfig.map(
