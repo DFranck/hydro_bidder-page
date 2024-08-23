@@ -1,6 +1,6 @@
 import { Proposal, Tranche } from '../ts_types/HydroBase.types';
 import { Tribute } from '../ts_types/TributeBase.types';
-import Dashboard from "./dashboard"
+import Dashboard from "../dashboard/dashboard"
 import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../hooks/hooks"
 
 export default async function Page() {

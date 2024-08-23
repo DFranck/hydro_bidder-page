@@ -13,7 +13,7 @@ const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34
 const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
 const numberOfProposals = 5;
 const staleTime = 10000;
-const mockTimeout = 100;
+const mockTimeout = 0;
 const limit = 10000;
 const startFrom = 0;
 

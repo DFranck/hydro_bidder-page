@@ -1,12 +1,9 @@
 'use client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
-import { DataTable } from "./data-table"
-import { proposalColumns, deployedProposalColumns, makeProposalColumnDef } from "./proposals/columns"
+import { DataTable } from "./proposalTable"
+import { proposalColumns, makeProposalColumnDef } from "./proposalTable"
 import Image from "next/image"
-import { Lockup, columns as lockupColumns } from "./lockups/columns"
-import { totalEarnedTribute, tributeHistory } from "./tribute/data"
-import { formatAmount, total } from "./tribute/utils"
 import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { LockEntry, Proposal, Vote } from '../ts_types/HydroBase.types';
@@ -197,15 +194,15 @@ function TributeTab({ walletAddress }: { walletAddress: string }) {
                     <h3 className="font-bold mb-[18px]">Total Earned Tribute</h3>
                     <table style={{ width: '100%', color: 'white', fontSize: '20px' }}>
                         <tbody>
-                            {totalEarnedTribute.map((item, index) => (
+                            {/* {totalEarnedTribute.map((item, index) => (
                                 <tr key={index} style={{ borderBottom: '1px solid white' }}>
                                     <td style={{ paddingTop: '8px', paddingBottom: '8px', paddingRight: '10px', display: 'flex', alignItems: 'start', flexDirection: 'row', WebkitAlignItems: 'center', gap: '5px' }}>{<Image src={'/images/Ellipse.svg'} alt='twitter' width={12} height={12} />}{item.tributeToken}</td>
                                     <td style={{ paddingTop: '8px', paddingBottom: '8px', textAlign: 'right', fontWeight: 'bold' }}>{formatAmount(item.tributeAmount)}</td>
                                 </tr>
-                            ))}
+                            ))} */}
                             <tr style={{ color: '#E4B472' }}>
                                 <td style={{ paddingTop: '10px', fontWeight: 'bold' }}>TOTAL</td>
-                                <td style={{ paddingTop: '10px', textAlign: 'right', fontWeight: 'bold' }}>{total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                                {/* <td style={{ paddingTop: '10px', textAlign: 'right', fontWeight: 'bold' }}>{total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td> */}
                             </tr>
                         </tbody>
                     </table>
@@ -213,7 +210,7 @@ function TributeTab({ walletAddress }: { walletAddress: string }) {
                 <div className="w-[-webkit-fill-available] mt-6">
                     <h3 className="font-bold mb-[18px]">Tribute History</h3>
                     <div className="flex flex-col gap-[16px] h-[278px] overflow-y-auto">
-                        {tributeHistory.map((item, index) => {
+                        {/* {tributeHistory.map((item, index) => {
                             return (
                                 <div key={index} className="flex flex-row bg-[#303132] rounded-[10px] p-6 justify-between px-6 py-[14px]">
                                     <div className="flex flex-col">
@@ -223,7 +220,7 @@ function TributeTab({ walletAddress }: { walletAddress: string }) {
                                     <p className="text-base not-italic font-normal leading-[150%]">{item.period}</p>
                                 </div>
                             )
-                        })}
+                        })} */}
                     </div>
                 </div>
             </div>
