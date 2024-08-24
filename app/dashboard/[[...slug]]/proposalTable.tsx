@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/table"
 import { Proposal } from "@/app/ts_types/HydroBase.types";
 import { Tribute } from "@/app/ts_types/TributeBase.types";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -131,11 +133,10 @@ function sumTributeAmounts(tributes: Tribute[]): { denom: string, amount: number
 export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDef<ProposalColumnDef>[] => [
     {
         accessorKey: "title",
-        header: "Filter",
+        header: "",
         cell: ({ row }) => {
             return (<div className="flex flex-col">
                 <p className="text-xl not-italic font-bold leading-[150%]">{row.original.proposal.title}</p>
-                <p className="text-base not-italic font-medium leading-[150%]">{row.original.proposal.description}</p>
             </div>
             )
         },
@@ -153,24 +154,12 @@ export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDe
         accessorKey: "votingPowerPercent",
         header: () => <div className="text-center">Voting Power %</div>,
         cell: ({ row }) => <div className="text-center">{row.original.proposal.percentage}</div>,
-    }
-]
-
-export const deployedProposalColumns: ColumnDef<ProposalColumnDef>[] = [
+    },
     {
-        accessorKey: "title",
+        accessorKey: "link",
         header: "",
-    },
-    {
-        accessorKey: "tribute",
-        header: "Tribute Amount",
-    },
-    {
-        accessorKey: "currentVotingPower",
-        header: "Current Voting Power",
-    },
-    {
-        accessorKey: "votingPowerPercent",
-        header: "Voting Power %",
+        cell: ({ row }) => {
+            return (<Link href={`/dashboard/proposals/${row.original.proposal.proposal_id}`}><Button>View Proposal</Button></Link>)
+        }
     }
 ]
