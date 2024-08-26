@@ -60,16 +60,18 @@ export default function Dashboard({
 
     const tabsBtnsClass = "inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-[#FFE1B8] text-center text-base not-italic font-normal leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8] data-[state=active]:bg-[#FFE1B8] data-[state=active]:text-foreground data-[state=active]:shadow-sm inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-center text-base not-italic data-[state=active]:font-bold leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8]"
 
-
     const { isWalletConnected, address: walletAddress } = useChain("cosmoshubtestnet");
     const { data: myVotes = [] } = useMyVotes(walletAddress || '', globalState.currentRound, Array.from(currentProposalTranches.keys()));
 
+    const currentProposal = Array.from(currentProposalTranches.values())
+        .flat()
+        .find(proposal => proposal.proposal_id === Number(selectedProposalId));
     return (
         <div className='text-3xl bg-[linear-gradient(180deg,#010006_49.9%,#001C47_100%)]'>
             <Dialog.Root open={selectedProposalId !== undefined} onOpenChange={setOpen}>
                 <Dialog.Portal>
                     <Dialog.Overlay className="fixed inset-0 bg-black/50">
-                        {selectedProposalId && <ProposalModal proposalId={selectedProposalId} />}
+                        {selectedProposalId && currentProposal && <ProposalModal proposal={currentProposal} hasVoted={Array.from(myVotes).length > 0} />}
                     </Dialog.Overlay>
                 </Dialog.Portal>
             </Dialog.Root>
@@ -117,7 +119,6 @@ export default function Dashboard({
                         lastProposalTranches={lastProposalTranches}
                         lastProposalTributes={lastProposalTributes}
                     />}
-                    {/*---------------------------------------------------------------- */}
                     {isWalletConnected && walletAddress && <>
                         <TributeTab
                             walletAddress={walletAddress}

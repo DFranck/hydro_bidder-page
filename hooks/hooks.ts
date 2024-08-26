@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { HydroBaseQueryClient } from '../app/ts_types/HydroBase.client';
+import { HydroBaseQueryClient, HydroBaseClient } from '../app/ts_types/HydroBase.client';
 import { TributeBaseQueryClient } from '../app/ts_types/TributeBase.client';
-import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr } from '../app/ts_types/HydroBase.types';
 import { Tribute } from '../app/ts_types/TributeBase.types';
 import { GlobalState, RoundState } from '../app/types';
@@ -203,4 +203,12 @@ export const useMyLockups = (myAddress: string) => {
         queryFn: () => fetchMyAllLockups(myAddress),
         staleTime,
     });
+}
+
+export const executeVote = async (getSigningCosmWasmClient: Promise<SigningCosmWasmClient>, address: string, proposalId: number, trancheId: number) => {
+    const client = await getSigningCosmWasmClient;
+
+    const hydroClient = new HydroBaseClient(client, address, hydroContractAddress);
+    const response = await hydroClient.vote({ proposalId, trancheId });
+    return response;
 }
