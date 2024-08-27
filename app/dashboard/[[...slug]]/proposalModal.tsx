@@ -36,12 +36,12 @@ const mockData = {
 }
 
 export const ProposalModal = ({ proposal, hasVoted }: { proposal: Proposal, hasVoted: boolean }) => {
-    const { address, getSigningCosmWasmClient } = useChain('cosmoshubtestnet');
+    const { address, getSigningCosmWasmClient, estimateFee } = useChain('cosmoshubtestnet');
 
     const [showChangeVote, setShowChangeVote] = useState(false);
 
     function doVote() {
-        executeVote(getSigningCosmWasmClient(), address!, proposal.proposal_id, proposal.tranche_id);
+        executeVote(getSigningCosmWasmClient, estimateFee, address!, proposal.proposal_id, proposal.tranche_id);
     }
 
 

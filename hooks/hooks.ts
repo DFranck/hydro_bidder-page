@@ -6,6 +6,9 @@ import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr
 import { Tribute } from '../app/ts_types/TributeBase.types';
 import { GlobalState, RoundState } from '../app/types';
 import { topNProposals, mockGlobalState, mockTributes, mockVotes, mockAllLockEntries, mockExpiredLockEntries } from "../app/mockData"
+import { StdFee } from "@cosmjs/amino";
+import { MsgVoteEncodeObject, GasPrice } from "@cosmjs/stargate";
+
 
 const hydroContractAddress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
 const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
@@ -205,8 +208,23 @@ export const useMyLockups = (myAddress: string) => {
     });
 }
 
-export const executeVote = async (getSigningCosmWasmClient: Promise<SigningCosmWasmClient>, address: string, proposalId: number, trancheId: number) => {
-    const client = await getSigningCosmWasmClient;
+export const executeVote = async (getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>, estimateFee: (messages: MsgVoteEncodeObject[]) => Promise<StdFee>, address: string, proposalId: number, trancheId: number) => {
+    const client = await getSigningCosmWasmClient();
+    const msg = {
+        typeUrl: '/cosmos.gov.v1beta1.MsgVote',
+        value: {
+            proposalId: BigInt(proposalId),
+            voter: address,
+            option: 1
+        }
+    } as MsgVoteEncodeObject;
+    const fee = await estimateFee([msg]);
+    console.log({ fee });
+    console.log({
+        address,
+        proposalId,
+        trancheId
+    });
 
     const hydroClient = new HydroBaseClient(client, address, hydroContractAddress);
     const response = await hydroClient.vote({ proposalId, trancheId });
