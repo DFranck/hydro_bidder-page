@@ -35,6 +35,7 @@ export function WalletHandler({
             typeof chain === "string" ? chain : chain.chain_name;
           switch (chainName) {
             case DEFAULT_CHAIN:
+            case testnetChain.chain_name:
               return {
                 gasPrice: GasPrice.fromString("0.005uatom"),
               };
