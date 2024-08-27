@@ -3,6 +3,9 @@ import Button from "./ui/Button";
 import { HorizontalDivider } from "./ui/HorizontalDivider";
 import { Newsletter } from "./ui/Newsletter";
 import { Footer } from "./ui/Footer";
+import { Convert } from "./ui/modals/steps/Convert";
+import { GetHAtom } from "./ui/modals/steps/GetHAtom";
+import { Congratulations } from "./ui/modals/steps/Congratulations";
 
 const howHydroWorksTiles = [
   {
@@ -122,8 +125,9 @@ export default function Home() {
           Hydro is a decentralized platform that allows you to lock your ATOM tokens and earn rewards. Earn passive income, participate in ICS projects, and more.
         </p>
         <div className="flex gap-5 mt-[60px]">
-          <Button type='secondary' style='filled' title="Get Started" />
-          <Button type='secondary' style='outline' title="Lock your stATOM" />
+          <Convert />
+          <GetHAtom />
+          <Congratulations />
         </div>
       </div>
       <div className="text-center mt-[330px] z-[1]">
