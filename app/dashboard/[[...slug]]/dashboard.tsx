@@ -18,6 +18,7 @@ import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ProposalModal } from "./proposalModal"
 import * as Dialog from '@radix-ui/react-dialog';
+import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
 
 
 type Tab = {
@@ -55,7 +56,7 @@ export default function Dashboard({
         alert(`clicked VOTE on row ${proposal.proposal_id}`);
     }, []);
     const onEditLockup = useCallback((lockup: LockEntry) => {
-        // alert(`clicked EDIT on row ${lockup.id}`);
+        console.log({ lockup })
     }, []);
 
     const tabsBtnsClass = "inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-[#FFE1B8] text-center text-base not-italic font-normal leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8] data-[state=active]:bg-[#FFE1B8] data-[state=active]:text-foreground data-[state=active]:shadow-sm inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 border text-center text-base not-italic data-[state=active]:font-bold leading-[21px] px-5 py-0 rounded-[6px_6px_0px_0px] border-solid border-[#FFE1B8]"
@@ -284,7 +285,7 @@ function LockupsTab({ onEditLockup, walletAddress }: { onEditLockup: (lockup: Lo
                                 <TableCell>{calculateTimeRemaining(lockup.lock_end)}</TableCell>
                                 <TableCell>0</TableCell>
                                 <TableCell>
-                                    <Button onClick={() => onEditLockup(lockup)}>Edit</Button>
+                                    <EditLockupDuration lockup={lockup} onEditLockup={onEditLockup} />
                                 </TableCell>
                             </TableRow>
                         ))}
