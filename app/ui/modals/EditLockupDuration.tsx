@@ -44,8 +44,6 @@ export const EditLockupDuration = ({
   lockup,
   onEditLockup,
 }: EditLockupDurationProps) => {
-  console.log("LOCKUP", lockup);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
