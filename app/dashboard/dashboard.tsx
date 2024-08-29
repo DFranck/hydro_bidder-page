@@ -2,23 +2,23 @@
 
 import * as React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { HorizontalDivider } from "../../ui/HorizontalDivider"
+import { HorizontalDivider } from "../ui/HorizontalDivider"
 import { DataTable } from "./proposalTable"
 import { proposalColumns, makeProposalColumnDef } from "./proposalTable"
 import Image from "next/image"
 import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LockEntry, Proposal, Vote } from '../../ts_types/HydroBase.types';
-import { GlobalState } from '../../types';
+import { LockEntry, Proposal, Vote } from '../ts_types/HydroBase.types';
+import { GlobalState } from '../types';
 import { useChain } from "@cosmos-kit/react"
-import { Tribute } from "../../ts_types/TributeBase.types"
+import { Tribute } from "../ts_types/TributeBase.types"
 import TopModule, { TabLabel } from "./TopModule"
 import { topModulesConfig } from "./topModulesConfig"
 import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ProposalModal } from "./proposalModal"
-import * as Dialog from '@radix-ui/react-dialog';
 import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
+import { useRouter } from "next/navigation"
+
 
 
 type Tab = {
@@ -47,14 +47,11 @@ export default function Dashboard({
 }) {
     const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
     const [currentTranche, setCurrentTranche] = useState(0);
-    const [open, setOpen] = React.useState(false);
 
     const onTabChange = (value: TabLabel) => {
         setTab(value);
     }
-    const onVoteProposal = useCallback((proposal: Proposal) => {
-        alert(`clicked VOTE on row ${proposal.proposal_id}`);
-    }, []);
+
     const onEditLockup = useCallback((lockup: LockEntry) => {
         console.log({ lockup })
     }, []);
@@ -64,18 +61,8 @@ export default function Dashboard({
     const { isWalletConnected, address: walletAddress } = useChain("cosmoshubtestnet");
     const { data: myVotes = [] } = useMyVotes(walletAddress || '', globalState.currentRound, Array.from(currentProposalTranches.keys()));
 
-    const currentProposal = Array.from(currentProposalTranches.values())
-        .flat()
-        .find(proposal => proposal.proposal_id === Number(selectedProposalId));
     return (
-        <div className='text-3xl bg-[linear-gradient(180deg,#010006_49.9%,#001C47_100%)]'>
-            <Dialog.Root open={selectedProposalId !== undefined} onOpenChange={setOpen}>
-                <Dialog.Portal>
-                    <Dialog.Overlay className="fixed inset-0 bg-black/50">
-                        {selectedProposalId && currentProposal && <ProposalModal proposal={currentProposal} hasVoted={Array.from(myVotes).length > 0} />}
-                    </Dialog.Overlay>
-                </Dialog.Portal>
-            </Dialog.Root>
+        <>
             {/* 
             NOTE: I'm not enitrely sure if the hand crafted isn't better than the radix dialog. The radix modal seems more polished,
             for example blocking scroll behind it, but is slightly slower to load.
@@ -128,7 +115,7 @@ export default function Dashboard({
                     </>}
                 </Tabs>
             </div>
-        </div >
+        </>
     )
 }
 
@@ -145,6 +132,11 @@ function VotingTab({
     currentProposalTranches: Map<number, any[]>,
     currentProposalTributes: Map<number, Tribute[]> // Changed from Map<string, any>
 }) {
+    const router = useRouter();
+    const handleRowClick = (proposal: Proposal) => {
+        const url = new URL(`${window.location.href}/proposal/${proposal.proposal_id}`);
+        router.push(url.toString());
+    }
     return <TabsContent value="voting">
         <div className="flex flex-row gap-[18px] justify-end items-center">
             <Button variant="ghost" size="icon" onClick={() => setCurrentTranche((currentTranche - 1 + globalState.tranches.length) % globalState.tranches.length)}>
@@ -164,6 +156,8 @@ function VotingTab({
                     data={(currentProposalTranches.get(currentTranche) || []).map((proposal) => makeProposalColumnDef(proposal, currentProposalTributes.get(proposal.proposal_id)!))}
                     height="h-[330px]"
                     theme="light"
+                    clickable
+                    onRowClick={(proposal) => handleRowClick(proposal.proposal)}
                 />
             </div>
         )}
