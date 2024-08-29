@@ -28,7 +28,7 @@ export default function RootLayout({
         src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
         async
       />
-      <body className={`${inter.className} text-white`}>
+      <body className={`${inter.className} text-white bg-black`}>
         <QueryClientProvider client={queryClient}>
           <WalletHandler>
             <Header />

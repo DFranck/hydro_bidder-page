@@ -844,7 +844,7 @@ export const mockGlobalState: GlobalState = {
 export const mockVotes: Record<number, Vote> = {
     0: { // ATOM Tranche
         power: "1000000",
-        prop_id: 2
+        prop_id: 21
     },
     1: { // USDC Tranche
         power: "500000",

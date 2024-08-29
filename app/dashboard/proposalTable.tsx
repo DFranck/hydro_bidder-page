@@ -24,13 +24,17 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
     height?: string,
-    theme?: 'light' | 'dark'
+    theme?: 'light' | 'dark',
+    clickable?: boolean,
+    onRowClick?: (row: TData) => void
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    theme = 'dark'
+    theme = 'dark',
+    clickable = false,
+    onRowClick
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -65,7 +69,8 @@ export function DataTable<TData, TValue>({
                         table.getRowModel().rows.map((row) => (<TableRow
                             key={row.id}
                             data-state={row.getIsSelected() && "selected"}
-                            className="w-full table table-fixed h-[82px] border-b-0"
+                            className={`w-full table table-fixed h-[82px] border-b-0 ${clickable ? 'cursor-pointer' : ''}`}
+                            onClick={clickable ? () => onRowClick?.(row.original) : undefined}
                         >
                             {row.getVisibleCells().map((cell, index, row) => (
                                 <TableCell key={cell.id} className={`py-[14px] px-[24px] ${index === 0 ? 'rounded-[10px_0_0_10px]' : row.length === index + 1 ? 'rounded-[0_10px_10px_0]' : ''} bg-[${theme === 'light' ? '#fff' : '#303132'}] text-[${theme === 'light' ? '#080815' : '#fff'}]`}>
@@ -159,7 +164,7 @@ export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDe
         accessorKey: "link",
         header: "",
         cell: ({ row }) => {
-            return (<Link href={`/dashboard/proposals/${row.original.proposal.proposal_id}`}><Button>View Proposal</Button></Link>)
+            return (<Link href={`/dashboard/proposal/${row.original.proposal.proposal_id}`}><Button>View Proposal</Button></Link>)
         }
     }
 ]

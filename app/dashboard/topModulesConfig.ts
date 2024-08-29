@@ -1,4 +1,4 @@
-import { mockGlobalState, mockRoundStates } from "../../mockData";
+import { mockGlobalState } from "../mockData";
 import { TabLabel } from "./TopModule";
 
 export const topModulesConfig = [

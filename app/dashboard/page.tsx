@@ -1,7 +1,7 @@
-import { Proposal, Tranche } from '../../ts_types/HydroBase.types';
-import { Tribute } from '../../ts_types/TributeBase.types';
+import { Proposal, Tranche } from '../ts_types/HydroBase.types';
+import { Tribute } from '../ts_types/TributeBase.types';
 import Dashboard from "./dashboard"
-import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../../hooks/hooks"
+import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../hooks/hooks"
 
 export default async function Page({ params: { slug } }: { params: { slug?: string[] } }) {
     const {
@@ -25,7 +25,7 @@ export default async function Page({ params: { slug } }: { params: { slug?: stri
     />
 }
 
-async function fetchDashboardData() {
+export async function fetchDashboardData() {
     const globalState = await fetchGlobalState();
 
     const { currentRound, tranches } = globalState;
