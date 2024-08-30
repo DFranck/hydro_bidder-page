@@ -17,10 +17,10 @@ import { executeVote, fetchGlobalState, useMyVotes } from "@/hooks/hooks";
 import { useChain } from "@cosmos-kit/react";
 import { Proposal } from "@/app/ts_types/HydroBase.types";
 import { NextRouter, withRouter } from "next/router";
-import { fetchDashboardData } from "../../page";
 import { GlobalState } from "@/app/types";
 import { ChevronLeft } from 'lucide-react';
-import TopModules from "../../topModules/TopModules";
+import { fetchDashboardData } from "@/app/dashboard/page";
+import TopModules from "@/app/dashboard/topModules/TopModules";
 
 const mockData = {
     tributeToVoters: [
@@ -123,13 +123,13 @@ const ProposalDetail = ({ params }: { params: { id: string } }) => {
     }
 
     return (
-        <>
+        <div className="px-[90px] pb-[90px] max-w-[1440px] mx-auto">
             <ChangeVote />
             <TopModules isConnected={false} isProposalDetailView={true} />
-            <div className="bg-[#303132] rounded-[10px] p-12 mx-[90px] mt-[72px]">
+            <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
                 <div className="flex flex-col md:flex-row gap-[10%]">
                     <div>
-                        <Link href="/dashboard" className="opacity-80">
+                        <Link href="/active-proposals" className="opacity-80">
                             <Button variant='link' className="mb-5 text-white pl-0"><ChevronLeft size={14} />Back</Button>
                         </Link>
                         <div className="flex flex-row gap-5 items-center pb-5">
@@ -185,7 +185,7 @@ const ProposalDetail = ({ params }: { params: { id: string } }) => {
                 </div>
             </div>
 
-        </>
+        </div>
 
     );
 };

@@ -3,11 +3,7 @@
 import * as React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
-import { DataTable } from "./proposalTable"
-import { proposalColumns, makeProposalColumnDef } from "./proposalTable"
-import Image from "next/image"
 import { useCallback, useState } from "react"
-import { Button } from "@/components/ui/button"
 import { LockEntry, Proposal, Vote } from '../ts_types/HydroBase.types';
 import { GlobalState } from '../types';
 import { useChain } from "@cosmos-kit/react"
@@ -15,16 +11,9 @@ import { Tribute } from "../ts_types/TributeBase.types"
 import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
-import { useRouter } from "next/navigation"
 import TopModules from "./topModules/TopModules"
 import { TabLabel } from "./topModules/types"
 
-
-
-type Tab = {
-    tab: TabLabel,
-    title: string
-}
 
 export default function Dashboard({
     lastProposalTranches,
@@ -34,7 +23,6 @@ export default function Dashboard({
     globalState,
     currentProposalTributes,
     lastProposalTributes,
-    selectedProposalId
 }: {
     currentProposalTranches: Map<number, Proposal[]>,
     currentVotingPower: number,
@@ -43,10 +31,8 @@ export default function Dashboard({
     lastVotingPower?: number,
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
-    selectedProposalId?: string
 }) {
     const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
-    const [currentTranche, setCurrentTranche] = useState(0);
 
     const onTabChange = (value: TabLabel) => {
         setTab(value);
@@ -62,7 +48,7 @@ export default function Dashboard({
     const { data: myVotes = [] } = useMyVotes(walletAddress || '', globalState.currentRound, Array.from(currentProposalTranches.keys()));
 
     return (
-        <>
+        <div className="px-[90px] pb-[90px]">
             {/* 
             NOTE: I'm not enitrely sure if the hand crafted isn't better than the radix dialog. The radix modal seems more polished,
             for example blocking scroll behind it, but is slightly slower to load.
@@ -72,29 +58,14 @@ export default function Dashboard({
             
             */}
             <TopModules onTabChange={onTabChange} tab={tab} isConnected={isWalletConnected} isProposalDetailView={false} />
-            <div className="px-[90px] pt-[70px] pb-[90px]">
+            <div className="pt-[70px]">
                 <Tabs value={tab}>
                     <TabsList className="p-[unset] h-[unset] rounded-[unset] bg-transparent flex flex-row justify-start gap-[10px]">
-                        <TabsTrigger className={tabsBtnsClass} value="voting" onClick={() => onTabChange(TabLabel.VOTING)}>Voting</TabsTrigger>
-                        {lastProposalTranches && lastProposalTributes && <TabsTrigger className={tabsBtnsClass} value="deployed" onClick={() => onTabChange(TabLabel.DEPLOYED)}>Deployed</TabsTrigger>}
                         {isWalletConnected && <TabsTrigger className={tabsBtnsClass} value="tribute" onClick={() => onTabChange(TabLabel.TRIBUTE)}>Earned Tribute</TabsTrigger>}
                         {isWalletConnected && <TabsTrigger className={tabsBtnsClass} value="lockups" onClick={() => onTabChange(TabLabel.LOCKUPS)}>Lockups</TabsTrigger>}
                     </TabsList>
                     <HorizontalDivider style="mt-[-21px]" />
-                    <VotingTab
-                        globalState={globalState}
-                        currentTranche={currentTranche}
-                        setCurrentTranche={setCurrentTranche}
-                        currentProposalTranches={currentProposalTranches}
-                        currentProposalTributes={currentProposalTributes}
-                    />
-                    {lastProposalTranches && lastProposalTributes && <DeployedTab
-                        globalState={globalState}
-                        currentTranche={currentTranche}
-                        setCurrentTranche={setCurrentTranche}
-                        lastProposalTranches={lastProposalTranches}
-                        lastProposalTributes={lastProposalTributes}
-                    />}
+
                     {isWalletConnected && walletAddress && <>
                         <TributeTab
                             walletAddress={walletAddress}
@@ -103,95 +74,8 @@ export default function Dashboard({
                     </>}
                 </Tabs>
             </div>
-        </>
-    )
-}
-
-function VotingTab({
-    globalState,
-    currentTranche,
-    setCurrentTranche,
-    currentProposalTranches,
-    currentProposalTributes
-}: {
-    globalState: { tranches: any[] },
-    currentTranche: number,
-    setCurrentTranche: (tranche: number) => void,
-    currentProposalTranches: Map<number, any[]>,
-    currentProposalTributes: Map<number, Tribute[]> // Changed from Map<string, any>
-}) {
-    const router = useRouter();
-    const handleRowClick = (proposal: Proposal) => {
-        const url = new URL(`${window.location.href}/proposal/${proposal.proposal_id}`);
-        router.push(url.toString());
-    }
-    return <TabsContent value="voting">
-        <div className="flex flex-row gap-[18px] justify-end items-center">
-            <Button variant="ghost" size="icon" onClick={() => setCurrentTranche((currentTranche - 1 + globalState.tranches.length) % globalState.tranches.length)}>
-                <Image src={'/images/Vector3.svg'} alt='tranches-left' width={14} height={24} />
-            </Button>
-            <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]">{`TRANCH ${currentTranche + 1}/${globalState.tranches.length}`}</p>
-            <Button variant="ghost" size="icon" onClick={() => setCurrentTranche((currentTranche + 1) % globalState.tranches.length)}>
-                <Image src={'/images/Vector4.svg'} alt='tranches-right' width={14} height={24} />
-            </Button>
         </div>
-        {currentProposalTranches.get(currentTranche) && (
-            <div>
-                <h3>Proposals in Voting</h3>
-                <p className="text-xl not-italic font-normal leading-[150%]">The winning proposals will be deployed in the next round</p>
-                <DataTable
-                    columns={proposalColumns(() => { })}
-                    data={(currentProposalTranches.get(currentTranche) || []).map((proposal) => makeProposalColumnDef(proposal, currentProposalTributes.get(proposal.proposal_id)!))}
-                    height="h-[330px]"
-                    theme="light"
-                    clickable
-                    onRowClick={(proposal) => handleRowClick(proposal.proposal)}
-                />
-            </div>
-        )}
-    </TabsContent>
-}
-
-function DeployedTab({
-    globalState,
-    currentTranche,
-    setCurrentTranche,
-    lastProposalTranches,
-    lastProposalTributes
-}: {
-    globalState: { tranches: any[] },
-    currentTranche: number,
-    setCurrentTranche: (tranche: number) => void,
-    lastProposalTranches: Map<number, any[]>,
-    lastProposalTributes: Map<number, any>
-}) {
-    return (
-        <TabsContent value="deployed">
-            <div className="flex flex-row gap-[18px] justify-end items-center">
-                <Button variant="ghost" size="icon" onClick={() => setCurrentTranche((currentTranche - 1 + globalState.tranches.length) % globalState.tranches.length)}>
-                    <Image src={'/images/Vector3.svg'} alt='tranches-left' width={14} height={24} />
-                </Button>
-                <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]">{`TRANCH ${currentTranche + 1}/${globalState.tranches.length}`}</p>
-                <Button variant="ghost" size="icon" onClick={() => setCurrentTranche((currentTranche + 1) % globalState.tranches.length)}>
-                    <Image src={'/images/Vector4.svg'} alt='tranches-right' width={14} height={24} />
-                </Button>
-            </div>
-            {lastProposalTranches && lastProposalTributes && lastProposalTranches.get(currentTranche) && (
-                <div>
-                    <h3>Actively Deployed Proposals</h3>
-                    <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
-                    <DataTable
-                        columns={proposalColumns(() => { })}
-                        data={
-                            (lastProposalTranches.get(currentTranche) || [])
-                                .map((proposal) => makeProposalColumnDef(proposal, lastProposalTributes.get(proposal.proposal_id)!))
-                        }
-                        height=" h-[330px]"
-                    />
-                </div>
-            )}
-        </TabsContent>
-    );
+    )
 }
 
 function TributeTab({ walletAddress }: { walletAddress: string }) {
