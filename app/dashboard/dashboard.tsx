@@ -12,12 +12,12 @@ import { LockEntry, Proposal, Vote } from '../ts_types/HydroBase.types';
 import { GlobalState } from '../types';
 import { useChain } from "@cosmos-kit/react"
 import { Tribute } from "../ts_types/TributeBase.types"
-import TopModule, { TabLabel } from "./TopModule"
-import { topModulesConfig } from "./topModulesConfig"
 import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
 import { useRouter } from "next/navigation"
+import TopModules from "./topModules/TopModules"
+import { TabLabel } from "./topModules/types"
 
 
 
@@ -71,19 +71,7 @@ export default function Dashboard({
             </div>}
             
             */}
-
-            {isWalletConnected && <div className='grid grid-cols-3 gap-[60px] px-[90px]'>
-                {
-                    topModulesConfig.map(
-                        (item) => <TopModule
-                            key={item.title}
-                            isActive={tab === item.tab}
-                            onTabChange={onTabChange}
-                            {...item}
-                        />
-                    )
-                }
-            </div>}
+            <TopModules onTabChange={onTabChange} tab={tab} isConnected={isWalletConnected} isProposalDetailView={false} />
             <div className="px-[90px] pt-[70px] pb-[90px]">
                 <Tabs value={tab}>
                     <TabsList className="p-[unset] h-[unset] rounded-[unset] bg-transparent flex flex-row justify-start gap-[10px]">
