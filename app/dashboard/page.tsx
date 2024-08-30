@@ -3,7 +3,7 @@ import { Tribute } from '../ts_types/TributeBase.types';
 import Dashboard from "./dashboard"
 import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../hooks/hooks"
 
-export default async function Page({ params: { slug } }: { params: { slug?: string[] } }) {
+export default async function Page() {
     const {
         lastProposalTranches,
         currentProposalTranches,
@@ -21,7 +21,6 @@ export default async function Page({ params: { slug } }: { params: { slug?: stri
         globalState={globalState}
         currentProposalTributes={currentProposalTributes}
         lastProposalTributes={lastProposalTributes}
-        selectedProposalId={slug && slug[0] === "proposals" ? slug[1] : undefined}
     />
 }
 

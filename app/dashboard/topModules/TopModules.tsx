@@ -65,7 +65,7 @@ const TopModules = ({ tab, onTabChange, isProposalDetailView, isConnected }: Top
     }
 
     return (
-        <div className='flex flex-row gap-[60px] mx-[90px]'>
+        <div className='flex flex-row gap-[60px]'>
 
             {isConnected ?
                 <LoggedInModules onTabChange={onTabChange} tab={tab} /> :
