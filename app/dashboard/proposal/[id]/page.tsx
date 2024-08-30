@@ -20,6 +20,7 @@ import { NextRouter, withRouter } from "next/router";
 import { fetchDashboardData } from "../../page";
 import { GlobalState } from "@/app/types";
 import { ChevronLeft } from 'lucide-react';
+import TopModules from "../../topModules/TopModules";
 
 const mockData = {
     tributeToVoters: [
@@ -124,8 +125,8 @@ const ProposalDetail = ({ params }: { params: { id: string } }) => {
     return (
         <>
             <ChangeVote />
-
-            <div className="bg-[#303132] rounded-[10px] p-12 w-10/12 mx-auto">
+            <TopModules isConnected={false} isProposalDetailView={true} />
+            <div className="bg-[#303132] rounded-[10px] p-12 mx-[90px] mt-[72px]">
                 <div className="flex flex-col md:flex-row gap-[10%]">
                     <div>
                         <Link href="/dashboard" className="opacity-80">
