@@ -69,11 +69,11 @@ export function DataTable<TData, TValue>({
                         table.getRowModel().rows.map((row) => (<TableRow
                             key={row.id}
                             data-state={row.getIsSelected() && "selected"}
-                            className={`w-full table table-fixed h-[82px] border-b-0 ${clickable ? 'cursor-pointer' : ''}`}
+                            className={`w-full table table-fixed h-[82px] border-b-0 ${clickable ? 'cursor-pointer' : ''} hover:bg-[${clickable ? '#555555' : '#303132'}]`}
                             onClick={clickable ? () => onRowClick?.(row.original) : undefined}
                         >
                             {row.getVisibleCells().map((cell, index, row) => (
-                                <TableCell key={cell.id} className={`py-[14px] px-[24px] ${index === 0 ? 'rounded-[10px_0_0_10px]' : row.length === index + 1 ? 'rounded-[0_10px_10px_0]' : ''} bg-[${theme === 'light' ? '#fff' : '#303132'}] text-[${theme === 'light' ? '#080815' : '#fff'}]`}>
+                                <TableCell key={cell.id} className={`py-[14px] px-[24px] ${index === 0 ? 'rounded-[10px_0_0_10px]' : row.length === index + 1 ? 'rounded-[0_10px_10px_0]' : ''} bg-[#303132]  text-[${theme === 'light' ? '#080815' : '#fff'}]`}>
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </TableCell>
                             )
@@ -164,7 +164,7 @@ export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDe
         accessorKey: "link",
         header: "",
         cell: ({ row }) => {
-            return (<Link href={`/dashboard/proposal/${row.original.proposal.proposal_id}`}><Button>View Proposal</Button></Link>)
+            return (<Link href={`/active-proposals/${row.original.proposal.proposal_id}`}><Button className="bg-[#0061FF]">View Proposal</Button></Link>)
         }
     }
 ]
