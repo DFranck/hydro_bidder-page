@@ -2,21 +2,18 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogClose,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { executeVote, fetchGlobalState, useMyVotes } from "@/hooks/hooks";
+import { executeVote, useMyVotes } from "@/hooks/hooks";
 import { useChain } from "@cosmos-kit/react";
 import { Proposal } from "@/app/ts_types/HydroBase.types";
-import { NextRouter, withRouter } from "next/router";
 import { GlobalState } from "@/app/types";
 import { ChevronLeft } from 'lucide-react';
 import { fetchDashboardData } from "@/app/dashboard/page";
