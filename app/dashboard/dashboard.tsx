@@ -13,6 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
 import TopModules from "./topModules/TopModules"
 import { TabLabel } from "./topModules/types"
+import { useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 
 
 export default function Dashboard({
@@ -32,11 +34,19 @@ export default function Dashboard({
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
 }) {
+    const searchParams = useSearchParams();
+
     const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
 
     const onTabChange = (value: TabLabel) => {
         setTab(value);
     }
+
+    useEffect(() => {
+        if (searchParams.get('tab')) {
+            setTab(searchParams.get('tab') as TabLabel);
+        }
+    }, [searchParams])
 
     const onEditLockup = useCallback((lockup: LockEntry) => {
         console.log({ lockup })
