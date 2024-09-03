@@ -17,7 +17,7 @@ import { Proposal } from "@/app/ts_types/HydroBase.types";
 import { GlobalState } from "@/app/types";
 import { ChevronLeft } from 'lucide-react';
 import TopModules from "@/app/dashboard/topModules/TopModules";
-import { fetchDashboardData } from "@/app/dashboard/api";
+import { fetchDashboardData } from "@/app/dashboard/dashboardFetch";
 
 const mockData = {
     tributeToVoters: [
