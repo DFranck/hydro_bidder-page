@@ -6,6 +6,7 @@ import { Footer } from "./ui/Footer";
 import { Convert } from "./ui/modals/steps/Convert";
 import { GetHAtom } from "./ui/modals/steps/GetHAtom";
 import { Congratulations } from "./ui/modals/steps/Congratulations";
+import StartLockup from "./ui/modals/steps/StartLockup";
 
 const howHydroWorksTiles = [
   {
@@ -157,6 +158,7 @@ export default function Home() {
           <Convert />
           <GetHAtom />
           <Congratulations />
+          <StartLockup />
         </div>
       </div>
       <div className="text-center mt-[330px] z-[1]">
