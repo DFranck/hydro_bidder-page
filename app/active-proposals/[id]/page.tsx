@@ -16,7 +16,7 @@ import { useChain } from "@cosmos-kit/react";
 import { Proposal } from "@/app/ts_types/HydroBase.types";
 import { GlobalState } from "@/app/types";
 import { ChevronLeft } from 'lucide-react';
-import TopModules from "@/app/dashboard/topModules/TopModules";
+import { ProposalListTopModules } from "@/app/dashboard/topModules/TopModules";
 import { fetchDashboardData } from "@/app/dashboard/dashboardFetch";
 
 const mockData = {
@@ -122,7 +122,7 @@ const ProposalDetail = ({ params }: { params: { id: string } }) => {
     return (
         <div className="px-[90px] pb-[90px] max-w-[1440px] mx-auto">
             <ChangeVote />
-            <TopModules isConnected={false} isProposalDetailView={true} />
+            <ProposalListTopModules />
             <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
                 <div className="flex flex-col md:flex-row gap-[10%]">
                     <div>

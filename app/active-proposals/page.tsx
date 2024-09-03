@@ -1,6 +1,6 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import TopModules from "../dashboard/topModules/TopModules";
+import { ProposalListTopModules } from "../dashboard/topModules/TopModules";
 import Image from "next/image";
 import { DataTable, makeProposalColumnDef, proposalColumns } from "./proposalTable";
 import { Proposal, Tranche } from "../ts_types/HydroBase.types";
@@ -39,7 +39,7 @@ const ActiveProposals = () => {
 
     return (
         <div className="px-[90px] pb-[90px] max-w-[1440px] mx-auto">
-            <TopModules isConnected={false} isProposalDetailView={false} />
+            <ProposalListTopModules />
             <div className="mt-14 relative">
                 <div className="p-5 absolute flex flex-row gap-[18px] justify-between items-center w-[380px] border rounded-[40px] border-solid border-[#FFE1B8] right-0">
                     <Button variant='ghost' className="hover:bg-transparent text-[#E4B472]" size="icon" onClick={() => setCurrentTranche((currentTranche - 1 + globalState.tranches.length) % globalState.tranches.length)}>
