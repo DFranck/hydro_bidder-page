@@ -46,33 +46,14 @@ export default function Navigation() {
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <NavigationMenuTrigger className={navigationMenuTriggerStyle("/dashboard")}>
-                        <Image src={'/images/user.svg'} alt='user' width={16} height={16} className="mr-2" />
-                        Dashboard
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="min-w-[217px] bg-black">
-                        <NavigationMenuItem>
-                            <Link href={getHrefIfConnected("/dashboard?tab=lockups")} legacyBehavior passHref>
-                                <NavigationMenuLink className={navigationSubMenuTriggerStyle("lockups")}>
-                                    Lockups & Voting Power
-                                </NavigationMenuLink>
-                            </Link>
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <Link href={getHrefIfConnected("/dashboard?tab=tribute")} legacyBehavior passHref>
-                                <NavigationMenuLink className={navigationSubMenuTriggerStyle("tribute")}>
-                                    Tribute Rewards
-                                </NavigationMenuLink>
-                            </Link>
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <Link href="/active-proposals" legacyBehavior passHref>
-                                <NavigationMenuLink className={navigationMenuTriggerStyle("/active-proposals")}>
-                                    Vote in Current Round
-                                </NavigationMenuLink>
-                            </Link>
-                        </NavigationMenuItem>
-                    </NavigationMenuContent>
+                    <Link href="/dashboard" legacyBehavior passHref>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle("/dashboard")}>
+                            <div className="flex items-center">
+                                <Image src={'/images/user.svg'} alt='user' width={16} height={16} className="mr-2" />
+                                <span>Dashboard</span>
+                            </div>
+                        </NavigationMenuLink>
+                    </Link>
                 </NavigationMenuItem>
             </NavigationMenuList>
         </NavigationMenu>
