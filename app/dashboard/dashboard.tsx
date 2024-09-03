@@ -10,8 +10,7 @@ import { Tribute } from "../ts_types/TributeBase.types"
 import { useMyLockups, useMyVotes } from "@/hooks/hooks"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
-import TopModules from "./topModules/TopModules"
-import { TabLabel } from "./topModules/types"
+import { DashboardTopModules, TabLabel } from "./topModules/TopModules"
 import { useSearchParams } from "next/navigation"
 import { Progress } from "@/components/ui/progress"
 
@@ -33,19 +32,7 @@ export default function Dashboard({
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
 }) {
-    // const searchParams = useSearchParams();
-
     const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
-
-    const onTabChange = (value: TabLabel) => {
-        setTab(value);
-    }
-
-    // useEffect(() => {
-    //     if (searchParams.get('tab')) {
-    //         setTab(searchParams.get('tab') as TabLabel);
-    //     }
-    // }, [searchParams])
 
     const onEditLockup = useCallback((lockup: LockEntry) => {
         console.log({ lockup })
@@ -58,15 +45,7 @@ export default function Dashboard({
 
     return (
         <div className="px-[90px] pb-[90px]">
-            {/* 
-            NOTE: I'm not enitrely sure if the hand crafted isn't better than the radix dialog. The radix modal seems more polished,
-            for example blocking scroll behind it, but is slightly slower to load.
-            {selectedProposalId && <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-                <ProposalModal proposalId={selectedProposalId} />
-            </div>}
-            
-            */}
-            <TopModules onTabChange={onTabChange} tab={tab} isConnected={isWalletConnected} isProposalDetailView={false} />
+            <DashboardTopModules onTabChange={setTab} tab={tab} />
             {/* <div className="pt-[70px]">
                 <Tabs value={tab}>
                     <TabsList className="p-[unset] h-[unset] rounded-[unset] bg-transparent flex flex-row justify-start gap-[10px]">
