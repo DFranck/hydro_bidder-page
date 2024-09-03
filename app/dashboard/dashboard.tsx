@@ -33,7 +33,7 @@ export default function Dashboard({
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
 }) {
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
 
     const [tab, setTab] = useState<TabLabel>(TabLabel.VOTING);
 
@@ -41,11 +41,11 @@ export default function Dashboard({
         setTab(value);
     }
 
-    useEffect(() => {
-        if (searchParams.get('tab')) {
-            setTab(searchParams.get('tab') as TabLabel);
-        }
-    }, [searchParams])
+    // useEffect(() => {
+    //     if (searchParams.get('tab')) {
+    //         setTab(searchParams.get('tab') as TabLabel);
+    //     }
+    // }, [searchParams])
 
     const onEditLockup = useCallback((lockup: LockEntry) => {
         console.log({ lockup })
@@ -67,7 +67,7 @@ export default function Dashboard({
             
             */}
             <TopModules onTabChange={onTabChange} tab={tab} isConnected={isWalletConnected} isProposalDetailView={false} />
-            <div className="pt-[70px]">
+            {/* <div className="pt-[70px]">
                 <Tabs value={tab}>
                     <TabsList className="p-[unset] h-[unset] rounded-[unset] bg-transparent flex flex-row justify-start gap-[10px]">
                         {isWalletConnected && <TabsTrigger className={tabsBtnsClass} value="tribute" onClick={() => onTabChange(TabLabel.TRIBUTE)}>Earned Tribute</TabsTrigger>}
@@ -82,7 +82,10 @@ export default function Dashboard({
                         <LockupsTab onEditLockup={onEditLockup} walletAddress={walletAddress} />
                     </>}
                 </Tabs>
-            </div>
+            </div> */}
+            {isWalletConnected && walletAddress && <div className="mt-10">
+                <Lockups onEditLockup={onEditLockup} walletAddress={walletAddress} />
+            </div>}
         </div>
     )
 }
@@ -129,7 +132,7 @@ function TributeTab({ walletAddress }: { walletAddress: string }) {
     );
 }
 
-function LockupsTab({ onEditLockup, walletAddress }: { onEditLockup: (lockup: LockEntry) => void, walletAddress: string }) {
+function Lockups({ onEditLockup, walletAddress }: { onEditLockup: (lockup: LockEntry) => void, walletAddress: string }) {
     const { data: myLockups } = useMyLockups(walletAddress);
     type ExtendedLockEntry = LockEntry & { id: number, votingPower: number };
     const processLockups = useMemo(() => {
@@ -167,41 +170,39 @@ function LockupsTab({ onEditLockup, walletAddress }: { onEditLockup: (lockup: Lo
         return dateObj.toISOString().split('T')[0];
     }
 
-    return <TabsContent value="lockups">
-        <div>
-            <h3>My Lockups</h3>
-            {myLockups && (
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Lockup ID</TableHead>
-                            <TableHead>Voting Power</TableHead>
-                            <TableHead>ATOM</TableHead>
-                            <TableHead>Start Date</TableHead>
-                            <TableHead>End Date</TableHead>
-                            <TableHead>Time Remaining</TableHead>
-                            <TableHead></TableHead>
+    return <div>
+        <h3>My Lockups</h3>
+        {myLockups && (
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Lockup ID</TableHead>
+                        <TableHead>Voting Power</TableHead>
+                        <TableHead>ATOM</TableHead>
+                        <TableHead>Start Date</TableHead>
+                        <TableHead>End Date</TableHead>
+                        <TableHead>Time Remaining</TableHead>
+                        <TableHead></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {processLockups.map((lockup, index) => (
+                        <TableRow key={index}>
+                            <TableCell>{lockup.id}</TableCell>
+                            <TableCell>{lockup.votingPower.toLocaleString('en-US')}</TableCell>
+                            <TableCell>{(parseFloat(lockup.funds.amount) / 1000000).toLocaleString('en-US')}</TableCell>
+                            <TableCell>{formatDate(lockup.lock_start)}</TableCell>
+                            <TableCell>{formatDate(lockup.lock_end)}</TableCell>
+                            <TableCell><Progress value={timeRemainingPercent(lockup)} /></TableCell>
+                            <TableCell>
+                                <EditLockupDuration lockup={lockup} onEditLockup={onEditLockup} />
+                            </TableCell>
                         </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {processLockups.map((lockup, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{lockup.id}</TableCell>
-                                <TableCell>{lockup.votingPower.toLocaleString('en-US')}</TableCell>
-                                <TableCell>{(parseFloat(lockup.funds.amount) / 1000000).toLocaleString('en-US')}</TableCell>
-                                <TableCell>{formatDate(lockup.lock_start)}</TableCell>
-                                <TableCell>{formatDate(lockup.lock_end)}</TableCell>
-                                <TableCell><Progress value={timeRemainingPercent(lockup)} /></TableCell>
-                                <TableCell>
-                                    <EditLockupDuration lockup={lockup} onEditLockup={onEditLockup} />
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            )}
-        </div>
-    </TabsContent>
+                    ))}
+                </TableBody>
+            </Table>
+        )}
+    </div>
 }
 
 function RewardsSnapshot({ amount }: { amount: number }) {
