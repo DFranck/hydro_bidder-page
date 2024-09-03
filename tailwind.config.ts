@@ -1,13 +1,15 @@
 import type { Config } from "tailwindcss"
 
 const config = {
+  presets: [require("./app\\subframe\\tailwind.config.js")],
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+    "./app/subframe/**/*.{tsx,ts,js,jsx}",
+  ],
   prefix: "",
   theme: {
     container: {
