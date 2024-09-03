@@ -1,9 +1,8 @@
 'use client'
 
-import * as React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
-import { useCallback, useState } from "react"
+import { useCallback, useState, useEffect, useMemo } from "react"
 import { LockEntry, Proposal, Vote } from '../ts_types/HydroBase.types';
 import { GlobalState } from '../types';
 import { useChain } from "@cosmos-kit/react"
@@ -14,7 +13,7 @@ import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
 import TopModules from "./topModules/TopModules"
 import { TabLabel } from "./topModules/types"
 import { useSearchParams } from "next/navigation"
-import { useEffect } from "react"
+import { Progress } from "@/components/ui/progress"
 
 
 export default function Dashboard({
@@ -132,6 +131,16 @@ function TributeTab({ walletAddress }: { walletAddress: string }) {
 
 function LockupsTab({ onEditLockup, walletAddress }: { onEditLockup: (lockup: LockEntry) => void, walletAddress: string }) {
     const { data: myLockups } = useMyLockups(walletAddress);
+    type ExtendedLockEntry = LockEntry & { id: number, votingPower: number };
+    const processLockups = useMemo(() => {
+        const modifiedLockups = (myLockups as unknown as ExtendedLockEntry[])?.map((lockup, index) => {
+            lockup.id = index;
+            lockup.votingPower = Math.floor(1000 + Math.random() * 9000);
+            return lockup;
+        });
+        return modifiedLockups;
+    }, [myLockups]);
+
     const calculateTimeRemaining = (lockEnd: string) => {
         const now = new Date().getTime();
         const end = parseInt(lockEnd) / 1000000; // Convert nanoseconds to milliseconds
@@ -141,6 +150,23 @@ function LockupsTab({ onEditLockup, walletAddress }: { onEditLockup: (lockup: Lo
         return daysRemaining;
     }
 
+    const timeRemainingPercent = ({ lock_start, lock_end }: LockEntry) => {
+        const lockStartMs = parseInt(lock_start) / 1e6;
+        const lockEndMs = parseInt(lock_end) / 1e6;
+        const nowMs = Date.now();
+        const totalDuration = lockEndMs - lockStartMs;
+        const elapsedTime = nowMs - lockStartMs;
+        const percentagePassed = (elapsedTime / totalDuration) * 100;
+
+        return Math.floor(percentagePassed);
+    }
+
+    const formatDate = (date: string) => {
+        const timestampMs = parseInt(date) / 1e6;
+        const dateObj = new Date(timestampMs);
+        return dateObj.toISOString().split('T')[0];
+    }
+
     return <TabsContent value="lockups">
         <div>
             <h3>My Lockups</h3>
@@ -148,18 +174,24 @@ function LockupsTab({ onEditLockup, walletAddress }: { onEditLockup: (lockup: Lo
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Locked Atoms</TableHead>
-                            <TableHead>Days Remaining</TableHead>
-                            <TableHead>hATOM (Voting Power)</TableHead>
+                            <TableHead>Lockup ID</TableHead>
+                            <TableHead>Voting Power</TableHead>
+                            <TableHead>ATOM</TableHead>
+                            <TableHead>Start Date</TableHead>
+                            <TableHead>End Date</TableHead>
+                            <TableHead>Time Remaining</TableHead>
                             <TableHead></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {myLockups.map((lockup, index) => (
+                        {processLockups.map((lockup, index) => (
                             <TableRow key={index}>
-                                <TableCell>{(parseFloat(lockup.funds.amount) / 1000000).toFixed(2)}</TableCell>
-                                <TableCell>{calculateTimeRemaining(lockup.lock_end)}</TableCell>
-                                <TableCell>0</TableCell>
+                                <TableCell>{lockup.id}</TableCell>
+                                <TableCell>{lockup.votingPower.toLocaleString('en-US')}</TableCell>
+                                <TableCell>{(parseFloat(lockup.funds.amount) / 1000000).toLocaleString('en-US')}</TableCell>
+                                <TableCell>{formatDate(lockup.lock_start)}</TableCell>
+                                <TableCell>{formatDate(lockup.lock_end)}</TableCell>
+                                <TableCell><Progress value={timeRemainingPercent(lockup)} /></TableCell>
                                 <TableCell>
                                     <EditLockupDuration lockup={lockup} onEditLockup={onEditLockup} />
                                 </TableCell>
