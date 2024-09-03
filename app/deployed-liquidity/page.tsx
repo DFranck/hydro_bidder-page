@@ -1,13 +1,13 @@
 'use client'
 import { useEffect, useState } from "react";
 import { DataTable, makeProposalColumnDef, proposalColumns } from "../active-proposals/proposalTable";
-import { fetchDashboardData } from "../dashboard/page";
 import TopModules from "../dashboard/topModules/TopModules";
 import { Proposal, Tranche } from "../ts_types/HydroBase.types";
 import { Tribute } from "../ts_types/TributeBase.types";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { GlobalState } from "../types";
+import { fetchDashboardData } from "../dashboard/dashboardFetch";
 
 const DeployedLiquidity = () => {
     const [currentTranche, setCurrentTranche] = useState(0);

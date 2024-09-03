@@ -6,9 +6,9 @@ import { DataTable, makeProposalColumnDef, proposalColumns } from "./proposalTab
 import { Proposal, Tranche } from "../ts_types/HydroBase.types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchDashboardData } from "../dashboard/page";
 import { GlobalState } from "../types";
 import { Tribute } from "../ts_types/TributeBase.types";
+import { fetchDashboardData } from "../dashboard/dashboardFetch";
 
 const ActiveProposals = () => {
     const [currentTranche, setCurrentTranche] = useState(0);

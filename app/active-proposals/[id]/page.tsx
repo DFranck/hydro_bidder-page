@@ -16,8 +16,8 @@ import { useChain } from "@cosmos-kit/react";
 import { Proposal } from "@/app/ts_types/HydroBase.types";
 import { GlobalState } from "@/app/types";
 import { ChevronLeft } from 'lucide-react';
-import { fetchDashboardData } from "@/app/dashboard/page";
 import TopModules from "@/app/dashboard/topModules/TopModules";
+import { fetchDashboardData } from "@/app/dashboard/api";
 
 const mockData = {
     tributeToVoters: [

@@ -1,30 +1,8 @@
 import { Proposal, Tranche } from '../ts_types/HydroBase.types';
 import { Tribute } from '../ts_types/TributeBase.types';
-import Dashboard from "../dashboard/dashboard"
 import { fetchGlobalState, fetchRoundState, fetchProposals, fetchProposalTributes, fetchMyAllLockups, fetchMyExpiredLockups } from "../../hooks/hooks"
 
-export default async function Page() {
-    const {
-        lastProposalTranches,
-        currentProposalTranches,
-        lastVotingPower,
-        currentVotingPower,
-        globalState,
-        currentProposalTributes,
-        lastProposalTributes
-    } = await fetchDashboardData();
-    return <Dashboard
-        lastProposalTranches={lastProposalTranches}
-        currentProposalTranches={currentProposalTranches}
-        lastVotingPower={lastVotingPower}
-        currentVotingPower={currentVotingPower}
-        globalState={globalState}
-        currentProposalTributes={currentProposalTributes}
-        lastProposalTributes={lastProposalTributes}
-    />
-}
-
-async function fetchDashboardData() {
+export async function fetchDashboardData() {
     const globalState = await fetchGlobalState();
 
     const { currentRound, tranches } = globalState;
