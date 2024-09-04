@@ -20,22 +20,13 @@ import { Tribute } from "@/app/ts_types/TributeBase.types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[],
-    height?: string,
-    theme?: 'light' | 'dark',
-    clickable?: boolean,
-    onRowClick?: (row: TData) => void
-}
-
 export function DataTable<TData, TValue>({
     columns,
     data,
-    theme = 'dark',
-    clickable = false,
-    onRowClick
-}: DataTableProps<TData, TValue>) {
+}: {
+    columns: ColumnDef<TData, TValue>[]
+    data: TData[],
+}) {
     const table = useReactTable({
         data,
         columns,
@@ -69,11 +60,10 @@ export function DataTable<TData, TValue>({
                         table.getRowModel().rows.map((row) => (<TableRow
                             key={row.id}
                             data-state={row.getIsSelected() && "selected"}
-                            className={`w-full table table-fixed h-[82px] border-b-0 ${clickable ? 'cursor-pointer' : ''} hover:bg-[${clickable ? '#555555' : '#303132'}]`}
-                            onClick={clickable ? () => onRowClick?.(row.original) : undefined}
+                            className={`w-full table table-fixed h-[82px] border-b-0 hover:bg-[#303132}]`}
                         >
                             {row.getVisibleCells().map((cell, index, row) => (
-                                <TableCell key={cell.id} className={`py-[14px] px-[24px] ${index === 0 ? 'rounded-[10px_0_0_10px]' : row.length === index + 1 ? 'rounded-[0_10px_10px_0]' : ''} bg-[#303132]  text-[${theme === 'light' ? '#080815' : '#fff'}]`}>
+                                <TableCell key={cell.id} className={`py-[14px] px-[24px] ${index === 0 ? 'rounded-[10px_0_0_10px]' : row.length === index + 1 ? 'rounded-[0_10px_10px_0]' : ''} bg-[#303132]  text-[#fff}]`}>
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </TableCell>
                             )
@@ -134,37 +124,3 @@ function sumTributeAmounts(tributes: Tribute[]): { denom: string, amount: number
         amount: denomSums.get(denom)!
     }));
 }
-
-export const proposalColumns = (onClick: (proposal: Proposal) => void): ColumnDef<ProposalColumnDef>[] => [
-    {
-        accessorKey: "title",
-        header: "",
-        cell: ({ row }) => {
-            return (<div className="flex flex-col">
-                <p className="text-xl not-italic font-bold leading-[150%]">{row.original.proposal.title}</p>
-            </div>
-            )
-        },
-    },
-    {
-        accessorKey: "tribute",
-        header: () => <div className="text-center">Tribute Amount</div>,
-        cell: ({ row }) => <div className="text-center">{row.original.summedTributes.map((tribute, index) =>
-            <div key={index} className="text-center">
-                {`${(tribute.amount / 1000000).toFixed(2)} ${tribute.denom.length > 20 ? tribute.denom.slice(0, 17) + '...' : tribute.denom}`}
-            </div>)
-        }</div>,
-    },
-    {
-        accessorKey: "votingPowerPercent",
-        header: () => <div className="text-center">Voting Power %</div>,
-        cell: ({ row }) => <div className="text-center">{row.original.proposal.percentage}</div>,
-    },
-    {
-        accessorKey: "link",
-        header: "",
-        cell: ({ row }) => {
-            return (<Link href={`/active-proposals/${row.original.proposal.proposal_id}`}><Button className="bg-[#0061FF]">View Proposal</Button></Link>)
-        }
-    }
-]

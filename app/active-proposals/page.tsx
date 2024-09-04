@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { ProposalListTopModules } from "../dashboard/topModules/TopModules";
 import Image from "next/image";
-import { DataTable, makeProposalColumnDef, proposalColumns } from "./proposalTable";
+import Link from "next/link";
+import { DataTable, makeProposalColumnDef } from "./proposalTable";
 import { Proposal, Tranche } from "../ts_types/HydroBase.types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,12 +32,6 @@ const ActiveProposals = () => {
             .catch(console.error);;
     }, [currentTranche]);
 
-    const router = useRouter();
-    const handleRowClick = (proposal: Proposal) => {
-        const url = new URL(`${window.location.href}/${proposal.proposal_id}`);
-        router.push(url.toString());
-    }
-
     return (
         <div className="px-[90px] pb-[90px] max-w-[1440px] mx-auto">
             <ProposalListTopModules />
@@ -54,11 +49,40 @@ const ActiveProposals = () => {
                 <p className="text-xl not-italic font-normal leading-[150%]">The winning proposals will be deployed in the next round</p>
                 {currentProposalTranches.get(currentTranche) && (
                     <DataTable
-                        columns={proposalColumns(() => { })}
+                        columns={[
+                            {
+                                accessorKey: "title",
+                                header: "",
+                                cell: ({ row }) => {
+                                    return (<div className="flex flex-col">
+                                        <p className="text-xl not-italic font-bold leading-[150%]">{row.original.proposal.title}</p>
+                                    </div>
+                                    )
+                                },
+                            },
+                            {
+                                accessorKey: "tribute",
+                                header: () => <div className="text-center">Tribute Amount</div>,
+                                cell: ({ row }) => <div className="text-center">{row.original.summedTributes.map((tribute, index) =>
+                                    <div key={index} className="text-center">
+                                        {`${(tribute.amount / 1000000).toFixed(2)} ${tribute.denom.length > 20 ? tribute.denom.slice(0, 17) + '...' : tribute.denom}`}
+                                    </div>)
+                                }</div>,
+                            },
+                            {
+                                accessorKey: "votingPowerPercent",
+                                header: () => <div className="text-center">Voting Power %</div>,
+                                cell: ({ row }) => <div className="text-center">{row.original.proposal.percentage}</div>,
+                            },
+                            {
+                                accessorKey: "link",
+                                header: "",
+                                cell: ({ row }) => {
+                                    return (<Link href={`/active-proposals/${row.original.proposal.proposal_id}`}><Button className="bg-[#0061FF]">View Proposal</Button></Link>)
+                                }
+                            }
+                        ]}
                         data={(currentProposalTranches.get(currentTranche) || []).map((proposal) => makeProposalColumnDef(proposal, currentProposalTributes.get(proposal.proposal_id)!))}
-                        height="h-[330px]"
-                        clickable={true}
-                        onRowClick={(proposal) => handleRowClick(proposal.proposal)}
                     />
                 )}
             </div>
