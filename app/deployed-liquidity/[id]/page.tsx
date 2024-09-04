@@ -1,6 +1,6 @@
 import React from "react";
 import { fetchDashboardData } from "@/app/dashboard/dashboardFetch";
-import ProposalDetail from '../../proposalDetail';
+import ProposalDetail from '@/app/proposalDetail';
 
 
 export default async ({ params }: { params: { id: string } }) => {
@@ -18,7 +18,7 @@ export default async ({ params }: { params: { id: string } }) => {
             currentProposal={currentProposal}
             globalState={globalState}
             currentProposalTranches={currentProposalTranches}
-            deployed={false}
+            deployed={true}
         />
     ) : (
         <div className="text-center py-8">

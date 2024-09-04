@@ -1,11 +1,12 @@
 'use client'
 import { useEffect, useState } from "react";
-import { DataTable, makeProposalColumnDef, proposalColumns } from "../active-proposals/proposalTable";
+import { DataTable, makeProposalColumnDef } from "../active-proposals/proposalTable";
 import { ProposalListTopModules } from "../dashboard/topModules/TopModules";
 import { Proposal, Tranche } from "../ts_types/HydroBase.types";
 import { Tribute } from "../ts_types/TributeBase.types";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import { GlobalState } from "../types";
 import { fetchDashboardData } from "../dashboard/dashboardFetch";
 
@@ -47,12 +48,43 @@ const DeployedLiquidity = () => {
                 <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
                 {lastProposalTranches && lastProposalTributes && lastProposalTranches.get(currentTranche) && (
                     <DataTable
-                        columns={proposalColumns(() => { })}
+                        columns={[
+                            {
+                                accessorKey: "title",
+                                header: "",
+                                cell: ({ row }) => {
+                                    return (<div className="flex flex-col">
+                                        <p className="text-xl not-italic font-bold leading-[150%]">{row.original.proposal.title}</p>
+                                    </div>
+                                    )
+                                },
+                            },
+                            {
+                                accessorKey: "tribute",
+                                header: () => <div className="text-center">Tribute Amount</div>,
+                                cell: ({ row }) => <div className="text-center">{row.original.summedTributes.map((tribute, index) =>
+                                    <div key={index} className="text-center">
+                                        {`${(tribute.amount / 1000000).toFixed(2)} ${tribute.denom.length > 20 ? tribute.denom.slice(0, 17) + '...' : tribute.denom}`}
+                                    </div>)
+                                }</div>,
+                            },
+                            {
+                                accessorKey: "votingPowerPercent",
+                                header: () => <div className="text-center">Voting Power %</div>,
+                                cell: ({ row }) => <div className="text-center">{row.original.proposal.percentage}</div>,
+                            },
+                            {
+                                accessorKey: "link",
+                                header: "",
+                                cell: ({ row }) => {
+                                    return (<Link href={`/deployed-liquidity/${row.original.proposal.proposal_id}`}><Button className="bg-[#0061FF]">View Proposal</Button></Link>)
+                                }
+                            }
+                        ]}
                         data={
                             (lastProposalTranches.get(currentTranche) || [])
                                 .map((proposal) => makeProposalColumnDef(proposal, lastProposalTributes.get(proposal.proposal_id)!))
                         }
-                        height=" h-[330px]"
                     />
                 )}
             </div>
