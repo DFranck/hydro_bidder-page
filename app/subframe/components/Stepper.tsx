@@ -8,11 +8,12 @@ import React from "react";
 import * as SubframeCore from "@subframe/core";
 
 interface StepProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "completed" | "active";
+  variant?: "default" | "completed" | "active" | "disabled";
   firstStep?: boolean;
   lastStep?: boolean;
   stepNumber?: string;
   label?: string;
+  description?: string;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
     lastStep = false,
     stepNumber,
     label,
+    description,
     className,
     ...otherProps
   }: StepProps,
@@ -31,8 +33,10 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
   return (
     <div
       className={SubframeCore.twClassNames(
-        "group/c1145464 flex cursor-pointer flex-row gap-1 h-[136px]",
-        className
+        "group/c1145464 flex cursor-pointer flex-row gap-3 h-[136px] items-center relative",
+        className,
+        { "h-[82px]": firstStep },
+        { 'items-start': firstStep },
       )}
       ref={ref as any}
       {...otherProps}
@@ -40,19 +44,22 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
       <div
         className={SubframeCore.twClassNames(
           "flex items-center justify-center flex-col",
-          { "flex-col": firstStep }
+          { "flex-col self-end": firstStep },
         )}
       >
         <div
           className={SubframeCore.twClassNames(
-            "flex-grow border-l border-color-[#FFE1B8]  h-[54px]",
+            "flex-grow border-l border-color-[#FFE1B8] h-[54px]",
             { "border-[unset] border-transparent": firstStep }
           )}
         />
         <div
           className={SubframeCore.twClassNames(
             "flex h-7 w-7 flex-none flex-col items-center justify-center gap-2 rounded-full bg-neutral-100",
-            { "bg-brand-100": variant === "active" || variant === "completed" }
+            { "bg-brand-100": variant === "active" || variant === "completed" },
+            {
+              "bg-neutral-600": variant === "disabled",
+            }
           )}
         >
           {stepNumber ? (
@@ -76,20 +83,36 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
           )}
         />
       </div>
-      {label ? (
-        <span
-          className={SubframeCore.twClassNames(
-            "text-body font-body text-subtext-color group-hover/c1145464:text-default-font",
-            {
-              "text-body-bold font-body-bold text-default-font":
-                variant === "active",
-              "text-subtext-color": variant === "completed",
-            }
-          )}
-        >
-          {label}
-        </span>
-      ) : null}
+
+      <div
+        className={SubframeCore.twClassNames({ "mt-9": !firstStep })}
+      >
+        {label ? (
+          <span
+            className={SubframeCore.twClassNames(
+              "text-center text-base not-italic font-semibold leading-6 tracking-[0.08px]",
+              { "font-body-bold": variant === "active" },
+              {
+                "text-neutral-600": variant === "disabled",
+              }
+            )}
+          >
+            {label}
+          </span>
+        ) : null}
+        {description ? (
+          <div
+            className={SubframeCore.twClassNames(
+              "text-gray-500 text-sm not-italic font-medium leading-5 tracking-[0.07px] w-[225px]",
+              {
+                "text-neutral-600": variant === "disabled",
+              }
+            )}
+          >
+            {description}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 });
