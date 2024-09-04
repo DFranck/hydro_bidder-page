@@ -45,16 +45,18 @@ export default function Navigation() {
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link href="/dashboard" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle("/dashboard")}>
-                            <div className="flex items-center">
-                                <Image src={'/images/user.svg'} alt='user' width={16} height={16} className="mr-2" />
-                                <span>Dashboard</span>
-                            </div>
-                        </NavigationMenuLink>
-                    </Link>
-                </NavigationMenuItem>
+                {isWalletConnected && (
+                    <NavigationMenuItem>
+                        <Link href="/dashboard" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle("/dashboard")}>
+                                <div className="flex items-center">
+                                    <Image src={'/images/user.svg'} alt='user' width={16} height={16} className="mr-2" />
+                                    <span>Dashboard</span>
+                                </div>
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                )}
             </NavigationMenuList>
         </NavigationMenu>
     )
