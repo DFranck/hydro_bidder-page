@@ -32,16 +32,16 @@ export default function Navigation() {
         <NavigationMenu style={{ fontFamily: 'Inter' }}>
             <NavigationMenuList className="flex flex-row items-center justify-between gap-6">
                 <NavigationMenuItem>
-                    <Link href="/active-proposals" legacyBehavior passHref aria-disabled={true}>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle("/active-proposals")}>
-                            Vote: Active Proposals
+                    <Link href="/voting-proposals" legacyBehavior passHref aria-disabled={true}>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle("/voting-proposals")}>
+                            Voting Proposals
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <Link href="/deployed-liquidity" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle("/deployed-liquidity")}>
-                            Deployed Liquidity
+                    <Link href="/deployed-proposals" legacyBehavior passHref>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle("/deployed-proposals")}>
+                            Deployed Proposals
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>

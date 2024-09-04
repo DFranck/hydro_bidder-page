@@ -102,7 +102,7 @@ const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal,
             <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
                 <div className="flex flex-col md:flex-row gap-[10%]">
                     <div>
-                        <Link href="/active-proposals" className="opacity-80">
+                        <Link href="/voting-proposals" className="opacity-80">
                             <Button variant='link' className="mb-5 text-white pl-0"><ChevronLeft size={14} />Back</Button>
                         </Link>
                         <div className="flex flex-row gap-5 items-center pb-5">
