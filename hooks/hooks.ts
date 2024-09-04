@@ -9,6 +9,14 @@ import { topNProposals, mockGlobalState, mockTributes, mockVotes, mockAllLockEnt
 import { StdFee } from "@cosmjs/amino";
 import { MsgVoteEncodeObject, GasPrice } from "@cosmjs/stargate";
 
+let clientInstance: CosmWasmClient | null = null;
+
+const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
+    if (!clientInstance) {
+        clientInstance = await CosmWasmClient.connect(rpcEndpoint);
+    }
+    return clientInstance;
+};
 
 const hydroContractAddress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
 const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
@@ -20,7 +28,7 @@ const limit = 10000;
 const startFrom = 0;
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
-    const client = await CosmWasmClient.connect(rpcEndpoint);
+    const client = await getCosmWasmClient();
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
     // TODO: commented this out and mocked it
@@ -42,13 +50,11 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     //     whitelist,
     // };
 
-    // Add a 0.5-second delay
-    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return mockGlobalState;
 }
 
 export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
-    const client = await CosmWasmClient.connect(rpcEndpoint);
+    const client = await getCosmWasmClient();
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
     // TODO: commented this out and mocked it
@@ -57,8 +63,6 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
     //     hydroQueryClient.roundTotalVotingPower({ roundId }).then((response) => response.total_voting_power),
     // ])
 
-    // Add a 0.5-second delay
-    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return {
         roundEnd: "",
         // TODO: This is a large number so we should use a large number library
@@ -67,7 +71,7 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
 }
 
 export const fetchProposals = async (roundId: number, trancheId: number): Promise<Proposal[]> => {
-    const client = await CosmWasmClient.connect(rpcEndpoint);
+    const client = await getCosmWasmClient();
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
     // TODO: commented this out and mocked it
@@ -76,13 +80,11 @@ export const fetchProposals = async (roundId: number, trancheId: number): Promis
 
 
 
-    // Add a 0.5-second delay
-    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return topNProposals[roundId][trancheId].slice(0, numberOfProposals);
 };
 
 export const fetchProposalTributes = async (roundId: number, trancheId: number, proposalId: number): Promise<Tribute[]> => {
-    const client = await CosmWasmClient.connect(rpcEndpoint);
+    const client = await getCosmWasmClient();
     const tributeQueryClient = new TributeBaseQueryClient(client, tributeContractAdress);
 
     // TODO: commented this out and mocked it
@@ -97,8 +99,6 @@ export const fetchProposalTributes = async (roundId: number, trancheId: number, 
     // return tributes.tributes;
 
     // Mock implementation for fetchProposalTributes
-    // Add a 0.5-second delay
-    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     let tributes = mockTributes[roundId]?.[trancheId]?.[proposalId] || [];
 
     // Replace IBC denoms with token names
@@ -138,14 +138,7 @@ export const ibcDenomToToken: Record<string, string> = {
 };
 
 export const fetchMyVotes = async (myAddress: string, roundId: number, trancheIds: number[]) => {
-    // mock vote promises
-    const votePromises = trancheIds.map(trancheId => {
-        return {
-            vote: mockVotes[trancheId]
-        }
-    });
-
-    // const client = await CosmWasmClient.connect(rpcEndpoint);
+    const client = await getCosmWasmClient();
     // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
     // const votePromises = trancheIds.map(trancheId =>
     //     hydroQueryClient.userVote({
@@ -154,6 +147,13 @@ export const fetchMyVotes = async (myAddress: string, roundId: number, trancheId
     //         trancheId: trancheId
     //     })
     // );
+
+    // mock vote promises
+    const votePromises = trancheIds.map(trancheId => {
+        return {
+            vote: mockVotes[trancheId]
+        }
+    });
 
     const votes = await Promise.all(votePromises);
 
@@ -166,18 +166,17 @@ export const fetchMyVotes = async (myAddress: string, roundId: number, trancheId
 }
 
 export const fetchMyAllLockups = async (myAddress: string) => {
-    // const client = await CosmWasmClient.connect(rpcEndpoint);
+    const client = await getCosmWasmClient();
     // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
     // const lockups = await hydroQueryClient.allUserLockups({ address: myAddress, limit, startFrom });
     // return lockups.lockups;
 
     // Mock implementation for fetchMyAllLockups
-    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return mockAllLockEntries;
 }
 
 export const fetchMyExpiredLockups = async (myAddress: string) => {
-    // const client = await CosmWasmClient.connect(rpcEndpoint);
+    const client = await getCosmWasmClient();
     // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
     // const response = await hydroQueryClient.expiredUserLockups({ 
@@ -188,7 +187,6 @@ export const fetchMyExpiredLockups = async (myAddress: string) => {
     // return response.lockups;
 
     // Mock implementation for fetchMyExpiredLockups
-    await new Promise(resolve => setTimeout(resolve, mockTimeout));
     return mockExpiredLockEntries;
 }
 

@@ -15,10 +15,11 @@ export const DashboardTopModules = ({ tab, onTabChange }: {
     const bgColor = 'bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]';
     const activeBgColor = 'bg-white bg-[linear-gradient(180deg,rgba(255,255,255,1)_64%,rgba(0,35,255,1)_64%)]';
     const isTributeActive = tab === TabLabel.TRIBUTE;
-    const isLockupsOrVotingActive = tab === TabLabel.LOCKUPS || tab === TabLabel.VOTING;
+    // const isLockupsOrVotingActive = tab === TabLabel.LOCKUPS || tab === TabLabel.VOTING;
+    const isLockupsOrVotingActive = false // Make it false by default because we only have one tab right now
     return (
         <div className="flex flex-row justify-between">
-            <div onClick={() => onTabChange && onTabChange(TabLabel.TRIBUTE)} className={`relative cursor-pointer flex w-[380px] h-[360px] flex-col shrink-0 p-6 rounded-[10px] ${tab === TabLabel.TRIBUTE ? activeBgColor : bgColor}`}>
+            {/* <div onClick={() => onTabChange && onTabChange(TabLabel.TRIBUTE)} className={`relative cursor-pointer flex w-[380px] h-[360px] flex-col shrink-0 p-6 rounded-[10px] ${tab === TabLabel.TRIBUTE ? activeBgColor : bgColor}`}>
                 <Image alt="Rewards snapshot" src={isTributeActive ? '/images/Rewards_Light-black.svg' : '/images/Rewards_Light.svg'} width={100} height={100} />
                 <div
                     onClick={() => undefined}
@@ -30,8 +31,8 @@ export const DashboardTopModules = ({ tab, onTabChange }: {
                 <p className={`text-xl not-italic font-normal leading-[150%] ${isTributeActive ? 'text-[#080815]' : 'text-white'}`}>Your ROI on your staked stATOM</p>
                 <p className={`text-[${isTributeActive ? 'white' : '#E4B472'}] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]`}>123</p>
                 <p className={`text-[${isTributeActive ? 'white' : '#FFE1B8'}] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}>USDC EQUIVALENT</p>
-            </div>
-            <div onClick={() => onTabChange && onTabChange(TabLabel.LOCKUPS)} className={`gap-[155px] relative cursor-pointer flex w-[820px] h-[360px] flex-row shrink-0 p-6 rounded-[10px] ${tab === TabLabel.LOCKUPS || tab === TabLabel.VOTING ? activeBgColor : bgColor}`}>
+            </div> */}
+            <div onClick={() => onTabChange && onTabChange(TabLabel.LOCKUPS)} className={`gap-[155px] relative cursor-pointer flex w-[820px] h-[360px] flex-row shrink-0 p-6 rounded-[10px] ${isLockupsOrVotingActive ? activeBgColor : bgColor}`}>
                 <div className="flex flex-col">
                     <Image alt="Locked ATOM" src={isLockupsOrVotingActive ? '/images/Lock_Light-black.svg' : '/images/Lock_Light.svg'} width={100} height={100} />
                     <h3 className={`py-4 ${isLockupsOrVotingActive ? 'text-[#080815]' : 'text-white'}`}>Locked ATOM</h3>
