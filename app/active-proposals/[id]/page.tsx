@@ -55,6 +55,7 @@ const ProposalDetail = ({ params }: { params: { id: string } }) => {
     const [currentProposalTranches, setCurrentProposalTranches] = useState<Map<number, Proposal[]>>(new Map());
     const [currentProposal, setCurrentProposal] = useState<Proposal>();
     const [globalState, setGlobalState] = useState<GlobalState | { currentRound: number }>({ currentRound: 0 });
+    const { isWalletConnected, address: walletAddress } = useChain("cosmoshubtestnet");
     useEffect(() => {
         const fetchData = async () => {
             const {
@@ -145,11 +146,12 @@ const ProposalDetail = ({ params }: { params: { id: string } }) => {
                     <div className="w-full md:w-[30%] mt-6 md:mt-0 pb-10">
                         <div className="mt-auto pt-6 pb-16">
                             <Button
-                                disabled={!!hasVotedOnThisProposal}
+                                disabled={!isWalletConnected || !!hasVotedOnThisProposal}
                                 onClick={handleVoteClick}
                                 className="w-[250px] text-[#080815] text-center text-xl not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white"
                             >
-                                {!!hasVotedOnThisProposal ? 'Already Voted This' : 'Vote for Project'}
+                                {!isWalletConnected ? 'Connect wallet to vote' :
+                                    !!hasVotedOnThisProposal ? 'Already Voted This' : 'Vote for Project'}
                             </Button>
                         </div>
                         <div className="pl-6">
