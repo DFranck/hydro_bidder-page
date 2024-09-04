@@ -1,37 +1,36 @@
 'use client'
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { DataTable, makeProposalColumnDef } from "../voting-proposals/proposalTable";
 import { ProposalListTopModules } from "../dashboard/topModules/TopModules";
+import { Proposal, Tranche } from "../ts_types/HydroBase.types";
+import { Tribute } from "../ts_types/TributeBase.types";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { DataTable, makeProposalColumnDef } from "./proposalTable";
-import { Proposal, Tranche } from "../ts_types/HydroBase.types";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { GlobalState } from "../types";
-import { Tribute } from "../ts_types/TributeBase.types";
 import { fetchDashboardData } from "../dashboard/dashboardFetch";
 
-const ActiveProposals = () => {
+const DeployedLiquidity = () => {
     const [currentTranche, setCurrentTranche] = useState(0);
-    const [currentProposalTranches, setCurrentProposalTranches] = useState<Map<number, Proposal[]>>(new Map());
+    const [lastProposalTranches, setLastProposalTranches] = useState<Map<number, Proposal[]>>();
+    const [lastProposalTributes, setLastProposalTributes] = useState<Map<number, Tribute[]>>();
     const [globalState, setGlobalState] = useState<GlobalState | { tranches: Tranche[] }>({ tranches: [] });
-    const [currentProposalTributes, setCurrentProposalTributes] = useState<Map<number, Tribute[]>>(new Map());
 
     useEffect(() => {
         const fetchData = async () => {
             const {
-                currentProposalTranches,
                 globalState,
-                currentProposalTributes,
+                lastProposalTranches,
+                lastProposalTributes,
             } = await fetchDashboardData();
-            setCurrentProposalTranches(currentProposalTranches);
+
+            setLastProposalTranches(lastProposalTranches);
+            setLastProposalTributes(lastProposalTributes);
             setGlobalState(globalState);
-            setCurrentProposalTributes(currentProposalTributes);
         }
         fetchData()
             .catch(console.error);;
     }, [currentTranche]);
-
     return (
         <div className="px-[90px] pb-[90px] max-w-[1440px] mx-auto">
             <ProposalListTopModules />
@@ -45,9 +44,9 @@ const ActiveProposals = () => {
                         <Image src={'/images/Vector4.svg'} alt='tranches-right' width={24} height={40} />
                     </Button>
                 </div>
-                <h3>Proposals in Voting</h3>
-                <p className="text-xl not-italic font-normal leading-[150%]">The winning proposals will be deployed in the next round</p>
-                {currentProposalTranches.get(currentTranche) && (
+                <h3 className="pb-5">Actively Deployed Proposals</h3>
+                <p className="text-xl not-italic font-normal leading-[150%]">Winning proposals from previous rounds that are currently deployed</p>
+                {lastProposalTranches && lastProposalTributes && lastProposalTranches.get(currentTranche) && (
                     <DataTable
                         columns={[
                             {
@@ -78,11 +77,14 @@ const ActiveProposals = () => {
                                 accessorKey: "link",
                                 header: "",
                                 cell: ({ row }) => {
-                                    return (<Link href={`/active-proposals/${row.original.proposal.proposal_id}`}><Button className="bg-[#0061FF]">View Proposal</Button></Link>)
+                                    return (<Link href={`/deployed-proposals/${row.original.proposal.proposal_id}`}><Button className="bg-[#0061FF]">View Proposal</Button></Link>)
                                 }
                             }
                         ]}
-                        data={(currentProposalTranches.get(currentTranche) || []).map((proposal) => makeProposalColumnDef(proposal, currentProposalTributes.get(proposal.proposal_id)!))}
+                        data={
+                            (lastProposalTranches.get(currentTranche) || [])
+                                .map((proposal) => makeProposalColumnDef(proposal, lastProposalTributes.get(proposal.proposal_id)!))
+                        }
                     />
                 )}
             </div>
@@ -90,4 +92,4 @@ const ActiveProposals = () => {
     )
 }
 
-export default ActiveProposals;
+export default DeployedLiquidity;
