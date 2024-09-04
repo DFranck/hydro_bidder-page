@@ -7,13 +7,25 @@ function LockupSteper() {
     return (
         <Stepper>
             <Stepper.Step
-                variant="completed"
+                variant="disabled"
                 firstStep={true}
                 stepNumber="1"
-                label="Create an account"
+                label="Convert to LSM"
+                description="Convert your staked ATOM to LSM Shares on the Cosmos Hub."
             />
-            <Stepper.Step variant="active" stepNumber="2" label="Enter details" />
-            <Stepper.Step lastStep={true} stepNumber="3" label="Start building!" />
+            <Stepper.Step
+                variant="disabled"
+                stepNumber="2"
+                label="Transfer to Neutron"
+                description="Transfer to your LSM Shares to Neutron."
+            />
+            <Stepper.Step
+                lastStep={true}
+                variant="active"
+                stepNumber="3"
+                label="Get Voting Power"
+                description="Lock your LSM shares for Voting Power on Neutron."
+            />
         </Stepper>
     );
 }

@@ -1,21 +1,9 @@
 "use client"
-import { Switch } from "../../../../components/ui/switch";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 enum LockupPeriod {
     "1m" = "1m",
@@ -23,6 +11,30 @@ enum LockupPeriod {
     "6m" = "6m",
     "12m" = "12m",
 }
+
+const mockValidators = [
+    {
+        name: 'Golden Ratio Staking',
+        funds: {
+            amount: 5000,
+            denom: "atom"
+        }
+    },
+    {
+        name: 'Informal Staking',
+        funds: {
+            amount: 5000,
+            denom: "atom"
+        }
+    },
+    {
+        name: 'Ludicrously long validator name | Why? Because 😎s get attention and so on',
+        funds: {
+            amount: 10000000,
+            denom: "atom"
+        }
+    },
+]
 
 export const Convert = () => {
     const formSchema = z.object({
@@ -50,88 +62,36 @@ export const Convert = () => {
             </DialogTrigger>
             <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
                 <DialogHeader className="pb-[34px]">
-                    <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px] mb-[10px]">Step 1: Lock up your ATOM for hATOM</DialogTitle>
+                    <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px] mb-[10px]">Step 1: Select your Validator</DialogTitle>
                     <DialogDescription className="text-white/50 text-xl not-italic font-normal leading-[150%]">
-                        Stake your ATOM tokens in exchange for stATOM which you can deploy around the ecosystem. You can liquid stake half of your balance, if you’re going to LP.
+                        Lock your staked ATOM tokens for Voting Power, which you can use to vote on liquidity proposals and potentially earn rewards. Your locked ATOM will be converted to LSM shares and sent to Neutron for Voting Power. If you don’t have staked ATOM, stake them first before returning to Hydro.
                     </DialogDescription>
                 </DialogHeader>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5 mt-5 [&>*:last-child]:mt-[30px]">
-                        <FormField
-                            control={form.control}
-                            name="nativeBalance"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <div className="flex justify-start items-center gap-[10px]">
-                                        <FormControl>
-                                            <Switch />
-                                        </FormControl>
-                                        <FormLabel className="text-xl not-italic font-normal leading-[150%]">Pull from natively staked balance</FormLabel>
-                                    </div>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="lockupPeriod"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <div className=" gap-[56px] flex justify-start items-center">
-                                        <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[55px]">Lock-up period:</FormLabel>
-                                        <FormControl>
-                                            <ToggleGroup type="single" className="gap-[10px]" defaultValue={form.getValues("lockupPeriod")}>
-                                                {Object.entries(LockupPeriod).map(([value, label]) => (
-                                                    <ToggleGroupItem key={value} value={value} className="text-[#080815] text-center text-base not-italic font-medium leading-[21px] inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 bg-[rgba(255,255,255,0.40)] px-4 py-0 rounded-[100px]">
-                                                        {label}
-                                                    </ToggleGroupItem>
-                                                ))}
-                                            </ToggleGroup>
-                                        </FormControl>
-                                    </div>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="atom"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormDescription>
-                                        Amount to Stake
-                                    </FormDescription>
-                                    <div className="flex justify-between items-center">
-                                        <FormLabel className="text-xl not-italic font-normal leading-[150%]">ATOM:</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" className="flex w-[505px] h-10 items-center gap-2.5 shrink-0 border opacity-60 px-4 py-0 rounded-[10px] border-solid border-white bg-transparent" {...field} />
-                                        </FormControl>
-                                    </div>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="hatom"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormDescription>
-                                        What You’ll Get
-                                    </FormDescription>
-                                    <div className="flex justify-between items-center">
-                                        <FormLabel className="text-xl not-italic font-normal leading-[150%]">hATOM:</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" className="flex w-[505px] h-10 items-center gap-2.5 shrink-0 border opacity-60 px-4 py-0 rounded-[10px] border-solid border-white bg-transparent" {...field} />
-                                        </FormControl>
-                                    </div>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button variant='secondary'>Connect Wallet</Button>
-                    </form>
-                </Form>
+                <p className="text-xl not-italic font-bold leading-[150%]">
+                    Once locked, your ATOM remains inaccessible until the lockup expires.
+                </p>
+                <p className="text-white/50 text-xl not-italic font-semibold leading-[150%]">
+                    You can only pull from your natively staked balance.
+                </p>
+                <p className="text-white/50 text-xl not-italic font-semibold leading-[150%]">
+                    Choose the validator to pull from:
+                </p>
+                <div className="flex flex-col gap-[35px]">
+                    {mockValidators.map((validator, index) => (
+                        <div key={index} className="w-full flex justify-between items-center">
+                            <div className="flex flex-col">
+                                <p className="text-xl not-italic font-bold leading-[150%] max-w-[405px] truncate ...">
+                                    {validator.name}
+                                </p>
+                                <div className="text-white/60 text-sm not-italic font-normal leading-[150%]">
+                                    Available <span>{validator.funds.amount.toLocaleString('en-US')} </span>
+                                    <span className="uppercase">{validator.funds.denom}</span>
+                                </div>
+                            </div>
+                            <Button className="h-[48px] px-6 rounded-[10px] text-[#080815] text-center text-xl not-italic font-medium leading-[21px]" variant="secondary">Select</Button>
+                        </div>
+                    ))}
+                </div>
             </DialogContent>
         </Dialog>
 
