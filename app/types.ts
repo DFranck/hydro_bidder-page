@@ -25,6 +25,5 @@ export type GlobalState = {
 };
 export type RoundState = {
     roundEnd: Timestamp;
-    // TODO: This is a large number so we should use a large number library
-    totalVotingPower: number;
+    totalVotingPower: BigInt;
 };

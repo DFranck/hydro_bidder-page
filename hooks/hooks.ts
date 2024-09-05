@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { HydroBaseQueryClient, HydroBaseClient } from '../app/ts_types/HydroBase.client';
 import { TributeBaseQueryClient } from '../app/ts_types/TributeBase.client';
 import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr } from '../app/ts_types/HydroBase.types';
+import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, VoteWithPower, Addr } from '../app/ts_types/HydroBase.types';
 import { Tribute } from '../app/ts_types/TributeBase.types';
 import { GlobalState, RoundState } from '../app/types';
 import { topNProposals, mockGlobalState, mockTributes, mockVotes, mockAllLockEntries, mockExpiredLockEntries } from "../app/mockData"
@@ -18,7 +18,7 @@ const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
     return clientInstance;
 };
 
-const hydroContractAddress = 'neutron170q77yl3qfxyu43edpgc4u546mtp3jwwhxal3ujy79qw7qp6kgmszyuarv';
+const hydroContractAddress = 'neutron13wqp5t3xxlwer9mq9mmrfa3j0vfn06cfs3r5kdaz2sp97vpqdmeqwm2p7y';
 const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
 const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
 const numberOfProposals = 5;
@@ -31,56 +31,45 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await getCosmWasmClient();
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
-    // TODO: commented this out and mocked it
-    // const [constants, currentRound, totalLockedTokens, tranches, whitelistAdmins, whitelist] = await Promise.all([
-    //     hydroQueryClient.constants().then((response) => response.constants),
-    //     hydroQueryClient.currentRound().then((response) => response.round_id),
-    //     hydroQueryClient.totalLockedTokens().then((response) => response.total_locked_tokens),
-    //     hydroQueryClient.tranches().then((response) => response.tranches),
-    //     hydroQueryClient.whitelistAdmins().then((response) => response.admins),
-    //     hydroQueryClient.whitelist().then((response) => response.whitelist),
-    // ]);
+    const [constants, currentRound, totalLockedTokens, tranches, whitelistAdmins, whitelist] = await Promise.all([
+        hydroQueryClient.constants().then((response) => response.constants),
+        hydroQueryClient.currentRound().then((response) => response.round_id),
+        hydroQueryClient.totalLockedTokens().then((response) => response.total_locked_tokens),
+        hydroQueryClient.tranches().then((response) => response.tranches),
+        hydroQueryClient.whitelistAdmins().then((response) => response.admins),
+        hydroQueryClient.whitelist().then((response) => response.whitelist),
+    ]);
 
-    // return {
-    //     constants,
-    //     currentRound,
-    //     totalLockedTokens,
-    //     tranches,
-    //     whitelistAdmins,
-    //     whitelist,
-    // };
-
-    return mockGlobalState;
+    return {
+        constants,
+        currentRound,
+        totalLockedTokens,
+        tranches,
+        whitelistAdmins,
+        whitelist,
+    };
 }
 
 export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
     const client = await getCosmWasmClient();
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
-    // TODO: commented this out and mocked it
-    // const [roundEnd, totalVotingPower] = await Promise.all([
-    //     hydroQueryClient.roundEnd({ roundId }).then((response) => response.round_end),
-    //     hydroQueryClient.roundTotalVotingPower({ roundId }).then((response) => response.total_voting_power),
-    // ])
+    const [roundEnd, totalVotingPower] = await Promise.all([
+        hydroQueryClient.roundEnd({ roundId }).then((response) => response.round_end),
+        hydroQueryClient.roundTotalVotingPower({ roundId }).then((response) => response.total_voting_power),
+    ])
 
     return {
-        roundEnd: "",
-        // TODO: This is a large number so we should use a large number library
-        totalVotingPower: 100,
+        roundEnd,
+        totalVotingPower: BigInt(totalVotingPower),
     }
 }
 
 export const fetchProposals = async (roundId: number, trancheId: number): Promise<Proposal[]> => {
     const client = await getCosmWasmClient();
     const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
-
-    // TODO: commented this out and mocked it
-    // const proposals = await hydroQueryClient.topNProposals({ numberOfProposals, roundId, trancheId })
-    //     .then((response) => response.proposals);
-
-
-
-    return topNProposals[roundId][trancheId].slice(0, numberOfProposals);
+    const response = await hydroQueryClient.topNProposals({ numberOfProposals, roundId, trancheId });
+    return response.proposals;
 };
 
 export const fetchProposalTributes = async (roundId: number, trancheId: number, proposalId: number): Promise<Tribute[]> => {
@@ -139,27 +128,27 @@ export const ibcDenomToToken: Record<string, string> = {
 
 export const fetchMyVotes = async (myAddress: string, roundId: number, trancheIds: number[]) => {
     const client = await getCosmWasmClient();
-    // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
-    // const votePromises = trancheIds.map(trancheId =>
-    //     hydroQueryClient.userVote({
-    //         address: myAddress,
-    //         roundId: roundId,
-    //         trancheId: trancheId
-    //     })
-    // );
+    const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
+    const votePromises = trancheIds.map(trancheId =>
+        hydroQueryClient.userVote({
+            address: myAddress,
+            roundId: roundId,
+            trancheId: trancheId
+        })
+    );
 
-    // mock vote promises
-    const votePromises = trancheIds.map(trancheId => {
-        return {
-            vote: mockVotes[trancheId]
-        }
-    });
+    // // mock vote promises
+    // const votePromises = trancheIds.map(trancheId => {
+    //     return {
+    //         vote: mockVotes[trancheId]
+    //     }
+    // });
 
     const votes = await Promise.all(votePromises);
 
     const votesByTranche = trancheIds.reduce(
         (acc, trancheId, index) => acc.set(trancheId, votes[index].vote),
-        new Map<number, Vote>()
+        new Map<number, VoteWithPower>()
     );
 
     return votesByTranche;
@@ -167,27 +156,22 @@ export const fetchMyVotes = async (myAddress: string, roundId: number, trancheId
 
 export const fetchMyAllLockups = async (myAddress: string) => {
     const client = await getCosmWasmClient();
-    // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
-    // const lockups = await hydroQueryClient.allUserLockups({ address: myAddress, limit, startFrom });
-    // return lockups.lockups;
-
-    // Mock implementation for fetchMyAllLockups
-    return mockAllLockEntries;
+    const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
+    const lockups = await hydroQueryClient.allUserLockups({ address: myAddress, limit, startFrom });
+    return lockups.lockups;
 }
 
 export const fetchMyExpiredLockups = async (myAddress: string) => {
     const client = await getCosmWasmClient();
-    // const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
+    const hydroQueryClient = new HydroBaseQueryClient(client, hydroContractAddress);
 
-    // const response = await hydroQueryClient.expiredUserLockups({ 
-    //     address: myAddress, 
-    //     limit, 
-    //     startFrom 
-    // });
-    // return response.lockups;
+    const response = await hydroQueryClient.expiredUserLockups({
+        address: myAddress,
+        limit,
+        startFrom
+    });
+    return response.lockups;
 
-    // Mock implementation for fetchMyExpiredLockups
-    return mockExpiredLockEntries;
 }
 
 export const useMyVotes = (myAddress: string, roundId: number, trancheIds: number[]) => {
