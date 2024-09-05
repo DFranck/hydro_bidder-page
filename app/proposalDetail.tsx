@@ -16,6 +16,7 @@ import { useChain } from "@cosmos-kit/react";
 import { Proposal } from "@/app/ts_types/HydroBase.types";
 import { ChevronLeft } from 'lucide-react';
 import { ProposalListTopModules } from "@/app/dashboard/topModules/TopModules";
+import Markdown from "react-markdown";
 
 const mockData = {
     tributeToVoters: [
@@ -72,6 +73,7 @@ const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal,
         hasVoted ? setShowChangeVote(true) : doVote();
     }
 
+    console.log(currentProposal.description)
     const ChangeVote = () => {
         return (
             <Dialog open={showChangeVote} onOpenChange={setShowChangeVote}>
@@ -107,13 +109,12 @@ const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal,
                         </Link>
                         <div className="flex flex-row gap-5 items-center pb-5">
                             <Image src={'/images/icon_Boost.svg'} width={50} height={50} alt="Icon" />
-                            <p className="text-2xl not-italic font-bold leading-[150%]">Super long proposal name that should wrap and then be cut off but not anymore on the detail</p>
+                            <p className="text-2xl not-italic font-bold leading-[150%]">{currentProposal.title}</p>
                         </div>
                         <div className="">
                             <p className="text-sm not-italic font-normal opacity-80">Project Overview</p>
                             <div className="text-xl not-italic font-normal pb-15">
-                                <p>
-                                    Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation. Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation. Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation. Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation. Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation. Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation.  Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation.  Hydro provides a unique opportunity to project to access liquidity and gain exposure, while rewarding ATOM holders for their participation.                            </p>
+                                <Markdown>{currentProposal.description}</Markdown>
                             </div>
                         </div>
                     </div>
