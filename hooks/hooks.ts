@@ -19,7 +19,7 @@ const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
 };
 
 const hydroContractAddress = 'neutron13wqp5t3xxlwer9mq9mmrfa3j0vfn06cfs3r5kdaz2sp97vpqdmeqwm2p7y';
-const tributeContractAdress = 'neutron1qydlxxz4ze6m5k6v7xqg0wnuzuuxaxhghvhtwvs34qaku24nhltse3hm7p';
+const tributeContractAdress = 'neutron1duww23zf05mtxwcvaq9pkalq0h4pg0yn7chmqt227gzvaz0r7jyq72fd0e';
 const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443";
 const numberOfProposals = 5;
 const staleTime = 10000;
@@ -76,28 +76,31 @@ export const fetchProposalTributes = async (roundId: number, trancheId: number, 
     const client = await getCosmWasmClient();
     const tributeQueryClient = new TributeBaseQueryClient(client, tributeContractAdress);
 
-    // TODO: commented this out and mocked it
-    // const tributes = await tributeQueryClient.proposalTributes({
-    //     roundId,
-    //     trancheId,
-    //     proposalId,
-    //     limit: 10,
-    //     startFrom: 0
-    // })
+    console.log(`Fetching proposal tributes for roundId: ${roundId}, trancheId: ${trancheId}, proposalId: ${proposalId}`);
 
-    // return tributes.tributes;
+    const query = {
+        roundId,
+        trancheId,
+        proposalId,
+        limit: 10,
+        startFrom: 0
+    };
 
-    // Mock implementation for fetchProposalTributes
-    let tributes = mockTributes[roundId]?.[trancheId]?.[proposalId] || [];
+    console.log('Query:', JSON.stringify(query, null, 2));
+
+    const tributes = await tributeQueryClient.proposalTributes(query);
 
     // Replace IBC denoms with token names
-    return tributes.map(tribute => ({
+    const tribute = tributes.tributes.map(tribute => ({
         ...tribute,
         funds: {
             ...tribute.funds,
             denom: ibcDenomToToken[tribute.funds.denom] || tribute.funds.denom
         }
     }));
+
+    console.log('Tributes result:', JSON.stringify(tribute, null, 2));
+    return tribute;
 }
 
 export const useProposals = (roundId: number, trancheId: number) => {
@@ -123,7 +126,8 @@ export const ibcDenomToToken: Record<string, string> = {
     "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9": "JUNO",
     "ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4": "SCRT",
     "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858": "USDC",
-    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": "USDT"
+    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": "USDT",
+    "untrn": "NTRN"
 };
 
 export const fetchMyVotes = async (myAddress: string, roundId: number, trancheIds: number[]) => {
