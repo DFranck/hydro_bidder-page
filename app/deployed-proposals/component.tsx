@@ -26,11 +26,11 @@ const DeployedLiquidity = ({
             <ProposalListTopModules />
             <div className="mt-14 relative">
                 <div className="p-5 absolute flex flex-row gap-[18px] justify-between items-center w-[380px] border rounded-[40px] border-solid border-[#FFE1B8] right-0">
-                    <Button variant='ghost' className="hover:bg-transparent text-[#E4B472]" size="icon" onClick={() => setCurrentTranche((currentTranche - 1 + globalState.tranches.length) % globalState.tranches.length)}>
+                    <Button variant='ghost' className="hover:bg-transparent text-[#E4B472]" size="icon" onClick={() => setCurrentTranche(currentTranche > 1 ? currentTranche - 1 : globalState.tranches.length)}>
                         <Image src={'/images/Vector3.svg'} alt='tranches-left' width={24} height={40} />
                     </Button>
-                    <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]  text-[#E4B472]">{`TRANCH ${currentTranche + 1}/${globalState.tranches.length}`}</p>
-                    <Button variant="ghost" className="hover:bg-transparent  text-[#E4B472]" size="icon" onClick={() => setCurrentTranche((currentTranche + 1) % globalState.tranches.length)}>
+                    <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]  text-[#E4B472]">{`TRANCHE ${currentTranche}/${globalState.tranches.length}`}</p>
+                    <Button variant="ghost" className="hover:bg-transparent  text-[#E4B472]" size="icon" onClick={() => setCurrentTranche(currentTranche < globalState.tranches.length ? currentTranche + 1 : 1)}>
                         <Image src={'/images/Vector4.svg'} alt='tranches-right' width={24} height={40} />
                     </Button>
                 </div>
