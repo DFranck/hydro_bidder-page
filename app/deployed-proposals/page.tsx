@@ -1,7 +1,7 @@
 import { fetchDashboardData } from "../dashboard/dashboardFetch";
 import DeployedLiquidity from "./component";
 
-export default async () => {
+const Page = async () => {
     const {
         globalState,
         lastProposalTranches,
@@ -16,3 +16,4 @@ export default async () => {
         />
     )
 }
+export default Page;

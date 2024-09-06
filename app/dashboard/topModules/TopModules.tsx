@@ -63,17 +63,17 @@ export const ProposalListTopModules = () => {
     return (
         <div className="flex flex-row justify-between">
             <div className={`flex w-[380px] h-[206px] flex-col shrink-0 p-6 rounded-[10px] ${bgColor}`}>
-                <h3 className={`pb-4 text-white whitespace-pre-wrap`}>Current Round Tribute Value</h3>
+                <h3 className={`pb-4 text-white whitespace-pre-wrap`}>Current Round <br />Tribute Value</h3>
                 <p className={`text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px]`}>{12345.67.toLocaleString('en-US', { maximumFractionDigits: 2, style: "currency", currency: "USD" })}</p>
                 <p className={`text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}>USDC EQUIVALENT</p>
             </div>
             <div className={`flex w-[380px] h-[206px] flex-col shrink-0 p-6 rounded-[10px] ${bgColor}`}>
-                <h3 className={`pb-4 text-white whitespace-pre-wrap`}>Current Round Time Remaining</h3>
+                <h3 className={`pb-4 text-white whitespace-pre-wrap`}>Current Round <br />Time Remaining</h3>
                 <p className={`text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px]`}>{'00:10'}</p>
                 <p className={`text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}>DAYS: HOURS</p>
             </div>
             <div className={`flex w-[380px] h-[206px] flex-col shrink-0 p-6 rounded-[10px] ${bgColor}`}>
-                <h3 className={`pb-4 text-white whitespace-pre-wrap`}>Total Locked{'\n'}ATOM</h3>
+                <h3 className={`pb-4 text-white whitespace-pre-wrap`}>Total Locked<br />ATOM</h3>
                 <p className={`text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px]`}>{12345.00.toLocaleString('en-US', { maximumFractionDigits: 2 })}</p>
                 <p className={`text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}>$1,200,534 USDC Equivalent</p>
             </div>

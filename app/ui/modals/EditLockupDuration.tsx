@@ -33,6 +33,7 @@ const formSchema = z.object({
   lockupPeriod: z.nativeEnum(LockupPeriod),
   statom: z.string(),
   hatom: z.coerce.number().min(0),
+  validator: z.string(),
 });
 
 type EditLockupDurationProps = {
@@ -50,6 +51,7 @@ export const EditLockupDuration = ({
       lockupPeriod: LockupPeriod["1m"],
       statom: (parseFloat(lockup.funds.amount) / 1000000).toFixed(2),
       hatom: 0,
+      validator: "Golden Ratio Staking",
     },
   });
 

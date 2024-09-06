@@ -1,7 +1,7 @@
 import { fetchDashboardData } from "../dashboard/dashboardFetch";
 import ActiveProposals from "./component";
 
-export default async () => {
+const Page = async () => {
     const {
         currentProposalTranches,
         globalState,
@@ -16,3 +16,5 @@ export default async () => {
         />
     )
 }
+
+export default Page;

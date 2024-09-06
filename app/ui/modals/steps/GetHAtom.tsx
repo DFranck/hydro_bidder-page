@@ -59,24 +59,18 @@ export const GetHAtom: React.FC<{ action?: () => void }> = ({ action }) => {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-[30px] mt-5">
-                        <FormField
-                            control={form.control}
-                            name="validator"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormDescription>
-                                        Your selected validator:
-                                    </FormDescription>
-                                    <div className="flex items-center gap-[38px]">
-                                        <Button variant='ghost' className="hover:bg-transparent pl-0">
-                                            <Image src='./images/Chevron-Left.svg' alt="back-validator" width={16} height={27} />
-                                        </Button>
-                                        <p className="text-white/50 text-xl not-italic font-normal leading-[150%]">{form.watch("validator")}</p>
-                                    </div>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="space-y-2">
+                            <FormDescription>
+                                Your selected validator:
+                            </FormDescription>
+                            <div className="flex items-center gap-[38px]">
+                                <Button variant='ghost' className="hover:bg-transparent pl-0">
+                                    <Image src='./images/Chevron-Left.svg' alt="back-validator" width={16} height={27} />
+                                </Button>
+                                <p className="text-white/50 text-xl not-italic font-normal leading-[150%]">{form.watch("validator")}</p>
+                            </div>
+                            <FormMessage />
+                        </div>
                         <FormField
                             control={form.control}
                             name="atom"

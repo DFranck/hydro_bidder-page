@@ -3,7 +3,7 @@ import { fetchDashboardData } from "@/app/dashboard/dashboardFetch";
 import ProposalDetail from '../../proposalDetail';
 
 
-export default async ({ params }: { params: { id: string } }) => {
+const Page = async ({ params }: { params: { id: string } }) => {
     const {
         currentProposalTranches,
         globalState,
@@ -27,3 +27,5 @@ export default async ({ params }: { params: { id: string } }) => {
         </div>
     )
 };
+
+export default Page;

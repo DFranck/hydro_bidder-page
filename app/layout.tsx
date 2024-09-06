@@ -1,6 +1,5 @@
 'use client';
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from 'next/font/local'
 import "./globals.css";
 import { GoogleTagManager } from "@next/third-parties/google";
 
@@ -11,7 +10,16 @@ import Script from "next/script";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = localFont({
+  src: "../public/fonts/Inter/Inter-VariableFont_opsz,wght.ttf",
+  display: "swap",
+  declarations: [
+    {
+      prop: "font-feature-settings",
+      value: '"zero" 1',
+    },
+  ],
+});
 
 export default function RootLayout({
   children,

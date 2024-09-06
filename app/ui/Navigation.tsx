@@ -26,10 +26,10 @@ export default function Navigation() {
         return "javascript:;";
     }
 
-    const navigationMenuTriggerStyle = (link: string) => `text-[#FFE1B8] hover:text-[#FFE1B8] focus:text-[#FFE1B8] focus:bg-transparent text-sm not-italic font-medium leading-10 tracking-[0.07px] ${pathname === link ? 'underline' : ''} bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent`;
+    const navigationMenuTriggerStyle = (link: string) => `text-[#FFE1B8] hover:text-[#FFE1B8] focus:text-[#FFE1B8] focus:bg-transparent text-sm font-medium leading-tight tracking-tight ${pathname === link ? 'underline' : ''} bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent`;
     const navigationSubMenuTriggerStyle = (param: string) => `text-[${isWalletConnected ? '#FFE1B8' : '#646464'}] hover:text-[${isWalletConnected ? '#FFE1B8' : '#646464'}] focus:text-[${isWalletConnected ? '#FFE1B8' : '#646464'}] focus:bg-transparent text-sm not-italic font-medium leading-10 tracking-[0.07px] ${tab === param ? 'underline' : ''} bg-transparent hover:bg-transparent`;
     return (
-        <NavigationMenu style={{ fontFamily: 'Inter' }}>
+        <NavigationMenu>
             <NavigationMenuList className="flex flex-row items-center justify-between gap-6">
                 <NavigationMenuItem>
                     <Link href="/voting-proposals" legacyBehavior passHref aria-disabled={true}>
