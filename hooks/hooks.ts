@@ -76,8 +76,6 @@ export const fetchProposalTributes = async (roundId: number, trancheId: number, 
     const client = await getCosmWasmClient();
     const tributeQueryClient = new TributeBaseQueryClient(client, tributeContractAdress);
 
-    console.log(`Fetching proposal tributes for roundId: ${roundId}, trancheId: ${trancheId}, proposalId: ${proposalId}`);
-
     const query = {
         roundId,
         trancheId,
@@ -85,8 +83,6 @@ export const fetchProposalTributes = async (roundId: number, trancheId: number, 
         limit: 10,
         startFrom: 0
     };
-
-    console.log('Query:', JSON.stringify(query, null, 2));
 
     const tributes = await tributeQueryClient.proposalTributes(query);
 

@@ -17,55 +17,27 @@ import { Proposal } from "@/app/ts_types/HydroBase.types";
 import { ChevronLeft } from 'lucide-react';
 import { ProposalListTopModules } from "@/app/dashboard/topModules/TopModules";
 import Markdown from "react-markdown";
+import { sumTributeAmounts } from "./proposalTable";
+import { Tribute } from "@/app/ts_types/TributeBase.types";
 
-const mockData = {
-    tributeToVoters: [
-        {
-            amount: 100000,
-            denom: "OSMO",
-        },
-        {
-            amount: 90,
-            denom: "USDT",
-        },
-        {
-            amount: 500,
-            denom: "USDC",
-        },
-        {
-            amount: 2000,
-            denom: "STARZ",
-        },
-    ],
-
-    liquidityRequested: [
-        {
-            amount: 200000,
-            denom: "ATOM",
-        }
-    ],
-    currentVotePercentage: 32,
-    status: 'Open',
-    totalVotingPower: 100,
-}
-
-const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal, deployed }: {
+const ProposalDetail = ({ globalState, proposalTranches, proposal, tributes, deployed }: {
     globalState: { currentRound: number },
-    currentProposalTranches: Map<number, Proposal[]>,
-    currentProposal: Proposal,
+    proposalTranches: Map<number, Proposal[]>,
+    proposal: Proposal,
+    tributes: Tribute[],
     deployed: boolean
 }) => {
     const { isWalletConnected, address, getSigningCosmWasmClient, estimateFee } = useChain('cosmoshubtestnet');
-    const { data: myVotes = [] } = useMyVotes(address || '', globalState.currentRound, Array.from(currentProposalTranches.keys()));
+    const { data: myVotes = [] } = useMyVotes(address || '', globalState.currentRound, Array.from(proposalTranches.keys()));
 
     const hasVoted = Array.from(myVotes).length > 0;
-    const hasVotedOnThisProposal = Array.from(myVotes.values()).flat().find(vote => vote.prop_id === Number(currentProposal.proposal_id));
+    const hasVotedOnThisProposal = Array.from(myVotes.values()).flat().find(vote => vote.prop_id === Number(proposal.proposal_id));
 
     const [showChangeVote, setShowChangeVote] = useState(false);
 
     function doVote() {
-        if (currentProposal) {
-            executeVote(getSigningCosmWasmClient, estimateFee, address!, currentProposal.proposal_id, currentProposal.tranche_id);
+        if (proposal) {
+            executeVote(getSigningCosmWasmClient, estimateFee, address!, proposal.proposal_id, proposal.tranche_id);
         }
     }
 
@@ -73,7 +45,6 @@ const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal,
         hasVoted ? setShowChangeVote(true) : doVote();
     }
 
-    console.log(currentProposal.description)
     const ChangeVote = () => {
         return (
             <Dialog open={showChangeVote} onOpenChange={setShowChangeVote}>
@@ -109,12 +80,12 @@ const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal,
                         </Link>
                         <div className="flex flex-row gap-5 items-center pb-5">
                             <Image src={'/images/icon_Boost.svg'} width={50} height={50} alt="Icon" />
-                            <p className="text-2xl not-italic font-bold leading-[150%]">{currentProposal.title}</p>
+                            <p className="text-2xl not-italic font-bold leading-[150%]">{proposal.title}</p>
                         </div>
                         <div className="">
                             <p className="text-sm not-italic font-normal opacity-80">Project Overview</p>
                             <div className="text-xl not-italic font-normal pb-15">
-                                <Markdown>{currentProposal.description}</Markdown>
+                                <Markdown>{proposal.description.replace(/\\n/g, "\n")}</Markdown>
                             </div>
                         </div>
                     </div>
@@ -134,27 +105,23 @@ const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal,
                         <div className="pl-6">
                             <div className="pb-6">
                                 <p className="text-sm not-italic font-normal leading-[150%] opacity-80">Tribute to Voters</p>
-                                {mockData.tributeToVoters.map((item, index) => (
-                                    <p key={index} className="text-xl not-italic font-bold leading-[150%]">{item.amount.toLocaleString('en-US')} {item.denom}</p>
-                                ))}
-                            </div>
-                            <div className="pb-6">
-                                <p className="text-sm not-italic font-normal leading-[150%] opacity-80">Liquidity Requested</p>
-                                {mockData.liquidityRequested.map((item, index) => (
-                                    <p key={index} className="text-xl not-italic font-bold leading-[150%]">{item.amount.toLocaleString('en-US')} {item.denom}</p>
-                                ))}
+                                {sumTributeAmounts(tributes).length > 0 ? (
+                                    sumTributeAmounts(tributes).map((tribute, index) => (
+                                        <p key={index} className="text-xl not-italic font-bold leading-[150%]">
+                                            {`${(tribute.amount / 1000000).toFixed(2)} ${tribute.denom.length > 20 ? tribute.denom.slice(0, 17) + '...' : tribute.denom}`}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <p className="text-xl not-italic font-bold leading-[150%]">None</p>
+                                )}
                             </div>
                             <div className="pb-6">
                                 <p className="text-sm not-italic font-normal leading-[150%] opacity-80">Current Vote Percentage</p>
-                                <p className="text-xl not-italic font-bold leading-[150%]">{mockData.currentVotePercentage}%</p>
+                                <p className="text-xl not-italic font-bold leading-[150%]">{proposal.percentage}%</p>
                             </div>
                             <div className="pb-6">
                                 <p className="text-sm not-italic font-normal leading-[150%] opacity-80">Status</p>
-                                <p className="text-[#00FFC2] text-xl not-italic font-bold leading-[150%]">{mockData.status}</p>
-                            </div>
-                            <div className="pb-6">
-                                <p className="text-sm not-italic font-normal leading-[150%] opacity-80">Total Voting Power</p>
-                                <p className="text-xl not-italic font-bold leading-[150%]">{mockData.totalVotingPower}</p>
+                                <p className="text-[#00FFC2] text-xl not-italic font-bold leading-[150%]">{deployed ? 'Deployed' : 'In voting'}</p>
                             </div>
                         </div>
                     </div>
