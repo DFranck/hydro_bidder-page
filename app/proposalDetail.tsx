@@ -89,7 +89,7 @@ const ProposalDetail = ({ globalState, currentProposalTranches, currentProposal,
                     </Button>
                     <DialogClose asChild>
                         <Button type="button" variant="outline" className="w-full border rounded-[10px] border-solid border-white hover:bg-white hover:text-black">
-                            Don't change my vote
+                            Don`&apos;`t change my vote
                         </Button>
                     </DialogClose>
                 </DialogContent>

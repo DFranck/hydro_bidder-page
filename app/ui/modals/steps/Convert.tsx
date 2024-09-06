@@ -28,7 +28,7 @@ const mockValidators = [
         }
     },
     {
-        name: 'Ludicrously long validator name | Why? Because 😎s get attention and so on',
+        name: 'Ludicrously long validator name | Why? Because 😎s get attention and so on and on and on and on',
         funds: {
             amount: 10000000,
             denom: "atom"
@@ -80,7 +80,7 @@ export const Convert = () => {
                     {mockValidators.map((validator, index) => (
                         <div key={index} className="w-full flex justify-between items-center">
                             <div className="flex flex-col">
-                                <p className="text-xl not-italic font-bold leading-[150%] max-w-[405px] truncate ...">
+                                <p className="text-xl not-italic font-bold leading-[150%] max-w-[405px] line-clamp-2">
                                     {validator.name}
                                 </p>
                                 <div className="text-white/60 text-sm not-italic font-normal leading-[150%]">

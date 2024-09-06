@@ -82,15 +82,15 @@
     @apply bg-background text-foreground;
   }
   h1 {
-    @apply text-[65px] not-italic font-bold leading-[120%] tracking-[-2.6px];
+    @apply text-[65px] font-bold leading-[78px] tracking-[-2.6px];
   }
 
   h2 {
-    @apply text-[40px] not-italic font-bold leading-[120%] tracking-[-1.2px];
+    @apply text-[40px] font-bold leading-[48px] tracking-[-1.2px];
   }
 
   h3 {
-    @apply text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px];
+    @apply text-[32px] font-bold leading-[38.40px] tracking-[-0.4px];
   }
 
 }

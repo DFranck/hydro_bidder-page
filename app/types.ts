@@ -1,4 +1,4 @@
-import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr } from './ts_types/HydroBase.types';
+import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Addr } from './ts_types/HydroBase.types';
 
 // AllUserLockups
 // Constants
@@ -16,7 +16,7 @@ import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr
 // WhitelistAdmins
 // Whitelist
 export type GlobalState = {
-    constants: Constants;
+    constants: Partial<Constants>;
     currentRound: number;
     totalLockedTokens: number;
     tranches: Tranche[];

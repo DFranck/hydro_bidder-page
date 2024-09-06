@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HorizontalDivider } from "../ui/HorizontalDivider"
 import { useCallback, useState, useEffect, useMemo } from "react"
-import { LockEntry, Proposal, Vote } from '../ts_types/HydroBase.types';
+import { LockEntry, Proposal } from '../ts_types/HydroBase.types';
 import { GlobalState } from '../types';
 import { useChain } from "@cosmos-kit/react"
 import { Tribute } from "../ts_types/TributeBase.types"
@@ -25,10 +25,10 @@ export default function Dashboard({
     lastProposalTributes,
 }: {
     currentProposalTranches: Map<number, Proposal[]>,
-    currentVotingPower: number,
+    currentVotingPower: BigInt,
     currentProposalTributes: Map<number, Tribute[]>,
     lastProposalTranches?: Map<number, Proposal[]>,
-    lastVotingPower?: number,
+    lastVotingPower?: BigInt,
     lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState,
 }) {
@@ -151,7 +151,7 @@ function Lockups({ onEditLockup, walletAddress }: { onEditLockup: (lockup: LockE
 
     return <div>
         <h3>My Lockups</h3>
-        {myLockups && (
+        {myLockups ? (
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -180,7 +180,8 @@ function Lockups({ onEditLockup, walletAddress }: { onEditLockup: (lockup: LockE
                     ))}
                 </TableBody>
             </Table>
-        )}
+        ) :
+            <p className="text-gray-400">No lockups found</p>}
     </div>
 }
 

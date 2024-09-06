@@ -36,7 +36,7 @@ const ActiveProposals = ({
                     </Button>
                 </div>
                 <h3>Proposals in Voting</h3>
-                <p className="text-xl not-italic font-normal leading-[150%]">The winning proposals will be deployed in the next round</p>
+                <p className="text-xl not-italic font-normal leading-[150%] max-w-[515px] pt-[14px]">The winning proposal from each tranche will deployed in the next round.</p>
                 {currentProposalTranches.get(currentTranche) && (
                     <DataTable
                         columns={[

@@ -1,4 +1,4 @@
-import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, Vote, Addr } from './ts_types/HydroBase.types';
+import { Tranche, Constants, Proposal, LockEntry, Timestamp, Uint128, VoteWithPower, Addr } from './ts_types/HydroBase.types';
 import { RoundState, GlobalState } from './types'
 import { Tribute } from './ts_types/TributeBase.types';
 
@@ -778,11 +778,11 @@ export const mockTributes: Record<number, Record<number, Record<number, Tribute[
 export const mockRoundStates: RoundState[] = [
     {
         roundEnd: "1675209599000", // 2023-01-31T23:59:59.000Z
-        totalVotingPower: 20000000, // Max of total_power from tranches in round 0
+        totalVotingPower: BigInt(20000000), // Max of total_power from tranches in round 0
     },
     {
         roundEnd: "1677628799000", // 2023-02-28T23:59:59.000Z
-        totalVotingPower: 20000000, // Max of total_power from tranches in round 1
+        totalVotingPower: BigInt(20000000), // Max of total_power from tranches in round 1
     },
 ];
 
@@ -841,7 +841,7 @@ export const mockGlobalState: GlobalState = {
 //     amount: Uint128;
 //     denom: string;
 //   }
-export const mockVotes: Record<number, Vote> = {
+export const mockVotes: Record<number, VoteWithPower> = {
     0: { // ATOM Tranche
         power: "1000000",
         prop_id: 21
@@ -854,6 +854,7 @@ export const mockVotes: Record<number, Vote> = {
 
 export const mockAllLockEntries: LockEntry[] = [
     {
+        lock_id: 0,
         funds: {
             amount: "1000000000",
             denom: "uatom"
@@ -862,6 +863,7 @@ export const mockAllLockEntries: LockEntry[] = [
         lock_end: "1738281600000000000"
     },
     {
+        lock_id: 1,
         funds: {
             amount: "750000000",
             denom: "uatom"
@@ -870,6 +872,7 @@ export const mockAllLockEntries: LockEntry[] = [
         lock_end: "1746144000000000000"
     },
     {
+        lock_id: 2,
         funds: {
             amount: "500000000",
             denom: "uatom"
@@ -878,6 +881,7 @@ export const mockAllLockEntries: LockEntry[] = [
         lock_end: "1751414400000000000"
     },
     {
+        lock_id: 3,
         funds: {
             amount: "2000000000",
             denom: "uatom"
@@ -886,6 +890,7 @@ export const mockAllLockEntries: LockEntry[] = [
         lock_end: "1708560000000000000"
     },
     {
+        lock_id: 4,
         funds: {
             amount: "1500000000",
             denom: "uatom"
@@ -897,6 +902,7 @@ export const mockAllLockEntries: LockEntry[] = [
 
 export const mockExpiredLockEntries: LockEntry[] = [
     {
+        lock_id: 0,
         funds: {
             amount: "2000000000",
             denom: "uatom"
@@ -905,6 +911,7 @@ export const mockExpiredLockEntries: LockEntry[] = [
         lock_end: "2024-02-22T00:00:00Z"
     },
     {
+        lock_id: 1,
         funds: {
             amount: "1500000000",
             denom: "uatom"
