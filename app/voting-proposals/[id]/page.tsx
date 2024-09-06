@@ -6,6 +6,7 @@ import ProposalDetail from '../../proposalDetail';
 const Page = async ({ params }: { params: { id: string } }) => {
     const {
         currentProposalTranches,
+        currentProposalTributes,
         globalState,
     } = await fetchDashboardData();
 
@@ -15,10 +16,11 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
     return currentProposal ? (
         <ProposalDetail
-            currentProposal={currentProposal}
+            proposal={currentProposal}
             globalState={globalState}
-            currentProposalTranches={currentProposalTranches}
+            proposalTranches={currentProposalTranches}
             deployed={false}
+            tributes={currentProposalTributes.get(currentProposal.proposal_id)!}
         />
     ) : (
         <div className="text-center py-8">

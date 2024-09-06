@@ -105,7 +105,7 @@ export function makeProposalColumnDef(proposal: Proposal, tributes: Tribute[]): 
 // 
 // The returned array maintains the original order of token appearance and
 // provides a clear summary of total tributes per token type.
-function sumTributeAmounts(tributes: Tribute[]): { denom: string, amount: number }[] {
+export function sumTributeAmounts(tributes: Tribute[]): { denom: string, amount: number }[] {
     // Sum up tributes by denom, maintaining order of first appearance
     const denomSums = new Map<string, number>();
     const denomOrder: string[] = [];

@@ -5,20 +5,30 @@ import ProposalDetail from '@/app/proposalDetail';
 
 const Page = async ({ params }: { params: { id: string } }) => {
     const {
-        currentProposalTranches,
+        lastProposalTranches,
         globalState,
+        lastProposalTributes,
     } = await fetchDashboardData();
 
-    const currentProposal = Array.from(currentProposalTranches.values())
+
+    if (!lastProposalTranches || !lastProposalTributes) {
+        return <div className="text-center py-8">
+            <h2 className="text-2xl font-bold text-red-500">Error: Proposal not found</h2>
+            <p className="mt-2 text-gray-600">The requested proposal could not be found.</p>
+        </div>
+    }
+
+    const lastProposal = Array.from(lastProposalTranches.values())
         .flat()
         .find(proposal => proposal.proposal_id === Number(params.id));
 
-    return currentProposal ? (
+    return lastProposal ? (
         <ProposalDetail
-            currentProposal={currentProposal}
+            proposal={lastProposal}
             globalState={globalState}
-            currentProposalTranches={currentProposalTranches}
+            proposalTranches={lastProposalTranches}
             deployed={true}
+            tributes={lastProposalTributes.get(lastProposal.proposal_id)!}
         />
     ) : (
         <div className="text-center py-8">
