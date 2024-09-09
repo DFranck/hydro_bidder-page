@@ -3,10 +3,9 @@ import { fetchDashboardData } from "@/app/dashboard/dashboardFetch";
 import ProposalDetail from '../../ui/proposalDetail';
 
 
-const Page = async ({ params }: { params: { id: string } }) => {
+export default async ({ params }: { params: { id: string } }) => {
     const {
         currentProposalTranches,
-        currentProposalTributes,
         globalState,
     } = await fetchDashboardData();
 
@@ -16,11 +15,10 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
     return currentProposal ? (
         <ProposalDetail
-            proposal={currentProposal}
+            currentProposal={currentProposal}
             globalState={globalState}
-            proposalTranches={currentProposalTranches}
+            currentProposalTranches={currentProposalTranches}
             deployed={false}
-            tributes={currentProposalTributes.get(currentProposal.proposal_id)!}
         />
     ) : (
         <div className="text-center py-8">
@@ -29,5 +27,3 @@ const Page = async ({ params }: { params: { id: string } }) => {
         </div>
     )
 };
-
-export default Page;

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ProposalListTopModules } from "../dashboard/topModules/TopModules";
 import Image from "next/image";
 import Link from "next/link";
-import { DataTable, makeProposalColumnDef } from "../proposalTable";
+import { DataTable, makeProposalColumnDef } from "../ui/proposalTable";
 import { Proposal, Tranche } from "../ts_types/HydroBase.types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
