@@ -555,3 +555,13 @@ export const localAssets: AssetList = {
     },
   ],
 };
+
+export const pionChain: Chain = {
+  chain_name: "pion",
+  chain_id: "pion-1",
+  pretty_name: "Pion",
+  status: "live",
+  network_type: "testnet",
+  bech32_prefix: "neutron",
+  "slip44": 118,
+}

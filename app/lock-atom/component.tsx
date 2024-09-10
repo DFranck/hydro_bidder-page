@@ -1,5 +1,6 @@
-import { useCallback, useState, useEffect, useMemo } from "react"
-import { useChain } from "@cosmos-kit/react"
+"use client";
+import { useState, useEffect } from "react";
+import { useChain } from "@cosmos-kit/react";
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,8 @@ import { cosmos } from 'interchain';
 const txRaw = cosmos.tx.v1beta1.TxRaw;
 
 export default function LSMInteraction() {
-    const hubChain = useChain("cosmoshub");
-    const neutronChain = useChain("neutron");
+    const hubChain = useChain("cosmoshubtestnet");
+    const neutronChain = useChain("pion");
 
     const [hasLSMShares, setHasLSMShares] = useState<{
         hub: { validator: string, amount: number } | undefined,
@@ -29,8 +30,13 @@ export default function LSMInteraction() {
     const [revertStepper, setRevertStepper] = useState<{ step: number } | undefined>(undefined)
     const [lockStepper, setLockStepper] = useState<{ step: number, validator: string, amount: number } | undefined>(undefined)
 
+    useEffect(() => {
+        console.log('Hub Chain Wallet Connected:', hubChain.isWalletConnected);
+        console.log('Neutron Chain Wallet Connected:', neutronChain.isWalletConnected);
+    }, [hubChain.isWalletConnected, neutronChain.isWalletConnected]);
+
     return hubChain.isWalletConnected && neutronChain.isWalletConnected &&
-        <div>
+        <div>YO
             {hasLSMShares.hub && <div>
                 <div>It looks like you might have been in the middle of locking up your tokens.</div>
                 <div onClick={() => { setRevertStepper({ step: 1 }) }}>Revert</div>

@@ -17,6 +17,7 @@ import {
   localnetChain,
   testnetAssets,
   testnetChain,
+  pionChain
 } from "../config";
 
 export function WalletHandler({
@@ -26,7 +27,7 @@ export function WalletHandler({
 }>) {
   return (
     <ChainProvider
-      chains={[testnetChain, localnetChain]}
+      chains={[testnetChain, localnetChain, pionChain]}
       assetLists={[testnetAssets, localAssets]}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
       signerOptions={{
