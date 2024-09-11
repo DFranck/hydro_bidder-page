@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -11,14 +11,17 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog'
-import { executeVote, useMyVotes } from '@/hooks/hooks'
+import { executeVote, fetchMyVotes } from '@/hooks/hooks'
 import { useChain } from '@cosmos-kit/react'
 import { Proposal } from '@/app/ts_types/HydroBase.types'
-import { ChevronLeft } from 'lucide-react'
+import { AlertTriangleIcon, ChevronLeft, Loader2Icon } from 'lucide-react'
 import { ProposalListTopModules } from '@/app/dashboard/topModules/TopModules'
 import Markdown from 'react-markdown'
 import { sumTributeAmounts } from './proposalTable'
 import { Tribute } from '@/app/ts_types/TributeBase.types'
+import { DialogTrigger } from '@radix-ui/react-dialog'
+import { useToast } from '@/components/ui/use-toast'
+import { cn } from '@/lib/utils'
 
 const ProposalDetail = ({
     globalState,
@@ -33,44 +36,132 @@ const ProposalDetail = ({
     tributes: Tribute[]
     deployed: boolean
 }) => {
-    const {
-        isWalletConnected,
-        address,
-        getSigningCosmWasmClient,
-        estimateFee,
-    } = useChain('cosmoshubtestnet')
-    const { data: myVotes = [] } = useMyVotes(
-        address || '',
-        globalState.currentRound,
-        Array.from(proposalTranches.keys())
-    )
+    const [hasVoted, setHasVoted] = useState(false)
+    const [hasVotedThisProposal, setHasVotedThisProposal] = useState(false)
+    const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
+    const { toast } = useToast()
 
-    const hasVoted = Array.from(myVotes).length > 0
-    const hasVotedOnThisProposal = Array.from(myVotes.values())
-        .flat()
-        .find((vote) => vote.prop_id === Number(proposal.proposal_id))
+    const { isWalletConnected, address, getSigningCosmWasmClient } =
+        useChain('neutrontestnet')
 
-    const [showChangeVote, setShowChangeVote] = useState(false)
+    useEffect(() => {
+        if (!address) {
+            return
+        }
 
-    function doVote() {
-        if (proposal) {
-            executeVote(
+        const fetchVoteStatus = async () => {
+            const voteMap = await fetchMyVotes(
+                address || '',
+                globalState.currentRound,
+                Array.from(proposalTranches.keys())
+            )
+            if (voteMap && voteMap.size < 1) {
+                setHasVoted(false)
+                return
+            }
+
+            let voted = Array.from(voteMap.values())
+                .flat()
+                .find((vote) => vote.prop_id === Number(proposal.proposal_id))
+            setHasVoted(true)
+            setHasVotedThisProposal(!!voted)
+        }
+        fetchVoteStatus()
+    }, [])
+
+    async function onVote() {
+        if (!proposal) {
+            return
+        }
+        try {
+            setSubmitting(true)
+            await executeVote(
                 getSigningCosmWasmClient,
-                estimateFee,
                 address!,
                 proposal.proposal_id,
                 proposal.tranche_id
             )
+            toast({
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
+                title: 'Transaction submitted',
+                description: (
+                    <div className="inline-flex">
+                        <Loader2Icon className="animate-spin h-5 w-5 mr-2" />
+                        Processing...
+                    </div>
+                ),
+                duration: 2000,
+            })
+        } catch (err: any) {
+            if (
+                err &&
+                err?.message &&
+                err.message.includes('Request rejected')
+            ) {
+                toast({
+                    className: cn(
+                        'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                    ),
+                    title: 'Aborted',
+                    description: (
+                        <div className="inline-flex items-center">
+                            Transaction was not submitted
+                        </div>
+                    ),
+                    duration: 2000,
+                })
+                return
+            }
+            toast({
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
+                title: 'Exception',
+                description: (
+                    <div className="inline-flex items-center">
+                        <AlertTriangleIcon className="w-8 h-8 text-yellow-400 mr-2" />
+                        {err && err?.message
+                            ? `Transaction failed: ${err.message}`
+                            : 'Transaction failed - unkonwn error'}
+                    </div>
+                ),
+                variant: 'destructive',
+                duration: 5000,
+            })
+        } finally {
+            setSubmitting(false)
         }
     }
 
-    function handleVoteClick() {
-        hasVoted ? setShowChangeVote(true) : doVote()
+    function onVoteClicked() {
+        if (hasVotedThisProposal) {
+            setOpenChangeVoteModal(true)
+        } else {
+            onVote()
+        }
+    }
+
+    function displayBtnText() {
+        if (!isWalletConnected) {
+            return 'Connect wallet to vote'
+        }
+        if (submitting) {
+            return 'Submitting...'
+        }
+
+        return hasVotedThisProposal ? 'Already Voted This' : 'Vote for Project'
     }
 
     const ChangeVote = () => {
         return (
-            <Dialog open={showChangeVote} onOpenChange={setShowChangeVote}>
+            <Dialog
+                open={openChangeVoteModal}
+                onOpenChange={setOpenChangeVoteModal}
+            >
+                <DialogTrigger asChild></DialogTrigger>
                 <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
                     <DialogHeader className="pb-[34px]">
                         <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px]">
@@ -82,7 +173,7 @@ const ProposalDetail = ({
                         </DialogDescription>
                     </DialogHeader>
                     <Button
-                        onClick={doVote}
+                        onClick={onVote}
                         type="button"
                         variant="secondary"
                         className="w-full hover:bg-neutral-900 hover:text-white hover:border hover:border-white rounded-[10px]"
@@ -108,7 +199,7 @@ const ProposalDetail = ({
             <ChangeVote />
             <ProposalListTopModules />
             <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
-                <div className="flex flex-col md:flex-row gap-[10%]">
+                <div className="flex flex-col md:flex-row gap-[10%] justify-between">
                     <div>
                         <Link href="/voting-proposals" className="opacity-80">
                             <Button
@@ -134,8 +225,13 @@ const ProposalDetail = ({
                             <p className="text-sm not-italic font-normal opacity-80">
                                 Project Overview
                             </p>
-                            <div className="text-xl not-italic font-normal pb-15 prose prose-headings:text-white text-white prose-li:text-white prose-ol:text-white prose-strong:text-white marker:text-white">
-                                <Markdown>{proposal.description.replaceAll(/\\\\n/g, "\n")}</Markdown>
+                            <div className="not-italic font-normal pb-15 prose prose-headings:text-white text-white prose-li:text-white prose-ol:text-white prose-strong:text-white marker:text-white prose-h2:tracking-normal">
+                                <Markdown>
+                                    {proposal.description.replaceAll(
+                                        /\\\\n/g,
+                                        '\n'
+                                    )}
+                                </Markdown>
                             </div>
                         </div>
                     </div>
@@ -145,16 +241,13 @@ const ProposalDetail = ({
                                 <Button
                                     disabled={
                                         !isWalletConnected ||
-                                        !!hasVotedOnThisProposal
+                                        hasVotedThisProposal ||
+                                        submitting
                                     }
-                                    onClick={handleVoteClick}
+                                    onClick={() => onVoteClicked()}
                                     className="w-[250px] text-[#080815] text-center text-xl not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white"
                                 >
-                                    {!isWalletConnected
-                                        ? 'Connect wallet to vote'
-                                        : !!hasVotedOnThisProposal
-                                        ? 'Already Voted This'
-                                        : 'Vote for Project'}
+                                    {displayBtnText()}
                                 </Button>
                             )}
                         </div>
