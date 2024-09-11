@@ -1,12 +1,9 @@
-import { fetchDashboardData } from "../dashboard/dashboardFetch";
-import ActiveProposals from "./component";
+import { fetchDashboardData } from '../dashboard/dashboardFetch'
+import ActiveProposals from './component'
 
 const Page = async () => {
-    const {
-        currentProposalTranches,
-        globalState,
-        currentProposalTributes,
-    } = await fetchDashboardData();
+    const { currentProposalTranches, globalState, currentProposalTributes } =
+        await fetchDashboardData()
 
     return (
         <ActiveProposals
@@ -17,4 +14,4 @@ const Page = async () => {
     )
 }
 
-export default Page;
+export default Page
