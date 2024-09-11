@@ -16,21 +16,36 @@ type Stepper =
     | { type: 'continueFromHubLSM', validator: string, amount: number }
     | { type: 'continueFromNeutronLSM', validator: string, amount: number }
 
+type IncompleteNotice =
+    | { type: 'LSMSharesOnHub', validator: string, amount: number }
+    | { type: 'LSMSharesOnNeutron', validator: string, amount: number }
+
 export default function LSMInteraction() {
     const hubChain = useChain("cosmoshubtestnet");
     const neutronChain = useChain("neutrontestnet");
 
-    const [hasLSMShares, setHasLSMShares] = useState<{
-        hub: { validator: string, amount: number } | undefined,
-        neutron: { validator: string, amount: number } | undefined
-    }>({
-        hub: undefined,
-        neutron: undefined
-    });
+    const [incompleteNotices, setIncompleteNotices] = useState<IncompleteNotice[]>([]);
 
     useEffect(() => {
         if (hubChain.address && neutronChain.address) {
-            checkLSMShares(hubChain.address, neutronChain.address).then()
+            checkLSMShares(hubChain.address, neutronChain.address).then(shares => {
+                const notices: IncompleteNotice[] = [];
+                if (shares.hub) {
+                    notices.push({
+                        type: 'LSMSharesOnHub',
+                        validator: shares.hub.validator,
+                        amount: shares.hub.amount
+                    });
+                }
+                if (shares.neutron) {
+                    notices.push({
+                        type: 'LSMSharesOnNeutron',
+                        validator: shares.neutron.validator,
+                        amount: shares.neutron.amount
+                    });
+                }
+                setIncompleteNotices(notices);
+            });
         }
     }, [hubChain.address, neutronChain.address])
 
@@ -44,11 +59,36 @@ export default function LSMInteraction() {
     return hubChain.isWalletConnected && neutronChain.isWalletConnected &&
         <div>
             {stepper && stepper.type === 'lock' && <LockStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
-            {stepper && stepper.type === 'revertFromHubLSM' && <RevertFromHubLSMStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
+            {stepper && stepper.type === 'revertFromHubLSM' && <RevertFromHubStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
+            {stepper && stepper.type === 'revertFromNeutronLSM' && <RevertFromNeutronStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
+            {stepper && stepper.type === 'continueFromHubLSM' && <ContinueFromHubStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
+            {stepper && stepper.type === 'continueFromNeutronLSM' && <ContinueFromNeutronStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
             <div>
+                {incompleteNotices.map((notice, index) => (
+                    <div key={index}>
+                        {notice.type === 'LSMSharesOnHub' && <HubIncompleteNotice amount={notice.amount} validator={notice.validator} setStepper={setStepper} />}
+                        {notice.type === 'LSMSharesOnNeutron' && <NeutronIncompleteNotice amount={notice.amount} validator={notice.validator} setStepper={setStepper} />}
+                    </div>
+                ))}
                 <LockForm onSubmit={(validator, amount, duration) => setStepper({ type: 'lock', validator, amount, duration })} />
             </div>
         </div>
+}
+
+const HubIncompleteNotice = ({ amount, validator, setStepper }: { amount: number, validator: string, setStepper: (stepper: Stepper) => void }) => {
+    return <div>
+        <p>Looks like you might have been interrupted while locking your ATOM. Would you like to continue from where you left off?</p>
+        <Button onClick={() => setStepper({ type: 'continueFromHubLSM', validator, amount })}>Continue</Button>
+        <Button onClick={() => setStepper({ type: 'revertFromHubLSM', validator, amount })}>Revert</Button>
+    </div>
+}
+
+const NeutronIncompleteNotice = ({ amount, validator, setStepper }: { amount: number, validator: string, setStepper: (stepper: Stepper) => void }) => {
+    return <div>
+        <p>Looks like you might have been interrupted while locking your ATOM. Would you like to continue from where you left off?</p>
+        <Button onClick={() => setStepper({ type: 'continueFromNeutronLSM', validator, amount })}>Continue</Button>
+        <Button onClick={() => setStepper({ type: 'revertFromNeutronLSM', validator, amount })}>Revert</Button>
+    </div>
 }
 
 const LockForm = ({ onSubmit }: { onSubmit: (validator: string, amount: number, duration: number) => void }) => {
@@ -111,17 +151,6 @@ const LockForm = ({ onSubmit }: { onSubmit: (validator: string, amount: number, 
 };
 
 
-enum LockStep {
-    Init = "init",
-    WaitingForTokenizeSigning = "waitingForTokenizeSigning",
-    WaitingForTokenizeBroadcast = "waitingForTokenizeBroadcast",
-    Error = "error",
-    WaitingForIBCSigning = "waitingForIBCSigning",
-    WaitingForIBCBroadcastAndRelay = "waitingForIBCBroadcastAndRelay",
-    WaitingForLockingSigning = "waitingForLockingSigning",
-    WaitingForLockingBroadcast = "waitingForLockingBroadcast",
-    Success = "success"
-}
 
 const waitForIbcTransfer = async (): Promise<boolean> => {
     // TODO: Implement actual IBC transfer logic
@@ -143,7 +172,9 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
     neutronChain: ChainContext;
     onExit: () => void;
 }) => {
-    const [step, setStep] = useState<LockStep>(LockStep.Init);
+    type LockStep = "Init" | "WaitingForTokenizeSigning" | "WaitingForTokenizeBroadcast" | "Error" | "WaitingForIBCSigning" | "WaitingForIBCBroadcastAndRelay" | "WaitingForLockingSigning" | "WaitingForLockingBroadcast" | "Success";
+    
+    const [step, setStep] = useState<LockStep>("Init");
 
     const lockExecute = async () => {
         console.log("Locking execute");
@@ -177,16 +208,16 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
 
             const fee = await hubChain.estimateFee([msg]);
 
-            setStep(LockStep.WaitingForTokenizeSigning);
+            setStep("WaitingForTokenizeSigning");
             const signedTx = await hubSigningClient.sign(hubChain.address, [msg], fee, "");
             console.log("Transaction signed successfully:", signedTx);
 
             // Broadcast the transaction
-            setStep(LockStep.WaitingForTokenizeBroadcast);
+            setStep("WaitingForTokenizeBroadcast");
             const broadcastResult = await hubSigningClient.broadcastTx(new Uint8Array(txRaw.encode(signedTx).finish()));
             console.log("Transaction broadcast result:", broadcastResult);
 
-            setStep(LockStep.WaitingForIBCSigning);
+            setStep("WaitingForIBCSigning");
             const ibcMsg = {
                 typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
                 value: {
@@ -207,7 +238,7 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
 
             const ibcSignedTx = await hubSigningClient.sign(hubChain.address, [ibcMsg], ibcFee, "");
 
-            setStep(LockStep.WaitingForIBCBroadcastAndRelay);
+            setStep("WaitingForIBCBroadcastAndRelay");
 
             const ibcBroadcastResult = await hubSigningClient.broadcastTx(new Uint8Array(txRaw.encode(ibcSignedTx).finish()));
             console.log("IBC transaction broadcast result:", ibcBroadcastResult);
@@ -216,7 +247,7 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
             // Note: waitForIbcTransfer function needs to be implemented
             await waitForIbcTransfer();
 
-            setStep(LockStep.WaitingForLockingSigning);
+            setStep("WaitingForLockingSigning");
 
             // Prepare the lock tokens message for Hydro
             const lockMsg = {
@@ -232,23 +263,23 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
             // Sign the lock tokens transaction
             const lockSignedTx = await neutronSigningClient.sign(neutronChain.address, [lockMsg], lockFee, "");
 
-            setStep(LockStep.WaitingForLockingBroadcast);
+            setStep("WaitingForLockingBroadcast");
 
             // Broadcast the lock tokens transaction
             const lockBroadcastResult = await neutronSigningClient.broadcastTx(new Uint8Array(txRaw.encode(lockSignedTx).finish()));
             console.log("Lock transaction broadcast result:", lockBroadcastResult);
 
-            setStep(LockStep.Success);
+            setStep("Success");
 
         } catch (error) {
             console.error("Error during process:", error);
-            setStep(LockStep.Error);
+            setStep("Error");
         }
     };
 
     const renderStep = () => {
         switch (step) {
-            case LockStep.Init:
+            case "Init":
                 return (
                     <>
                         <p>Nice! You're about to lock {amount} ATOM staked to {validator} in Hydro to get {amount} hATOM.</p>
@@ -256,21 +287,21 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
                         <Button onClick={lockExecute}>Start locking</Button>
                     </>
                 );
-            case LockStep.WaitingForTokenizeSigning:
+            case "WaitingForTokenizeSigning":
                 return (
                     <>
                         <p>Approve the transaction in your wallet to continue</p>
                         <p>This will start the tokenization of your staked {denom} tokens in preparation for locking in Hydro.</p>
                     </>
                 );
-            case LockStep.WaitingForTokenizeBroadcast:
+            case "WaitingForTokenizeBroadcast":
                 return (
                     <>
                         <p>Tokenizing your staked ATOM...</p>
                         <p>Just a few seconds, unless the network is congested.</p>
                     </>
                 );
-            case LockStep.Error:
+            case "Error":
                 return (
                     <>
                         <p>Transaction error</p>
@@ -279,39 +310,39 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
                         <Button onClick={onTryAgain}>Try Again</Button> */}
                     </>
                 );
-            case LockStep.WaitingForIBCSigning:
+            case "WaitingForIBCSigning":
                 return (
                     <>
                         <p>Approve the transaction in your wallet to continue</p>
                         <p>This will start the transfer of your tokenized ATOM to Hydro to start the locking process.</p>
                     </>
                 );
-            case LockStep.WaitingForIBCBroadcastAndRelay:
+            case "WaitingForIBCBroadcastAndRelay":
                 return (
                     <>
                         <p>Sending your staked {denom} to Hydro...</p>
                         <p>This could take 30 seconds or longer if the network is congested. If you exit Hydro, this status may not be visible when you return, but the transfer will continue. Once the transfer is complete, you will need to return to initiate the staking process.</p>
                     </>
                 );
-            case LockStep.WaitingForLockingSigning:
+            case "WaitingForLockingSigning":
                 return (
                     <>
                         <p>Transfer complete! Approve in your wallet again to lock your {denom}</p>
                         <p>This will initiate locking your staked {denom} into the Hydro contract and receiving voting power.</p>
                     </>
                 );
-            case LockStep.WaitingForLockingBroadcast:
+            case "WaitingForLockingBroadcast":
                 return (
                     <>
                         <p>Staking your {denom}...</p>
                         <p>Just a few seconds, unless the network is congested</p>
                     </>
                 );
-            case LockStep.Success:
+            case "Success":
                 return (
                     <>
                         <p>Success!</p>
-                        <p>You locked {amount} {denom} in Hydro received {amount} h{denom} (voting power).</p>
+                        <p>You locked {amount} ATOM in Hydro and received {amount} ATOM (voting power).</p>
                         <p>Do you want to view the list of proposals to vote for?</p>
                     </>
                 );
@@ -327,14 +358,7 @@ const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit 
     );
 };
 
-enum RevertStep {
-    Init,
-    WaitingForRedeemSigning,
-    WaitingForRedeemBroadcast,
-    Success
-}
-
-const RevertFromHubLSMStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: {
+const RevertFromHubStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: {
     amount: number;
     validator: string;
     denom: string;
@@ -342,7 +366,7 @@ const RevertFromHubLSMStepper = ({ amount, validator, denom, hubChain, neutronCh
     neutronChain: ChainContext;
     onExit: () => void;
 }) => {
-    const [step, setStep] = useState<RevertStep>(RevertStep.Init);
+    const [step, setStep] = useState<'Init' | 'WaitingForRedeemSigning' | 'WaitingForRedeemBroadcast' | 'Success'>('Init');
 
     const execute = async () => {
         if (!hubChain.address || !hubChain.getSigningStargateClient) {
@@ -355,7 +379,7 @@ const RevertFromHubLSMStepper = ({ amount, validator, denom, hubChain, neutronCh
         }
         const hubSigningClient = await hubChain.getSigningStargateClient();
         const neutronSigningClient = await neutronChain.getSigningStargateClient();
-        setStep(RevertStep.WaitingForRedeemSigning);
+        setStep('WaitingForRedeemSigning');
         const msg = {
             typeUrl: "/cosmos.staking.v1beta1.MsgRedeemTokensForShares",
             value: {
@@ -368,14 +392,14 @@ const RevertFromHubLSMStepper = ({ amount, validator, denom, hubChain, neutronCh
         }
         const fee = await hubChain.estimateFee([msg]);
         const signedTx = await hubSigningClient.sign(hubChain.address, [msg], fee, "");
-        setStep(RevertStep.WaitingForRedeemBroadcast);
+        setStep('WaitingForRedeemBroadcast');
         const broadcastResult = await hubSigningClient.broadcastTx(new Uint8Array(txRaw.encode(signedTx).finish()));
         console.log("Transaction broadcast result:", broadcastResult);
-        setStep(RevertStep.Success);
+        setStep('Success');
     }
     const renderStep = () => {
         switch (step) {
-            case RevertStep.Init:
+            case 'Init':
                 return (
                     <>
                         <p>You're about to revert {amount} {denom} back to its original state, staked with {validator}.</p>
@@ -383,21 +407,21 @@ const RevertFromHubLSMStepper = ({ amount, validator, denom, hubChain, neutronCh
                         <button onClick={execute}>Revert</button>
                     </>
                 );
-            case RevertStep.WaitingForRedeemSigning:
+            case 'WaitingForRedeemSigning':
                 return (
                     <>
                         <p>Approve the transaction in your wallet to continue</p>
                         <p>This will restore your previous staked position with the amount of {amount} {denom} to {validator}.</p>
                     </>
                 );
-            case RevertStep.WaitingForRedeemBroadcast:
+            case 'WaitingForRedeemBroadcast':
                 return (
                     <>
                         <p>Redeeming {denom}...</p>
                         <p>Hang tight, we're restoring your previous staked position.</p>
                     </>
                 );
-            case RevertStep.Success:
+            case 'Success':
                 return (
                     <>
                         <p>Success!</p>
@@ -417,17 +441,10 @@ const RevertFromHubLSMStepper = ({ amount, validator, denom, hubChain, neutronCh
     );
 };
 
-const RevertFromNeutronLSMStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: number, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
-    enum RevertStep {
-        Init,
-        WaitingForIBCSigning,
-        WaitingForIBCBroadcast,
-        WaitingForRedeemSigning,
-        WaitingForRedeemBroadcast,
-        Success
-    }
+const RevertFromNeutronStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: number, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
+    type RevertStep = 'Init' | 'WaitingForIBCSigning' | 'WaitingForIBCBroadcast' | 'WaitingForRedeemSigning' | 'WaitingForRedeemBroadcast' | 'Success';
 
-    const [step, setStep] = useState<RevertStep>(RevertStep.Init);
+    const [step, setStep] = useState<RevertStep>('Init');
 
     const execute = async () => {
         if (!hubChain.address || !hubChain.getSigningStargateClient) {
@@ -446,7 +463,7 @@ const RevertFromNeutronLSMStepper = ({ amount, validator, denom, hubChain, neutr
             const hubSigningClient = await hubChain.getSigningStargateClient();
 
             // IBC Transfer
-            setStep(RevertStep.WaitingForIBCSigning);
+            setStep('WaitingForIBCSigning');
             const ibcMsg = {
                 typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
                 value: {
@@ -463,15 +480,15 @@ const RevertFromNeutronLSMStepper = ({ amount, validator, denom, hubChain, neutr
                 }
             };
 
-            const ibcFee = await neutronSigningClient.simulate(neutronChain.address, [ibcMsg], "");
+            const ibcFee = await neutronChain.estimateFee([ibcMsg]);
             const ibcSignedTx = await neutronSigningClient.sign(neutronChain.address, [ibcMsg], ibcFee, "");
 
-            setStep(RevertStep.WaitingForIBCBroadcast);
+            setStep('WaitingForIBCBroadcast');
             const ibcBroadcastResult = await neutronSigningClient.broadcastTx(new Uint8Array(txRaw.encode(ibcSignedTx).finish()));
             console.log("IBC Transaction broadcast result:", ibcBroadcastResult);
 
             // Redeem tokens for shares
-            setStep(RevertStep.WaitingForRedeemSigning);
+            setStep('WaitingForRedeemSigning');
             const redeemMsg = {
                 typeUrl: "/cosmos.staking.v1beta1.MsgRedeemTokensForShares",
                 value: {
@@ -483,14 +500,14 @@ const RevertFromNeutronLSMStepper = ({ amount, validator, denom, hubChain, neutr
                 }
             };
 
-            const redeemFee = await hubChain.estimateFee(hubChain.address, [redeemMsg], "");
+            const redeemFee = await hubChain.estimateFee([redeemMsg]);
             const redeemSignedTx = await hubSigningClient.sign(hubChain.address, [redeemMsg], redeemFee, "");
 
-            setStep(RevertStep.WaitingForRedeemBroadcast);
+            setStep('WaitingForRedeemBroadcast');
             const redeemBroadcastResult = await hubSigningClient.broadcastTx(new Uint8Array(txRaw.encode(redeemSignedTx).finish()));
             console.log("Redeem Transaction broadcast result:", redeemBroadcastResult);
 
-            setStep(RevertStep.Success);
+            setStep('Success');
         } catch (error) {
             console.error("Error during revert process:", error);
             // Handle error appropriately
@@ -499,7 +516,7 @@ const RevertFromNeutronLSMStepper = ({ amount, validator, denom, hubChain, neutr
 
     const renderStep = () => {
         switch (step) {
-            case RevertStep.Init:
+            case 'Init':
                 return (
                     <>
                         <p>You're about to revert {amount} ATOM back to its original state.</p>
@@ -507,35 +524,35 @@ const RevertFromNeutronLSMStepper = ({ amount, validator, denom, hubChain, neutr
                         <button onClick={execute}>Revert</button>
                     </>
                 );
-            case RevertStep.WaitingForIBCSigning:
+            case 'WaitingForIBCSigning':
                 return (
                     <>
                         <p>Approve the transaction in your wallet to continue</p>
                         <p>This will start the transfer of your ATOM tokens to your Cosmos Hub wallet.</p>
                     </>
                 );
-            case RevertStep.WaitingForIBCBroadcast:
+            case 'WaitingForIBCBroadcast':
                 return (
                     <>
                         <p>Transferring tokenized ATOM to Cosmos Hub...</p>
                         <p>This could take 30 seconds or longer if the network is congested.</p>
                     </>
                 );
-            case RevertStep.WaitingForRedeemSigning:
+            case 'WaitingForRedeemSigning':
                 return (
                     <>
                         <p>Approve the transaction in your wallet to continue</p>
                         <p>This will restore your previous staked position with the amount of {amount} ATOM to {validator}.</p>
                     </>
                 );
-            case RevertStep.WaitingForRedeemBroadcast:
+            case 'WaitingForRedeemBroadcast':
                 return (
                     <>
                         <p>Redeeming ATOM...</p>
                         <p>Hang tight, we're restoring your previous staked position.</p>
                     </>
                 );
-            case RevertStep.Success:
+            case 'Success':
                 return (
                     <>
                         <p>Success!</p>
@@ -555,9 +572,233 @@ const RevertFromNeutronLSMStepper = ({ amount, validator, denom, hubChain, neutr
     );
 };
 
+const ContinueFromNeutronStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: number, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
+    const [step, setStep] = useState<'Init' | 'WaitingForLockSigning' | 'WaitingForLockBroadcast' | 'Success' | 'Error'>('Init');
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
-async function checkLSMShares(hubAddress: string, neutronAddress: string): Promise<{ hub: boolean, neutron: boolean }> {
-    return { hub: false, neutron: false }
+    const executeContinueFromNeutron = async () => {
+        if (!neutronChain.address || !neutronChain.getSigningStargateClient) {
+            console.error("Neutron chain wallet not connected or signing client not available");
+            setStep('Error');
+            setErrorMessage("Neutron chain wallet not connected or signing client not available");
+            return;
+        }
+
+        try {
+            setStep('WaitingForLockSigning');
+            const client = await neutronChain.getSigningStargateClient();
+            
+            const msg = {
+                typeUrl: "/hydro.lockup.MsgLock",
+                value: {
+                    sender: neutronChain.address,
+                    amount: {
+                        amount: amount.toString(),
+                        denom: denom
+                    },
+                    validator: validator
+                }
+            };
+
+            setStep('WaitingForLockBroadcast');
+            const response = await client.signAndBroadcast(neutronChain.address, [msg], 'auto');
+
+            if (response.code !== undefined && response.code !== 0) {
+                throw new Error(response.rawLog);
+            }
+
+            setStep('Success');
+        } catch (error) {
+            console.error("Error in executeContinueFromNeutron:", error);
+            setStep('Error');
+            setErrorMessage(error instanceof Error ? error.message : "An unknown error occurred");
+        }
+    };
+
+    const renderStep = () => {
+        switch (step) {
+            case 'Init':
+                return (
+                    <>
+                        <p>Nice! You're about to lock {amount} ATOM staked to {validator} in Hydro to get {amount} hATOM.</p>
+                        <p>This will require one wallet approval.</p>
+                        <Button onClick={executeContinueFromNeutron}>Lock</Button>
+                    </>
+                );
+            case 'WaitingForLockSigning':
+                return (
+                    <p>Approve in your wallet again to lock your ATOM into the Hydro contract to receive voting power.</p>
+                );
+            case 'WaitingForLockBroadcast':
+                return (
+                    <>
+                        <p>Locking your ATOM...</p>
+                        <p>Just a few seconds, unless the network is congested</p>
+                    </>
+                );
+            case 'Success':
+                return (
+                    <>
+                        <p>Success!</p>
+                        <p>You locked {amount} ATOM in Hydro and received {amount} hATOM (voting power).</p>
+                        <p>Do you want to view the list of proposals to vote for?</p>
+                        <Button onClick={onExit}>Done</Button>
+                    </>
+                );
+            case 'Error':
+                return (
+                    <>
+                        <p>An error occurred:</p>
+                        <p>{errorMessage}</p>
+                        <Button onClick={() => setStep('Init')}>Try Again</Button>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
+            {renderStep()}
+        </div>
+    );
+};
+
+const ContinueFromHubStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: number, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
+    const [step, setStep] = useState<'Init' | 'WaitingForIBCSigning' | 'WaitingForIBCBroadcastAndRelay' | 'WaitingForLockingSigning' | 'WaitingForLockingBroadcast' | 'Success' | 'Error'>('Init');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const executeContinueFromHub = async () => {
+        try {
+            setStep('WaitingForIBCSigning');
+
+            const hubSigningClient = await hubChain.getSigningCosmWasmClient();
+            const neutronSigningClient = await neutronChain.getSigningCosmWasmClient();
+
+            // Prepare IBC transfer message
+            const ibcMsg = {
+                typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+                value: {
+                    sourcePort: "transfer",
+                    sourceChannel: "channel-391", // Replace with correct channel
+                    token: {
+                        denom: `${validator}/51579`, // Replace with correct denom
+                        amount: amount.toString(),
+                    },
+                    sender: hubChain.address,
+                    receiver: neutronChain.address,
+                    timeoutHeight: { revisionHeight: "0" }, // Replace with correct timeout
+                    timeoutTimestamp: "0" // Replace with correct timestamp
+                }
+            };
+
+            const ibcFee = await hubChain.estimateFee([ibcMsg]);
+            const ibcSignedTx = await hubSigningClient.sign(hubChain.address || "", [ibcMsg], ibcFee, "");
+
+            setStep('WaitingForIBCBroadcastAndRelay');
+
+            const ibcBroadcastResult = await hubSigningClient.broadcastTx(new Uint8Array(txRaw.encode(ibcSignedTx).finish()));
+            console.log("IBC transaction broadcast result:", ibcBroadcastResult);
+
+            // Wait for relaying to complete
+            // Note: waitForIbcTransfer function needs to be implemented
+            await waitForIbcTransfer();
+
+            setStep('WaitingForLockingSigning');
+
+            // Prepare the lock tokens message for Hydro
+            const lockMsg = {
+                typeUrl: "/hydro.base.v1beta1.MsgLockTokens",
+                value: {
+                    sender: neutronChain.address,
+                    lockDuration: 1209600, // 14 days in seconds
+                }
+            };
+
+            const lockFee = await neutronChain.estimateFee([lockMsg]);
+            const lockSignedTx = await neutronSigningClient.sign(neutronChain.address || "", [lockMsg], lockFee, "");
+
+            setStep('WaitingForLockingBroadcast');
+
+            const lockBroadcastResult = await neutronSigningClient.broadcastTx(new Uint8Array(txRaw.encode(lockSignedTx).finish()));
+            console.log("Lock transaction broadcast result:", lockBroadcastResult);
+
+            setStep('Success');
+
+        } catch (error) {
+            console.error("Error during process:", error);
+            setStep('Error');
+        }
+    };
+
+    const renderStep = () => {
+        switch (step) {
+            case 'Init':
+                return (
+                    <>
+                        <p>Nice! You're about to lock {amount} ATOM staked to {validator} in Hydro to get {amount} hATOM.</p>
+                        <p>This will require two wallet approvals.</p>
+                        <Button onClick={executeContinueFromHub}>Lock</Button>
+                    </>
+                );
+            case 'WaitingForIBCSigning':
+                return (
+                    <>
+                        <p>Approve the transaction in your wallet to continue</p>
+                        <p>This will start the transfer of your tokenized ATOM to Hydro to start the locking process.</p>
+                    </>
+                );
+            case 'WaitingForIBCBroadcastAndRelay':
+                return (
+                    <>
+                        <p>Sending your staked ATOM to Hydro...</p>
+                        <p>This could take 30 seconds or longer if the network is congested. If you exit Hydro, this status may not be visible when you return, but the transfer will continue. Once the transfer is complete, you will need to return to initiate the staking process.</p>
+                    </>
+                );
+            case 'WaitingForLockingSigning':
+                return (
+                    <p>Transfer complete! Approve in your wallet again to lock your ATOM</p>
+                );
+            case 'WaitingForLockingBroadcast':
+                return (
+                    <>
+                        <p>Locking your ATOM...</p>
+                        <p>Just a few seconds, unless the network is congested</p>
+                    </>
+                );
+            case 'Success':
+                return (
+                    <>
+                        <p>Success!</p>
+                        <p>You locked {amount} ATOM in Hydro and received {amount} hATOM (voting power).</p>
+                        <p>Do you want to view the list of proposals to vote for?</p>
+                        <Button onClick={onExit}>Done</Button>
+                    </>
+                );
+            case 'Error':
+                return (
+                    <>
+                        <p>An error occurred:</p>
+                        <p>{errorMessage}</p>
+                        <Button onClick={() => setStep('Init')}>Try Again</Button>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
+            {renderStep()}
+        </div>
+    );
+};
+
+
+async function checkLSMShares(hubAddress: string, neutronAddress: string): Promise<{ hub: {amount: number, validator: string} | undefined, neutron: {amount: number, validator: string} | undefined }> {
+    return { hub: undefined, neutron: undefined }
 }
 
 async function hasEnoughGas(neutronAddress: string) {
