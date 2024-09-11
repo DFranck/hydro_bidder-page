@@ -11,7 +11,7 @@ const config = {
     "./app/subframe/**/*.{tsx,ts,js,jsx}",
   ],
   prefix: "",
-  theme: {
+  theme: {  
     fontFamily: {
       inter: ["Inter"],
     },
@@ -79,7 +79,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography'),],
 } satisfies Config
 
 export default config
