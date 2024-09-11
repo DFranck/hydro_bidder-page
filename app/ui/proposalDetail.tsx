@@ -228,7 +228,7 @@ const ProposalDetail = ({
                             <div className="not-italic font-normal pb-15 prose prose-headings:text-white text-white prose-li:text-white prose-ol:text-white prose-strong:text-white marker:text-white prose-h2:tracking-normal">
                                 <Markdown>
                                     {proposal.description.replaceAll(
-                                        /\\\\n/g,
+                                        /\\n/g,
                                         '\n'
                                     )}
                                 </Markdown>
