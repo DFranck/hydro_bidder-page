@@ -18,15 +18,15 @@ import {
 } from './steppers';
 
 type Stepper =
-    | { type: 'lock', validator: string, amount: number, duration: number }
-    | { type: 'revertFromHubLSM', validator: string, amount: number }
-    | { type: 'revertFromNeutronLSM', validator: string, amount: number }
-    | { type: 'continueFromHubLSM', validator: string, amount: number }
-    | { type: 'continueFromNeutronLSM', validator: string, amount: number }
+    | { type: 'lock', validator: string, amount: string, duration: number }
+    | { type: 'revertFromHubLSM', validator: string, amount: string }
+    | { type: 'revertFromNeutronLSM', validator: string, amount: string }
+    | { type: 'continueFromHubLSM', validator: string, amount: string }
+    | { type: 'continueFromNeutronLSM', validator: string, amount: string }
 
 type IncompleteNotice =
-    | { type: 'LSMSharesOnHub', validator: string, amount: number }
-    | { type: 'LSMSharesOnNeutron', validator: string, amount: number }
+    | { type: 'LSMSharesOnHub', validator: string, amount: string }
+    | { type: 'LSMSharesOnNeutron', validator: string, amount: string }
 
 export default function LSMInteraction() {
     const hubChain = useChain("cosmoshubtestnet");
@@ -61,7 +61,7 @@ export default function LSMInteraction() {
 
     return hubChain.isWalletConnected && neutronChain.isWalletConnected &&
         <div>
-            {stepper && stepper.type === 'lock' && <LockStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
+            {stepper && stepper.type === 'lock' && <LockStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" lockDuration={stepper.duration} hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
             {stepper && stepper.type === 'revertFromHubLSM' && <RevertFromHubStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
             {stepper && stepper.type === 'revertFromNeutronLSM' && <RevertFromNeutronStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
             {stepper && stepper.type === 'continueFromHubLSM' && <ContinueFromHubStepper amount={stepper.amount} validator={stepper.validator} denom="uatom" hubChain={hubChain} neutronChain={neutronChain} onExit={() => setStepper(undefined)} />}
@@ -78,7 +78,7 @@ export default function LSMInteraction() {
         </div>
 }
 
-const HubIncompleteNotice = ({ amount, validator, setStepper }: { amount: number, validator: string, setStepper: (stepper: Stepper) => void }) => {
+const HubIncompleteNotice = ({ amount, validator, setStepper }: { amount: string, validator: string, setStepper: (stepper: Stepper) => void }) => {
     return <div>
         <p>Looks like you might have been interrupted while locking your ATOM. Would you like to continue from where you left off, or revert to get back your staked ATOM?</p>
         <Button onClick={() => setStepper({ type: 'continueFromHubLSM', validator, amount })}>Continue</Button>
@@ -86,7 +86,7 @@ const HubIncompleteNotice = ({ amount, validator, setStepper }: { amount: number
     </div>
 }
 
-const NeutronIncompleteNotice = ({ amount, validator, setStepper }: { amount: number, validator: string, setStepper: (stepper: Stepper) => void }) => {
+const NeutronIncompleteNotice = ({ amount, validator, setStepper }: { amount: string, validator: string, setStepper: (stepper: Stepper) => void }) => {
     return <div>
         <p>Looks like you might have been interrupted while locking your ATOM. Would you like to continue from where you left off, or revert to get back your staked ATOM?</p>
         <Button onClick={() => setStepper({ type: 'continueFromNeutronLSM', validator, amount })}>Continue</Button>
@@ -94,7 +94,7 @@ const NeutronIncompleteNotice = ({ amount, validator, setStepper }: { amount: nu
     </div>
 }
 
-const LockForm = ({ onSubmit }: { onSubmit: (validator: string, amount: number, duration: number) => void }) => {
+const LockForm = ({ onSubmit }: { onSubmit: (validator: string, amount: string, duration: number) => void }) => {
     // Using SimplyStaking for testing
     const [validator, setValidator] = useState('cosmosvaloper124maqmcqv8tquy764ktz7cu0gxnzfw54n3vww8');
     // 0.01 atom in uatom for testing
@@ -104,7 +104,7 @@ const LockForm = ({ onSubmit }: { onSubmit: (validator: string, amount: number, 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(validator, parseInt(amount), parseInt(duration));
+        onSubmit(validator, amount, parseInt(duration));
     };
 
     return (
@@ -153,6 +153,6 @@ const LockForm = ({ onSubmit }: { onSubmit: (validator: string, amount: number, 
     );
 };
 
-async function checkLSMShares(hubAddress: string, neutronAddress: string): Promise<{ hub: {amount: number, validator: string} | undefined, neutron: {amount: number, validator: string} | undefined }> {
+async function checkLSMShares(hubAddress: string, neutronAddress: string): Promise<{ hub: {amount: string, validator: string} | undefined, neutron: {amount: string, validator: string} | undefined }> {
     return { hub: undefined, neutron: undefined }
 }
