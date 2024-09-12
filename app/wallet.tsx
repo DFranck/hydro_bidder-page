@@ -59,7 +59,7 @@ export function WalletHandler({
                             }
                         case 'cosmoshubtestnet':
                             return {
-                                registry: new Registry(stride.cosmosProtoRegistry),
+                                registry: new Registry([...stride.cosmosProtoRegistry, ...stride.ibcProtoRegistry]),
                                 gasPrice: GasPrice.fromString('0.005uatom'),
                             }
                         default:
