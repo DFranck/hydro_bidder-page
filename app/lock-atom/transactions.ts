@@ -3,90 +3,243 @@ import { ChainContext } from "@cosmos-kit/core";
 import { cosmos } from 'interchain';
 const txRaw = cosmos.tx.v1beta1.TxRaw;
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { MsgRedeemTokensForShares, MsgTokenizeShares } from "stridejs/types/codegen/cosmos/staking/v1beta1/tx";
+import { MsgTransfer } from "stridejs/types/codegen/ibc/applications/transfer/v1/tx";
+import { useQuery } from '@tanstack/react-query'
+import {
+    HydroBaseQueryClient,
+    HydroBaseClient,
+} from '../ts_types/HydroBase.client'
+import { TributeBaseQueryClient } from '../ts_types/TributeBase.client'
+import {
+    CosmWasmClient,
+    SigningCosmWasmClient,
+} from '@cosmjs/cosmwasm-stargate'
+import {
+    Tranche,
+    Constants,
+    Proposal,
+    LockEntry,
+    Timestamp,
+    Uint128,
+    VoteWithPower,
+    Addr,
+} from '../ts_types/HydroBase.types'
+import { Tribute } from '../ts_types/TributeBase.types'
+import { GlobalState, RoundState } from '../types'
 
+import { StdFee } from '@cosmjs/amino'
+import { MsgVoteEncodeObject, GasPrice } from '@cosmjs/stargate'
 
-export async function signTokenizeShares(hubChain: ChainContext, hubSigner: SigningStargateClient, amount: number, validator: string) {
+const hydroContractAddress =
+    'neutron13wqp5t3xxlwer9mq9mmrfa3j0vfn06cfs3r5kdaz2sp97vpqdmeqwm2p7y'
+const rpcEndpoint = 'https://rpc-palvus.pion-1.ntrn.tech:443'
+
+export async function checkForHubLSMShares(hubChain: ChainContext, hubSigner: SigningStargateClient) {
     if (!hubChain.address) {
         throw new Error("Hub chain address not set");
     }
-    // Mocking out with a send message for now
-    const msg = {
-        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+    const response: {
+        balances: {
+            denom: string;
+            amount: string;
+        }[];
+        pagination: {
+            next_key: string | null;
+            total: string;
+        };
+        // TODO: No pagination so it will break if they have a crap ton of denoms in their account
+    } = await fetch(`https://${hubChain.getRestEndpoint()}/cosmos/bank/v1beta1/balances/${hubChain.address}`).then(res => res.json());
+
+    const lsmShares = response.balances
+        .filter(balance => balance.denom.startsWith('cosmosvaloper'))
+        .map(balance => {
+            const [validator, _] = balance.denom.split('/');
+            return {
+                validator,
+                amount: balance.amount,
+                denom: balance.denom
+            };
+        });
+
+    return lsmShares
+}
+
+export async function checkForNeutronLSMShares(neutronChain: ChainContext, neutronSigner: SigningStargateClient) {
+    if (!neutronChain.address) {
+        throw new Error("Neutron chain address not set");
+    }
+
+    const response = await fetch(`https://${neutronChain.getRestEndpoint()}/cosmos/bank/v1beta1/balances/${neutronChain.address}`).then(res => res.json());
+
+    const fetchDenomTrace = async (balance: {
+        denom: string;
+        amount: string;
+    }) => {
+        if (balance.denom.startsWith('ibc/')) {
+            try {
+                const denomTraceResponse = await fetch(`https://${neutronChain.getRestEndpoint()}/ibc/apps/transfer/v1/denom_traces/${balance.denom}`).then(res => res.json());
+                const baseDenom = denomTraceResponse.denom_trace.base_denom;
+                
+                if (baseDenom.startsWith('cosmosvaloper')) {
+                    const [validator, _] = baseDenom.split('/');
+                    return {
+                        validator,
+                        amount: balance.amount,
+                        denom: balance.denom,
+                        baseDenom
+                    };
+                }
+            } catch (error) {
+                console.error(`Error fetching denom trace for ${balance.denom}:`, error);
+            }
+        }
+        return null;
+    };
+
+    const lsmSharesPromises: Promise<{ validator: string; amount: string; denom: string; baseDenom: string } | null>[] = response.balances.map(fetchDenomTrace);
+    const lsmSharesResults = await Promise.all(lsmSharesPromises);
+    const lsmShares = lsmSharesResults.filter(share => share !== null);
+
+    return lsmShares;
+}
+
+export async function signTokenizeShares(hubChain: ChainContext, hubSigner: SigningStargateClient, amount: string, validator: string) {
+    if (!hubChain.address) {
+        throw new Error("Hub chain address not set");
+    }
+
+    const msg: { typeUrl: string, value: MsgTokenizeShares } = {
+        typeUrl: "/cosmos.staking.v1beta1.MsgTokenizeShares",
         value: {
-            fromAddress: hubChain.address,
-            toAddress: "cosmos13r7j89tfe5n6z5secywjt2dru7t4apy6gwuhew",
-            amount: [{ denom: "uatom", amount: amount }]
+            delegatorAddress: hubChain.address,
+            validatorAddress: 'cosmosvaloper13n6wqhq8la352je00nwq847ktp47pgknseu6kk',
+            amount: { denom: "uatom", amount: amount },
+            tokenizedShareOwner: hubChain.address
         }
     };
 
     const fee = await hubChain.estimateFee([msg]);
-    const signed = await hubSigner.sign(hubChain.address, [msg], fee, "");
-    return signed
+    return await hubSigner.sign(hubChain.address, [msg], fee, "");
 }
 
-export async function signRedeemTokensForShares(hubChain: ChainContext, hubSigner: SigningStargateClient, amount: number, validator: string) {
+export function extractLSMDenom(broadcastResult: DeliverTxResponse): string {
+    const tokenizeSharesEvent = broadcastResult.events.find(event => event.type === 'tokenize_shares');
+    if (!tokenizeSharesEvent) {
+        throw new Error("Tokenize shares event not found in broadcast result");
+    }
+
+    const validatorAttribute = tokenizeSharesEvent.attributes.find(attr => attr.key === 'validator');
+    const shareRecordIdAttribute = tokenizeSharesEvent.attributes.find(attr => attr.key === 'share_record_id');
+
+    if (!validatorAttribute || !shareRecordIdAttribute) {
+        throw new Error("Required attributes not found in tokenize_shares event");
+    }
+
+    return `${validatorAttribute.value}/${shareRecordIdAttribute.value}`;
+};
+
+export async function signRedeemTokensForShares(hubChain: ChainContext, hubSigner: SigningStargateClient, amount: string, denom: string) {
     if (!hubChain.address) {
         throw new Error("Hub chain address not set");
     }
-    // Mocking out with a send message for now
-    const msg = {
-        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+
+    const msg: { typeUrl: string, value: MsgRedeemTokensForShares } = {
+        typeUrl: "/cosmos.staking.v1beta1.MsgRedeemTokensForShares",
         value: {
-            fromAddress: hubChain.address,
-            toAddress: "cosmos13r7j89tfe5n6z5secywjt2dru7t4apy6gwuhew",
-            amount: [{ denom: "uatom", amount: amount }]
+            delegatorAddress: hubChain.address,
+            amount: { denom, amount }
         }
     };
 
     const fee = await hubChain.estimateFee([msg]);
-    const signed = await hubSigner.sign(hubChain.address, [msg], fee, "");
-    return signed
+    return await hubSigner.sign(hubChain.address, [msg], fee, "");
 }
 
-export async function signIBCTransfer(
+export async function signIBCTransferHubToNeutron(
     hubChain: ChainContext,
     hubSigner: SigningStargateClient,
     neutronChain: ChainContext,
-    neutronSigner: SigningStargateClient,
-    direction: "hubToNeutron" | "neutronToHub",
-    amount: number,
+    amount: string,
     denom: string
 ) {
     if (!hubChain.address) {
         throw new Error("Hub chain address not set");
     }
-    // Mocking out with a send message for now
-    const msg = {
-        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+    if (!neutronChain.address) {
+        throw new Error("Neutron chain address not set");
+    }
+
+    const msg: { typeUrl: string, value: MsgTransfer } = {
+        typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
         value: {
-            fromAddress: hubChain.address,
-            toAddress: "cosmos13r7j89tfe5n6z5secywjt2dru7t4apy6gwuhew",
-            amount: [{ denom: "uatom", amount: amount }]
+            sourcePort: "transfer",
+            sourceChannel: "channel-0",
+            token: { denom, amount },
+            sender: hubChain.address,
+            receiver: neutronChain.address,
+            // TODO: IMPORTANT: Need to set the timeout properly or lost funds could result!!!!!
+            timeoutHeight: {
+                revisionHeight: BigInt(0),
+                revisionNumber: BigInt(0)
+            },
+            timeoutTimestamp: BigInt(0),
+            memo: ""
         }
     };
 
     const fee = await hubChain.estimateFee([msg]);
-    const signed = await hubSigner.sign(hubChain.address, [msg], fee, "");
-    return signed
+    return await hubSigner.sign(hubChain.address, [msg], fee, "");
 }
 
-export async function signLockTokens(neutronChain: ChainContext, neutronSigner: SigningStargateClient, amount: number) {
-    if (!neutronChain.address) {
+export async function signIBCTransferNeutronToHub(
+    hubChain: ChainContext,
+    neutronChain: ChainContext,
+    neutronSigner: SigningStargateClient,
+    amount: string,
+    denom: string
+) {
+    if (!hubChain.address) {
         throw new Error("Hub chain address not set");
     }
-    // Mocking out with a send message for now
-    const msg = {
-        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-        value: {
-            fromAddress: neutronChain.address,
-            toAddress: "cosmos13r7j89tfe5n6z5secywjt2dru7t4apy6gwuhew",
-            amount: [{ denom: "uatom", amount: amount }]
-        }
-    };
+    if (!neutronChain.address) {
+        throw new Error("Neutron chain address not set");
+    }
 
+    const msg: { typeUrl: string, value: MsgTransfer } = {
+        typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+        value: {
+            sourcePort: "transfer",
+            sourceChannel: "channel-0",
+            token: { denom, amount },
+            sender: neutronChain.address,
+            receiver: hubChain.address,
+            // TODO: IMPORTANT: Need to set the timeout properly or lost funds could result!!!!!
+            timeoutHeight: {
+                revisionHeight: BigInt(0),
+                revisionNumber: BigInt(0)
+            },
+            timeoutTimestamp: BigInt(0),
+            memo: ""
+        }
+    }
     const fee = await neutronChain.estimateFee([msg]);
-    const signed = await neutronSigner.sign(neutronChain.address, [msg], fee, "");
-    return signed
+    return await neutronSigner.sign(neutronChain.address, [msg], fee, "");
+}
+
+export async function signLockTokens(neutronChain: ChainContext, neutronSigner: SigningStargateClient, lockDuration: number, denom: string, amount: string) {
+    const client = await neutronChain.getSigningCosmWasmClient()
+    if (!neutronChain.address) {
+        throw new Error("Neutron chain address not set");
+    }
+
+    const hydroClient = new HydroBaseClient(
+        client,
+        neutronChain.address,
+        hydroContractAddress
+    )
+    const response = await hydroClient.lockTokens({ lockDuration }, 'auto', '', [{ denom, amount }])
+    return response
 }
 
 export async function broadcastTx(
@@ -97,19 +250,62 @@ export async function broadcastTx(
     return await hubSigner.broadcastTx(new Uint8Array(txRaw.encode(signedTx).finish()));
 }
 
-export async function broadcastAndRelayIBC(
+export async function broadcastAndRelayIBCHubToNeutron(
     hubSigner: SigningStargateClient,
+    hubChain: ChainContext,
     neutronSigner: SigningStargateClient,
-    direction: "hubToNeutron" | "neutronToHub",
+    neutronChain: ChainContext,
+    denom: string,
     signedTx: TxRaw,
     resolveResponsesTimeoutMs: number = 180000,
     resolveResponsesCheckIntervalMs: number = 12000,
 ) {
     await hubSigner.broadcastTx(new Uint8Array(txRaw.encode(signedTx).finish()));
-    // Mock implementation with a ten second sleep
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve([]);
-        }, 10000);
-    });
+
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < resolveResponsesTimeoutMs) {
+        await new Promise(resolve => setTimeout(resolve, resolveResponsesCheckIntervalMs));
+
+        const neutronShares = await checkForNeutronLSMShares(neutronChain, neutronSigner);
+        const foundShare = neutronShares.find(share => share.baseDenom === denom);
+
+        if (foundShare) {
+            console.log(`LSM shares (${denom}) successfully transferred to Neutron`);
+            return foundShare;
+        }
+    }
+
+    throw new Error(`Timeout: LSM shares (${denom}) transfer not detected within ${resolveResponsesTimeoutMs}ms`);
 }
+
+export async function broadcastAndRelayIBCNeutronToHub(
+    hubSigner: SigningStargateClient,
+    hubChain: ChainContext,
+    neutronSigner: SigningStargateClient,
+    neutronChain: ChainContext,
+    denom: string,
+    signedTx: TxRaw,
+    resolveResponsesTimeoutMs: number = 180000,
+    resolveResponsesCheckIntervalMs: number = 12000,
+) {
+    await neutronSigner.broadcastTx(new Uint8Array(txRaw.encode(signedTx).finish()));
+
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < resolveResponsesTimeoutMs) {
+        await new Promise(resolve => setTimeout(resolve, resolveResponsesCheckIntervalMs));
+
+        const hubShares = await checkForHubLSMShares(hubChain, hubSigner);
+        const foundShare = hubShares.find(share => share.denom === denom);
+
+        if (foundShare) {
+            console.log(`LSM shares (${denom}) successfully transferred to Hub`);
+            return foundShare;
+        }
+    }
+
+    throw new Error(`Timeout: LSM shares (${denom}) transfer not detected within ${resolveResponsesTimeoutMs}ms`);
+}   
+
+    

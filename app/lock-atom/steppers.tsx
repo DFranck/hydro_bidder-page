@@ -11,16 +11,22 @@ const txRaw = cosmos.tx.v1beta1.TxRaw;
 import {
   signTokenizeShares,
   signRedeemTokensForShares,
-  signIBCTransfer,
   signLockTokens,
   broadcastTx,
-  broadcastAndRelayIBC
+  signIBCTransferHubToNeutron,
+  signIBCTransferNeutronToHub,
+  broadcastAndRelayIBCHubToNeutron,
+  broadcastAndRelayIBCNeutronToHub,
+  checkForHubLSMShares,
+  checkForNeutronLSMShares,
+  extractLSMDenom
 } from './transactions';
 
-export const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: {
-    amount: number;
+export const LockStepper = ({ amount, validator, denom, lockDuration, hubChain, neutronChain, onExit }: {
+    amount: string;
     validator: string;
     denom: string;
+    lockDuration: number;
     hubChain: ChainContext;
     neutronChain: ChainContext;
     onExit: () => void;
@@ -46,21 +52,25 @@ export const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, 
             setStep("WaitingForTokenizeBroadcast");
             const broadcastResult = await broadcastTx(hubSigner, neutronSigner, signedTokenizeTx);
 
+            // Extract the LSM denom
+            const lsmDenom = extractLSMDenom(broadcastResult);
+            console.log("LSM Denom:", lsmDenom);
+
             // Wait for the user to sign the IBC transfer transaction
             setStep("WaitingForIBCSigning");
-            const signedIBCTx = await signIBCTransfer(hubChain, hubSigner, neutronChain, neutronSigner, 'hubToNeutron', amount, "lsmDenom"); // TODO: figure out how to get the correct denoms
+            const signedIBCTx = await signIBCTransferHubToNeutron(hubChain, hubSigner, neutronChain, amount, lsmDenom); // TODO: figure out how to get the correct denoms
 
             // Wait for the IBC transfer to be broadcast and relayed
             setStep("WaitingForIBCBroadcastAndRelay");
-            const ibcBroadcastResult = await broadcastAndRelayIBC(hubSigner, neutronSigner, 'hubToNeutron', signedIBCTx);
+            const ibcBroadcastResult = await broadcastAndRelayIBCHubToNeutron(hubSigner, hubChain, neutronSigner, neutronChain, lsmDenom, signedIBCTx);
 
             // Wait for the user to sign the lock tokens transaction
             setStep("WaitingForLockingSigning");
-            const signedLockTx = await signLockTokens(neutronChain, neutronSigner, amount);
+            const signedLockTx = await signLockTokens(neutronChain, neutronSigner, lockDuration, ibcBroadcastResult.denom, amount);
 
             // Broadcast the lock tokens transaction
             setStep("WaitingForLockingBroadcast");
-            const lockBroadcastResult = await broadcastTx(neutronSigner, hubSigner, signedLockTx);
+            // const lockBroadcastResult = await broadcastTx(neutronSigner, hubSigner, signedLockTx);
 
             setStep("Success");
 
@@ -152,7 +162,7 @@ export const LockStepper = ({ amount, validator, denom, hubChain, neutronChain, 
 };
 
 export const RevertFromHubStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: {
-    amount: number;
+    amount: string;
     validator: string;
     denom: string;
     hubChain: ChainContext;
@@ -236,7 +246,7 @@ export const RevertFromHubStepper = ({ amount, validator, denom, hubChain, neutr
     );
 };
 
-export const RevertFromNeutronStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: number, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
+export const RevertFromNeutronStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: string, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
     type RevertStep = 'Init' | 'WaitingForIBCSigning' | 'WaitingForIBCBroadcast' | 'WaitingForRedeemSigning' | 'WaitingForRedeemBroadcast' | 'Success' | 'Error';
 
     const [step, setStep] = useState<RevertStep>('Init');
@@ -252,15 +262,15 @@ export const RevertFromNeutronStepper = ({ amount, validator, denom, hubChain, n
 
             // Wait for the user to sign the IBC transfer transaction
             setStep('WaitingForIBCSigning');
-            const signedIBCTx = await signIBCTransfer(hubChain, hubSigner, neutronChain, neutronSigner, 'hubToNeutron', amount, denom); // TODO: figure out how to get the correct denoms
+            const signedIBCTx = await signIBCTransferNeutronToHub(hubChain, neutronChain, neutronSigner, amount, denom);
             
             // Broadcast the IBC transfer transaction
             setStep('WaitingForIBCBroadcast');
-            const ibcBroadcastResult = await broadcastAndRelayIBC(hubSigner, neutronSigner, 'hubToNeutron', signedIBCTx);
+            const ibcBroadcastResult = await broadcastAndRelayIBCNeutronToHub(hubSigner, hubChain, neutronSigner, neutronChain, denom, signedIBCTx);
 
             // Redeem tokens for shares
             setStep('WaitingForRedeemSigning');
-            const signedRedeemTx = await signRedeemTokensForShares(hubChain, hubSigner, amount, validator);
+            const signedRedeemTx = await signRedeemTokensForShares(hubChain, hubSigner, amount, denom);
 
             // Broadcast the redeem transaction
             setStep('WaitingForRedeemBroadcast');
@@ -339,9 +349,11 @@ export const RevertFromNeutronStepper = ({ amount, validator, denom, hubChain, n
     );
 };
 
-export const ContinueFromNeutronStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: number, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
+export const ContinueFromNeutronStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: string, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
     const [step, setStep] = useState<'Init' | 'WaitingForLockSigning' | 'WaitingForLockBroadcast' | 'Success' | 'Error'>('Init');
 
+    const [lockDuration, setLockDuration] = useState(0);
+    
     const executeContinueFromNeutron = async () => {
         try {
             const hubSigner = await hubChain.getSigningStargateClient();
@@ -353,11 +365,10 @@ export const ContinueFromNeutronStepper = ({ amount, validator, denom, hubChain,
 
             // Wait for the user to sign the lock tokens transaction
             setStep('WaitingForLockSigning');
-            const signedLockTx = await signLockTokens(neutronChain, neutronSigner, amount);
+            const signedLockTx = await signLockTokens(neutronChain, neutronSigner, lockDuration, denom, amount);
 
             // Broadcast the lock tokens transaction
-            setStep('WaitingForLockBroadcast');
-            const lockBroadcastResult = await broadcastTx(neutronSigner, hubSigner, signedLockTx);
+            // setStep('WaitingForLockBroadcast');
 
             setStep('Success');
         } catch (error) {
@@ -369,11 +380,27 @@ export const ContinueFromNeutronStepper = ({ amount, validator, denom, hubChain,
     const renderStep = () => {
         switch (step) {
             case 'Init':
+                const [lockDuration, setLockDuration] = useState(30); // Default to 30 days
+
                 return (
                     <>
                         <p>Nice! You're about to lock {amount} ATOM staked to {validator} in Hydro to get {amount} hATOM.</p>
-                        <p>This will require one wallet approval.</p>
-                        <Button onClick={executeContinueFromNeutron}>Lock</Button>
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            executeContinueFromNeutron();
+                        }}>
+                            <label htmlFor="lockDuration">Lock Duration (days):</label>
+                            <input
+                                type="number"
+                                id="lockDuration"
+                                value={lockDuration}
+                                onChange={(e) => setLockDuration(parseInt(e.target.value) * 24 * 60 * 60 * 1000000000)}
+                                min="1"
+                                required
+                            />
+                            <p>This will require one wallet approval.</p>
+                            <Button type="submit">Lock</Button>
+                        </form>
                     </>
                 );
             case 'WaitingForLockSigning':
@@ -415,9 +442,9 @@ export const ContinueFromNeutronStepper = ({ amount, validator, denom, hubChain,
     );
 };
 
-export const ContinueFromHubStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: number, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
+export const ContinueFromHubStepper = ({ amount, validator, denom, hubChain, neutronChain, onExit }: { amount: string, validator: string, denom: string, hubChain: ChainContext, neutronChain: ChainContext, onExit: () => void }) => {
     const [step, setStep] = useState<'Init' | 'WaitingForIBCSigning' | 'WaitingForIBCBroadcastAndRelay' | 'WaitingForLockingSigning' | 'WaitingForLockingBroadcast' | 'Success' | 'Error'>('Init');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [lockDuration, setLockDuration] = useState(30 * 24 * 60 * 60 * 1000000000); // 30 days in nanoseconds
 
     const execute = async () => {
         try {
@@ -430,19 +457,19 @@ export const ContinueFromHubStepper = ({ amount, validator, denom, hubChain, neu
 
             // Wait for the user to sign the IBC transfer transaction
             setStep('WaitingForIBCSigning');
-            const signedIBCTx = await signIBCTransfer(hubChain, hubSigner, neutronChain, neutronSigner, 'hubToNeutron', amount, denom);
+            const signedIBCTx = await signIBCTransferHubToNeutron(hubChain, hubSigner, neutronChain, amount, denom);
 
             // Broadcast the IBC transfer transaction
             setStep('WaitingForIBCBroadcastAndRelay');
-            const ibcBroadcastResult = await broadcastAndRelayIBC(hubSigner, neutronSigner, 'hubToNeutron', signedIBCTx);
+            const ibcBroadcastResult = await broadcastAndRelayIBCHubToNeutron(hubSigner, hubChain, neutronSigner, neutronChain, denom, signedIBCTx);
 
             // Wait for the user to sign the lock tokens transaction
             setStep('WaitingForLockingSigning');
-            const signedLockTx = await signLockTokens(neutronChain, neutronSigner, amount);
+            const signedLockTx = await signLockTokens(neutronChain, neutronSigner, lockDuration, ibcBroadcastResult.denom, amount);
 
             // Broadcast the lock tokens transaction
             setStep('WaitingForLockingBroadcast');
-            const lockBroadcastResult = await broadcastTx(neutronSigner, hubSigner, signedLockTx);
+            // await broadcastTx(neutronSigner, hubSigner, signedLockTx);
 
             setStep('Success');
 
@@ -500,7 +527,6 @@ export const ContinueFromHubStepper = ({ amount, validator, denom, hubChain, neu
                 return (
                     <>
                         <p>An error occurred:</p>
-                        <p>{errorMessage}</p>
                         <Button onClick={() => setStep('Init')}>Try Again</Button>
                     </>
                 );
