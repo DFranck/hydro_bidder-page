@@ -34,11 +34,14 @@ export default function TXExample() {
         setTransactionStatus("waiting for signing");
         const signer = await hubChain.getSigningStargateClient();
         try {
-            const msg = send({
-                fromAddress: hubChain.address,
-                toAddress: toAddress,
-                amount: [{ denom: "uatom", amount: amount }]
-            });
+            const msg = {
+                typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+                value: {
+                    fromAddress: hubChain.address,
+                    toAddress: toAddress,
+                    amount: [{ denom: "uatom", amount: amount }]
+                }
+            };
 
             const fee = await hubChain.estimateFee([msg]);
             const signed = await signer.sign(hubChain.address, [msg], fee, "");
