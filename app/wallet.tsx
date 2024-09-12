@@ -5,6 +5,8 @@ import { ChainProvider } from '@cosmos-kit/react'
 import { wallets as keplr } from '@cosmos-kit/keplr-extension'
 import { ChainName } from '@cosmos-kit/core'
 import { Chain } from '@chain-registry/types'
+import { Registry } from "@cosmjs/proto-signing";
+import * as stride from 'stridejs';
 
 import { GasPrice } from '@cosmjs/stargate'
 
@@ -57,6 +59,7 @@ export function WalletHandler({
                             }
                         case 'cosmoshubtestnet':
                             return {
+                                registry: new Registry(stride.cosmosProtoRegistry),
                                 gasPrice: GasPrice.fromString('0.005uatom'),
                             }
                         default:

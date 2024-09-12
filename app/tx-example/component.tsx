@@ -11,6 +11,21 @@ import { Label } from "@/components/ui/label"
 
 const { send } = cosmos.bank.v1beta1.MessageComposer.fromPartial;
 
+export interface Coin {
+    denom: string;
+    amount: string;
+}
+export interface MsgTokenizeShares {
+    delegatorAddress: string;
+    validatorAddress: string;
+    amount: Coin;
+    tokenizedShareOwner: string;
+}
+export interface MsgTokenizeSharesProtoMsg {
+    typeUrl: "/cosmos.staking.v1beta1.MsgTokenizeShares";
+    value: Uint8Array;
+}
+
 export default function TXExample() {
     const hubChain = useChain("cosmoshubtestnet");
     const neutronChain = useChain("neutrontestnet");
@@ -33,13 +48,18 @@ export default function TXExample() {
 
         setTransactionStatus("waiting for signing");
         const signer = await hubChain.getSigningStargateClient();
+        // const signer = await stride.getSigningCosmosClient({
+        //     rpcEndpoint: await hubChain.getRpcEndpoint(),
+        //     signer: hubChain.getOfflineSigner()
+        // });
         try {
-            const msg = {
-                typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+            const msg: { typeUrl: string, value: MsgTokenizeShares } = {
+                typeUrl: "/cosmos.staking.v1beta1.MsgTokenizeShares",
                 value: {
-                    fromAddress: hubChain.address,
-                    toAddress: toAddress,
-                    amount: [{ denom: "uatom", amount: amount }]
+                    delegatorAddress: hubChain.address,
+                    validatorAddress: 'cosmosvaloper13n6wqhq8la352je00nwq847ktp47pgknseu6kk',
+                    amount: { denom: "uatom", amount: amount },
+                    tokenizedShareOwner: hubChain.address
                 }
             };
 
@@ -55,6 +75,16 @@ export default function TXExample() {
             setTransactionStatus("error");
         }
     };
+
+    // const queryLSMShares = async () => {
+    //     if (!hubChain.address || !hubChain.getSigningStargateClient) {
+    //         console.error("Hub chain wallet not connected or signing client not available");
+    //         setTransactionStatus("error");
+    //         return;
+    //     }
+
+    //     hub
+    // }
 
     return (
         <div className="space-y-4">
