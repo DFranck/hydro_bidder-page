@@ -29,8 +29,8 @@ type IncompleteNotice =
     | { type: 'LSMSharesOnNeutron', validator: string, amount: string }
 
 export default function LSMInteraction() {
-    const hubChain = useChain("cosmoshubtestnet");
-    const neutronChain = useChain("neutrontestnet");
+    const hubChain = useChain("cosmoshub");
+    const neutronChain = useChain("neutron");
 
     const [incompleteNotices, setIncompleteNotices] = useState<IncompleteNotice[]>([]);
 
@@ -75,7 +75,7 @@ export default function LSMInteraction() {
                 ))}
                 <LockForm onSubmit={(validator, amount, duration) => setStepper({ type: 'lock', validator, amount, duration })} />
             </div>
-        </div>
+        </div> || <div>Wallet not connected</div>
 }
 
 const HubIncompleteNotice = ({ amount, validator, setStepper }: { amount: string, validator: string, setStepper: (stepper: Stepper) => void }) => {
@@ -95,8 +95,7 @@ const NeutronIncompleteNotice = ({ amount, validator, setStepper }: { amount: st
 }
 
 const LockForm = ({ onSubmit }: { onSubmit: (validator: string, amount: string, duration: number) => void }) => {
-    // Using SimplyStaking for testing
-    const [validator, setValidator] = useState('cosmosvaloper124maqmcqv8tquy764ktz7cu0gxnzfw54n3vww8');
+    const [validator, setValidator] = useState('cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv');
     // 0.01 atom in uatom for testing
     const [amount, setAmount] = useState('10000');
     // 3 months for testing

@@ -27,12 +27,12 @@ export interface MsgTokenizeSharesProtoMsg {
 }
 
 export default function TXExample() {
-    const hubChain = useChain("cosmoshubtestnet");
-    const neutronChain = useChain("neutrontestnet");
+    const hubChain = useChain("cosmoshub");
+    const neutronChain = useChain("neutron");
     const [transactionStatus, setTransactionStatus] = useState<string | null>(null);
     const [broadcastResult, setBroadcastResult] = useState<string | null>(null);
     const [amount, setAmount] = useState<string>("1000");
-    const [toAddress, setToAddress] = useState<string>("cosmos13r7j89tfe5n6z5secywjt2dru7t4apy6gwuhew");
+    const [toAddress, setToAddress] = useState<string>("cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv");
 
     const signAndBroadcastTransaction = async () => {
         if (!hubChain.address || !hubChain.getSigningStargateClient) {
@@ -57,7 +57,7 @@ export default function TXExample() {
                 typeUrl: "/cosmos.staking.v1beta1.MsgTokenizeShares",
                 value: {
                     delegatorAddress: hubChain.address,
-                    validatorAddress: 'cosmosvaloper13n6wqhq8la352je00nwq847ktp47pgknseu6kk',
+                    validatorAddress: 'cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv',
                     amount: { denom: "uatom", amount: amount },
                     tokenizedShareOwner: hubChain.address
                 }
@@ -68,6 +68,7 @@ export default function TXExample() {
             
             setTransactionStatus("waiting for broadcast");
             const result = await signer.broadcastTx(Uint8Array.from(TxRaw.encode(signed).finish()));
+
             setBroadcastResult(`hash: ${result.transactionHash}`);
             setTransactionStatus(null);
         } catch (error) {
