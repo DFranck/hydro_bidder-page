@@ -1,6 +1,7 @@
-import { Suspense } from "react";
-import { fetchDashboardData } from "../dashboardFetch";
+import { Suspense } from "react"
+import { fetchDashboardData } from "../dashboardFetch"
 import Dashboard from "../dashboard"
+import TributesTable from "./tributesTable"
 
 export default async function Page() {
     const {
@@ -10,19 +11,16 @@ export default async function Page() {
         currentVotingPower,
         globalState,
         currentProposalTributes,
-        lastProposalTributes
-    } = await fetchDashboardData();
+        lastProposalTributes,
+    } = await fetchDashboardData()
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <Dashboard
-                lastProposalTranches={lastProposalTranches}
-                currentProposalTranches={currentProposalTranches}
-                lastVotingPower={lastVotingPower}
-                currentVotingPower={currentVotingPower}
-                globalState={globalState}
-                currentProposalTributes={currentProposalTributes}
-                lastProposalTributes={lastProposalTributes}
-            />
+            <Dashboard activeTab="tributes">
+                <TributesTable
+                    currentProposalTranches={currentProposalTranches}
+                    globalState={globalState}
+                />
+            </Dashboard>
         </Suspense>
     )
 }

@@ -1,6 +1,6 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import { ProposalListTopModules } from "../dashboard/topModules/TopModules";
+import { ProposalListTopModules } from "../dashboard/TopModules";
 import Image from "next/image";
 import Link from "next/link";
 import { DataTable, makeProposalColumnDef } from "../ui/proposalTable";
