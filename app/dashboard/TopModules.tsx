@@ -29,7 +29,7 @@ export const ProposalListTopModules = () => {
     const bgColor =
         "bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]"
     return (
-        <div className="flex flex-row justify-between bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]">
+        <div className="flex flex-row justify-between bg-transparent">
             <div
                 className={`flex w-[380px] h-[206px] flex-col shrink-0 p-6 rounded-[10px] ${bgColor}`}
             >
