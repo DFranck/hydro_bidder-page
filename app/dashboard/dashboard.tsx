@@ -22,7 +22,6 @@ export default function Dashboard({
                             asChild
                             value="tributes"
                             className="h-full rounded-xl w-32"
-                            // value="tribute"
                         >
                             <a href="/dashboard/tributes">Earned Tribute</a>
                         </TabsTrigger>
