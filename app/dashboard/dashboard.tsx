@@ -17,11 +17,11 @@ export default function Dashboard({
             <DashboardTopModules />
             <div className="pt-[70px]">
                 <Tabs value={activeTab || "lockups"}>
-                    <TabsList className="bg-[#303132] p-0 h-12 rounded-lg text-white">
+                    <TabsList className="bg-[#303132] p-0 h-12 rounded-xl text-white">
                         <TabsTrigger
                             asChild
                             value="tributes"
-                            className="h-full rounded-lg w-32"
+                            className="h-full rounded-xl w-32"
                             // value="tribute"
                         >
                             <a href="/dashboard/tributes">Earned Tribute</a>
@@ -29,7 +29,7 @@ export default function Dashboard({
                         <TabsTrigger
                             asChild
                             value="lockups"
-                            className="h-full rounded-lg w-24"
+                            className="h-full rounded-xl w-24"
                         >
                             <a href="/dashboard">Lockups</a>
                         </TabsTrigger>
