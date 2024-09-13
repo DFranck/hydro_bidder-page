@@ -1,5 +1,7 @@
 import Image from "next/image"
 import { mockGlobalState } from "../mockData"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export enum TabLabel {
     VOTING = "voting",
@@ -8,128 +10,17 @@ export enum TabLabel {
     TRIBUTE = "tribute",
 }
 
+const bgColor =
+    "bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]"
+const activeBgColor =
+    "bg-white bg-[linear-gradient(180deg,rgba(255,255,255,1)_64%,rgba(0,35,255,1)_64%)]"
+
 export const DashboardTopModules = () => {
-    const bgColor =
-        "bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]"
-    const activeBgColor =
-        "bg-white bg-[linear-gradient(180deg,rgba(255,255,255,1)_64%,rgba(0,35,255,1)_64%)]"
-    // const isLockupsOrVotingActive = tab === TabLabel.LOCKUPS || tab === TabLabel.VOTING;
-    const isLockupsOrVotingActive = false // Make it false by default because we only have one tab right now
     return (
-        <div className="flex flex-row justify-between">
-            {/* <div onClick={() => onTabChange && onTabChange(TabLabel.TRIBUTE)} className={`relative cursor-pointer flex w-[380px] h-[360px] flex-col shrink-0 p-6 rounded-[10px] ${tab === TabLabel.TRIBUTE ? activeBgColor : bgColor}`}>
-                <Image alt="Rewards snapshot" src={isTributeActive ? '/images/Rewards_Light-black.svg' : '/images/Rewards_Light.svg'} width={100} height={100} />
-                <div
-                    onClick={() => undefined}
-                    className="absolute top-4 right-4 inline-flex h-10 justify-center items-center gap-2.5 shrink-0 px-6 py-0 rounded-[10px] bg-[#00FFC2] text-[#080815] text-center text-xl not-italic font-medium leading-[21px]"
-                >
-                    Claim Rewards
-                </div>
-                <h3 className={`py-4 ${isTributeActive ? 'text-[#080815]' : 'text-white'}`}>Rewards snapshot</h3>
-                <p className={`text-xl not-italic font-normal leading-[150%] ${isTributeActive ? 'text-[#080815]' : 'text-white'}`}>Your ROI on your staked stATOM</p>
-                <p className={`text-[${isTributeActive ? 'white' : '#E4B472'}] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]`}>123</p>
-                <p className={`text-[${isTributeActive ? 'white' : '#FFE1B8'}] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}>USDC EQUIVALENT</p>
-            </div> */}
-            <div
-                className={`gap-[155px] relative cursor-pointer flex w-[820px] h-[360px] flex-row shrink-0 p-6 rounded-[10px] ${
-                    isLockupsOrVotingActive ? activeBgColor : bgColor
-                }`}
-            >
-                <div className="flex flex-col">
-                    <Image
-                        alt="Locked ATOM"
-                        src={
-                            isLockupsOrVotingActive
-                                ? "/images/Lock_Light-black.svg"
-                                : "/images/Lock_Light.svg"
-                        }
-                        width={100}
-                        height={100}
-                    />
-                    <h3
-                        className={`py-4 ${
-                            isLockupsOrVotingActive
-                                ? "text-[#080815]"
-                                : "text-white"
-                        }`}
-                    >
-                        Locked ATOM
-                    </h3>
-                    <p
-                        className={`text-xl not-italic font-normal leading-[150%] ${
-                            isLockupsOrVotingActive
-                                ? "text-[#080815]"
-                                : "text-white"
-                        }`}
-                    >
-                        Your locked ATOM balance
-                    </p>
-                    <p
-                        className={`text-[${
-                            isLockupsOrVotingActive ? "white" : "#E4B472"
-                        }] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]`}
-                    >
-                        {mockGlobalState.totalLockedTokens}
-                    </p>
-                    <p
-                        className={`text-[${
-                            isLockupsOrVotingActive ? "white" : "#FFE1B8"
-                        }] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}
-                    >
-                        IN 3 Lockups
-                    </p>
-                </div>
-                <div className="flex flex-col">
-                    <Image
-                        alt="Voting Power"
-                        src={
-                            isLockupsOrVotingActive
-                                ? "/images/Wallet_Light-black.svg"
-                                : "/images/Wallet_Light.svg"
-                        }
-                        width={100}
-                        height={100}
-                    />
-                    <div
-                        onClick={() => undefined}
-                        className="absolute top-4 right-4 inline-flex h-10 justify-center items-center gap-2.5 shrink-0 px-6 py-0 rounded-[10px] bg-[#00FFC2] text-[#080815] text-center text-xl not-italic font-medium leading-[21px]"
-                    >
-                        New Lockup
-                    </div>
-                    <h3
-                        className={`py-4 ${
-                            isLockupsOrVotingActive
-                                ? "text-[#080815]"
-                                : "text-white"
-                        }`}
-                    >
-                        Voting Power
-                    </h3>
-                    <p
-                        className={`text-xl not-italic font-normal leading-[150%] ${
-                            isLockupsOrVotingActive
-                                ? "text-[#080815]"
-                                : "text-white"
-                        }`}
-                    >
-                        Your current Voting Power
-                    </p>
-                    <p
-                        className={`text-[${
-                            isLockupsOrVotingActive ? "white" : "#E4B472"
-                        }] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]`}
-                    >
-                        456
-                    </p>
-                    <p
-                        className={`text-[${
-                            isLockupsOrVotingActive ? "white" : "#FFE1B8"
-                        }] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}
-                    >
-                        until (pull date of soonest lockup)
-                    </p>
-                </div>
-            </div>
+        <div className="grid lg:grid-cols-3 gap-12">
+            <RewardsSnapshotCard amount={12345.67} />
+            <LockedAtomCard />
+            <VotingPowerCard />
         </div>
     )
 }
@@ -138,7 +29,7 @@ export const ProposalListTopModules = () => {
     const bgColor =
         "bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]"
     return (
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]">
             <div
                 className={`flex w-[380px] h-[206px] flex-col shrink-0 p-6 rounded-[10px] ${bgColor}`}
             >
@@ -204,35 +95,85 @@ export const ProposalListTopModules = () => {
     )
 }
 
-function RewardsSnapshot({ amount }: { amount: number }) {
+function RewardsSnapshotCard({ amount }: { amount: number }) {
     return (
-        <div className="bg-[#1a1b23] rounded-lg p-4 max-w-sm">
-            <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center">
-                    <div className="bg-blue-600 rounded-full p-2 mr-2">
-                        <span className="text-white text-xl">$</span>
-                    </div>
-                    <h2 className="text-white text-lg font-semibold">
-                        Rewards
-                        <br />
-                        Snapshot
-                    </h2>
+        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
+            <div className="flex flex-col flex-1 justify-between text-white">
+                <div className="flex w-full justify-between">
+                    <Image
+                        alt="Locked ATOM"
+                        src="/images/Rewards_Light.svg"
+                        width={100}
+                        height={100}
+                    />
+                    <Button className="h-10 rounded-full bg-[#00FFC2] text-[#080815] text-center text-lg font-medium">
+                        Claim Rewards
+                    </Button>
                 </div>
-                <button className="bg-[#4ade80] text-black px-4 py-2 rounded-md text-sm font-medium">
-                    Claim Rewards
-                </button>
+                <h3 className="py-4 text-white">Rewards Snapshot</h3>
+                <p className="text-xl font-normal">ROI on your locked ATOM</p>
+                <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
+                    {Intl.NumberFormat("en-US", {
+                        maximumFractionDigits: 0,
+                        style: "currency",
+                        currency: "USD",
+                    }).format(amount)}
+                </p>
+                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                    USDC EQUIVALENT
+                </p>
             </div>
-            <p className="text-gray-400 text-sm mb-2">
-                Your ROI on your staked stATOM
-            </p>
-            <p className="text-[#4ade80] text-3xl font-bold">
-                $
-                {amount.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                })}
-            </p>
-            <p className="text-gray-400 text-xs">USDC EQUIVALENT</p>
+        </div>
+    )
+}
+
+function LockedAtomCard() {
+    return (
+        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
+            <div className="flex flex-col flex-1 justify-between text-white">
+                <Image
+                    alt="Locked ATOM"
+                    src={"/images/Lock_Light.svg"}
+                    width={100}
+                    height={100}
+                />
+                <h3 className="py-4 text-white">Locked ATOM</h3>
+                <p className="text-xl font-normal">Your locked ATOM balance</p>
+                <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
+                    {mockGlobalState.totalLockedTokens}
+                </p>
+                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                    IN 3 Lockups
+                </p>
+            </div>
+        </div>
+    )
+}
+
+function VotingPowerCard() {
+    return (
+        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
+            <div className="flex flex-col flex-1 justify-between">
+                <div className="flex w-full justify-between">
+                    <Image
+                        alt="Voting Power"
+                        src={"/images/Wallet_Light.svg"}
+                        width={100}
+                        height={100}
+                    />
+                    <Button className="h-10 rounded-full bg-[#00FFC2] text-[#080815] text-center text-lg font-medium">
+                        New Lockup
+                    </Button>
+                </div>
+                <h3 className="py-4 text-white">Voting Power</h3>
+                <p className="text-xl font-normal">Your current Voting Power</p>
+                <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
+                    456
+                </p>
+                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                    until (pull date of soonest lockup)
+                </p>
+            </div>
         </div>
     )
 }
