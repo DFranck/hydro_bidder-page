@@ -20,6 +20,7 @@ import {
 import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
 import { Progress } from "@/components/ui/progress"
 import { LockIcon, TriangleAlertIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function LockupsTable({
     currentProposalTranches,
@@ -37,7 +38,7 @@ export default function LockupsTable({
         Array.from(currentProposalTranches.keys())
     )
 
-    const onEditLockup = useCallback((lockup: LockEntry) => {
+    const onEditLockup = useCallback((lockup: LockEntryWithPower) => {
         console.log({ lockup })
     }, [])
 
@@ -63,7 +64,7 @@ function Lockups({
     onEditLockup,
     walletAddress,
 }: {
-    onEditLockup: (lockup: LockEntry) => void
+    onEditLockup: (lockup: LockEntryWithPower) => void
     walletAddress: string
 }) {
     const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
@@ -109,7 +110,13 @@ function Lockups({
 
     return (
         <div>
-            <h3>My Lockups</h3>
+            <div className="flex flex-col lg:flex-row justify-between">
+                <h3>My Lockups</h3>
+                <div className="space-x-2   ">
+                    <span>Lock staked ATOM to get voting power </span>
+                    <Button className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]">New Lockup</Button>
+                </div>
+            </div>
             <Table className="border-separate border-spacing-y-2">
                 <TableHeader>
                     <TableRow>
@@ -205,7 +212,7 @@ function Lockups({
                                     className="rounded-r-xl"
                                 >
                                     <EditLockupDuration
-                                        lockup={lockup.lock_entry}
+                                        lockup={lockup}
                                         onEditLockup={onEditLockup}
                                     />
                                 </TableCell>
