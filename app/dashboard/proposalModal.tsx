@@ -1,37 +1,34 @@
-import React, { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import React, { useState } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogClose,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog'
-import { executeVote } from '@/hooks/hooks'
-import { useChain } from '@cosmos-kit/react'
-import { Proposal } from '@/app/ts_types/HydroBase.types'
+} from "@/components/ui/dialog"
+import { executeVote } from "@/hooks/hooks"
+import { useChain } from "@cosmos-kit/react"
+import { Proposal } from "@/app/ts_types/HydroBase.types"
 
 const mockData = {
     tributeToVoters: [
         {
             amount: 100000,
-            denom: 'OSMO',
+            denom: "OSMO",
         },
     ],
 
     liquidityRequested: [
         {
             amount: 200000,
-            denom: 'ATOMS',
+            denom: "ATOMS",
         },
     ],
     currentVotePercentage: 32,
-    status: 'Open',
+    status: "Open",
     totalVotingPower: 100,
 }
 
@@ -43,7 +40,7 @@ export const ProposalModal = ({
     hasVoted: boolean
 }) => {
     const { address, getSigningCosmWasmClient, estimateFee } =
-        useChain('neutrontestnet')
+        useChain("neutrontestnet")
 
     const [showChangeVote, setShowChangeVote] = useState(false)
 
@@ -234,8 +231,8 @@ export const ProposalModal = ({
                                                 className="text-xl not-italic font-bold leading-[150%]"
                                             >
                                                 {item.amount.toLocaleString(
-                                                    'en-US'
-                                                )}{' '}
+                                                    "en-US"
+                                                )}{" "}
                                                 {item.denom}
                                             </p>
                                         )
@@ -252,8 +249,8 @@ export const ProposalModal = ({
                                                 className="text-xl not-italic font-bold leading-[150%]"
                                             >
                                                 {item.amount.toLocaleString(
-                                                    'en-US'
-                                                )}{' '}
+                                                    "en-US"
+                                                )}{" "}
                                                 {item.denom}
                                             </p>
                                         )
