@@ -33,6 +33,15 @@ function gasPrices(chain: Chain | ChainName) {
             return {
                 gasPrice: GasPrice.fromString('0.005uatom'),
             }
+        case 'cosmoshub':
+            return {
+                registry: new Registry([...stride.cosmosProtoRegistry, ...stride.ibcProtoRegistry]),
+                gasPrice: GasPrice.fromString('0.005uatom'),
+            }
+        case 'neutron':
+            return {
+                gasPrice: GasPrice.fromString('0.008untrn'),
+            }
         default:
             return void 0
     }
@@ -45,7 +54,7 @@ export function WalletHandler({
 }>) {
     return (
         <ChainProvider
-            chains={[testnetChain, localnetChain, pionChain]}
+            chains={[testnetChain, localnetChain, pionChain, 'cosmoshub', 'neutron']}
             assetLists={[testnetAssets, localAssets]}
             wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
             signerOptions={{
@@ -61,6 +70,15 @@ export function WalletHandler({
                             return {
                                 registry: new Registry([...stride.cosmosProtoRegistry, ...stride.ibcProtoRegistry]),
                                 gasPrice: GasPrice.fromString('0.005uatom'),
+                            }
+                        case 'cosmoshub':
+                            return {
+                                registry: new Registry([...stride.cosmosProtoRegistry, ...stride.ibcProtoRegistry]),
+                                gasPrice: GasPrice.fromString('0.005uatom'),
+                            }
+                        case 'neutron':
+                            return {
+                                gasPrice: GasPrice.fromString('0.008untrn'),
                             }
                         default:
                             return void 0
@@ -88,6 +106,14 @@ export function WalletHandler({
                     neutrontestnet: {
                         rpc: ['https://rpc-palvus.pion-1.ntrn.tech'],
                         rest: ['https://rest-palvus.pion-1.ntrn.tech'],
+                    },
+                    neutron: {
+                        rpc: ['https://rpc.cosmos.directory/neutron'],
+                        rest: ['https://api.neutron.quokkastake.io/', 'https://neutron-api.lavenderfive.com/'],
+                    },
+                    cosmoshub: {
+                        rpc: ['https://cosmos-rpc.polkachu.com'],
+                        rest: ['https://cosmos-api.polkachu.com/'],
                     },
                 },
                 isLazy: true,

@@ -32,8 +32,7 @@ import { StdFee } from '@cosmjs/amino'
 import { MsgVoteEncodeObject, GasPrice } from '@cosmjs/stargate'
 
 const hydroContractAddress =
-    'neutron13wqp5t3xxlwer9mq9mmrfa3j0vfn06cfs3r5kdaz2sp97vpqdmeqwm2p7y'
-const rpcEndpoint = 'https://rpc-palvus.pion-1.ntrn.tech:443'
+    'neutron1vjac85ht2wj4sh9j6g88tuh0f7up0h26aauk3cm0tz0lgdsz24hqgzqhsn'
 
 export async function checkForHubLSMShares(hubChain: ChainContext, hubSigner: SigningStargateClient) {
     if (!hubChain.address) {
@@ -70,7 +69,9 @@ export async function checkForNeutronLSMShares(neutronChain: ChainContext, neutr
         throw new Error("Neutron chain address not set");
     }
 
-    const response = await fetch(`https://${neutronChain.getRestEndpoint()}/cosmos/bank/v1beta1/balances/${neutronChain.address}`).then(res => res.json());
+    const restEndpoint = await neutronChain.getRestEndpoint()
+
+    const response = await fetch(`${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`).then(res => res.json());
 
     const fetchDenomTrace = async (balance: {
         denom: string;
@@ -78,7 +79,7 @@ export async function checkForNeutronLSMShares(neutronChain: ChainContext, neutr
     }) => {
         if (balance.denom.startsWith('ibc/')) {
             try {
-                const denomTraceResponse = await fetch(`https://${neutronChain.getRestEndpoint()}/ibc/apps/transfer/v1/denom_traces/${balance.denom}`).then(res => res.json());
+                const denomTraceResponse = await fetch(`${restEndpoint}ibc/apps/transfer/v1/denom_traces/${balance.denom}`).then(res => res.json());
                 const baseDenom = denomTraceResponse.denom_trace.base_denom;
                 
                 if (baseDenom.startsWith('cosmosvaloper')) {
@@ -109,11 +110,16 @@ export async function signTokenizeShares(hubChain: ChainContext, hubSigner: Sign
         throw new Error("Hub chain address not set");
     }
 
+    console.log("Signing tokenize shares transaction");
+    console.log("Hub chain address:", hubChain.address);
+    console.log("Amount:", amount);
+    console.log("Validator:", validator);
+
     const msg: { typeUrl: string, value: MsgTokenizeShares } = {
         typeUrl: "/cosmos.staking.v1beta1.MsgTokenizeShares",
         value: {
             delegatorAddress: hubChain.address,
-            validatorAddress: 'cosmosvaloper13n6wqhq8la352je00nwq847ktp47pgknseu6kk',
+            validatorAddress: validator,
             amount: { denom: "uatom", amount: amount },
             tokenizedShareOwner: hubChain.address
         }
@@ -174,16 +180,15 @@ export async function signIBCTransferHubToNeutron(
         typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
         value: {
             sourcePort: "transfer",
-            sourceChannel: "channel-0",
+            sourceChannel: "channel-569",
             token: { denom, amount },
             sender: hubChain.address,
             receiver: neutronChain.address,
-            // TODO: IMPORTANT: Need to set the timeout properly or lost funds could result!!!!!
             timeoutHeight: {
                 revisionHeight: BigInt(0),
                 revisionNumber: BigInt(0)
             },
-            timeoutTimestamp: BigInt(0),
+            timeoutTimestamp: BigInt(Date.now() + 5 * 60 * 1000) * BigInt(1000000),
             memo: ""
         }
     };
@@ -210,16 +215,15 @@ export async function signIBCTransferNeutronToHub(
         typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
         value: {
             sourcePort: "transfer",
-            sourceChannel: "channel-0",
+            sourceChannel: "channel-1",
             token: { denom, amount },
             sender: neutronChain.address,
             receiver: hubChain.address,
-            // TODO: IMPORTANT: Need to set the timeout properly or lost funds could result!!!!!
             timeoutHeight: {
                 revisionHeight: BigInt(0),
                 revisionNumber: BigInt(0)
             },
-            timeoutTimestamp: BigInt(0),
+            timeoutTimestamp: BigInt(Date.now() + 5 * 60 * 1000) * BigInt(1000000),
             memo: ""
         }
     }
