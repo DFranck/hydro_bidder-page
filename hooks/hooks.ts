@@ -41,7 +41,8 @@ const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
 }
 
 const hydroContractAddress =
-    'neutron13wqp5t3xxlwer9mq9mmrfa3j0vfn06cfs3r5kdaz2sp97vpqdmeqwm2p7y'
+    // 'neutron13wqp5t3xxlwer9mq9mmrfa3j0vfn06cfs3r5kdaz2sp97vpqdmeqwm2p7y'
+    'neutron10thpcagmt7zxl2p0dnevxl78kfgxr06pkumzkvhkhtze2z49h0msj8mwjf'
 const tributeContractAdress =
     'neutron1duww23zf05mtxwcvaq9pkalq0h4pg0yn7chmqt227gzvaz0r7jyq72fd0e'
 const rpcEndpoint = 'https://rpc-palvus.pion-1.ntrn.tech:443'
