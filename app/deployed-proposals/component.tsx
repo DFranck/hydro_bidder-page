@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import { DataTable, makeProposalColumnDef } from "../ui/proposalTable";
-import { ProposalListTopModules } from "../dashboard/topModules/TopModules";
+import { ProposalListTopModules } from "../dashboard/TopModules";
 import { Proposal, Tranche } from "../ts_types/HydroBase.types";
 import { Tribute } from "../ts_types/TributeBase.types";
 import { Button } from "@/components/ui/button";
