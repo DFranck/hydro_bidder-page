@@ -20,6 +20,8 @@ import {
     testnetAssets,
     testnetChain,
     pionChain,
+    hubChain,
+    neutronChain
 } from '../config'
 
 function gasPrices(chain: Chain | ChainName) {
@@ -54,7 +56,7 @@ export function WalletHandler({
 }>) {
     return (
         <ChainProvider
-            chains={[testnetChain, localnetChain, pionChain, 'cosmoshub', 'neutron']}
+            chains={[testnetChain, localnetChain, pionChain, hubChain, neutronChain]}
             assetLists={[testnetAssets, localAssets]}
             wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
             signerOptions={{
@@ -94,22 +96,16 @@ export function WalletHandler({
             endpointOptions={{
                 endpoints: {
                     cosmoshubtestnet: {
-                        // rpc: ["http://localhost:3000/tm"],
-                        // rest: ["http://localhost:3000/rpc"],
-                        rpc: [
-                            'https://rpc.sentry-01.theta-testnet.polypore.xyz',
-                        ],
-                        rest: [
-                            'https://rest.sentry-01.theta-testnet.polypore.xyz',
-                        ],
+                        rpc: ['https://rpc.sentry-01.theta-testnet.polypore.xyz'],
+                        rest: ['https://rest.sentry-01.theta-testnet.polypore.xyz'],
                     },
                     neutrontestnet: {
                         rpc: ['https://rpc-palvus.pion-1.ntrn.tech'],
                         rest: ['https://rest-palvus.pion-1.ntrn.tech'],
                     },
                     neutron: {
-                        rpc: ['https://rpc.cosmos.directory/neutron'],
-                        rest: ['https://api.neutron.quokkastake.io/', 'https://neutron-api.lavenderfive.com/'],
+                        rpc: ['https://neutron-rpc.polkachu.com'],
+                        rest: ['https://neutron-api.polkachu.com/'],
                     },
                     cosmoshub: {
                         rpc: ['https://cosmos-rpc.polkachu.com'],
