@@ -30,6 +30,17 @@ import {
     CardContent,
 } from "@/components/ui/card"
 
+type LockStep =
+    | "Init"
+    | "WaitingForTokenizeSigning"
+    | "WaitingForTokenizeBroadcast"
+    | "Error"
+    | "WaitingForIBCSigning"
+    | "WaitingForIBCBroadcastAndRelay"
+    | "WaitingForLockingSigning"
+    | "WaitingForLockingBroadcast"
+    | "Success"
+
 export const LockStepper = ({
     amount,
     validator,
@@ -38,6 +49,7 @@ export const LockStepper = ({
     hubSigner,
     neutronChain,
     neutronSigner,
+    startState,
     onExit,
 }: {
     amount: string
@@ -47,20 +59,10 @@ export const LockStepper = ({
     hubSigner: SigningStargateClient
     neutronChain: ChainContext
     neutronSigner: SigningStargateClient
+    startState?: LockStep
     onExit: () => void
 }) => {
-    type LockStep =
-        | "Init"
-        | "WaitingForTokenizeSigning"
-        | "WaitingForTokenizeBroadcast"
-        | "Error"
-        | "WaitingForIBCSigning"
-        | "WaitingForIBCBroadcastAndRelay"
-        | "WaitingForLockingSigning"
-        | "WaitingForLockingBroadcast"
-        | "Success"
-
-    const [step, setStep] = useState<LockStep>("Init")
+    const [step, setStep] = useState<LockStep>(startState || "Init")
 
     const execute = async () => {
         try {
@@ -325,12 +327,15 @@ export const LockStepper = ({
         }
     }
 
-    return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
-        </div>
-    )
+    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
 }
+
+type RevertFromHubStep =
+    | "Init"
+    | "WaitingForRedeemSigning"
+    | "WaitingForRedeemBroadcast"
+    | "Success"
+    | "Error"
 
 export const RevertFromHubStepper = ({
     amount,
@@ -338,6 +343,7 @@ export const RevertFromHubStepper = ({
     denom,
     hubChain,
     neutronChain,
+    startState,
     onExit,
 }: {
     amount: string
@@ -345,15 +351,10 @@ export const RevertFromHubStepper = ({
     denom: string
     hubChain: ChainContext
     neutronChain: ChainContext
+    startState?: RevertFromHubStep
     onExit: () => void
 }) => {
-    const [step, setStep] = useState<
-        | "Init"
-        | "WaitingForRedeemSigning"
-        | "WaitingForRedeemBroadcast"
-        | "Success"
-        | "Error"
-    >("Init")
+    const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
 
     const execute = async () => {
         try {
@@ -397,59 +398,94 @@ export const RevertFromHubStepper = ({
             case "Init":
                 return (
                     <>
-                        <p>
-                            You're about to revert {amount} {denom} back to its
-                            original state, staked with {validator}.
-                        </p>
-                        <p>
-                            This should take about a minute and will require 1
-                            wallet approval.
-                        </p>
-                        <button onClick={execute}>Revert</button>
+                        <CardHeader>
+                            <CardTitle>Reverting {amount} ATOM</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                You're about to revert {amount} ATOM back to its
+                                original state, staked with {validator}.
+                            </p>
+                            <p>
+                                This should take about a minute and will require
+                                1 wallet approval.
+                            </p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button onClick={execute}>Revert</Button>
+                            <Button variant="outline" onClick={onExit}>
+                                Cancel
+                            </Button>
+                        </CardFooter>
                     </>
                 )
             case "WaitingForRedeemSigning":
                 return (
                     <>
-                        <p>
-                            Approve the transaction in your wallet to continue
-                        </p>
-                        <p>
-                            This will restore your previous staked position with
-                            the amount of {amount} {denom} to {validator}.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Approve Transaction</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Approve the transaction in your wallet to
+                                continue
+                            </p>
+                            <p>
+                                This will restore your previous staked position
+                                with the amount of {amount} ATOM staked to{" "}
+                                {validator}.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "WaitingForRedeemBroadcast":
                 return (
                     <>
-                        <p>Redeeming {denom}...</p>
-                        <p>
-                            Hang tight, we're restoring your previous staked
-                            position.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Redeeming {denom}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Redeeming {denom}...</p>
+                            <p>
+                                Hang tight, we're restoring your previous staked
+                                position.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "Success":
                 return (
                     <>
-                        <p>Success!</p>
-                        <p>
-                            Your {amount} ATOM has been restored to your
-                            previous staked position.
-                        </p>
-                        <button onClick={onExit}>Done</button>
+                        <CardHeader>
+                            <CardTitle>Success!</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Your {amount} ATOM has been restored to your
+                                previous staked position.
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={onExit}>Done</Button>
+                        </CardFooter>
                     </>
                 )
             case "Error":
                 return (
                     <>
-                        <p>An error occurred during the revert process.</p>
-                        <p>
-                            Please try again later or contact support if the
-                            problem persists.
-                        </p>
-                        <button onClick={onExit}>Close</button>
+                        <CardHeader>
+                            <CardTitle>Error</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>An error occurred during the revert process.</p>
+                            <p>
+                                Please try again later or contact support if the
+                                problem persists.
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={onExit}>Close</Button>
+                        </CardFooter>
                     </>
                 )
             default:
@@ -457,12 +493,17 @@ export const RevertFromHubStepper = ({
         }
     }
 
-    return (
-        <div className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
-            {renderStep()}
-        </div>
-    )
+    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
 }
+
+type RevertFromNeutronStep =
+    | "Init"
+    | "WaitingForIBCSigning"
+    | "WaitingForIBCBroadcast"
+    | "WaitingForRedeemSigning"
+    | "WaitingForRedeemBroadcast"
+    | "Success"
+    | "Error"
 
 export const RevertFromNeutronStepper = ({
     amount,
@@ -470,6 +511,7 @@ export const RevertFromNeutronStepper = ({
     denom,
     hubChain,
     neutronChain,
+    startState,
     onExit,
 }: {
     amount: string
@@ -477,18 +519,12 @@ export const RevertFromNeutronStepper = ({
     denom: string
     hubChain: ChainContext
     neutronChain: ChainContext
+    startState?: RevertFromNeutronStep
     onExit: () => void
 }) => {
-    type RevertStep =
-        | "Init"
-        | "WaitingForIBCSigning"
-        | "WaitingForIBCBroadcast"
-        | "WaitingForRedeemSigning"
-        | "WaitingForRedeemBroadcast"
-        | "Success"
-        | "Error"
-
-    const [step, setStep] = useState<RevertStep>("Init")
+    const [step, setStep] = useState<RevertFromNeutronStep>(
+        startState || "Init"
+    )
 
     const execute = async () => {
         try {
@@ -554,78 +590,123 @@ export const RevertFromNeutronStepper = ({
             case "Init":
                 return (
                     <>
-                        <p>
-                            You're about to revert {amount} ATOM back to its
-                            original state.
-                        </p>
-                        <p>
-                            This should take about a minute and will require 2
-                            wallet approvals.
-                        </p>
-                        <button onClick={execute}>Revert</button>
+                        <CardHeader>
+                            <CardTitle>Reverting {amount} ATOM</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                You're about to revert {amount} ATOM back to its
+                                original state.
+                            </p>
+                            <p>
+                                This should take about a minute and will require
+                                2 wallet approvals.
+                            </p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button onClick={execute}>Revert</Button>
+                            <Button variant="outline" onClick={onExit}>
+                                Cancel
+                            </Button>
+                        </CardFooter>
                     </>
                 )
             case "WaitingForIBCSigning":
                 return (
                     <>
-                        <p>
-                            Approve the transaction in your wallet to continue
-                        </p>
-                        <p>
-                            This will start the transfer of your ATOM tokens to
-                            your Cosmos Hub wallet.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Approve IBC Transfer</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Approve the transaction in your wallet to
+                                continue
+                            </p>
+                            <p>
+                                This will start the transfer of your ATOM tokens
+                                to your Cosmos Hub wallet.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "WaitingForIBCBroadcast":
                 return (
                     <>
-                        <p>Transferring tokenized ATOM to Cosmos Hub...</p>
-                        <p>
-                            This could take 30 seconds or longer if the network
-                            is congested.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Transferring to Cosmos Hub</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Transferring tokenized ATOM to Cosmos Hub...</p>
+                            <p>
+                                This could take 30 seconds or longer if the
+                                network is congested.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "WaitingForRedeemSigning":
                 return (
                     <>
-                        <p>
-                            Approve the transaction in your wallet to continue
-                        </p>
-                        <p>
-                            This will restore your previous staked position with
-                            the amount of {amount} ATOM to {validator}.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Approve Redemption</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Approve the transaction in your wallet to
+                                continue
+                            </p>
+                            <p>
+                                This will restore your previous staked position
+                                with the amount of {amount} ATOM to {validator}.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "WaitingForRedeemBroadcast":
                 return (
                     <>
-                        <p>Redeeming ATOM...</p>
-                        <p>
-                            Hang tight, we're restoring your previous staked
-                            position.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Redeeming ATOM</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Redeeming ATOM...</p>
+                            <p>
+                                Hang tight, we're restoring your previous staked
+                                position.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "Success":
                 return (
                     <>
-                        <p>Success!</p>
-                        <p>
-                            Your {amount} ATOM has been restored to your
-                            previous staked position.
-                        </p>
-                        <button onClick={onExit}>Done</button>
+                        <CardHeader>
+                            <CardTitle>Success!</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Your {amount} ATOM has been restored to your
+                                previous staked position.
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={onExit}>Done</Button>
+                        </CardFooter>
                     </>
                 )
             case "Error":
                 return (
                     <>
-                        <p>An error occurred during the revert process.</p>
-                        <button onClick={onExit}>Exit</button>
-                        <button onClick={execute}>Try Again</button>
+                        <CardHeader>
+                            <CardTitle>Error</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>An error occurred during the revert process.</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button onClick={onExit}>Exit</Button>
+                            <Button onClick={execute}>Try Again</Button>
+                        </CardFooter>
                     </>
                 )
             default:
@@ -633,12 +714,15 @@ export const RevertFromNeutronStepper = ({
         }
     }
 
-    return (
-        <div className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
-            {renderStep()}
-        </div>
-    )
+    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
 }
+
+type ContinueFromNeutronStep =
+    | "Init"
+    | "WaitingForLockSigning"
+    | "WaitingForLockBroadcast"
+    | "Success"
+    | "Error"
 
 export const ContinueFromNeutronStepper = ({
     amount,
@@ -646,6 +730,7 @@ export const ContinueFromNeutronStepper = ({
     denom,
     hubChain,
     neutronChain,
+    startState,
     onExit,
 }: {
     amount: string
@@ -653,15 +738,12 @@ export const ContinueFromNeutronStepper = ({
     denom: string
     hubChain: ChainContext
     neutronChain: ChainContext
+    startState?: ContinueFromNeutronStep
     onExit: () => void
 }) => {
-    const [step, setStep] = useState<
-        | "Init"
-        | "WaitingForLockSigning"
-        | "WaitingForLockBroadcast"
-        | "Success"
-        | "Error"
-    >("Init")
+    const [step, setStep] = useState<ContinueFromNeutronStep>(
+        startState || "Init"
+    )
 
     const [lockDuration, setLockDuration] = useState(0)
 
@@ -706,78 +788,116 @@ export const ContinueFromNeutronStepper = ({
 
                 return (
                     <>
-                        <p>
-                            Nice! You're about to lock {amount} ATOM staked to{" "}
-                            {validator} in Hydro to get {amount} hATOM.
-                        </p>
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault()
-                                executeContinueFromNeutron()
-                            }}
-                        >
-                            <label htmlFor="lockDuration">
-                                Lock Duration (days):
-                            </label>
-                            <input
-                                type="number"
-                                id="lockDuration"
-                                value={lockDuration}
-                                onChange={(e) =>
-                                    setLockDuration(
-                                        parseInt(e.target.value) *
-                                            24 *
-                                            60 *
-                                            60 *
-                                            1000000000
-                                    )
-                                }
-                                min="1"
-                                required
-                            />
-                            <p>This will require one wallet approval.</p>
-                            <Button type="submit">Lock</Button>
-                        </form>
+                        <CardHeader>
+                            <CardTitle>Lock {amount} ATOM</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Nice! You're about to lock {amount} ATOM staked
+                                to {validator} in Hydro to get {amount} hATOM.
+                            </p>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault()
+                                    executeContinueFromNeutron()
+                                }}
+                            >
+                                <label htmlFor="lockDuration">
+                                    Lock Duration (days):
+                                </label>
+                                <input
+                                    type="number"
+                                    id="lockDuration"
+                                    value={lockDuration}
+                                    onChange={(e) =>
+                                        setLockDuration(
+                                            parseInt(e.target.value) *
+                                                24 *
+                                                60 *
+                                                60 *
+                                                1000000000
+                                        )
+                                    }
+                                    min="1"
+                                    required
+                                />
+                                <p>This will require one wallet approval.</p>
+                            </form>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button onClick={executeContinueFromNeutron}>
+                                Lock
+                            </Button>
+                            <Button variant="outline" onClick={onExit}>
+                                Cancel
+                            </Button>
+                        </CardFooter>
                     </>
                 )
             case "WaitingForLockSigning":
                 return (
-                    <p>
-                        Approve in your wallet again to lock your ATOM into the
-                        Hydro contract to receive voting power.
-                    </p>
+                    <>
+                        <CardHeader>
+                            <CardTitle>Approve Locking</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Approve in your wallet again to lock your ATOM
+                                into the Hydro contract to receive voting power.
+                            </p>
+                        </CardContent>
+                    </>
                 )
             case "WaitingForLockBroadcast":
                 return (
                     <>
-                        <p>Locking your ATOM...</p>
-                        <p>
-                            Just a few seconds, unless the network is congested
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Locking in Progress</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Locking your ATOM...</p>
+                            <p>
+                                Just a few seconds, unless the network is
+                                congested
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "Success":
                 return (
                     <>
-                        <p>Success!</p>
-                        <p>
-                            You locked {amount} ATOM in Hydro and received{" "}
-                            {amount} hATOM (voting power).
-                        </p>
-                        <p>
-                            Do you want to view the list of proposals to vote
-                            for?
-                        </p>
-                        <Button onClick={onExit}>Done</Button>
+                        <CardHeader>
+                            <CardTitle>Success!</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                You locked {amount} ATOM in Hydro and received{" "}
+                                {amount} hATOM (voting power).
+                            </p>
+                            <p>
+                                Do you want to view the list of proposals to
+                                vote for?
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={onExit}>Done</Button>
+                        </CardFooter>
                     </>
                 )
             case "Error":
                 return (
                     <>
-                        <p>An error occurred:</p>
-                        <Button onClick={() => setStep("Init")}>
-                            Try Again
-                        </Button>
+                        <CardHeader>
+                            <CardTitle>Error</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>An error occurred:</p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={() => setStep("Init")}>
+                                Try Again
+                            </Button>
+                        </CardFooter>
                     </>
                 )
             default:
@@ -785,12 +905,17 @@ export const ContinueFromNeutronStepper = ({
         }
     }
 
-    return (
-        <div className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
-            {renderStep()}
-        </div>
-    )
+    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
 }
+
+type ContinueFromHubStep =
+    | "Init"
+    | "WaitingForIBCSigning"
+    | "WaitingForIBCBroadcastAndRelay"
+    | "WaitingForLockingSigning"
+    | "WaitingForLockingBroadcast"
+    | "Success"
+    | "Error"
 
 export const ContinueFromHubStepper = ({
     amount,
@@ -798,6 +923,7 @@ export const ContinueFromHubStepper = ({
     denom,
     hubChain,
     neutronChain,
+    startState,
     onExit,
 }: {
     amount: string
@@ -805,20 +931,12 @@ export const ContinueFromHubStepper = ({
     denom: string
     hubChain: ChainContext
     neutronChain: ChainContext
+    startState?: ContinueFromHubStep
     onExit: () => void
 }) => {
-    const [step, setStep] = useState<
-        | "Init"
-        | "WaitingForIBCSigning"
-        | "WaitingForIBCBroadcastAndRelay"
-        | "WaitingForLockingSigning"
-        | "WaitingForLockingBroadcast"
-        | "Success"
-        | "Error"
-    >("Init")
-    const [lockDuration, setLockDuration] = useState(
-        30 * 24 * 60 * 60 * 1000000000
-    ) // 30 days in nanoseconds
+    const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
+
+    const [lockDuration, setLockDuration] = useState(0)
 
     const execute = async () => {
         try {
@@ -881,77 +999,125 @@ export const ContinueFromHubStepper = ({
             case "Init":
                 return (
                     <>
-                        <p>
-                            Nice! You're about to lock {amount} ATOM staked to{" "}
-                            {validator} in Hydro to get {amount} hATOM.
-                        </p>
-                        <p>This will require two wallet approvals.</p>
-                        <Button onClick={execute}>Lock</Button>
+                        <CardHeader>
+                            <CardTitle>Lock {amount} ATOM</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Nice! You're about to lock {amount} ATOM staked
+                                to {validator} in Hydro to get {amount} hATOM.
+                            </p>
+                            <p>This will require two wallet approvals.</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button onClick={execute}>Lock</Button>
+                            <Button variant="outline" onClick={onExit}>
+                                Cancel
+                            </Button>
+                        </CardFooter>
                     </>
                 )
             case "WaitingForIBCSigning":
                 return (
                     <>
-                        <p>
-                            Approve the transaction in your wallet to continue
-                        </p>
-                        <p>
-                            This will start the transfer of your tokenized ATOM
-                            to Hydro to start the locking process.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Approve IBC Transfer</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Approve the transaction in your wallet to
+                                continue
+                            </p>
+                            <p>
+                                This will start the transfer of your tokenized
+                                ATOM to Hydro to start the locking process.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "WaitingForIBCBroadcastAndRelay":
                 return (
                     <>
-                        <p>Sending your staked ATOM to Hydro...</p>
-                        <p>
-                            This could take 30 seconds or longer if the network
-                            is congested. If you exit Hydro, this status may not
-                            be visible when you return, but the transfer will
-                            continue. Once the transfer is complete, you will
-                            need to return to initiate the staking process.
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Transferring to Hydro</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Sending your staked ATOM to Hydro...</p>
+                            <p>
+                                This could take 30 seconds or longer if the
+                                network is congested. If you exit Hydro, this
+                                status may not be visible when you return, but
+                                the transfer will continue. Once the transfer is
+                                complete, you will need to return to initiate
+                                the staking process.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "WaitingForLockingSigning":
                 return (
-                    <p>
-                        Transfer complete! Approve in your wallet again to lock
-                        your ATOM
-                    </p>
+                    <>
+                        <CardHeader>
+                            <CardTitle>Approve Locking</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                Transfer complete! Approve in your wallet again
+                                to lock your ATOM
+                            </p>
+                        </CardContent>
+                    </>
                 )
             case "WaitingForLockingBroadcast":
                 return (
                     <>
-                        <p>Locking your ATOM...</p>
-                        <p>
-                            Just a few seconds, unless the network is congested
-                        </p>
+                        <CardHeader>
+                            <CardTitle>Locking in Progress</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Locking your ATOM...</p>
+                            <p>
+                                Just a few seconds, unless the network is
+                                congested
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "Success":
                 return (
                     <>
-                        <p>Success!</p>
-                        <p>
-                            You locked {amount} ATOM in Hydro and received{" "}
-                            {amount} hATOM (voting power).
-                        </p>
-                        <p>
-                            Do you want to view the list of proposals to vote
-                            for?
-                        </p>
-                        <Button onClick={onExit}>Done</Button>
+                        <CardHeader>
+                            <CardTitle>Success!</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>
+                                You locked {amount} ATOM in Hydro and received{" "}
+                                {amount} hATOM (voting power).
+                            </p>
+                            <p>
+                                Do you want to view the list of proposals to
+                                vote for?
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={onExit}>Done</Button>
+                        </CardFooter>
                     </>
                 )
             case "Error":
                 return (
                     <>
-                        <p>An error occurred:</p>
-                        <Button onClick={() => setStep("Init")}>
-                            Try Again
-                        </Button>
+                        <CardHeader>
+                            <CardTitle>Error</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>An error occurred:</p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={() => setStep("Init")}>
+                                Try Again
+                            </Button>
+                        </CardFooter>
                     </>
                 )
             default:
@@ -959,9 +1125,5 @@ export const ContinueFromHubStepper = ({
         }
     }
 
-    return (
-        <div className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
-            {renderStep()}
-        </div>
-    )
+    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
 }
