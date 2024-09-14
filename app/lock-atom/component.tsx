@@ -144,56 +144,66 @@ export default function LSMInteraction() {
         (hubSigner && neutronSigner && (
             <div>
                 {stepper && stepper.type === "lock" && (
-                    <LockStepper
-                        amount={stepper.amount}
-                        validator={stepper.validator}
-                        lockDuration={stepper.duration}
-                        hubChain={hubChain}
-                        hubSigner={hubSigner}
-                        neutronChain={neutronChain}
-                        neutronSigner={neutronSigner}
-                        onExit={() => setStepper(undefined)}
-                    />
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <LockStepper
+                            amount={stepper.amount}
+                            validator={stepper.validator}
+                            lockDuration={stepper.duration}
+                            hubChain={hubChain}
+                            hubSigner={hubSigner}
+                            neutronChain={neutronChain}
+                            neutronSigner={neutronSigner}
+                            onExit={() => setStepper(undefined)}
+                        />
+                    </div>
                 )}
                 {stepper && stepper.type === "revertFromHubLSM" && (
-                    <RevertFromHubStepper
-                        amount={stepper.amount}
-                        validator={stepper.validator}
-                        denom="uatom"
-                        hubChain={hubChain}
-                        neutronChain={neutronChain}
-                        onExit={() => setStepper(undefined)}
-                    />
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <RevertFromHubStepper
+                            amount={stepper.amount}
+                            validator={stepper.validator}
+                            denom="uatom"
+                            hubChain={hubChain}
+                            neutronChain={neutronChain}
+                            onExit={() => setStepper(undefined)}
+                        />
+                    </div>
                 )}
                 {stepper && stepper.type === "revertFromNeutronLSM" && (
-                    <RevertFromNeutronStepper
-                        amount={stepper.amount}
-                        validator={stepper.validator}
-                        denom="uatom"
-                        hubChain={hubChain}
-                        neutronChain={neutronChain}
-                        onExit={() => setStepper(undefined)}
-                    />
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <RevertFromNeutronStepper
+                            amount={stepper.amount}
+                            validator={stepper.validator}
+                            denom="uatom"
+                            hubChain={hubChain}
+                            neutronChain={neutronChain}
+                            onExit={() => setStepper(undefined)}
+                        />
+                    </div>
                 )}
                 {stepper && stepper.type === "continueFromHubLSM" && (
-                    <ContinueFromHubStepper
-                        amount={stepper.amount}
-                        validator={stepper.validator}
-                        denom="uatom"
-                        hubChain={hubChain}
-                        neutronChain={neutronChain}
-                        onExit={() => setStepper(undefined)}
-                    />
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <ContinueFromHubStepper
+                            amount={stepper.amount}
+                            validator={stepper.validator}
+                            denom="uatom"
+                            hubChain={hubChain}
+                            neutronChain={neutronChain}
+                            onExit={() => setStepper(undefined)}
+                        />
+                    </div>
                 )}
                 {stepper && stepper.type === "continueFromNeutronLSM" && (
-                    <ContinueFromNeutronStepper
-                        amount={stepper.amount}
-                        validator={stepper.validator}
-                        denom="uatom"
-                        hubChain={hubChain}
-                        neutronChain={neutronChain}
-                        onExit={() => setStepper(undefined)}
-                    />
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <ContinueFromNeutronStepper
+                            amount={stepper.amount}
+                            validator={stepper.validator}
+                            denom="uatom"
+                            hubChain={hubChain}
+                            neutronChain={neutronChain}
+                            onExit={() => setStepper(undefined)}
+                        />
+                    </div>
                 )}
                 <div>
                     {incompleteNotices
