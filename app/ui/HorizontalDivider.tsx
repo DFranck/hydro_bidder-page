@@ -8,7 +8,7 @@ type Props = {
 export const HorizontalDivider: FC<Props> = ({ style }) => {
     return (
         <div className={cn("flex py-5 items-center", style)}>
-            <div className="flex-grow border-t border-color-[#FFE1B8]"></div>
+            <div className="flex-grow border-t border-[#FFE1B8]"></div>
         </div>
     )
 }

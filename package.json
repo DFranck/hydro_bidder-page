@@ -37,6 +37,7 @@
     "@tanstack/react-table": "^8.19.3",
     "@walletconnect/web3-provider": "^1.8.0",
     "@web3modal/wagmi": "^5.0.7",
+    "chain-registry": "^1.63.92",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.3.2",
     "clsx": "^2.1.1",
