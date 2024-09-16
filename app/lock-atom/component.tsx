@@ -41,6 +41,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "@/components/ui/input"
+import { useMyValidators } from "@/hooks/hooks"
 
 type Stepper =
     | { type: "lock"; validator: string; amount: string; duration: number }
@@ -124,20 +125,6 @@ export default function LSMInteraction() {
     }, [hubSigner, neutronSigner])
 
     const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
-
-    useEffect(() => {
-        console.log("Hub chain connection status:", hubChain.isWalletConnected)
-        console.log(
-            "Neutron chain connection status:",
-            neutronChain.isWalletConnected
-        )
-        console.log("Incomplete notices:", incompleteNotices)
-    }, [
-        hubChain.isWalletConnected,
-        neutronChain.isWalletConnected,
-        incompleteNotices,
-    ])
-
     const [visibleNotices, setVisibleNotices] = useState(2)
 
     return (
@@ -247,6 +234,7 @@ export default function LSMInteraction() {
                                 duration,
                             })
                         }
+                        hubChain={hubChain}
                     />
                 </div>
             </div>
@@ -366,9 +354,13 @@ const NeutronIncompleteNotice = ({
 
 const LockForm = ({
     onSubmit,
+    hubChain,
 }: {
     onSubmit: (validator: string, amount: string, duration: number) => void
+    hubChain: ChainContext
 }) => {
+    const [selectedValidator, setSelectedValidator] = useState<string>("")
+
     const formSchema = z.object({
         validator: z.string().min(1, "Validator address is required"),
         amount: z.string().min(1, "Amount is required"),
@@ -378,15 +370,20 @@ const LockForm = ({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            validator: "cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv",
+            validator: "",
             amount: "10000",
             duration: "7884000000000000",
         },
     })
 
     const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        onSubmit(values.validator, values.amount, parseInt(values.duration))
+        onSubmit(selectedValidator, values.amount, parseInt(values.duration))
     }
+
+    const { data: validators, isLoading } = useMyValidators(
+        hubChain,
+        hubChain.address || ""
+    )
 
     return (
         <Card>
@@ -403,13 +400,43 @@ const LockForm = ({
                             control={form.control}
                             name="validator"
                             render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Validator Address</FormLabel>
+                                <FormItem className="space-y-3">
+                                    <FormLabel>Select Validator</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            className="text-black"
-                                            {...field}
-                                        />
+                                        <div className="space-y-2">
+                                            {isLoading ? (
+                                                <p>Loading validators...</p>
+                                            ) : (
+                                                validators?.map((validator) => (
+                                                    <Button
+                                                        key={
+                                                            validator.operator_address
+                                                        }
+                                                        type="button"
+                                                        onClick={() => {
+                                                            console.log(
+                                                                "setting",
+                                                                validator
+                                                            )
+                                                            setSelectedValidator(
+                                                                validator.operator_address
+                                                            )
+                                                        }}
+                                                        variant={
+                                                            selectedValidator ===
+                                                            validator.operator_address
+                                                                ? "default"
+                                                                : "outline"
+                                                        }
+                                                        className="w-full justify-start"
+                                                    >
+                                                        {validator.description
+                                                            .moniker ||
+                                                            validator.operator_address}
+                                                    </Button>
+                                                ))
+                                            )}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

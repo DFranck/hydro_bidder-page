@@ -130,7 +130,7 @@ export function WalletHandler({
                     },
                     cosmoshub: {
                         rpc: ["https://cosmos-rpc.polkachu.com"],
-                        rest: ["https://cosmos-api.polkachu.com/"],
+                        rest: ["https://cosmos-rest.publicnode.com/"],
                     },
                 },
                 isLazy: true,
