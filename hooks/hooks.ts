@@ -30,6 +30,7 @@ import {
 } from "../app/mockData"
 import { StdFee } from "@cosmjs/amino"
 import { MsgVoteEncodeObject, GasPrice } from "@cosmjs/stargate"
+import { ChainContext } from "@cosmos-kit/core"
 
 let clientInstance: CosmWasmClient | null = null
 
@@ -51,6 +52,13 @@ const staleTime = 10000
 const mockTimeout = 0
 const limit = 10000
 const startFrom = 0
+
+export type Validator = {
+    operator_address: string
+    description: {
+        moniker: string
+    }
+}
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await getCosmWasmClient()
@@ -339,4 +347,32 @@ export const executeExtendLockup = async (
         "auto"
     )
     return response
+}
+
+export const fetchMyValidators = async (
+    chain: ChainContext,
+    delegatorAddress: string
+): Promise<Validator[]> => {
+    const restEndpoint = await chain.getRestEndpoint()
+
+    const response = await fetch(
+        `${restEndpoint}cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`
+    ).then((res) => res.json())
+
+    if (!response.validators) {
+        throw new Error("Failed to fetch validators")
+    }
+
+    return response.validators
+}
+
+export const useMyValidators = (
+    chain: ChainContext,
+    delegatorAddress: string
+) => {
+    return useQuery({
+        queryKey: ["myValidators", delegatorAddress],
+        queryFn: () => fetchMyValidators(chain, delegatorAddress),
+        staleTime,
+    })
 }

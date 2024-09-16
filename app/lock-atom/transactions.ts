@@ -144,11 +144,6 @@ export async function signTokenizeShares(
         throw new Error("Hub chain address not set")
     }
 
-    console.log("Signing tokenize shares transaction")
-    console.log("Hub chain address:", hubChain.address)
-    console.log("Amount:", amount)
-    console.log("Validator:", validator)
-
     const msg: { typeUrl: string; value: MsgTokenizeShares } = {
         typeUrl: "/cosmos.staking.v1beta1.MsgTokenizeShares",
         value: {
