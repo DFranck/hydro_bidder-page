@@ -25,8 +25,19 @@ import {
     calculateLockupVotingPower,
     LockupPeriod,
     formatAmount,
+    LockupPeriodMultipler,
 } from "@/lib/utils"
 import { DialogDescription } from "@radix-ui/react-dialog"
+import { useState } from "react"
+import { Loader2Icon } from "lucide-react"
+import { ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import {
+    ToastAborted,
+    ToastError,
+    ToastExecutedTx,
+    ToastProcessing,
+} from "@/components/ui/toast-wallet"
+import { executeExtendLockup } from "@/hooks/hooks"
 
 const formSchema = z.object({
     lockupPeriod: z.nativeEnum(LockupPeriod),
@@ -37,13 +48,20 @@ const formSchema = z.object({
 
 type EditLockupDurationProps = {
     lockup: LockEntryWithPower
-    onEditLockup: (lockup: LockEntryWithPower) => void
+    walletAddress: string
+    getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
+    onSuccess: () => void
 }
 
 export const EditLockupDuration = ({
     lockup,
-    onEditLockup,
+    walletAddress,
+    getSigningCosmWasmClient,
+    onSuccess,
 }: EditLockupDurationProps) => {
+    const [isLoading, setIsLoading] = useState(false)
+    const [open, setOpen] = useState(false)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -57,8 +75,36 @@ export const EditLockupDuration = ({
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        onEditLockup({ ...lockup, ...values })
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsLoading(true)
+        if (!values.lockupPeriod || !lockup) {
+            return
+        }
+        try {
+            ToastProcessing()
+            await executeExtendLockup(
+                getSigningCosmWasmClient,
+                walletAddress || "",
+                lockup.lock_entry.lock_id,
+                LockupPeriodMultipler[values.lockupPeriod]
+            )
+            ToastExecutedTx("Success", "Lockup extended.")
+            setOpen(false)
+            onSuccess()
+        } catch (err: any) {
+            if (
+                err &&
+                err?.message &&
+                err.message.includes("Request rejected")
+            ) {
+                ToastAborted()
+                return
+            }
+            ToastError(err)
+            setOpen(false)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const onChangeLockupPeriod = (value: LockupPeriod) => {
@@ -73,8 +119,11 @@ export const EditLockupDuration = ({
     }
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger
+                asChild
+                id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
+            >
                 <Button className="rounded-lg text-black bg-white border-white border w-24 h-10 hover:bg-transparent hover:text-white">
                     Edit
                 </Button>
@@ -148,13 +197,22 @@ export const EditLockupDuration = ({
                             <p className="text-xl">{form.watch("power")}</p>
                         </div>
 
-                        <Button variant="secondary" type="submit">
-                            Confirm
+                        <Button
+                            variant="secondary"
+                            type="submit"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <Loader2Icon className="w-4 h-4 animate-spin" />
+                            ) : (
+                                "Confirm"
+                            )}
                         </Button>
                     </form>
                 </Form>
                 <DialogClose asChild>
                     <Button
+                        disabled={isLoading}
                         type="button"
                         variant="outline"
                         className="w-full border rounded-[10px] border-solid border-white hover:bg-white hover:text-black"
