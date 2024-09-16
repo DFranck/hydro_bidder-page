@@ -37,7 +37,7 @@ import {
 
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
 
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "@/components/ui/input"
@@ -359,8 +359,6 @@ const LockForm = ({
     onSubmit: (validator: string, amount: string, duration: number) => void
     hubChain: ChainContext
 }) => {
-    const [selectedValidator, setSelectedValidator] = useState<string>("")
-
     const formSchema = z.object({
         validator: z.string().min(1, "Validator address is required"),
         amount: z.string().min(1, "Amount is required"),
@@ -377,7 +375,7 @@ const LockForm = ({
     })
 
     const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        onSubmit(selectedValidator, values.amount, parseInt(values.duration))
+        onSubmit(values.validator, values.amount, parseInt(values.duration))
     }
 
     const { data: validators, isLoading } = useMyValidators(
@@ -414,16 +412,12 @@ const LockForm = ({
                                                         }
                                                         type="button"
                                                         onClick={() => {
-                                                            console.log(
-                                                                "setting",
-                                                                validator
-                                                            )
-                                                            setSelectedValidator(
+                                                            field.onChange(
                                                                 validator.operator_address
                                                             )
                                                         }}
                                                         variant={
-                                                            selectedValidator ===
+                                                            field.value ===
                                                             validator.operator_address
                                                                 ? "default"
                                                                 : "outline"
