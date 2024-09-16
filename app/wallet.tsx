@@ -20,6 +20,8 @@ import {
     testnetAssets,
     testnetChain,
     pionChain,
+    hubChain,
+    neutronChain
 } from '../config'
 
 function gasPrices(chain: Chain | ChainName) {
@@ -33,6 +35,15 @@ function gasPrices(chain: Chain | ChainName) {
             return {
                 gasPrice: GasPrice.fromString('0.005uatom'),
             }
+        case 'cosmoshub':
+            return {
+                registry: new Registry([...stride.cosmosProtoRegistry, ...stride.ibcProtoRegistry]),
+                gasPrice: GasPrice.fromString('0.005uatom'),
+            }
+        case 'neutron':
+            return {
+                gasPrice: GasPrice.fromString('0.008untrn'),
+            }
         default:
             return void 0
     }
@@ -45,7 +56,7 @@ export function WalletHandler({
 }>) {
     return (
         <ChainProvider
-            chains={[testnetChain, localnetChain, pionChain]}
+            chains={[testnetChain, localnetChain, pionChain, hubChain, neutronChain]}
             assetLists={[testnetAssets, localAssets]}
             wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
             signerOptions={{
@@ -62,6 +73,15 @@ export function WalletHandler({
                                 registry: new Registry([...stride.cosmosProtoRegistry, ...stride.ibcProtoRegistry]),
                                 gasPrice: GasPrice.fromString('0.005uatom'),
                             }
+                        case 'cosmoshub':
+                            return {
+                                registry: new Registry([...stride.cosmosProtoRegistry, ...stride.ibcProtoRegistry]),
+                                gasPrice: GasPrice.fromString('0.005uatom'),
+                            }
+                        case 'neutron':
+                            return {
+                                gasPrice: GasPrice.fromString('0.008untrn'),
+                            }
                         default:
                             return void 0
                     }
@@ -76,18 +96,20 @@ export function WalletHandler({
             endpointOptions={{
                 endpoints: {
                     cosmoshubtestnet: {
-                        // rpc: ["http://localhost:3000/tm"],
-                        // rest: ["http://localhost:3000/rpc"],
-                        rpc: [
-                            'https://rpc.sentry-01.theta-testnet.polypore.xyz',
-                        ],
-                        rest: [
-                            'https://rest.sentry-01.theta-testnet.polypore.xyz',
-                        ],
+                        rpc: ['https://rpc.sentry-01.theta-testnet.polypore.xyz'],
+                        rest: ['https://rest.sentry-01.theta-testnet.polypore.xyz'],
                     },
                     neutrontestnet: {
                         rpc: ['https://rpc-palvus.pion-1.ntrn.tech'],
                         rest: ['https://rest-palvus.pion-1.ntrn.tech'],
+                    },
+                    neutron: {
+                        rpc: ['https://neutron-rpc.polkachu.com'],
+                        rest: ['https://neutron-api.polkachu.com/'],
+                    },
+                    cosmoshub: {
+                        rpc: ['https://cosmos-rpc.polkachu.com'],
+                        rest: ['https://cosmos-api.polkachu.com/'],
                     },
                 },
                 isLazy: true,
