@@ -1,8 +1,8 @@
-'use client'
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
+"use client"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogClose,
@@ -10,18 +10,18 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog'
-import { executeVote, fetchMyVotes } from '@/hooks/hooks'
-import { useChain } from '@cosmos-kit/react'
-import { Proposal } from '@/app/ts_types/HydroBase.types'
-import { AlertTriangleIcon, ChevronLeft, Loader2Icon } from 'lucide-react'
-import { ProposalListTopModules } from '@/app/dashboard/topModules/TopModules'
-import Markdown from 'react-markdown'
-import { sumTributeAmounts } from './proposalTable'
-import { Tribute } from '@/app/ts_types/TributeBase.types'
-import { DialogTrigger } from '@radix-ui/react-dialog'
-import { useToast } from '@/components/ui/use-toast'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/dialog"
+import { executeVote, fetchMyVotes } from "@/hooks/hooks"
+import { useChain } from "@cosmos-kit/react"
+import { Proposal } from "@/app/ts_types/HydroBase.types"
+import { AlertTriangleIcon, ChevronLeft, Loader2Icon } from "lucide-react"
+import Markdown from "react-markdown"
+import { sumTributeAmounts } from "./proposalTable"
+import { Tribute } from "@/app/ts_types/TributeBase.types"
+import { DialogTrigger } from "@radix-ui/react-dialog"
+import { useToast } from "@/components/ui/use-toast"
+import { cn } from "@/lib/utils"
+import { ProposalListTopModules } from "../dashboard/TopModules"
 
 const ProposalDetail = ({
     globalState,
@@ -43,7 +43,7 @@ const ProposalDetail = ({
     const { toast } = useToast()
 
     const { isWalletConnected, address, getSigningCosmWasmClient } =
-        useChain('neutrontestnet')
+        useChain("neutrontestnet")
 
     useEffect(() => {
         if (!address) {
@@ -52,7 +52,7 @@ const ProposalDetail = ({
 
         const fetchVoteStatus = async () => {
             const voteMap = await fetchMyVotes(
-                address || '',
+                address || "",
                 globalState.currentRound,
                 Array.from(proposalTranches.keys())
             )
@@ -84,9 +84,9 @@ const ProposalDetail = ({
             )
             toast({
                 className: cn(
-                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                    "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
                 ),
-                title: 'Transaction submitted',
+                title: "Transaction submitted",
                 description: (
                     <div className="inline-flex">
                         <Loader2Icon className="animate-spin h-5 w-5 mr-2" />
@@ -99,13 +99,13 @@ const ProposalDetail = ({
             if (
                 err &&
                 err?.message &&
-                err.message.includes('Request rejected')
+                err.message.includes("Request rejected")
             ) {
                 toast({
                     className: cn(
-                        'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
                     ),
-                    title: 'Aborted',
+                    title: "Aborted",
                     description: (
                         <div className="inline-flex items-center">
                             Transaction was not submitted
@@ -117,18 +117,18 @@ const ProposalDetail = ({
             }
             toast({
                 className: cn(
-                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                    "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
                 ),
-                title: 'Exception',
+                title: "Exception",
                 description: (
                     <div className="inline-flex items-center">
                         <AlertTriangleIcon className="w-8 h-8 text-yellow-400 mr-2" />
                         {err && err?.message
                             ? `Transaction failed: ${err.message}`
-                            : 'Transaction failed - unkonwn error'}
+                            : "Transaction failed - unkonwn error"}
                     </div>
                 ),
-                variant: 'destructive',
+                variant: "destructive",
                 duration: 5000,
             })
         } finally {
@@ -146,13 +146,13 @@ const ProposalDetail = ({
 
     function displayBtnText() {
         if (!isWalletConnected) {
-            return 'Connect wallet to vote'
+            return "Connect wallet to vote"
         }
         if (submitting) {
-            return 'Submitting...'
+            return "Submitting..."
         }
 
-        return hasVotedThisProposal ? 'Already Voted This' : 'Vote for Project'
+        return hasVotedThisProposal ? "Already Voted This" : "Vote for Project"
     }
 
     const ChangeVote = () => {
@@ -212,7 +212,7 @@ const ProposalDetail = ({
                         </Link>
                         <div className="flex flex-row gap-5 items-center pb-5">
                             <Image
-                                src={'/images/icon_Boost.svg'}
+                                src={"/images/icon_Boost.svg"}
                                 width={50}
                                 height={50}
                                 alt="Icon"
@@ -229,7 +229,7 @@ const ProposalDetail = ({
                                 <Markdown>
                                     {proposal.description.replaceAll(
                                         /\\n/g,
-                                        '\n'
+                                        "\n"
                                     )}
                                 </Markdown>
                             </div>
@@ -271,7 +271,7 @@ const ProposalDetail = ({
                                                         ? tribute.denom.slice(
                                                               0,
                                                               17
-                                                          ) + '...'
+                                                          ) + "..."
                                                         : tribute.denom
                                                 }`}
                                             </p>
@@ -296,7 +296,7 @@ const ProposalDetail = ({
                                     Status
                                 </p>
                                 <p className="text-[#00FFC2] text-xl not-italic font-bold leading-[150%]">
-                                    {deployed ? 'Deployed' : 'In voting'}
+                                    {deployed ? "Deployed" : "In voting"}
                                 </p>
                             </div>
                         </div>

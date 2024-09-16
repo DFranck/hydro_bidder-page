@@ -1,14 +1,10 @@
 "use client"
 
-import { useCallback, useState, useEffect } from "react"
-import {
-    LockEntry,
-    LockEntryWithPower,
-    Proposal,
-} from "../ts_types/HydroBase.types"
+import { useState, useEffect } from "react"
+import { LockEntryWithPower, Proposal } from "../ts_types/HydroBase.types"
 import { GlobalState } from "../types"
 import { useChain } from "@cosmos-kit/react"
-import { fetchMyAllLockups, useMyVotes } from "@/hooks/hooks"
+import { fetchMyAllLockups } from "@/hooks/hooks"
 import {
     Table,
     TableBody,
@@ -18,9 +14,11 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
-import { Progress } from "@/components/ui/progress"
 import { LockIcon, TriangleAlertIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { calculateTimeRemaining, cn } from "@/lib/utils"
+
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
 export default function LockupsTable({
     currentProposalTranches,
@@ -29,26 +27,16 @@ export default function LockupsTable({
     currentProposalTranches: Map<number, Proposal[]>
     globalState: GlobalState
 }) {
-    const { isWalletConnected, address: walletAddress } =
+    const { isWalletConnected, address, getSigningCosmWasmClient } =
         useChain("neutrontestnet")
-
-    const { data: myVotes = [] } = useMyVotes(
-        walletAddress || "",
-        globalState.currentRound,
-        Array.from(currentProposalTranches.keys())
-    )
-
-    const onEditLockup = useCallback((lockup: LockEntryWithPower) => {
-        console.log({ lockup })
-    }, [])
 
     return (
         <>
-            {isWalletConnected && walletAddress ? (
+            {isWalletConnected && address ? (
                 <div className="mt-10">
                     <Lockups
-                        onEditLockup={onEditLockup}
-                        walletAddress={walletAddress}
+                        walletAddress={address}
+                        getSigningCosmWasmClient={getSigningCosmWasmClient}
                     />
                 </div>
             ) : (
@@ -61,14 +49,16 @@ export default function LockupsTable({
 }
 
 function Lockups({
-    onEditLockup,
     walletAddress,
+    getSigningCosmWasmClient,
 }: {
-    onEditLockup: (lockup: LockEntryWithPower) => void
     walletAddress: string
+    getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
 }) {
     const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [submitting, setSubmitting] = useState(false)
+    const [refetch, setRefetch] = useState(false)
 
     useEffect(() => {
         const fetchLockups = async () => {
@@ -81,8 +71,17 @@ function Lockups({
                 setIsLoading(false)
             }
         }
-        fetchLockups()
-    }, [walletAddress])
+
+        if (walletAddress && refetch) {
+            fetchLockups()
+            setRefetch(false)
+            return
+        }
+
+        if (walletAddress) {
+            fetchLockups()
+        }
+    }, [walletAddress, refetch])
 
     const isExpired = (lockEnd: string) => {
         const now = new Date().getTime()
@@ -91,41 +90,43 @@ function Lockups({
         return diff < 0
     }
 
-    const timeRemainingPercent = ({ lock_start, lock_end }: LockEntry) => {
-        const lockStartMs = parseInt(lock_start) / 1e6
-        const lockEndMs = parseInt(lock_end) / 1e6
-        const nowMs = Date.now()
-        const totalDuration = lockEndMs - lockStartMs
-        const elapsedTime = nowMs - lockStartMs
-        const percentagePassed = (elapsedTime / totalDuration) * 100
-
-        return Math.floor(percentagePassed)
-    }
-
     const formatDate = (date: string) => {
         const timestampMs = parseInt(date) / 1e6
         const dateObj = new Date(timestampMs)
         return dateObj.toISOString().split("T")[0]
     }
 
+    const onSuccess = () => {
+        setRefetch(true)
+    }
+
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between">
                 <h3>My Lockups</h3>
-                <div className="space-x-2   ">
+                <div className="space-x-2 flex items-center justify-between">
                     <span>Lock staked ATOM to get voting power </span>
-                    <Button className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]">New Lockup</Button>
+                    <Button className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]">
+                        New Lockup
+                    </Button>
                 </div>
             </div>
-            <Table className="border-separate border-spacing-y-2">
+            <Table
+                className={cn(
+                    "border-separate border-spacing-y-2",
+                    submitting && "opacity-70 pointer-events-none"
+                )}
+            >
                 <TableHeader>
                     <TableRow>
                         <TableHead>Lockup ID</TableHead>
-                        <TableHead>Voting Power</TableHead>
-                        <TableHead>ATOM</TableHead>
+                        <TableHead className="text-center">
+                            Voting Power
+                        </TableHead>
+                        <TableHead className="text-center">ATOM</TableHead>
                         <TableHead>Start Date</TableHead>
                         <TableHead>End Date</TableHead>
-                        <TableHead>Time Remaining</TableHead>
+                        <TableHead>Expire in</TableHead>
                         <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
@@ -170,16 +171,16 @@ function Lockups({
                                 key={index}
                                 className="h-20 border-b-0 bg-[#303132] hover:bg-[#555555]"
                             >
-                                <TableCell className="rounded-l-xl">
+                                <TableCell className="rounded-l-xl w-28">
                                     <div className="inline-flex items-center h-full">
                                         <LockIcon className="w-4 h-4 mr-2 text-white" />
                                         {lockup.lock_entry.lock_id}
                                     </div>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="lg:w-36 text-center">
                                     {lockup.current_voting_power}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="lg:w-42 text-center">
                                     {(
                                         parseInt(
                                             lockup.lock_entry.funds.amount
@@ -194,17 +195,17 @@ function Lockups({
                                 <TableCell>
                                     {formatDate(lockup.lock_entry.lock_end)}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="text-center lg:w-24">
                                     {isExpired(lockup.lock_entry.lock_end) ? (
                                         <div className="inline-flex items-center">
                                             <TriangleAlertIcon className="w-8 h-8 text-white" />
                                         </div>
                                     ) : (
-                                        <Progress
-                                            value={timeRemainingPercent(
-                                                lockup.lock_entry
+                                        <p>
+                                            {calculateTimeRemaining(
+                                                lockup.lock_entry.lock_end
                                             )}
-                                        />
+                                        </p>
                                     )}
                                 </TableCell>
                                 <TableCell
@@ -212,18 +213,22 @@ function Lockups({
                                     className="rounded-r-xl"
                                 >
                                     <EditLockupDuration
+                                        onSuccess={onSuccess}
                                         lockup={lockup}
-                                        onEditLockup={onEditLockup}
+                                        walletAddress={walletAddress}
+                                        getSigningCosmWasmClient={
+                                            getSigningCosmWasmClient
+                                        }
                                     />
                                 </TableCell>
                             </TableRow>
                         ))
                     ) : (
-                        <TableRow className="h-20 border-b-0 bg-[#303132] hover:bg-[#303132]">
-                            <TableCell colSpan={6} className="rounded-xl">
-                                <div className="flex items-center justify-center h-20 ml-5 rounded-xl flex-1">
+                        <TableRow className="h-20 border-b-0 bg-[#303132] hover:bg-[#303132] w-full">
+                            <TableCell colSpan={7} className="rounded-xl">
+                                <div className="flex items-center justify-center h-20 ml-5 rounded-xl">
                                     <p className="text-gray-200">
-                                        No lockups found
+                                        No lockups found.
                                     </p>
                                 </div>
                             </TableCell>
