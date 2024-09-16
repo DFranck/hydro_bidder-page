@@ -36,7 +36,7 @@ export const StepperOverview: React.FC = () => {
                         <LockStepper
                             amount="100"
                             validator="cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv"
-                            lockDuration={1209600} // 14 days in seconds
+                            lockDuration={180 * 86400000000000} // 14 days in seconds
                             hubChain={mockChainContext}
                             hubSigner={{} as SigningStargateClient} // Mock signer
                             neutronChain={mockChainContext}
