@@ -1,6 +1,9 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+// 1 month in nanoseconds
+export const lockEpochLength = 2628000000000000
+
 export enum LockupPeriod {
     ONE_EPOCH = "1m",
     THREE_EPOCHS = "3m",
@@ -29,9 +32,9 @@ export function calculateTimeRemaining(lockEnd: string) {
     if (hours < 1) {
         return "< 1 hour"
     } else if (days < 1) {
-        return `${hours} hour${hours !== 1 ? 's' : ''}`
+        return `${hours} hour${hours !== 1 ? "s" : ""}`
     } else {
-        return `${days} day${days !== 1 ? 's' : ''}`
+        return `${days} day${days !== 1 ? "s" : ""}`
     }
 }
 
@@ -73,4 +76,28 @@ export function formatAmount(amount: string) {
     return (parseInt(amount) / 1000000).toLocaleString("en-US", {
         minimumFractionDigits: 6,
     })
+}
+
+// Ported from cosmwasm contract
+export function scaleLockupPower(lockupTime: number, rawPower: bigint): bigint {
+    const two = BigInt(2)
+
+    // Scale lockup power
+    // 1x if lockup is between 0 and 1 epochs
+    // 1.5x if lockup is between 1 and 3 epochs
+    // 2x if lockup is between 3 and 6 epochs
+    // 4x if lockup is between 6 and 12 epochs
+    if (lockupTime > lockEpochLength * 6) {
+        // 4x if lockup is over 6 epochs
+        return rawPower * two * two
+    } else if (lockupTime > lockEpochLength * 3) {
+        // 2x if lockup is between 3 and 6 epochs
+        return rawPower * two
+    } else if (lockupTime > lockEpochLength) {
+        // 1.5x if lockup is between 1 and 3 epochs
+        return rawPower + rawPower / two
+    } else {
+        // Covers 0 and 1 epoch which have no scaling
+        return rawPower
+    }
 }
