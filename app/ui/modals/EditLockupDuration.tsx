@@ -20,53 +20,118 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { LockEntry } from "@/app/ts_types/HydroBase.types"
-
-enum LockupPeriod {
-    "1m" = "1m",
-    "3m" = "3m",
-    "6m" = "6m",
-    "12m" = "12m",
-}
+import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
+import {
+    calculateLockupVotingPower,
+    LockupPeriod,
+    formatAmount,
+    LockupPeriodMultipler,
+} from "@/lib/utils"
+import { DialogDescription } from "@radix-ui/react-dialog"
+import { useState } from "react"
+import { Loader2Icon } from "lucide-react"
+import { ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import {
+    ToastAborted,
+    ToastError,
+    ToastExecutedTx,
+    ToastProcessing,
+} from "@/components/ui/toast-wallet"
+import { executeExtendLockup } from "@/hooks/hooks"
 
 const formSchema = z.object({
     lockupPeriod: z.nativeEnum(LockupPeriod),
-    statom: z.string(),
-    hatom: z.coerce.number().min(0),
+    shares: z.string(),
+    power: z.string(),
     validator: z.string(),
 })
 
 type EditLockupDurationProps = {
-    lockup: LockEntry
-    onEditLockup: (lockup: LockEntry) => void
+    lockup: LockEntryWithPower
+    walletAddress: string
+    getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
+    onSuccess: () => void
 }
 
 export const EditLockupDuration = ({
     lockup,
-    onEditLockup,
+    walletAddress,
+    getSigningCosmWasmClient,
+    onSuccess,
 }: EditLockupDurationProps) => {
+    const [isLoading, setIsLoading] = useState(false)
+    const [open, setOpen] = useState(false)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            lockupPeriod: LockupPeriod["1m"],
-            statom: (parseFloat(lockup.funds.amount) / 1000000).toFixed(2),
-            hatom: 0,
+            lockupPeriod: LockupPeriod.ONE_EPOCH,
+            shares: formatAmount(lockup.lock_entry.funds.amount),
+            power: calculateLockupVotingPower(
+                parseInt(lockup.lock_entry.funds.amount),
+                LockupPeriod.ONE_EPOCH
+            ).toString(),
             validator: "Golden Ratio Staking",
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        onEditLockup({ ...lockup, ...values })
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsLoading(true)
+        if (!values.lockupPeriod || !lockup) {
+            return
+        }
+        try {
+            ToastProcessing()
+            await executeExtendLockup(
+                getSigningCosmWasmClient,
+                walletAddress || "",
+                lockup.lock_entry.lock_id,
+                LockupPeriodMultipler[values.lockupPeriod]
+            )
+            ToastExecutedTx("Success", "Lockup extended.")
+            setOpen(false)
+            onSuccess()
+        } catch (err: any) {
+            if (
+                err &&
+                err?.message &&
+                err.message.includes("Request rejected")
+            ) {
+                ToastAborted()
+                return
+            }
+            ToastError(err)
+            setOpen(false)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const onChangeLockupPeriod = (value: LockupPeriod) => {
+        form.setValue("lockupPeriod", value)
+        form.setValue(
+            "power",
+            calculateLockupVotingPower(
+                parseInt(lockup.lock_entry.funds.amount),
+                value
+            ).toString()
+        )
     }
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button className="rounded-lg text-black bg-white w-24 h-10 hover:bg-white">
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger
+                asChild
+                id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
+            >
+                <Button className="rounded-lg text-black bg-white border-white border w-24 h-10 hover:bg-transparent hover:text-white">
                     Edit
                 </Button>
             </DialogTrigger>
             <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
+                <DialogDescription className="sr-only">
+                    Edit Lockup Duration
+                </DialogDescription>
                 <DialogHeader className="pb-[34px]">
                     <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px] mb-[10px]">
                         Edit Lockup Duration
@@ -84,7 +149,7 @@ export const EditLockupDuration = ({
                                 <FormItem>
                                     <div className="gap-[56px] flex justify-start items-center">
                                         <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
-                                            New Lockup Time:
+                                            Extend Lockup Time:
                                         </FormLabel>
                                         <FormControl>
                                             <ToggleGroup
@@ -96,13 +161,18 @@ export const EditLockupDuration = ({
                                             >
                                                 {Object.entries(
                                                     LockupPeriod
-                                                ).map(([value, label]) => (
+                                                ).map(([name, value]) => (
                                                     <ToggleGroupItem
-                                                        key={value}
+                                                        key={name}
                                                         value={value}
                                                         className="text-[#080815] text-center text-base not-italic font-medium leading-[21px] inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 bg-[rgba(255,255,255,0.40)] px-4 py-0 rounded-[100px]"
+                                                        onClick={() =>
+                                                            onChangeLockupPeriod(
+                                                                value as LockupPeriod
+                                                            )
+                                                        }
                                                     >
-                                                        {label}
+                                                        {value}
                                                     </ToggleGroupItem>
                                                 ))}
                                             </ToggleGroup>
@@ -114,30 +184,35 @@ export const EditLockupDuration = ({
                         />
 
                         <div className="flex items-center gap-[56px]">
-                            <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
-                                stATOMs:
+                            <FormLabel className="text-sm opacity-60 w-[100px]">
+                                Locked ATOM:
                             </FormLabel>
-                            <p className="text-[#646464] text-xl not-italic font-medium leading-[21px]">
-                                {form.watch("statom")}
-                            </p>
+                            <p className="text-xl">{form.watch("shares")}</p>
                         </div>
 
                         <div className="flex items-center gap-[56px]">
-                            <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
+                            <FormLabel className="text-sm opacity-60 w-[100px]">
                                 Updated Voting Power:
                             </FormLabel>
-                            <p className="text-xl not-italic font-medium leading-[21px]">
-                                {form.watch("hatom")}
-                            </p>
+                            <p className="text-xl">{form.watch("power")}</p>
                         </div>
 
-                        <Button variant="secondary" type="submit">
-                            Confirm
+                        <Button
+                            variant="secondary"
+                            type="submit"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <Loader2Icon className="w-4 h-4 animate-spin" />
+                            ) : (
+                                "Confirm"
+                            )}
                         </Button>
                     </form>
                 </Form>
                 <DialogClose asChild>
                     <Button
+                        disabled={isLoading}
                         type="button"
                         variant="outline"
                         className="w-full border rounded-[10px] border-solid border-white hover:bg-white hover:text-black"

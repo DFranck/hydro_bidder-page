@@ -29,7 +29,7 @@ export const ProposalListTopModules = () => {
     const bgColor =
         "bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]"
     return (
-        <div className="flex flex-row justify-between bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]">
+        <div className="flex flex-row justify-between bg-transparent">
             <div
                 className={`flex w-[380px] h-[206px] flex-col shrink-0 p-6 rounded-[10px] ${bgColor}`}
             >
@@ -154,17 +154,12 @@ function VotingPowerCard() {
     return (
         <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
             <div className="flex flex-col flex-1 justify-between">
-                <div className="flex w-full justify-between">
-                    <Image
-                        alt="Voting Power"
-                        src={"/images/Wallet_Light.svg"}
-                        width={100}
-                        height={100}
-                    />
-                    <Button className="h-10 rounded-full bg-[#00FFC2] text-[#080815] text-center text-lg font-medium">
-                        New Lockup
-                    </Button>
-                </div>
+                <Image
+                    alt="Voting Power"
+                    src={"/images/Wallet_Light.svg"}
+                    width={100}
+                    height={100}
+                />
                 <h3 className="py-4 text-white">Voting Power</h3>
                 <p className="text-xl font-normal">Your current Voting Power</p>
                 <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
