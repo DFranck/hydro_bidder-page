@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import { ChevronDown } from "lucide-react"
 
 import React from "react"
 import { Button } from "@/components/ui/button"
@@ -64,9 +65,14 @@ export const LockStepper = ({
     onExit: () => void
 }) => {
     const [step, setStep] = useState<LockStep>(startState || "Init")
+    const [errorLog, setErrorLog] = useState<string>("")
+    const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
         try {
+            setErrorLog(
+                `Starting execution with amount: ${amount}, validator: ${validator}, lockDuration: ${lockDuration}`
+            )
             if (
                 !hubChain.address ||
                 !hubSigner ||
@@ -133,9 +139,10 @@ export const LockStepper = ({
             // const lockBroadcastResult = await broadcastTx(neutronSigner, hubSigner, signedLockTx);
 
             setStep("Success")
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error during process:", error)
             setStep("Error")
+            setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
         }
     }
 
@@ -223,6 +230,21 @@ export const LockStepper = ({
                                 Refresh the page to try again or recover your
                                 staked ATOM.
                             </p>
+                            <div className="mt-4">
+                                {!showErrorLog ? (
+                                    <button
+                                        onClick={() => setShowErrorLog(true)}
+                                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+                                    >
+                                        Show Error Log
+                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                    </button>
+                                ) : (
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                        {errorLog}
+                                    </pre>
+                                )}
+                            </div>
                         </CardContent>
                         <CardFooter>
                             <Button onClick={() => window.location.reload()}>
@@ -375,9 +397,14 @@ export const RevertFromHubStepper = ({
     onExit: () => void
 }) => {
     const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
+    const [errorLog, setErrorLog] = useState<string>("")
+    const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
         try {
+            setErrorLog(
+                `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`
+            )
             const hubSigner = await hubChain.getSigningStargateClient()
             const neutronSigner = await neutronChain.getSigningStargateClient()
 
@@ -408,9 +435,10 @@ export const RevertFromHubStepper = ({
             )
 
             setStep("Success")
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error during revert process:", error)
             setStep("Error")
+            setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
         }
     }
     const renderStep = () => {
@@ -494,17 +522,37 @@ export const RevertFromHubStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Error</CardTitle>
+                            <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
-                            <p>An error occurred during the revert process.</p>
                             <p>
-                                Please try again later or contact support if the
-                                problem persists.
+                                This transaction could not be completed. Your
+                                staked ATOM has not been locked in Hydro.
                             </p>
+                            <p>
+                                Refresh the page to try again or recover your
+                                staked ATOM.
+                            </p>
+                            <div className="mt-4">
+                                {!showErrorLog ? (
+                                    <button
+                                        onClick={() => setShowErrorLog(true)}
+                                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+                                    >
+                                        Show Error Log
+                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                    </button>
+                                ) : (
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                        {errorLog}
+                                    </pre>
+                                )}
+                            </div>
                         </CardContent>
                         <CardFooter>
-                            <Button onClick={onExit}>Close</Button>
+                            <Button onClick={() => window.location.reload()}>
+                                Refresh page
+                            </Button>
                         </CardFooter>
                     </>
                 )
@@ -545,9 +593,14 @@ export const RevertFromNeutronStepper = ({
     const [step, setStep] = useState<RevertFromNeutronStep>(
         startState || "Init"
     )
+    const [errorLog, setErrorLog] = useState<string>("")
+    const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
         try {
+            setErrorLog(
+                `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`
+            )
             const hubSigner = await hubChain.getSigningStargateClient()
             const neutronSigner = await neutronChain.getSigningStargateClient()
 
@@ -599,9 +652,10 @@ export const RevertFromNeutronStepper = ({
             )
 
             setStep("Success")
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error during revert process:", error)
             setStep("Error")
+            setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
         }
     }
 
@@ -718,14 +772,37 @@ export const RevertFromNeutronStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Error</CardTitle>
+                            <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
-                            <p>An error occurred during the revert process.</p>
+                            <p>
+                                This transaction could not be completed. Your
+                                staked ATOM has not been locked in Hydro.
+                            </p>
+                            <p>
+                                Refresh the page to try again or recover your
+                                staked ATOM.
+                            </p>
+                            <div className="mt-4">
+                                {!showErrorLog ? (
+                                    <button
+                                        onClick={() => setShowErrorLog(true)}
+                                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+                                    >
+                                        Show Error Log
+                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                    </button>
+                                ) : (
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                        {errorLog}
+                                    </pre>
+                                )}
+                            </div>
                         </CardContent>
-                        <CardFooter className="flex justify-between">
-                            <Button onClick={onExit}>Exit</Button>
-                            <Button onClick={execute}>Try Again</Button>
+                        <CardFooter>
+                            <Button onClick={() => window.location.reload()}>
+                                Refresh page
+                            </Button>
                         </CardFooter>
                     </>
                 )
@@ -764,11 +841,16 @@ export const ContinueFromNeutronStepper = ({
     const [step, setStep] = useState<ContinueFromNeutronStep>(
         startState || "Init"
     )
+    const [errorLog, setErrorLog] = useState<string>("")
+    const [showErrorLog, setShowErrorLog] = useState(false)
 
     const [lockDuration, setLockDuration] = useState(30 * 86400000000000) // Default to 30 days in nanoseconds
 
     const executeContinueFromNeutron = async () => {
         try {
+            setErrorLog(
+                `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
+            )
             const hubSigner = await hubChain.getSigningStargateClient()
             const neutronSigner = await neutronChain.getSigningStargateClient()
 
@@ -795,9 +877,10 @@ export const ContinueFromNeutronStepper = ({
             // setStep('WaitingForLockBroadcast');
 
             setStep("Success")
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error in executeContinueFromNeutron:", error)
             setStep("Error")
+            setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
         }
     }
 
@@ -943,14 +1026,36 @@ export const ContinueFromNeutronStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Error</CardTitle>
+                            <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
-                            <p>An error occurred:</p>
+                            <p>
+                                This transaction could not be completed. Your
+                                staked ATOM has not been locked in Hydro.
+                            </p>
+                            <p>
+                                Refresh the page to try again or recover your
+                                staked ATOM.
+                            </p>
+                            <div className="mt-4">
+                                {!showErrorLog ? (
+                                    <button
+                                        onClick={() => setShowErrorLog(true)}
+                                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+                                    >
+                                        Show Error Log
+                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                    </button>
+                                ) : (
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                        {errorLog}
+                                    </pre>
+                                )}
+                            </div>
                         </CardContent>
                         <CardFooter>
-                            <Button onClick={() => setStep("Init")}>
-                                Try Again
+                            <Button onClick={() => window.location.reload()}>
+                                Refresh page
                             </Button>
                         </CardFooter>
                     </>
@@ -990,11 +1095,16 @@ export const ContinueFromHubStepper = ({
     onExit: () => void
 }) => {
     const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
+    const [errorLog, setErrorLog] = useState<string>("")
+    const [showErrorLog, setShowErrorLog] = useState(false)
 
     const [lockDuration, setLockDuration] = useState(30 * 86400000000000) // Default to 30 days in nanoseconds
 
     const execute = async () => {
         try {
+            setErrorLog(
+                `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
+            )
             const hubSigner = await hubChain.getSigningStargateClient()
             const neutronSigner = await neutronChain.getSigningStargateClient()
 
@@ -1043,9 +1153,10 @@ export const ContinueFromHubStepper = ({
             // await broadcastTx(neutronSigner, hubSigner, signedLockTx);
 
             setStep("Success")
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error during process:", error)
             setStep("Error")
+            setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
         }
     }
 
@@ -1226,14 +1337,36 @@ export const ContinueFromHubStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Error</CardTitle>
+                            <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
-                            <p>An error occurred:</p>
+                            <p>
+                                This transaction could not be completed. Your
+                                staked ATOM has not been locked in Hydro.
+                            </p>
+                            <p>
+                                Refresh the page to try again or recover your
+                                staked ATOM.
+                            </p>
+                            <div className="mt-4">
+                                {!showErrorLog ? (
+                                    <button
+                                        onClick={() => setShowErrorLog(true)}
+                                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+                                    >
+                                        Show Error Log
+                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                    </button>
+                                ) : (
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                        {errorLog}
+                                    </pre>
+                                )}
+                            </div>
                         </CardContent>
                         <CardFooter>
-                            <Button onClick={() => setStep("Init")}>
-                                Try Again
+                            <Button onClick={() => window.location.reload()}>
+                                Refresh page
                             </Button>
                         </CardFooter>
                     </>
