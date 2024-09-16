@@ -8,6 +8,7 @@ import { ChainContext } from "@cosmos-kit/core"
 import { cosmos } from "interchain"
 const txRaw = cosmos.tx.v1beta1.TxRaw
 import { SigningStargateClient } from "@cosmjs/stargate"
+import { scaleLockupPower } from "@/lib/utils"
 import {
     signTokenizeShares,
     signRedeemTokensForShares,
@@ -148,8 +149,10 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             Nice! You're about to lock {amount} ATOM staked to{" "}
-                            {validator} in Hydro to get hATOM. This should take
-                            about a minute and will require 3 wallet approvals.
+                            {validator} in Hydro to get{" "}
+                            {scaleLockupPower(lockDuration, BigInt(amount))}
+                            hATOM (voting power). This should take about a
+                            minute and will require 3 wallet approvals.
                         </CardContent>
                         <CardFooter className="flex justify-between">
                             <Button onClick={execute}>Start locking</Button>
@@ -745,7 +748,7 @@ export const ContinueFromNeutronStepper = ({
         startState || "Init"
     )
 
-    const [lockDuration, setLockDuration] = useState(0)
+    const [lockDuration, setLockDuration] = useState(30 * 86400000000000) // Default to 30 days in nanoseconds
 
     const executeContinueFromNeutron = async () => {
         try {
@@ -784,17 +787,22 @@ export const ContinueFromNeutronStepper = ({
     const renderStep = () => {
         switch (step) {
             case "Init":
-                const [lockDuration, setLockDuration] = useState(30) // Default to 30 days
-
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Lock {amount} ATOM</CardTitle>
+                            <CardTitle>
+                                Continue Locking {amount} ATOM
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="prose">
                             <p>
                                 Nice! You're about to lock {amount} ATOM staked
-                                to {validator} in Hydro to get {amount} hATOM.
+                                to {validator} in Hydro to get{" "}
+                                {scaleLockupPower(
+                                    lockDuration,
+                                    BigInt(amount)
+                                ).toString()}{" "}
+                                hATOM (voting power).
                             </p>
                             <form
                                 onSubmit={(e) => {
@@ -802,25 +810,35 @@ export const ContinueFromNeutronStepper = ({
                                     executeContinueFromNeutron()
                                 }}
                             >
-                                <label htmlFor="lockDuration">
-                                    Lock Duration (days):
-                                </label>
-                                <input
-                                    type="number"
-                                    id="lockDuration"
-                                    value={lockDuration}
-                                    onChange={(e) =>
-                                        setLockDuration(
-                                            parseInt(e.target.value) *
-                                                24 *
-                                                60 *
-                                                60 *
-                                                1000000000
-                                        )
-                                    }
-                                    min="1"
-                                    required
-                                />
+                                <div className="mb-4">
+                                    <label className="block mb-2">
+                                        Select Lock Duration:
+                                    </label>
+                                    <div className="flex space-x-2">
+                                        {[30, 60, 90].map((days) => (
+                                            <button
+                                                key={days}
+                                                type="button"
+                                                className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
+                                                    lockDuration ===
+                                                    days * 86400000000000
+                                                        ? "bg-blue-500 text-white"
+                                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                                }`}
+                                                onClick={() =>
+                                                    setLockDuration(
+                                                        days * 86400000000000
+                                                    )
+                                                }
+                                            >
+                                                {days / 30}{" "}
+                                                {days === 30
+                                                    ? "month"
+                                                    : "months"}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                                 <p>This will require one wallet approval.</p>
                             </form>
                         </CardContent>
@@ -936,7 +954,7 @@ export const ContinueFromHubStepper = ({
 }) => {
     const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
 
-    const [lockDuration, setLockDuration] = useState(0)
+    const [lockDuration, setLockDuration] = useState(30 * 86400000000000) // Default to 30 days in nanoseconds
 
     const execute = async () => {
         try {
@@ -1000,14 +1018,57 @@ export const ContinueFromHubStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Lock {amount} ATOM</CardTitle>
+                            <CardTitle>
+                                Continue Locking {amount} ATOM
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="prose">
                             <p>
                                 Nice! You're about to lock {amount} ATOM staked
-                                to {validator} in Hydro to get {amount} hATOM.
+                                to {validator} in Hydro to get{" "}
+                                {scaleLockupPower(
+                                    lockDuration,
+                                    BigInt(amount)
+                                ).toString()}{" "}
+                                hATOM (voting power).
                             </p>
-                            <p>This will require two wallet approvals.</p>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault()
+                                    execute()
+                                }}
+                            >
+                                <div className="mb-4">
+                                    <label className="block mb-2">
+                                        Select Lock Duration:
+                                    </label>
+                                    <div className="flex space-x-2">
+                                        {[30, 60, 90].map((days) => (
+                                            <button
+                                                key={days}
+                                                type="button"
+                                                className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
+                                                    lockDuration ===
+                                                    days * 86400000000000
+                                                        ? "bg-blue-500 text-white"
+                                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                                }`}
+                                                onClick={() =>
+                                                    setLockDuration(
+                                                        days * 86400000000000
+                                                    )
+                                                }
+                                            >
+                                                {days / 30}{" "}
+                                                {days === 30
+                                                    ? "month"
+                                                    : "months"}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <p>This will require one wallet approval.</p>
+                            </form>
                         </CardContent>
                         <CardFooter className="flex justify-between">
                             <Button onClick={execute}>Lock</Button>
