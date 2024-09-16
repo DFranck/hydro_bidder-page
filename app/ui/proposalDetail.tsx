@@ -22,6 +22,11 @@ import { DialogTrigger } from "@radix-ui/react-dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
 import { ProposalListTopModules } from "../dashboard/TopModules"
+import {
+    ToastAborted,
+    ToastError,
+    ToastProcessing,
+} from "@/components/ui/toast-wallet"
 
 const ProposalDetail = ({
     globalState,
@@ -40,7 +45,6 @@ const ProposalDetail = ({
     const [hasVotedThisProposal, setHasVotedThisProposal] = useState(false)
     const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
     const [submitting, setSubmitting] = useState(false)
-    const { toast } = useToast()
 
     const { isWalletConnected, address, getSigningCosmWasmClient } =
         useChain("neutrontestnet")
@@ -49,7 +53,6 @@ const ProposalDetail = ({
         if (!address) {
             return
         }
-
         const fetchVoteStatus = async () => {
             const voteMap = await fetchMyVotes(
                 address || "",
@@ -63,12 +66,12 @@ const ProposalDetail = ({
 
             let voted = Array.from(voteMap.values())
                 .flat()
-                .find((vote) => vote.prop_id === Number(proposal.proposal_id))
+                .find((vote) => vote?.prop_id === Number(proposal.proposal_id))
             setHasVoted(true)
             setHasVotedThisProposal(!!voted)
         }
         fetchVoteStatus()
-    }, [])
+    }, [address])
 
     async function onVote() {
         if (!proposal) {
@@ -76,68 +79,31 @@ const ProposalDetail = ({
         }
         try {
             setSubmitting(true)
-            await executeVote(
+            ToastProcessing()
+            const res = await executeVote(
                 getSigningCosmWasmClient,
                 address!,
                 proposal.proposal_id,
                 proposal.tranche_id
             )
-            toast({
-                className: cn(
-                    "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                ),
-                title: "Transaction submitted",
-                description: (
-                    <div className="inline-flex">
-                        <Loader2Icon className="animate-spin h-5 w-5 mr-2" />
-                        Processing...
-                    </div>
-                ),
-                duration: 2000,
-            })
+            console.log("## Vote response", res)
         } catch (err: any) {
             if (
                 err &&
                 err?.message &&
                 err.message.includes("Request rejected")
             ) {
-                toast({
-                    className: cn(
-                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                    ),
-                    title: "Aborted",
-                    description: (
-                        <div className="inline-flex items-center">
-                            Transaction was not submitted
-                        </div>
-                    ),
-                    duration: 2000,
-                })
+                ToastAborted()
                 return
             }
-            toast({
-                className: cn(
-                    "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                ),
-                title: "Exception",
-                description: (
-                    <div className="inline-flex items-center">
-                        <AlertTriangleIcon className="w-8 h-8 text-yellow-400 mr-2" />
-                        {err && err?.message
-                            ? `Transaction failed: ${err.message}`
-                            : "Transaction failed - unkonwn error"}
-                    </div>
-                ),
-                variant: "destructive",
-                duration: 5000,
-            })
+            ToastError(err)
         } finally {
             setSubmitting(false)
         }
     }
 
     function onVoteClicked() {
-        if (hasVotedThisProposal) {
+        if (!hasVotedThisProposal && hasVoted) {
             setOpenChangeVoteModal(true)
         } else {
             onVote()
@@ -186,7 +152,7 @@ const ProposalDetail = ({
                             variant="outline"
                             className="w-full border rounded-[10px] border-solid border-white hover:bg-white hover:text-black"
                         >
-                            Don`&apos;`t change my vote
+                            {"Don't change my vote"}
                         </Button>
                     </DialogClose>
                 </DialogContent>
