@@ -72,9 +72,11 @@ export function calculateLockupVotingPower(
     }
 }
 
-export function formatAmount(amount: string) {
-    return (parseInt(amount) / 1000000).toLocaleString("en-US", {
+export function formatAmount(amount: string | number | bigint) {
+    amount = Number(amount) / 1000000
+    return amount.toLocaleString("en-US", {
         minimumFractionDigits: 6,
+        trailingZeroDisplay: "stripIfInteger",
     })
 }
 
