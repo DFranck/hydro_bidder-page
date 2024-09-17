@@ -6,8 +6,6 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
-import { cosmos } from "interchain"
-const txRaw = cosmos.tx.v1beta1.TxRaw
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { scaleLockupPower } from "@/lib/utils"
 import {
@@ -19,8 +17,6 @@ import {
     signIBCTransferNeutronToHub,
     broadcastAndRelayIBCHubToNeutron,
     broadcastAndRelayIBCNeutronToHub,
-    checkForHubLSMShares,
-    checkForNeutronLSMShares,
     extractLSMDenom,
 } from "./transactions"
 import {
@@ -28,7 +24,6 @@ import {
     CardHeader,
     CardFooter,
     CardTitle,
-    CardDescription,
     CardContent,
 } from "@/components/ui/card"
 import { Validator } from "@/hooks/hooks"
@@ -162,31 +157,44 @@ export const LockStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Lock {amount} ATOM</CardTitle>
+                            <CardTitle>
+                                Lock {Number(amount) / 1000000} ATOM
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Nice! You're about to lock {amount} ATOM staked
-                                to{" "}
-                                {getValidatorMoniker(validator, validatorMap)}{" "}
+                                Nice! You're about to lock{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                staked to{" "}
+                                <strong>
+                                    {getValidatorMoniker(
+                                        validator,
+                                        validatorMap
+                                    )}
+                                </strong>{" "}
                                 in Hydro for{" "}
-                                {lockDuration / (30 * 86400000000000)}{" "}
-                                {lockDuration > 30 * 86400000000000
-                                    ? "months"
-                                    : "month"}{" "}
+                                <strong>
+                                    {lockDuration / (30 * 86400000000000)}{" "}
+                                    {lockDuration > 30 * 86400000000000
+                                        ? "months"
+                                        : "month"}
+                                </strong>{" "}
                                 to get{" "}
-                                {scaleLockupPower(
-                                    lockDuration,
-                                    BigInt(amount)
-                                ).toString()}{" "}
-                                hATOM (voting power).
+                                <strong>
+                                    {scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    ).toString()}{" "}
+                                    hATOM
+                                </strong>{" "}
+                                (voting power).
                             </p>{" "}
                             <p>
                                 This should take about a minute and will require
                                 3 wallet approvals.
                             </p>
                         </CardContent>
-                        <CardFooter className="flex justify-between">
+                        <CardFooter className="space-x-2">
                             <Button onClick={execute}>Start locking</Button>
                             <Button variant="outline" onClick={onExit}>
                                 Cancel
@@ -343,12 +351,17 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                You locked {amount} ATOM in Hydro and received{" "}
-                                {scaleLockupPower(
-                                    lockDuration,
-                                    BigInt(amount)
-                                ).toString()}{" "}
-                                hATOM (voting power).
+                                You locked{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                in Hydro and received{" "}
+                                <strong>
+                                    {scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    ).toString()}{" "}
+                                    hATOM
+                                </strong>{" "}
+                                (voting power).
                             </p>
                             <p>
                                 Do you want to view the list of proposals to
@@ -461,20 +474,29 @@ export const RevertFromHubStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Revert {amount} ATOM</CardTitle>
+                            <CardTitle>
+                                Revert {Number(amount) / 1000000} ATOM
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                You're about to revert {amount} ATOM back to its
-                                original state, staked with{" "}
-                                {getValidatorMoniker(validator, validatorMap)}.
+                                You're about to revert{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                back to its original state, staked with{" "}
+                                <strong>
+                                    {getValidatorMoniker(
+                                        validator,
+                                        validatorMap
+                                    )}
+                                </strong>
+                                .
                             </p>
                             <p>
                                 This should take about a minute and will require
                                 1 wallet approval.
                             </p>
                         </CardContent>
-                        <CardFooter className="flex justify-between">
+                        <CardFooter className="space-x-2">
                             <Button onClick={execute}>Revert</Button>
                             <Button variant="outline" onClick={onExit}>
                                 Cancel
@@ -495,8 +517,16 @@ export const RevertFromHubStepper = ({
                             </p>
                             <p>
                                 This will restore your previous staked position
-                                with the amount of {amount} ATOM staked to{" "}
-                                {getValidatorMoniker(validator, validatorMap)}.
+                                with the amount of{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                staked to{" "}
+                                <strong>
+                                    {getValidatorMoniker(
+                                        validator,
+                                        validatorMap
+                                    )}
+                                </strong>
+                                .
                             </p>
                         </CardContent>
                     </>
@@ -524,8 +554,10 @@ export const RevertFromHubStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Your {amount} ATOM has been restored to your
-                                previous staked position.
+                                Your{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                has been restored to your previous staked
+                                position.
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -682,20 +714,29 @@ export const RevertFromNeutronStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>Reverting {amount} ATOM</CardTitle>
+                            <CardTitle>
+                                Reverting {Number(amount) / 1000000} ATOM
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                You're about to revert {amount} ATOM back to its
-                                original state, staked with{" "}
-                                {getValidatorMoniker(validator, validatorMap)}.
+                                You're about to revert{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                back to its original state, staked with{" "}
+                                <strong>
+                                    {getValidatorMoniker(
+                                        validator,
+                                        validatorMap
+                                    )}
+                                </strong>
+                                .
                             </p>
                             <p>
                                 This should take about a minute and will require
                                 2 wallet approvals.
                             </p>
                         </CardContent>
-                        <CardFooter className="flex justify-between">
+                        <CardFooter className="space-x-2">
                             <Button onClick={execute}>Revert</Button>
                             <Button variant="outline" onClick={onExit}>
                                 Cancel
@@ -749,8 +790,16 @@ export const RevertFromNeutronStepper = ({
                             </p>
                             <p>
                                 This will restore your previous staked position
-                                with the amount of {amount} ATOM to{" "}
-                                {getValidatorMoniker(validator, validatorMap)}.
+                                with the amount of{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                staked to{" "}
+                                <strong>
+                                    {getValidatorMoniker(
+                                        validator,
+                                        validatorMap
+                                    )}
+                                </strong>
+                                .
                             </p>
                         </CardContent>
                     </>
@@ -778,8 +827,10 @@ export const RevertFromNeutronStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Your {amount} ATOM has been restored to your
-                                previous staked position.
+                                Your{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                has been restored to your previous staked
+                                position.
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -912,20 +963,29 @@ export const ContinueFromNeutronStepper = ({
                     <>
                         <CardHeader>
                             <CardTitle>
-                                Continue Locking {amount} ATOM
+                                Continue Locking {Number(amount) / 1000000} ATOM
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Nice! You're about to lock {amount} ATOM staked
-                                to{" "}
-                                {getValidatorMoniker(validator, validatorMap)}{" "}
+                                Nice! You're about to lock{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                staked to{" "}
+                                <strong>
+                                    {getValidatorMoniker(
+                                        validator,
+                                        validatorMap
+                                    )}
+                                </strong>{" "}
                                 in Hydro to get{" "}
-                                {scaleLockupPower(
-                                    lockDuration,
-                                    BigInt(amount)
-                                ).toString()}{" "}
-                                hATOM (voting power).
+                                <strong>
+                                    {scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    ).toString()}{" "}
+                                    hATOM
+                                </strong>{" "}
+                                (voting power).
                             </p>
                             <form
                                 onSubmit={(e) => {
@@ -966,7 +1026,7 @@ export const ContinueFromNeutronStepper = ({
                                 <p>This will require one wallet approval.</p>
                             </form>
                         </CardContent>
-                        <CardFooter className="flex justify-between">
+                        <CardFooter className="space-x-2">
                             <Button onClick={executeContinueFromNeutron}>
                                 Lock
                             </Button>
@@ -1013,12 +1073,17 @@ export const ContinueFromNeutronStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                You locked {amount} ATOM in Hydro and received{" "}
-                                {scaleLockupPower(
-                                    lockDuration,
-                                    BigInt(amount)
-                                ).toString()}{" "}
-                                hATOM (voting power).
+                                You locked{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                in Hydro and received{" "}
+                                <strong>
+                                    {scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    ).toString()}{" "}
+                                    hATOM
+                                </strong>{" "}
+                                (voting power).
                             </p>
                             <p>
                                 Do you want to view the list of proposals to
@@ -1193,20 +1258,29 @@ export const ContinueFromHubStepper = ({
                     <>
                         <CardHeader>
                             <CardTitle>
-                                Continue Locking {amount} ATOM
+                                Continue Locking {Number(amount) / 1000000} ATOM
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Nice! You're about to lock {amount} ATOM staked
-                                to{" "}
-                                {getValidatorMoniker(validator, validatorMap)}{" "}
+                                Nice! You're about to lock{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                staked to{" "}
+                                <strong>
+                                    {getValidatorMoniker(
+                                        validator,
+                                        validatorMap
+                                    )}
+                                </strong>{" "}
                                 in Hydro to get{" "}
-                                {scaleLockupPower(
-                                    lockDuration,
-                                    BigInt(amount)
-                                ).toString()}{" "}
-                                hATOM (voting power).
+                                <strong>
+                                    {scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    ).toString()}{" "}
+                                    hATOM
+                                </strong>{" "}
+                                (voting power).
                             </p>
                             <form
                                 onSubmit={(e) => {
@@ -1247,7 +1321,7 @@ export const ContinueFromHubStepper = ({
                                 <p>This will require one wallet approval.</p>
                             </form>
                         </CardContent>
-                        <CardFooter className="flex justify-between">
+                        <CardFooter className="space-x-2">
                             <Button onClick={execute}>Lock</Button>
                             <Button variant="outline" onClick={onExit}>
                                 Cancel
@@ -1329,12 +1403,17 @@ export const ContinueFromHubStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                You locked {amount} ATOM in Hydro and received{" "}
-                                {scaleLockupPower(
-                                    lockDuration,
-                                    BigInt(amount)
-                                ).toString()}{" "}
-                                hATOM (voting power).
+                                You locked{" "}
+                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                in Hydro and received{" "}
+                                <strong>
+                                    {scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    ).toString()}{" "}
+                                    hATOM
+                                </strong>{" "}
+                                (voting power).
                             </p>
                             <p>
                                 Do you want to view the list of proposals to

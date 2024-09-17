@@ -10,10 +10,25 @@ import {
 } from "./steppers"
 import { ChainContext } from "@cosmos-kit/core"
 import { SigningStargateClient } from "@cosmjs/stargate"
+import { Validator } from "@/hooks/hooks"
 
 // Mock chain contexts and onExit function for demonstration
 const mockChainContext: ChainContext = {} as ChainContext
 const mockOnExit = () => {}
+
+// Add a mock validatorMap
+const mockValidatorMap = new Map<string, Validator>([
+    [
+        "cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv",
+        {
+            operator_address:
+                "cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv",
+            description: {
+                moniker: "Mock Validator",
+            },
+        },
+    ],
+])
 
 export const StepperOverview: React.FC = () => {
     return (
@@ -43,6 +58,7 @@ export const StepperOverview: React.FC = () => {
                             neutronSigner={{} as SigningStargateClient} // Mock signer
                             onExit={mockOnExit}
                             startState={state as any}
+                            validatorMap={mockValidatorMap}
                         />
                     </div>
                 ))}
@@ -67,6 +83,7 @@ export const StepperOverview: React.FC = () => {
                             neutronChain={mockChainContext}
                             onExit={mockOnExit}
                             startState={state as any}
+                            validatorMap={mockValidatorMap}
                         />
                     </div>
                 ))}
@@ -93,6 +110,7 @@ export const StepperOverview: React.FC = () => {
                             neutronChain={mockChainContext}
                             onExit={mockOnExit}
                             startState={state as any}
+                            validatorMap={mockValidatorMap}
                         />
                     </div>
                 ))}
@@ -117,6 +135,7 @@ export const StepperOverview: React.FC = () => {
                             neutronChain={mockChainContext}
                             onExit={mockOnExit}
                             startState={state as any}
+                            validatorMap={mockValidatorMap}
                         />
                     </div>
                 ))}
@@ -143,6 +162,7 @@ export const StepperOverview: React.FC = () => {
                             neutronChain={mockChainContext}
                             onExit={mockOnExit}
                             startState={state as any}
+                            validatorMap={mockValidatorMap}
                         />
                     </div>
                 ))}
