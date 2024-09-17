@@ -163,7 +163,7 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Nice! You're about to lock{" "}
+                                Nice! You&apos;re about to lock{" "}
                                 <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
@@ -480,7 +480,7 @@ export const RevertFromHubStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                You're about to revert{" "}
+                                You&apos;re about to revert{" "}
                                 <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
                                 back to its original state, staked with{" "}
                                 <strong>
@@ -540,7 +540,7 @@ export const RevertFromHubStepper = ({
                         <CardContent className="prose">
                             <p>Redeeming ATOM...</p>
                             <p>
-                                Hang tight, we're restoring your previous staked
+                                Hang tight, we&apos;re restoring your previous staked
                                 position.
                             </p>
                         </CardContent>
@@ -720,7 +720,7 @@ export const RevertFromNeutronStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                You're about to revert{" "}
+                                You&apos;re about to revert{" "}
                                 <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
                                 back to its original state, staked with{" "}
                                 <strong>
@@ -813,7 +813,7 @@ export const RevertFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>Redeeming ATOM...</p>
                             <p>
-                                Hang tight, we're restoring your previous staked
+                                Hang tight, we&apos;re restoring your previous staked
                                 position.
                             </p>
                         </CardContent>
@@ -968,7 +968,7 @@ export const ContinueFromNeutronStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Nice! You're about to lock{" "}
+                                Nice! You&apos;re about to lock{" "}
                                 <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
@@ -1263,7 +1263,7 @@ export const ContinueFromHubStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Nice! You're about to lock{" "}
+                                Nice! You&apos;re about to lock{" "}
                                 <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
