@@ -1,6 +1,6 @@
 import TXExample from "./component";
 
-export default async () => {
+export default async function TXExamplePage() {
     return (
         <TXExample />
     )
