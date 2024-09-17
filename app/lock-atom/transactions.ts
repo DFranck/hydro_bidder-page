@@ -39,7 +39,7 @@ import { StdFee } from "@cosmjs/amino"
 import { MsgVoteEncodeObject, GasPrice } from "@cosmjs/stargate"
 
 const hydroContractAddress =
-    "neutron1vjac85ht2wj4sh9j6g88tuh0f7up0h26aauk3cm0tz0lgdsz24hqgzqhsn"
+    "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
 
 export async function checkForHubLSMShares(
     hubChain: ChainContext,
@@ -63,6 +63,8 @@ export async function checkForHubLSMShares(
             hubChain.address
         }`
     ).then((res) => res.json())
+
+    console.log("checkForHubLSMShares", response)
 
     const lsmShares = response.balances
         .filter((balance) => balance.denom.startsWith("cosmosvaloper"))
@@ -158,7 +160,10 @@ export async function signTokenizeShares(
     return await hubSigner.sign(hubChain.address, [msg], fee, "")
 }
 
-export function extractLSMDenom(broadcastResult: DeliverTxResponse): string {
+export function extractLSMDenom(broadcastResult: DeliverTxResponse): {
+    amount: string
+    denom: string
+} {
     const tokenizeSharesEvent = broadcastResult.events.find(
         (event) => event.type === "tokenize_shares"
     )
@@ -166,20 +171,23 @@ export function extractLSMDenom(broadcastResult: DeliverTxResponse): string {
         throw new Error("Tokenize shares event not found in broadcast result")
     }
 
-    const validatorAttribute = tokenizeSharesEvent.attributes.find(
-        (attr) => attr.key === "validator"
-    )
-    const shareRecordIdAttribute = tokenizeSharesEvent.attributes.find(
-        (attr) => attr.key === "share_record_id"
+    const tokenizedSharesAttribute = tokenizeSharesEvent.attributes.find(
+        (attr) => attr.key === "tokenized_shares"
     )
 
-    if (!validatorAttribute || !shareRecordIdAttribute) {
-        throw new Error(
-            "Required attributes not found in tokenize_shares event"
-        )
+    if (!tokenizedSharesAttribute) {
+        throw new Error("Tokenized shares attribute not found in event")
     }
 
-    return `${validatorAttribute.value}/${shareRecordIdAttribute.value}`
+    const match = tokenizedSharesAttribute.value.match(/(.*)(cosmosvaloper.*)/)
+
+    if (!match || match.length !== 3) {
+        throw new Error("Unable to parse tokenized shares value")
+    }
+
+    const [_, amount, denom] = match
+
+    return { amount, denom }
 }
 
 export async function signRedeemTokensForShares(

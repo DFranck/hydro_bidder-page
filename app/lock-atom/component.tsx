@@ -42,13 +42,34 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "@/components/ui/input"
 import { useMyValidators, Validator } from "@/hooks/hooks"
+import { EPOCH_LENGTH } from "@/config"
 
 type Stepper =
     | { type: "lock"; validator: string; amount: string; duration: number }
-    | { type: "revertFromHubLSM"; validator: string; amount: string }
-    | { type: "revertFromNeutronLSM"; validator: string; amount: string }
-    | { type: "continueFromHubLSM"; validator: string; amount: string }
-    | { type: "continueFromNeutronLSM"; validator: string; amount: string }
+    | {
+          type: "revertFromHubLSM"
+          validator: string
+          amount: string
+          denom: string
+      }
+    | {
+          type: "revertFromNeutronLSM"
+          validator: string
+          amount: string
+          denom: string
+      }
+    | {
+          type: "continueFromHubLSM"
+          validator: string
+          amount: string
+          denom: string
+      }
+    | {
+          type: "continueFromNeutronLSM"
+          validator: string
+          amount: string
+          denom: string
+      }
 
 type IncompleteNotice =
     | {
@@ -101,7 +122,7 @@ export default function LSMInteraction({
 
     useEffect(() => {
         const checkLSMShares = async () => {
-            const newIncompleteNotices: IncompleteNotice[] = []
+            let newIncompleteNotices: IncompleteNotice[] = []
             if (hubSigner && neutronSigner) {
                 const hubShares = await checkForHubLSMShares(
                     hubChain,
@@ -116,19 +137,27 @@ export default function LSMInteraction({
                     })
                 })
 
-                const neutronShares = await checkForNeutronLSMShares(
-                    neutronChain,
-                    neutronSigner
-                )
-                neutronShares.forEach((share) => {
-                    newIncompleteNotices.push({
-                        type: "LSMSharesOnNeutron",
-                        validator: share.validator,
-                        amount: share.amount,
-                        denom: share.denom,
-                    })
-                })
+                // const neutronShares = await checkForNeutronLSMShares(
+                //     neutronChain,
+                //     neutronSigner
+                // )
+                // neutronShares.forEach((share) => {
+                //     newIncompleteNotices.push({
+                //         type: "LSMSharesOnNeutron",
+                //         validator: share.validator,
+                //         amount: share.amount,
+                //         denom: share.denom,
+                //     })
+                // })
             }
+            console.log("newIncompleteNotices", newIncompleteNotices)
+
+            // filter out incomplete notices whose amount is < 100uatom
+            // since very small amounts sometimes cannot be redeemed
+            newIncompleteNotices = newIncompleteNotices.filter(
+                (notice) => parseInt(notice.amount) >= 100
+            )
+
             setIncompleteNotices(newIncompleteNotices)
         }
 
@@ -161,7 +190,7 @@ export default function LSMInteraction({
                         <RevertFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
-                            denom="uatom"
+                            denom={stepper.denom}
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
@@ -174,7 +203,7 @@ export default function LSMInteraction({
                         <RevertFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
-                            denom="uatom"
+                            denom={stepper.denom}
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
@@ -187,7 +216,7 @@ export default function LSMInteraction({
                         <ContinueFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
-                            denom="uatom"
+                            denom={stepper.denom}
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
@@ -200,7 +229,7 @@ export default function LSMInteraction({
                         <ContinueFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
-                            denom="uatom"
+                            denom={stepper.denom}
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
@@ -218,6 +247,7 @@ export default function LSMInteraction({
                                         amount={notice.amount}
                                         validator={notice.validator}
                                         validatorMap={validatorMap}
+                                        denom={notice.denom}
                                         setStepper={setStepper}
                                     />
                                 )}
@@ -226,6 +256,7 @@ export default function LSMInteraction({
                                         amount={notice.amount}
                                         validator={notice.validator}
                                         validatorMap={validatorMap}
+                                        denom={notice.denom}
                                         setStepper={setStepper}
                                     />
                                 )}
@@ -264,12 +295,14 @@ export default function LSMInteraction({
 const HubIncompleteNotice = ({
     amount,
     validator,
+    denom,
     validatorMap,
     setStepper,
 }: {
     amount: string
     validator: string
     validatorMap: Map<string, Validator>
+    denom: string
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
@@ -300,6 +333,7 @@ const HubIncompleteNotice = ({
                             type: "continueFromHubLSM",
                             validator,
                             amount,
+                            denom,
                         })
                     }
                     variant="default"
@@ -313,6 +347,7 @@ const HubIncompleteNotice = ({
                             type: "revertFromHubLSM",
                             validator,
                             amount,
+                            denom,
                         })
                     }
                     variant="outline"
@@ -328,11 +363,13 @@ const NeutronIncompleteNotice = ({
     amount,
     validator,
     validatorMap,
+    denom,
     setStepper,
 }: {
     amount: string
     validator: string
     validatorMap: Map<string, Validator>
+    denom: string
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
@@ -363,6 +400,7 @@ const NeutronIncompleteNotice = ({
                             type: "continueFromNeutronLSM",
                             validator,
                             amount,
+                            denom,
                         })
                     }
                     variant="default"
@@ -376,6 +414,7 @@ const NeutronIncompleteNotice = ({
                             type: "revertFromNeutronLSM",
                             validator,
                             amount,
+                            denom,
                         })
                     }
                     variant="outline"
@@ -407,7 +446,7 @@ const LockForm = ({
         defaultValues: {
             validator: "",
             amount: "10000",
-            duration: "2592000000000000",
+            duration: EPOCH_LENGTH.toString(),
         },
     })
 
@@ -510,15 +549,15 @@ const LockForm = ({
                                     <FormLabel>Duration</FormLabel>
                                     <FormControl>
                                         <div className="flex space-x-2">
-                                            {[30, 60, 90].map((days) => (
+                                            {[1, 2, 3].map((months) => (
                                                 <Button
-                                                    key={days}
+                                                    key={months}
                                                     type="button"
                                                     variant={
                                                         field.value ===
                                                         (
-                                                            days *
-                                                            86400000000000
+                                                            months *
+                                                            EPOCH_LENGTH
                                                         ).toString()
                                                             ? "default"
                                                             : "outline"
@@ -526,15 +565,15 @@ const LockForm = ({
                                                     onClick={() =>
                                                         field.onChange(
                                                             (
-                                                                days *
-                                                                86400000000000
+                                                                months *
+                                                                EPOCH_LENGTH
                                                             ).toString()
                                                         )
                                                     }
                                                     className="flex-1"
                                                 >
-                                                    {days / 30}{" "}
-                                                    {days === 30
+                                                    {months}{" "}
+                                                    {months === 1
                                                         ? "month"
                                                         : "months"}
                                                 </Button>
