@@ -205,7 +205,6 @@ export const fetchMyVotes = async (
         hydroContractAddress
     )
 
-    console.log("## Fetching my votes", myAddress, roundId, trancheIds)
     const votePromises = trancheIds.map((trancheId) => {
         try {
             return hydroQueryClient.userVote({
@@ -214,7 +213,6 @@ export const fetchMyVotes = async (
                 trancheId: trancheId,
             })
         } catch (err) {
-            console.log("## Error fetching user vote", err)
             return {
                 vote: null,
             }
@@ -223,14 +221,14 @@ export const fetchMyVotes = async (
 
     // return all promises resolved or rejected
     const votes = await Promise.allSettled(votePromises)
-    console.log(
-        "fetchMyVotes",
-        myAddress,
-        roundId,
-        trancheIds,
-        "HAVE VOTES",
-        votes
-    )
+    // console.log(
+    //     "fetchMyVotes",
+    //     myAddress,
+    //     roundId,
+    //     trancheIds,
+    //     "HAVE VOTES",
+    //     votes
+    // )
 
     const votesByTranche = trancheIds.reduce((acc, trancheId, index) => {
         if (votes[index].status === "fulfilled") {
