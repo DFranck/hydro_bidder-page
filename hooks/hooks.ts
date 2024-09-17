@@ -192,35 +192,38 @@ export const fetchMyVotes = async (
         client,
         hydroContractAddress
     )
-    const votePromises = trancheIds.map((trancheId) =>
-        hydroQueryClient.userVote({
-            address: myAddress,
-            roundId: roundId,
-            trancheId: trancheId,
-        })
-    )
 
-    // // mock vote promises
-    // const votePromises = trancheIds.map(trancheId => {
-    //     return {
-    //         vote: mockVotes[trancheId]
-    //     }
-    // });
+    const votePromises = trancheIds.map((trancheId) => {
+        try {
+            return hydroQueryClient.userVote({
+                address: myAddress,
+                roundId: roundId,
+                trancheId: trancheId,
+            })
+        } catch (err) {
+            return {
+                vote: null,
+            }
+        }
+    })
 
-    const votes = await Promise.all(votePromises)
-    console.log(
-        "fetchMyVotes",
-        myAddress,
-        roundId,
-        trancheIds,
-        "HAVE VOTES",
-        votes
-    )
+    // return all promises resolved or rejected
+    const votes = await Promise.allSettled(votePromises)
+    // console.log(
+    //     "fetchMyVotes",
+    //     myAddress,
+    //     roundId,
+    //     trancheIds,
+    //     "HAVE VOTES",
+    //     votes
+    // )
 
-    const votesByTranche = trancheIds.reduce(
-        (acc, trancheId, index) => acc.set(trancheId, votes[index].vote),
-        new Map<number, VoteWithPower>()
-    )
+    const votesByTranche = trancheIds.reduce((acc, trancheId, index) => {
+        if (votes[index].status === "fulfilled") {
+            acc.set(trancheId, votes[index].value.vote)
+        }
+        return acc
+    }, new Map<number, VoteWithPower | null>())
 
     return votesByTranche
 }

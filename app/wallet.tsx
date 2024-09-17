@@ -69,7 +69,7 @@ export function WalletHandler({
                 hubChain,
                 neutronChain,
             ]}
-            assetLists={[assets]}
+            assetLists={[assets, testnetAssets, localAssets]}
             wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
             signerOptions={{
                 signingStargate: (chain: Chain | ChainName) => {
