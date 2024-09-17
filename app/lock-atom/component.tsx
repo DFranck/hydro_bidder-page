@@ -138,20 +138,19 @@ export default function LSMInteraction({
                     })
                 })
 
-                // const neutronShares = await checkForNeutronLSMShares(
-                //     neutronChain,
-                //     neutronSigner
-                // )
-                // neutronShares.forEach((share) => {
-                //     newIncompleteNotices.push({
-                //         type: "LSMSharesOnNeutron",
-                //         validator: share.validator,
-                //         amount: share.amount,
-                //         denom: share.denom,
-                //     })
-                // })
+                const neutronShares = await checkForNeutronLSMShares(
+                    neutronChain,
+                    neutronSigner
+                )
+                neutronShares.forEach((share) => {
+                    newIncompleteNotices.push({
+                        type: "LSMSharesOnNeutron",
+                        validator: share.validator,
+                        amount: share.amount,
+                        denom: share.denom,
+                    })
+                })
             }
-            console.log("newIncompleteNotices", newIncompleteNotices)
 
             // filter out incomplete notices whose amount is < 100uatom
             // since very small amounts sometimes cannot be redeemed
