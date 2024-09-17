@@ -21,6 +21,8 @@ export const endpoints = {
     },
 }
 
+export const EPOCH_LENGTH = 2628000000000000
+
 export const DEFAULT_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN || "localchain"
 
 export const testnetChain: Chain = {

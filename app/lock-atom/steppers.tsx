@@ -27,6 +27,7 @@ import {
     CardContent,
 } from "@/components/ui/card"
 import { Validator } from "@/hooks/hooks"
+import { EPOCH_LENGTH } from "@/config"
 
 function getValidatorMoniker(
     validator: string,
@@ -105,8 +106,8 @@ export const LockStepper = ({
             )
 
             // Extract the LSM denom
-            const lsmDenom = extractLSMDenom(broadcastResult)
-            console.log("LSM Denom:", lsmDenom)
+            const lsm = extractLSMDenom(broadcastResult)
+            console.log("LSM Denom:", lsm)
 
             // Wait for the user to sign the IBC transfer transaction
             setStep("WaitingForIBCSigning")
@@ -114,9 +115,9 @@ export const LockStepper = ({
                 hubChain,
                 hubSigner,
                 neutronChain,
-                amount,
-                lsmDenom
-            ) // TODO: figure out how to get the correct denoms
+                lsm.amount,
+                lsm.denom
+            )
 
             // Wait for the IBC transfer to be broadcast and relayed
             setStep("WaitingForIBCBroadcastAndRelay")
@@ -125,7 +126,7 @@ export const LockStepper = ({
                 hubChain,
                 neutronSigner,
                 neutronChain,
-                lsmDenom,
+                lsm.denom,
                 signedIBCTx
             )
 
@@ -136,7 +137,7 @@ export const LockStepper = ({
                 neutronSigner,
                 lockDuration,
                 ibcBroadcastResult.denom,
-                amount
+                lsm.amount
             )
 
             // Broadcast the lock tokens transaction
@@ -174,8 +175,8 @@ export const LockStepper = ({
                                 </strong>{" "}
                                 in Hydro for{" "}
                                 <strong>
-                                    {lockDuration / (30 * 86400000000000)}{" "}
-                                    {lockDuration > 30 * 86400000000000
+                                    {lockDuration / EPOCH_LENGTH}{" "}
+                                    {lockDuration > EPOCH_LENGTH
                                         ? "months"
                                         : "month"}
                                 </strong>{" "}
@@ -260,7 +261,7 @@ export const LockStepper = ({
                                         <ChevronDown className="w-4 h-4 ml-1" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
                                         {errorLog}
                                     </pre>
                                 )}
@@ -428,6 +429,7 @@ export const RevertFromHubStepper = ({
     const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
+        console.log("execute", amount, validator, denom)
         try {
             setErrorLog(
                 `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`
@@ -450,7 +452,7 @@ export const RevertFromHubStepper = ({
                 hubChain,
                 hubSigner,
                 amount,
-                validator
+                denom
             )
 
             // Broadcast the redeem transaction
@@ -540,8 +542,8 @@ export const RevertFromHubStepper = ({
                         <CardContent className="prose">
                             <p>Redeeming ATOM...</p>
                             <p>
-                                Hang tight, we&apos;re restoring your previous staked
-                                position.
+                                Hang tight, we&apos;re restoring your previous
+                                staked position.
                             </p>
                         </CardContent>
                     </>
@@ -590,7 +592,7 @@ export const RevertFromHubStepper = ({
                                         <ChevronDown className="w-4 h-4 ml-1" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
                                         {errorLog}
                                     </pre>
                                 )}
@@ -813,8 +815,8 @@ export const RevertFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>Redeeming ATOM...</p>
                             <p>
-                                Hang tight, we&apos;re restoring your previous staked
-                                position.
+                                Hang tight, we&apos;re restoring your previous
+                                staked position.
                             </p>
                         </CardContent>
                     </>
@@ -863,7 +865,7 @@ export const RevertFromNeutronStepper = ({
                                         <ChevronDown className="w-4 h-4 ml-1" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
                                         {errorLog}
                                     </pre>
                                 )}
@@ -916,7 +918,7 @@ export const ContinueFromNeutronStepper = ({
     const [errorLog, setErrorLog] = useState<string>("")
     const [showErrorLog, setShowErrorLog] = useState(false)
 
-    const [lockDuration, setLockDuration] = useState(30 * 86400000000000) // Default to 30 days in nanoseconds
+    const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
 
     const executeContinueFromNeutron = async () => {
         try {
@@ -998,25 +1000,25 @@ export const ContinueFromNeutronStepper = ({
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
-                                        {[30, 60, 90].map((days) => (
+                                        {[1, 2, 3].map((months) => (
                                             <Button
-                                                key={days}
+                                                key={months}
                                                 type="button"
                                                 variant={
                                                     lockDuration ===
-                                                    days * 86400000000000
+                                                    months * EPOCH_LENGTH
                                                         ? "default"
                                                         : "outline"
                                                 }
                                                 onClick={() =>
                                                     setLockDuration(
-                                                        days * 86400000000000
+                                                        months * EPOCH_LENGTH
                                                     )
                                                 }
                                                 className="flex-1"
                                             >
-                                                {days / 30}{" "}
-                                                {days === 30
+                                                {months}{" "}
+                                                {months === 1
                                                     ? "month"
                                                     : "months"}
                                             </Button>
@@ -1136,7 +1138,7 @@ export const ContinueFromNeutronStepper = ({
                                         <ChevronDown className="w-4 h-4 ml-1" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
                                         {errorLog}
                                     </pre>
                                 )}
@@ -1189,7 +1191,7 @@ export const ContinueFromHubStepper = ({
     const [errorLog, setErrorLog] = useState<string>("")
     const [showErrorLog, setShowErrorLog] = useState(false)
 
-    const [lockDuration, setLockDuration] = useState(30 * 86400000000000) // Default to 30 days in nanoseconds
+    const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
 
     const execute = async () => {
         try {
@@ -1293,32 +1295,32 @@ export const ContinueFromHubStepper = ({
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
-                                        {[30, 60, 90].map((days) => (
+                                        {[1, 2, 3].map((months) => (
                                             <Button
-                                                key={days}
+                                                key={months}
                                                 type="button"
                                                 variant={
                                                     lockDuration ===
-                                                    days * 86400000000000
+                                                    months * EPOCH_LENGTH
                                                         ? "default"
                                                         : "outline"
                                                 }
                                                 onClick={() =>
                                                     setLockDuration(
-                                                        days * 86400000000000
+                                                        months * EPOCH_LENGTH
                                                     )
                                                 }
                                                 className="flex-1"
                                             >
-                                                {days / 30}{" "}
-                                                {days === 30
+                                                {months}{" "}
+                                                {months === 1
                                                     ? "month"
                                                     : "months"}
                                             </Button>
                                         ))}
                                     </div>
                                 </div>
-                                <p>This will require one wallet approval.</p>
+                                <p>This will require two wallet approvals.</p>
                             </form>
                         </CardContent>
                         <CardFooter className="space-x-2">
@@ -1466,7 +1468,7 @@ export const ContinueFromHubStepper = ({
                                         <ChevronDown className="w-4 h-4 ml-1" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap">
+                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
                                         {errorLog}
                                     </pre>
                                 )}
