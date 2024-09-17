@@ -8,29 +8,10 @@ import {
     CosmWasmClient,
     SigningCosmWasmClient,
 } from "@cosmjs/cosmwasm-stargate"
-import {
-    Tranche,
-    Constants,
-    Proposal,
-    LockEntry,
-    Timestamp,
-    Uint128,
-    VoteWithPower,
-    Addr,
-    UserVoteResponse,
-} from "../app/ts_types/HydroBase.types"
+import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
 import { Tribute } from "../app/ts_types/TributeBase.types"
 import { GlobalState, RoundState } from "../app/types"
-import {
-    topNProposals,
-    mockGlobalState,
-    mockTributes,
-    mockVotes,
-    mockAllLockEntries,
-    mockExpiredLockEntries,
-} from "../app/mockData"
-import { StdFee } from "@cosmjs/amino"
-import { MsgVoteEncodeObject, GasPrice } from "@cosmjs/stargate"
+import { ChainContext } from "@cosmos-kit/core"
 
 let clientInstance: CosmWasmClient | null = null
 
@@ -52,6 +33,13 @@ const staleTime = 10000
 const mockTimeout = 0
 const limit = 10000
 const startFrom = 0
+
+export type Validator = {
+    operator_address: string
+    description: {
+        moniker: string
+    }
+}
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await getCosmWasmClient()
@@ -342,5 +330,45 @@ export const executeExtendLockup = async (
         { lockDuration: DEFAULT_LOCKUP_PERIOD * lockDuration, lockId },
         "auto"
     )
+    return response
+}
+
+export const fetchMyValidators = async (
+    chain: ChainContext,
+    delegatorAddress: string
+): Promise<Validator[]> => {
+    const restEndpoint = await chain.getRestEndpoint()
+
+    const response = await fetch(
+        `${restEndpoint}cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`
+    ).then((res) => res.json())
+
+    if (!response.validators) {
+        throw new Error("Failed to fetch validators")
+    }
+
+    return response.validators
+}
+
+export const useMyValidators = (
+    chain: ChainContext,
+    delegatorAddress: string
+) => {
+    return useQuery({
+        queryKey: ["myValidators", delegatorAddress],
+        queryFn: () => fetchMyValidators(chain, delegatorAddress),
+        staleTime,
+    })
+}
+
+export const fetchAllValidators = async (
+    restEndpoint: string
+): Promise<Validator[]> => {
+    const response = await fetch(
+        `${restEndpoint}cosmos/staking/v1beta1/validators?pagination.limit=500`
+    )
+        .then((res) => res.json())
+        .then((data) => data.validators)
+
     return response
 }
