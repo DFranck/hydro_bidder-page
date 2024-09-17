@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
 import { SigningStargateClient } from "@cosmjs/stargate"
-import { scaleLockupPower } from "@/lib/utils"
+import { scaleLockupPower, formatAmount } from "@/lib/utils"
 import {
     signTokenizeShares,
     signRedeemTokensForShares,
@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/card"
 import { Validator } from "@/hooks/hooks"
 import { EPOCH_LENGTH } from "@/config"
-
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -159,13 +158,13 @@ export const LockStepper = ({
                     <>
                         <CardHeader>
                             <CardTitle>
-                                Lock {Number(amount) / 1000000} ATOM
+                                Lock {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
                                 Nice! You&apos;re about to lock{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -182,10 +181,12 @@ export const LockStepper = ({
                                 </strong>{" "}
                                 to get{" "}
                                 <strong>
-                                    {scaleLockupPower(
-                                        lockDuration,
-                                        BigInt(amount)
-                                    ).toString()}{" "}
+                                    {formatAmount(
+                                        scaleLockupPower(
+                                            lockDuration,
+                                            BigInt(amount)
+                                        )
+                                    )}{" "}
                                     hATOM
                                 </strong>{" "}
                                 (voting power).
@@ -319,8 +320,7 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Transfer complete! Approve in your wallet again
-                                to lock your ATOM
+                                Approve in your wallet again to lock your ATOM
                             </p>
                             <p>
                                 This will initiate locking your staked ATOM into
@@ -353,13 +353,15 @@ export const LockStepper = ({
                         <CardContent className="prose">
                             <p>
                                 You locked{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
-                                in Hydro and received{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong> in
+                                Hydro and received{" "}
                                 <strong>
-                                    {scaleLockupPower(
-                                        lockDuration,
-                                        BigInt(amount)
-                                    ).toString()}{" "}
+                                    {formatAmount(
+                                        scaleLockupPower(
+                                            lockDuration,
+                                            BigInt(amount)
+                                        )
+                                    )}{" "}
                                     hATOM
                                 </strong>{" "}
                                 (voting power).
@@ -477,13 +479,13 @@ export const RevertFromHubStepper = ({
                     <>
                         <CardHeader>
                             <CardTitle>
-                                Revert {Number(amount) / 1000000} ATOM
+                                Revert {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
                                 You&apos;re about to revert{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
                                 back to its original state, staked with{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -520,7 +522,7 @@ export const RevertFromHubStepper = ({
                             <p>
                                 This will restore your previous staked position
                                 with the amount of{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -557,9 +559,8 @@ export const RevertFromHubStepper = ({
                         <CardContent className="prose">
                             <p>
                                 Your{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
-                                has been restored to your previous staked
-                                position.
+                                <strong>{formatAmount(amount)} ATOM</strong> has
+                                been restored to your previous staked position.
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -717,13 +718,13 @@ export const RevertFromNeutronStepper = ({
                     <>
                         <CardHeader>
                             <CardTitle>
-                                Reverting {Number(amount) / 1000000} ATOM
+                                Revert {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
                                 You&apos;re about to revert{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
                                 back to its original state, staked with{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -793,7 +794,7 @@ export const RevertFromNeutronStepper = ({
                             <p>
                                 This will restore your previous staked position
                                 with the amount of{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -830,9 +831,8 @@ export const RevertFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>
                                 Your{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
-                                has been restored to your previous staked
-                                position.
+                                <strong>{formatAmount(amount)} ATOM</strong> has
+                                been restored to your previous staked position.
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -965,13 +965,13 @@ export const ContinueFromNeutronStepper = ({
                     <>
                         <CardHeader>
                             <CardTitle>
-                                Continue Locking {Number(amount) / 1000000} ATOM
+                                Continue Locking {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
                                 Nice! You&apos;re about to lock{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -981,10 +981,12 @@ export const ContinueFromNeutronStepper = ({
                                 </strong>{" "}
                                 in Hydro to get{" "}
                                 <strong>
-                                    {scaleLockupPower(
-                                        lockDuration,
-                                        BigInt(amount)
-                                    ).toString()}{" "}
+                                    {formatAmount(
+                                        scaleLockupPower(
+                                            lockDuration,
+                                            BigInt(amount)
+                                        )
+                                    )}{" "}
                                     hATOM
                                 </strong>{" "}
                                 (voting power).
@@ -1076,13 +1078,15 @@ export const ContinueFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>
                                 You locked{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
-                                in Hydro and received{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong> in
+                                Hydro and received{" "}
                                 <strong>
-                                    {scaleLockupPower(
-                                        lockDuration,
-                                        BigInt(amount)
-                                    ).toString()}{" "}
+                                    {formatAmount(
+                                        scaleLockupPower(
+                                            lockDuration,
+                                            BigInt(amount)
+                                        )
+                                    )}{" "}
                                     hATOM
                                 </strong>{" "}
                                 (voting power).
@@ -1260,13 +1264,13 @@ export const ContinueFromHubStepper = ({
                     <>
                         <CardHeader>
                             <CardTitle>
-                                Continue Locking {Number(amount) / 1000000} ATOM
+                                Continue Locking {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
                                 Nice! You&apos;re about to lock{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
                                 staked to{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -1276,10 +1280,12 @@ export const ContinueFromHubStepper = ({
                                 </strong>{" "}
                                 in Hydro to get{" "}
                                 <strong>
-                                    {scaleLockupPower(
-                                        lockDuration,
-                                        BigInt(amount)
-                                    ).toString()}{" "}
+                                    {formatAmount(
+                                        scaleLockupPower(
+                                            lockDuration,
+                                            BigInt(amount)
+                                        )
+                                    )}{" "}
                                     hATOM
                                 </strong>{" "}
                                 (voting power).
@@ -1376,8 +1382,7 @@ export const ContinueFromHubStepper = ({
                         </CardHeader>
                         <CardContent className="prose">
                             <p>
-                                Transfer complete! Approve in your wallet again
-                                to lock your ATOM
+                                Approve in your wallet again to lock your ATOM
                             </p>
                         </CardContent>
                     </>
@@ -1406,13 +1411,15 @@ export const ContinueFromHubStepper = ({
                         <CardContent className="prose">
                             <p>
                                 You locked{" "}
-                                <strong>{Number(amount) / 1000000} ATOM</strong>{" "}
-                                in Hydro and received{" "}
+                                <strong>{formatAmount(amount)} ATOM</strong> in
+                                Hydro and received{" "}
                                 <strong>
-                                    {scaleLockupPower(
-                                        lockDuration,
-                                        BigInt(amount)
-                                    ).toString()}{" "}
+                                    {formatAmount(
+                                        scaleLockupPower(
+                                            lockDuration,
+                                            BigInt(amount)
+                                        )
+                                    )}{" "}
                                     hATOM
                                 </strong>{" "}
                                 (voting power).

@@ -43,6 +43,7 @@ import * as z from "zod"
 import { Input } from "@/components/ui/input"
 import { useMyValidators, Validator } from "@/hooks/hooks"
 import { EPOCH_LENGTH } from "@/config"
+import { formatAmount } from "@/lib/utils"
 
 type Stepper =
     | { type: "lock"; validator: string; amount: string; duration: number }
@@ -313,8 +314,7 @@ const HubIncompleteNotice = ({
             <CardContent className="prose">
                 <p>
                     Looks like you might have been interrupted while locking
-                    your ATOM. You have{" "}
-                    <strong>{(parseInt(amount) / 1000000).toFixed(6)}</strong>{" "}
+                    your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}
                     ATOM staked with{" "}
                     <strong>
                         {getValidatorMoniker(validator, validatorMap)}
@@ -338,8 +338,7 @@ const HubIncompleteNotice = ({
                     }
                     variant="default"
                 >
-                    Continue Locking {(parseInt(amount) / 1000000).toFixed(6)}{" "}
-                    ATOM
+                    Continue Locking {formatAmount(amount)} ATOM
                 </Button>
                 <Button
                     onClick={() =>
@@ -352,7 +351,7 @@ const HubIncompleteNotice = ({
                     }
                     variant="outline"
                 >
-                    Revert {(parseInt(amount) / 1000000).toFixed(6)} ATOM
+                    Revert {formatAmount(amount)} ATOM
                 </Button>
             </CardFooter>
         </Card>
@@ -380,8 +379,7 @@ const NeutronIncompleteNotice = ({
             <CardContent>
                 <p>
                     Looks like you might have been interrupted while locking
-                    your ATOM. You have{" "}
-                    <strong>{(parseInt(amount) / 1000000).toFixed(6)}</strong>{" "}
+                    your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}
                     ATOM with validator{" "}
                     <strong>
                         {getValidatorMoniker(validator, validatorMap)}
@@ -405,8 +403,7 @@ const NeutronIncompleteNotice = ({
                     }
                     variant="default"
                 >
-                    Continue Locking {(parseInt(amount) / 1000000).toFixed(6)}{" "}
-                    ATOM
+                    Continue Locking {formatAmount(amount)} ATOM
                 </Button>
                 <Button
                     onClick={() =>
@@ -419,7 +416,7 @@ const NeutronIncompleteNotice = ({
                     }
                     variant="outline"
                 >
-                    Revert {(parseInt(amount) / 1000000).toFixed(6)} ATOM
+                    Revert {formatAmount(amount)} ATOM
                 </Button>
             </CardFooter>
         </Card>
@@ -533,9 +530,7 @@ const LockForm = ({
                                                 ).toString()
                                                 field.onChange(uatomValue)
                                             }}
-                                            value={(
-                                                parseInt(field.value) / 1000000
-                                            ).toString()}
+                                            value={formatAmount(field.value)}
                                         />
                                     </FormControl>
                                 </FormItem>
