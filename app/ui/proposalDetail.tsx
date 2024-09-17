@@ -14,13 +14,11 @@ import {
 import { executeVote, fetchMyVotes } from "@/hooks/hooks"
 import { useChain } from "@cosmos-kit/react"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
-import { AlertTriangleIcon, ChevronLeft, Loader2Icon } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import Markdown from "react-markdown"
 import { sumTributeAmounts } from "./proposalTable"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { DialogTrigger } from "@radix-ui/react-dialog"
-import { useToast } from "@/components/ui/use-toast"
-import { cn } from "@/lib/utils"
 import { ProposalListTopModules } from "../dashboard/TopModules"
 import {
     ToastAborted,
@@ -86,7 +84,6 @@ const ProposalDetail = ({
                 proposal.proposal_id,
                 proposal.tranche_id
             )
-            console.log("## Vote response", res)
         } catch (err: any) {
             if (
                 err &&
@@ -183,15 +180,15 @@ const ProposalDetail = ({
                                 height={50}
                                 alt="Icon"
                             />
-                            <p className="text-2xl not-italic font-bold leading-[150%]">
+                            <h1 className="text-2xl tracking-normal">
                                 {proposal.title}
-                            </p>
+                            </h1>
                         </div>
                         <div className="">
                             <p className="text-sm not-italic font-normal opacity-80">
                                 Project Overview
                             </p>
-                            <div className="not-italic font-normal pb-15 prose prose-headings:text-white text-white prose-li:text-white prose-ol:text-white prose-strong:text-white marker:text-white prose-h2:tracking-normal">
+                            <div className="not-italic font-normal pb-15 prose prose-headings:text-white text-white prose-li:text-white prose-ol:text-white prose-strong:text-white marker:text-white prose-h1:tracking-normal">
                                 <Markdown>
                                     {proposal.description.replaceAll(
                                         /\\n/g,
