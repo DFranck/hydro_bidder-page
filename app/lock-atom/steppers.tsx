@@ -31,6 +31,14 @@ import {
     CardDescription,
     CardContent,
 } from "@/components/ui/card"
+import { Validator } from "@/hooks/hooks"
+
+function getValidatorMoniker(
+    validator: string,
+    validatorMap: Map<string, Validator>
+): string {
+    return validatorMap.get(validator)?.description.moniker || validator
+}
 
 type LockStep =
     | "Init"
@@ -53,6 +61,7 @@ export const LockStepper = ({
     neutronSigner,
     startState,
     onExit,
+    validatorMap,
 }: {
     amount: string
     validator: string
@@ -63,6 +72,7 @@ export const LockStepper = ({
     neutronSigner: SigningStargateClient
     startState?: LockStep
     onExit: () => void
+    validatorMap: Map<string, Validator>
 }) => {
     const [step, setStep] = useState<LockStep>(startState || "Init")
     const [errorLog, setErrorLog] = useState<string>("")
@@ -157,7 +167,9 @@ export const LockStepper = ({
                         <CardContent className="prose">
                             <p>
                                 Nice! You're about to lock {amount} ATOM staked
-                                to {validator} in Hydro for{" "}
+                                to{" "}
+                                {getValidatorMoniker(validator, validatorMap)}{" "}
+                                in Hydro for{" "}
                                 {lockDuration / (30 * 86400000000000)}{" "}
                                 {lockDuration > 30 * 86400000000000
                                     ? "months"
@@ -387,6 +399,7 @@ export const RevertFromHubStepper = ({
     neutronChain,
     startState,
     onExit,
+    validatorMap,
 }: {
     amount: string
     validator: string
@@ -395,6 +408,7 @@ export const RevertFromHubStepper = ({
     neutronChain: ChainContext
     startState?: RevertFromHubStep
     onExit: () => void
+    validatorMap: Map<string, Validator>
 }) => {
     const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
     const [errorLog, setErrorLog] = useState<string>("")
@@ -452,7 +466,8 @@ export const RevertFromHubStepper = ({
                         <CardContent className="prose">
                             <p>
                                 You're about to revert {amount} ATOM back to its
-                                original state, staked with {validator}.
+                                original state, staked with{" "}
+                                {getValidatorMoniker(validator, validatorMap)}.
                             </p>
                             <p>
                                 This should take about a minute and will require
@@ -481,7 +496,7 @@ export const RevertFromHubStepper = ({
                             <p>
                                 This will restore your previous staked position
                                 with the amount of {amount} ATOM staked to{" "}
-                                {validator}.
+                                {getValidatorMoniker(validator, validatorMap)}.
                             </p>
                         </CardContent>
                     </>
@@ -581,6 +596,7 @@ export const RevertFromNeutronStepper = ({
     neutronChain,
     startState,
     onExit,
+    validatorMap,
 }: {
     amount: string
     validator: string
@@ -589,6 +605,7 @@ export const RevertFromNeutronStepper = ({
     neutronChain: ChainContext
     startState?: RevertFromNeutronStep
     onExit: () => void
+    validatorMap: Map<string, Validator>
 }) => {
     const [step, setStep] = useState<RevertFromNeutronStep>(
         startState || "Init"
@@ -670,7 +687,8 @@ export const RevertFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>
                                 You're about to revert {amount} ATOM back to its
-                                original state, staked with {validator}.
+                                original state, staked with{" "}
+                                {getValidatorMoniker(validator, validatorMap)}.
                             </p>
                             <p>
                                 This should take about a minute and will require
@@ -731,7 +749,8 @@ export const RevertFromNeutronStepper = ({
                             </p>
                             <p>
                                 This will restore your previous staked position
-                                with the amount of {amount} ATOM to {validator}.
+                                with the amount of {amount} ATOM to{" "}
+                                {getValidatorMoniker(validator, validatorMap)}.
                             </p>
                         </CardContent>
                     </>
@@ -829,6 +848,7 @@ export const ContinueFromNeutronStepper = ({
     neutronChain,
     startState,
     onExit,
+    validatorMap,
 }: {
     amount: string
     validator: string
@@ -837,6 +857,7 @@ export const ContinueFromNeutronStepper = ({
     neutronChain: ChainContext
     startState?: ContinueFromNeutronStep
     onExit: () => void
+    validatorMap: Map<string, Validator>
 }) => {
     const [step, setStep] = useState<ContinueFromNeutronStep>(
         startState || "Init"
@@ -897,7 +918,9 @@ export const ContinueFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>
                                 Nice! You're about to lock {amount} ATOM staked
-                                to {validator} in Hydro to get{" "}
+                                to{" "}
+                                {getValidatorMoniker(validator, validatorMap)}{" "}
+                                in Hydro to get{" "}
                                 {scaleLockupPower(
                                     lockDuration,
                                     BigInt(amount)
@@ -1086,6 +1109,7 @@ export const ContinueFromHubStepper = ({
     neutronChain,
     startState,
     onExit,
+    validatorMap,
 }: {
     amount: string
     validator: string
@@ -1094,6 +1118,7 @@ export const ContinueFromHubStepper = ({
     neutronChain: ChainContext
     startState?: ContinueFromHubStep
     onExit: () => void
+    validatorMap: Map<string, Validator>
 }) => {
     const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
     const [errorLog, setErrorLog] = useState<string>("")
@@ -1174,7 +1199,9 @@ export const ContinueFromHubStepper = ({
                         <CardContent className="prose">
                             <p>
                                 Nice! You're about to lock {amount} ATOM staked
-                                to {validator} in Hydro to get{" "}
+                                to{" "}
+                                {getValidatorMoniker(validator, validatorMap)}{" "}
+                                in Hydro to get{" "}
                                 {scaleLockupPower(
                                     lockDuration,
                                     BigInt(amount)

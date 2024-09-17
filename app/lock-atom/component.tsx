@@ -153,6 +153,7 @@ export default function LSMInteraction({
                             neutronChain={neutronChain}
                             neutronSigner={neutronSigner}
                             onExit={() => setStepper(undefined)}
+                            validatorMap={validatorMap}
                         />
                     </div>
                 )}
@@ -165,6 +166,7 @@ export default function LSMInteraction({
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
+                            validatorMap={validatorMap}
                         />
                     </div>
                 )}
@@ -177,6 +179,7 @@ export default function LSMInteraction({
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
+                            validatorMap={validatorMap}
                         />
                     </div>
                 )}
@@ -189,6 +192,7 @@ export default function LSMInteraction({
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
+                            validatorMap={validatorMap}
                         />
                     </div>
                 )}
@@ -201,6 +205,7 @@ export default function LSMInteraction({
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
+                            validatorMap={validatorMap}
                         />
                     </div>
                 )}
