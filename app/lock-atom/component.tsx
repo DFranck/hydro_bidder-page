@@ -76,7 +76,6 @@ export default function LSMInteraction({
 }: {
     validatorMap: Map<string, Validator>
 }) {
-    console.log(validatorMap)
     const hubChain = useChain("cosmoshub")
     const neutronChain = useChain("neutron")
 
