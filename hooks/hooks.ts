@@ -8,28 +8,9 @@ import {
     CosmWasmClient,
     SigningCosmWasmClient,
 } from "@cosmjs/cosmwasm-stargate"
-import {
-    Tranche,
-    Constants,
-    Proposal,
-    LockEntry,
-    Timestamp,
-    Uint128,
-    VoteWithPower,
-    Addr,
-} from "../app/ts_types/HydroBase.types"
+import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
 import { Tribute } from "../app/ts_types/TributeBase.types"
 import { GlobalState, RoundState } from "../app/types"
-import {
-    topNProposals,
-    mockGlobalState,
-    mockTributes,
-    mockVotes,
-    mockAllLockEntries,
-    mockExpiredLockEntries,
-} from "../app/mockData"
-import { StdFee } from "@cosmjs/amino"
-import { MsgVoteEncodeObject, GasPrice } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 
 let clientInstance: CosmWasmClient | null = null
@@ -375,4 +356,16 @@ export const useMyValidators = (
         queryFn: () => fetchMyValidators(chain, delegatorAddress),
         staleTime,
     })
+}
+
+export const fetchAllValidators = async (
+    restEndpoint: string
+): Promise<Validator[]> => {
+    const response = await fetch(
+        `${restEndpoint}cosmos/staking/v1beta1/validators?pagination.limit=500`
+    )
+        .then((res) => res.json())
+        .then((data) => data.validators)
+
+    return response
 }

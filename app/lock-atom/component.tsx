@@ -41,7 +41,7 @@ import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "@/components/ui/input"
-import { useMyValidators } from "@/hooks/hooks"
+import { useMyValidators, Validator } from "@/hooks/hooks"
 
 type Stepper =
     | { type: "lock"; validator: string; amount: string; duration: number }
@@ -64,7 +64,19 @@ type IncompleteNotice =
           denom: string
       }
 
-export default function LSMInteraction() {
+function getValidatorMoniker(
+    validator: string,
+    validatorMap: Map<string, Validator>
+): string {
+    return validatorMap.get(validator)?.description.moniker || validator
+}
+
+export default function LSMInteraction({
+    validatorMap,
+}: {
+    validatorMap: Map<string, Validator>
+}) {
+    console.log(validatorMap)
     const hubChain = useChain("cosmoshub")
     const neutronChain = useChain("neutron")
 
@@ -201,6 +213,7 @@ export default function LSMInteraction() {
                                     <HubIncompleteNotice
                                         amount={notice.amount}
                                         validator={notice.validator}
+                                        validatorMap={validatorMap}
                                         setStepper={setStepper}
                                     />
                                 )}
@@ -208,6 +221,7 @@ export default function LSMInteraction() {
                                     <NeutronIncompleteNotice
                                         amount={notice.amount}
                                         validator={notice.validator}
+                                        validatorMap={validatorMap}
                                         setStepper={setStepper}
                                     />
                                 )}
@@ -235,6 +249,7 @@ export default function LSMInteraction() {
                             })
                         }
                         hubChain={hubChain}
+                        validatorMap={validatorMap}
                     />
                 </div>
             </div>
@@ -245,10 +260,12 @@ export default function LSMInteraction() {
 const HubIncompleteNotice = ({
     amount,
     validator,
+    validatorMap,
     setStepper,
 }: {
     amount: string
     validator: string
+    validatorMap: Map<string, Validator>
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
@@ -256,10 +273,15 @@ const HubIncompleteNotice = ({
             <CardHeader>
                 <CardTitle>Incomplete ATOM Locking</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="prose">
                 <p>
                     Looks like you might have been interrupted while locking
-                    your ATOM. You have {amount} ATOM with validator {validator}{" "}
+                    your ATOM. You have{" "}
+                    <strong>{(parseInt(amount) / 1000000).toFixed(6)}</strong>{" "}
+                    ATOM staked with{" "}
+                    <strong>
+                        {getValidatorMoniker(validator, validatorMap)}
+                    </strong>{" "}
                     that is not fully locked.
                 </p>
                 <p>
@@ -276,9 +298,10 @@ const HubIncompleteNotice = ({
                             amount,
                         })
                     }
-                    className="bg-blue-500 hover:bg-blue-600"
+                    variant="default"
                 >
-                    Continue Locking {amount} ATOM
+                    Continue Locking {(parseInt(amount) / 1000000).toFixed(6)}{" "}
+                    ATOM
                 </Button>
                 <Button
                     onClick={() =>
@@ -288,9 +311,9 @@ const HubIncompleteNotice = ({
                             amount,
                         })
                     }
-                    className="bg-red-500 hover:bg-red-600"
+                    variant="outline"
                 >
-                    Revert {amount} ATOM
+                    Revert {(parseInt(amount) / 1000000).toFixed(6)} ATOM
                 </Button>
             </CardFooter>
         </Card>
@@ -300,10 +323,12 @@ const HubIncompleteNotice = ({
 const NeutronIncompleteNotice = ({
     amount,
     validator,
+    validatorMap,
     setStepper,
 }: {
     amount: string
     validator: string
+    validatorMap: Map<string, Validator>
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
@@ -314,7 +339,12 @@ const NeutronIncompleteNotice = ({
             <CardContent>
                 <p>
                     Looks like you might have been interrupted while locking
-                    your ATOM. You have {amount} ATOM with validator {validator}{" "}
+                    your ATOM. You have{" "}
+                    <strong>{(parseInt(amount) / 1000000).toFixed(6)}</strong>{" "}
+                    ATOM with validator{" "}
+                    <strong>
+                        {getValidatorMoniker(validator, validatorMap)}
+                    </strong>{" "}
                     that is not fully locked.
                 </p>
                 <p>
@@ -331,9 +361,10 @@ const NeutronIncompleteNotice = ({
                             amount,
                         })
                     }
-                    className="bg-blue-500 hover:bg-blue-600"
+                    variant="default"
                 >
-                    Continue Locking {amount} ATOM
+                    Continue Locking {(parseInt(amount) / 1000000).toFixed(6)}{" "}
+                    ATOM
                 </Button>
                 <Button
                     onClick={() =>
@@ -343,9 +374,9 @@ const NeutronIncompleteNotice = ({
                             amount,
                         })
                     }
-                    className="bg-red-500 hover:bg-red-600"
+                    variant="outline"
                 >
-                    Revert {amount} ATOM
+                    Revert {(parseInt(amount) / 1000000).toFixed(6)} ATOM
                 </Button>
             </CardFooter>
         </Card>
@@ -355,9 +386,11 @@ const NeutronIncompleteNotice = ({
 const LockForm = ({
     onSubmit,
     hubChain,
+    validatorMap,
 }: {
     onSubmit: (validator: string, amount: string, duration: number) => void
     hubChain: ChainContext
+    validatorMap: Map<string, Validator>
 }) => {
     const formSchema = z.object({
         validator: z.string().min(1, "Validator address is required"),
@@ -370,7 +403,7 @@ const LockForm = ({
         defaultValues: {
             validator: "",
             amount: "10000",
-            duration: "7884000000000000",
+            duration: "2592000000000000",
         },
     })
 
@@ -441,15 +474,27 @@ const LockForm = ({
                             name="amount"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Amount</FormLabel>
+                                    <FormLabel>Amount (ATOM)</FormLabel>
                                     <FormControl>
                                         <Input
                                             className="text-black"
                                             {...field}
                                             type="number"
+                                            step="0.000001"
+                                            onChange={(e) => {
+                                                const atomValue = parseFloat(
+                                                    e.target.value
+                                                )
+                                                const uatomValue = Math.floor(
+                                                    atomValue * 1000000
+                                                ).toString()
+                                                field.onChange(uatomValue)
+                                            }}
+                                            value={(
+                                                parseInt(field.value) / 1000000
+                                            ).toString()}
                                         />
                                     </FormControl>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -460,10 +505,37 @@ const LockForm = ({
                                 <FormItem>
                                     <FormLabel>Duration</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            className="text-black"
-                                            {...field}
-                                        />
+                                        <div className="flex space-x-2">
+                                            {[30, 60, 90].map((days) => (
+                                                <Button
+                                                    key={days}
+                                                    type="button"
+                                                    variant={
+                                                        field.value ===
+                                                        (
+                                                            days *
+                                                            86400000000000
+                                                        ).toString()
+                                                            ? "default"
+                                                            : "outline"
+                                                    }
+                                                    onClick={() =>
+                                                        field.onChange(
+                                                            (
+                                                                days *
+                                                                86400000000000
+                                                            ).toString()
+                                                        )
+                                                    }
+                                                    className="flex-1"
+                                                >
+                                                    {days / 30}{" "}
+                                                    {days === 30
+                                                        ? "month"
+                                                        : "months"}
+                                                </Button>
+                                            ))}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

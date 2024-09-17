@@ -916,26 +916,27 @@ export const ContinueFromNeutronStepper = ({
                                     </label>
                                     <div className="flex space-x-2">
                                         {[30, 60, 90].map((days) => (
-                                            <button
+                                            <Button
                                                 key={days}
                                                 type="button"
-                                                className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
+                                                variant={
                                                     lockDuration ===
                                                     days * 86400000000000
-                                                        ? "bg-blue-500 text-white"
-                                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                                }`}
+                                                        ? "default"
+                                                        : "outline"
+                                                }
                                                 onClick={() =>
                                                     setLockDuration(
                                                         days * 86400000000000
                                                     )
                                                 }
+                                                className="flex-1"
                                             >
                                                 {days / 30}{" "}
                                                 {days === 30
                                                     ? "month"
                                                     : "months"}
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
                                 </div>
@@ -1192,26 +1193,27 @@ export const ContinueFromHubStepper = ({
                                     </label>
                                     <div className="flex space-x-2">
                                         {[30, 60, 90].map((days) => (
-                                            <button
+                                            <Button
                                                 key={days}
                                                 type="button"
-                                                className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
+                                                variant={
                                                     lockDuration ===
                                                     days * 86400000000000
-                                                        ? "bg-blue-500 text-white"
-                                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                                }`}
+                                                        ? "default"
+                                                        : "outline"
+                                                }
                                                 onClick={() =>
                                                     setLockDuration(
                                                         days * 86400000000000
                                                     )
                                                 }
+                                                className="flex-1"
                                             >
                                                 {days / 30}{" "}
                                                 {days === 30
                                                     ? "month"
                                                     : "months"}
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
                                 </div>

@@ -23,6 +23,7 @@ import {
     pionChain,
     hubChain,
     neutronChain,
+    endpoints,
 } from "../config"
 
 function gasPrices(chain: Chain | ChainName) {
@@ -111,28 +112,7 @@ export function WalletHandler({
                 },
             }}
             endpointOptions={{
-                endpoints: {
-                    cosmoshubtestnet: {
-                        rpc: [
-                            "https://rpc.sentry-01.theta-testnet.polypore.xyz",
-                        ],
-                        rest: [
-                            "https://rest.sentry-01.theta-testnet.polypore.xyz",
-                        ],
-                    },
-                    neutrontestnet: {
-                        rpc: ["https://rpc-palvus.pion-1.ntrn.tech"],
-                        rest: ["https://rest-palvus.pion-1.ntrn.tech"],
-                    },
-                    neutron: {
-                        rpc: ["https://neutron-rpc.polkachu.com"],
-                        rest: ["https://neutron-api.polkachu.com/"],
-                    },
-                    cosmoshub: {
-                        rpc: ["https://cosmos-rpc.polkachu.com"],
-                        rest: ["https://cosmos-rest.publicnode.com/"],
-                    },
-                },
+                endpoints,
                 isLazy: true,
             }}
         >
