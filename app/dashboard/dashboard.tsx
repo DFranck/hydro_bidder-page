@@ -5,7 +5,7 @@ import { HorizontalDivider } from "../ui/HorizontalDivider"
 
 import { DashboardTopModules } from "./TopModules"
 
-export default function Dashboard({
+export default function DashboardWithTabs({
     activeTab,
     children,
 }: {

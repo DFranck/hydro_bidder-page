@@ -12,25 +12,27 @@ import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
 import { Tribute } from "../app/ts_types/TributeBase.types"
 import { GlobalState, RoundState } from "../app/types"
 import { ChainContext } from "@cosmos-kit/core"
+import {
+    DEFAULT_EPOCH_LENGTH,
+    DEFAULT_TOP_N,
+    HYDRO_CONTRACT_ADDRESS,
+    NEUTRON_DEFAULT_RPC,
+} from "@/app/config"
 
 let clientInstance: CosmWasmClient | null = null
 
+// convenience func that allows doing contract queries on both server and client
+// without the need to wait for the client side to finish executing useChain()
 const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
     if (!clientInstance) {
-        clientInstance = await CosmWasmClient.connect(rpcEndpoint)
+        clientInstance = await CosmWasmClient.connect(NEUTRON_DEFAULT_RPC)
     }
     return clientInstance
 }
 
-const hydroContractAddress =
-    // 'neutron13wqp5t3xxlwer9mq9mmrfa3j0vfn06cfs3r5kdaz2sp97vpqdmeqwm2p7y'
-    "neutron10thpcagmt7zxl2p0dnevxl78kfgxr06pkumzkvhkhtze2z49h0msj8mwjf"
 const tributeContractAdress =
     "neutron1duww23zf05mtxwcvaq9pkalq0h4pg0yn7chmqt227gzvaz0r7jyq72fd0e"
-const rpcEndpoint = "https://rpc-palvus.pion-1.ntrn.tech:443"
-const numberOfProposals = 5
 const staleTime = 10000
-const mockTimeout = 0
 const limit = 10000
 const startFrom = 0
 
@@ -45,7 +47,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
         client,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
 
     const [
@@ -80,7 +82,7 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
         client,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
 
     const [roundEnd, totalVotingPower] = await Promise.all([
@@ -105,10 +107,10 @@ export const fetchProposals = async (
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
         client,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
     const response = await hydroQueryClient.topNProposals({
-        numberOfProposals,
+        numberOfProposals: DEFAULT_TOP_N,
         roundId,
         trancheId,
     })
@@ -190,7 +192,7 @@ export const fetchMyVotes = async (
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
         client,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
 
     const votePromises = trancheIds.map((trancheId) => {
@@ -209,14 +211,6 @@ export const fetchMyVotes = async (
 
     // return all promises resolved or rejected
     const votes = await Promise.allSettled(votePromises)
-    // console.log(
-    //     "fetchMyVotes",
-    //     myAddress,
-    //     roundId,
-    //     trancheIds,
-    //     "HAVE VOTES",
-    //     votes
-    // )
 
     const votesByTranche = trancheIds.reduce((acc, trancheId, index) => {
         if (votes[index].status === "fulfilled") {
@@ -232,7 +226,7 @@ export const fetchMyAllLockups = async (myAddress: string) => {
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
         client,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
     const lockups = await hydroQueryClient.allUserLockups({
         address: myAddress,
@@ -246,7 +240,7 @@ export const fetchMyExpiredLockups = async (myAddress: string) => {
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
         client,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
 
     const response = await hydroQueryClient.expiredUserLockups({
@@ -284,34 +278,14 @@ export const executeVote = async (
     trancheId: number
 ) => {
     const client = await getSigningCosmWasmClient()
-    // console.log('exec wasm client', client)
-    // console.log('executeVote', address, proposalId, trancheId)
-    // const msg = {
-    //     typeUrl: '/cosmos.gov.v1beta1.MsgVote',
-    //     value: {
-    //         proposalId: BigInt(proposalId),
-    //         voter: address,
-    //         option: 1,
-    //     },
-    // } as MsgVoteEncodeObject
-    // const fee = await estimateFee([msg])
-    // console.log({ fee })
-    // console.log({
-    //     address,
-    //     proposalId,
-    //     trancheId,
-    // })
-
     const hydroClient = new HydroBaseClient(
         client,
         address,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
     const response = await hydroClient.vote({ proposalId, trancheId }, "auto")
     return response
 }
-
-const DEFAULT_LOCKUP_PERIOD = 3600000000000
 
 export const executeExtendLockup = async (
     getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>,
@@ -324,10 +298,10 @@ export const executeExtendLockup = async (
     const hydroClient = new HydroBaseClient(
         client,
         address,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
     const response = await hydroClient.refreshLockDuration(
-        { lockDuration: DEFAULT_LOCKUP_PERIOD * lockDuration, lockId },
+        { lockDuration: DEFAULT_EPOCH_LENGTH * lockDuration, lockId },
         "auto"
     )
     return response

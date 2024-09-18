@@ -45,7 +45,7 @@ const ProposalDetail = ({
     const [submitting, setSubmitting] = useState(false)
 
     const { isWalletConnected, address, getSigningCosmWasmClient } =
-        useChain("neutrontestnet")
+        useChain("neutron")
 
     useEffect(() => {
         if (!address) {
