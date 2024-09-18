@@ -162,7 +162,7 @@ const ProposalDetail = ({
             <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
                 <div className="flex flex-col md:flex-row gap-[10%] justify-between">
                     <div>
-                        <Link href="/voting-proposals" className="opacity-80">
+                        <Link href="/proposals" className="opacity-80">
                             <Button
                                 variant="link"
                                 className="mb-5 text-white pl-0"

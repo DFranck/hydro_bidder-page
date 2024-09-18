@@ -21,22 +21,27 @@ export default function Navigation() {
         <nav>
             <div className="flex flex-row items-center justify-between gap-6">
                 <a
-                    href="/voting-proposals"
-                    className={navigationMenuTriggerStyle("/voting-proposals")}
+                    href="/proposals"
+                    className={navigationMenuTriggerStyle("/proposals")}
                 >
-                    Voting Proposals
+                    Proposals
                 </a>
-                <a
-                    href="/deployed-proposals"
+                {/* <a
+                    href="/deployed-liquidity"
                     className={navigationMenuTriggerStyle(
-                        "/deployed-proposals"
+                        "/deployed-liquidity"
                     )}
                 >
-                    Deployed Proposals
-                </a>
+                    Deployed Liquidity
+                </a> */}
                 <a
                     href="/dashboard"
-                    className={cn(navigationMenuTriggerStyle("/dashboard"), !isWalletConnected ? "pointer-events-none opacity-50" : "")}
+                    className={cn(
+                        navigationMenuTriggerStyle("/dashboard"),
+                        !isWalletConnected
+                            ? "pointer-events-none opacity-50"
+                            : ""
+                    )}
                 >
                     Dashboard
                 </a>
