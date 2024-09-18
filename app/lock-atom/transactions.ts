@@ -12,31 +12,10 @@ import {
     MsgTokenizeShares,
 } from "stridejs/types/codegen/cosmos/staking/v1beta1/tx"
 import { MsgTransfer } from "stridejs/types/codegen/ibc/applications/transfer/v1/tx"
-import { useQuery } from "@tanstack/react-query"
 import {
     HydroBaseQueryClient,
     HydroBaseClient,
 } from "../ts_types/HydroBase.client"
-import { TributeBaseQueryClient } from "../ts_types/TributeBase.client"
-import {
-    CosmWasmClient,
-    SigningCosmWasmClient,
-} from "@cosmjs/cosmwasm-stargate"
-import {
-    Tranche,
-    Constants,
-    Proposal,
-    LockEntry,
-    Timestamp,
-    Uint128,
-    VoteWithPower,
-    Addr,
-} from "../ts_types/HydroBase.types"
-import { Tribute } from "../ts_types/TributeBase.types"
-import { GlobalState, RoundState } from "../types"
-
-import { StdFee } from "@cosmjs/amino"
-import { MsgVoteEncodeObject, GasPrice } from "@cosmjs/stargate"
 
 const hydroContractAddress =
     "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
@@ -63,8 +42,6 @@ export async function checkForHubLSMShares(
             hubChain.address
         }`
     ).then((res) => res.json())
-
-    console.log("checkForHubLSMShares", response)
 
     const lsmShares = response.balances
         .filter((balance) => balance.denom.startsWith("cosmosvaloper"))
