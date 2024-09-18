@@ -70,7 +70,7 @@ export const LockStepper = ({
     validatorMap: Map<string, Validator>
 }) => {
     const [step, setStep] = useState<LockStep>(startState || "Init")
-    const [errorLog, setErrorLog] = useState<string>("")
+    const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
     const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
@@ -366,29 +366,9 @@ export const LockStepper = ({
                                 </strong>{" "}
                                 (voting power).
                             </p>
-                            <p>
-                                Do you want to view the list of proposals to
-                                vote for?
-                            </p>
                         </CardContent>
                         <CardFooter>
-                            <Button
-                                onClick={() =>
-                                    (window.location.href = "/voting-proposals")
-                                }
-                            >
-                                View Voting Proposals
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    (window.location.href =
-                                        "/dashboard?tab=lockups")
-                                }
-                                variant="outline"
-                                className="ml-2"
-                            >
-                                View Lockups
-                            </Button>
+                            <Button onClick={onExit}>Done</Button>
                         </CardFooter>
                     </>
                 )
@@ -416,6 +396,7 @@ export const RevertFromHubStepper = ({
     startState,
     onExit,
     validatorMap,
+    deleteIncompleteNotice,
 }: {
     amount: string
     validator: string
@@ -425,9 +406,10 @@ export const RevertFromHubStepper = ({
     startState?: RevertFromHubStep
     onExit: () => void
     validatorMap: Map<string, Validator>
+    deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
     const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
-    const [errorLog, setErrorLog] = useState<string>("")
+    const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
     const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
@@ -466,6 +448,7 @@ export const RevertFromHubStepper = ({
             )
 
             setStep("Success")
+            deleteIncompleteNotice(denom, amount)
         } catch (error: any) {
             console.error("Error during revert process:", error)
             setStep("Error")
@@ -577,7 +560,7 @@ export const RevertFromHubStepper = ({
                         <CardContent className="prose">
                             <p>
                                 This transaction could not be completed. Your
-                                staked ATOM has not been locked in Hydro.
+                                staked ATOM has not been reverted.
                             </p>
                             <p>
                                 Refresh the page to try again or recover your
@@ -627,25 +610,31 @@ export const RevertFromNeutronStepper = ({
     amount,
     validator,
     denom,
+    baseDenom,
     hubChain,
     neutronChain,
     startState,
     onExit,
     validatorMap,
+    deleteIncompleteNotice,
 }: {
     amount: string
     validator: string
     denom: string
+    baseDenom: string
     hubChain: ChainContext
     neutronChain: ChainContext
     startState?: RevertFromNeutronStep
     onExit: () => void
     validatorMap: Map<string, Validator>
+    deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
     const [step, setStep] = useState<RevertFromNeutronStep>(
         startState || "Init"
     )
-    const [errorLog, setErrorLog] = useState<string>("")
+    const [errorLog, setErrorLog] = useState<string>(
+        "RevertFromNeutronStepper: "
+    )
     const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
@@ -677,12 +666,13 @@ export const RevertFromNeutronStepper = ({
 
             // Broadcast the IBC transfer transaction
             setStep("WaitingForIBCBroadcast")
-            const ibcBroadcastResult = await broadcastAndRelayIBCNeutronToHub(
+            const lsmShares = await broadcastAndRelayIBCNeutronToHub(
                 hubSigner,
                 hubChain,
                 neutronSigner,
                 neutronChain,
                 denom,
+                baseDenom,
                 signedIBCTx
             )
 
@@ -691,8 +681,8 @@ export const RevertFromNeutronStepper = ({
             const signedRedeemTx = await signRedeemTokensForShares(
                 hubChain,
                 hubSigner,
-                amount,
-                denom
+                lsmShares.amount,
+                lsmShares.denom
             )
 
             // Broadcast the redeem transaction
@@ -704,6 +694,7 @@ export const RevertFromNeutronStepper = ({
             )
 
             setStep("Success")
+            deleteIncompleteNotice(denom, amount)
         } catch (error: any) {
             console.error("Error during revert process:", error)
             setStep("Error")
@@ -849,7 +840,7 @@ export const RevertFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>
                                 This transaction could not be completed. Your
-                                staked ATOM has not been locked in Hydro.
+                                staked ATOM has not been reverted.
                             </p>
                             <p>
                                 Refresh the page to try again or recover your
@@ -897,25 +888,31 @@ export const ContinueFromNeutronStepper = ({
     amount,
     validator,
     denom,
+    baseDenom,
     hubChain,
     neutronChain,
     startState,
     onExit,
     validatorMap,
+    deleteIncompleteNotice,
 }: {
     amount: string
     validator: string
     denom: string
+    baseDenom: string
     hubChain: ChainContext
     neutronChain: ChainContext
     startState?: ContinueFromNeutronStep
     onExit: () => void
     validatorMap: Map<string, Validator>
+    deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
     const [step, setStep] = useState<ContinueFromNeutronStep>(
         startState || "Init"
     )
-    const [errorLog, setErrorLog] = useState<string>("")
+    const [errorLog, setErrorLog] = useState<string>(
+        "ContinueFromNeutronStepper: "
+    )
     const [showErrorLog, setShowErrorLog] = useState(false)
 
     const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
@@ -951,6 +948,7 @@ export const ContinueFromNeutronStepper = ({
             // setStep('WaitingForLockBroadcast');
 
             setStep("Success")
+            deleteIncompleteNotice(denom, amount)
         } catch (error: any) {
             console.error("Error in executeContinueFromNeutron:", error)
             setStep("Error")
@@ -1091,29 +1089,9 @@ export const ContinueFromNeutronStepper = ({
                                 </strong>{" "}
                                 (voting power).
                             </p>
-                            <p>
-                                Do you want to view the list of proposals to
-                                vote for?
-                            </p>
                         </CardContent>
                         <CardFooter>
-                            <Button
-                                onClick={() =>
-                                    (window.location.href = "/voting-proposals")
-                                }
-                            >
-                                View Voting Proposals
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    (window.location.href =
-                                        "/dashboard?tab=lockups")
-                                }
-                                variant="outline"
-                                className="ml-2"
-                            >
-                                View Lockups
-                            </Button>
+                            <Button onClick={onExit}>Done</Button>
                         </CardFooter>
                     </>
                 )
@@ -1181,6 +1159,7 @@ export const ContinueFromHubStepper = ({
     startState,
     onExit,
     validatorMap,
+    deleteIncompleteNotice,
 }: {
     amount: string
     validator: string
@@ -1190,9 +1169,10 @@ export const ContinueFromHubStepper = ({
     startState?: ContinueFromHubStep
     onExit: () => void
     validatorMap: Map<string, Validator>
+    deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
     const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
-    const [errorLog, setErrorLog] = useState<string>("")
+    const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
     const [showErrorLog, setShowErrorLog] = useState(false)
 
     const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
@@ -1250,6 +1230,7 @@ export const ContinueFromHubStepper = ({
             // await broadcastTx(neutronSigner, hubSigner, signedLockTx);
 
             setStep("Success")
+            deleteIncompleteNotice(denom, amount)
         } catch (error: any) {
             console.error("Error during process:", error)
             setStep("Error")
@@ -1424,29 +1405,9 @@ export const ContinueFromHubStepper = ({
                                 </strong>{" "}
                                 (voting power).
                             </p>
-                            <p>
-                                Do you want to view the list of proposals to
-                                vote for?
-                            </p>
                         </CardContent>
                         <CardFooter>
-                            <Button
-                                onClick={() =>
-                                    (window.location.href = "/voting-proposals")
-                                }
-                            >
-                                View Voting Proposals
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    (window.location.href =
-                                        "/dashboard?tab=lockups")
-                                }
-                                variant="outline"
-                                className="ml-2"
-                            >
-                                View Lockups
-                            </Button>
+                            <Button onClick={onExit}>Done</Button>
                         </CardFooter>
                     </>
                 )

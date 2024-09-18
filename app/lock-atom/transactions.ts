@@ -368,22 +368,12 @@ export async function broadcastAndRelayIBCNeutronToHub(
     neutronSigner: SigningStargateClient,
     neutronChain: ChainContext,
     denom: string,
+    baseDenom: string,
     signedTx: TxRaw,
     resolveResponsesTimeoutMs: number = 180000,
     resolveResponsesCheckIntervalMs: number = 12000
 ) {
     neutronSigner.broadcastTx(new Uint8Array(txRaw.encode(signedTx).finish()))
-
-    const restEndpoint = await neutronChain.getRestEndpoint()
-
-    const res = await fetchDenomTrace(
-        { denom, amount: "0" },
-        restEndpoint as string
-    )
-
-    if (!res) {
-        throw new Error(`Unable to find denom trace for ${denom}`)
-    }
 
     const startTime = Date.now()
 
@@ -393,13 +383,11 @@ export async function broadcastAndRelayIBCNeutronToHub(
         )
 
         const hubShares = await checkForHubLSMShares(hubChain, hubSigner)
-        const foundShare = hubShares.find(
-            (share) => share.denom === res.baseDenom
-        )
+        const foundShare = hubShares.find((share) => share.denom === baseDenom)
 
         if (foundShare) {
             console.log(
-                `LSM shares (${res.baseDenom}) successfully transferred to Hub`
+                `LSM shares (${foundShare}) successfully transferred to Hub`
             )
             return foundShare
         }

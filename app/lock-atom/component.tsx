@@ -58,6 +58,7 @@ type Stepper =
           validator: string
           amount: string
           denom: string
+          baseDenom: string
       }
     | {
           type: "continueFromHubLSM"
@@ -70,6 +71,7 @@ type Stepper =
           validator: string
           amount: string
           denom: string
+          baseDenom: string
       }
 
 type IncompleteNotice =
@@ -84,6 +86,7 @@ type IncompleteNotice =
           validator: string
           amount: string
           denom: string
+          baseDenom: string
       }
 
 function getValidatorMoniker(
@@ -148,6 +151,7 @@ export default function LSMInteraction({
                         validator: share.validator,
                         amount: share.amount,
                         denom: share.denom,
+                        baseDenom: share.baseDenom,
                     })
                 })
             }
@@ -158,11 +162,22 @@ export default function LSMInteraction({
                 (notice) => parseInt(notice.amount) >= 100
             )
 
+            console.log("newIncompleteNotices", newIncompleteNotices)
+
             setIncompleteNotices(newIncompleteNotices)
         }
 
         checkLSMShares()
     }, [hubSigner, neutronSigner])
+
+    const deleteIncompleteNotice = (denom: string, amount: string) => {
+        setIncompleteNotices((prevNotices) =>
+            prevNotices.filter(
+                (notice) =>
+                    !(notice.denom === denom && notice.amount === amount)
+            )
+        )
+    }
 
     const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
     const [visibleNotices, setVisibleNotices] = useState(2)
@@ -195,6 +210,7 @@ export default function LSMInteraction({
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
                             validatorMap={validatorMap}
+                            deleteIncompleteNotice={deleteIncompleteNotice}
                         />
                     </div>
                 )}
@@ -204,10 +220,12 @@ export default function LSMInteraction({
                             amount={stepper.amount}
                             validator={stepper.validator}
                             denom={stepper.denom}
+                            baseDenom={stepper.baseDenom}
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
                             validatorMap={validatorMap}
+                            deleteIncompleteNotice={deleteIncompleteNotice}
                         />
                     </div>
                 )}
@@ -221,6 +239,7 @@ export default function LSMInteraction({
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
                             validatorMap={validatorMap}
+                            deleteIncompleteNotice={deleteIncompleteNotice}
                         />
                     </div>
                 )}
@@ -230,10 +249,12 @@ export default function LSMInteraction({
                             amount={stepper.amount}
                             validator={stepper.validator}
                             denom={stepper.denom}
+                            baseDenom={stepper.baseDenom}
                             hubChain={hubChain}
                             neutronChain={neutronChain}
                             onExit={() => setStepper(undefined)}
                             validatorMap={validatorMap}
+                            deleteIncompleteNotice={deleteIncompleteNotice}
                         />
                     </div>
                 )}
@@ -257,6 +278,7 @@ export default function LSMInteraction({
                                         validator={notice.validator}
                                         validatorMap={validatorMap}
                                         denom={notice.denom}
+                                        baseDenom={notice.baseDenom}
                                         setStepper={setStepper}
                                     />
                                 )}
@@ -362,12 +384,14 @@ const NeutronIncompleteNotice = ({
     validator,
     validatorMap,
     denom,
+    baseDenom,
     setStepper,
 }: {
     amount: string
     validator: string
     validatorMap: Map<string, Validator>
     denom: string
+    baseDenom: string
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
@@ -398,6 +422,7 @@ const NeutronIncompleteNotice = ({
                             validator,
                             amount,
                             denom,
+                            baseDenom,
                         })
                     }
                     variant="default"
@@ -411,6 +436,7 @@ const NeutronIncompleteNotice = ({
                             validator,
                             amount,
                             denom,
+                            baseDenom,
                         })
                     }
                     variant="outline"
