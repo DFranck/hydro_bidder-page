@@ -94,46 +94,49 @@ export async function checkForNeutronLSMShares(
         `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`
     ).then((res) => res.json())
 
-    const fetchDenomTrace = async (balance: {
-        denom: string
-        amount: string
-    }) => {
-        if (balance.denom.startsWith("ibc/")) {
-            try {
-                const denomTraceResponse = await fetch(
-                    `${restEndpoint}ibc/apps/transfer/v1/denom_traces/${balance.denom}`
-                ).then((res) => res.json())
-                const baseDenom = denomTraceResponse.denom_trace.base_denom
-
-                if (baseDenom.startsWith("cosmosvaloper")) {
-                    const [validator, _] = baseDenom.split("/")
-                    return {
-                        validator,
-                        amount: balance.amount,
-                        denom: balance.denom,
-                        baseDenom,
-                    }
-                }
-            } catch (error) {
-                console.error(
-                    `Error fetching denom trace for ${balance.denom}:`,
-                    error
-                )
-            }
-        }
-        return null
-    }
-
     const lsmSharesPromises: Promise<{
         validator: string
         amount: string
         denom: string
         baseDenom: string
-    } | null>[] = response.balances.map(fetchDenomTrace)
+    } | null>[] = response.balances.map(
+        (balance: { denom: string; amount: string }) =>
+            fetchDenomTrace(balance, restEndpoint as string)
+    )
     const lsmSharesResults = await Promise.all(lsmSharesPromises)
     const lsmShares = lsmSharesResults.filter((share) => share !== null)
 
     return lsmShares
+}
+
+const fetchDenomTrace = async (
+    balance: { denom: string; amount: string },
+    restEndpoint: string
+) => {
+    if (balance.denom.startsWith("ibc/")) {
+        try {
+            const denomTraceResponse = await fetch(
+                `${restEndpoint}ibc/apps/transfer/v1/denom_traces/${balance.denom}`
+            ).then((res) => res.json())
+            const baseDenom = denomTraceResponse.denom_trace.base_denom
+
+            if (baseDenom.startsWith("cosmosvaloper")) {
+                const [validator, _] = baseDenom.split("/")
+                return {
+                    validator,
+                    amount: balance.amount,
+                    denom: balance.denom,
+                    baseDenom,
+                }
+            }
+        } catch (error) {
+            console.error(
+                `Error fetching denom trace for ${balance.denom}:`,
+                error
+            )
+        }
+    }
+    return null
 }
 
 export async function signTokenizeShares(
@@ -369,9 +372,18 @@ export async function broadcastAndRelayIBCNeutronToHub(
     resolveResponsesTimeoutMs: number = 180000,
     resolveResponsesCheckIntervalMs: number = 12000
 ) {
-    await neutronSigner.broadcastTx(
-        new Uint8Array(txRaw.encode(signedTx).finish())
+    neutronSigner.broadcastTx(new Uint8Array(txRaw.encode(signedTx).finish()))
+
+    const restEndpoint = await neutronChain.getRestEndpoint()
+
+    const res = await fetchDenomTrace(
+        { denom, amount: "0" },
+        restEndpoint as string
     )
+
+    if (!res) {
+        throw new Error(`Unable to find denom trace for ${denom}`)
+    }
 
     const startTime = Date.now()
 
@@ -381,10 +393,14 @@ export async function broadcastAndRelayIBCNeutronToHub(
         )
 
         const hubShares = await checkForHubLSMShares(hubChain, hubSigner)
-        const foundShare = hubShares.find((share) => share.denom === denom)
+        const foundShare = hubShares.find(
+            (share) => share.denom === res.baseDenom
+        )
 
         if (foundShare) {
-            console.log(`LSM shares (${denom}) successfully transferred to Hub`)
+            console.log(
+                `LSM shares (${res.baseDenom}) successfully transferred to Hub`
+            )
             return foundShare
         }
     }
