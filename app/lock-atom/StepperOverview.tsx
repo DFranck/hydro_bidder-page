@@ -23,6 +23,9 @@ const mockValidatorMap = new Map<string, Validator>([
         {
             operator_address:
                 "cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv",
+            validator_bond_shares: "100",
+            liquid_shares: "100",
+            delegator_shares: "100",
             description: {
                 moniker: "Mock Validator",
             },
@@ -84,6 +87,7 @@ export const StepperOverview: React.FC = () => {
                             onExit={mockOnExit}
                             startState={state as any}
                             validatorMap={mockValidatorMap}
+                            deleteIncompleteNotice={mockOnExit}
                         />
                     </div>
                 ))}
@@ -111,6 +115,8 @@ export const StepperOverview: React.FC = () => {
                             onExit={mockOnExit}
                             startState={state as any}
                             validatorMap={mockValidatorMap}
+                            baseDenom="uatom"
+                            deleteIncompleteNotice={mockOnExit}
                         />
                     </div>
                 ))}
@@ -136,6 +142,8 @@ export const StepperOverview: React.FC = () => {
                             onExit={mockOnExit}
                             startState={state as any}
                             validatorMap={mockValidatorMap}
+                            baseDenom="uatom"
+                            deleteIncompleteNotice={mockOnExit}
                         />
                     </div>
                 ))}
@@ -163,6 +171,7 @@ export const StepperOverview: React.FC = () => {
                             onExit={mockOnExit}
                             startState={state as any}
                             validatorMap={mockValidatorMap}
+                            deleteIncompleteNotice={mockOnExit}
                         />
                     </div>
                 ))}
