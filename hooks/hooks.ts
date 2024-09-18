@@ -41,6 +41,9 @@ export type Validator = {
     description: {
         moniker: string
     }
+    validator_bond_shares: string
+    liquid_shares: string
+    delegator_shares: string
 }
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
@@ -383,9 +386,9 @@ export const fetchUserVotingData = async (
         }, 0)
         lockedAtom.count = lockups.lockups.length
         lockedAtom.firstExpireTs = lockups.lockups.reduce((acc, lockup) => {
-            const lockEnd = parseInt(lockup.lock_entry.lock_end);
-            return acc === 0 || lockEnd < acc ? lockEnd : acc;
-        }, 0);
+            const lockEnd = parseInt(lockup.lock_entry.lock_end)
+            return acc === 0 || lockEnd < acc ? lockEnd : acc
+        }, 0)
     } catch (error) {
         console.error("Error fetching user voting data:", error)
     }

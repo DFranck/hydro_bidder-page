@@ -448,6 +448,13 @@ const NeutronIncompleteNotice = ({
     )
 }
 
+const calculateLsmCapacity = (
+    validator_bond_shares: string,
+    liquid_shares: string
+) => {
+    return Number(validator_bond_shares) * 250 - Number(liquid_shares)
+}
+
 const LockForm = ({
     onSubmit,
     hubChain,
@@ -479,6 +486,22 @@ const LockForm = ({
     const { data: validators, isLoading } = useMyValidators(
         hubChain,
         hubChain.address || ""
+    )
+
+    console.log(
+        "validators",
+        validators?.map((validator) => ({
+            moniker: validator.description.moniker,
+            validatorBondShares: formatAmount(validator.validator_bond_shares),
+            liquidShares: formatAmount(validator.liquid_shares),
+            delegatorShares: formatAmount(validator.delegator_shares),
+            lsmCapacity: formatAmount(
+                calculateLsmCapacity(
+                    validator.validator_bond_shares,
+                    validator.liquid_shares
+                )
+            ),
+        }))
     )
 
     return (
@@ -610,14 +633,4 @@ const LockForm = ({
             </CardContent>
         </Card>
     )
-}
-
-async function checkLSMShares(
-    hubAddress: string,
-    neutronAddress: string
-): Promise<{
-    hub: { amount: string; validator: string } | undefined
-    neutron: { amount: string; validator: string } | undefined
-}> {
-    return { hub: undefined, neutron: undefined }
 }
