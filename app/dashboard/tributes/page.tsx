@@ -1,8 +1,7 @@
 import { Suspense } from "react"
-import { fetchDashboardData } from "../dashboardFetch"
 import Dashboard from "../dashboard"
 import TributesTable from "./tributesTable"
-
+import { fetchDashboardData } from "../getData"
 export default async function Page() {
     const {
         lastProposalTranches,
