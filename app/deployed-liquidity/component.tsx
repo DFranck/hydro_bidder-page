@@ -1,20 +1,20 @@
 "use client"
+import { useState } from "react"
+import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
+import { Proposal } from "../ts_types/HydroBase.types"
+import { Tribute } from "../ts_types/TributeBase.types"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
-import { Proposal, Timestamp } from "../ts_types/HydroBase.types"
-import { useState } from "react"
 import { GlobalState } from "../types"
-import { Tribute } from "../ts_types/TributeBase.types"
 import { TranchePagination } from "@/components/TranchePagination"
 
-const ActiveProposals = ({
-    currentProposalTranches,
-    currentProposalTributes,
+const DeployedLiquidity = ({
+    lastProposalTranches,
+    lastProposalTributes,
     globalState,
 }: {
-    currentProposalTranches: Map<number, Proposal[]>
-    currentProposalTributes: Map<number, Tribute[]>
+    lastProposalTranches?: Map<number, Proposal[]>
+    lastProposalTributes?: Map<number, Tribute[]>
     globalState: GlobalState
 }) => {
     const [currentTranche, setCurrentTranche] = useState(1)
@@ -26,9 +26,8 @@ const ActiveProposals = ({
             setCurrentTranche(1)
         }
     }
-
     return (
-        <div className="mt-14 space-y-8 lg:space-y-14">
+        <div className="mt-14 relative">
             <TranchePagination
                 currentTranche={currentTranche}
                 toggleTranche={toggleTranche}
@@ -37,21 +36,18 @@ const ActiveProposals = ({
                 description="The winning proposal from each tranche will deployed in the
                     next round."
             />
-
-            {currentProposalTranches.get(currentTranche) && (
+            {lastProposalTranches &&
+            lastProposalTributes &&
+            lastProposalTranches.get(currentTranche) ? (
                 <DataTable
                     columns={[
                         {
                             accessorKey: "title",
-                            header: () => (
-                                <div className="text-center capitalize">
-                                    Proposal Name
-                                </div>
-                            ),
+                            header: "",
                             cell: ({ row }) => {
                                 return (
                                     <div className="flex flex-col">
-                                        <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2">
+                                        <p className="text-xl not-italic font-bold leading-[150%]">
                                             {row.original.proposal.title}
                                         </p>
                                     </div>
@@ -61,7 +57,7 @@ const ActiveProposals = ({
                         {
                             accessorKey: "tribute",
                             header: () => (
-                                <div className="text-center capitalize">
+                                <div className="text-center">
                                     Tribute Amount
                                 </div>
                             ),
@@ -92,8 +88,8 @@ const ActiveProposals = ({
                         {
                             accessorKey: "votingPowerPercent",
                             header: () => (
-                                <div className="text-center capitalize">
-                                    Current vote share
+                                <div className="text-center">
+                                    Voting Power %
                                 </div>
                             ),
                             cell: ({ row }) => (
@@ -113,7 +109,7 @@ const ActiveProposals = ({
                                             asChild
                                         >
                                             <Link
-                                                href={`/voting-proposals/${row.original.proposal.proposal_id}`}
+                                                href={`/deployed-liquidity/${row.original.proposal.proposal_id}`}
                                             >
                                                 View Proposal
                                             </Link>
@@ -123,18 +119,21 @@ const ActiveProposals = ({
                             },
                         },
                     ]}
-                    data={(
-                        currentProposalTranches.get(currentTranche) || []
-                    ).map((proposal) =>
-                        makeProposalColumnDef(
-                            proposal,
-                            currentProposalTributes.get(proposal.proposal_id)!
-                        )
+                    data={(lastProposalTranches.get(currentTranche) || []).map(
+                        (proposal) =>
+                            makeProposalColumnDef(
+                                proposal,
+                                lastProposalTributes.get(proposal.proposal_id)!
+                            )
                     )}
                 />
+            ) : (
+                <div className="text-center py-8 text-xl">
+                    There is no deployed liquidity yet.
+                </div>
             )}
         </div>
     )
 }
 
-export default ActiveProposals
+export default DeployedLiquidity

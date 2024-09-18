@@ -1,20 +1,20 @@
 "use client"
-import { useState } from "react"
-import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
-import { Proposal } from "../ts_types/HydroBase.types"
-import { Tribute } from "../ts_types/TributeBase.types"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
+import { Proposal, Timestamp } from "../ts_types/HydroBase.types"
+import { useState } from "react"
 import { GlobalState } from "../types"
+import { Tribute } from "../ts_types/TributeBase.types"
 import { TranchePagination } from "@/components/TranchePagination"
 
-const DeployedLiquidity = ({
-    lastProposalTranches,
-    lastProposalTributes,
+const ActiveProposals = ({
+    currentProposalTranches,
+    currentProposalTributes,
     globalState,
 }: {
-    lastProposalTranches?: Map<number, Proposal[]>
-    lastProposalTributes?: Map<number, Tribute[]>
+    currentProposalTranches: Map<number, Proposal[]>
+    currentProposalTributes: Map<number, Tribute[]>
     globalState: GlobalState
 }) => {
     const [currentTranche, setCurrentTranche] = useState(1)
@@ -26,8 +26,9 @@ const DeployedLiquidity = ({
             setCurrentTranche(1)
         }
     }
+
     return (
-        <div className="mt-14 relative">
+        <div className="mt-14 space-y-8 lg:space-y-14">
             <TranchePagination
                 currentTranche={currentTranche}
                 toggleTranche={toggleTranche}
@@ -36,18 +37,21 @@ const DeployedLiquidity = ({
                 description="The winning proposal from each tranche will deployed in the
                     next round."
             />
-            {lastProposalTranches &&
-            lastProposalTributes &&
-            lastProposalTranches.get(currentTranche) ? (
+
+            {currentProposalTranches.get(currentTranche) && (
                 <DataTable
                     columns={[
                         {
                             accessorKey: "title",
-                            header: "",
+                            header: () => (
+                                <div className="text-center capitalize">
+                                    Proposal Name
+                                </div>
+                            ),
                             cell: ({ row }) => {
                                 return (
                                     <div className="flex flex-col">
-                                        <p className="text-xl not-italic font-bold leading-[150%]">
+                                        <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2">
                                             {row.original.proposal.title}
                                         </p>
                                     </div>
@@ -57,7 +61,7 @@ const DeployedLiquidity = ({
                         {
                             accessorKey: "tribute",
                             header: () => (
-                                <div className="text-center">
+                                <div className="text-center capitalize">
                                     Tribute Amount
                                 </div>
                             ),
@@ -88,8 +92,8 @@ const DeployedLiquidity = ({
                         {
                             accessorKey: "votingPowerPercent",
                             header: () => (
-                                <div className="text-center">
-                                    Voting Power %
+                                <div className="text-center capitalize">
+                                    Current vote share
                                 </div>
                             ),
                             cell: ({ row }) => (
@@ -109,7 +113,7 @@ const DeployedLiquidity = ({
                                             asChild
                                         >
                                             <Link
-                                                href={`/deployed-proposals/${row.original.proposal.proposal_id}`}
+                                                href={`/proposals/${row.original.proposal.proposal_id}`}
                                             >
                                                 View Proposal
                                             </Link>
@@ -119,21 +123,18 @@ const DeployedLiquidity = ({
                             },
                         },
                     ]}
-                    data={(lastProposalTranches.get(currentTranche) || []).map(
-                        (proposal) =>
-                            makeProposalColumnDef(
-                                proposal,
-                                lastProposalTributes.get(proposal.proposal_id)!
-                            )
+                    data={(
+                        currentProposalTranches.get(currentTranche) || []
+                    ).map((proposal) =>
+                        makeProposalColumnDef(
+                            proposal,
+                            currentProposalTributes.get(proposal.proposal_id)!
+                        )
                     )}
                 />
-            ) : (
-                <div className="text-center py-8 text-xl">
-                    There are no deployed proposals yet.
-                </div>
             )}
         </div>
     )
 }
 
-export default DeployedLiquidity
+export default ActiveProposals

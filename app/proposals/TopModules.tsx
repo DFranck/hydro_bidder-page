@@ -23,7 +23,7 @@ export const ProposalListTopModules = ({
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 justify-between bg-transparent">
-            <div className={`flex flex-col p-6 rounded-xl ${bgColor}`}>
+            {/* <div className={`flex flex-col p-6 rounded-xl ${bgColor}`}>
                 <h3
                     className={`pb-4 text-white whitespace-pre-wrap text-2xl lg:text-4xl`}
                 >
@@ -44,7 +44,7 @@ export const ProposalListTopModules = ({
                 >
                     USDC EQUIVALENT
                 </p>
-            </div>
+            </div> */}
             <div className={`flex flex-col p-6 rounded-xl ${bgColor}`}>
                 <h3
                     className={`pb-4 text-white whitespace-pre-wrap text-2xl lg:text-4xl`}
