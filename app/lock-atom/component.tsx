@@ -474,7 +474,7 @@ const LockForm = ({
         resolver: zodResolver(formSchema),
         defaultValues: {
             validator: "",
-            amount: "10000",
+            amount: "1000000",
             duration: EPOCH_LENGTH.toString(),
         },
     })
@@ -487,6 +487,27 @@ const LockForm = ({
         hubChain,
         hubChain.address || ""
     )
+
+    const selectedAmount = parseInt(form.watch("amount") || "0")
+    const selectedValidator = form.watch("validator")
+
+    // Add this useEffect hook
+    useEffect(() => {
+        if (selectedValidator && validators) {
+            const validator = validators.find(
+                (v) => v.operator_address === selectedValidator
+            )
+            if (validator) {
+                const lsmCapacity = calculateLsmCapacity(
+                    validator.validator_bond_shares,
+                    validator.liquid_shares
+                )
+                if (lsmCapacity < selectedAmount) {
+                    form.setValue("validator", "")
+                }
+            }
+        }
+    }, [selectedAmount, selectedValidator, validators])
 
     console.log(
         "validators",
@@ -526,30 +547,55 @@ const LockForm = ({
                                             {isLoading ? (
                                                 <p>Loading validators...</p>
                                             ) : (
-                                                validators?.map((validator) => (
-                                                    <Button
-                                                        key={
-                                                            validator.operator_address
-                                                        }
-                                                        type="button"
-                                                        onClick={() => {
-                                                            field.onChange(
+                                                validators?.map((validator) => {
+                                                    const lsmCapacity =
+                                                        calculateLsmCapacity(
+                                                            validator.validator_bond_shares,
+                                                            validator.liquid_shares
+                                                        )
+                                                    const isDisabled =
+                                                        lsmCapacity <= 0 ||
+                                                        lsmCapacity <
+                                                            selectedAmount
+                                                    return (
+                                                        <Button
+                                                            key={
                                                                 validator.operator_address
-                                                            )
-                                                        }}
-                                                        variant={
-                                                            field.value ===
-                                                            validator.operator_address
-                                                                ? "default"
-                                                                : "outline"
-                                                        }
-                                                        className="w-full justify-start"
-                                                    >
-                                                        {validator.description
-                                                            .moniker ||
-                                                            validator.operator_address}
-                                                    </Button>
-                                                ))
+                                                            }
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (
+                                                                    !isDisabled
+                                                                ) {
+                                                                    field.onChange(
+                                                                        validator.operator_address
+                                                                    )
+                                                                }
+                                                            }}
+                                                            variant={
+                                                                field.value ===
+                                                                validator.operator_address
+                                                                    ? "default"
+                                                                    : "outline"
+                                                            }
+                                                            className={`w-full justify-start ${
+                                                                isDisabled
+                                                                    ? "opacity-50 cursor-not-allowed"
+                                                                    : ""
+                                                            }`}
+                                                            disabled={
+                                                                isDisabled
+                                                            }
+                                                        >
+                                                            {validator
+                                                                .description
+                                                                .moniker ||
+                                                                validator.operator_address}
+                                                            {isDisabled &&
+                                                                " (Insufficient validator bond)"}
+                                                        </Button>
+                                                    )
+                                                })
                                             )}
                                         </div>
                                     </FormControl>
@@ -578,7 +624,9 @@ const LockForm = ({
                                                 ).toString()
                                                 field.onChange(uatomValue)
                                             }}
-                                            value={formatAmount(field.value)}
+                                            value={
+                                                Number(field.value) / 1000000
+                                            }
                                         />
                                     </FormControl>
                                 </FormItem>
