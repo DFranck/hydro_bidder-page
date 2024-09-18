@@ -63,11 +63,6 @@ export async function fetchDashboardData() {
         currentRound
     )
 
-    console.log(
-        "currentProposalTributes",
-        currentProposalTributes,
-        currentRound
-    )
     return {
         lastProposalTranches,
         currentProposalTranches,
@@ -83,7 +78,7 @@ export async function fetchDashboardData() {
 async function fetchProposalTributesForRound(
     proposalTranches: Map<number, Proposal[]>,
     round: number
-) {
+): Promise<Map<number, Tribute[]>> {
     const allProposals = Array.from(proposalTranches.values()).flat()
     const tributePromises = allProposals.map((proposal) =>
         fetchProposalTributes(

@@ -87,7 +87,11 @@ export const ProposalListTopModules = ({
                 <p
                     className={`text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}
                 >
-                    ${atomPrice * (lockedAtom / 1e6)} USDC Equivalent
+                    {Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                    }).format(atomPrice * (lockedAtom / 1e6))}{" "}
+                    USDC Equivalent
                 </p>
             </div>
         </div>

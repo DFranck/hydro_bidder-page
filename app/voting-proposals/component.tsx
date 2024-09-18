@@ -1,6 +1,5 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { ProposalListTopModules } from "../dashboard/TopModules"
 import Image from "next/image"
 import Link from "next/link"
 import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
@@ -8,6 +7,7 @@ import { Proposal, Timestamp, Tranche } from "../ts_types/HydroBase.types"
 import { useState } from "react"
 import { GlobalState } from "../types"
 import { Tribute } from "../ts_types/TributeBase.types"
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 const ActiveProposals = ({
     currentProposalTranches,
@@ -21,60 +21,67 @@ const ActiveProposals = ({
 }) => {
     const [currentTranche, setCurrentTranche] = useState(1)
 
+    const toggleTranche = () => {
+        if (currentTranche === 1) {
+            setCurrentTranche(2)
+        } else {
+            setCurrentTranche(1)
+        }
+    }
+
     return (
-        <div className="mt-14 relative">
-            <div className="p-5 absolute flex flex-row gap-[18px] justify-between items-center w-[380px] border rounded-[40px] border-solid border-[#FFE1B8] right-0">
-                <Button
-                    variant="ghost"
-                    className="hover:bg-transparent text-[#E4B472]"
-                    size="icon"
-                    onClick={() =>
-                        setCurrentTranche(
-                            currentTranche > 1
-                                ? currentTranche - 1
-                                : globalState.tranches.length
-                        )
-                    }
-                >
-                    <Image
-                        src={"/images/Vector3.svg"}
-                        alt="tranches-left"
-                        width={24}
-                        height={40}
-                    />
-                </Button>
-                <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]  text-[#E4B472]">{`TRANCHE ${currentTranche}/${globalState.tranches.length}`}</p>
-                <Button
-                    variant="ghost"
-                    className="hover:bg-transparent  text-[#E4B472]"
-                    size="icon"
-                    onClick={() =>
-                        setCurrentTranche(
-                            currentTranche < globalState.tranches.length
-                                ? currentTranche + 1
-                                : 1
-                        )
-                    }
-                >
-                    <Image
-                        src={"/images/Vector4.svg"}
-                        alt="tranches-right"
-                        width={24}
-                        height={40}
-                    />
-                </Button>
-            </div>
-            <h3>Proposals in Voting</h3>
-            <p className="text-xl not-italic font-normal leading-[150%] max-w-[515px] pt-[14px]">
-                The winning proposal from each tranche will deployed in the next
-                round.
-            </p>
+        <div className="mt-14 space-y-8 lg:space-y-14">
+            <aside className="flex flex-col lg:flex-row gap-4 w-full justify-between items-center">
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-3xl font-semibold">
+                        Proposals in Voting
+                    </h3>
+                    <p className="text-lg">
+                        The winning proposal from each tranche will deployed in
+                        the next round.
+                    </p>
+                </div>
+                <nav className="p-2.5 flex flex-row justify-between items-center gap-12 border rounded-full border-solid border-[#FFE1B8] lg:w-1/3">
+                    <Button
+                        variant="ghost"
+                        className="hover:bg-transparent"
+                        size="icon"
+                        onClick={toggleTranche}
+                        aria-label="Previous Tranche"
+                    >
+                        <ChevronLeftIcon className="w-16 h-32 text-[#E4B472] hover:text-[#FFE1B8]" />
+                    </Button>
+                    <div className="flex flex-col items-center gap-1">
+                        <p className="uppercase text-xs font-normal text-[#E4B472]">
+                            Viewing tranche {currentTranche} of{" "}
+                            {globalState.tranches.length}
+                        </p>
+                        <p className="text-2xl font-semibold text-[#E4B472]">
+                            {globalState.tranches[currentTranche - 1].name}
+                        </p>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        className="hover:bg-transparent  text-[#E4B472]"
+                        size="icon"
+                        aria-label="Next Tranche"
+                        onClick={toggleTranche}
+                    >
+                        <ChevronRightIcon className="w-16 h-32 text-[#E4B472] hover:text-[#FFE1B8]" />
+                    </Button>
+                </nav>
+            </aside>
+
             {currentProposalTranches.get(currentTranche) && (
                 <DataTable
                     columns={[
                         {
                             accessorKey: "title",
-                            header: "",
+                            header: () => (
+                                <div className="text-center capitalize">
+                                    Proposal Name
+                                </div>
+                            ),
                             cell: ({ row }) => {
                                 return (
                                     <div className="flex flex-col">
@@ -88,7 +95,7 @@ const ActiveProposals = ({
                         {
                             accessorKey: "tribute",
                             header: () => (
-                                <div className="text-center">
+                                <div className="text-center capitalize">
                                     Tribute Amount
                                 </div>
                             ),
@@ -119,8 +126,8 @@ const ActiveProposals = ({
                         {
                             accessorKey: "votingPowerPercent",
                             header: () => (
-                                <div className="text-center">
-                                    Voting Power %
+                                <div className="text-center capitalize">
+                                    Current vote share
                                 </div>
                             ),
                             cell: ({ row }) => (
