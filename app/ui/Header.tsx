@@ -20,7 +20,6 @@ export const Header = () => {
                 <Suspense fallback={<div>Loading...</div>}>
                     <Navigation />
                 </Suspense>
-                <Wallet />
             </div>
         </div>
     )
