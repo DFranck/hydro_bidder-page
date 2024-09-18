@@ -7,7 +7,7 @@ import Link from "next/link"
 
 export const Header = () => {
     return (
-        <div className="max-w-[1440px] mx-auto bg-black p-[60px] z-10 w-full items-center justify-between font-mono text-sm lg:flex">
+        <div className="max-w-7xl mx-auto bg-black pt-6 pb-3 mb-12 z-50 w-full items-center justify-between font-mono text-sm lg:flex border-b border-[#FFE1B8]">
             <Link href={"/"}>
                 <Image
                     src={"/images/logo.svg"}
