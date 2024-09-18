@@ -58,7 +58,6 @@ export default async function ActiveProposalsPage() {
                 currentProposalTranches={currentProposalTranches}
                 currentProposalTributes={currentProposalTributes}
                 globalState={globalState}
-                roundEnd={currentRoundEnd}
             />
         </div>
     )
