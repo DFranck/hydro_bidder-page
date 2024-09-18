@@ -1,7 +1,11 @@
+"use client"
+
 import Image from "next/image"
-import { mockGlobalState } from "../mockData"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn, formatAmount } from "@/lib/utils"
+import { useChain } from "@cosmos-kit/react"
+import { fetchUserVotingData, UserVotingData } from "@/hooks/hooks"
+import { useEffect, useState } from "react"
 
 export enum TabLabel {
     VOTING = "voting",
@@ -16,11 +20,38 @@ const activeBgColor =
     "bg-white bg-[linear-gradient(180deg,rgba(255,255,255,1)_64%,rgba(0,35,255,1)_64%)]"
 
 export const DashboardTopModules = () => {
+    const { isWalletConnected, address } = useChain("neutron")
+    const [userVotingData, setUserVotingData] = useState<UserVotingData | null>(
+        {
+            votingPower: 0,
+            lockups: {
+                count: 0,
+                lockedAtom: 0,
+                firstExpireTs: 0,
+            },
+        }
+    )
+
+    useEffect(() => {
+        const getUserVotingData = async (address: string) => {
+            const data = await fetchUserVotingData(address)
+            setUserVotingData(data)
+        }
+        if (isWalletConnected && address) {
+            getUserVotingData(address)
+        }
+    }, [isWalletConnected, address])
+
     return (
-        <div className="grid lg:grid-cols-3 gap-12">
-            <RewardsSnapshotCard amount={12345.67} />
-            <LockedAtomCard />
-            <VotingPowerCard />
+        <div className="grid lg:grid-cols-2 gap-6">
+            <LockedAtomCard
+                count={userVotingData?.lockups.count || 0}
+                lockedAtom={userVotingData?.lockups.lockedAtom || 0}
+            />
+            <VotingPowerCard
+                votingPower={userVotingData?.votingPower || 0}
+                firstExpireTs={userVotingData?.lockups.firstExpireTs || 0}
+            />
         </div>
     )
 }
@@ -127,7 +158,13 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
     )
 }
 
-function LockedAtomCard() {
+function LockedAtomCard({
+    count,
+    lockedAtom,
+}: {
+    count: number
+    lockedAtom: number
+}) {
     return (
         <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
             <div className="flex flex-col flex-1 justify-between text-white">
@@ -139,18 +176,33 @@ function LockedAtomCard() {
                 />
                 <h3 className="py-4 text-white">Locked ATOM</h3>
                 <p className="text-xl font-normal">Your locked ATOM balance</p>
-                <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
-                    {mockGlobalState.totalLockedTokens}
-                </p>
-                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                    IN 3 Lockups
-                </p>
+                {lockedAtom === 0 ? (
+                    <div className="animate-pulse pt-6">
+                        <div className="h-12 bg-gray-300 rounded w-3/4 mb-4"></div>
+                        <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+                    </div>
+                ) : (
+                    <>
+                        <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
+                            {formatAmount(lockedAtom)}
+                        </p>
+                        <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                            IN {count} Lockups
+                        </p>
+                    </>
+                )}
             </div>
         </div>
     )
 }
 
-function VotingPowerCard() {
+function VotingPowerCard({
+    votingPower,
+    firstExpireTs,
+}: {
+    votingPower: number
+    firstExpireTs: number
+}) {
     return (
         <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
             <div className="flex flex-col flex-1 justify-between">
@@ -162,12 +214,24 @@ function VotingPowerCard() {
                 />
                 <h3 className="py-4 text-white">Voting Power</h3>
                 <p className="text-xl font-normal">Your current Voting Power</p>
-                <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
-                    456
-                </p>
-                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                    until (pull date of soonest lockup)
-                </p>
+                {votingPower === 0 ? (
+                    <div className="animate-pulse pt-6">
+                        <div className="h-12 bg-gray-300 rounded w-3/4 mb-4"></div>
+                        <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+                    </div>
+                ) : (
+                    <>
+                        <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
+                            {votingPower.toLocaleString()}
+                        </p>
+                        {firstExpireTs > 0 && (
+                            <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                                until{" "}
+                                {new Date(firstExpireTs / 1e6).toLocaleDateString()}
+                            </p>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     )

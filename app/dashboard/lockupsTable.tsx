@@ -19,14 +19,9 @@ import { Button } from "@/components/ui/button"
 import { calculateTimeRemaining, cn } from "@/lib/utils"
 
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import Link from "next/link"
 
-export default function LockupsTable({
-    currentProposalTranches,
-    globalState,
-}: {
-    currentProposalTranches: Map<number, Proposal[]>
-    globalState: GlobalState
-}) {
+export default function LockupsTable() {
     const { isWalletConnected, address, getSigningCosmWasmClient } =
         useChain("neutron")
 
@@ -106,8 +101,11 @@ function Lockups({
                 <h3>My Lockups</h3>
                 <div className="space-x-2 flex items-center justify-between">
                     <span>Lock staked ATOM to get voting power </span>
-                    <Button className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]">
-                        New Lockup
+                    <Button
+                        asChild
+                        className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]"
+                    >
+                        <Link href="/lock-atom">New Lockup</Link>
                     </Button>
                 </div>
             </div>
