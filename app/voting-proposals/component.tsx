@@ -1,13 +1,12 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
 import Link from "next/link"
 import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
-import { Proposal, Timestamp, Tranche } from "../ts_types/HydroBase.types"
+import { Proposal, Timestamp } from "../ts_types/HydroBase.types"
 import { useState } from "react"
 import { GlobalState } from "../types"
 import { Tribute } from "../ts_types/TributeBase.types"
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+import { TranchePagination } from "@/components/TranchePagination"
 
 const ActiveProposals = ({
     currentProposalTranches,
@@ -17,7 +16,6 @@ const ActiveProposals = ({
     currentProposalTranches: Map<number, Proposal[]>
     currentProposalTributes: Map<number, Tribute[]>
     globalState: GlobalState
-    roundEnd?: Timestamp
 }) => {
     const [currentTranche, setCurrentTranche] = useState(1)
 
@@ -31,46 +29,14 @@ const ActiveProposals = ({
 
     return (
         <div className="mt-14 space-y-8 lg:space-y-14">
-            <aside className="flex flex-col lg:flex-row gap-4 w-full justify-between items-center">
-                <div className="flex flex-col gap-2">
-                    <h3 className="text-3xl font-semibold">
-                        Proposals in Voting
-                    </h3>
-                    <p className="text-lg">
-                        The winning proposal from each tranche will deployed in
-                        the next round.
-                    </p>
-                </div>
-                <nav className="p-2.5 flex flex-row justify-between items-center gap-12 border rounded-full border-solid border-[#FFE1B8] lg:w-1/3">
-                    <Button
-                        variant="ghost"
-                        className="hover:bg-transparent"
-                        size="icon"
-                        onClick={toggleTranche}
-                        aria-label="Previous Tranche"
-                    >
-                        <ChevronLeftIcon className="w-16 h-32 text-[#E4B472] hover:text-[#FFE1B8]" />
-                    </Button>
-                    <div className="flex flex-col items-center gap-1">
-                        <p className="uppercase text-xs font-normal text-[#E4B472]">
-                            Viewing tranche {currentTranche} of{" "}
-                            {globalState.tranches.length}
-                        </p>
-                        <p className="text-2xl font-semibold text-[#E4B472]">
-                            {globalState.tranches[currentTranche - 1].name}
-                        </p>
-                    </div>
-                    <Button
-                        variant="ghost"
-                        className="hover:bg-transparent  text-[#E4B472]"
-                        size="icon"
-                        aria-label="Next Tranche"
-                        onClick={toggleTranche}
-                    >
-                        <ChevronRightIcon className="w-16 h-32 text-[#E4B472] hover:text-[#FFE1B8]" />
-                    </Button>
-                </nav>
-            </aside>
+            <TranchePagination
+                currentTranche={currentTranche}
+                toggleTranche={toggleTranche}
+                globalState={globalState}
+                title="Proposals in Voting"
+                description="The winning proposal from each tranche will deployed in the
+                    next round."
+            />
 
             {currentProposalTranches.get(currentTranche) && (
                 <DataTable
@@ -141,13 +107,18 @@ const ActiveProposals = ({
                             header: "",
                             cell: ({ row }) => {
                                 return (
-                                    <Link
-                                        href={`/voting-proposals/${row.original.proposal.proposal_id}`}
-                                    >
-                                        <Button className="bg-[#0061FF]">
-                                            View Proposal
+                                    <div className="flex justify-end w-full">
+                                        <Button
+                                            className="bg-white text-black lg:w-40 hover:bg-gray-200"
+                                            asChild
+                                        >
+                                            <Link
+                                                href={`/voting-proposals/${row.original.proposal.proposal_id}`}
+                                            >
+                                                View Proposal
+                                            </Link>
                                         </Button>
-                                    </Link>
+                                    </div>
                                 )
                             },
                         },

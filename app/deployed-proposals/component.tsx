@@ -1,12 +1,12 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
-import { Proposal, Tranche } from "../ts_types/HydroBase.types"
+import { Proposal } from "../ts_types/HydroBase.types"
 import { Tribute } from "../ts_types/TributeBase.types"
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
 import Link from "next/link"
 import { GlobalState } from "../types"
+import { TranchePagination } from "@/components/TranchePagination"
 
 const DeployedLiquidity = ({
     lastProposalTranches,
@@ -15,58 +15,27 @@ const DeployedLiquidity = ({
 }: {
     lastProposalTranches?: Map<number, Proposal[]>
     lastProposalTributes?: Map<number, Tribute[]>
-    globalState: GlobalState | { tranches: Tranche[] }
+    globalState: GlobalState
 }) => {
-    const [currentTranche, setCurrentTranche] = useState(0)
+    const [currentTranche, setCurrentTranche] = useState(1)
 
+    const toggleTranche = () => {
+        if (currentTranche === 1) {
+            setCurrentTranche(2)
+        } else {
+            setCurrentTranche(1)
+        }
+    }
     return (
         <div className="mt-14 relative">
-            <div className="p-5 absolute flex flex-row gap-[18px] justify-between items-center w-[380px] border rounded-[40px] border-solid border-[#FFE1B8] right-0">
-                <Button
-                    variant="ghost"
-                    className="hover:bg-transparent text-[#E4B472]"
-                    size="icon"
-                    onClick={() =>
-                        setCurrentTranche(
-                            currentTranche > 1
-                                ? currentTranche - 1
-                                : globalState.tranches.length
-                        )
-                    }
-                >
-                    <Image
-                        src={"/images/Vector3.svg"}
-                        alt="tranches-left"
-                        width={24}
-                        height={40}
-                    />
-                </Button>
-                <p className="text-[32px] not-italic font-normal leading-[120%] tracking-[-0.4px]  text-[#E4B472]">{`TRANCHE ${currentTranche}/${globalState.tranches.length}`}</p>
-                <Button
-                    variant="ghost"
-                    className="hover:bg-transparent  text-[#E4B472]"
-                    size="icon"
-                    onClick={() =>
-                        setCurrentTranche(
-                            currentTranche < globalState.tranches.length
-                                ? currentTranche + 1
-                                : 1
-                        )
-                    }
-                >
-                    <Image
-                        src={"/images/Vector4.svg"}
-                        alt="tranches-right"
-                        width={24}
-                        height={40}
-                    />
-                </Button>
-            </div>
-            <h3 className="pb-5">Actively Deployed Proposals</h3>
-            <p className="text-xl not-italic font-normal leading-[150%]">
-                Winning proposals from previous rounds that are currently
-                deployed
-            </p>
+            <TranchePagination
+                currentTranche={currentTranche}
+                toggleTranche={toggleTranche}
+                globalState={globalState}
+                title="Proposals in Voting"
+                description="The winning proposal from each tranche will deployed in the
+                    next round."
+            />
             {lastProposalTranches &&
             lastProposalTributes &&
             lastProposalTranches.get(currentTranche) ? (
@@ -134,13 +103,18 @@ const DeployedLiquidity = ({
                             header: "",
                             cell: ({ row }) => {
                                 return (
-                                    <Link
-                                        href={`/deployed-proposals/${row.original.proposal.proposal_id}`}
-                                    >
-                                        <Button className="bg-[#0061FF]">
-                                            View Proposal
+                                    <div className="flex justify-end w-full">
+                                        <Button
+                                            className="bg-white text-black lg:w-40 hover:bg-gray-200"
+                                            asChild
+                                        >
+                                            <Link
+                                                href={`/deployed-proposals/${row.original.proposal.proposal_id}`}
+                                            >
+                                                View Proposal
+                                            </Link>
                                         </Button>
-                                    </Link>
+                                    </div>
                                 )
                             },
                         },
