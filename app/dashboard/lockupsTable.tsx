@@ -20,6 +20,7 @@ import { calculateTimeRemaining, cn } from "@/lib/utils"
 
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import Link from "next/link"
+import { formatAmount } from "@/lib/utils"
 
 export default function LockupsTable() {
     const { isWalletConnected, address, getSigningCosmWasmClient } =
@@ -117,14 +118,21 @@ function Lockups({
             >
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Lockup ID</TableHead>
+                        {/* <TableHead>Lockup ID</TableHead> */}
+                        <TableHead className="text-center">
+                            Locked ATOM
+                        </TableHead>
+                        <TableHead className="text-center">
+                            Multiplier
+                        </TableHead>
                         <TableHead className="text-center">
                             Voting Power
                         </TableHead>
-                        <TableHead className="text-center">ATOM</TableHead>
-                        <TableHead>Start Date</TableHead>
-                        <TableHead>End Date</TableHead>
-                        <TableHead>Expire in</TableHead>
+                        {/* <TableHead>Start Date</TableHead> */}
+                        <TableHead className="text-center">
+                            Expires in
+                        </TableHead>
+                        <TableHead className="text-center">End Date</TableHead>
                         <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
@@ -150,9 +158,6 @@ function Lockups({
                                     <div className="w-24 h-4 bg-[#555555] rounded animate-pulse"></div>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="w-24 h-4 bg-[#555555] rounded animate-pulse"></div>
-                                </TableCell>
-                                <TableCell>
                                     <div className="w-full h-4 bg-[#555555] rounded animate-pulse"></div>
                                 </TableCell>
                                 <TableCell
@@ -167,33 +172,34 @@ function Lockups({
                         myLockups.map((lockup, index) => (
                             <TableRow
                                 key={index}
-                                className="h-20 border-b-0 bg-[#303132] hover:bg-[#555555]"
+                                className="h-20 border-b-0 bg-[#303132]"
                             >
-                                <TableCell className="rounded-l-xl w-28">
+                                {/* <TableCell className="rounded-l-xl w-28">
                                     <div className="inline-flex items-center h-full">
                                         <LockIcon className="w-4 h-4 mr-2 text-white" />
                                         {lockup.lock_entry.lock_id}
                                     </div>
+                                </TableCell> */}
+                                <TableCell className="text-center rounded-l-xl">
+                                    {formatAmount(
+                                        lockup.lock_entry.funds.amount
+                                    )}
+                                    <small>ATOM</small>
                                 </TableCell>
-                                <TableCell className="lg:w-36 text-center">
-                                    {lockup.current_voting_power}
-                                </TableCell>
-                                <TableCell className="lg:w-42 text-center">
+                                <TableCell className="text-center">
                                     {(
-                                        parseInt(
-                                            lockup.lock_entry.funds.amount
-                                        ) / 1000000
-                                    ).toLocaleString("en-US", {
-                                        minimumFractionDigits: 6,
-                                    })}
+                                        Number(lockup.current_voting_power) /
+                                        Number(lockup.lock_entry.funds.amount)
+                                    ).toPrecision(3)}
+                                    x
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="text-center">
+                                    {formatAmount(lockup.current_voting_power)}
+                                </TableCell>
+                                {/* <TableCell>
                                     {formatDate(lockup.lock_entry.lock_start)}
-                                </TableCell>
-                                <TableCell>
-                                    {formatDate(lockup.lock_entry.lock_end)}
-                                </TableCell>
-                                <TableCell className="text-center lg:w-24">
+                                </TableCell> */}
+                                <TableCell className="text-center">
                                     {isExpired(lockup.lock_entry.lock_end) ? (
                                         <div className="inline-flex items-center">
                                             <TriangleAlertIcon className="w-8 h-8 text-white" />
@@ -206,10 +212,10 @@ function Lockups({
                                         </p>
                                     )}
                                 </TableCell>
-                                <TableCell
-                                    align="right"
-                                    className="rounded-r-xl"
-                                >
+                                <TableCell className="text-center">
+                                    {formatDate(lockup.lock_entry.lock_end)}
+                                </TableCell>
+                                <TableCell className="rounded-r-xl text-center">
                                     <EditLockupDuration
                                         onSuccess={onSuccess}
                                         lockup={lockup}

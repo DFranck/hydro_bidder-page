@@ -124,17 +124,17 @@ export const EditLockupDuration = ({
                 asChild
                 id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
             >
-                <Button className="rounded-lg text-black bg-white border-white border w-24 h-10 hover:bg-transparent hover:text-white">
-                    Edit
+                <Button className="rounded-lg text-black bg-white border-white border h-10 hover:bg-transparent hover:text-white">
+                    Extend Lockup
                 </Button>
             </DialogTrigger>
             <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
                 <DialogDescription className="sr-only">
-                    Edit Lockup Duration
+                    Extend Lockup
                 </DialogDescription>
                 <DialogHeader className="pb-[34px]">
                     <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px] mb-[10px]">
-                        Edit Lockup Duration
+                        Extend Lockup
                     </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
@@ -194,7 +194,9 @@ export const EditLockupDuration = ({
                             <FormLabel className="text-sm opacity-60 w-[100px]">
                                 Updated Voting Power:
                             </FormLabel>
-                            <p className="text-xl">{form.watch("power")}</p>
+                            <p className="text-xl">
+                                {formatAmount(form.watch("power"))}
+                            </p>
                         </div>
 
                         <Button

@@ -6,16 +6,18 @@ export const lockEpochLength = 2628000000000000
 
 export enum LockupPeriod {
     ONE_EPOCH = "1m",
+    TWO_EPOCHS = "2m",
     THREE_EPOCHS = "3m",
-    SIX_EPOCHS = "6m",
-    TWELVE_EPOCHS = "12m",
+    // SIX_EPOCHS = "6m",
+    // TWELVE_EPOCHS = "12m",
 }
 
 export enum LockupPeriodMultipler {
     "1m" = 1,
+    "2m" = 2,
     "3m" = 3,
-    "6m" = 6,
-    "12m" = 12,
+    // "6m" = 6,
+    // "12m" = 12,
 }
 
 export function cn(...inputs: ClassValue[]) {
@@ -61,12 +63,14 @@ export function calculateLockupVotingPower(
     switch (lockupPeriod) {
         case LockupPeriod.ONE_EPOCH:
             return amount
+        case LockupPeriod.TWO_EPOCHS:
+            return amount * 1.25
         case LockupPeriod.THREE_EPOCHS:
             return amount * 1.5
-        case LockupPeriod.SIX_EPOCHS:
-            return amount * 2
-        case LockupPeriod.TWELVE_EPOCHS:
-            return amount * 4
+        // case LockupPeriod.SIX_EPOCHS:
+        //     return amount * 2
+        // case LockupPeriod.TWELVE_EPOCHS:
+        //     return amount * 4
         default:
             return amount
     }
@@ -86,7 +90,8 @@ export function scaleLockupPower(lockupTime: number, rawPower: bigint): bigint {
 
     // Scale lockup power
     // 1x if lockup is between 0 and 1 epochs
-    // 1.5x if lockup is between 1 and 3 epochs
+    // 1.25x if lockup is between 1 and 2 epochs
+    // 1.5x if lockup is between 2 and 3 epochs
     // 2x if lockup is between 3 and 6 epochs
     // 4x if lockup is between 6 and 12 epochs
     if (lockupTime > lockEpochLength * 6) {
@@ -95,9 +100,12 @@ export function scaleLockupPower(lockupTime: number, rawPower: bigint): bigint {
     } else if (lockupTime > lockEpochLength * 3) {
         // 2x if lockup is between 3 and 6 epochs
         return rawPower * two
-    } else if (lockupTime > lockEpochLength) {
-        // 1.5x if lockup is between 1 and 3 epochs
+    } else if (lockupTime > lockEpochLength * 2) {
+        // 1.5x if lockup is between 2 and 3 epochs
         return rawPower + rawPower / two
+    } else if (lockupTime > lockEpochLength) {
+        // 1.25x if lockup is between 1 and 2 epochs
+        return rawPower + rawPower / (two * two)
     } else {
         // Covers 0 and 1 epoch which have no scaling
         return rawPower
