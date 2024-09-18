@@ -1,6 +1,6 @@
 import React from "react"
-import { fetchDashboardData } from "@/app/dashboard/dashboardFetch"
 import ProposalDetail from "../../ui/proposalDetail"
+import { fetchDashboardData } from "@/app/dashboard/getData"
 
 const Page = async ({ params }: { params: { id: string } }) => {
     const { currentProposalTranches, currentProposalTributes, globalState } =

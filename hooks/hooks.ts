@@ -31,7 +31,7 @@ const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
 }
 
 const tributeContractAdress =
-    "neutron1duww23zf05mtxwcvaq9pkalq0h4pg0yn7chmqt227gzvaz0r7jyq72fd0e"
+    "neutron15l38cpukqhw9fkvxkmj7sq8u7qclwh4wqn5360p6ke43ua0fc4ssy96uw4"
 const staleTime = 10000
 const limit = 10000
 const startFrom = 0
