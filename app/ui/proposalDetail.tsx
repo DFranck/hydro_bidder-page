@@ -19,7 +19,6 @@ import Markdown from "react-markdown"
 import { sumTributeAmounts } from "./proposalTable"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { DialogTrigger } from "@radix-ui/react-dialog"
-import { ProposalListTopModules } from "../dashboard/TopModules"
 import {
     ToastAborted,
     ToastError,
@@ -158,9 +157,8 @@ const ProposalDetail = ({
     }
 
     return (
-        <div className="px-[90px] pb-[90px] max-w-[1440px] mx-auto">
+        <div className="max-w-7xl mx-auto pb-44">
             <ChangeVote />
-            <ProposalListTopModules />
             <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
                 <div className="flex flex-col md:flex-row gap-[10%] justify-between">
                     <div>
