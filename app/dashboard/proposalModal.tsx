@@ -40,7 +40,7 @@ export const ProposalModal = ({
     hasVoted: boolean
 }) => {
     const { address, getSigningCosmWasmClient, estimateFee } =
-        useChain("neutrontestnet")
+        useChain("neutron")
 
     const [showChangeVote, setShowChangeVote] = useState(false)
 

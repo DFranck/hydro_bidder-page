@@ -28,7 +28,7 @@ export default function LockupsTable({
     globalState: GlobalState
 }) {
     const { isWalletConnected, address, getSigningCosmWasmClient } =
-        useChain("neutrontestnet")
+        useChain("neutron")
 
     return (
         <>

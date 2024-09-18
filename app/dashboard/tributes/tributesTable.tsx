@@ -12,7 +12,7 @@ export default function TributesTable({
     globalState: GlobalState
 }) {
     const { isWalletConnected, address: walletAddress } =
-        useChain("neutrontestnet")
+        useChain("neutron")
 
     return (
         <>
