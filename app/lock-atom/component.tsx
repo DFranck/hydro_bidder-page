@@ -546,8 +546,18 @@ const LockForm = ({
                                         <div className="space-y-2">
                                             {isLoading ? (
                                                 <p>Loading validators...</p>
+                                            ) : !validators ||
+                                              validators.length === 0 ? (
+                                                <p>
+                                                    You need to have some staked
+                                                    ATOM to participate in
+                                                    Hydro. Go to your wallet's
+                                                    staking interface to select
+                                                    a validator and stake some
+                                                    ATOM, then come back.
+                                                </p>
                                             ) : (
-                                                validators?.map((validator) => {
+                                                validators.map((validator) => {
                                                     const lsmCapacity =
                                                         calculateLsmCapacity(
                                                             validator.validator_bond_shares,
