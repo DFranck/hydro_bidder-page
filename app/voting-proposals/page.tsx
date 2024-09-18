@@ -1,33 +1,54 @@
+import { ATOM_PRICE_URL } from "../config"
 import { fetchDashboardData } from "../dashboard/getData"
 import ActiveProposals from "./component"
 import { ProposalListTopModules } from "./TopModules"
 
-const ATOM_PRICE_URL =
-    "https://api.coingecko.com/api/v3/simple/price?ids=cosmos&vs_currencies=usd"
-
 export default async function ActiveProposalsPage() {
     const {
-        lastProposalTranches,
         currentProposalTranches,
-        lastVotingPower,
-        currentVotingPower,
         globalState,
         currentProposalTributes,
-        lastProposalTributes,
         currentRoundEnd,
     } = await fetchDashboardData()
 
     let atomPrice = 0
     try {
-        // { cosmos: { usd: 4.13 } }
+        // responds with: { cosmos: { usd: 4.13 } }
         const res = await fetch(ATOM_PRICE_URL).then((res) => res.json())
         atomPrice = res["cosmos"]["usd"]
     } catch {
         console.log("failed to fetch atom price data")
     }
 
+    const allTributesCoins = Array.from(currentProposalTributes.values())
+        .flat()
+        .reduce((acc, tribute) => {
+            const { denom, amount } = tribute.funds
+            if (!acc[denom]) {
+                acc[denom] = BigInt(0)
+            }
+            acc[denom] += BigInt(amount)
+            return acc
+        }, {} as Record<string, bigint>)
+
+    // gets symbol/pretty name for each denom
+    const resolvedTributes = Object.entries(allTributesCoins).reduce(
+        (acc, [denom, amount]) => {
+            const asset = NEUTRON_ASSETS.assets.find(
+                (asset) =>
+                    asset.base.toLowerCase() === denom.toLowerCase() ||
+                    (denom.toLowerCase().startsWith("ibc/") &&
+                        asset.base.toLowerCase() === denom.toLowerCase())
+            )
+            const symbol = asset ? asset.symbol : denom
+            acc[symbol] = amount
+            return acc
+        },
+        {} as Record<string, bigint>
+    )
+
     return (
-        <div className="px-[90px] pb-[90px] max-w-[1440px] mx-auto">
+        <div className="pb-44 max-w-7xl mx-auto px-5 lg:px-0">
             <ProposalListTopModules
                 lockedAtom={globalState.totalLockedTokens}
                 roundEnd={currentRoundEnd}
