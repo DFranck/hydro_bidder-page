@@ -2,12 +2,13 @@
 
 import { Wallet } from "@/components/wallet/Wallet"
 import { cn } from "@/lib/utils"
-import { useChain } from "@cosmos-kit/react"
 import { usePathname } from "next/navigation"
+import { useState } from "react"
 
 export default function Navigation() {
     const pathname = usePathname()
-    const { isWalletConnected } = useChain("neutron")
+
+    const [isConnected, setIsConnected] = useState<boolean>(false)
 
     const navigationMenuTriggerStyle = (link: string) => {
         return cn(
@@ -38,14 +39,12 @@ export default function Navigation() {
                     href="/dashboard"
                     className={cn(
                         navigationMenuTriggerStyle("/dashboard"),
-                        !isWalletConnected
-                            ? "pointer-events-none opacity-50"
-                            : ""
+                        !isConnected ? "pointer-events-none opacity-50" : ""
                     )}
                 >
                     Dashboard
                 </a>
-                <Wallet />
+                <Wallet notifyConnectedCB={setIsConnected} />
             </div>
         </nav>
     )

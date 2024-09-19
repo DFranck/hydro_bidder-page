@@ -1,68 +1,69 @@
-import { useEffect } from "react";
-import { WalletStatus } from "@cosmos-kit/core";
-import { useChain } from "@cosmos-kit/react";
-import { CHAIN_NAME, CHAIN_NAME_STORAGE_KEY, DEFAULT_CHAIN } from "@/config";
+"use client"
+import { MouseEventHandler, useEffect } from "react"
+import { WalletStatus } from "@cosmos-kit/core"
+import { useChain } from "@cosmos-kit/react"
+
 import {
-  WButtonConnect,
-  WButtonConnected,
-  WButtonConnecting,
-  WButtonDisconnected,
-  WButtonError,
-  WButtonNotExist,
-  WButtonRejected,
-} from "./Connect";
-import { useToast } from "../ui/use-toast";
+    WButtonConnect,
+    WButtonConnected,
+    WButtonConnecting,
+    WButtonDisconnected,
+    WButtonError,
+    WButtonNotExist,
+    WButtonRejected,
+} from "./Connect"
+import { useToast } from "../ui/use-toast"
 
 export type WalletProps = {
-  chainName?: string;
-  onChainChange?: (chainName?: string) => void;
-};
+    chainName?: string
+    notifyConnectedCB: (isConnected: boolean) => void
+}
 
-export function Wallet({
-  chainName = CHAIN_NAME,
-  onChainChange = () => { },
-}: WalletProps) {
-  const { chain, status, address, message, connect, openView } =
-    useChain(DEFAULT_CHAIN);
+export function Wallet({ chainName, notifyConnectedCB }: WalletProps) {
+    const { connect, openView, status, address, message } = useChain(
+        chainName || "neutron"
+    )
 
-  // console.log(DEFAULT_CHAIN, "USING CHAIN", chain);
+    const { toast } = useToast()
 
-  const { toast } = useToast();
-
-  const ConnectButton = {
-    [WalletStatus.Connected]: (
-      <WButtonConnected address={address} onClick={openView} />
-    ),
-    [WalletStatus.Connecting]: <WButtonConnecting />,
-    [WalletStatus.Disconnected]: <WButtonDisconnected onClick={connect} />,
-    [WalletStatus.Error]: <WButtonError onClick={openView} />,
-    [WalletStatus.Rejected]: <WButtonRejected onClick={connect} />,
-    [WalletStatus.NotExist]: <WButtonNotExist onClick={openView} />,
-  }[status] || <WButtonConnect onClick={connect} />;
-
-  useEffect(() => {
-    if (
-      message &&
-      [WalletStatus.Error, WalletStatus.Rejected].includes(status)
-    ) {
-      toast({
-        title: "Wallet Connection Error",
-        description: message,
-        variant: "destructive",
-      });
+    // Events
+    const onClickConnect: MouseEventHandler = async (e) => {
+        e.preventDefault()
+        await connect()
     }
-  }, [message, status, toast]);
 
-  useEffect(() => {
-    const selected = localStorage.getItem(CHAIN_NAME_STORAGE_KEY);
-    if (selected && selected !== chainName) {
-      onChainChange(selected);
+    const onClickOpenView: MouseEventHandler = (e) => {
+        e.preventDefault()
+        openView()
     }
-  }, [chainName, onChainChange]);
 
-  return (
-    <>
-      {ConnectButton}
-    </>
-  );
+    useEffect(() => {
+        if (
+            message &&
+            [WalletStatus.Error, WalletStatus.Rejected].includes(status)
+        ) {
+            toast({
+                title: "Wallet Connection Error",
+                description: message,
+                variant: "destructive",
+            })
+        } else {
+            notifyConnectedCB?.(status === WalletStatus.Connected)
+        }
+    }, [message, status, toast, notifyConnectedCB])
+
+    const ConnectButton = {
+        [WalletStatus.Connected]: (
+            <WButtonConnected address={address} onClick={onClickOpenView} />
+        ),
+        [WalletStatus.Connecting]: <WButtonConnecting />,
+        [WalletStatus.Disconnected]: (
+            <WButtonDisconnected onClick={onClickConnect} />
+        ),
+        [WalletStatus.Error]: <WButtonError onClick={onClickOpenView} />,
+        [WalletStatus.Rejected]: <WButtonRejected onClick={onClickConnect} />,
+        [WalletStatus.NotExist]: <WButtonNotExist onClick={onClickOpenView} />,
+    }[status] || <WButtonConnect onClick={onClickConnect} />
+
+    return <>{ConnectButton}</>
 }

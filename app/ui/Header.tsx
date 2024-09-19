@@ -1,8 +1,7 @@
-"use client"
+// "use client"
 import Image from "next/image"
-import { Wallet } from "@/components/wallet/Wallet"
 import Navigation from "./Navigation"
-import { Suspense } from "react"
+// import { Suspense } from "react"
 import Link from "next/link"
 
 export const Header = () => {
@@ -17,9 +16,9 @@ export const Header = () => {
                 />
             </Link>
             <div className="flex flex-row items-center justify-between gap-6">
-                <Suspense fallback={<div>Loading...</div>}>
-                    <Navigation />
-                </Suspense>
+                {/* <Suspense fallback={<div>Loading...</div>}> */}
+                <Navigation />
+                {/* </Suspense> */}
             </div>
         </div>
     )
