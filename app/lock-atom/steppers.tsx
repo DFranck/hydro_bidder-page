@@ -18,6 +18,11 @@ import {
     broadcastAndRelayIBCHubToNeutron,
     broadcastAndRelayIBCNeutronToHub,
     extractLSMDenom,
+    checkForGasOnNeutron,
+    signATOMGasTransferToNeutron,
+    broadcastAndRelayIBCGasToNeutron,
+    checkForGasOnHub,
+    minimumUATOMGas,
 } from "./transactions"
 import {
     Card,
@@ -37,6 +42,9 @@ function getValidatorMoniker(
 
 type LockStep =
     | "Init"
+    | "NoHubGasError"
+    | "WaitingForNeutronGasSigning"
+    | "WaitingForNeutronGasBroadcastAndRelay"
     | "WaitingForTokenizeSigning"
     | "WaitingForTokenizeBroadcast"
     | "Error"
@@ -85,6 +93,34 @@ export const LockStepper = ({
                 !neutronSigner
             ) {
                 throw new Error("Signing clients or addresses not available")
+            }
+
+            const hubGasCheck = await checkForGasOnHub(hubChain)
+
+            if (!hubGasCheck.hasEnoughUatom) {
+                setStep("NoHubGasError")
+                return
+            }
+
+            const neutronGasCheck = await checkForGasOnNeutron(neutronChain)
+
+            if (
+                !neutronGasCheck.hasEnoughUntrn &&
+                !neutronGasCheck.hasEnoughUatom
+            ) {
+                setStep("WaitingForNeutronGasSigning")
+                const signedTx = await signATOMGasTransferToNeutron(
+                    hubChain,
+                    hubSigner,
+                    neutronChain
+                )
+
+                setStep("WaitingForNeutronGasBroadcastAndRelay")
+                await broadcastAndRelayIBCGasToNeutron(
+                    hubSigner,
+                    neutronChain,
+                    signedTx
+                )
             }
 
             // Sign the tokenize shares transaction
@@ -202,6 +238,71 @@ export const LockStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
+                    </>
+                )
+            case "NoHubGasError":
+                return (
+                    <>
+                        <CardHeader>
+                            <CardTitle>Insufficient Gas</CardTitle>
+                        </CardHeader>
+                        <CardContent className="prose">
+                            <p>
+                                You do not have enough gas to complete the
+                                transaction.
+                            </p>
+                            <p>
+                                Please transfer more ATOM to your Hub wallet and
+                                try again.
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={onExit}>OK</Button>
+                        </CardFooter>
+                    </>
+                )
+            case "WaitingForNeutronGasSigning":
+                return (
+                    <>
+                        <CardHeader>
+                            <CardTitle>Insufficient Gas</CardTitle>
+                        </CardHeader>
+                        <CardContent className="prose">
+                            <p>
+                                You do not have enough gas on Neutron (the chain
+                                which hosts Hydro).
+                            </p>
+                            <p>
+                                Approve the transaction in your wallet to
+                                transfer{" "}
+                                <strong>
+                                    {formatAmount(minimumUATOMGas)} ATOM
+                                </strong>{" "}
+                                to your Neutron wallet to continue.
+                            </p>
+                        </CardContent>
+                    </>
+                )
+
+            case "WaitingForNeutronGasBroadcastAndRelay":
+                return (
+                    <>
+                        <CardHeader>
+                            <CardTitle>Transferring ATOM</CardTitle>
+                        </CardHeader>
+                        <CardContent className="prose">
+                            <p>
+                                Transferring your ATOM to your Neutron wallet...
+                            </p>
+                            <p>
+                                This could take 30 seconds or longer if the
+                                network is congested. If you exit Hydro, this
+                                status may not be visible when you return, but
+                                the transfer will continue. Once the transfer is
+                                complete, you will need to return to initiate
+                                the staking process.
+                            </p>
+                        </CardContent>
                     </>
                 )
             case "WaitingForTokenizeSigning":
