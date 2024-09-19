@@ -17,6 +17,7 @@ import {
     DEFAULT_TOP_N,
     HYDRO_CONTRACT_ADDRESS,
     NEUTRON_DEFAULT_RPC,
+    TRIBUTE_CONTRACT_ADDRESS,
 } from "@/app/config"
 
 let clientInstance: CosmWasmClient | null = null
@@ -30,8 +31,6 @@ const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
     return clientInstance
 }
 
-const tributeContractAdress =
-    "neutron15l38cpukqhw9fkvxkmj7sq8u7qclwh4wqn5360p6ke43ua0fc4ssy96uw4"
 const staleTime = 10000
 const limit = 10000
 const startFrom = 0
@@ -113,7 +112,7 @@ export const fetchProposals = async (
         HYDRO_CONTRACT_ADDRESS
     )
     const response = await hydroQueryClient.topNProposals({
-        numberOfProposals: DEFAULT_TOP_N,
+        numberOfProposals: 20,
         roundId,
         trancheId,
     })
@@ -128,7 +127,7 @@ export const fetchProposalTributes = async (
     const client = await getCosmWasmClient()
     const tributeQueryClient = new TributeBaseQueryClient(
         client,
-        tributeContractAdress
+        TRIBUTE_CONTRACT_ADDRESS
     )
 
     const query = {
