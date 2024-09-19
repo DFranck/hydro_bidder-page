@@ -18,8 +18,8 @@ import {
     HYDRO_CONTRACT_ADDRESS,
     NEUTRON_DEFAULT_RPC,
     TRIBUTE_CONTRACT_ADDRESS,
-} from "@/app/config"
-
+} from "@/config"
+import { displayNeutronDenom } from "@/lib/utils"
 let clientInstance: CosmWasmClient | null = null
 
 // convenience func that allows doing contract queries on both server and client
@@ -145,11 +145,10 @@ export const fetchProposalTributes = async (
         ...tribute,
         funds: {
             ...tribute.funds,
-            denom: ibcDenomToToken[tribute.funds.denom] || tribute.funds.denom,
+            denom: displayNeutronDenom(tribute.funds.denom),
         },
     }))
 
-    // console.log('Tributes result:', JSON.stringify(tribute, null, 2));
     return tribute
 }
 
@@ -167,23 +166,6 @@ export const useRoundState = (roundId: number) => {
         queryFn: () => fetchRoundState(roundId),
         staleTime,
     })
-}
-
-// TODO: what's the right way to get this stuff?
-export const ibcDenomToToken: Record<string, string> = {
-    "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2":
-        "ATOM",
-    "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4":
-        "OSMO",
-    "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9":
-        "JUNO",
-    "ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4":
-        "SCRT",
-    "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858":
-        "USDC",
-    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1":
-        "USDT",
-    untrn: "NTRN",
 }
 
 export const fetchMyVotes = async (

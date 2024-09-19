@@ -1,7 +1,7 @@
 "use client"
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { HorizontalDivider } from "../ui/HorizontalDivider"
+import { HorizontalDivider } from "../../components/HorizontalDivider"
 
 import { DashboardTopModules } from "./TopModules"
 

@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import React from "react";
-import { Stepper } from "../subframe/components/Stepper";
+import React from "react"
+import { Stepper } from "../app/subframe/components/Stepper"
 
 function LockupSteper() {
     return (
@@ -27,7 +27,7 @@ function LockupSteper() {
                 description="Lock your LSM shares for Voting Power on Neutron."
             />
         </Stepper>
-    );
+    )
 }
 
-export default LockupSteper;
+export default LockupSteper

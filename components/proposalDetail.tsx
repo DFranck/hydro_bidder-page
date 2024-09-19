@@ -16,7 +16,7 @@ import { useChain } from "@cosmos-kit/react"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { ChevronLeft } from "lucide-react"
 import Markdown from "react-markdown"
-import { sumTributeAmounts } from "./proposalTable"
+import { sumTributeAmounts, formatAmount } from "@/lib/utils"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import {
@@ -227,9 +227,9 @@ const ProposalDetail = ({
                                                 key={index}
                                                 className="text-xl not-italic font-bold"
                                             >
-                                                {`${(
-                                                    tribute.amount / 1000000
-                                                ).toFixed(2)} ${
+                                                {`${formatAmount(
+                                                    tribute.amount
+                                                )} ${
                                                     tribute.denom.length > 20
                                                         ? tribute.denom.slice(
                                                               0,

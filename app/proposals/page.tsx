@@ -1,6 +1,5 @@
-import { ATOM_PRICE_URL } from "../config"
+import { ATOM_PRICE_URL } from "@/config"
 import { fetchDashboardData } from "../dashboard/getData"
-import { NEUTRON_ASSETS } from "../neutronAssets"
 import ActiveProposals from "./component"
 import { ProposalListTopModules } from "./TopModules"
 
@@ -20,33 +19,6 @@ export default async function ActiveProposalsPage() {
     } catch {
         console.log("failed to fetch atom price data")
     }
-
-    const allTributesCoins = Array.from(currentProposalTributes.values())
-        .flat()
-        .reduce((acc, tribute) => {
-            const { denom, amount } = tribute.funds
-            if (!acc[denom]) {
-                acc[denom] = BigInt(0)
-            }
-            acc[denom] += BigInt(amount)
-            return acc
-        }, {} as Record<string, bigint>)
-
-    // gets symbol/pretty name for each denom
-    const resolvedTributes = Object.entries(allTributesCoins).reduce(
-        (acc, [denom, amount]) => {
-            const asset = NEUTRON_ASSETS.assets.find(
-                (asset) =>
-                    asset.base.toLowerCase() === denom.toLowerCase() ||
-                    (denom.toLowerCase().startsWith("ibc/") &&
-                        asset.base.toLowerCase() === denom.toLowerCase())
-            )
-            const symbol = asset ? asset.symbol : denom
-            acc[symbol] = amount
-            return acc
-        },
-        {} as Record<string, bigint>
-    )
 
     return (
         <div className="pb-44 max-w-7xl mx-auto px-5 lg:px-0">

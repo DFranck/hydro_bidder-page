@@ -1,6 +1,9 @@
 "use client"
 import { useState } from "react"
-import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
+import {
+    DataTable,
+    makeProposalColumnDef,
+} from "../../components/proposalTable"
 import { Proposal } from "../ts_types/HydroBase.types"
 import { Tribute } from "../ts_types/TributeBase.types"
 import { Button } from "@/components/ui/button"

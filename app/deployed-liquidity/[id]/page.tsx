@@ -1,5 +1,5 @@
 import React from "react"
-import ProposalDetail from "@/app/ui/proposalDetail"
+import ProposalDetail from "@/components/proposalDetail"
 import { fetchDashboardData } from "@/app/dashboard/getData"
 
 const Page = async ({ params }: { params: { id: string } }) => {
