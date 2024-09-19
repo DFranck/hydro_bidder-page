@@ -114,7 +114,9 @@ const ProposalDetail = ({
             return "Submitting..."
         }
 
-        return hasVotedThisProposal ? "Already Voted This" : "Vote for Project"
+        return hasVotedThisProposal
+            ? "You voted for this proposal"
+            : "Vote for Project"
     }
 
     const ChangeVote = () => {
@@ -129,7 +131,7 @@ const ProposalDetail = ({
                         <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px]">
                             Change your vote?
                         </DialogTitle>
-                        <DialogDescription className="text-white/50 text-xl not-italic font-normal leading-[150%]">
+                        <DialogDescription className="text-white/50 text-xl">
                             Changing your vote will reallocate your total voting
                             power to the new project.
                         </DialogDescription>
@@ -160,7 +162,7 @@ const ProposalDetail = ({
         <div className="max-w-7xl mx-auto pb-44">
             <ChangeVote />
             <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
-                <div className="flex flex-col md:flex-row gap-[10%] justify-between">
+                <div className="flex flex-col md:flex-row gap-8 justify-between">
                     <div>
                         <Link href="/proposals" className="opacity-80">
                             <Button
@@ -178,15 +180,15 @@ const ProposalDetail = ({
                                 height={50}
                                 alt="Icon"
                             />
-                            <h1 className="text-2xl tracking-normal">
+                            <h1 className="text-2xl tracking-normal max-w-lg">
                                 {proposal.title}
                             </h1>
                         </div>
-                        <div className="">
-                            <p className="text-sm not-italic font-normal opacity-80">
+                        <div>
+                            <p className="text-sm opacity-80 mb-2 uppercase">
                                 Project Overview
                             </p>
-                            <div className="not-italic font-normal pb-15 prose prose-headings:text-white text-white prose-li:text-white prose-ol:text-white prose-strong:text-white marker:text-white prose-h1:tracking-normal">
+                            <div className="pb-15 prose prose-headings:text-white text-white prose-li:text-white prose-ol:text-white prose-strong:text-white marker:text-white prose-h1:tracking-normal">
                                 <Markdown>
                                     {proposal.description.replaceAll(
                                         /\\n/g,
@@ -196,8 +198,8 @@ const ProposalDetail = ({
                             </div>
                         </div>
                     </div>
-                    <div className="w-full md:w-[30%] mt-6 md:mt-0 pb-10 ">
-                        <div className="mt-auto pt-6 pb-16 w-[250px]">
+                    <div className="w-full md:w-[30%] mt-6 md:mt-0 pb-10">
+                        <div className="pt-6 pb-8 w-[250px]">
                             {!deployed && (
                                 <Button
                                     disabled={
@@ -206,16 +208,16 @@ const ProposalDetail = ({
                                         submitting
                                     }
                                     onClick={() => onVoteClicked()}
-                                    className="w-[250px] text-[#080815] text-center text-xl not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white"
+                                    className="text-[#080815] text-center text-lg not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white"
                                 >
                                     {displayBtnText()}
                                 </Button>
                             )}
                         </div>
 
-                        <div className="pl-6">
+                        <div>
                             <div className="pb-6">
-                                <p className="text-sm not-italic font-normal leading-[150%] opacity-80">
+                                <p className="text-sm opacity-80">
                                     Tribute to Voters
                                 </p>
                                 {sumTributeAmounts(tributes).length > 0 ? (
@@ -223,7 +225,7 @@ const ProposalDetail = ({
                                         (tribute, index) => (
                                             <p
                                                 key={index}
-                                                className="text-xl not-italic font-bold leading-[150%]"
+                                                className="text-xl not-italic font-bold"
                                             >
                                                 {`${(
                                                     tribute.amount / 1000000
@@ -239,24 +241,22 @@ const ProposalDetail = ({
                                         )
                                     )
                                 ) : (
-                                    <p className="text-xl not-italic font-bold leading-[150%]">
+                                    <p className="text-xl not-italic font-bold">
                                         None
                                     </p>
                                 )}
                             </div>
                             <div className="pb-6">
-                                <p className="text-sm not-italic font-normal leading-[150%] opacity-80">
+                                <p className="text-sm opacity-80">
                                     Current Vote Percentage
                                 </p>
-                                <p className="text-xl not-italic font-bold leading-[150%]">
+                                <p className="text-xl not-italic font-bold">
                                     {proposal.percentage}%
                                 </p>
                             </div>
                             <div className="pb-6">
-                                <p className="text-sm not-italic font-normal leading-[150%] opacity-80">
-                                    Status
-                                </p>
-                                <p className="text-[#00FFC2] text-xl not-italic font-bold leading-[150%]">
+                                <p className="text-sm opacity-80">Status</p>
+                                <p className="text-[#00FFC2] text-xl not-italic font-bold">
                                     {deployed ? "Deployed" : "In voting"}
                                 </p>
                             </div>
