@@ -15,7 +15,7 @@ import { wallets as cosmostation } from "@cosmos-kit/cosmostation-extension"
 import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
 import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
 
-import { hubChain, neutronChain, endpoints } from "../config"
+import { hubChain, neutronChain, endpoints } from "@/config"
 
 function gasPrices(chain: Chain | ChainName) {
     const chainName = typeof chain === "string" ? chain : chain.chain_name

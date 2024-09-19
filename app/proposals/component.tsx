@@ -1,7 +1,10 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { DataTable, makeProposalColumnDef } from "../ui/proposalTable"
+import {
+    DataTable,
+    makeProposalColumnDef,
+} from "../../components/proposalTable"
 import { Proposal, Timestamp } from "../ts_types/HydroBase.types"
 import { useState } from "react"
 import { GlobalState } from "../types"

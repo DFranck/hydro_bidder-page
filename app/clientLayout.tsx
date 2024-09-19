@@ -1,6 +1,6 @@
 "use client"
 
-import { Header } from "./ui/Header"
+import { Header } from "../components/Header"
 import { WalletHandler } from "./wallet"
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"

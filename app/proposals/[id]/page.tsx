@@ -1,9 +1,8 @@
 import React from "react"
-import ProposalDetail from "../../ui/proposalDetail"
+import ProposalDetail from "../../../components/proposalDetail"
 import { fetchDashboardData } from "@/app/dashboard/getData"
-import { ATOM_PRICE_URL } from "@/app/config"
+import { ATOM_PRICE_URL } from "@/config"
 import { ProposalListTopModules } from "../TopModules"
-import { NEUTRON_ASSETS } from "@/app/neutronAssets"
 
 export default async function VotingProposalSinglePage({
     params,
@@ -25,33 +24,6 @@ export default async function VotingProposalSinglePage({
     } catch {
         console.log("failed to fetch atom price data")
     }
-
-    const allTributesCoins = Array.from(currentProposalTributes.values())
-        .flat()
-        .reduce((acc, tribute) => {
-            const { denom, amount } = tribute.funds
-            if (!acc[denom]) {
-                acc[denom] = BigInt(0)
-            }
-            acc[denom] += BigInt(amount)
-            return acc
-        }, {} as Record<string, bigint>)
-
-    // gets symbol/pretty name for each denom
-    const resolvedTributes = Object.entries(allTributesCoins).reduce(
-        (acc, [denom, amount]) => {
-            const asset = NEUTRON_ASSETS.assets.find(
-                (asset) =>
-                    asset.base.toLowerCase() === denom.toLowerCase() ||
-                    (denom.toLowerCase().startsWith("ibc/") &&
-                        asset.base.toLowerCase() === denom.toLowerCase())
-            )
-            const symbol = asset ? asset.symbol : denom
-            acc[symbol] = amount
-            return acc
-        },
-        {} as Record<string, bigint>
-    )
 
     const currentProposal = Array.from(currentProposalTranches.values())
         .flat()

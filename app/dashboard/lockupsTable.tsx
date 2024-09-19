@@ -13,7 +13,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { EditLockupDuration } from "@/app/ui/modals/EditLockupDuration"
+import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
 import { LockIcon, TriangleAlertIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { calculateTimeRemaining, cn } from "@/lib/utils"
