@@ -80,7 +80,7 @@ export function calculateLockupVotingPower(
 export function formatAmount(amount: string | number | bigint) {
     amount = Number(amount) / 1000000
     return amount.toLocaleString("en-US", {
-        minimumFractionDigits: 6,
+        minimumFractionDigits: 4,
         trailingZeroDisplay: "stripIfInteger",
     })
 }

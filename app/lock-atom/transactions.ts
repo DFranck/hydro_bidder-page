@@ -20,6 +20,11 @@ import {
 const hydroContractAddress =
     "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
 
+export const minimumUNTRNGas = 10000
+export const minimumUATOMGas = 10000
+export const UATOMDenom =
+    "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+
 export async function checkForHubLSMShares(
     hubChain: ChainContext,
     hubSigner: SigningStargateClient
@@ -84,6 +89,93 @@ export async function checkForNeutronLSMShares(
     const lsmShares = lsmSharesResults.filter((share) => share !== null)
 
     return lsmShares
+}
+
+export async function checkForGasOnNeutron(neutronChain: ChainContext) {
+    if (!neutronChain.address) {
+        throw new Error("Neutron chain address not set")
+    }
+
+    const restEndpoint = await neutronChain.getRestEndpoint()
+
+    const response: {
+        balances: {
+            denom: string
+            amount: string
+        }[]
+        pagination: {
+            next_key: string | null
+            total: string
+        }
+        // TODO: No pagination so it will break if they have a crap ton of denoms in their account
+    } = await fetch(
+        `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`
+    ).then((res) => res.json())
+
+    console.log(response)
+
+    const balances = response.balances
+    const untrnBalance = balances.find((b) => b.denom === "untrn")
+    const uatomBalance = balances.find((b) => b.denom === UATOMDenom)
+
+    const hasEnoughUntrn =
+        untrnBalance && Number(untrnBalance.amount) >= minimumUNTRNGas
+    const hasEnoughUatom =
+        uatomBalance && Number(uatomBalance.amount) >= minimumUATOMGas
+
+    console.log("Neutron gas check result:", {
+        hasEnoughUntrn,
+        hasEnoughUatom,
+        untrnBalance: untrnBalance ? untrnBalance.amount : "0",
+        uatomBalance: uatomBalance ? uatomBalance.amount : "0",
+    })
+
+    return {
+        hasEnoughUntrn: !!hasEnoughUntrn,
+        hasEnoughUatom: !!hasEnoughUatom,
+        untrnBalance: untrnBalance ? untrnBalance.amount : "0",
+        uatomBalance: uatomBalance ? uatomBalance.amount : "0",
+    }
+}
+
+export async function checkForGasOnHub(hubChain: ChainContext) {
+    if (!hubChain.address) {
+        throw new Error("Hub chain address not set")
+    }
+
+    const restEndpoint = await hubChain.getRestEndpoint()
+
+    const response: {
+        balances: {
+            denom: string
+            amount: string
+        }[]
+        pagination: {
+            next_key: string | null
+            total: string
+        }
+        // TODO: No pagination so it will break if they have a crap ton of denoms in their account
+    } = await fetch(
+        `${restEndpoint}cosmos/bank/v1beta1/balances/${hubChain.address}`
+    ).then((res) => res.json())
+
+    console.log(response)
+
+    const balances = response.balances
+    const uatomBalance = balances.find((b) => b.denom === "uatom")
+
+    const hasEnoughUatom =
+        uatomBalance && Number(uatomBalance.amount) > minimumUATOMGas * 2
+
+    console.log("Hub gas check result:", {
+        hasEnoughUatom,
+        uatomBalance: uatomBalance ? uatomBalance.amount : "0",
+    })
+
+    return {
+        hasEnoughUatom: !!hasEnoughUatom,
+        uatomBalance: uatomBalance ? uatomBalance.amount : "0",
+    }
 }
 
 const fetchDenomTrace = async (
@@ -289,6 +381,39 @@ export async function signLockTokens(
     return response
 }
 
+export async function signATOMGasTransferToNeutron(
+    hubChain: ChainContext,
+    hubSigner: SigningStargateClient,
+    neutronChain: ChainContext
+) {
+    if (!hubChain.address) {
+        throw new Error("Hub chain address not set")
+    }
+    if (!neutronChain.address) {
+        throw new Error("Neutron chain address not set")
+    }
+    // Transfer UATOM from hub to neutron
+    const msg: { typeUrl: string; value: MsgTransfer } = {
+        typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+        value: {
+            sourcePort: "transfer",
+            sourceChannel: "channel-569",
+            token: { denom: "uatom", amount: minimumUATOMGas.toString() },
+            sender: hubChain.address,
+            receiver: neutronChain.address,
+            timeoutHeight: {
+                revisionHeight: BigInt(0),
+                revisionNumber: BigInt(0),
+            },
+            timeoutTimestamp:
+                BigInt(Date.now() + 5 * 60 * 1000) * BigInt(1000000),
+            memo: "",
+        },
+    }
+    const fee = await hubChain.estimateFee([msg])
+    return await hubSigner.sign(hubChain.address, [msg], fee, "")
+}
+
 export async function broadcastTx(
     hubSigner: SigningStargateClient,
     neutronSigner: SigningStargateClient,
@@ -372,5 +497,36 @@ export async function broadcastAndRelayIBCNeutronToHub(
 
     throw new Error(
         `Timeout: LSM shares (${denom}) transfer not detected within ${resolveResponsesTimeoutMs}ms`
+    )
+}
+
+export async function broadcastAndRelayIBCGasToNeutron(
+    hubSigner: SigningStargateClient,
+    neutronChain: ChainContext,
+    signedTx: TxRaw,
+    resolveResponsesTimeoutMs: number = 180000,
+    resolveResponsesCheckIntervalMs: number = 12000
+) {
+    await hubSigner.broadcastTx(new Uint8Array(TxRaw.encode(signedTx).finish()))
+
+    const startTime = Date.now()
+
+    while (Date.now() - startTime < resolveResponsesTimeoutMs) {
+        await new Promise((resolve) =>
+            setTimeout(resolve, resolveResponsesCheckIntervalMs)
+        )
+
+        const gasCheck = await checkForGasOnNeutron(neutronChain)
+
+        if (gasCheck.hasEnoughUatom) {
+            console.log(
+                `Gas (${gasCheck.uatomBalance} uatom) successfully transferred to Neutron`
+            )
+            return gasCheck
+        }
+    }
+
+    throw new Error(
+        `Timeout: Gas transfer not detected within ${resolveResponsesTimeoutMs}ms`
     )
 }
