@@ -2,6 +2,7 @@ import DeployedLiquidity from "./component"
 import { ATOM_PRICE_URL } from "../config"
 import { fetchDashboardData } from "../dashboard/getData"
 import { ProposalListTopModules } from "../proposals/TopModules"
+import { NEUTRON_ASSETS } from "../neutronAssets"
 
 export default async function DeployedProposalPage() {
     const {

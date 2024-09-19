@@ -1,5 +1,6 @@
 import { ATOM_PRICE_URL } from "../config"
 import { fetchDashboardData } from "../dashboard/getData"
+import { NEUTRON_ASSETS } from "../neutronAssets"
 import ActiveProposals from "./component"
 import { ProposalListTopModules } from "./TopModules"
 

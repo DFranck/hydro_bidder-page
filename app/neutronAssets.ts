@@ -1,4 +1,4 @@
-const NEUTRON_ASSETS = {
+export const NEUTRON_ASSETS = {
     $schema: "../assetlist.schema.json",
     chain_name: "neutron",
     assets: [

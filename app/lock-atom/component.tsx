@@ -551,7 +551,7 @@ const LockForm = ({
                                                 <p>
                                                     You need to have some staked
                                                     ATOM to participate in
-                                                    Hydro. Go to your wallet's
+                                                    Hydro. Go to your wallet&apos;s
                                                     staking interface to select
                                                     a validator and stake some
                                                     ATOM, then come back.

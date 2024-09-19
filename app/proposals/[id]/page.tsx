@@ -3,6 +3,7 @@ import ProposalDetail from "../../ui/proposalDetail"
 import { fetchDashboardData } from "@/app/dashboard/getData"
 import { ATOM_PRICE_URL } from "@/app/config"
 import { ProposalListTopModules } from "../TopModules"
+import { NEUTRON_ASSETS } from "@/app/neutronAssets"
 
 export default async function VotingProposalSinglePage({
     params,
