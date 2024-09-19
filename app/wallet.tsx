@@ -12,19 +12,10 @@ import { GasPrice } from "@cosmjs/stargate"
 
 import { wallets as leap } from "@cosmos-kit/leap-extension"
 import { wallets as cosmostation } from "@cosmos-kit/cosmostation-extension"
-import { assets, chain } from "chain-registry/testnet/neutrontestnet"
+import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
+import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
 
-import {
-    DEFAULT_CHAIN,
-    localAssets,
-    localnetChain,
-    testnetAssets,
-    testnetChain,
-    pionChain,
-    hubChain,
-    neutronChain,
-    endpoints,
-} from "../config"
+import { hubChain, neutronChain, endpoints } from "../config"
 
 function gasPrices(chain: Chain | ChainName) {
     const chainName = typeof chain === "string" ? chain : chain.chain_name
@@ -62,32 +53,32 @@ export function WalletHandler({
     return (
         <ChainProvider
             chains={[
-                chain,
-                testnetChain,
-                localnetChain,
-                pionChain,
+                // chain,
+                // testnetChain,
+                // localnetChain,
+                // pionChain,
                 hubChain,
                 neutronChain,
             ]}
-            assetLists={[assets, testnetAssets, localAssets]}
+            assetLists={[hubAssets, neutronAssets]}
             wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
             signerOptions={{
                 signingStargate: (chain: Chain | ChainName) => {
                     const chainName =
                         typeof chain === "string" ? chain : chain.chain_name
                     switch (chainName) {
-                        case "neutrontestnet":
-                            return {
-                                gasPrice: GasPrice.fromString("0.008untrn"),
-                            }
-                        case "cosmoshubtestnet":
-                            return {
-                                registry: new Registry([
-                                    ...stride.cosmosProtoRegistry,
-                                    ...stride.ibcProtoRegistry,
-                                ]),
-                                gasPrice: GasPrice.fromString("0.005uatom"),
-                            }
+                        // case "neutrontestnet":
+                        //     return {
+                        //         gasPrice: GasPrice.fromString("0.008untrn"),
+                        //     }
+                        // case "cosmoshubtestnet":
+                        //     return {
+                        //         registry: new Registry([
+                        //             ...stride.cosmosProtoRegistry,
+                        //             ...stride.ibcProtoRegistry,
+                        //         ]),
+                        //         gasPrice: GasPrice.fromString("0.005uatom"),
+                        //     }
                         case "cosmoshub":
                             return {
                                 registry: new Registry([

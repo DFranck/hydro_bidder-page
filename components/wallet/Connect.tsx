@@ -2,7 +2,6 @@ import { MouseEventHandler } from "react"
 import { Button } from "../ui/button"
 import { LinkIcon, LoaderCircleIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-// import { Button as UIButton, IconName } from "@interchain-ui/react";
 
 export type ButtonProps = {
     text?: string
