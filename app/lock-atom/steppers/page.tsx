@@ -1,4 +1,4 @@
-import { StepperOverview } from "../StepperOverview"
+import { StepperOverview } from "./component"
 
 export default async function StepperOverviewPage() {
     return (

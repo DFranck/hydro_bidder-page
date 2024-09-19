@@ -27,13 +27,11 @@ import {
     CardContent,
 } from "@/components/ui/card"
 
-import {
-    LockStepper,
-    RevertFromHubStepper,
-    RevertFromNeutronStepper,
-    ContinueFromHubStepper,
-    ContinueFromNeutronStepper,
-} from "./steppers"
+import { LockStepper } from "./steppers/lockStepper"
+import { RevertFromHubStepper } from "./steppers/revertFromHubStepper"
+import { RevertFromNeutronStepper } from "./steppers/revertFromNeutronStepper"
+import { ContinueFromHubStepper } from "./steppers/continueFromHubStepper"
+import { ContinueFromNeutronStepper } from "./steppers/continueFromNeutronStepper"
 
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
 
@@ -41,7 +39,7 @@ import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "@/components/ui/input"
-import { useMyValidators, Validator } from "@/hooks/hooks"
+import { useMyValidators, Validator, Delegation } from "@/hooks/hooks"
 import { EPOCH_LENGTH } from "@/config"
 import { formatAmount } from "@/lib/utils"
 
@@ -466,7 +464,17 @@ const LockForm = ({
 }) => {
     const formSchema = z.object({
         validator: z.string().min(1, "Validator address is required"),
-        amount: z.string().min(1, "Amount is required"),
+        amount: z.string().refine((val) => {
+            const amount = Number(val)
+            const selectedValidator: string = form.getValues("validator")
+            const validator = validators?.find(
+                (v) => v.validator.operator_address === selectedValidator
+            )
+            const maxAmount = validator
+                ? Number(validator.delegation_balance.amount)
+                : 0
+            return amount <= maxAmount
+        }, "Amount exceeds maximum available balance"),
         duration: z.string().min(1, "Duration is required"),
     })
 
@@ -474,7 +482,7 @@ const LockForm = ({
         resolver: zodResolver(formSchema),
         defaultValues: {
             validator: "",
-            amount: "1000000",
+            // amount: "0", // Set the default amount to "0"
             duration: EPOCH_LENGTH.toString(),
         },
     })
@@ -495,12 +503,12 @@ const LockForm = ({
     useEffect(() => {
         if (selectedValidator && validators) {
             const validator = validators.find(
-                (v) => v.operator_address === selectedValidator
+                (v) => v.validator.operator_address === selectedValidator
             )
             if (validator) {
                 const lsmCapacity = calculateLsmCapacity(
-                    validator.validator_bond_shares,
-                    validator.liquid_shares
+                    validator.validator.validator_bond_shares,
+                    validator.validator.liquid_shares
                 )
                 if (lsmCapacity < selectedAmount) {
                     form.setValue("validator", "")
@@ -509,21 +517,54 @@ const LockForm = ({
         }
     }, [selectedAmount, selectedValidator, validators])
 
-    console.log(
-        "validators",
-        validators?.map((validator) => ({
-            moniker: validator.description.moniker,
-            validatorBondShares: formatAmount(validator.validator_bond_shares),
-            liquidShares: formatAmount(validator.liquid_shares),
-            delegatorShares: formatAmount(validator.delegator_shares),
-            lsmCapacity: formatAmount(
-                calculateLsmCapacity(
-                    validator.validator_bond_shares,
-                    validator.liquid_shares
-                )
-            ),
-        }))
-    )
+    console.log("validators", validators)
+
+    // Pulling this out to reduce nesting
+    const validatorList =
+        (value: string, onChange: (value: string) => void) =>
+        (v: {
+            validator: Validator
+            delegation: Delegation
+            delegation_balance: { denom: string; amount: string }
+        }) => {
+            const lsmCapacity = calculateLsmCapacity(
+                v.validator.validator_bond_shares,
+                v.validator.liquid_shares
+            )
+            const isDisabled = lsmCapacity <= 0 || lsmCapacity < selectedAmount
+            return (
+                <Button
+                    key={v.validator.operator_address}
+                    type="button"
+                    onClick={() => {
+                        if (!isDisabled) {
+                            onChange(v.validator.operator_address)
+                        }
+                    }}
+                    variant={
+                        value === v.validator.operator_address
+                            ? "default"
+                            : "outline"
+                    }
+                    className={`w-full justify-start ${
+                        isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={isDisabled}
+                >
+                    <span className="flex-grow text-left">
+                        {v.validator.description.moniker ||
+                            v.validator.operator_address}
+                    </span>
+                    <span className="flex-shrink-0 text-right">
+                        {isDisabled
+                            ? "(Insufficient validator bond)"
+                            : `(${formatAmount(
+                                  v.delegation_balance.amount
+                              )} ATOM staked)`}
+                    </span>
+                </Button>
+            )
+        }
 
     return (
         <Card>
@@ -558,55 +599,12 @@ const LockForm = ({
                                                     ATOM, then come back.
                                                 </p>
                                             ) : (
-                                                validators.map((validator) => {
-                                                    const lsmCapacity =
-                                                        calculateLsmCapacity(
-                                                            validator.validator_bond_shares,
-                                                            validator.liquid_shares
-                                                        )
-                                                    const isDisabled =
-                                                        lsmCapacity <= 0 ||
-                                                        lsmCapacity <
-                                                            selectedAmount
-                                                    return (
-                                                        <Button
-                                                            key={
-                                                                validator.operator_address
-                                                            }
-                                                            type="button"
-                                                            onClick={() => {
-                                                                if (
-                                                                    !isDisabled
-                                                                ) {
-                                                                    field.onChange(
-                                                                        validator.operator_address
-                                                                    )
-                                                                }
-                                                            }}
-                                                            variant={
-                                                                field.value ===
-                                                                validator.operator_address
-                                                                    ? "default"
-                                                                    : "outline"
-                                                            }
-                                                            className={`w-full justify-start ${
-                                                                isDisabled
-                                                                    ? "opacity-50 cursor-not-allowed"
-                                                                    : ""
-                                                            }`}
-                                                            disabled={
-                                                                isDisabled
-                                                            }
-                                                        >
-                                                            {validator
-                                                                .description
-                                                                .moniker ||
-                                                                validator.operator_address}
-                                                            {isDisabled &&
-                                                                " (Insufficient validator bond)"}
-                                                        </Button>
+                                                validators.map(
+                                                    validatorList(
+                                                        field.value,
+                                                        field.onChange
                                                     )
-                                                })
+                                                )
                                             )}
                                         </div>
                                     </FormControl>
@@ -617,31 +615,68 @@ const LockForm = ({
                         <FormField
                             control={form.control}
                             name="amount"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Amount (ATOM)</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="text-black"
-                                            {...field}
-                                            type="number"
-                                            step="0.000001"
-                                            onChange={(e) => {
-                                                const atomValue = parseFloat(
-                                                    e.target.value
-                                                )
-                                                const uatomValue = Math.floor(
-                                                    atomValue * 1000000
-                                                ).toString()
-                                                field.onChange(uatomValue)
-                                            }}
-                                            value={
-                                                Number(field.value) / 1000000
-                                            }
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
+                            render={({ field }) => {
+                                const selectedValidator =
+                                    form.watch("validator")
+                                const validator = validators?.find(
+                                    (v) =>
+                                        v.validator.operator_address ===
+                                        selectedValidator
+                                )
+                                const maxAmount = validator
+                                    ? Number(
+                                          validator.delegation_balance.amount
+                                      )
+                                    : 0
+                                const isDisabled = !selectedValidator
+
+                                return (
+                                    <FormItem>
+                                        <FormLabel>Amount (ATOM)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="text-black"
+                                                {...field}
+                                                type="number"
+                                                step="0.000001"
+                                                min="0"
+                                                disabled={isDisabled}
+                                                onChange={(e) => {
+                                                    const atomValue =
+                                                        parseFloat(
+                                                            e.target.value
+                                                        )
+                                                    const uatomValue =
+                                                        Math.floor(
+                                                            atomValue * 1000000
+                                                        ).toString()
+                                                    field.onChange(uatomValue)
+                                                }}
+                                                value={
+                                                    Number(field.value) /
+                                                    1000000
+                                                }
+                                            />
+                                        </FormControl>
+                                        {selectedValidator && (
+                                            <FormDescription>
+                                                Max:{" "}
+                                                {(maxAmount / 1000000).toFixed(
+                                                    6
+                                                )}{" "}
+                                                ATOM
+                                            </FormDescription>
+                                        )}
+                                        {selectedValidator &&
+                                            Number(field.value) > maxAmount && (
+                                                <FormMessage>
+                                                    Amount exceeds maximum
+                                                    available balance
+                                                </FormMessage>
+                                            )}
+                                    </FormItem>
+                                )
+                            }}
                         />
                         <FormField
                             control={form.control}
