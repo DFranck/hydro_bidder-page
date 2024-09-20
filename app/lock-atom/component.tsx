@@ -308,7 +308,12 @@ export default function LSMInteraction({
                     />
                 </div>
             </div>
-        )) || <div>Wallet not connected</div>
+        )) || (
+            <LoaderCard
+                haveChains={!!hubChain || !!neutronChain}
+                address={hubChain?.address || null}
+            />
+        )
     )
 }
 
@@ -724,6 +729,43 @@ const LockForm = ({
                         <Button type="submit">Submit</Button>
                     </form>
                 </Form>
+            </CardContent>
+        </Card>
+    )
+}
+
+const LoaderCard = ({
+    address,
+    haveChains,
+}: {
+    address: string | null
+    haveChains: boolean
+}) => {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Lock ATOM to vote in Hydro</CardTitle>
+            </CardHeader>
+            <CardContent>
+                {!address && haveChains ? (
+                    <div>
+                        <p>Connect your wallet to lock ATOM</p>
+                    </div>
+                ) : haveChains ? (
+                    <>
+                        <div className="space-y-4">
+                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="h-10 w-1/2 bg-gray-300 animate-pulse rounded"></div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 mt-12">
+                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
+                        </div>
+                    </>
+                ) : null}
             </CardContent>
         </Card>
     )

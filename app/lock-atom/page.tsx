@@ -1,6 +1,7 @@
 import LSMInteraction from "./component"
 import { fetchAllValidators } from "@/hooks/hooks"
 import { endpoints } from "@/config"
+import { Suspense } from "react"
 
 export default async function LockPage() {
     const validators = await fetchAllValidators(endpoints.cosmoshub.rest[0])
