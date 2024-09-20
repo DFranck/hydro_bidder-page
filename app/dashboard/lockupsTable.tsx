@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { LockEntryWithPower, Proposal } from "../ts_types/HydroBase.types"
 import { GlobalState } from "../types"
 import { useChain } from "@cosmos-kit/react"
-import { fetchMyAllLockups } from "@/hooks/hooks"
+import { fetchMyAllLockups, Validator } from "@/hooks/hooks"
 import {
     Table,
     TableBody,
@@ -21,10 +21,19 @@ import { calculateTimeRemaining, cn } from "@/lib/utils"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import Link from "next/link"
 import { formatAmount } from "@/lib/utils"
+import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 
-export default function LockupsTable() {
-    const { isWalletConnected, address, getSigningCosmWasmClient } =
-        useChain("neutron")
+export default function LockupsTable({
+    validatorMap,
+}: {
+    validatorMap: Map<string, Validator>
+}) {
+    const {
+        isWalletConnected,
+        address,
+        getSigningCosmWasmClient,
+        getRestEndpoint,
+    } = useChain("neutron")
 
     return (
         <>
@@ -33,6 +42,8 @@ export default function LockupsTable() {
                     <Lockups
                         walletAddress={address}
                         getSigningCosmWasmClient={getSigningCosmWasmClient}
+                        validatorMap={validatorMap}
+                        getRestEndpoint={getRestEndpoint}
                     />
                 </div>
             ) : (
@@ -47,9 +58,13 @@ export default function LockupsTable() {
 function Lockups({
     walletAddress,
     getSigningCosmWasmClient,
+    validatorMap,
+    getRestEndpoint,
 }: {
     walletAddress: string
     getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
+    validatorMap: Map<string, Validator>
+    getRestEndpoint: () => Promise<string | ExtendedHttpEndpoint>
 }) {
     const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -217,12 +232,14 @@ function Lockups({
                                 </TableCell>
                                 <TableCell className="rounded-r-xl text-center">
                                     <EditLockupDuration
+                                        validatorMap={validatorMap}
                                         onSuccess={onSuccess}
                                         lockup={lockup}
                                         walletAddress={walletAddress}
                                         getSigningCosmWasmClient={
                                             getSigningCosmWasmClient
                                         }
+                                        getRestEndpoint={getRestEndpoint}
                                     />
                                 </TableCell>
                             </TableRow>

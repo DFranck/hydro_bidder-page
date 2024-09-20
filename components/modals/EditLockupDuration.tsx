@@ -28,16 +28,18 @@ import {
     LockupPeriodMultipler,
 } from "@/lib/utils"
 import { DialogDescription } from "@radix-ui/react-dialog"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Loader2Icon } from "lucide-react"
-import { ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import {
     ToastAborted,
     ToastError,
     ToastExecutedTx,
     ToastProcessing,
 } from "@/components/ui/toast-wallet"
-import { executeExtendLockup } from "@/hooks/hooks"
+import { executeExtendLockup, Validator } from "@/hooks/hooks"
+import { fetchDenomTrace } from "@/app/lock-atom/transactions"
+import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 
 const formSchema = z.object({
     lockupPeriod: z.nativeEnum(LockupPeriod),
@@ -49,6 +51,8 @@ const formSchema = z.object({
 type EditLockupDurationProps = {
     lockup: LockEntryWithPower
     walletAddress: string
+    validatorMap: Map<string, Validator>
+    getRestEndpoint: () => Promise<string | ExtendedHttpEndpoint>
     getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
     onSuccess: () => void
 }
@@ -56,6 +60,8 @@ type EditLockupDurationProps = {
 export const EditLockupDuration = ({
     lockup,
     walletAddress,
+    validatorMap,
+    getRestEndpoint,
     getSigningCosmWasmClient,
     onSuccess,
 }: EditLockupDurationProps) => {
@@ -71,7 +77,7 @@ export const EditLockupDuration = ({
                 parseInt(lockup.lock_entry.funds.amount),
                 LockupPeriod.ONE_EPOCH
             ).toString(),
-            validator: "Golden Ratio Staking",
+            validator: "",
         },
     })
 
@@ -117,6 +123,27 @@ export const EditLockupDuration = ({
             ).toString()
         )
     }
+
+    useEffect(() => {
+        const resolveValidator = async () => {
+            if (open &&lockup && lockup.lock_entry.funds.denom) {
+                const endpoint = await getRestEndpoint()
+                const trace = await fetchDenomTrace(
+                    lockup.lock_entry.funds,
+                    endpoint as string
+                )
+                console.log(trace)
+                if (trace) {
+                    form.setValue(
+                        "validator",
+                        validatorMap.get(trace.validator)?.description
+                            .moniker || "Unknown Validator"
+                    )
+                }
+            }
+        }
+        resolveValidator()
+    }, [open, getRestEndpoint, validatorMap, lockup])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -188,6 +215,15 @@ export const EditLockupDuration = ({
                                 Locked ATOM:
                             </FormLabel>
                             <p className="text-xl">{form.watch("shares")}</p>
+                        </div>
+
+                        <div className="flex items-center gap-[56px]">
+                            <FormLabel className="text-sm opacity-60 w-[100px]">
+                                Validator:
+                            </FormLabel>
+                            <p className="text-xl">
+                                {form.watch("validator") || ""}
+                            </p>
                         </div>
 
                         <div className="flex items-center gap-[56px]">

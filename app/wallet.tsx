@@ -20,14 +20,14 @@ import { hubChain, neutronChain, endpoints } from "@/config"
 function gasPrices(chain: Chain | ChainName) {
     const chainName = typeof chain === "string" ? chain : chain.chain_name
     switch (chainName) {
-        case "neutrontestnet":
-            return {
-                gasPrice: GasPrice.fromString("0.008untrn"),
-            }
-        case "cosmoshubtestnet":
-            return {
-                gasPrice: GasPrice.fromString("0.005uatom"),
-            }
+        // case "neutrontestnet":
+        //     return {
+        //         gasPrice: GasPrice.fromString("0.008untrn"),
+        //     }
+        // case "cosmoshubtestnet":
+        //     return {
+        //         gasPrice: GasPrice.fromString("0.005uatom"),
+        //     }
         case "cosmoshub":
             return {
                 registry: new Registry([
