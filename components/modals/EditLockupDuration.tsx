@@ -155,7 +155,7 @@ export const EditLockupDuration = ({
                     Extend Lockup
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
+            <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12 text-white">
                 <DialogDescription className="sr-only">
                     Extend Lockup
                 </DialogDescription>
