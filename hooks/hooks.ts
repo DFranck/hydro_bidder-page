@@ -428,3 +428,11 @@ export const fetchUserVotingData = async (
         lockups: lockedAtom,
     }
 }
+
+export const useUserVotingData = (address: string) => {
+    return useQuery({
+        queryKey: ["userVotingData", address],
+        queryFn: () => fetchUserVotingData(address),
+        staleTime,
+    })
+}
