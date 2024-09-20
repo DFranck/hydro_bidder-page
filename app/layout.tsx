@@ -26,8 +26,11 @@ export default function RootLayout({
         src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
         async
       /> */}
-            <body className={`${inter.className} text-white bg-black p-5`}>
-                <ClientHandler>{children}</ClientHandler>
+            <body className={`${inter.className}`}>
+                <div className="bg-gradient-to-b from-black via-[#010006] to-[#001C47] p-5 h-screen w-screen fixed top-0 left-0 -z-10"></div>
+                <div className="text-white p-5">
+                    <ClientHandler>{children}</ClientHandler>
+                </div>
             </body>
         </html>
     )
