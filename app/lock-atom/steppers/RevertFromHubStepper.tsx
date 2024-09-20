@@ -128,9 +128,9 @@ export const RevertFromHubStepper = ({
                         <CardContent className="prose">
                             <p>
                                 You&apos;re about to revert{" "}
-                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
+                                <strong className="text-white">{formatAmount(amount)} ATOM</strong>{" "}
                                 back to its original state, staked with{" "}
-                                <strong>
+                                <strong className="text-white">
                                     {getValidatorMoniker(
                                         validator,
                                         validatorMap
@@ -165,9 +165,9 @@ export const RevertFromHubStepper = ({
                             <p>
                                 This will restore your previous staked position
                                 with the amount of{" "}
-                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
+                                <strong className="text-white">{formatAmount(amount)} ATOM</strong>{" "}
                                 staked to{" "}
-                                <strong>
+                                <strong className="text-white">
                                     {getValidatorMoniker(
                                         validator,
                                         validatorMap
@@ -202,7 +202,7 @@ export const RevertFromHubStepper = ({
                         <CardContent className="prose">
                             <p>
                                 Your{" "}
-                                <strong>{formatAmount(amount)} ATOM</strong> has
+                                <strong className="text-white">{formatAmount(amount)} ATOM</strong> has
                                 been restored to your previous staked position.
                             </p>
                         </CardContent>

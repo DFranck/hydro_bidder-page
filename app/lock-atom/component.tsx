@@ -184,7 +184,7 @@ export default function LSMInteraction({
         (hubSigner && neutronSigner && (
             <div>
                 {stepper && stepper.type === "lock" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
                         <LockStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -199,7 +199,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromHubLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
                         <RevertFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -213,7 +213,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromNeutronLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
                         <RevertFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -228,7 +228,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromHubLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
                         <ContinueFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -242,7 +242,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromNeutronLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
                         <ContinueFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -551,9 +551,7 @@ const LockForm = ({
                             ? "default"
                             : "outline"
                     }
-                    className={`w-full justify-start ${
-                        isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    className="w-full"
                     disabled={isDisabled}
                 >
                     <span className="flex-grow text-left">
@@ -640,7 +638,6 @@ const LockForm = ({
                                         <FormLabel>Amount (ATOM)</FormLabel>
                                         <FormControl>
                                             <Input
-                                                className="text-black"
                                                 {...field}
                                                 type="number"
                                                 step="0.000001"

@@ -191,7 +191,7 @@ export const LockStepper = ({
         switch (step) {
             case "Init":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>
                                 Lock {formatAmount(amount)} ATOM
@@ -238,11 +238,11 @@ export const LockStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "NoHubGasError":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Insufficient Gas</CardTitle>
                         </CardHeader>
@@ -259,11 +259,11 @@ export const LockStepper = ({
                         <CardFooter>
                             <Button onClick={onExit}>OK</Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "WaitingForNeutronGasSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Insufficient Gas</CardTitle>
                         </CardHeader>
@@ -281,12 +281,12 @@ export const LockStepper = ({
                                 to your Neutron wallet to continue.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
 
             case "WaitingForNeutronGasBroadcastAndRelay":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Transferring ATOM</CardTitle>
                         </CardHeader>
@@ -303,11 +303,11 @@ export const LockStepper = ({
                                 the staking process.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForTokenizeSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Approve Transaction</CardTitle>
                         </CardHeader>
@@ -321,11 +321,11 @@ export const LockStepper = ({
                                 ATOM in preparation for locking in Hydro.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForTokenizeBroadcast":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Tokenizing ATOM</CardTitle>
                         </CardHeader>
@@ -336,11 +336,11 @@ export const LockStepper = ({
                                 congested.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "Error":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
@@ -374,11 +374,11 @@ export const LockStepper = ({
                                 Refresh page
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "WaitingForIBCSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Approve IBC Transfer</CardTitle>
                         </CardHeader>
@@ -392,11 +392,11 @@ export const LockStepper = ({
                                 ATOM to Hydro to start the locking process.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForIBCBroadcastAndRelay":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>IBC Transfer to Hydro</CardTitle>
                         </CardHeader>
@@ -411,11 +411,11 @@ export const LockStepper = ({
                                 the staking process.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForLockingSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Lock Tokens</CardTitle>
                         </CardHeader>
@@ -428,11 +428,11 @@ export const LockStepper = ({
                                 the Hydro contract and receiving voting power.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForLockingBroadcast":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Locking in Progress</CardTitle>
                         </CardHeader>
@@ -443,11 +443,11 @@ export const LockStepper = ({
                                 congested
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "Success":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
@@ -471,7 +471,7 @@ export const LockStepper = ({
                         <CardFooter>
                             <Button onClick={onExit}>Done</Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             default:
                 return null

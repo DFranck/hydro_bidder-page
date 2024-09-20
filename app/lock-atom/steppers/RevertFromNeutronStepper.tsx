@@ -158,7 +158,7 @@ export const RevertFromNeutronStepper = ({
                         <CardContent className="prose">
                             <p>
                                 You&apos;re about to revert{" "}
-                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
+                                <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
                                 back to its original state, staked with{" "}
                                 <strong>
                                     {getValidatorMoniker(
