@@ -1,13 +1,9 @@
 import { cn } from "@/lib/utils"
 import { FC } from "react"
 
-type Props = {
-    style?: string
-}
-
-export const HorizontalDivider: FC<Props> = ({ style }) => {
+export function HorizontalDivider({ className }: { className: string }) {
     return (
-        <div className={cn("flex py-5 items-center", style)}>
+        <div className={cn("flex py-5 items-center", className)}>
             <div className="flex-grow border-t border-[#FFE1B8]"></div>
         </div>
     )

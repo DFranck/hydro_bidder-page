@@ -28,7 +28,7 @@ export default function RootLayout({
       /> */}
             <body className={`${inter.className}`}>
                 <div className="bg-gradient-to-b from-black via-[#010006] to-[#001C47] p-5 h-screen w-screen fixed top-0 left-0 -z-10"></div>
-                <div className="text-white p-5">
+                <div className="text-white p-5 lg:p-0">
                     <ClientHandler>{children}</ClientHandler>
                 </div>
             </body>

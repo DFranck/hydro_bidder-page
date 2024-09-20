@@ -33,7 +33,7 @@ export default function DashboardWithTabs({
                             <a href="/dashboard">Lockups</a>
                         </TabsTrigger>
                     </TabsList>
-                    <HorizontalDivider style="mt-4 py-0" />
+                    <HorizontalDivider className="mt-4 py-0" />
                     {children}
                 </Tabs>
             </div>

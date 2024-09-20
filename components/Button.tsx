@@ -8,7 +8,13 @@ type Props = {
     className?: string
 }
 
-const Button: FC<Props> = ({ type, style, title, onClick, className }) => {
+export const Button: FC<Props> = ({
+    type,
+    style,
+    title,
+    onClick,
+    className,
+}) => {
     let buttonClass =
         "flex justify-center items-center w-fit gap-2.5 border rounded-[10px] border-solid text-center text-xl not-italic font-medium leading-[21px]"
     const providedPx = className?.match(/px-(\d+)/)
@@ -36,5 +42,3 @@ const Button: FC<Props> = ({ type, style, title, onClick, className }) => {
         </button>
     )
 }
-
-export default Button

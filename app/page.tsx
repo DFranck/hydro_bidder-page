@@ -1,8 +1,10 @@
 import Image from "next/image"
-import Button from "@/components/Button"
+import { Button as MikaButton } from "@/components/Button"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Newsletter } from "@/components/Newsletter"
 import { Footer } from "@/components/Footer"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const howHydroWorksTiles = [
     {
@@ -136,7 +138,7 @@ export default function Home() {
                                     />
                                 </g>
                             </svg>
-                            <p className="w-[569px] text-white text-xl font-normal font-['Inter'] leading-10">
+                            <p className="w-[569px] text-white text-xl font-normal leading-10">
                                 {item}
                             </p>
                         </div>
@@ -147,75 +149,104 @@ export default function Home() {
     }
 
     return (
-        <main className="w-full mx-auto flex min-h-screen flex-col bg-[#080815] bg-contain bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_100px_300px_black] after:pointer-events-none after:top-[978px] after:inset-x-0">
-            <div className="ml-[88px]">
-                <div className="mt-[155px]">
-                    <h1>Unlock the Power of Hydro</h1>
+        <main className="w-full text-white flex min-h-screen flex-col bg-[#080815] overflow-hidden">
+            <div className="relative">
+                <div className="bg-cover absolute -top-[11%] bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] h-screen w-screen"></div>
+                <div className=" relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_100px_220px_#080815] after:pointer-events-none after:top-[978px] after:inset-x-0"></div>
+                <div className="relavite mx-auto max-w-7xl relative z-10">
+                    <div className="max-w-6xl mx-auto h-[600px]">
+                        <div className="mt-[155px]">
+                            <h1 className="text-6xl font-bold leading-snug">
+                                Unlock the Power of Hydro
+                            </h1>
+                        </div>
+                        <p className="text-xl font-normal">
+                            Hydro is a decentralized platform that allows you to
+                            lock your ATOM tokens <br />
+                            and earn rewards. Earn passive income, participate
+                            in ICS projects, and more.
+                        </p>
+                        <Button
+                            asChild
+                            className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal"
+                        >
+                            <Link href="/lock-atom">Get started</Link>
+                        </Button>
+                    </div>
+
+                    <div className="max-w-6xl mx-auto mt-44">
+                        <div className="text-center">
+                            <h2>How Hydro Works</h2>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col items-center">
+                        <div className="text-center text-white text-xl font-normal leading-[30px] z-[1] mt-[20px]">
+                            Understand the step-by-step process of participating
+                            in the Hydro ecosystem.
+                        </div>
+                        {renderTiles({
+                            tiles: howHydroWorksTiles,
+                            size: "small",
+                        })}
+                        <Button
+                            asChild
+                            className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal"
+                        >
+                            <Link href="/lock-atom">Get started</Link>
+                        </Button>
+                    </div>
+                    <HorizontalDivider className="mt-[60px] mb-[150px] mx-[60px]" />
+                    <div className="ml-[112px] bg-contain bg-no-repeat bg-right bg-[url('/images/AdobeStock_856949849.png')] mix-blend-screen">
+                        <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase">
+                            benefits
+                        </p>
+                        <h2>Unlock the Power of Liquidity</h2>
+                        <div className="w-[598px] text-xl leading-[30px] pt-5">
+                            Hydro provides a unique opportunity to project to
+                            access liquidity and gain exposure, while rewarding
+                            ATOM holders for their participation.
+                        </div>
+                        {renderBenefits()}
+                        <MikaButton
+                            type="secondary"
+                            style="filled"
+                            title="Get Allowlisted"
+                        />
+                    </div>
+                    <div className="flex flex-col items-center px-[90px]  bg-gradient-to-b from-[rgba(0,21,45,0.20)] to-[rgba(0,59,147,0.40)]">
+                        <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase mt-[210px]">
+                            for projects
+                        </p>
+                        <h2 className="mt-[14px]">How it Works for Projects</h2>
+                        <p className="w-[693px] text-center text-white text-xl font-normal leading-[30px] mt-5">
+                            Hydro provides a unique opportunity for projects to
+                            access liquidity and gain exposure, while rewarding
+                            ATOM holders for their participation through a
+                            multi-step process involving tribute auctions.
+                        </p>
+                        {renderTiles({
+                            tiles: howItWorksForProjectsTiles,
+                            size: "large",
+                        })}
+                        <div className="flex gap-5 mt-[60px] mb-[80px]">
+                            <Button
+                                asChild
+                                className="mt-12 capitalize w-40 h-14 rounded-xl text-lg font-normal"
+                            >
+                                <Link href="/lock-atom">Get Allowlisted</Link>
+                            </Button>
+                            <Button
+                                asChild
+                                className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal bg-transparent border text-white"
+                            >
+                                <Link href="/docs">Read Docs</Link>
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-                <p className="w-[733px] text-white text-xl font-normal font-['Inter'] leading-7 mt-[20px]">
-                    Hydro is a decentralized platform that allows you to lock
-                    your ATOM tokens <br />
-                    and earn rewards. Earn passive income, participate in ICS
-                    projects, and more.
-                </p>
             </div>
-            <div className="text-center mt-[330px] z-[1]">
-                <h2>How Hydro Works</h2>
-            </div>
-            <div className="flex flex-col items-center">
-                <div className="text-center text-white text-xl font-normal leading-[30px] z-[1] mt-[20px]">
-                    Understand the step-by-step process of participating in the
-                    Hydro ecosystem.
-                </div>
-                {renderTiles({ tiles: howHydroWorksTiles, size: "small" })}
-                <Button type="secondary" style="filled" title="Get Started" />
-            </div>
-            <HorizontalDivider style="mt-[60px] mb-[150px] mx-[60px]" />
-            <div className="ml-[112px] bg-contain bg-no-repeat bg-right bg-[url('/images/AdobeStock_856949849.png')] mix-blend-screen">
-                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase">
-                    benefits
-                </p>
-                <h2>Unlock the Power of Liquidity</h2>
-                <div className="w-[598px] text-xl leading-[30px] pt-5">
-                    Hydro provides a unique opportunity to project to access
-                    liquidity and gain exposure, while rewarding ATOM holders
-                    for their participation.
-                </div>
-                {renderBenefits()}
-                <Button
-                    type="secondary"
-                    style="filled"
-                    title="Get Allowlisted"
-                />
-            </div>
-            <div className="flex flex-col items-center px-[90px]  bg-gradient-to-b from-[rgba(0,21,45,0.20)] to-[rgba(0,59,147,0.40)]">
-                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase mt-[210px]">
-                    for projects
-                </p>
-                <h2 className="mt-[14px]">How it Works for Projects</h2>
-                <p className="w-[693px] text-center text-white text-xl font-normal leading-[30px] mt-5">
-                    Hydro provides a unique opportunity for projects to access
-                    liquidity and gain exposure, while rewarding ATOM holders
-                    for their participation through a multi-step process
-                    involving tribute auctions.
-                </p>
-                {renderTiles({
-                    tiles: howItWorksForProjectsTiles,
-                    size: "large",
-                })}
-                <div className="flex gap-5 mt-[60px] mb-[80px]">
-                    <Button
-                        type="secondary"
-                        style="filled"
-                        title="Get Allowlisted"
-                    />
-                    <Button
-                        type="secondary"
-                        style="outline"
-                        title="Read Docs"
-                    />
-                </div>
-            </div>
+
             <Newsletter />
             <Footer />
         </main>
