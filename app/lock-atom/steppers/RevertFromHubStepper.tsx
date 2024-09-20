@@ -125,8 +125,8 @@ export const RevertFromHubStepper = ({
                                 Revert {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
-                            <p>
+                        <CardContent className="space-y-4">
+ƒ                            <p>
                                 You&apos;re about to revert{" "}
                                 <strong className="text-white">{formatAmount(amount)} ATOM</strong>{" "}
                                 back to its original state, staked with{" "}
@@ -157,7 +157,7 @@ export const RevertFromHubStepper = ({
                         <CardHeader>
                             <CardTitle>Approve Redemption</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -184,7 +184,7 @@ export const RevertFromHubStepper = ({
                         <CardHeader>
                             <CardTitle>Redeeming ATOM</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Redeeming ATOM...</p>
                             <p>
                                 Hang tight, we&apos;re restoring your previous
@@ -199,7 +199,7 @@ export const RevertFromHubStepper = ({
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Your{" "}
                                 <strong className="text-white">{formatAmount(amount)} ATOM</strong> has
@@ -217,7 +217,7 @@ export const RevertFromHubStepper = ({
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been reverted.

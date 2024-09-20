@@ -141,13 +141,13 @@ export const ContinueFromHubStepper = ({
         switch (step) {
             case "Init":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>
                                 Continue Locking {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Nice! You&apos;re about to lock{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong>{" "}
@@ -171,13 +171,14 @@ export const ContinueFromHubStepper = ({
                                 (voting power).
                             </p>
                             <form
+                            className="mt-12"
                                 onSubmit={(e) => {
                                     e.preventDefault()
                                     execute()
                                 }}
                             >
                                 <div className="mb-4">
-                                    <label className="block mb-2">
+                                    <label className="block m">
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
@@ -215,15 +216,15 @@ export const ContinueFromHubStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "WaitingForIBCSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Approve IBC Transfer</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -233,15 +234,15 @@ export const ContinueFromHubStepper = ({
                                 ATOM to Hydro to start the locking process.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForIBCBroadcastAndRelay":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Transferring to Hydro</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Sending your staked ATOM to Hydro...</p>
                             <p>
                                 This could take 30 seconds or longer if the
@@ -252,43 +253,43 @@ export const ContinueFromHubStepper = ({
                                 the staking process.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForLockingSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Approve Locking</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve in your wallet again to lock your ATOM
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForLockingBroadcast":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Locking in Progress</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Locking your ATOM...</p>
                             <p>
                                 Just a few seconds, unless the network is
                                 congested
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "Success":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 You locked{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong> in
@@ -308,15 +309,15 @@ export const ContinueFromHubStepper = ({
                         <CardFooter>
                             <Button onClick={onExit}>Done</Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "Error":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been locked in Hydro.
@@ -346,7 +347,7 @@ export const ContinueFromHubStepper = ({
                                 Refresh page
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             default:
                 return null

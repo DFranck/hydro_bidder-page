@@ -149,16 +149,18 @@ export const RevertFromNeutronStepper = ({
         switch (step) {
             case "Init":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>
                                 Revert {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent className="space-y-4">
                             <p>
                                 You&apos;re about to revert{" "}
-                                <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
+                                <span className="font-bold">
+                                    {formatAmount(amount)} ATOM
+                                </span>{" "}
                                 back to its original state, staked with{" "}
                                 <strong>
                                     {getValidatorMoniker(
@@ -179,15 +181,15 @@ export const RevertFromNeutronStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "WaitingForIBCSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Approve IBC Transfer</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -197,30 +199,30 @@ export const RevertFromNeutronStepper = ({
                                 to your Cosmos Hub wallet.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForIBCBroadcast":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Transferring to Cosmos Hub</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Transferring tokenized ATOM to Cosmos Hub...</p>
                             <p>
                                 This could take 30 seconds or longer if the
                                 network is congested.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForRedeemSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Approve Redemption</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -239,30 +241,30 @@ export const RevertFromNeutronStepper = ({
                                 .
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForRedeemBroadcast":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Redeeming ATOM</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Redeeming ATOM...</p>
                             <p>
                                 Hang tight, we&apos;re restoring your previous
                                 staked position.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "Success":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Your{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong> has
@@ -272,15 +274,15 @@ export const RevertFromNeutronStepper = ({
                         <CardFooter>
                             <Button onClick={onExit}>Done</Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "Error":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been reverted.
@@ -310,7 +312,7 @@ export const RevertFromNeutronStepper = ({
                                 Refresh page
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             default:
                 return null
