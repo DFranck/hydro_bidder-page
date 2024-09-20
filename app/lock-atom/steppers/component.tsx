@@ -1,11 +1,11 @@
 "use client"
 
 import React from "react"
-import { LockStepper } from "./lockStepper"
-import { RevertFromHubStepper } from "./revertFromHubStepper"
-import { RevertFromNeutronStepper } from "./revertFromNeutronStepper"
-import { ContinueFromHubStepper } from "./continueFromHubStepper"
-import { ContinueFromNeutronStepper } from "./continueFromNeutronStepper"
+import { LockStepper } from "./LockStepper"
+import { RevertFromHubStepper } from "./RevertFromHubStepper"
+import { RevertFromNeutronStepper } from "./RevertFromNeutronStepper"
+import { ContinueFromHubStepper } from "./ContinueFromHubStepper"
+import { ContinueFromNeutronStepper } from "./ContinueFromNeutronStepper"
 
 import { ChainContext } from "@cosmos-kit/core"
 import { SigningStargateClient } from "@cosmjs/stargate"

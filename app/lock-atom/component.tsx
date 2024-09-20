@@ -23,7 +23,6 @@ import {
     CardHeader,
     CardFooter,
     CardTitle,
-    CardDescription,
     CardContent,
 } from "@/components/ui/card"
 
@@ -35,7 +34,7 @@ import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronSteppe
 
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
 
-import { useForm, Controller } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "@/components/ui/input"
