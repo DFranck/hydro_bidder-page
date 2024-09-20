@@ -11,7 +11,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { executeVote, fetchMyVotes } from "@/hooks/hooks"
+import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { useChain } from "@cosmos-kit/react"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { ChevronLeft } from "lucide-react"
@@ -70,6 +70,8 @@ const ProposalDetail = ({
         fetchVoteStatus()
     }, [address])
 
+    const { data: userVotingData } = useUserVotingData(address || "")
+
     async function onVote() {
         if (!proposal) {
             return
@@ -106,17 +108,62 @@ const ProposalDetail = ({
         }
     }
 
-    function displayBtnText() {
-        if (!isWalletConnected) {
-            return "Connect wallet to vote"
-        }
-        if (submitting) {
-            return "Submitting..."
+    function displayButton() {
+        if (deployed) {
+            return null
         }
 
-        return hasVotedThisProposal
-            ? "You voted for this proposal"
-            : "Vote for Project"
+        if (!isWalletConnected) {
+            return (
+                <Button
+                    disabled
+                    className="text-[#080815] text-center text-lg not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white w-full"
+                >
+                    Connect wallet to vote
+                </Button>
+            )
+        }
+
+        if (submitting) {
+            return (
+                <Button
+                    disabled
+                    className="text-[#080815] text-center text-lg not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white w-full"
+                >
+                    Submitting...
+                </Button>
+            )
+        }
+
+        if (userVotingData?.votingPower === 0) {
+            return (
+                <Link href="/lock-atom">
+                    <Button className="text-[#080815] text-center text-lg not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white w-full">
+                        Lock ATOM to vote
+                    </Button>
+                </Link>
+            )
+        }
+
+        if (hasVotedThisProposal) {
+            return (
+                <Button
+                    disabled
+                    className="text-[#080815] text-center text-lg not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white w-full"
+                >
+                    You voted for this proposal
+                </Button>
+            )
+        }
+
+        return (
+            <Button
+                onClick={() => onVoteClicked()}
+                className="text-[#080815] text-center text-lg not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white w-full"
+            >
+                Vote for proposal
+            </Button>
+        )
     }
 
     const ChangeVote = () => {
@@ -200,19 +247,7 @@ const ProposalDetail = ({
                     </div>
                     <div className="w-full md:w-[30%] mt-6 md:mt-0 pb-10">
                         <div className="pt-6 pb-8 w-[250px]">
-                            {!deployed && (
-                                <Button
-                                    disabled={
-                                        !isWalletConnected ||
-                                        hasVotedThisProposal ||
-                                        submitting
-                                    }
-                                    onClick={() => onVoteClicked()}
-                                    className="text-[#080815] text-center text-lg not-italic font-medium leading-[21px] flex h-[45px] justify-center items-center gap-2.5 shrink-0 py-0 bg-white hover:text-white"
-                                >
-                                    {displayBtnText()}
-                                </Button>
-                            )}
+                            {displayButton()}
                         </div>
 
                         <div>

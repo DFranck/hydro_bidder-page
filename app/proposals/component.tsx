@@ -1,15 +1,23 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import {
-    DataTable,
-    makeProposalColumnDef,
-} from "../../components/proposalTable"
-import { Proposal, Timestamp } from "../ts_types/HydroBase.types"
+import { useChain } from "@cosmos-kit/react"
+import { Proposal } from "../ts_types/HydroBase.types"
 import { useState } from "react"
 import { GlobalState } from "../types"
 import { Tribute } from "../ts_types/TributeBase.types"
 import { TranchePagination } from "@/components/TranchePagination"
+import { sumTributeAmounts } from "@/lib/utils"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { CircleCheckBig, Circle } from "lucide-react"
+import { useMyVotes } from "@/hooks/hooks"
 
 const ActiveProposals = ({
     currentProposalTranches,
@@ -23,12 +31,17 @@ const ActiveProposals = ({
     const [currentTranche, setCurrentTranche] = useState(1)
 
     const toggleTranche = () => {
-        if (currentTranche === 1) {
-            setCurrentTranche(2)
-        } else {
-            setCurrentTranche(1)
-        }
+        setCurrentTranche(currentTranche === 1 ? 2 : 1)
     }
+
+    const { isWalletConnected, address, getSigningCosmWasmClient } =
+        useChain("neutron")
+
+    const { data: myVotes } = useMyVotes(
+        address || "",
+        globalState.currentRound,
+        Array.from(currentProposalTranches.keys())
+    )
 
     return (
         <div className="mt-14 space-y-8 lg:space-y-14">
@@ -37,104 +50,88 @@ const ActiveProposals = ({
                 toggleTranche={toggleTranche}
                 globalState={globalState}
                 title="Proposals in Voting"
-                description="The winning proposal from each tranche will deployed in the
-                    next round."
+                description="The winning proposal from each tranche will deployed in the next round."
             />
 
             {currentProposalTranches.get(currentTranche) && (
-                <DataTable
-                    columns={[
-                        {
-                            accessorKey: "title",
-                            header: () => (
-                                <div className="text-center capitalize">
-                                    Proposal Name
-                                </div>
-                            ),
-                            cell: ({ row }) => {
+                <Table className="border-separate border-spacing-y-2">
+                    <TableHeader>
+                        <TableRow className="border-0">
+                            <TableHead className="text-left pr-0">
+                                Vote
+                            </TableHead>
+                            <TableHead className="text-left">
+                                Proposal Name
+                            </TableHead>
+                            <TableHead className="text-center">
+                                Tribute Amount
+                            </TableHead>
+                            <TableHead className="text-center">
+                                Current vote share
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {currentProposalTranches
+                            .get(currentTranche)!
+                            .map((proposal) => {
+                                const tributes = currentProposalTributes.get(
+                                    proposal.proposal_id
+                                )!
+                                const summedTributes =
+                                    sumTributeAmounts(tributes)
+
                                 return (
-                                    <div className="flex flex-col">
-                                        <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2">
-                                            {row.original.proposal.title}
-                                        </p>
-                                    </div>
+                                    <TableRow
+                                        key={proposal.proposal_id}
+                                        className="bg-[#303132] text-white hover:bg-[#404142] cursor-pointer border-0"
+                                        onClick={() =>
+                                            (window.location.href = `/proposals/${proposal.proposal_id}`)
+                                        }
+                                    >
+                                        <TableCell className="p-5 rounded-[10px_0_0_10px] mb-5 text-center">
+                                            {myVotes?.get(currentTranche) &&
+                                            myVotes.get(currentTranche)
+                                                ?.prop_id ===
+                                                proposal.proposal_id ? (
+                                                <CircleCheckBig />
+                                            ) : (
+                                                <Circle />
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="p-5 mb-5">
+                                            <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2">
+                                                {proposal.title}
+                                            </p>
+                                        </TableCell>
+                                        <TableCell className="p-5 text-center mb-5">
+                                            {summedTributes.map(
+                                                (tribute, index) => (
+                                                    <div key={index}>
+                                                        {`${(
+                                                            tribute.amount /
+                                                            1000000
+                                                        ).toFixed(2)} ${
+                                                            tribute.denom
+                                                                .length > 20
+                                                                ? tribute.denom.slice(
+                                                                      0,
+                                                                      17
+                                                                  ) + "..."
+                                                                : tribute.denom
+                                                        }`}
+                                                    </div>
+                                                )
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="p-5 text-center rounded-[0_10px_10px_0] border-0 mb-5">
+                                            {proposal.percentage}
+                                        </TableCell>
+                                    </TableRow>
                                 )
-                            },
-                        },
-                        {
-                            accessorKey: "tribute",
-                            header: () => (
-                                <div className="text-center capitalize">
-                                    Tribute Amount
-                                </div>
-                            ),
-                            cell: ({ row }) => (
-                                <div className="text-center">
-                                    {row.original.summedTributes.map(
-                                        (tribute, index) => (
-                                            <div
-                                                key={index}
-                                                className="text-center"
-                                            >
-                                                {`${(
-                                                    tribute.amount / 1000000
-                                                ).toFixed(2)} ${
-                                                    tribute.denom.length > 20
-                                                        ? tribute.denom.slice(
-                                                              0,
-                                                              17
-                                                          ) + "..."
-                                                        : tribute.denom
-                                                }`}
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            ),
-                        },
-                        {
-                            accessorKey: "votingPowerPercent",
-                            header: () => (
-                                <div className="text-center capitalize">
-                                    Current vote share
-                                </div>
-                            ),
-                            cell: ({ row }) => (
-                                <div className="text-center">
-                                    {row.original.proposal.percentage}
-                                </div>
-                            ),
-                        },
-                        {
-                            accessorKey: "link",
-                            header: "",
-                            cell: ({ row }) => {
-                                return (
-                                    <div className="flex justify-end w-full">
-                                        <Button
-                                            className="bg-white text-black lg:w-40 hover:bg-gray-200"
-                                            asChild
-                                        >
-                                            <Link
-                                                href={`/proposals/${row.original.proposal.proposal_id}`}
-                                            >
-                                                View Proposal
-                                            </Link>
-                                        </Button>
-                                    </div>
-                                )
-                            },
-                        },
-                    ]}
-                    data={(
-                        currentProposalTranches.get(currentTranche) || []
-                    ).map((proposal) =>
-                        makeProposalColumnDef(
-                            proposal,
-                            currentProposalTributes.get(proposal.proposal_id)!
-                        )
-                    )}
-                />
+                            })}
+                    </TableBody>
+                </Table>
             )}
         </div>
     )
