@@ -27,11 +27,11 @@ import {
     CardContent,
 } from "@/components/ui/card"
 
-import { LockStepper } from "./steppers/lockStepper"
-import { RevertFromHubStepper } from "./steppers/revertFromHubStepper"
-import { RevertFromNeutronStepper } from "./steppers/revertFromNeutronStepper"
-import { ContinueFromHubStepper } from "./steppers/continueFromHubStepper"
-import { ContinueFromNeutronStepper } from "./steppers/continueFromNeutronStepper"
+import { LockStepper } from "./steppers/LockStepper"
+import { RevertFromHubStepper } from "./steppers/RevertFromHubStepper"
+import { RevertFromNeutronStepper } from "./steppers/RevertFromNeutronStepper"
+import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
+import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
 
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
 
