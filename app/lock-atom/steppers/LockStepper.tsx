@@ -197,7 +197,7 @@ export const LockStepper = ({
                                 Lock {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent className="space-y-4">
                             <p>
                                 Nice! You&apos;re about to lock{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong>{" "}
@@ -246,7 +246,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Insufficient Gas</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 You do not have enough gas to complete the
                                 transaction.
@@ -267,7 +267,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Insufficient Gas</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 You do not have enough gas on Neutron (the chain
                                 which hosts Hydro).
@@ -290,7 +290,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Transferring ATOM</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Transferring your ATOM to your Neutron wallet...
                             </p>
@@ -311,7 +311,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Approve Transaction</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -329,7 +329,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Tokenizing ATOM</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Tokenizing your staked ATOM...</p>
                             <p>
                                 Just a few seconds, unless the network is
@@ -344,7 +344,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been locked in Hydro.
@@ -382,7 +382,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Approve IBC Transfer</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -400,7 +400,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>IBC Transfer to Hydro</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Sending your staked ATOM to Hydro...</p>
                             <p>
                                 This could take 30 seconds or longer if the
@@ -419,7 +419,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Lock Tokens</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve in your wallet again to lock your ATOM
                             </p>
@@ -436,7 +436,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Locking in Progress</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Locking your ATOM...</p>
                             <p>
                                 Just a few seconds, unless the network is
@@ -451,7 +451,7 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 You locked{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong> in

@@ -95,7 +95,7 @@ export const ProposalModal = ({
     return (
         <>
             <ChangeVote />
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
                 <div className="relative bg-[url('/images/ProposalModal-background.png')] bg-cover bg-center bg-no-repeat rounded-md shadow-md p-4 sm:p-8 md:p-12 w-full sm:w-11/12 md:w-3/4 max-h-[90vh] overflow-auto">
                     <Link
                         className="absolute top-2.5 right-4 h-6 w-6 bg-black text-white rounded flex justify-center items-center text-3xl"

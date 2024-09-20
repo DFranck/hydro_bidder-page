@@ -184,7 +184,7 @@ export default function LSMInteraction({
         (hubSigner && neutronSigner && (
             <div>
                 {stepper && stepper.type === "lock" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
                         <LockStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -199,7 +199,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromHubLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
                         <RevertFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -213,7 +213,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromNeutronLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
                         <RevertFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -228,7 +228,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromHubLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
                         <ContinueFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -242,7 +242,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromNeutronLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
                         <ContinueFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -335,7 +335,7 @@ const HubIncompleteNotice = ({
             <CardHeader>
                 <CardTitle>Incomplete ATOM Locking</CardTitle>
             </CardHeader>
-            <CardContent className="prose">
+            <CardContent className="space-y-4">
                 <p>
                     Looks like you might have been interrupted while locking
                     your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}
@@ -402,7 +402,7 @@ const NeutronIncompleteNotice = ({
             <CardHeader>
                 <CardTitle>Incomplete ATOM Locking</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
                 <p>
                     Looks like you might have been interrupted while locking
                     your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}

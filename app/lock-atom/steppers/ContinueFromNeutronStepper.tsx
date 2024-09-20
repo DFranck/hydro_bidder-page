@@ -123,13 +123,13 @@ export const ContinueFromNeutronStepper = ({
         switch (step) {
             case "Init":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>
                                 Continue Locking {formatAmount(amount)} ATOM
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent className="space-y-4">
                             <p>
                                 Nice! You&apos;re about to lock{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong>{" "}
@@ -199,44 +199,44 @@ export const ContinueFromNeutronStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "WaitingForLockSigning":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Approve Locking</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 Approve in your wallet again to lock your ATOM
                                 into the Hydro contract to receive voting power.
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "WaitingForLockBroadcast":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Locking in Progress</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>Locking your ATOM...</p>
                             <p>
                                 Just a few seconds, unless the network is
                                 congested
                             </p>
                         </CardContent>
-                    </>
+                    </Card>
                 )
             case "Success":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 You locked{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong> in
@@ -256,15 +256,15 @@ export const ContinueFromNeutronStepper = ({
                         <CardFooter>
                             <Button onClick={onExit}>Done</Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             case "Error":
                 return (
-                    <>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
-                        <CardContent className="prose">
+                        <CardContent>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been locked in Hydro.
@@ -294,7 +294,7 @@ export const ContinueFromNeutronStepper = ({
                                 Refresh page
                             </Button>
                         </CardFooter>
-                    </>
+                    </Card>
                 )
             default:
                 return null
