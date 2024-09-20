@@ -117,7 +117,7 @@ export default function Home() {
 
     const renderBenefits = () => {
         return (
-            <div className="mt-[20px] mb-[60px]">
+            <div className="">
                 {benefitsCheckList.map((item, index) => {
                     return (
                         <div
@@ -138,9 +138,7 @@ export default function Home() {
                                     />
                                 </g>
                             </svg>
-                            <p className="w-[569px] text-white text-xl font-normal leading-10">
-                                {item}
-                            </p>
+                            <p className="text-lg font-normal">{item}</p>
                         </div>
                     )
                 })}
@@ -196,57 +194,74 @@ export default function Home() {
                             <Link href="/lock-atom">Get started</Link>
                         </Button>
                     </div>
-                    <HorizontalDivider className="mt-[60px] mb-[150px] mx-[60px]" />
-                    <div className="ml-[112px] bg-contain bg-no-repeat bg-right bg-[url('/images/AdobeStock_856949849.png')] mix-blend-screen">
-                        <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase">
-                            benefits
-                        </p>
-                        <h2>Unlock the Power of Liquidity</h2>
-                        <div className="w-[598px] text-xl leading-[30px] pt-5">
-                            Hydro provides a unique opportunity to project to
-                            access liquidity and gain exposure, while rewarding
-                            ATOM holders for their participation.
-                        </div>
-                        {renderBenefits()}
-                        <MikaButton
-                            type="secondary"
-                            style="filled"
-                            title="Get Allowlisted"
-                        />
-                    </div>
-                    <div className="flex flex-col items-center px-[90px]  bg-gradient-to-b from-[rgba(0,21,45,0.20)] to-[rgba(0,59,147,0.40)]">
-                        <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase mt-[210px]">
-                            for projects
-                        </p>
-                        <h2 className="mt-[14px]">How it Works for Projects</h2>
-                        <p className="w-[693px] text-center text-white text-xl font-normal leading-[30px] mt-5">
-                            Hydro provides a unique opportunity for projects to
-                            access liquidity and gain exposure, while rewarding
-                            ATOM holders for their participation through a
-                            multi-step process involving tribute auctions.
-                        </p>
-                        {renderTiles({
-                            tiles: howItWorksForProjectsTiles,
-                            size: "large",
-                        })}
-                        <div className="flex gap-5 mt-[60px] mb-[80px]">
+                    <HorizontalDivider className="mt-[60px] mb-[150px]" />
+                    <div className="max-w-6xl mx-auto pb-44 flex lg:flex-row flex-col items-center">
+                        <div>
+                            <div className="max-w-3xl space-y-3">
+                                <p className="text-[#FFE1B8] slashed-zero tracking-wide font-medium uppercase">
+                                    benefits
+                                </p>
+                                <h2>Unlock the Power of Liquidity</h2>
+                                <div className="text-lg">
+                                    Hydro provides a unique opportunity to
+                                    project to access liquidity and gain
+                                    exposure, while rewarding ATOM holders for
+                                    their participation.
+                                </div>
+                                {renderBenefits()}
+                            </div>
                             <Button
                                 asChild
-                                className="mt-12 capitalize w-40 h-14 rounded-xl text-lg font-normal"
+                                className="mt-8 capitalize w-40 h-14 rounded-xl text-lg font-normal"
                             >
                                 <Link href="/lock-atom">Get Allowlisted</Link>
                             </Button>
-                            <Button
-                                asChild
-                                className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal bg-transparent border text-white"
-                            >
-                                <Link href="/docs">Read Docs</Link>
-                            </Button>
+                        </div>
+                        <div className="relative bg-[#080815]">
+                            <div className="bg-white"></div>
+                            <Image
+                                className="mix-blend-screen"
+                                src="/images/side-image-dots.png"
+                                alt="Hydro"
+                                width={800}
+                                height={800}
+                            />
                         </div>
                     </div>
                 </div>
             </div>
-
+            <div className="bg-gradient-to-b from-[rgba(0,21,45,0.20)] to-[rgba(0,59,147,0.40)]">
+                <div className="max-w-7xl mx-auto flex flex-col items-center ">
+                    <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase mt-[210px]">
+                        for projects
+                    </p>
+                    <h2 className="mt-[14px]">How it Works for Projects</h2>
+                    <p className="w-[693px] text-center text-white text-xl font-normal leading-[30px] mt-5">
+                        Hydro provides a unique opportunity for projects to
+                        access liquidity and gain exposure, while rewarding ATOM
+                        holders for their participation through a multi-step
+                        process involving tribute auctions.
+                    </p>
+                    {renderTiles({
+                        tiles: howItWorksForProjectsTiles,
+                        size: "large",
+                    })}
+                    <div className="flex gap-5 mt-8 mb-44">
+                        <Button
+                            asChild
+                            className="capitalize w-40 h-14 rounded-xl text-lg font-normal"
+                        >
+                            <Link href="/lock-atom">Get Allowlisted</Link>
+                        </Button>
+                        <Button
+                            asChild
+                            className="capitalize w-36 h-14 rounded-xl text-lg font-normal bg-transparent border text-white"
+                        >
+                            <Link href="/docs">Read Docs</Link>
+                        </Button>
+                    </div>
+                </div>
+            </div>
             <Newsletter />
             <Footer />
         </main>
