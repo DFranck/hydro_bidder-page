@@ -178,7 +178,7 @@ export async function checkForGasOnHub(hubChain: ChainContext) {
     }
 }
 
-const fetchDenomTrace = async (
+export const fetchDenomTrace = async (
     balance: { denom: string; amount: string },
     restEndpoint: string
 ) => {
