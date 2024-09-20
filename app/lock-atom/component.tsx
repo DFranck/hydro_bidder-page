@@ -521,53 +521,6 @@ const LockForm = ({
         }
     }, [selectedAmount, selectedValidator, validators])
 
-    console.log("validators", validators)
-
-    // Pulling this out to reduce nesting
-    const validatorList =
-        (value: string, onChange: (value: string) => void) =>
-        (v: {
-            validator: Validator
-            delegation: Delegation
-            delegation_balance: { denom: string; amount: string }
-        }) => {
-            const lsmCapacity = calculateLsmCapacity(
-                v.validator.validator_bond_shares,
-                v.validator.liquid_shares
-            )
-            const isDisabled = lsmCapacity <= 0 || lsmCapacity < selectedAmount
-            return (
-                <Button
-                    key={v.validator.operator_address}
-                    type="button"
-                    onClick={() => {
-                        if (!isDisabled) {
-                            onChange(v.validator.operator_address)
-                        }
-                    }}
-                    variant={
-                        value === v.validator.operator_address
-                            ? "default"
-                            : "outline"
-                    }
-                    className="w-full"
-                    disabled={isDisabled}
-                >
-                    <span className="flex-grow text-left">
-                        {v.validator.description.moniker ||
-                            v.validator.operator_address}
-                    </span>
-                    <span className="flex-shrink-0 text-right">
-                        {isDisabled
-                            ? "(Insufficient validator bond)"
-                            : `(${formatAmount(
-                                  v.delegation_balance.amount
-                              )} ATOM staked)`}
-                    </span>
-                </Button>
-            )
-        }
-
     return (
         <Card>
             <CardHeader>
@@ -601,12 +554,24 @@ const LockForm = ({
                                                     ATOM, then come back.
                                                 </p>
                                             ) : (
-                                                validators.map(
-                                                    validatorList(
-                                                        field.value,
-                                                        field.onChange
-                                                    )
-                                                )
+                                                validators.map((v) => (
+                                                    <ValidatorListItem
+                                                        key={
+                                                            v.validator
+                                                                .operator_address
+                                                        }
+                                                        validator={v}
+                                                        selectedValue={
+                                                            field.value
+                                                        }
+                                                        onChange={
+                                                            field.onChange
+                                                        }
+                                                        selectedAmount={
+                                                            selectedAmount
+                                                        }
+                                                    />
+                                                ))
                                             )}
                                         </div>
                                     </FormControl>
@@ -727,6 +692,60 @@ const LockForm = ({
                 </Form>
             </CardContent>
         </Card>
+    )
+}
+
+interface ValidatorListItemProps {
+    validator: {
+        validator: Validator
+        delegation: Delegation
+        delegation_balance: { denom: string; amount: string }
+    }
+    selectedValue: string
+    onChange: (value: string) => void
+    selectedAmount: number
+}
+
+export const ValidatorListItem: React.FC<ValidatorListItemProps> = ({
+    validator: v,
+    selectedValue,
+    onChange,
+    selectedAmount,
+}) => {
+    const lsmCapacity = calculateLsmCapacity(
+        v.validator.validator_bond_shares,
+        v.validator.liquid_shares
+    )
+    const isDisabled = lsmCapacity <= 0 || lsmCapacity < selectedAmount
+
+    return (
+        <Button
+            type="button"
+            onClick={() => {
+                if (!isDisabled) {
+                    onChange(v.validator.operator_address)
+                }
+            }}
+            variant={
+                selectedValue === v.validator.operator_address
+                    ? "default"
+                    : "outline"
+            }
+            className="w-full"
+            disabled={isDisabled}
+        >
+            <span className="flex-grow text-left">
+                {v.validator.description.moniker ||
+                    v.validator.operator_address}
+            </span>
+            <span className="flex-shrink-0 text-right">
+                {isDisabled
+                    ? "(Insufficient validator bond)"
+                    : `(${formatAmount(
+                          v.delegation_balance.amount
+                      )} ATOM staked)`}
+            </span>
+        </Button>
     )
 }
 
