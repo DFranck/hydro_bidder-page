@@ -126,7 +126,7 @@ export const EditLockupDuration = ({
 
     useEffect(() => {
         const resolveValidator = async () => {
-            if (open &&lockup && lockup.lock_entry.funds.denom) {
+            if (open && lockup && lockup.lock_entry.funds.denom) {
                 const endpoint = await getRestEndpoint()
                 const trace = await fetchDenomTrace(
                     lockup.lock_entry.funds,
@@ -151,7 +151,7 @@ export const EditLockupDuration = ({
                 asChild
                 id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
             >
-                <Button className="rounded-lg text-black bg-white border-white border h-10 hover:bg-transparent hover:text-white">
+                <Button className="rounded-lg text-black bg-white h-10 border-y-4 border-transparent hover:border-b-[#C7C7C7] hover:bg-white">
                     Extend Lockup
                 </Button>
             </DialogTrigger>

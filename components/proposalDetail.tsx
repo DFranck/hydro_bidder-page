@@ -208,7 +208,7 @@ const ProposalDetail = ({
     return (
         <div className="max-w-7xl mx-auto pb-44">
             <ChangeVote />
-            <div className="bg-[#303132] rounded-[10px] p-12 mt-[72px]">
+            <div className="bg-[#303132]/75 backdrop-blur rounded-[10px] p-12 mt-[72px]">
                 <div className="flex flex-col md:flex-row gap-8 justify-between">
                     <div>
                         <Link href="/proposals" className="opacity-80">

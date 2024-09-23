@@ -57,16 +57,16 @@ const ActiveProposals = ({
                 <Table className="border-separate border-spacing-y-2">
                     <TableHeader>
                         <TableRow className="border-0">
-                            <TableHead className="text-left pr-0">
+                            <TableHead className="text-left pr-0 text-neutral-200">
                                 Vote
                             </TableHead>
-                            <TableHead className="text-left">
+                            <TableHead className="text-left text-neutral-200">
                                 Proposal Name
                             </TableHead>
-                            <TableHead className="text-center">
+                            <TableHead className="text-center text-neutral-200">
                                 Tribute Amount
                             </TableHead>
-                            <TableHead className="text-center">
+                            <TableHead className="text-center text-neutral-200">
                                 Current vote share
                             </TableHead>
                         </TableRow>

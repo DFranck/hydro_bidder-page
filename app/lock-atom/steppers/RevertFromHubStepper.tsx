@@ -126,9 +126,12 @@ export const RevertFromHubStepper = ({
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-ƒ                            <p>
+                            ƒ{" "}
+                            <p>
                                 You&apos;re about to revert{" "}
-                                <strong className="text-white">{formatAmount(amount)} ATOM</strong>{" "}
+                                <strong className="text-white">
+                                    {formatAmount(amount)} ATOM
+                                </strong>{" "}
                                 back to its original state, staked with{" "}
                                 <strong className="text-white">
                                     {getValidatorMoniker(
@@ -165,7 +168,9 @@ export const RevertFromHubStepper = ({
                             <p>
                                 This will restore your previous staked position
                                 with the amount of{" "}
-                                <strong className="text-white">{formatAmount(amount)} ATOM</strong>{" "}
+                                <strong className="text-white">
+                                    {formatAmount(amount)} ATOM
+                                </strong>{" "}
                                 staked to{" "}
                                 <strong className="text-white">
                                     {getValidatorMoniker(
@@ -202,8 +207,11 @@ export const RevertFromHubStepper = ({
                         <CardContent>
                             <p>
                                 Your{" "}
-                                <strong className="text-white">{formatAmount(amount)} ATOM</strong> has
-                                been restored to your previous staked position.
+                                <strong className="text-white">
+                                    {formatAmount(amount)} ATOM
+                                </strong>{" "}
+                                has been restored to your previous staked
+                                position.
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -254,5 +262,9 @@ export const RevertFromHubStepper = ({
         }
     }
 
-    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
+    return (
+        <Card className="max-w-[800px] mx-auto bg-[#171717]">
+            {renderStep()}
+        </Card>
+    )
 }

@@ -116,7 +116,7 @@ function Lockups({
             <div className="flex flex-col lg:flex-row justify-between">
                 <h3>My Lockups</h3>
                 <div className="space-x-2 flex items-center justify-between">
-                    <span>Lock staked ATOM to get voting power </span>
+                    <p className="drop-shadow-sm">Lock staked ATOM to get voting power</p>
                     <Button
                         asChild
                         className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]"
@@ -132,22 +132,24 @@ function Lockups({
                 )}
             >
                 <TableHeader>
-                    <TableRow >
+                    <TableRow>
                         {/* <TableHead>Lockup ID</TableHead> */}
-                        <TableHead className="text-center">
+                        <TableHead className="text-center text-neutral-200">
                             Locked ATOM
                         </TableHead>
-                        <TableHead className="text-center">
+                        <TableHead className="text-center text-neutral-200">
                             Multiplier
                         </TableHead>
-                        <TableHead className="text-center">
+                        <TableHead className="text-center text-neutral-200">
                             Voting Power
                         </TableHead>
                         {/* <TableHead>Start Date</TableHead> */}
-                        <TableHead className="text-center">
+                        <TableHead className="text-center text-neutral-200">
                             Expires in
                         </TableHead>
-                        <TableHead className="text-center">End Date</TableHead>
+                        <TableHead className="text-center text-neutral-200">
+                            End Date
+                        </TableHead>
                         <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
