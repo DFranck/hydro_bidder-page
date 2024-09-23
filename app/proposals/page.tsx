@@ -2,6 +2,7 @@ import { ATOM_PRICE_URL } from "@/config"
 import { fetchDashboardData } from "../dashboard/getData"
 import ActiveProposals from "./component"
 import { ProposalListTopModules } from "./TopModules"
+import { WelcomePopup } from "./welcomePopup"
 
 export default async function ActiveProposalsPage() {
     const {
@@ -22,6 +23,7 @@ export default async function ActiveProposalsPage() {
 
     return (
         <div className="pb-44 max-w-7xl mx-auto px-5 lg:px-0">
+            <WelcomePopup />
             <ProposalListTopModules
                 lockedAtom={globalState.totalLockedTokens}
                 roundEnd={currentRoundEnd}
