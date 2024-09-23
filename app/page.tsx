@@ -148,10 +148,10 @@ export default function Home() {
 
     return (
         <main className="w-full text-white flex min-h-screen flex-col bg-[#080815] overflow-hidden">
-            <div className="relative">
-                <div className="bg-cover absolute -top-[11%] bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] h-screen w-screen"></div>
-                <div className=" relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_100px_220px_#080815] after:pointer-events-none after:top-[978px] after:inset-x-0"></div>
-                <div className="relavite mx-auto max-w-7xl relative z-10">
+            <div className="relative h-screen">
+                <div className="bg-cover absolute -top-[11%] bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] h-full w-screen"></div>
+                <div className=" relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_120px_200px_#080815] after:pointer-events-none after:top-[760px] after:inset-x-0"></div>
+                <div className="mx-auto max-w-7xl relative z-10">
                     <div className="max-w-6xl mx-auto h-[600px]">
                         <div className="mt-[155px]">
                             <h1 className="text-6xl font-bold leading-snug">
@@ -171,62 +171,62 @@ export default function Home() {
                             <Link href="/lock-atom">Get started</Link>
                         </Button>
                     </div>
-
-                    <div className="max-w-6xl mx-auto mt-44">
-                        <div className="text-center">
-                            <h2>How Hydro Works</h2>
-                        </div>
+                </div>
+            </div>
+            <div className="max-w-7xl mx-auto z-10">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center">
+                        <h2>How Hydro Works</h2>
                     </div>
+                </div>
 
-                    <div className="flex flex-col items-center">
-                        <div className="text-center text-white text-xl font-normal leading-[30px] z-[1] mt-[20px]">
-                            Understand the step-by-step process of participating
-                            in the Hydro ecosystem.
+                <div className="flex flex-col items-center">
+                    <div className="text-center text-white text-xl font-normal leading-[30px] z-[1] mt-[20px]">
+                        Understand the step-by-step process of participating in
+                        the Hydro ecosystem.
+                    </div>
+                    {renderTiles({
+                        tiles: howHydroWorksTiles,
+                        size: "small",
+                    })}
+                    <Button
+                        asChild
+                        className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal"
+                    >
+                        <Link href="/lock-atom">Get started</Link>
+                    </Button>
+                </div>
+                <HorizontalDivider className="mt-[60px] mb-[150px]" />
+                <div className="max-w-6xl mx-auto pb-44 flex lg:flex-row flex-col items-center">
+                    <div>
+                        <div className="max-w-3xl space-y-3">
+                            <p className="text-[#FFE1B8] slashed-zero tracking-wide font-medium uppercase">
+                                benefits
+                            </p>
+                            <h2>Unlock the Power of Liquidity</h2>
+                            <div className="text-lg">
+                                Hydro provides a unique opportunity to project
+                                to access liquidity and gain exposure, while
+                                rewarding ATOM holders for their participation.
+                            </div>
+                            {renderBenefits()}
                         </div>
-                        {renderTiles({
-                            tiles: howHydroWorksTiles,
-                            size: "small",
-                        })}
                         <Button
                             asChild
-                            className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal"
+                            className="mt-8 capitalize w-40 h-14 rounded-xl text-lg font-normal"
                         >
-                            <Link href="/lock-atom">Get started</Link>
+                            <Link href="/lock-atom">Get Allowlisted</Link>
                         </Button>
                     </div>
-                    <HorizontalDivider className="mt-[60px] mb-[150px]" />
-                    <div className="max-w-6xl mx-auto pb-44 flex lg:flex-row flex-col items-center">
-                        <div>
-                            <div className="max-w-3xl space-y-3">
-                                <p className="text-[#FFE1B8] slashed-zero tracking-wide font-medium uppercase">
-                                    benefits
-                                </p>
-                                <h2>Unlock the Power of Liquidity</h2>
-                                <div className="text-lg">
-                                    Hydro provides a unique opportunity to
-                                    project to access liquidity and gain
-                                    exposure, while rewarding ATOM holders for
-                                    their participation.
-                                </div>
-                                {renderBenefits()}
-                            </div>
-                            <Button
-                                asChild
-                                className="mt-8 capitalize w-40 h-14 rounded-xl text-lg font-normal"
-                            >
-                                <Link href="/lock-atom">Get Allowlisted</Link>
-                            </Button>
-                        </div>
-                        <div className="relative bg-[#080815]">
-                            <div className="bg-white"></div>
-                            <Image
-                                className="mix-blend-screen"
-                                src="/images/side-image-dots.png"
-                                alt="Hydro"
-                                width={800}
-                                height={800}
-                            />
-                        </div>
+                    <div className="relative bg-[#080815]">
+                        <div className="bg-white"></div>
+                        <Image
+                            className="mix-blend-screen"
+                            src="/images/side-image-dots.png"
+                            alt="Hydro"
+                            width={800}
+                            height={800}
+                        />
                     </div>
                 </div>
             </div>
