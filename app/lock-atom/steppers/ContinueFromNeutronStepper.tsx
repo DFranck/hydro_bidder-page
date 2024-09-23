@@ -123,7 +123,7 @@ export const ContinueFromNeutronStepper = ({
         switch (step) {
             case "Init":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>
                                 Continue Locking {formatAmount(amount)} ATOM
@@ -199,11 +199,11 @@ export const ContinueFromNeutronStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
-                    </Card>
+                    </>
                 )
             case "WaitingForLockSigning":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Approve Locking</CardTitle>
                         </CardHeader>
@@ -213,11 +213,11 @@ export const ContinueFromNeutronStepper = ({
                                 into the Hydro contract to receive voting power.
                             </p>
                         </CardContent>
-                    </Card>
+                    </>
                 )
             case "WaitingForLockBroadcast":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Locking in Progress</CardTitle>
                         </CardHeader>
@@ -228,11 +228,11 @@ export const ContinueFromNeutronStepper = ({
                                 congested
                             </p>
                         </CardContent>
-                    </Card>
+                    </>
                 )
             case "Success":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
@@ -256,11 +256,11 @@ export const ContinueFromNeutronStepper = ({
                         <CardFooter>
                             <Button onClick={onExit}>Done</Button>
                         </CardFooter>
-                    </Card>
+                    </>
                 )
             case "Error":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
@@ -294,12 +294,16 @@ export const ContinueFromNeutronStepper = ({
                                 Refresh page
                             </Button>
                         </CardFooter>
-                    </Card>
+                    </>
                 )
             default:
                 return null
         }
     }
 
-    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
+    return (
+        <Card className="max-w-[800px] mx-auto bg-[#171717]">
+            {renderStep()}
+        </Card>
+    )
 }

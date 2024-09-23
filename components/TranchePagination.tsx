@@ -21,7 +21,7 @@ export function TranchePagination({
                 <h3 className="text-3xl font-semibold">{title}</h3>
                 <p className="text-lg">{description}</p>
             </div>
-            <nav className="p-2.5 flex flex-row justify-between items-center gap-12 border rounded-full border-solid border-[#FFE1B8] lg:w-1/3">
+            <nav className="bg-black/80 backdrop-blur p-2.5 flex flex-row justify-between items-center gap-12 border rounded-full border-solid border-[#FFE1B8] lg:w-1/3">
                 <Button
                     variant="ghost"
                     className="hover:bg-transparent"

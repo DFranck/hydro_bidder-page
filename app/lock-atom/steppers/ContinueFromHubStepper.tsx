@@ -141,7 +141,7 @@ export const ContinueFromHubStepper = ({
         switch (step) {
             case "Init":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>
                                 Continue Locking {formatAmount(amount)} ATOM
@@ -171,7 +171,7 @@ export const ContinueFromHubStepper = ({
                                 (voting power).
                             </p>
                             <form
-                            className="mt-12"
+                                className="mt-12"
                                 onSubmit={(e) => {
                                     e.preventDefault()
                                     execute()
@@ -216,11 +216,11 @@ export const ContinueFromHubStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
-                    </Card>
+                    </>
                 )
             case "WaitingForIBCSigning":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Approve IBC Transfer</CardTitle>
                         </CardHeader>
@@ -234,11 +234,11 @@ export const ContinueFromHubStepper = ({
                                 ATOM to Hydro to start the locking process.
                             </p>
                         </CardContent>
-                    </Card>
+                    </>
                 )
             case "WaitingForIBCBroadcastAndRelay":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Transferring to Hydro</CardTitle>
                         </CardHeader>
@@ -253,11 +253,11 @@ export const ContinueFromHubStepper = ({
                                 the staking process.
                             </p>
                         </CardContent>
-                    </Card>
+                    </>
                 )
             case "WaitingForLockingSigning":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Approve Locking</CardTitle>
                         </CardHeader>
@@ -266,11 +266,11 @@ export const ContinueFromHubStepper = ({
                                 Approve in your wallet again to lock your ATOM
                             </p>
                         </CardContent>
-                    </Card>
+                    </>
                 )
             case "WaitingForLockingBroadcast":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Locking in Progress</CardTitle>
                         </CardHeader>
@@ -281,11 +281,11 @@ export const ContinueFromHubStepper = ({
                                 congested
                             </p>
                         </CardContent>
-                    </Card>
+                    </>
                 )
             case "Success":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Success!</CardTitle>
                         </CardHeader>
@@ -309,11 +309,11 @@ export const ContinueFromHubStepper = ({
                         <CardFooter>
                             <Button onClick={onExit}>Done</Button>
                         </CardFooter>
-                    </Card>
+                    </>
                 )
             case "Error":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>Transaction Error</CardTitle>
                         </CardHeader>
@@ -347,12 +347,16 @@ export const ContinueFromHubStepper = ({
                                 Refresh page
                             </Button>
                         </CardFooter>
-                    </Card>
+                    </>
                 )
             default:
                 return null
         }
     }
 
-    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
+    return (
+        <Card className="max-w-[800px] mx-auto bg-[#171717]">
+            {renderStep()}
+        </Card>
+    )
 }

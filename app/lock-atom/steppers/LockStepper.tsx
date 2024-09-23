@@ -191,7 +191,7 @@ export const LockStepper = ({
         switch (step) {
             case "Init":
                 return (
-                    <Card>
+                    <>
                         <CardHeader>
                             <CardTitle>
                                 Lock {formatAmount(amount)} ATOM
@@ -238,7 +238,7 @@ export const LockStepper = ({
                                 Cancel
                             </Button>
                         </CardFooter>
-                    </Card>
+                    </>
                 )
             case "NoHubGasError":
                 return (
@@ -478,5 +478,9 @@ export const LockStepper = ({
         }
     }
 
-    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
+    return (
+        <Card className="max-w-[800px] mx-auto bg-[#171717]">
+            {renderStep()}
+        </Card>
+    )
 }

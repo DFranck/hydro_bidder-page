@@ -757,7 +757,7 @@ const LoaderCard = ({
     haveChains: boolean
 }) => {
     return (
-        <Card>
+        <Card className="bg-[#303132]/75 backdrop-blur">
             <CardHeader>
                 <CardTitle>Lock ATOM to vote in Hydro</CardTitle>
             </CardHeader>
