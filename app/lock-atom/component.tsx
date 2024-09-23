@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useChain } from "@cosmos-kit/react"
+import { useChain, useChains } from "@cosmos-kit/react"
 
 import React from "react"
 import { Button } from "@/components/ui/button"
@@ -98,8 +98,9 @@ export default function LSMInteraction({
 }: {
     validatorMap: Map<string, Validator>
 }) {
-    const hubChain = useChain("cosmoshub")
-    const neutronChain = useChain("neutron")
+    const chains = useChains(["cosmoshub", "neutron"])
+    const hubChain = chains.cosmoshub
+    const neutronChain = chains.neutron
 
     const [hubSigner, setHubSigner] = useState<
         SigningStargateClient | undefined
