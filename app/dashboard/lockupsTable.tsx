@@ -132,7 +132,7 @@ function Lockups({
                 )}
             >
                 <TableHeader>
-                    <TableRow>
+                    <TableRow >
                         {/* <TableHead>Lockup ID</TableHead> */}
                         <TableHead className="text-center">
                             Locked ATOM
@@ -187,7 +187,7 @@ function Lockups({
                         myLockups.map((lockup, index) => (
                             <TableRow
                                 key={index}
-                                className="h-20 border-b-0 bg-[#303132]"
+                                className="h-20 border-b-0 bg-[#303132]/75 hover:bg-[#0061FF] backdrop-blur"
                             >
                                 {/* <TableCell className="rounded-l-xl w-28">
                                     <div className="inline-flex items-center h-full">

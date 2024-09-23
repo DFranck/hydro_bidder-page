@@ -84,7 +84,7 @@ const ActiveProposals = ({
                                 return (
                                     <TableRow
                                         key={proposal.proposal_id}
-                                        className="bg-[#303132] text-white hover:bg-[#404142] cursor-pointer border-0"
+                                        className="bg-[#303132]/75 text-white hover:bg-[#0061FF] cursor-pointer border-0 backdrop-blur"
                                         onClick={() =>
                                             (window.location.href = `/proposals/${proposal.proposal_id}`)
                                         }
@@ -100,7 +100,7 @@ const ActiveProposals = ({
                                             )}
                                         </TableCell>
                                         <TableCell className="p-5 mb-5">
-                                            <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2">
+                                            <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2 drop-shadow">
                                                 {proposal.title}
                                             </p>
                                         </TableCell>

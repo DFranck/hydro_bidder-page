@@ -6,7 +6,12 @@ const getRoundEndText = (roundEnd: Timestamp) => {
     const diff = end.getTime() - now.getTime()
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    return `${days}:${hours.toString().padStart(2, "0")}`
+    
+    if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''}`
+    } else {
+        return `${hours} hour${hours > 1 ? 's' : ''}`
+    }
 }
 
 export const ProposalListTopModules = ({
@@ -60,7 +65,7 @@ export const ProposalListTopModules = ({
                 <p
                     className={`text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}
                 >
-                    DAYS: HOURS
+                    time remaining
                 </p>
             </div>
             <div className={`flex flex-col p-6 rounded-xl ${bgColor}`}>
