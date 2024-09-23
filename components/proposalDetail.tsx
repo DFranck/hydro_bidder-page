@@ -97,6 +97,7 @@ const ProposalDetail = ({
             ToastError(err)
         } finally {
             setSubmitting(false)
+            setOpenChangeVoteModal(false)
         }
     }
 
@@ -173,7 +174,7 @@ const ProposalDetail = ({
                 onOpenChange={setOpenChangeVoteModal}
             >
                 <DialogTrigger asChild></DialogTrigger>
-                <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12">
+                <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12 text-white">
                     <DialogHeader className="pb-[34px]">
                         <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px]">
                             Change your vote?
