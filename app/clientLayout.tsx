@@ -17,13 +17,13 @@ export function ClientHandler({
 
     return (
         <>
-            <QueryClientProvider client={queryClient}>
-                <WalletHandler>
+            <WalletHandler>
+                <QueryClientProvider client={queryClient}>
                     <Header />
                     {children}
                     <Toaster />
-                </WalletHandler>
-            </QueryClientProvider>
+                </QueryClientProvider>
+            </WalletHandler>
         </>
     )
 }
