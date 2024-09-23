@@ -39,7 +39,7 @@ export function WelcomePopup() {
                     <CardTitle>Get started on Hydro</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ol className="list-decimal list-inside space-y-2">
+                    <ol className="list-decimal p-5 space-y-2">
                         <li>
                             Lock your ATOM to get voting power. The longer you
                             lock it, the more power you get. Locked ATOM
