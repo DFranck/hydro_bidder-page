@@ -16,11 +16,13 @@ const getRoundEndText = (roundEnd: Timestamp) => {
 
 export const ProposalListTopModules = ({
     lockedAtom,
+    trancheValue,
     roundEnd,
     atomPrice,
     roundNumber,
 }: {
     lockedAtom: number
+    trancheValue: number
     roundEnd?: Timestamp
     atomPrice: number
     roundNumber: number
@@ -30,7 +32,7 @@ export const ProposalListTopModules = ({
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 justify-between bg-transparent">
-            {/* <div className={`flex flex-col p-6 rounded-xl ${bgColor}`}>
+            <div className={`flex flex-col p-6 rounded-xl ${bgColor}`}>
                 <h3
                     className={`pb-4 text-white whitespace-pre-wrap text-2xl lg:text-4xl`}
                 >
@@ -40,18 +42,24 @@ export const ProposalListTopModules = ({
                 <p
                     className={`text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px]`}
                 >
-                    {(12345.67).toLocaleString("en-US", {
-                        maximumFractionDigits: 2,
-                        style: "currency",
-                        currency: "USD",
-                    })}
+                    {trancheValue > 1000
+                        ? trancheValue.toLocaleString("en-US", {
+                              maximumFractionDigits: 0,
+                              style: "currency",
+                              currency: "USD",
+                          })
+                        : trancheValue.toLocaleString("en-US", {
+                              maximumFractionDigits: 2,
+                              style: "currency",
+                              currency: "USD",
+                          })}
                 </p>
                 <p
                     className={`text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase`}
                 >
                     USDC EQUIVALENT
                 </p>
-            </div> */}
+            </div>
             <div className={`flex flex-col p-6 rounded-xl ${bgColor}`}>
                 <h3
                     className={`pb-4 text-white whitespace-pre-wrap text-2xl lg:text-4xl`}

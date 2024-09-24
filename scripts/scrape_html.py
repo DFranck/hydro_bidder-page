@@ -8,7 +8,8 @@ with open("response.html", "r") as file:
 # Assuming this HTML content is stored in a variable called 'html_content'
 soup = BeautifulSoup(html_content, "html.parser")
 
-coins = {}
+coins_by_api_id = {}
+coins_by_symbol = {}
 # Find all <a> tags with the specified class and href pattern
 links = soup.find_all(
     "a",
@@ -28,15 +29,20 @@ for link in links:
         symbol = name_symbol[1].strip()
         href = link["href"]
         api_id = href.replace("/en/coins/", "")
-        if api_id not in coins:
-            coins[api_id] = {"name": name, "symbol": symbol}
+        if api_id not in coins_by_api_id:
+            coins_by_api_id[api_id] = {"name": name, "symbol": symbol}
+        if symbol not in coins_by_symbol:
+            coins_by_symbol[symbol] = {"name": name, "api_id": api_id}
         # print(name, symbol, href, api_id)
         # print("---")
 
 if not links:
     print("No matching links found")
 
-pprint(coins)
+# pprint(coins)
 
-with open("coins.json", "w") as file:
-    json.dump(coins, file)
+with open("coins_by_api_id.json", "w") as file:
+    json.dump(coins_by_api_id, file)
+
+with open("coins_by_symbol.json", "w") as file:
+    json.dump(coins_by_symbol, file)
