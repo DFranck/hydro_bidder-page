@@ -21,16 +21,7 @@ const activeBgColor =
 
 export const DashboardTopModules = () => {
     const { isWalletConnected, address } = useChain("neutron")
-    const [userVotingData, setUserVotingData] = useState<UserVotingData | null>(
-        {
-            votingPower: 0,
-            lockups: {
-                count: 0,
-                lockedAtom: 0,
-                firstExpireTs: 0,
-            },
-        }
-    )
+    const [userVotingData, setUserVotingData] = useState<UserVotingData>()
 
     useEffect(() => {
         const getUserVotingData = async (address: string) => {
@@ -45,12 +36,14 @@ export const DashboardTopModules = () => {
     return (
         <div className="grid lg:grid-cols-2 gap-6">
             <LockedAtomCard
-                count={userVotingData?.lockups.count || 0}
-                lockedAtom={userVotingData?.lockups.lockedAtom || 0}
+                isLoading={!userVotingData}
+                count={userVotingData?.lockups.count}
+                lockedAtom={userVotingData?.lockups.lockedAtom}
             />
             <VotingPowerCard
-                votingPower={userVotingData?.votingPower || 0}
-                firstExpireTs={userVotingData?.lockups.firstExpireTs || 0}
+                isLoading={!userVotingData}
+                votingPower={userVotingData?.votingPower}
+                firstExpireTs={userVotingData?.lockups.firstExpireTs}
             />
         </div>
     )
@@ -88,12 +81,23 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
     )
 }
 
+const skeleton = () => {
+    return (
+        <div className="animate-pulse pt-6">
+            <div className="h-12 bg-gray-300 rounded w-3/4 mb-4"></div>
+            <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+        </div>
+    )
+}
+
 function LockedAtomCard({
     count,
     lockedAtom,
+    isLoading,
 }: {
-    count: number
-    lockedAtom: number
+    count?: number
+    lockedAtom?: number
+    isLoading: boolean
 }) {
     return (
         <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
@@ -105,22 +109,24 @@ function LockedAtomCard({
                     height={100}
                 />
                 <h3 className="py-4 text-white">Locked ATOM</h3>
-                <p className="text-xl font-normal">Your locked ATOM balance</p>
-                {lockedAtom === 0 ? (
-                    <div className="animate-pulse pt-6">
-                        <div className="h-12 bg-gray-300 rounded w-3/4 mb-4"></div>
-                        <div className="h-6 bg-gray-300 rounded w-1/2"></div>
-                    </div>
-                ) : (
-                    <>
-                        <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
-                            {formatAmount(lockedAtom)}
-                        </p>
-                        <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                            IN {count} Lockups
-                        </p>
-                    </>
-                )}
+                <p className="text-xl font-normal">
+                    {lockedAtom === 0
+                        ? "Lock ATOM to get Voting Power"
+                        : "Your locked ATOM balance"}
+                </p>
+                {isLoading
+                    ? skeleton()
+                    : !!lockedAtom &&
+                      lockedAtom > 0 && (
+                          <>
+                              <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
+                                  {formatAmount(lockedAtom)}
+                              </p>
+                              <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                                  IN {count} Lockups
+                              </p>
+                          </>
+                      )}
             </div>
         </div>
     )
@@ -129,9 +135,11 @@ function LockedAtomCard({
 function VotingPowerCard({
     votingPower,
     firstExpireTs,
+    isLoading,
 }: {
-    votingPower: number
-    firstExpireTs: number
+    votingPower?: number
+    firstExpireTs?: number
+    isLoading: boolean
 }) {
     return (
         <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
@@ -143,27 +151,30 @@ function VotingPowerCard({
                     height={100}
                 />
                 <h3 className="py-4 text-white">Voting Power</h3>
-                <p className="text-xl font-normal">Your current Voting Power</p>
-                {votingPower === 0 ? (
-                    <div className="animate-pulse pt-6">
-                        <div className="h-12 bg-gray-300 rounded w-3/4 mb-4"></div>
-                        <div className="h-6 bg-gray-300 rounded w-1/2"></div>
-                    </div>
-                ) : (
-                    <>
-                        <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
-                            {votingPower.toLocaleString()}
-                        </p>
-                        {firstExpireTs > 0 && (
-                            <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                                until{" "}
-                                {new Date(
-                                    firstExpireTs / 1e6
-                                ).toLocaleDateString()}
-                            </p>
-                        )}
-                    </>
-                )}
+                <p className="text-xl font-normal">
+                    {votingPower === 0
+                        ? "Lock ATOM to get Voting Power"
+                        : "Your current Voting Power"}
+                </p>
+                {isLoading
+                    ? skeleton()
+                    : !!votingPower &&
+                      votingPower > 0 && (
+                          <>
+                              <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
+                                  {formatAmount(votingPower)}a
+                              </p>
+                              {firstExpireTs && firstExpireTs > 0 && (
+                                  <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                                      until{" "}
+                                      {new Date(
+                                          firstExpireTs / 1e6
+                                      ).toLocaleDateString()}{" "}
+                                      aa
+                                  </p>
+                              )}
+                          </>
+                      )}
             </div>
         </div>
     )
