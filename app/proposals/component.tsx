@@ -1,5 +1,4 @@
 "use client"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useChain } from "@cosmos-kit/react"
 import { Proposal } from "../ts_types/HydroBase.types"
@@ -82,10 +81,7 @@ const ActiveProposals = ({
                                 return (
                                     <TableRow
                                         key={proposal.proposal_id}
-                                        className="bg-[#303132]/75 text-white hover:bg-[#0061FF] cursor-pointer border-0 backdrop-blur"
-                                        onClick={() =>
-                                            (window.location.href = `/proposals/${proposal.proposal_id}`)
-                                        }
+                                        className="relative bg-[#303132]/75 text-white hover:bg-[#0061FF] cursor-pointer border-0 backdrop-blur"
                                     >
                                         <TableCell className="p-5 rounded-[10px_0_0_10px] mb-5 text-center">
                                             {myVotes?.get(currentTranche) &&
@@ -101,6 +97,10 @@ const ActiveProposals = ({
                                             <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2 drop-shadow">
                                                 {proposal.title}
                                             </p>
+                                            <Link
+                                                href={`/proposals/${proposal.proposal_id}`}
+                                                className="absolute inset-0 w-full h-full z-10"
+                                            ></Link>
                                         </TableCell>
                                         <TableCell className="p-5 text-center mb-5">
                                             {summedTributes.map(
