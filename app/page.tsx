@@ -149,8 +149,7 @@ export default function Home() {
     return (
         <main className="w-full text-white flex min-h-screen flex-col bg-[#080815] overflow-hidden">
             <div className="relative h-screen">
-                <div className="bg-cover absolute -top-[11%] bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] h-full w-screen"></div>
-                <div className=" relative after:z-[0] after:content-[''] after:absolute after:shadow-[0_0px_120px_200px_#080815] after:pointer-events-none after:top-[760px] after:inset-x-0"></div>
+                <div className="bg-cover absolute -top-[11%] xl:-top-[15%] bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] h-full w-screen"></div>
                 <div className="mx-auto max-w-7xl relative z-10">
                     <div className="max-w-6xl mx-auto h-[600px]">
                         <div className="mt-[155px]">
@@ -173,6 +172,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            <div className="relative before:z-[0] before:content-[''] before:absolute before:shadow-[0_0px_100px_200px_#080815] before:pointer-events-none before:bottom-12 2xl:before:bottom-24 before:inset-x-0"></div>
             <div className="max-w-7xl mx-auto z-10">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center">
