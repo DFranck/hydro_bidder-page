@@ -1,8 +1,8 @@
 import React from "react"
 import ProposalDetail from "../../../components/proposalDetail"
 import { fetchDashboardData } from "@/app/dashboard/getData"
-import { ATOM_PRICE_URL } from "@/config"
 import { ProposalListTopModules } from "../TopModules"
+import { getTributeValuesFromPriceFeed } from "@/hooks/hooks"
 
 export default async function VotingProposalSinglePage({
     params,
@@ -16,14 +16,9 @@ export default async function VotingProposalSinglePage({
         currentRoundEnd,
     } = await fetchDashboardData()
 
-    let atomPrice = 0
-    try {
-        // responds with: { cosmos: { usd: 4.13 } }
-        const res = await fetch(ATOM_PRICE_URL).then((res) => res.json())
-        atomPrice = res["cosmos"]["usd"]
-    } catch {
-        console.log("failed to fetch atom price data")
-    }
+    const { totalTributeValue, atomPrice } = await getTributeValuesFromPriceFeed(
+        currentProposalTributes
+    )
 
     const currentProposal = Array.from(currentProposalTranches.values())
         .flat()
@@ -36,6 +31,7 @@ export default async function VotingProposalSinglePage({
                 roundEnd={currentRoundEnd}
                 atomPrice={atomPrice}
                 roundNumber={globalState.currentRound}
+                trancheValue={totalTributeValue}
             />
             {currentProposal ? (
                 <ProposalDetail

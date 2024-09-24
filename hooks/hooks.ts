@@ -15,11 +15,13 @@ import { ChainContext } from "@cosmos-kit/core"
 import {
     DEFAULT_EPOCH_LENGTH,
     DEFAULT_TOP_N,
+    getPriceFeedUrl,
     HYDRO_CONTRACT_ADDRESS,
     NEUTRON_DEFAULT_RPC,
     TRIBUTE_CONTRACT_ADDRESS,
 } from "@/config"
 import { displayNeutronDenom } from "@/lib/utils"
+import { FEED_COINS_BY_SYMBOL } from "@/config/feed"
 let clientInstance: CosmWasmClient | null = null
 
 // convenience func that allows doing contract queries on both server and client
@@ -435,4 +437,80 @@ export const useUserVotingData = (address: string) => {
         queryFn: () => fetchUserVotingData(address),
         staleTime,
     })
+}
+
+type TributesValuePerDenom = {
+    amount: number
+    apiId: string
+}
+
+type USDAmounts = {
+    totalTributeValue: number
+    atomPrice: number
+}
+
+export async function getTributeValuesFromPriceFeed(
+    propsalTributes: Map<number, Tribute[]>
+): Promise<USDAmounts> {
+    let atomPrice = 0
+    let totalValue = 0
+
+    const trancheDenoms = tributesValuePerDenom(propsalTributes)
+    const fetchDenoms: string[] = ["cosmos"] // always fetch atom
+    const missingDenoms: string[] = []
+    trancheDenoms.forEach((value, denom) => {
+        if (value.apiId) {
+            fetchDenoms.push(value.apiId)
+        } else {
+            missingDenoms.push(denom)
+        }
+    })
+
+    try {
+        // responds with: { cosmos: { usd: 4.13 }, ... }
+        const res = await fetch(getPriceFeedUrl(fetchDenoms), {
+            next: {
+                revalidate: 5 * 60,
+            },
+        }).then((res) => res.json())
+        atomPrice = res["cosmos"]["usd"]
+        totalValue = Array.from(trancheDenoms.values()).reduce(
+            (acc, { amount, apiId }) => {
+                const price = res[apiId]["usd"] / 1e6
+                return acc + price * amount
+            },
+            0
+        )
+    } catch {
+        return { totalTributeValue: 0, atomPrice: 0 }
+    }
+    return { totalTributeValue: totalValue, atomPrice: atomPrice }
+}
+
+function tributesValuePerDenom(
+    proposalTributes: Map<number, Tribute[]>
+): Map<string, TributesValuePerDenom> {
+    const trancheDenoms = new Map<
+        string,
+        {
+            amount: number
+            apiId: string
+        }
+    >()
+    Array.from(proposalTributes.values())
+        .flat()
+        .forEach((t) => {
+            const denom = t.funds.denom
+            const amount = parseInt(t.funds.amount)
+            if (trancheDenoms.has(denom)) {
+                const current = trancheDenoms.get(denom)!
+                current.amount += amount
+                trancheDenoms.set(denom, current)
+            } else {
+                const apiId = FEED_COINS_BY_SYMBOL.get(denom)?.api_id
+                trancheDenoms.set(denom, { amount, apiId: apiId ?? "" })
+            }
+        })
+
+    return trancheDenoms
 }
