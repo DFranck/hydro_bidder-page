@@ -81,7 +81,7 @@ export function WelcomePopup() {
                             htmlFor="dontShowAgain"
                             className="ml-2 block text-sm text-white"
                         >
-                            Don't show me this again
+                            {"Don't show me this again"}
                         </label>
                     </div>
                 </CardContent>

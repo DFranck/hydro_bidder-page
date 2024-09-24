@@ -22,19 +22,14 @@ const DeployedLiquidity = ({
 }) => {
     const [currentTranche, setCurrentTranche] = useState(1)
 
-    const toggleTranche = () => {
-        if (currentTranche === 1) {
-            setCurrentTranche(2)
-        } else {
-            setCurrentTranche(1)
-        }
-    }
     return (
         <div className="mt-14 relative">
             <TranchePagination
                 currentTranche={currentTranche}
-                toggleTranche={toggleTranche}
+                setCurrentTranche={setCurrentTranche}
                 globalState={globalState}
+                myVotes={new Map()}
+                currentProposalTranches={lastProposalTranches}
                 title="Proposals in Voting"
                 description="The winning proposal from each tranche will deployed in the
                     next round."
