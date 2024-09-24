@@ -126,7 +126,6 @@ export const RevertFromHubStepper = ({
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            ƒ{" "}
                             <p>
                                 You&apos;re about to revert{" "}
                                 <strong className="text-white">
