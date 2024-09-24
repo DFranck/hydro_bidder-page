@@ -35,6 +35,7 @@ export default async function VotingProposalSinglePage({
                 lockedAtom={globalState.totalLockedTokens}
                 roundEnd={currentRoundEnd}
                 atomPrice={atomPrice}
+                roundNumber={globalState.currentRound}
             />
             {currentProposal ? (
                 <ProposalDetail

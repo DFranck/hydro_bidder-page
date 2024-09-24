@@ -3,6 +3,7 @@ import { fetchDashboardData } from "../dashboard/getData"
 import ActiveProposals from "./component"
 import { ProposalListTopModules } from "./TopModules"
 import { WelcomePopup } from "./welcomePopup"
+import { Button } from "@/components/ui/button"
 
 export default async function ActiveProposalsPage() {
     const {
@@ -28,6 +29,7 @@ export default async function ActiveProposalsPage() {
                 lockedAtom={globalState.totalLockedTokens}
                 roundEnd={currentRoundEnd}
                 atomPrice={atomPrice}
+                roundNumber={globalState.currentRound}
             />
             <ActiveProposals
                 currentProposalTranches={currentProposalTranches}

@@ -6,11 +6,11 @@ const getRoundEndText = (roundEnd: Timestamp) => {
     const diff = end.getTime() - now.getTime()
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    
+
     if (days > 0) {
-        return `${days} day${days > 1 ? 's' : ''}`
+        return `${days} day${days > 1 ? "s" : ""}`
     } else {
-        return `${hours} hour${hours > 1 ? 's' : ''}`
+        return `${hours} hour${hours > 1 ? "s" : ""}`
     }
 }
 
@@ -18,10 +18,12 @@ export const ProposalListTopModules = ({
     lockedAtom,
     roundEnd,
     atomPrice,
+    roundNumber,
 }: {
     lockedAtom: number
     roundEnd?: Timestamp
     atomPrice: number
+    roundNumber: number
 }) => {
     const bgColor =
         "bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]"
@@ -54,8 +56,7 @@ export const ProposalListTopModules = ({
                 <h3
                     className={`pb-4 text-white whitespace-pre-wrap text-2xl lg:text-4xl`}
                 >
-                    Current Round <br />
-                    Time Remaining
+                    Time Remaining in Round {roundNumber}
                 </h3>
                 <p
                     className={`text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px]`}

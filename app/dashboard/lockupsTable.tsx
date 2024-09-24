@@ -114,9 +114,21 @@ function Lockups({
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between">
-                <h3>My Lockups</h3>
+                <div className="max-w-2xl">
+                    <h3>My Lockups</h3>
+                    <p>
+                        The more staked ATOM you lock, and the longer you lock
+                        it, the more voting power you get. To increase your
+                        voting power, you can either lock more ATOM in a new
+                        lockup, or extend one of your existing lockups. Locked
+                        ATOM continues earning staking rewards on the Cosmos Hub
+                        as well!
+                    </p>
+                </div>
                 <div className="space-x-2 flex items-center justify-between">
-                    <p className="drop-shadow-sm">Lock staked ATOM to get voting power</p>
+                    <p className="drop-shadow-sm">
+                        Lock staked ATOM to get voting power
+                    </p>
                     <Button
                         asChild
                         className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]"

@@ -30,10 +30,6 @@ const ActiveProposals = ({
 }) => {
     const [currentTranche, setCurrentTranche] = useState(1)
 
-    const toggleTranche = () => {
-        setCurrentTranche(currentTranche === 1 ? 2 : 1)
-    }
-
     const { isWalletConnected, address, getSigningCosmWasmClient } =
         useChain("neutron")
 
@@ -44,13 +40,15 @@ const ActiveProposals = ({
     )
 
     return (
-        <div className="mt-14 space-y-8 lg:space-y-14">
+        <div className="mt-10">
             <TranchePagination
                 currentTranche={currentTranche}
-                toggleTranche={toggleTranche}
+                currentProposalTranches={currentProposalTranches}
+                setCurrentTranche={setCurrentTranche}
                 globalState={globalState}
+                myVotes={myVotes}
                 title="Proposals in Voting"
-                description="The winning proposal from each tranche will deployed in the next round."
+                description="Choose a proposal to vote on! The top 5 proposals in each tranche get Hydro's ATOM liquidity, and their voters split the reward based on voting power."
             />
 
             {currentProposalTranches.get(currentTranche) && (
