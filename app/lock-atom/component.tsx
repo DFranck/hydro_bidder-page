@@ -98,9 +98,8 @@ export default function LSMInteraction({
 }: {
     validatorMap: Map<string, Validator>
 }) {
-    const chains = useChains(["cosmoshub", "neutron"])
-    const hubChain = chains.cosmoshub
-    const neutronChain = chains.neutron
+    const hubChain = useChain("cosmoshub")
+    const neutronChain = useChain("neutron")
 
     const [hubSigner, setHubSigner] = useState<
         SigningStargateClient | undefined
