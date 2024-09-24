@@ -33,6 +33,11 @@ export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 
 export const DEFAULT_TOP_N = 5
 
+export const getPriceFeedUrl = (denoms: string[]) =>
+    `https://api.coingecko.com/api/v3/simple/price?ids=${denoms.join(
+        ","
+    )}&vs_currencies=usd`
+
 export const ATOM_PRICE_URL =
     "https://api.coingecko.com/api/v3/simple/price?ids=cosmos&vs_currencies=usd"
 
