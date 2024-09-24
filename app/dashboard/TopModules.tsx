@@ -162,15 +162,14 @@ function VotingPowerCard({
                       votingPower > 0 && (
                           <>
                               <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
-                                  {formatAmount(votingPower)}a
+                                  {formatAmount(votingPower)}
                               </p>
                               {firstExpireTs && firstExpireTs > 0 && (
                                   <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
                                       until{" "}
                                       {new Date(
                                           firstExpireTs / 1e6
-                                      ).toLocaleDateString()}{" "}
-                                      aa
+                                      ).toLocaleDateString()}
                                   </p>
                               )}
                           </>
