@@ -14,10 +14,10 @@ export function TranchePagination({
     description,
 }: {
     currentTranche: number
-    currentProposalTranches: Map<number, Proposal[]>
+    currentProposalTranches?: Map<number, Proposal[]>
     setCurrentTranche: (tranche: number) => void
     globalState: GlobalState
-    myVotes: Map<number, VoteWithPower | null> | undefined
+    myVotes?: Map<number, VoteWithPower | null>
     title: string
     description: string
 }) {
