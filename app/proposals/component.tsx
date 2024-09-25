@@ -11,7 +11,7 @@ import {
 import { useMyVotes } from "@/hooks/hooks"
 import { sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { Circle, CircleCheckBig } from "lucide-react"
+import { CircleCheckBig, ScrollText } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { Proposal } from "../ts_types/HydroBase.types"
@@ -55,19 +55,59 @@ const ActiveProposals = ({
             />
 
             {currentProposalTranches.get(currentTranche) && (
-                <Table className="border-separate border-spacing-y-2">
+                <Table
+                    className="
+                        border-separate
+                        border-spacing-y-3
+                        bg-palette-text/20
+                        backdrop-blur-md
+                        px-3
+                        rounded-md
+                        overflow-hidden
+                    "
+                >
                     <TableHeader>
                         <TableRow className="border-0">
-                            <TableHead className="text-left pr-0 text-neutral-200">
-                                Vote
+                            <TableHead
+                                className="
+                                    py-2
+                                    text-left
+                                    pr-0
+                                    text-neutral-200
+                                    w-0
+                                "
+                            >
+                                &nbsp;
                             </TableHead>
-                            <TableHead className="text-left text-neutral-200">
+                            <TableHead
+                                className="
+                                    py-2
+                                    text-left
+                                    text-neutral-200
+                                "
+                            >
                                 Proposal Name
                             </TableHead>
-                            <TableHead className="text-center text-neutral-200">
+                            <TableHead
+                                className="
+                                    py-2
+                                    text-center
+                                    text-neutral-200
+                                    w-0
+                                    whitespace-nowrap
+                                "
+                            >
                                 Tribute Amount
                             </TableHead>
-                            <TableHead className="text-center text-neutral-200">
+                            <TableHead
+                                className="
+                                    py-2
+                                    text-center
+                                    text-neutral-200
+                                    w-0
+                                    whitespace-nowrap
+                                "
+                            >
                                 Current vote share
                             </TableHead>
                         </TableRow>
@@ -79,34 +119,97 @@ const ActiveProposals = ({
                                 const tributes = currentProposalTributes.get(
                                     proposal.proposal_id
                                 )!
+
                                 const summedTributes =
                                     sumTributeAmounts(tributes)
+
+                                const hasVotedOnProp =
+                                    myVotes?.get(currentTranche) &&
+                                    myVotes.get(currentTranche)?.prop_id ===
+                                        proposal.proposal_id
 
                                 return (
                                     <TableRow
                                         key={proposal.proposal_id}
-                                        className="relative bg-[#303132]/75 text-white hover:bg-[#0061FF] cursor-pointer border-0 backdrop-blur"
+                                        className="
+                                            group/row
+                                            relative
+                                            text-white
+                                            cursor-pointer
+                                            border-0
+                                            backdrop-blur
+                                            !bg-transparent
+                                        "
                                     >
-                                        <TableCell className="p-5 rounded-[10px_0_0_10px] mb-5 text-center">
-                                            {myVotes?.get(currentTranche) &&
-                                            myVotes.get(currentTranche)
-                                                ?.prop_id ===
-                                                proposal.proposal_id ? (
+                                        <TableCell
+                                            className="
+                                                px-5
+                                                py-5
+                                                rounded-tl-lg
+                                                rounded-bl-lg
+                                                bg-palette-beige/10
+                                                group-hover/row:bg-palette-beige
+                                                group-hover/row:delay-0
+                                                group-hover/row:text-palette-text
+                                                delay-75
+                                                transition
+                                            "
+                                        >
+                                            {hasVotedOnProp ? (
                                                 <CircleCheckBig />
                                             ) : (
-                                                <Circle />
+                                                <ScrollText />
                                             )}
                                         </TableCell>
-                                        <TableCell className="p-5 mb-5">
-                                            <p className="text-xl not-italic font-bold leading-[150%] line-clamp-2 drop-shadow">
+                                        <TableCell
+                                            className="
+                                                p-0
+                                                py-5
+                                                mb-5
+                                                bg-palette-beige/10
+                                                group-hover/row:bg-palette-beige
+                                                group-hover/row:delay-0
+                                                group-hover/row:text-palette-text
+                                                delay-75
+                                                transition
+                                            "
+                                        >
+                                            <p
+                                                className="
+                                                    text-xl
+                                                    not-italic
+                                                    font-bold
+                                                    leading-[150%]
+                                                    line-clamp-2
+                                                "
+                                            >
                                                 {proposal.title}
                                             </p>
                                             <Link
                                                 href={`/proposals/${proposal.proposal_id}`}
-                                                className="absolute inset-0 w-full h-full z-10"
+                                                className="
+                                                    absolute
+                                                    inset-0
+                                                    w-full
+                                                    h-full
+                                                    z-10
+                                                "
                                             ></Link>
                                         </TableCell>
-                                        <TableCell className="p-5 text-center mb-5">
+                                        <TableCell
+                                            className="
+                                                p-0
+                                                py-5
+                                                text-center
+                                                mb-5
+                                                bg-palette-beige/10
+                                                group-hover/row:bg-palette-beige
+                                                group-hover/row:delay-0
+                                                group-hover/row:text-palette-text
+                                                delay-75
+                                                transition
+                                            "
+                                        >
                                             {summedTributes.map(
                                                 (tribute, index) => (
                                                     <div key={index}>
@@ -126,8 +229,24 @@ const ActiveProposals = ({
                                                 )
                                             )}
                                         </TableCell>
-                                        <TableCell className="p-5 text-center rounded-[0_10px_10px_0] border-0 mb-5">
-                                            {proposal.percentage}
+                                        <TableCell
+                                            className="
+                                                p-0
+                                                py-5
+                                                text-center
+                                                rounded-tr-lg
+                                                rounded-br-lg
+                                                border-0
+                                                mb-5
+                                                bg-palette-beige/10
+                                                group-hover/row:bg-palette-beige
+                                                group-hover/row:delay-0
+                                                group-hover/row:text-palette-text
+                                                delay-75
+                                                transition
+                                            "
+                                        >
+                                            {proposal.percentage}%
                                         </TableCell>
                                     </TableRow>
                                 )

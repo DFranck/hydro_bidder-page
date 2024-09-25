@@ -1,9 +1,9 @@
+import { ProposalsContextProvider } from "@/app/proposals/context"
 import { getTributeValuesFromPriceFeed } from "@/hooks/hooks"
 import { fetchDashboardData } from "../dashboard/getData"
 import ActiveProposals from "./component"
 import { ProposalListTopModules } from "./TopModules"
 import { WelcomePopup } from "./welcomePopup"
-import { ProposalsContextProvider } from "@/app/proposals/context"
 
 export default async function ActiveProposalsPage() {
     const dashboardData = await fetchDashboardData()

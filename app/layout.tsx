@@ -43,16 +43,6 @@ export default function RootLayout({
                 <div className="text-white p-5 lg:p-0">
                     <ClientHandler>{children}</ClientHandler>
                 </div>
-                <div
-                    className="
-                        bg-black/40
-                        backdrop-blur-sm
-                        fixed
-                        inset-0
-                        pointer-events-none
-                        -z-10
-                    "
-                />
             </body>
         </html>
     )
