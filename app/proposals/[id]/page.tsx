@@ -1,8 +1,7 @@
-import React from "react"
-import ProposalDetail from "../../../components/proposalDetail"
 import { fetchDashboardData } from "@/app/dashboard/getData"
-import { ProposalListTopModules } from "../TopModules"
+import ProposalDetail from "@/components/proposalDetail"
 import { getTributeValuesFromPriceFeed } from "@/hooks/hooks"
+import { ProposalListTopModules } from "../TopModules"
 
 export default async function VotingProposalSinglePage({
     params,
@@ -16,9 +15,8 @@ export default async function VotingProposalSinglePage({
         currentRoundEnd,
     } = await fetchDashboardData()
 
-    const { totalTributeValue, atomPrice } = await getTributeValuesFromPriceFeed(
-        currentProposalTributes
-    )
+    const { totalTributeValue, atomPrice } =
+        await getTributeValuesFromPriceFeed(currentProposalTributes)
 
     const currentProposal = Array.from(currentProposalTranches.values())
         .flat()

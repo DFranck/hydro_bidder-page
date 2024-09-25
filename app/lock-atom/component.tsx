@@ -1,13 +1,8 @@
 "use client"
-import { useState, useEffect } from "react"
-import { useChain, useChains } from "@cosmos-kit/react"
+import { useChain } from "@cosmos-kit/react"
+import { useEffect, useState } from "react"
 
-import React from "react"
 import { Button } from "@/components/ui/button"
-import { ChainContext } from "@cosmos-kit/core"
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { cosmos } from "interchain"
-const txRaw = cosmos.tx.v1beta1.TxRaw
 import {
     Form,
     FormControl,
@@ -17,33 +12,37 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import { SigningStargateClient } from "@cosmjs/stargate"
+import { ChainContext } from "@cosmos-kit/core"
+import { cosmos } from "interchain"
+import React from "react"
+const txRaw = cosmos.tx.v1beta1.TxRaw
 
 import {
     Card,
-    CardHeader,
-    CardFooter,
-    CardTitle,
     CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card"
 
+import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
+import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
 import { LockStepper } from "./steppers/LockStepper"
 import { RevertFromHubStepper } from "./steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "./steppers/RevertFromNeutronStepper"
-import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
-import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
 
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Input } from "@/components/ui/input"
-import { useMyValidators, Validator, Delegation } from "@/hooks/hooks"
-import { EPOCH_LENGTH } from "@/config"
-import { formatAmount, LockupPeriod } from "@/lib/utils"
-import { AlertTriangle, ChevronLeft } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { scaleLockupPower } from "@/lib/utils"
+import { EPOCH_LENGTH } from "@/config"
+import { Delegation, useMyValidators, Validator } from "@/hooks/hooks"
+import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { AlertTriangle, ChevronLeft } from "lucide-react"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
 type Stepper =
     | { type: "lock"; validator: string; amount: string; duration: number }
@@ -575,7 +574,7 @@ const LockForm = ({
                                                 ) : !validators ||
                                                   validators.length === 0 ? (
                                                     <p>
-                                                        You need to have some staked ATOM to participate in Hydro. Go to your wallet&apos;s staking 
+                                                        You need to have some staked ATOM to participate in Hydro. Go to your wallet&apos;s staking
                                                         interface to select a validator and stake some ATOM, then come back.
                                                     </p>
                                                 ) : (
@@ -702,7 +701,7 @@ const LockForm = ({
                                     )}
                                 />
                                 <div className="mt-6">
-                                    <FormLabel>What You'll Get</FormLabel>
+                                    <FormLabel>What You&rsquo;ll Get</FormLabel>
                                     <div className="mt-2">
                                         Voting Power:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{formatAmount(scaleLockupPower(selectedDuration, BigInt(selectedAmount)))}
                                     </div>

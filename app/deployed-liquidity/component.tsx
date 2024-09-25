@@ -1,4 +1,7 @@
 "use client"
+import { TranchePagination } from "@/components/TranchePagination"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 import { useState } from "react"
 import {
     DataTable,
@@ -6,10 +9,7 @@ import {
 } from "../../components/proposalTable"
 import { Proposal } from "../ts_types/HydroBase.types"
 import { Tribute } from "../ts_types/TributeBase.types"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { GlobalState } from "../types"
-import { TranchePagination } from "@/components/TranchePagination"
 
 const DeployedLiquidity = ({
     lastProposalTranches,
@@ -27,9 +27,7 @@ const DeployedLiquidity = ({
             <TranchePagination
                 currentTranche={currentTranche}
                 setCurrentTranche={setCurrentTranche}
-                globalState={globalState}
                 myVotes={new Map()}
-                currentProposalTranches={lastProposalTranches}
                 title="Proposals in Voting"
                 description="The winning proposal from each tranche will deployed in the
                     next round."
