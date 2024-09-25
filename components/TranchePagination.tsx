@@ -14,20 +14,20 @@ export function TranchePagination({
     currentTranche: number
     setCurrentTranche: (tranche: number) => void
     myVotes?: Map<number, VoteWithPower | null>
-    title: ReactNode
-    description: ReactNode
+    title?: ReactNode
+    description?: ReactNode
 }) {
     const {
-        currentRoundEnd,
         globalState: { tranches },
     } = useProposalsContext()
 
-    const hasVotedOnAny = true
-    // const hasVotedOnAny = tranches.some((tranche) => myVotes?.has(tranche.id))
+    const hasVotedOnAnyTranch = tranches.some((tranche) =>
+        myVotes?.has(tranche.id)
+    )
 
     return (
         <div className="space-y-12">
-            <div className="flex gap-6 items-center">
+            <div className="flex gap-12 items-center">
                 <div
                     className="
                         flex
@@ -39,8 +39,8 @@ export function TranchePagination({
                     {tranches.map((tranche, index) => {
                         const trancheNumber = index + 1
                         const isSelected = trancheNumber === currentTranche
-                        const hasVoted = trancheNumber === 1
-                        // const hasVoted = myVotes?.has(trancheNumber)
+                        const hasVotedInTranch = myVotes?.has(trancheNumber)
+
                         return (
                             <button
                                 key={trancheNumber}
@@ -66,7 +66,7 @@ export function TranchePagination({
                                 )}
                             >
                                 {tranche.name}
-                                {hasVotedOnAny && (
+                                {hasVotedOnAnyTranch && (
                                     <span
                                         className={twMerge(
                                             `
@@ -83,7 +83,7 @@ export function TranchePagination({
                                                 py-1
                                                 font-normal
                                             `,
-                                            hasVoted
+                                            hasVotedInTranch
                                                 ? `
                                                       text-palette-green/70
                                                   `
@@ -96,7 +96,7 @@ export function TranchePagination({
                                                   `
                                         )}
                                     >
-                                        {hasVoted ? (
+                                        {hasVotedInTranch ? (
                                             <>
                                                 <CircleCheckBig size={14} />
                                                 You Voted
@@ -114,16 +114,46 @@ export function TranchePagination({
                     })}
                 </div>
 
-                <ArrowLeft size={72} />
-
                 <div
                     className="
-                        space-y-2
-                        py-3
+                        relative
+                        pl-6
+                        pr-3
+                        py-1
+                        bg-palette-beige/10
+                        rounded-md
+                        text-palette-green
+                        border-2
+                        border-palette-green
                     "
                 >
-                    <h3 className="text-3xl font-semibold">{title}</h3>
-                    <p className="text-base">{description}</p>
+                    <div
+                        className="
+                            absolute
+                            aspect-square
+                            p-1
+                            top-1/2
+                            left-0
+                            -translate-x-1/2
+                            -translate-y-1/2
+                            rounded-full
+                            bg-palette-green
+                            text-palette-text
+                            border-palette-text
+                            border-2
+                        "
+                    >
+                        <ArrowLeft />
+                    </div>
+
+                    <div className="space-y-2">
+                        {title && (
+                            <h3 className="text-xl font-semibold">{title}</h3>
+                        )}
+                        {description && (
+                            <p className="text-sm">{description}</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

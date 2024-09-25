@@ -1,13 +1,13 @@
-import { Truck } from "lucide-react"
+import { Loader } from "lucide-react"
 
 export default function LoadingState() {
     return (
         <div
             className="
-                bg-white
                 fixed
                 inset-0
-                text-palette-text
+                text-white
+                bg-palette-text
                 flex
                 items-center
                 justify-center
@@ -19,7 +19,7 @@ export default function LoadingState() {
                     animate
                 "
             >
-                <Truck size={40} />
+                <Loader size={40} />
             </div>
         </div>
     )

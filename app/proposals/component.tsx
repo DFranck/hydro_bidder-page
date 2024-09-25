@@ -11,9 +11,10 @@ import {
 import { useMyVotes } from "@/hooks/hooks"
 import { sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { CircleCheckBig, ScrollText } from "lucide-react"
+import { CircleCheckBig, ScrollText, X } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { ComponentProps, useState } from "react"
+import { twMerge } from "tailwind-merge"
 import { Proposal } from "../ts_types/HydroBase.types"
 import { Tribute } from "../ts_types/TributeBase.types"
 import { GlobalState } from "../types"
@@ -38,42 +39,93 @@ const ActiveProposals = ({
         Array.from(currentProposalTranches.keys())
     )
 
+    const proposals = currentProposalTranches.get(currentTranche)
+
+    const decoratedProposals = proposals?.map((proposal, index) => {
+        const tributes = currentProposalTributes.get(proposal.proposal_id)!
+
+        const summedTributes = sumTributeAmounts(tributes)
+
+        const hasVotedOnProp =
+            myVotes?.get(currentTranche) &&
+            myVotes.get(currentTranche)?.prop_id === proposal.proposal_id
+
+        return {
+            ...proposal,
+            summedTributes,
+            hasVotedOnProp,
+        }
+    })
+
+    const hasVoted = decoratedProposals?.some(
+        (proposal) => proposal.hasVotedOnProp
+    )
+
+    const hasVotedInAll = decoratedProposals?.every(
+        (proposal) => proposal.hasVotedOnProp
+    )
+
     return (
-        <div className="mt-10">
+        <div
+            className="
+                mt-10
+                -mx-3
+                space-y-6
+                bg-palette-text/20
+                backdrop-blur-md
+                px-3
+                rounded-md
+                overflow-hidden
+            "
+        >
             <TranchePagination
                 currentTranche={currentTranche}
                 setCurrentTranche={setCurrentTranche}
                 myVotes={myVotes}
-                title="Proposals in Voting"
                 description={
-                    <>
-                        Choose a proposal to vote on! The top 5 proposals in
-                        each tranche get Hydro&rsquo;s ATOM liquidity, and their
-                        voters split the reward based on voting&nbsp;power.
-                    </>
+                    hasVotedInAll ? (
+                        <>
+                            You can still change your vote until the end of the
+                            round
+                        </>
+                    ) : hasVoted ? (
+                        <>
+                            You can vote on{" "}
+                            <span className="italic font-bold">one</span>{" "}
+                            proposal from{" "}
+                            <span className="italic font-bold">each</span>{" "}
+                            tranche!
+                        </>
+                    ) : (
+                        <>
+                            <a className="font-bold underline" href="#">
+                                Lock some ATOM
+                            </a>{" "}
+                            to vote on{" "}
+                            <span className="italic font-bold">one</span>{" "}
+                            proposal from{" "}
+                            <span className="italic font-bold">each</span>{" "}
+                            tranche!
+                        </>
+                    )
                 }
             />
 
-            {currentProposalTranches.get(currentTranche) && (
+            {decoratedProposals?.length && (
                 <Table
                     className="
                         border-separate
                         border-spacing-y-3
-                        bg-palette-text/20
-                        backdrop-blur-md
-                        px-3
-                        rounded-md
-                        overflow-hidden
                     "
                 >
                     <TableHeader>
                         <TableRow className="border-0">
                             <TableHead
                                 className="
-                                    py-0
+                                    p-0
                                     h-auto
                                     text-left
-                                    pr-0
+                                    px-0
                                     text-neutral-200
                                     w-0
                                 "
@@ -82,7 +134,7 @@ const ActiveProposals = ({
                             </TableHead>
                             <TableHead
                                 className="
-                                    py-0
+                                    p-0
                                     h-auto
                                     text-left
                                     text-neutral-200
@@ -92,7 +144,8 @@ const ActiveProposals = ({
                             </TableHead>
                             <TableHead
                                 className="
-                                    py-0
+                                    p-0
+                                    px-12
                                     h-auto
                                     text-center
                                     text-neutral-200
@@ -104,7 +157,7 @@ const ActiveProposals = ({
                             </TableHead>
                             <TableHead
                                 className="
-                                    py-0
+                                    p-0
                                     h-auto
                                     text-center
                                     text-neutral-200
@@ -117,148 +170,154 @@ const ActiveProposals = ({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {currentProposalTranches
-                            .get(currentTranche)!
-                            .map((proposal) => {
-                                const tributes = currentProposalTributes.get(
-                                    proposal.proposal_id
-                                )!
-
-                                const summedTributes =
-                                    sumTributeAmounts(tributes)
-
-                                const hasVotedOnProp =
-                                    myVotes?.get(currentTranche) &&
-                                    myVotes.get(currentTranche)?.prop_id ===
-                                        proposal.proposal_id
-
-                                return (
-                                    <TableRow
-                                        key={proposal.proposal_id}
+                        {decoratedProposals.map((proposal) => (
+                            <TableRow
+                                key={proposal.proposal_id}
+                                className={twMerge(
+                                    `
+                                        group/row
+                                        relative
+                                        text-white
+                                        cursor-pointer
+                                        border-0
+                                        backdrop-blur
+                                        bg-transparent
+                                        hover:bg-transparent
+                                    `,
+                                    hasVoted &&
+                                        proposal.hasVotedOnProp &&
+                                        `
+                                            text-palette-text
+                                        `
+                                )}
+                            >
+                                <ProposalTableCell
+                                    className="
+                                        px-5
+                                        rounded-tl-lg
+                                        rounded-bl-lg
+                                    "
+                                    hasVoted={!!hasVoted}
+                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
+                                >
+                                    {hasVoted && proposal.hasVotedOnProp ? (
+                                        <CircleCheckBig />
+                                    ) : hasVoted ? (
+                                        <X />
+                                    ) : (
+                                        <ScrollText />
+                                    )}
+                                </ProposalTableCell>
+                                <ProposalTableCell
+                                    hasVoted={!!hasVoted}
+                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
+                                >
+                                    <p
                                         className="
-                                            group/row
-                                            relative
-                                            text-white
-                                            cursor-pointer
-                                            border-0
-                                            backdrop-blur
-                                            !bg-transparent
+                                            text-xl
+                                            not-italic
+                                            font-bold
+                                            leading-[150%]
+                                            line-clamp-2
                                         "
                                     >
-                                        <TableCell
-                                            className="
-                                                px-5
-                                                py-5
-                                                rounded-tl-lg
-                                                rounded-bl-lg
-                                                bg-palette-beige/10
-                                                group-hover/row:bg-palette-beige
-                                                group-hover/row:delay-0
-                                                group-hover/row:text-palette-text
-                                                delay-75
-                                                transition
-                                            "
-                                        >
-                                            {hasVotedOnProp ? (
-                                                <CircleCheckBig />
-                                            ) : (
-                                                <ScrollText />
-                                            )}
-                                        </TableCell>
-                                        <TableCell
-                                            className="
-                                                p-0
-                                                py-5
-                                                mb-5
-                                                bg-palette-beige/10
-                                                group-hover/row:bg-palette-beige
-                                                group-hover/row:delay-0
-                                                group-hover/row:text-palette-text
-                                                delay-75
-                                                transition
-                                            "
-                                        >
-                                            <p
-                                                className="
-                                                    text-xl
-                                                    not-italic
-                                                    font-bold
-                                                    leading-[150%]
-                                                    line-clamp-2
-                                                "
-                                            >
-                                                {proposal.title}
-                                            </p>
-                                            <Link
-                                                href={`/proposals/${proposal.proposal_id}`}
-                                                className="
-                                                    absolute
-                                                    inset-0
-                                                    w-full
-                                                    h-full
-                                                    z-10
-                                                "
-                                            ></Link>
-                                        </TableCell>
-                                        <TableCell
-                                            className="
-                                                p-0
-                                                py-5
-                                                text-center
-                                                mb-5
-                                                bg-palette-beige/10
-                                                group-hover/row:bg-palette-beige
-                                                group-hover/row:delay-0
-                                                group-hover/row:text-palette-text
-                                                delay-75
-                                                transition
-                                            "
-                                        >
-                                            {summedTributes.map(
-                                                (tribute, index) => (
-                                                    <div key={index}>
-                                                        {`${(
-                                                            tribute.amount /
-                                                            1000000
-                                                        ).toFixed(2)} ${
-                                                            tribute.denom
-                                                                .length > 20
-                                                                ? tribute.denom.slice(
-                                                                      0,
-                                                                      17
-                                                                  ) + "..."
-                                                                : tribute.denom
-                                                        }`}
-                                                    </div>
-                                                )
-                                            )}
-                                        </TableCell>
-                                        <TableCell
-                                            className="
-                                                p-0
-                                                py-5
-                                                text-center
-                                                rounded-tr-lg
-                                                rounded-br-lg
-                                                border-0
-                                                mb-5
-                                                bg-palette-beige/10
-                                                group-hover/row:bg-palette-beige
-                                                group-hover/row:delay-0
-                                                group-hover/row:text-palette-text
-                                                delay-75
-                                                transition
-                                            "
-                                        >
-                                            {proposal.percentage}%
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            })}
+                                        {proposal.title}
+                                    </p>
+                                    <Link
+                                        href={`/proposals/${proposal.proposal_id}`}
+                                        className="
+                                            absolute
+                                            inset-0
+                                            w-full
+                                            h-full
+                                            z-10
+                                        "
+                                    />
+                                </ProposalTableCell>
+                                <ProposalTableCell
+                                    className="
+                                        text-center
+                                    "
+                                    hasVoted={!!hasVoted}
+                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
+                                >
+                                    {proposal.summedTributes.map(
+                                        (tribute, index) => (
+                                            <div key={index}>
+                                                {`${(
+                                                    tribute.amount / 1000000
+                                                ).toFixed(2)} ${
+                                                    tribute.denom.length > 20
+                                                        ? tribute.denom.slice(
+                                                              0,
+                                                              17
+                                                          ) + "..."
+                                                        : tribute.denom
+                                                }`}
+                                            </div>
+                                        )
+                                    )}
+                                </ProposalTableCell>
+                                <ProposalTableCell
+                                    className="
+                                        text-center
+                                        rounded-tr-lg
+                                        rounded-br-lg
+                                        border-0
+                                    "
+                                    hasVoted={!!hasVoted}
+                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
+                                >
+                                    {proposal.percentage}%
+                                </ProposalTableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             )}
         </div>
+    )
+}
+
+function ProposalTableCell({
+    children,
+    className,
+    hasVoted,
+    hasVotedOnProp,
+    ...otherProps
+}: ComponentProps<"div"> & { hasVoted: boolean; hasVotedOnProp: boolean }) {
+    return (
+        <TableCell
+            className={twMerge(
+                `
+                    p-0
+                    py-5
+                    group-hover/row:delay-0
+                    bg-palette-beige/10
+                    delay-75
+                    transition
+                    group-hover/row:bg-palette-beige
+                    group-hover/row:text-palette-text
+                `,
+                hasVoted &&
+                    hasVotedOnProp &&
+                    `
+                        bg-palette-green
+                        text-palette-text
+                        group-hover/row:bg-palette-green
+                        group-hover/row:text-palette-text/60
+                    `,
+                hasVoted &&
+                    !hasVotedOnProp &&
+                    `
+                        opacity-90
+                        group-hover/row:opacity-100
+                    `,
+                className
+            )}
+        >
+            {children}
+        </TableCell>
     )
 }
 

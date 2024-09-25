@@ -9,21 +9,22 @@ export const Header = () => {
         <>
             <div
                 className="
-                max-w-7xl
-                mx-auto
-                bg-black
-                px-6
-                py-3
-                z-50
-                w-full
-                items-center
-                justify-between
-                font-mono
-                text-sm
-                lg:flex
-                border-b
-                border-[#FFE1B8]
-            "
+                    max-w-7xl
+                    mx-auto
+                    bg-black
+                    px-6
+                    py-3
+                    z-50
+                    w-full
+                    items-center
+                    justify-between
+                    font-mono
+                    text-sm
+                    border-b
+                    border-[#FFE1B8]
+                    lg:flex
+                    lg:px-12
+                "
             >
                 <Link href={"/"}>
                     <Image

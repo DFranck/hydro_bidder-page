@@ -30,7 +30,7 @@ export default async function ActiveProposalsPage() {
 
     return (
         <ProposalsContextProvider value={proposalsContextObject}>
-            <div className="pb-44 max-w-7xl mx-auto px-6">
+            <div className="pb-44 max-w-7xl mx-auto px-6 lg:px-12">
                 <WelcomePopup />
                 <ProposalListTopModules
                     trancheValue={totalTributeValue}
