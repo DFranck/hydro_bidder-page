@@ -72,29 +72,22 @@ export function TranchePagination({
                                             `
                                                 absolute
                                                 top-full
-                                                left-1/2
-                                                -translate-x-1/2
-                                                -translate-y-1/4
-                                                mb-1
-                                                rounded-full
+                                                right-0
+                                                mt-1
                                                 text-xs
                                                 flex
                                                 gap-1
                                                 items-center
                                                 px-2
+                                                text-white
                                                 py-1
                                                 font-normal
                                             `,
                                             hasVoted
                                                 ? `
-                                                      bg-white
-                                                      text-palette-text
+                                                      text-palette-green/70
                                                   `
                                                 : `
-                                                      bg-black
-                                                      border
-                                                      text-white
-                                                      border-white
                                                   `,
                                             isSelected
                                                 ? `
@@ -126,7 +119,6 @@ export function TranchePagination({
                 <div
                     className="
                         space-y-2
-                        px-6
                         py-3
                     "
                 >

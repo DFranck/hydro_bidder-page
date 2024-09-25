@@ -24,7 +24,8 @@ const config = {
             colors: {
                 palette: {
                     beige: "#FFE1B8",
-                    blue: "#00D1FF",
+                    cyan: "#00D1FF",
+                    blue: "#0061FF",
                     green: "#00FFC2",
                     red: "#FF7B51",
                     text: "#080815",
