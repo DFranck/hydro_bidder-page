@@ -23,7 +23,7 @@ export default async function VotingProposalSinglePage({
         .find((proposal) => proposal.proposal_id === Number(params.id))
 
     return (
-        <div className="pb-44 max-w-7xl mx-auto px-5 lg:px-0">
+        <div className="pb-44 max-w-7xl mx-auto px-6 lg:px-12 space-y-12">
             <ProposalListTopModules
                 lockedAtom={globalState.totalLockedTokens}
                 roundEnd={currentRoundEnd}

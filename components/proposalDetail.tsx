@@ -1,7 +1,6 @@
 "use client"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
+import { Proposal } from "@/app/ts_types/HydroBase.types"
+import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -11,19 +10,20 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
-import { useChain } from "@cosmos-kit/react"
-import { Proposal } from "@/app/ts_types/HydroBase.types"
-import { ChevronLeft } from "lucide-react"
-import Markdown from "react-markdown"
-import { sumTributeAmounts, formatAmount } from "@/lib/utils"
-import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { DialogTrigger } from "@radix-ui/react-dialog"
 import {
     ToastAborted,
     ToastError,
     ToastProcessing,
 } from "@/components/ui/toast-wallet"
+import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
+import { formatAmount, sumTributeAmounts } from "@/lib/utils"
+import { useChain } from "@cosmos-kit/react"
+import { DialogTrigger } from "@radix-ui/react-dialog"
+import { ChevronLeft } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import Markdown from "react-markdown"
 
 const ProposalDetail = ({
     globalState,
@@ -209,15 +209,26 @@ const ProposalDetail = ({
     return (
         <div className="max-w-7xl mx-auto pb-44">
             <ChangeVote />
-            <div className="bg-[#303132]/75 backdrop-blur rounded-[10px] p-12 mt-[72px]">
+
+            <div
+                className="
+                    bg-palette-text/20
+                    backdrop-blur-md
+                    rounded-[10px]
+                    p-12
+                "
+            >
                 <div className="flex flex-col md:flex-row gap-8 justify-between">
                     <div>
                         <Link href="/proposals" className="opacity-80">
                             <Button
                                 variant="link"
-                                className="mb-5 text-white pl-0"
+                                className="group mb-5 text-white pl-0 flex gap-1"
                             >
-                                <ChevronLeft size={14} />
+                                <ChevronLeft
+                                    className="transition-all group-hover:-ml-1"
+                                    size={14}
+                                />
                                 Back
                             </Button>
                         </Link>
