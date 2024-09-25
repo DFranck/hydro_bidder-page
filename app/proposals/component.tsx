@@ -70,7 +70,8 @@ const ActiveProposals = ({
                         <TableRow className="border-0">
                             <TableHead
                                 className="
-                                    py-2
+                                    py-0
+                                    h-auto
                                     text-left
                                     pr-0
                                     text-neutral-200
@@ -81,7 +82,8 @@ const ActiveProposals = ({
                             </TableHead>
                             <TableHead
                                 className="
-                                    py-2
+                                    py-0
+                                    h-auto
                                     text-left
                                     text-neutral-200
                                 "
@@ -90,7 +92,8 @@ const ActiveProposals = ({
                             </TableHead>
                             <TableHead
                                 className="
-                                    py-2
+                                    py-0
+                                    h-auto
                                     text-center
                                     text-neutral-200
                                     w-0
@@ -101,7 +104,8 @@ const ActiveProposals = ({
                             </TableHead>
                             <TableHead
                                 className="
-                                    py-2
+                                    py-0
+                                    h-auto
                                     text-center
                                     text-neutral-200
                                     w-0
