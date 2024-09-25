@@ -22,6 +22,13 @@ const config = {
         },
         extend: {
             colors: {
+                palette: {
+                    beige: "#FFE1B8",
+                    blue: "#00D1FF",
+                    green: "#00FFC2",
+                    red: "#FF7B51",
+                    text: "#080815",
+                },
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",

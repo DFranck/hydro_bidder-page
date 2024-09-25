@@ -1,12 +1,5 @@
 "use client"
-import Link from "next/link"
-import { useChain } from "@cosmos-kit/react"
-import { Proposal } from "../ts_types/HydroBase.types"
-import { useState } from "react"
-import { GlobalState } from "../types"
-import { Tribute } from "../ts_types/TributeBase.types"
 import { TranchePagination } from "@/components/TranchePagination"
-import { sumTributeAmounts } from "@/lib/utils"
 import {
     Table,
     TableBody,
@@ -15,8 +8,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { CircleCheckBig, Circle } from "lucide-react"
 import { useMyVotes } from "@/hooks/hooks"
+import { sumTributeAmounts } from "@/lib/utils"
+import { useChain } from "@cosmos-kit/react"
+import { Circle, CircleCheckBig } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
+import { Proposal } from "../ts_types/HydroBase.types"
+import { Tribute } from "../ts_types/TributeBase.types"
+import { GlobalState } from "../types"
 
 const ActiveProposals = ({
     currentProposalTranches,
@@ -42,12 +42,16 @@ const ActiveProposals = ({
         <div className="mt-10">
             <TranchePagination
                 currentTranche={currentTranche}
-                currentProposalTranches={currentProposalTranches}
                 setCurrentTranche={setCurrentTranche}
-                globalState={globalState}
                 myVotes={myVotes}
                 title="Proposals in Voting"
-                description="Choose a proposal to vote on! The top 5 proposals in each tranche get Hydro's ATOM liquidity, and their voters split the reward based on voting power."
+                description={
+                    <>
+                        Choose a proposal to vote on! The top 5 proposals in
+                        each tranche get Hydro&rsquo;s ATOM liquidity, and their
+                        voters split the reward based on voting&nbsp;power.
+                    </>
+                }
             />
 
             {currentProposalTranches.get(currentTranche) && (

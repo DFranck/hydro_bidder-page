@@ -1,7 +1,5 @@
 import "./globals.css"
-import { GoogleTagManager } from "@next/third-parties/google"
 
-import Script from "next/script"
 import { inter } from "@/lib/font"
 import { ClientHandler } from "./clientLayout"
 
@@ -21,17 +19,40 @@ export default function RootLayout({
     return (
         <html lang="en">
             {/* <GoogleTagManager gtmId="G-NZ1F6WL2PM" />
-      <Script
-        type="text/javascript"
-        src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
-        async
-      /> */}
+            <Script
+              type="text/javascript"
+              src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
+              async
+            /> */}
             <body className={`${inter.className}`}>
                 {/* <div className="bg-gradient-to-b from-black via-[#010006] to-[#001C47] p-5 h-screen w-screen fixed top-0 left-0 -z-10"></div> */}
-                <div className="bg-cover fixed top-0 left-0 bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] h-screen w-screen -z-10"></div>
+                <div
+                    className="
+                        bg-cover
+                        bg-black
+                        fixed
+                        top-0
+                        left-0
+                        bg-no-repeat
+                        bg-[url('/images/AdobeStock_633966567.png')]
+                        h-screen
+                        w-screen
+                        -z-10
+                    "
+                ></div>
                 <div className="text-white p-5 lg:p-0">
                     <ClientHandler>{children}</ClientHandler>
                 </div>
+                <div
+                    className="
+                        bg-black/40
+                        backdrop-blur-sm
+                        fixed
+                        inset-0
+                        pointer-events-none
+                        -z-10
+                    "
+                />
             </body>
         </html>
     )
