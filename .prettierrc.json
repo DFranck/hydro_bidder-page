@@ -1,4 +1,7 @@
 {
+    "plugins": ["prettier-plugin-tailwindcss"],
+    "tailwindFunctions": ["twJoin", "twMerge"],
+    "tailwindPreserveWhitespace": true,
     "trailingComma": "es5",
     "tabWidth": 4,
     "semi": false,

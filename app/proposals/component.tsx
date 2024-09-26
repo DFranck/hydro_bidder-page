@@ -1,4 +1,6 @@
 "use client"
+
+import { useProposalsContext } from "@/app/proposals/context"
 import { TranchePagination } from "@/components/TranchePagination"
 import {
     Table,
@@ -15,19 +17,11 @@ import { CircleCheckBig, ScrollText, X } from "lucide-react"
 import Link from "next/link"
 import { ComponentProps, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { Proposal } from "../ts_types/HydroBase.types"
-import { Tribute } from "../ts_types/TributeBase.types"
-import { GlobalState } from "../types"
 
-const ActiveProposals = ({
-    currentProposalTranches,
-    currentProposalTributes,
-    globalState,
-}: {
-    currentProposalTranches: Map<number, Proposal[]>
-    currentProposalTributes: Map<number, Tribute[]>
-    globalState: GlobalState
-}) => {
+const ActiveProposals = () => {
+    const { currentProposalTranches, currentProposalTributes, globalState } =
+        useProposalsContext()
+
     const [currentTranche, setCurrentTranche] = useState(1)
 
     const { isWalletConnected, address, getSigningCosmWasmClient } =

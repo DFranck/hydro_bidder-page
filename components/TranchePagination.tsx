@@ -1,3 +1,5 @@
+"use client"
+
 import { useProposalsContext } from "@/app/proposals/context"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import { ArrowLeft, CircleCheckBig, Clock } from "lucide-react"

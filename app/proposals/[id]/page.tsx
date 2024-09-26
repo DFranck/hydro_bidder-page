@@ -1,6 +1,7 @@
-import { fetchDashboardData } from "@/app/dashboard/getData"
+"use client"
+
+import { useProposalsContext } from "@/app/proposals/context"
 import ProposalDetail from "@/components/proposalDetail"
-import { getTributeValuesFromPriceFeed } from "@/hooks/hooks"
 import { ProposalListTopModules } from "../TopModules"
 
 export default async function VotingProposalSinglePage({
@@ -8,15 +9,8 @@ export default async function VotingProposalSinglePage({
 }: {
     params: { id: string }
 }) {
-    const {
-        currentProposalTranches,
-        globalState,
-        currentProposalTributes,
-        currentRoundEnd,
-    } = await fetchDashboardData()
-
-    const { totalTributeValue, atomPrice } =
-        await getTributeValuesFromPriceFeed(currentProposalTributes)
+    const { currentProposalTranches, currentProposalTributes, globalState } =
+        useProposalsContext()
 
     const currentProposal = Array.from(currentProposalTranches.values())
         .flat()
@@ -24,25 +18,9 @@ export default async function VotingProposalSinglePage({
 
     return (
         <div className="pb-44 max-w-7xl mx-auto px-6 lg:px-12 space-y-12">
-            <ProposalListTopModules
-                lockedAtom={globalState.totalLockedTokens}
-                roundEnd={currentRoundEnd}
-                atomPrice={atomPrice}
-                roundNumber={globalState.currentRound}
-                trancheValue={totalTributeValue}
-            />
+            <ProposalListTopModules />
             {currentProposal ? (
-                <ProposalDetail
-                    proposal={currentProposal}
-                    globalState={globalState}
-                    proposalTranches={currentProposalTranches}
-                    deployed={false}
-                    tributes={
-                        currentProposalTributes.get(
-                            currentProposal.proposal_id
-                        )!
-                    }
-                />
+                <ProposalDetail proposal={currentProposal} deployed={false} />
             ) : (
                 <div className="text-center py-8">
                     <h2 className="text-2xl font-bold text-red-500">
