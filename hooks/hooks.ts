@@ -514,3 +514,42 @@ function tributesValuePerDenom(
 
     return trancheDenoms
 }
+
+type AssetListEntry = {
+    token: string
+    symbol: string,
+    decimals: number
+    coingecko_id?: string,
+    price_usd?: number
+}
+
+export const fetchAssetListWithPrices = async (): Promise<Map<string, AssetListEntry>> => {
+    // Fetch the asset list
+    const response = await fetch('https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json', {
+        next: { revalidate: 5 * 60 }, // Revalidate every 5 minutes
+    });
+    const data: AssetListEntry[] = await response.json();
+
+    // Extract Coingecko IDs from assets that have them
+    const coingeckoIds = data
+        .filter(asset => asset.coingecko_id)
+        .map(asset => asset.coingecko_id as string);
+
+    // Fetch prices using getPriceFeedUrl
+    const pricesResponse = await fetch(getPriceFeedUrl(coingeckoIds), {
+        next: { revalidate: 5 * 60 }, // Revalidate every 5 minutes
+    });
+    const prices: Record<string, { usd: number }> = await pricesResponse.json();
+
+    // Create a Map with token as key and updated AssetListEntry as value
+    const assetMap = new Map<string, AssetListEntry>();
+
+    data.forEach(asset => {
+        const updatedAsset = asset.coingecko_id && prices[asset.coingecko_id]
+            ? { ...asset, price_usd: prices[asset.coingecko_id].usd }
+            : asset;
+        assetMap.set(asset.token, updatedAsset);
+    });
+
+    return assetMap;
+};
