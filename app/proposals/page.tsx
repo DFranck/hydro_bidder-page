@@ -2,12 +2,18 @@ import ActiveProposals from "./component"
 import { ProposalListTopModules } from "./TopModules"
 import { WelcomePopup } from "./welcomePopup"
 
-export default async function ActiveProposalsPage() {
+export default async function ActiveProposalsPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+    console.log('Query parameters:', searchParams);
+
     return (
         <div className="pb-44 max-w-7xl mx-auto px-6 lg:px-12">
             <WelcomePopup />
             <ProposalListTopModules />
-            <ActiveProposals />
+            <ActiveProposals searchParams={searchParams} />
         </div>
     )
 }
