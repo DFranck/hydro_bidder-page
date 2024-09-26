@@ -1,6 +1,6 @@
 "use client"
 
-import { fetchDashboardData } from "@/app/dashboard/getData"
+import { fetchDashboardData } from "@/hooks/hooks"
 import { createContext, useContext } from "react"
 
 export type ProposalsContextObject = Awaited<
