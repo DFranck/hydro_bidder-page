@@ -74,7 +74,7 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
                     }).format(amount)}
                 </p>
                 <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                    USDC EQUIVALENT
+                    USD EQUIVALENT
                 </p>
             </div>
         </div>

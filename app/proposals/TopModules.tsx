@@ -105,7 +105,7 @@ export function ProposalListTopModules({
         >
             <Card
                 title={<>Current Round Tribute&nbsp;Value</>}
-                label="USDC Equivalent"
+                label="USD Equivalent"
                 value={
                     trancheValue > 1000
                         ? trancheValue.toLocaleString("en-US", {
@@ -135,7 +135,7 @@ export function ProposalListTopModules({
                             style: "currency",
                             currency: "USD",
                         }).format(atomPrice * (lockedAtom / 1e6))}{" "}
-                        USDC Equivalent
+                        USD Equivalent
                     </>
                 }
                 value={(lockedAtom / 1e6).toLocaleString("en-US", {
