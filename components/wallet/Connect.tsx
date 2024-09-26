@@ -1,7 +1,7 @@
+import { cn } from "@/lib/utils"
+import { LinkIcon, LoaderCircleIcon } from "lucide-react"
 import { MouseEventHandler } from "react"
 import { Button } from "../ui/button"
-import { LinkIcon, LoaderCircleIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 export type ButtonProps = {
     text?: string
@@ -34,13 +34,13 @@ export function WButton({
             disabled={disabled}
             onClick={onClick}
             className={cn(
-                "text-md bg-[#303132] w-40 text-white inline-flex items-center",
+                "text-md inline-flex items-center bg-palette-blue text-white hover:bg-palette-blue/80",
                 className
             )}
         >
-            {connected && <LinkIcon className="w-4 h-4 mr-2" />}
+            {connected && <LinkIcon className="mr-2 h-4 w-4" />}
             {loading && (
-                <LoaderCircleIcon className="w-4 h-4 mr-2 animate-spin" />
+                <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
             )}
             {address ? address : text}
         </Button>
@@ -69,7 +69,7 @@ export const WButtonConnected = ({ address, onClick = noop }: ConnectProps) => (
 )
 
 export const WButtonDisconnected = ({
-    text = "Connect Wallet",
+    text = "Connect Wallet to Vote",
     onClick = noop,
 }: ConnectProps) => <WButton text={text} connected={false} onClick={onClick} />
 

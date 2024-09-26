@@ -1,3 +1,6 @@
+"use client"
+
+import { useProposalsContext } from "@/app/proposals/context"
 import { ReactNode } from "react"
 import { Timestamp } from "../ts_types/HydroBase.types"
 
@@ -29,48 +32,48 @@ function Card({
             className="
               flex
               flex-col
-              px-6
-              py-3
               rounded-xl
               bg-transparent
               bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]
+              px-6
+              py-3
             "
         >
             <h3
                 className="
-                    text-white
+                    order-2
                     whitespace-pre-wrap
                     text-xl
+                    text-white
                     lg:text-2xl
-                    order-2
                 "
             >
                 {title}
             </h3>
             <var
                 className="
-                    text-palette-beige
+                    order-1
                     text-5xl
-                    not-italic
                     font-bold
+                    not-italic
+                    slashed-zero
                     leading-[124.7%]
                     tracking-[-1.296px]
-                    order-1
-                    slashed-zero
+                    text-palette-beige
                 "
             >
                 {value}
             </var>
             <p
                 className="
-                    text-palette-beige
-                    slashed-zero
-                    text-base
-                    not-italic
-                    font-medium
-                    leading-[130%]
-                    uppercase
                     order-3
+                    text-base
+                    font-medium
+                    uppercase
+                    not-italic
+                    slashed-zero
+                    leading-[130%]
+                    text-palette-beige
                 "
             >
                 {label}
@@ -79,41 +82,36 @@ function Card({
     )
 }
 
-export function ProposalListTopModules({
-    lockedAtom,
-    trancheValue,
-    roundEnd,
-    atomPrice,
-    roundNumber,
-}: {
-    lockedAtom: number
-    trancheValue: number
-    roundEnd?: Timestamp
-    atomPrice: number
-    roundNumber: number
-}) {
+export function ProposalListTopModules() {
+    const {
+        totalTributeValue,
+        atomPrice,
+        globalState: { totalLockedTokens, currentRound },
+        currentRoundEnd,
+    } = useProposalsContext()
+
     return (
         <div
             className="
                 grid
                 grid-cols-1
-                lg:grid-cols-3
-                gap-6
                 justify-between
+                gap-6
                 bg-transparent
+                lg:grid-cols-3
             "
         >
             <Card
                 title={<>Current Round Tribute&nbsp;Value</>}
                 label="USD Equivalent"
                 value={
-                    trancheValue > 1000
-                        ? trancheValue.toLocaleString("en-US", {
+                    totalTributeValue > 1000
+                        ? totalTributeValue.toLocaleString("en-US", {
                               maximumFractionDigits: 0,
                               style: "currency",
                               currency: "USD",
                           })
-                        : trancheValue.toLocaleString("en-US", {
+                        : totalTributeValue.toLocaleString("en-US", {
                               maximumFractionDigits: 2,
                               style: "currency",
                               currency: "USD",
@@ -123,8 +121,10 @@ export function ProposalListTopModules({
 
             <Card
                 title="Time Remaining"
-                label={`In Round ${roundNumber}`}
-                value={roundEnd ? getRoundEndText(roundEnd) : "0:00"}
+                label={`In Round ${currentRound}`}
+                value={
+                    currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
+                }
             />
 
             <Card
@@ -134,11 +134,11 @@ export function ProposalListTopModules({
                         {Intl.NumberFormat("en-US", {
                             style: "currency",
                             currency: "USD",
-                        }).format(atomPrice * (lockedAtom / 1e6))}{" "}
-                        USD Equivalent
+                        }).format(atomPrice * (totalLockedTokens / 1e6))}{" "}
+                        USDC Equivalent
                     </>
                 }
-                value={(lockedAtom / 1e6).toLocaleString("en-US", {
+                value={(totalLockedTokens / 1e6).toLocaleString("en-US", {
                     maximumFractionDigits: 2,
                 })}
             />
