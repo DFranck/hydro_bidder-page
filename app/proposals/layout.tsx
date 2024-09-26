@@ -1,6 +1,5 @@
-import { fetchDashboardData } from "@/app/dashboard/getData"
 import { ProposalsContextProvider } from "@/app/proposals/context"
-import { getTributeValuesFromPriceFeed } from "@/hooks/hooks"
+import { getTributeValuesFromPriceFeed, fetchDashboardData } from "@/hooks/hooks"
 
 export default async function ProposalsLayout({
     children,
