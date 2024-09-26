@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from 'next/navigation'
 import { useProposalsContext } from "@/app/proposals/context"
 import { TranchePagination } from "@/components/TranchePagination"
 import {
@@ -18,11 +19,12 @@ import Link from "next/link"
 import { ComponentProps, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
-const ActiveProposals = () => {
+const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+    const router = useRouter()
     const { currentProposalTranches, currentProposalTributes, globalState } =
         useProposalsContext()
 
-    const [currentTranche, setCurrentTranche] = useState(1)
+    const [currentTranche, setCurrentTranche] = useState(searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1)
 
     const { isWalletConnected, address, getSigningCosmWasmClient } =
         useChain("neutron")
@@ -59,6 +61,17 @@ const ActiveProposals = () => {
         (proposal) => proposal.hasVotedOnProp
     )
 
+    const updateTrancheInURL = (tranche: number) => {
+        const newSearchParams = new URLSearchParams(window.location.search)
+        newSearchParams.set('tranche', tranche.toString())
+        router.push(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false })
+    }
+
+    const handleTrancheChange = (newTranche: number) => {
+        setCurrentTranche(newTranche)
+        updateTrancheInURL(newTranche)
+    }
+
     return (
         <div
             className="
@@ -74,7 +87,7 @@ const ActiveProposals = () => {
         >
             <TranchePagination
                 currentTranche={currentTranche}
-                setCurrentTranche={setCurrentTranche}
+                setCurrentTranche={handleTrancheChange}
                 myVotes={myVotes}
                 description={
                     hasVotedInAll ? (
