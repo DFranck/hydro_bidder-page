@@ -114,11 +114,19 @@ export function ProposalListTopModules() {
                 justify-between
                 gap-6
                 bg-transparent
-                lg:grid-cols-3
+                lg:grid-cols-4
             "
         >
             <Card
-                title={<>Current Round Tribute&nbsp;Value</>}
+                title="Time Remaining"
+                label={`In Round ${currentRound}`}
+                value={
+                    currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
+                }
+            />
+
+            <Card
+                title="Total Rewards"
                 label="USD Equivalent"
                 value={
                     totalTributeValue > 1000
@@ -135,16 +143,9 @@ export function ProposalListTopModules() {
                 }
             />
 
-            <Card
-                title="Time Remaining"
-                label={`In Round ${currentRound}`}
-                value={
-                    currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
-                }
-            />
 
-            <Card
-                title={<>Total Locked&nbsp;ATOM</>}
+<Card
+                title="Total Locked ATOM"
                 label={
                     <>
                         {Intl.NumberFormat("en-US", {
@@ -156,6 +157,15 @@ export function ProposalListTopModules() {
                 }
                 value={(totalLockedTokens / 1e6).toLocaleString("en-US", {
                     maximumFractionDigits: 2,
+                })}
+            />
+
+            <Card
+                title="Reward per Atom"
+                label="USD Equivalent"
+                value={(totalTributeValue / (totalLockedTokens / 1e6)).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
                 })}
             />
         </div>
