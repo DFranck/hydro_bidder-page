@@ -11,8 +11,9 @@ const themeConfig = {
             height={50}
         />
     ),
+    logoLink: "/docs",
     project: {
-        link: "https://hydro.cosmos.network",
+        link: "/docs",
     },
     head: (
         <>
