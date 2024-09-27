@@ -1,8 +1,8 @@
 "use client"
 
 import { useProposalsContext } from "@/app/proposals/context"
-import { ReactNode } from "react"
 import { Timestamp } from "../ts_types/HydroBase.types"
+import { TopCard } from "@/components/TopCard"
 
 export const getRoundEndText = (roundEnd: Timestamp) => {
     const now = new Date()
@@ -16,70 +16,6 @@ export const getRoundEndText = (roundEnd: Timestamp) => {
     } else {
         return `${hours} hour${hours > 1 ? "s" : ""}`
     }
-}
-
-function Card({
-    title,
-    value,
-    label,
-}: {
-    title?: ReactNode
-    value?: ReactNode
-    label?: ReactNode
-}) {
-    return (
-        <div
-            className="
-              flex
-              flex-col
-              rounded-xl
-              bg-transparent
-              bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]
-              px-6
-              py-3
-            "
-        >
-            <h3
-                className="
-                    order-2
-                    whitespace-pre-wrap
-                    text-xl
-                    text-white
-                    lg:text-2xl
-                "
-            >
-                {title}
-            </h3>
-            <var
-                className="
-                    order-1
-                    text-5xl
-                    font-bold
-                    not-italic
-                    slashed-zero
-                    leading-[124.7%]
-                    tracking-[-1.296px]
-                    text-palette-beige
-                "
-            >
-                {value}
-            </var>
-            <p
-                className="
-                    order-3
-                    text-base
-                    font-medium
-                    uppercase
-                    not-italic
-                    slashed-zero
-                    leading-[130%]
-                    text-palette-beige
-                "
-            >
-                {label}
-            </p>
-        </div>
-    )
 }
 
 export function ProposalListTopModules() {
@@ -101,7 +37,7 @@ export function ProposalListTopModules() {
                 lg:grid-cols-3
             "
         >
-            <Card
+            <TopCard
                 title={<>Current Round Tribute&nbsp;Value</>}
                 label="USD Equivalent"
                 value={
@@ -119,7 +55,7 @@ export function ProposalListTopModules() {
                 }
             />
 
-            <Card
+            <TopCard
                 title="Time Remaining"
                 label={`In Round ${currentRound}`}
                 value={
@@ -127,7 +63,7 @@ export function ProposalListTopModules() {
                 }
             />
 
-            <Card
+            <TopCard
                 title={<>Total Locked&nbsp;ATOM</>}
                 label={
                     <>

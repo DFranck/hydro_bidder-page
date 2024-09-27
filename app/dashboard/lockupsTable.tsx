@@ -1,10 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { LockEntryWithPower, Proposal } from "../ts_types/HydroBase.types"
-import { GlobalState } from "../types"
-import { useChain } from "@cosmos-kit/react"
-import { fetchMyAllLockups, Validator } from "@/hooks/hooks"
+import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
+import { Button } from "@/components/ui/button"
 import {
     Table,
     TableBody,
@@ -13,15 +10,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
-import { LockIcon, TriangleAlertIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { fetchMyAllLockups, Validator } from "@/hooks/hooks"
 import { calculateTimeRemaining, cn } from "@/lib/utils"
+import { useChain } from "@cosmos-kit/react"
+import { TriangleAlertIcon } from "lucide-react"
+import { useEffect, useState } from "react"
+import { LockEntryWithPower } from "../ts_types/HydroBase.types"
 
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import Link from "next/link"
+import { PrettyTable } from "@/components/PrettyTable"
 import { formatAmount } from "@/lib/utils"
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
+import Link from "next/link"
 
 export default function LockupsTable({
     validatorMap,
@@ -113,22 +113,70 @@ function Lockups({
 
     return (
         <div>
+            <PrettyTable
+                columns={[
+                    { key: "lockedATOM", label: "Locked ATOM" },
+                    { key: "multiplier", label: "Multiplier" },
+                    { key: "votingPower", label: "Voting Power" },
+                    { key: "expiresIn", label: "Expires In" },
+                    { key: "endDate", label: "End Date" },
+                    { key: "actions", label: "Actions" },
+                ]}
+                rows={myLockups.map((lockup, index) => {
+                    return {
+                        lockedATOM: (
+                            <>
+                                {formatAmount(lockup.lock_entry.funds.amount)}{" "}
+                                ATOM
+                            </>
+                        ),
+                        multiplier: (
+                            <>
+                                {(
+                                    Number(lockup.current_voting_power) /
+                                    Number(lockup.lock_entry.funds.amount)
+                                ).toPrecision(3)}{" "}
+                                x
+                            </>
+                        ),
+                        votingPower: formatAmount(lockup.current_voting_power),
+                        expiresIn: isExpired(lockup.lock_entry.lock_end) ? (
+                            <TriangleAlertIcon className="h-8 w-8 text-white" />
+                        ) : (
+                            calculateTimeRemaining(lockup.lock_entry.lock_end)
+                        ),
+                        endDate: formatDate(lockup.lock_entry.lock_end),
+                        actions: (
+                            <EditLockupDuration
+                                validatorMap={validatorMap}
+                                onSuccess={onSuccess}
+                                lockup={lockup}
+                                walletAddress={walletAddress}
+                                getSigningCosmWasmClient={
+                                    getSigningCosmWasmClient
+                                }
+                                getRestEndpoint={getRestEndpoint}
+                            />
+                        ),
+                    }
+                })}
+            />
             <div>
-                <div className="flex flex-col lg:flex-row justify-between w-full">
+                <div className="flex w-full flex-col justify-between lg:flex-row">
                     <h3>My Lockups</h3>
-                    <div className="space-x-2 flex items-center justify-between">
+                    <div className="flex items-center justify-between space-x-2">
                         <p className="sr-only">
                             Lock staked ATOM to get voting power
                         </p>
                         <Button
                             asChild
-                            className="bg-[#FFE1B8] text-black rounded-xl border-y-4 border-transparent hover:border-b-[#E4B472] hover:bg-[#FFE1B8]"
+                            className="rounded-xl border-y-4 border-transparent bg-[#FFE1B8] text-black hover:border-b-[#E4B472] hover:bg-[#FFE1B8]"
                         >
                             <Link href="/lock-atom">New Lockup</Link>
                         </Button>
                     </div>
                 </div>
-                <p className="text-sm text-neutral-400 max-w-5xl">
+                <p className="max-w-5xl text-sm text-neutral-400">
                     The more staked ATOM you lock, and the longer you lock it,
                     the more voting power you get. To increase your voting
                     power, you can either lock more ATOM in a new lockup, or
@@ -139,7 +187,7 @@ function Lockups({
             <Table
                 className={cn(
                     "border-separate border-spacing-y-2",
-                    submitting && "opacity-70 pointer-events-none"
+                    submitting && "pointer-events-none opacity-70"
                 )}
             >
                 <TableHeader>
@@ -172,27 +220,27 @@ function Lockups({
                                 className="h-20 border-b-0 bg-[#303132] hover:bg-[#555555]"
                             >
                                 <TableCell className="rounded-l-xl">
-                                    <div className="inline-flex items-center h-full">
-                                        <div className="w-16 h-4 bg-[#555555] rounded animate-pulse"></div>
+                                    <div className="inline-flex h-full items-center">
+                                        <div className="h-4 w-16 animate-pulse rounded bg-[#555555]"></div>
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="w-20 h-4 bg-[#555555] rounded animate-pulse"></div>
+                                    <div className="h-4 w-20 animate-pulse rounded bg-[#555555]"></div>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="w-24 h-4 bg-[#555555] rounded animate-pulse"></div>
+                                    <div className="h-4 w-24 animate-pulse rounded bg-[#555555]"></div>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="w-24 h-4 bg-[#555555] rounded animate-pulse"></div>
+                                    <div className="h-4 w-24 animate-pulse rounded bg-[#555555]"></div>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="w-full h-4 bg-[#555555] rounded animate-pulse"></div>
+                                    <div className="h-4 w-full animate-pulse rounded bg-[#555555]"></div>
                                 </TableCell>
                                 <TableCell
                                     align="right"
                                     className="rounded-r-xl"
                                 >
-                                    <div className="w-24 h-8 bg-[#555555] rounded animate-pulse"></div>
+                                    <div className="h-8 w-24 animate-pulse rounded bg-[#555555]"></div>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -200,7 +248,7 @@ function Lockups({
                         myLockups.map((lockup, index) => (
                             <TableRow
                                 key={index}
-                                className="h-20 border-b-0 bg-[#303132]/75 hover:bg-[#0061FF] backdrop-blur"
+                                className="h-20 border-b-0 bg-[#303132]/75 backdrop-blur hover:bg-[#0061FF]"
                             >
                                 {/* <TableCell className="rounded-l-xl w-28">
                                     <div className="inline-flex items-center h-full">
@@ -208,7 +256,7 @@ function Lockups({
                                         {lockup.lock_entry.lock_id}
                                     </div>
                                 </TableCell> */}
-                                <TableCell className="text-center rounded-l-xl">
+                                <TableCell className="rounded-l-xl text-center">
                                     {formatAmount(
                                         lockup.lock_entry.funds.amount
                                     )}
@@ -230,7 +278,7 @@ function Lockups({
                                 <TableCell className="text-center">
                                     {isExpired(lockup.lock_entry.lock_end) ? (
                                         <div className="inline-flex items-center">
-                                            <TriangleAlertIcon className="w-8 h-8 text-white" />
+                                            <TriangleAlertIcon className="h-8 w-8 text-white" />
                                         </div>
                                     ) : (
                                         <p>
@@ -258,9 +306,9 @@ function Lockups({
                             </TableRow>
                         ))
                     ) : (
-                        <TableRow className="h-20 border-b-0 bg-[#303132] hover:bg-[#303132] w-full">
+                        <TableRow className="h-20 w-full border-b-0 bg-[#303132] hover:bg-[#303132]">
                             <TableCell colSpan={7} className="rounded-xl">
-                                <div className="flex items-center justify-center h-20 ml-5 rounded-xl">
+                                <div className="ml-5 flex h-20 items-center justify-center rounded-xl">
                                     <p className="text-gray-200">
                                         No lockups found.
                                     </p>

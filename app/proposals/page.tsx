@@ -4,7 +4,7 @@ import { WelcomePopup } from "./welcomePopup"
 
 export default async function ActiveProposalsPage() {
     return (
-        <div className="pb-44 max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="mx-auto max-w-7xl px-6 pb-20 lg:px-12">
             <WelcomePopup />
             <ProposalListTopModules />
             <ActiveProposals />
