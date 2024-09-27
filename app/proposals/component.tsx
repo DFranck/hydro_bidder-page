@@ -189,19 +189,6 @@ const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: stri
                             <TableHead
                                 className="
                                     p-0
-                                    px-12
-                                    h-auto
-                                    text-center
-                                    text-neutral-200
-                                    w-0
-                                    whitespace-nowrap
-                                "
-                            >
-                                Estimated APR
-                            </TableHead>
-                            <TableHead
-                                className="
-                                    p-0
                                     h-auto
                                     text-center
                                     text-neutral-200
@@ -296,26 +283,18 @@ const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: stri
                                 <ProposalTableCell
                                     className="
                                         text-center
-                                        rounded-tr-lg
-                                        rounded-br-lg
                                         border-0
                                     "
                                     hasVoted={!!hasVoted}
                                     hasVotedOnProp={!!proposal.hasVotedOnProp}
                                 >
-                                    {proposal.percentage}
-                                </ProposalTableCell>
-                                <ProposalTableCell
-                                    className="
-                                        text-center
-                                        rounded-tr-lg
-                                        rounded-br-lg
-                                        border-0
-                                    "
-                                    hasVoted={!!hasVoted}
-                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
-                                >
-                                    {proposal.percentage}%
+                                    ${proposal.pricedAndNamedTributes.reduce((total, tribute) => {
+                                        return total + (tribute.priceUsd ?? 0) * tribute.amount / 10 ** (tribute.decimals ?? 0)
+                                    }, 0).toLocaleString("en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                        trailingZeroDisplay: "stripIfInteger",
+                                    })}
                                 </ProposalTableCell>
                                 <ProposalTableCell
                                     className="
