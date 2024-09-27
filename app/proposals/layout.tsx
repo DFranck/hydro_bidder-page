@@ -13,6 +13,8 @@ export default async function ProposalsLayout({
     const { totalTributeValue, atomPrice } =
         await getTributeValuesFromPriceFeed(currentProposalTributes)
 
+    
+
     const proposalsContextObject = {
         ...dashboardData,
         totalTributeValue,

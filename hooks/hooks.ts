@@ -257,16 +257,7 @@ export const fetchProposalTributes = async (
 
     const tributes = await tributeQueryClient.proposalTributes(query)
 
-    // Replace IBC denoms with token names
-    const tribute = tributes.tributes.map((tribute) => ({
-        ...tribute,
-        funds: {
-            ...tribute.funds,
-            denom: displayNeutronDenom(tribute.funds.denom),
-        },
-    }))
-
-    return tribute
+    return tributes.tributes
 }
 
 export const useProposals = (roundId: number, trancheId: number) => {
