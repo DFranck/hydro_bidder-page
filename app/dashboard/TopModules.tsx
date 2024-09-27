@@ -1,10 +1,11 @@
 "use client"
 
-import Image from "next/image"
+import { TopCard } from "@/components/TopCard"
 import { Button } from "@/components/ui/button"
+import { fetchUserVotingData, UserVotingData } from "@/hooks/hooks"
 import { cn, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { fetchUserVotingData, UserVotingData } from "@/hooks/hooks"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 
 export enum TabLabel {
@@ -13,11 +14,6 @@ export enum TabLabel {
     LOCKUPS = "lockups",
     TRIBUTE = "tribute",
 }
-
-const bgColor =
-    "bg-transparent bg-[linear-gradient(180deg,rgba(0,59,147,0.30)_0%,rgba(0,97,255,0.70)_100%)]"
-const activeBgColor =
-    "bg-white bg-[linear-gradient(180deg,rgba(255,255,255,1)_64%,rgba(0,35,255,1)_64%)]"
 
 export const DashboardTopModules = () => {
     const { isWalletConnected, address } = useChain("neutron")
@@ -34,7 +30,7 @@ export const DashboardTopModules = () => {
     }, [isWalletConnected, address])
 
     return (
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid gap-6 lg:grid-cols-2">
             <LockedAtomCard
                 isLoading={!userVotingData}
                 count={userVotingData?.lockups.count}
@@ -51,8 +47,8 @@ export const DashboardTopModules = () => {
 
 function RewardsSnapshotCard({ amount }: { amount: number }) {
     return (
-        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
-            <div className="flex flex-col flex-1 justify-between text-white">
+        <div className={cn("flex h-full flex-col rounded-xl p-8")}>
+            <div className="flex flex-1 flex-col justify-between text-white">
                 <div className="flex w-full justify-between">
                     <Image
                         alt="Locked ATOM"
@@ -60,32 +56,23 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
                         width={100}
                         height={100}
                     />
-                    <Button className="h-10 rounded-full bg-[#00FFC2] text-[#080815] text-center text-lg font-medium">
+                    <Button className="h-10 rounded-full bg-[#00FFC2] text-center text-lg font-medium text-[#080815]">
                         Claim Rewards
                     </Button>
                 </div>
                 <h3 className="py-4 text-white">Rewards Snapshot</h3>
                 <p className="text-xl font-normal">ROI on your locked ATOM</p>
-                <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
+                <p className="pt-[30px] text-5xl font-bold not-italic slashed-zero leading-[124.7%] tracking-[-1.296px] text-[#E4B472]">
                     {Intl.NumberFormat("en-US", {
                         maximumFractionDigits: 0,
                         style: "currency",
                         currency: "USD",
                     }).format(amount)}
                 </p>
-                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                <p className="text-base font-medium uppercase not-italic slashed-zero leading-[130%] text-[#FFE1B8]">
                     USD EQUIVALENT
                 </p>
             </div>
-        </div>
-    )
-}
-
-const skeleton = () => {
-    return (
-        <div className="animate-pulse pt-6">
-            <div className="h-12 bg-gray-300 rounded w-3/4 mb-4"></div>
-            <div className="h-6 bg-gray-300 rounded w-1/2"></div>
         </div>
     )
 }
@@ -100,35 +87,28 @@ function LockedAtomCard({
     isLoading: boolean
 }) {
     return (
-        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
-            <div className="flex flex-col flex-1 justify-between text-white">
+        <TopCard
+            icon={
                 <Image
                     alt="Locked ATOM"
+                    className="translate-x-4"
                     src={"/images/Lock_Light.svg"}
-                    width={100}
-                    height={100}
+                    fill={true}
                 />
-                <h3 className="py-4 text-white">Locked ATOM</h3>
-                <p className="text-xl font-normal">
-                    {lockedAtom === 0
-                        ? "Lock ATOM to get Voting Power"
-                        : "Your locked ATOM balance"}
-                </p>
-                {isLoading
-                    ? skeleton()
-                    : !!lockedAtom &&
-                      lockedAtom > 0 && (
-                          <>
-                              <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
-                                  {formatAmount(lockedAtom)}
-                              </p>
-                              <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                                  IN {count} Lockups
-                              </p>
-                          </>
-                      )}
-            </div>
-        </div>
+            }
+            isLoading={isLoading}
+            value={
+                !!lockedAtom && lockedAtom > 0
+                    ? formatAmount(lockedAtom)
+                    : "0.00"
+            }
+            title="Locked ATOM"
+            label={
+                !!lockedAtom && lockedAtom > 0
+                    ? `In ${count === 1 ? "Lockup" : "Lockups"}`
+                    : undefined
+            }
+        />
     )
 }
 
@@ -142,39 +122,32 @@ function VotingPowerCard({
     isLoading: boolean
 }) {
     return (
-        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
-            <div className="flex flex-col flex-1 justify-between">
+        <TopCard
+            icon={
                 <Image
                     alt="Voting Power"
+                    className="translate-x-2"
                     src={"/images/Wallet_Light.svg"}
-                    width={100}
-                    height={100}
+                    fill={true}
                 />
-                <h3 className="py-4 text-white">Voting Power</h3>
-                <p className="text-xl font-normal">
-                    {votingPower === 0
-                        ? "Lock ATOM to get Voting Power"
-                        : "Your current Voting Power"}
-                </p>
-                {isLoading
-                    ? skeleton()
-                    : !!votingPower &&
-                      votingPower > 0 && (
-                          <>
-                              <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
-                                  {formatAmount(votingPower)}
-                              </p>
-                              {firstExpireTs && firstExpireTs > 0 && (
-                                  <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                                      until{" "}
-                                      {new Date(
-                                          firstExpireTs / 1e6
-                                      ).toLocaleDateString()}
-                                  </p>
-                              )}
-                          </>
-                      )}
-            </div>
-        </div>
+            }
+            isLoading={isLoading}
+            value={
+                !!votingPower && votingPower > 0 && formatAmount(votingPower)
+            }
+            title="Voting Power"
+            label={
+                votingPower === 0 ? (
+                    "Lock ATOM to get Voting Power"
+                ) : firstExpireTs && firstExpireTs > 0 ? (
+                    <>
+                        until{" "}
+                        {new Date(firstExpireTs / 1e6).toLocaleDateString()}
+                    </>
+                ) : (
+                    "Your current Voting Power"
+                )
+            }
+        />
     )
 }

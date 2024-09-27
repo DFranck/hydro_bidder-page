@@ -4,7 +4,7 @@ import { useProposalsContext } from "@/app/proposals/context"
 import ProposalDetail from "@/components/proposalDetail"
 import { ProposalListTopModules } from "../TopModules"
 
-export default async function VotingProposalSinglePage({
+export default function VotingProposalSinglePage({
     params,
 }: {
     params: { id: string }
@@ -17,12 +17,12 @@ export default async function VotingProposalSinglePage({
         .find((proposal) => proposal.proposal_id === Number(params.id))
 
     return (
-        <div className="pb-44 max-w-7xl mx-auto px-6 lg:px-12 space-y-12">
+        <div className="mx-auto max-w-7xl space-y-12 px-6 pb-44 lg:px-12">
             <ProposalListTopModules />
             {currentProposal ? (
                 <ProposalDetail proposal={currentProposal} deployed={false} />
             ) : (
-                <div className="text-center py-8">
+                <div className="py-8 text-center">
                     <h2 className="text-2xl font-bold text-red-500">
                         Error: Proposal not found
                     </h2>

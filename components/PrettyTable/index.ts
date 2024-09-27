@@ -1,0 +1,8 @@
+export { TABLE } from "./components/TABLE"
+export { TBODY } from "./components/TBODY"
+export { TD } from "./components/TD"
+export { TFOOT } from "./components/TFOOT"
+export { TH } from "./components/TH"
+export { THEAD } from "./components/THEAD"
+export { TR } from "./components/TR"
+export { PrettyTable } from "./PrettyTable"

@@ -1,22 +1,32 @@
 "use client"
 
 import { useProposalsContext } from "@/app/proposals/context"
+import { PrettyTable, TR } from "@/components/PrettyTable"
 import { TranchePagination } from "@/components/TranchePagination"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import { useMyVotes } from "@/hooks/hooks"
 import { sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { CircleCheckBig, ScrollText, X } from "lucide-react"
+import { CircleCheckBig, ScrollText } from "lucide-react"
 import Link from "next/link"
-import { ComponentProps, useState } from "react"
-import { twMerge } from "tailwind-merge"
+import { useState } from "react"
+
+function proposalTotalTribute(
+    pricedAndNamedTributes: {
+        priceUsd: number | undefined
+        symbol: string | undefined
+        decimals: number | undefined
+        denom: string
+        amount: number
+    }[]
+) {
+    return pricedAndNamedTributes.reduce((total, tribute) => {
+        return (
+            total +
+            ((tribute.priceUsd ?? 0) * tribute.amount) /
+                10 ** (tribute.decimals ?? 0)
+        )
+    }, 0)
+}
 
 const ActiveProposals = () => {
     const { currentProposalTranches, currentProposalTributes, globalState } =
@@ -59,17 +69,23 @@ const ActiveProposals = () => {
         (proposal) => proposal.hasVotedOnProp
     )
 
+    const classNamesForCells = `
+        group-[&.has-voted]/table-row:bg-palette-green
+        group-[&.has-voted]/table-row:text-palette-text
+        group-[&.has-voted:hover]/table-row:text-palette-text/60
+    `
+
     return (
         <div
             className="
-                mt-10
                 -mx-3
+                mt-10
                 space-y-6
-                bg-palette-text/20
-                backdrop-blur-md
-                px-3
-                rounded-md
                 overflow-hidden
+                rounded-md
+                bg-palette-text/20
+                px-3
+                backdrop-blur-md
             "
         >
             <TranchePagination
@@ -85,9 +101,9 @@ const ActiveProposals = () => {
                     ) : hasVoted ? (
                         <>
                             You can vote on{" "}
-                            <span className="italic font-bold">one</span>{" "}
+                            <span className="font-bold italic">one</span>{" "}
                             proposal from{" "}
-                            <span className="italic font-bold">each</span>{" "}
+                            <span className="font-bold italic">each</span>{" "}
                             tranche!
                         </>
                     ) : (
@@ -96,222 +112,156 @@ const ActiveProposals = () => {
                                 Lock some ATOM
                             </a>{" "}
                             to vote on{" "}
-                            <span className="italic font-bold">one</span>{" "}
+                            <span className="font-bold italic">one</span>{" "}
                             proposal from{" "}
-                            <span className="italic font-bold">each</span>{" "}
+                            <span className="font-bold italic">each</span>{" "}
                             tranche!
                         </>
                     )
                 }
             />
-
             {decoratedProposals?.length && (
-                <Table
-                    className="
-                        border-separate
-                        border-spacing-y-3
-                    "
-                >
-                    <TableHeader>
-                        <TableRow className="border-0">
-                            <TableHead
-                                className="
-                                    p-0
-                                    h-auto
-                                    text-left
-                                    px-0
-                                    text-neutral-200
+                <PrettyTable
+                    columns={[
+                        {
+                            key: "hasVoted",
+                            label: "",
+                            isSortable: false,
+                            propsForHeaderCell: {
+                                className: `
+                                    !pr-0
                                     w-0
-                                "
-                            >
-                                &nbsp;
-                            </TableHead>
-                            <TableHead
-                                className="
-                                    p-0
-                                    h-auto
-                                    text-left
-                                    text-neutral-200
-                                "
-                            >
-                                Proposal Name
-                            </TableHead>
-                            <TableHead
-                                className="
-                                    p-0
-                                    px-12
-                                    h-auto
-                                    text-center
-                                    text-neutral-200
+                                `,
+                            },
+                            propsForCells: {
+                                className: `
+                                    ${classNamesForCells}
+                                    rounded-l-lg
+                                    !pr-0
                                     w-0
+                                `,
+                            },
+                        },
+                        {
+                            key: "name",
+                            label: "Proposal Name",
+                            isSortable: true,
+                            propsForCells: {
+                                className: classNamesForCells,
+                            },
+                        },
+                        {
+                            key: "status",
+                            label: "",
+                            propsForCells: {
+                                className: classNamesForCells,
+                            },
+                        },
+                        {
+                            key: "tributeAmount",
+                            label: "Tribute Amount",
+                            isSortable: true,
+                            textAlign: "right",
+                            propsForCells: {
+                                className: classNamesForCells,
+                            },
+                        },
+                        {
+                            key: "currentVoteShare",
+                            label: "Current Vote Share",
+                            isSortable: true,
+                            initialSortDirection: "DESC",
+                            textAlign: "right",
+                            propsForCells: {
+                                className: `
+                                    rounded-r-lg
+                                    ${classNamesForCells}
+                                `,
+                            },
+                        },
+                    ]}
+                    initialSortedColumnKey="currentVoteShare"
+                    rows={decoratedProposals.map((proposal) => ({
+                        _proposal: proposal,
+
+                        hasVoted:
+                            hasVoted && proposal.hasVotedOnProp ? (
+                                <CircleCheckBig />
+                            ) : (
+                                <ScrollText />
+                            ),
+
+                        name: (
+                            <>
+                                <p
+                                    className="
+                                        line-clamp-2
+                                        text-lg
+                                        font-semibold
+                                    "
+                                >
+                                    {proposal.title}
+                                </p>
+                                <Link
+                                    href={`/proposals/${proposal.proposal_id}`}
+                                    className="
+                                        absolute
+                                        inset-0
+                                        z-10
+                                        h-full
+                                        w-full
+                                    "
+                                />
+                            </>
+                        ),
+
+                        status: proposal.hasVotedOnProp && (
+                            <div
+                                className="
+                                    flex
+                                    w-min
+                                    items-center
+                                    gap-2
                                     whitespace-nowrap
+                                    rounded-full
+                                    bg-white
+                                    p-1
+                                    px-2
+                                    text-xs
                                 "
                             >
-                                Tribute Amount
-                            </TableHead>
-                            <TableHead
-                                className="
-                                    p-0
-                                    h-auto
-                                    text-center
-                                    text-neutral-200
-                                    w-0
-                                    whitespace-nowrap
-                                "
-                            >
-                                Current vote share
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {decoratedProposals.map((proposal) => (
-                            <TableRow
-                                key={proposal.proposal_id}
-                                className={twMerge(
-                                    `
-                                        group/row
-                                        relative
-                                        text-white
-                                        cursor-pointer
-                                        border-0
-                                        backdrop-blur
-                                        bg-transparent
-                                        hover:bg-transparent
-                                    `,
-                                    hasVoted &&
-                                        proposal.hasVotedOnProp &&
-                                        `
-                                            text-palette-text
-                                        `
-                                )}
-                            >
-                                <ProposalTableCell
-                                    className="
-                                        px-5
-                                        rounded-tl-lg
-                                        rounded-bl-lg
-                                    "
-                                    hasVoted={!!hasVoted}
-                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
-                                >
-                                    {hasVoted && proposal.hasVotedOnProp ? (
-                                        <CircleCheckBig />
-                                    ) : hasVoted ? (
-                                        <X />
-                                    ) : (
-                                        <ScrollText />
-                                    )}
-                                </ProposalTableCell>
-                                <ProposalTableCell
-                                    hasVoted={!!hasVoted}
-                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
-                                >
-                                    <p
-                                        className="
-                                            text-xl
-                                            not-italic
-                                            font-bold
-                                            leading-[150%]
-                                            line-clamp-2
-                                        "
-                                    >
-                                        {proposal.title}
-                                    </p>
-                                    <Link
-                                        href={`/proposals/${proposal.proposal_id}`}
-                                        className="
-                                            absolute
-                                            inset-0
-                                            w-full
-                                            h-full
-                                            z-10
-                                        "
-                                    />
-                                </ProposalTableCell>
-                                <ProposalTableCell
-                                    className="
-                                        text-center
-                                    "
-                                    hasVoted={!!hasVoted}
-                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
-                                >
-                                    {proposal.summedTributes.map(
-                                        (tribute, index) => (
-                                            <div key={index}>
-                                                {`${(
-                                                    tribute.amount / 1000000
-                                                ).toFixed(2)} ${
-                                                    tribute.denom.length > 20
-                                                        ? tribute.denom.slice(
-                                                              0,
-                                                              17
-                                                          ) + "..."
-                                                        : tribute.denom
-                                                }`}
-                                            </div>
-                                        )
-                                    )}
-                                </ProposalTableCell>
-                                <ProposalTableCell
-                                    className="
-                                        text-center
-                                        rounded-tr-lg
-                                        rounded-br-lg
-                                        border-0
-                                    "
-                                    hasVoted={!!hasVoted}
-                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
-                                >
-                                    {proposal.percentage}%
-                                </ProposalTableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                Your Pick
+                            </div>
+                        ),
+
+                        tributeAmount: proposal.summedTributes.length
+                            ? proposal.summedTributes.map((tribute, index) => (
+                                  <div key={index}>
+                                      {(tribute.amount / 1000000).toFixed(2)}{" "}
+                                      {tribute.denom.length > 20
+                                          ? tribute.denom.slice(0, 17) + "..."
+                                          : tribute.denom}
+                                  </div>
+                              ))
+                            : "0.00",
+
+                        currentVoteShare: `${proposal.percentage}%`,
+                    }))}
+                    renderRow={({ children, row, rowProps }) => (
+                        <TR
+                            className={
+                                row._proposal.hasVotedOnProp
+                                    ? "has-voted"
+                                    : undefined
+                            }
+                            {...rowProps}
+                        >
+                            {children}
+                        </TR>
+                    )}
+                />
             )}
         </div>
-    )
-}
-
-function ProposalTableCell({
-    children,
-    className,
-    hasVoted,
-    hasVotedOnProp,
-    ...otherProps
-}: ComponentProps<"div"> & { hasVoted: boolean; hasVotedOnProp: boolean }) {
-    return (
-        <TableCell
-            className={twMerge(
-                `
-                    p-0
-                    py-5
-                    group-hover/row:delay-0
-                    bg-palette-beige/10
-                    delay-75
-                    transition
-                    group-hover/row:bg-palette-beige
-                    group-hover/row:text-palette-text
-                `,
-                hasVoted &&
-                    hasVotedOnProp &&
-                    `
-                        bg-palette-green
-                        text-palette-text
-                        group-hover/row:bg-palette-green
-                        group-hover/row:text-palette-text/60
-                    `,
-                hasVoted &&
-                    !hasVotedOnProp &&
-                    `
-                        opacity-90
-                        group-hover/row:opacity-100
-                    `,
-                className
-            )}
-        >
-            {children}
-        </TableCell>
     )
 }
 
