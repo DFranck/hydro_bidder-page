@@ -95,7 +95,7 @@ export function ProposalListTopModules() {
             />
 
             <TopCard
-                title="Reward per Atom"
+                title="Reward per ATOM"
                 label="USD Equivalent"
                 value={(
                     totalTributeValue /
