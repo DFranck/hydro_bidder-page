@@ -34,7 +34,7 @@ export const DashboardTopModules = () => {
     }, [isWalletConnected, address])
 
     return (
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid gap-6 lg:grid-cols-2">
             <LockedAtomCard
                 isLoading={!userVotingData}
                 count={userVotingData?.lockups.count}
@@ -51,8 +51,8 @@ export const DashboardTopModules = () => {
 
 function RewardsSnapshotCard({ amount }: { amount: number }) {
     return (
-        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
-            <div className="flex flex-col flex-1 justify-between text-white">
+        <div className={cn("flex h-full flex-col rounded-xl p-8", bgColor)}>
+            <div className="flex flex-1 flex-col justify-between text-white">
                 <div className="flex w-full justify-between">
                     <Image
                         alt="Locked ATOM"
@@ -60,20 +60,20 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
                         width={100}
                         height={100}
                     />
-                    <Button className="h-10 rounded-full bg-[#00FFC2] text-[#080815] text-center text-lg font-medium">
+                    <Button className="h-10 rounded-full bg-[#00FFC2] text-center text-lg font-medium text-[#080815]">
                         Claim Rewards
                     </Button>
                 </div>
                 <h3 className="py-4 text-white">Rewards Snapshot</h3>
                 <p className="text-xl font-normal">ROI on your locked ATOM</p>
-                <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-[30px]">
+                <p className="pt-[30px] text-5xl font-bold not-italic slashed-zero leading-[124.7%] tracking-[-1.296px] text-[#E4B472]">
                     {Intl.NumberFormat("en-US", {
                         maximumFractionDigits: 0,
                         style: "currency",
                         currency: "USD",
                     }).format(amount)}
                 </p>
-                <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
+                <p className="text-base font-medium uppercase not-italic slashed-zero leading-[130%] text-[#FFE1B8]">
                     USD EQUIVALENT
                 </p>
             </div>
@@ -84,8 +84,8 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
 const skeleton = () => {
     return (
         <div className="animate-pulse pt-6">
-            <div className="h-12 bg-gray-300 rounded w-3/4 mb-4"></div>
-            <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+            <div className="mb-4 h-12 w-3/4 rounded bg-gray-300"></div>
+            <div className="h-6 w-1/2 rounded bg-gray-300"></div>
         </div>
     )
 }
@@ -100,33 +100,37 @@ function LockedAtomCard({
     isLoading: boolean
 }) {
     return (
-        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
-            <div className="flex flex-col flex-1 justify-between text-white">
-                <Image
-                    alt="Locked ATOM"
-                    src={"/images/Lock_Light.svg"}
-                    width={100}
-                    height={100}
-                />
-                <h3 className="py-4 text-white">Locked ATOM</h3>
-                <p className="text-xl font-normal">
-                    {lockedAtom === 0
-                        ? "Lock ATOM to get Voting Power"
-                        : "Your locked ATOM balance"}
-                </p>
-                {isLoading
-                    ? skeleton()
-                    : !!lockedAtom &&
-                      lockedAtom > 0 && (
-                          <>
-                              <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
-                                  {formatAmount(lockedAtom)}
-                              </p>
-                              <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                                  IN {count} Lockups
-                              </p>
-                          </>
-                      )}
+        <div className={cn("flex h-full flex-col rounded-xl p-8", bgColor)}>
+            <div className="flex flex-1 flex-col justify-between text-white">
+                <div className="flex flex-row justify-between">
+                    <Image
+                        alt="Locked ATOM"
+                        src={"/images/Lock_Light.svg"}
+                        width={100}
+                        height={100}
+                    />
+                    {isLoading
+                        ? skeleton()
+                        : !!lockedAtom &&
+                          lockedAtom > 0 && (
+                              <div className="flex flex-col items-end">
+                                  <p className="pt-6 text-5xl font-bold not-italic slashed-zero leading-[124.7%] tracking-[-1.296px] text-[#E4B472]">
+                                      {formatAmount(lockedAtom)}
+                                  </p>
+                                  <p className="text-base font-medium uppercase not-italic slashed-zero leading-[130%] text-[#FFE1B8]">
+                                      IN {count} Lockups
+                                  </p>
+                              </div>
+                          )}
+                </div>
+                <div>
+                    <h3 className="text-white">Locked ATOM</h3>
+                    <p className="text-gray-400">
+                        {lockedAtom === 0
+                            ? "Lock ATOM to get Voting Power"
+                            : "Your total locked ATOM balance"}
+                    </p>
+                </div>
             </div>
         </div>
     )
@@ -142,38 +146,42 @@ function VotingPowerCard({
     isLoading: boolean
 }) {
     return (
-        <div className={cn("h-full flex flex-col p-8 rounded-xl", bgColor)}>
-            <div className="flex flex-col flex-1 justify-between">
-                <Image
-                    alt="Voting Power"
-                    src={"/images/Wallet_Light.svg"}
-                    width={100}
-                    height={100}
-                />
-                <h3 className="py-4 text-white">Voting Power</h3>
-                <p className="text-xl font-normal">
-                    {votingPower === 0
-                        ? "Lock ATOM to get Voting Power"
-                        : "Your current Voting Power"}
-                </p>
-                {isLoading
-                    ? skeleton()
-                    : !!votingPower &&
-                      votingPower > 0 && (
-                          <>
-                              <p className="text-[#E4B472] slashed-zero text-5xl not-italic font-bold leading-[124.7%] tracking-[-1.296px] pt-6">
-                                  {formatAmount(votingPower)}
-                              </p>
-                              {firstExpireTs && firstExpireTs > 0 && (
-                                  <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] uppercase">
-                                      until{" "}
-                                      {new Date(
-                                          firstExpireTs / 1e6
-                                      ).toLocaleDateString()}
+        <div className={cn("flex h-full flex-col rounded-xl p-8", bgColor)}>
+            <div className="flex flex-1 flex-col justify-between">
+                <div className="flex flex-row justify-between">
+                    <Image
+                        alt="Voting Power"
+                        src={"/images/Wallet_Light.svg"}
+                        width={100}
+                        height={100}
+                    />
+                    {isLoading
+                        ? skeleton()
+                        : !!votingPower &&
+                          votingPower > 0 && (
+                              <div className="flex flex-col items-end">
+                                  <p className="pt-6 text-5xl font-bold not-italic slashed-zero leading-[124.7%] tracking-[-1.296px] text-[#E4B472]">
+                                      {formatAmount(votingPower)}
                                   </p>
-                              )}
-                          </>
-                      )}
+                                  {firstExpireTs && firstExpireTs > 0 && (
+                                      <p className="text-base font-medium uppercase not-italic slashed-zero leading-[130%] text-[#FFE1B8]">
+                                          until{" "}
+                                          {new Date(
+                                              firstExpireTs / 1e6
+                                          ).toLocaleDateString()}
+                                      </p>
+                                  )}
+                              </div>
+                          )}
+                </div>
+                <div>
+                    <h3 className="text-white">Voting Power</h3>
+                    <p className="text-gray-400">
+                        {votingPower === 0
+                            ? "Lock ATOM to get Voting Power"
+                            : "Your voting Power in this round"}
+                    </p>
+                </div>
             </div>
         </div>
     )
