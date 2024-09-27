@@ -1,4 +1,4 @@
-# DEPLOYMENT
+# Deployment
 
 ## DAO on Neutron
 
