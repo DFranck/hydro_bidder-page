@@ -161,8 +161,6 @@ export default function LSMInteraction({
                 (notice) => parseInt(notice.amount) >= 100
             )
 
-            console.log("newIncompleteNotices", newIncompleteNotices)
-
             setIncompleteNotices(newIncompleteNotices)
         }
 
@@ -522,13 +520,6 @@ const LockForm = ({
             }
         }
     }, [selectedAmount, selectedValidator, validators])
-
-    console.log(
-        "scaleLockupPower",
-        scaleLockupPower(selectedDuration, BigInt(selectedAmount))
-    )
-    console.log("selectedDuration", selectedDuration)
-    console.log("BigInt(selectedAmount)", BigInt(selectedAmount))
 
     const clearSelectedValidator = () => {
         form.setValue("validator", "")

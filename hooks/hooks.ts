@@ -139,6 +139,7 @@ export async function fetchDashboardData() {
     }
 }
 
+// returns a map of proposal id to tributes
 async function fetchProposalTributesForRound(
     proposalTranches: Map<number, Proposal[]>,
     round: number
@@ -524,88 +525,12 @@ export const useUserVotingData = (address: string) => {
     })
 }
 
-type TributesValuePerDenom = {
-    amount: number
-    apiId: string
-}
-
-type USDAmounts = {
-    totalTributeValue: number
-    atomPrice: number
-}
-
-export async function getTributeValuesFromPriceFeed(
-    propsalTributes: Map<number, Tribute[]>
-): Promise<USDAmounts> {
-    let atomPrice = 0
-    let totalValue = 0
-
-    const trancheDenoms = tributesValuePerDenom(propsalTributes)
-    const fetchDenoms: string[] = ["cosmos"] // always fetch atom
-    const missingDenoms: string[] = []
-    trancheDenoms.forEach((value, denom) => {
-        if (value.apiId) {
-            fetchDenoms.push(value.apiId)
-        } else {
-            missingDenoms.push(denom)
-        }
-    })
-
-    try {
-        // responds with: { cosmos: { usd: 4.13 }, ... }
-        const res = await fetch(getPriceFeedUrl(fetchDenoms), {
-            next: {
-                revalidate: 5 * 60,
-            },
-        }).then((res) => res.json())
-        atomPrice = res["cosmos"]["usd"]
-        totalValue = Array.from(trancheDenoms.values()).reduce(
-            (acc, { amount, apiId }) => {
-                const price = res[apiId]["usd"] / 1e6
-                return acc + price * amount
-            },
-            0
-        )
-    } catch {
-        return { totalTributeValue: 0, atomPrice: 0 }
-    }
-    return { totalTributeValue: totalValue, atomPrice: atomPrice }
-}
-
-function tributesValuePerDenom(
-    proposalTributes: Map<number, Tribute[]>
-): Map<string, TributesValuePerDenom> {
-    const trancheDenoms = new Map<
-        string,
-        {
-            amount: number
-            apiId: string
-        }
-    >()
-    Array.from(proposalTributes.values())
-        .flat()
-        .forEach((t) => {
-            const denom = t.funds.denom
-            const amount = parseInt(t.funds.amount)
-            if (trancheDenoms.has(denom)) {
-                const current = trancheDenoms.get(denom)!
-                current.amount += amount
-                trancheDenoms.set(denom, current)
-            } else {
-                const apiId = FEED_COINS_BY_SYMBOL.get(denom)?.api_id
-                trancheDenoms.set(denom, { amount, apiId: apiId ?? "" })
-            }
-        })
-
-    return trancheDenoms
-}
-
 type AssetListEntry = {
     token: string
     symbol: string,
     decimals: number
-    coingecko_id?: string,
-    price_usd?: number
+    coingeckoId?: string,
+    priceUsd?: number
 }
 
 export const fetchAssetListWithPrices = async (): Promise<Map<string, AssetListEntry>> => {
@@ -617,8 +542,8 @@ export const fetchAssetListWithPrices = async (): Promise<Map<string, AssetListE
 
     // Extract Coingecko IDs from assets that have them
     const coingeckoIds = data
-        .filter(asset => asset.coingecko_id)
-        .map(asset => asset.coingecko_id as string);
+        .filter(asset => asset.coingeckoId)
+        .map(asset => asset.coingeckoId as string);
 
     // Fetch prices using getPriceFeedUrl
     const pricesResponse = await fetch(getPriceFeedUrl(coingeckoIds), {
@@ -630,8 +555,8 @@ export const fetchAssetListWithPrices = async (): Promise<Map<string, AssetListE
     const assetMap = new Map<string, AssetListEntry>();
 
     data.forEach(asset => {
-        const updatedAsset = asset.coingecko_id && prices[asset.coingecko_id]
-            ? { ...asset, price_usd: prices[asset.coingecko_id].usd }
+        const updatedAsset = asset.coingeckoId && prices[asset.coingeckoId]
+            ? { ...asset, priceUsd: prices[asset.coingeckoId].usd }
             : asset;
         assetMap.set(asset.token, updatedAsset);
     });

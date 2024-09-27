@@ -5,10 +5,7 @@ import { createContext, useContext } from "react"
 
 export type ProposalsContextObject = Awaited<
     ReturnType<typeof fetchDashboardData>
-> & {
-    totalTributeValue: number
-    atomPrice: number
-}
+>
 
 // Define the type for ProposalsContext
 export const ProposalsContext: React.Context<ProposalsContextObject | null> = createContext<ProposalsContextObject | null>(null);
