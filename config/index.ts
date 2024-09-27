@@ -3,14 +3,14 @@ export const CHAIN_NAME_STORAGE_KEY = "selected-chain"
 import { AssetList, Chain } from "@chain-registry/types"
 
 export const endpoints = {
-    cosmoshubtestnet: {
-        rpc: ["https://rpc.sentry-01.theta-testnet.polypore.xyz"],
-        rest: ["https://rest.sentry-01.theta-testnet.polypore.xyz"],
-    },
-    neutrontestnet: {
-        rpc: ["https://rpc-palvus.pion-1.ntrn.tech"],
-        rest: ["https://rest-palvus.pion-1.ntrn.tech"],
-    },
+    // cosmoshubtestnet: {
+    //     rpc: ["https://rpc.sentry-01.theta-testnet.polypore.xyz"],
+    //     rest: ["https://rest.sentry-01.theta-testnet.polypore.xyz"],
+    // },
+    // neutrontestnet: {
+    //     rpc: ["https://rpc-palvus.pion-1.ntrn.tech"],
+    //     rest: ["https://rest-palvus.pion-1.ntrn.tech"],
+    // },
     neutron: {
         rpc: ["https://neutron-rpc.polkachu.com"],
         rest: ["https://neutron-api.polkachu.com/"],

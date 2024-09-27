@@ -13,7 +13,7 @@ export default function Navigation() {
     const navigationMenuTriggerStyle = (link: string) => {
         return cn(
             "text-white hover:text-[#FFE1B8] focus:text-[#FFE1B8] focus:bg-transparent text-sm font-medium leading-tight tracking-tight",
-            pathname.startsWith(link) ? "text-[#FFE1B8]" : ""
+            pathname?.startsWith(link) ? "text-[#FFE1B8]" : ""
         )
     }
 
