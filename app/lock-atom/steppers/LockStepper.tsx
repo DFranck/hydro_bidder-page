@@ -142,7 +142,6 @@ export const LockStepper = ({
 
             // Extract the LSM denom
             const lsm = extractLSMDenom(broadcastResult)
-            console.log("LSM Denom:", lsm)
 
             // Wait for the user to sign the IBC transfer transaction
             setStep("WaitingForIBCSigning")

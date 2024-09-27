@@ -112,8 +112,6 @@ export async function checkForGasOnNeutron(neutronChain: ChainContext) {
         `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`
     ).then((res) => res.json())
 
-    console.log(response)
-
     const balances = response.balances
     const untrnBalance = balances.find((b) => b.denom === "untrn")
     const uatomBalance = balances.find((b) => b.denom === UATOMDenom)
@@ -122,13 +120,6 @@ export async function checkForGasOnNeutron(neutronChain: ChainContext) {
         untrnBalance && Number(untrnBalance.amount) >= minimumUNTRNGas
     const hasEnoughUatom =
         uatomBalance && Number(uatomBalance.amount) >= minimumUATOMGas
-
-    console.log("Neutron gas check result:", {
-        hasEnoughUntrn,
-        hasEnoughUatom,
-        untrnBalance: untrnBalance ? untrnBalance.amount : "0",
-        uatomBalance: uatomBalance ? uatomBalance.amount : "0",
-    })
 
     return {
         hasEnoughUntrn: !!hasEnoughUntrn,
@@ -159,19 +150,12 @@ export async function checkForGasOnHub(hubChain: ChainContext) {
         `${restEndpoint}cosmos/bank/v1beta1/balances/${hubChain.address}`
     ).then((res) => res.json())
 
-    console.log(response)
-
     const balances = response.balances
     const uatomBalance = balances.find((b) => b.denom === "uatom")
 
     const hasEnoughUatom =
         uatomBalance && Number(uatomBalance.amount) > minimumUATOMGas * 2
-
-    console.log("Hub gas check result:", {
-        hasEnoughUatom,
-        uatomBalance: uatomBalance ? uatomBalance.amount : "0",
-    })
-
+        
     return {
         hasEnoughUatom: !!hasEnoughUatom,
         uatomBalance: uatomBalance ? uatomBalance.amount : "0",

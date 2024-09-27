@@ -132,7 +132,7 @@ export const EditLockupDuration = ({
                     lockup.lock_entry.funds,
                     endpoint as string
                 )
-                console.log(trace)
+
                 if (trace) {
                     form.setValue(
                         "validator",

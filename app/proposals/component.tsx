@@ -46,7 +46,7 @@ const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: stri
             const assetInfo = assetListWithPrices.get(tribute.denom);
             return {
                 ...tribute,
-                price_usd: assetInfo?.price_usd,
+                priceUsd: assetInfo?.priceUsd,
                 symbol: assetInfo?.symbol,
                 decimals: assetInfo?.decimals
             };
