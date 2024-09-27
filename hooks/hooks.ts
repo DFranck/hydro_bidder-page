@@ -550,7 +550,10 @@ export const fetchAssetListWithPrices = async (): Promise<Map<string, AssetListE
         next: { revalidate: 5 * 60 }, // Revalidate every 5 minutes
     });
     const prices: Record<string, { usd: number }> = await pricesResponse.json();
-
+    
+    // TODO: Remove this- mocking out large prices for testing
+    prices.stargaze = { usd: 243.22 }
+    
     // Create a Map with token as key and updated AssetListEntry as value
     const assetMap = new Map<string, AssetListEntry>();
 
