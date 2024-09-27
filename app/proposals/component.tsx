@@ -3,11 +3,12 @@
 import { useProposalsContext } from "@/app/proposals/context"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { TranchePagination } from "@/components/TranchePagination"
-import { useMyVotes } from "@/hooks/hooks"
-import { sumTributeAmounts } from "@/lib/utils"
+import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
+import { formatAmount, formatDenom, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { CircleCheckBig, ScrollText } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 function proposalTotalTribute(
@@ -28,14 +29,27 @@ function proposalTotalTribute(
     }, 0)
 }
 
-const ActiveProposals = () => {
-    const { currentProposalTranches, currentProposalTributes, globalState } =
-        useProposalsContext()
+const ActiveProposals = ({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | string[] | undefined }
+}) => {
+    const router = useRouter()
+    const {
+        currentProposalTranches,
+        currentProposalTributes,
+        globalState,
+        assetListWithPrices,
+    } = useProposalsContext()
 
-    const [currentTranche, setCurrentTranche] = useState(1)
+    const [currentTranche, setCurrentTranche] = useState(
+        searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1
+    )
 
     const { isWalletConnected, address, getSigningCosmWasmClient } =
         useChain("neutron")
+
+    const { data: myUserVotingData } = useUserVotingData(address ?? "")
 
     const { data: myVotes } = useMyVotes(
         address || "",
@@ -50,13 +64,23 @@ const ActiveProposals = () => {
 
         const summedTributes = sumTributeAmounts(tributes)
 
+        const pricedAndNamedTributes = summedTributes.map((tribute) => {
+            const assetInfo = assetListWithPrices.get(tribute.denom)
+            return {
+                ...tribute,
+                priceUsd: assetInfo?.priceUsd,
+                symbol: assetInfo?.symbol,
+                decimals: assetInfo?.decimals,
+            }
+        })
+
         const hasVotedOnProp =
             myVotes?.get(currentTranche) &&
             myVotes.get(currentTranche)?.prop_id === proposal.proposal_id
 
         return {
             ...proposal,
-            summedTributes,
+            pricedAndNamedTributes,
             hasVotedOnProp,
         }
     })
@@ -68,6 +92,20 @@ const ActiveProposals = () => {
     const hasVotedInAll = decoratedProposals?.every(
         (proposal) => proposal.hasVotedOnProp
     )
+
+    const updateTrancheInURL = (tranche: number) => {
+        const newSearchParams = new URLSearchParams(window.location.search)
+        newSearchParams.set("tranche", tranche.toString())
+        router.push(
+            `${window.location.pathname}?${newSearchParams.toString()}`,
+            { scroll: false }
+        )
+    }
+
+    const handleTrancheChange = (newTranche: number) => {
+        setCurrentTranche(newTranche)
+        updateTrancheInURL(newTranche)
+    }
 
     const classNamesForCells = `
         group-[&.has-voted]/table-row:bg-palette-green
@@ -90,7 +128,7 @@ const ActiveProposals = () => {
         >
             <TranchePagination
                 currentTranche={currentTranche}
-                setCurrentTranche={setCurrentTranche}
+                setCurrentTranche={handleTrancheChange}
                 myVotes={myVotes}
                 description={
                     hasVotedInAll ? (
@@ -158,8 +196,26 @@ const ActiveProposals = () => {
                             },
                         },
                         {
-                            key: "tributeAmount",
-                            label: "Tribute Amount",
+                            key: "rewards",
+                            label: "Rewards",
+                            isSortable: true,
+                            textAlign: "right",
+                            propsForCells: {
+                                className: classNamesForCells,
+                            },
+                        },
+                        {
+                            key: "rewardValue",
+                            label: "Reward Value",
+                            isSortable: true,
+                            textAlign: "right",
+                            propsForCells: {
+                                className: classNamesForCells,
+                            },
+                        },
+                        {
+                            key: "yourEstimatedReward",
+                            label: "Your Est. Reward",
                             isSortable: true,
                             textAlign: "right",
                             propsForCells: {
@@ -234,16 +290,36 @@ const ActiveProposals = () => {
                             </div>
                         ),
 
-                        tributeAmount: proposal.summedTributes.length
-                            ? proposal.summedTributes.map((tribute, index) => (
-                                  <div key={index}>
-                                      {(tribute.amount / 1000000).toFixed(2)}{" "}
-                                      {tribute.denom.length > 20
-                                          ? tribute.denom.slice(0, 17) + "..."
-                                          : tribute.denom}
-                                  </div>
-                              ))
-                            : "0.00",
+                        rewards: proposal.pricedAndNamedTributes.map(
+                            (tribute, index) => (
+                                <div key={index}>
+                                    {`${formatAmount(tribute.amount, tribute.decimals)} ${formatDenom(tribute.denom, tribute.symbol)}`}
+                                </div>
+                            )
+                        ),
+
+                        rewardValue: proposal.pricedAndNamedTributes
+                            .reduce((total, tribute) => {
+                                return (
+                                    total +
+                                    ((tribute.priceUsd ?? 0) * tribute.amount) /
+                                        10 ** (tribute.decimals ?? 0)
+                                )
+                            }, 0)
+                            .toLocaleString("en-US", {
+                                style: "currency",
+                                currency: "USD",
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                                trailingZeroDisplay: "stripIfInteger",
+                            }),
+
+                        yourEstimatedReward:
+                            proposalTotalTribute(
+                                proposal.pricedAndNamedTributes
+                            ) *
+                                ((myUserVotingData?.votingPower ?? 0) /
+                                    Number(proposal.power ?? 0)) || "0.00",
 
                         currentVoteShare: `${proposal.percentage}%`,
                     }))}

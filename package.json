@@ -48,6 +48,8 @@
     "lucide-react": "^0.417.0",
     "match-sorter": "^6.3.4",
     "next": "14.2.5",
+    "nextra": "^2.13.4",
+    "nextra-theme-docs": "^2.13.4",
     "pocketbase": "^0.21.4",
     "protobufjs": "^7.3.2",
     "react": "^18",

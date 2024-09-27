@@ -77,12 +77,21 @@ export function calculateLockupVotingPower(
     }
 }
 
-export function formatAmount(amount: string | number | bigint) {
-    amount = Number(amount) / 1000000
+export function formatAmount(amount: string | number | bigint, decimals: number = 6, digits: number = 4) {
+    amount = Number(amount) / 10 ** decimals
     return amount.toLocaleString("en-US", {
-        minimumFractionDigits: 4,
+        minimumFractionDigits: digits,
         trailingZeroDisplay: "stripIfInteger",
     })
+}
+
+export function formatDenom(denom: string, symbol: string | undefined) {
+    return symbol || (denom.length > 20
+        ? denom.slice(
+                0,
+                17
+            ) + "..."
+        : denom)
 }
 
 // Ported from cosmwasm contract

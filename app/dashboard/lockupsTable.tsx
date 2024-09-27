@@ -17,7 +17,6 @@ import { TriangleAlertIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { LockEntryWithPower } from "../ts_types/HydroBase.types"
 
-import { PrettyTable } from "@/components/PrettyTable"
 import { formatAmount } from "@/lib/utils"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
@@ -113,54 +112,6 @@ function Lockups({
 
     return (
         <div>
-            <PrettyTable
-                columns={[
-                    { key: "lockedATOM", label: "Locked ATOM" },
-                    { key: "multiplier", label: "Multiplier" },
-                    { key: "votingPower", label: "Voting Power" },
-                    { key: "expiresIn", label: "Expires In" },
-                    { key: "endDate", label: "End Date" },
-                    { key: "actions", label: "Actions" },
-                ]}
-                rows={myLockups.map((lockup, index) => {
-                    return {
-                        lockedATOM: (
-                            <>
-                                {formatAmount(lockup.lock_entry.funds.amount)}{" "}
-                                ATOM
-                            </>
-                        ),
-                        multiplier: (
-                            <>
-                                {(
-                                    Number(lockup.current_voting_power) /
-                                    Number(lockup.lock_entry.funds.amount)
-                                ).toPrecision(3)}{" "}
-                                x
-                            </>
-                        ),
-                        votingPower: formatAmount(lockup.current_voting_power),
-                        expiresIn: isExpired(lockup.lock_entry.lock_end) ? (
-                            <TriangleAlertIcon className="h-8 w-8 text-white" />
-                        ) : (
-                            calculateTimeRemaining(lockup.lock_entry.lock_end)
-                        ),
-                        endDate: formatDate(lockup.lock_entry.lock_end),
-                        actions: (
-                            <EditLockupDuration
-                                validatorMap={validatorMap}
-                                onSuccess={onSuccess}
-                                lockup={lockup}
-                                walletAddress={walletAddress}
-                                getSigningCosmWasmClient={
-                                    getSigningCosmWasmClient
-                                }
-                                getRestEndpoint={getRestEndpoint}
-                            />
-                        ),
-                    }
-                })}
-            />
             <div>
                 <div className="flex w-full flex-col justify-between lg:flex-row">
                     <h3>My Lockups</h3>
