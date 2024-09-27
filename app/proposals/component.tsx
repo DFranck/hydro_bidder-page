@@ -12,7 +12,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useMyVotes } from "@/hooks/hooks"
-import { sumTributeAmounts } from "@/lib/utils"
+import { formatAmount, formatDenom, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { CircleCheckBig, ScrollText, X } from "lucide-react"
 import Link from "next/link"
@@ -21,9 +21,9 @@ import { twMerge } from "tailwind-merge"
 
 const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
     const router = useRouter()
-    const { currentProposalTranches, currentProposalTributes, globalState } =
+    const { currentProposalTranches, currentProposalTributes, globalState, assetListWithPrices } =
         useProposalsContext()
-
+    
     const [currentTranche, setCurrentTranche] = useState(searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1)
 
     const { isWalletConnected, address, getSigningCosmWasmClient } =
@@ -42,13 +42,24 @@ const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: stri
 
         const summedTributes = sumTributeAmounts(tributes)
 
+        const pricedAndNamedTributes = summedTributes.map((tribute) => {
+            const assetInfo = assetListWithPrices.get(tribute.denom);
+            return {
+                ...tribute,
+                price_usd: assetInfo?.price_usd,
+                symbol: assetInfo?.symbol,
+                decimals: assetInfo?.decimals
+            };
+        });
+
+
         const hasVotedOnProp =
             myVotes?.get(currentTranche) &&
             myVotes.get(currentTranche)?.prop_id === proposal.proposal_id
 
         return {
             ...proposal,
-            summedTributes,
+            pricedAndNamedTributes,
             hasVotedOnProp,
         }
     })
@@ -160,7 +171,33 @@ const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: stri
                                     whitespace-nowrap
                                 "
                             >
-                                Tribute Amount
+                                Rewards
+                            </TableHead>
+                            <TableHead
+                                className="
+                                    p-0
+                                    px-12
+                                    h-auto
+                                    text-center
+                                    text-neutral-200
+                                    w-0
+                                    whitespace-nowrap
+                                "
+                            >
+                                Reward value
+                            </TableHead>
+                            <TableHead
+                                className="
+                                    p-0
+                                    px-12
+                                    h-auto
+                                    text-center
+                                    text-neutral-200
+                                    w-0
+                                    whitespace-nowrap
+                                "
+                            >
+                                Estimated APR
                             </TableHead>
                             <TableHead
                                 className="
@@ -248,22 +285,37 @@ const ActiveProposals = ({ searchParams }: { searchParams: { [key: string]: stri
                                     hasVoted={!!hasVoted}
                                     hasVotedOnProp={!!proposal.hasVotedOnProp}
                                 >
-                                    {proposal.summedTributes.map(
+                                    {proposal.pricedAndNamedTributes.map(
                                         (tribute, index) => (
                                             <div key={index}>
-                                                {`${(
-                                                    tribute.amount / 1000000
-                                                ).toFixed(2)} ${
-                                                    tribute.denom.length > 20
-                                                        ? tribute.denom.slice(
-                                                              0,
-                                                              17
-                                                          ) + "..."
-                                                        : tribute.denom
-                                                }`}
+                                                {`${formatAmount(tribute.amount, tribute.decimals)} ${formatDenom(tribute.denom, tribute.symbol)}`}
                                             </div>
                                         )
                                     )}
+                                </ProposalTableCell>
+                                <ProposalTableCell
+                                    className="
+                                        text-center
+                                        rounded-tr-lg
+                                        rounded-br-lg
+                                        border-0
+                                    "
+                                    hasVoted={!!hasVoted}
+                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
+                                >
+                                    {proposal.percentage}
+                                </ProposalTableCell>
+                                <ProposalTableCell
+                                    className="
+                                        text-center
+                                        rounded-tr-lg
+                                        rounded-br-lg
+                                        border-0
+                                    "
+                                    hasVoted={!!hasVoted}
+                                    hasVotedOnProp={!!proposal.hasVotedOnProp}
+                                >
+                                    {proposal.percentage}%
                                 </ProposalTableCell>
                                 <ProposalTableCell
                                     className="
