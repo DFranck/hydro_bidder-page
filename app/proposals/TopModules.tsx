@@ -86,7 +86,7 @@ export function ProposalListTopModules() {
                             style: "currency",
                             currency: "USD",
                         }).format(atomPrice * (totalLockedTokens / 1e6))}{" "}
-                        USDC Equivalent
+                        USD Equivalent
                     </>
                 }
                 value={(totalLockedTokens / 1e6).toLocaleString("en-US", {
