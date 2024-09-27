@@ -108,9 +108,11 @@ const ActiveProposals = ({
     }
 
     const classNamesForCells = `
-        sm:group-[&.has-voted]/table-row:bg-palette-green
-        sm:group-[&.has-voted]/table-row:text-palette-text
-        sm:group-[&.has-voted:hover]/table-row:text-palette-text/60
+        sm:group-[&.has-voted]/table-row:border-palette-green
+        sm:group-[&.has-voted]/table-row:border-y-2
+        sm:group-[&.has-voted]/table-row:first:border-l-2
+        sm:group-[&.has-voted]/table-row:last:border-r-2
+        sm:group-[&.has-voted:hover]/table-row:text-palette-green/20
     `
 
     return (
@@ -188,13 +190,6 @@ const ActiveProposals = ({
                             },
                         },
                         {
-                            key: "status",
-                            label: "",
-                            propsForCells: {
-                                className: classNamesForCells,
-                            },
-                        },
-                        {
                             key: "rewards",
                             label: "Rewards",
                             isSortable: true,
@@ -238,7 +233,38 @@ const ActiveProposals = ({
 
                         hasVoted:
                             hasVoted && proposal.hasVotedOnProp ? (
-                                <CircleCheckBig />
+                                <div
+                                    className="
+                                       relative
+                                       -translate-y-1/4
+                                       text-palette-green
+                                    "
+                                >
+                                    <CircleCheckBig />
+
+                                    <div
+                                        className="
+                                            absolute
+                                            left-1/2
+                                            top-full
+                                            flex
+                                            w-min
+                                            -translate-x-1/2
+                                            -translate-y-1/4
+                                            items-center
+                                            gap-2
+                                            whitespace-nowrap
+                                            rounded-full
+                                            bg-palette-green
+                                            p-0.5
+                                            px-1
+                                            text-[8px]
+                                            text-palette-text
+                                        "
+                                    >
+                                        Your Pick
+                                    </div>
+                                </div>
                             ) : (
                                 <ScrollText />
                             ),
@@ -265,25 +291,6 @@ const ActiveProposals = ({
                                     "
                                 />
                             </>
-                        ),
-
-                        status: proposal.hasVotedOnProp && (
-                            <div
-                                className="
-                                    flex
-                                    w-min
-                                    items-center
-                                    gap-2
-                                    whitespace-nowrap
-                                    rounded-full
-                                    bg-white
-                                    p-1
-                                    px-2
-                                    text-xs
-                                "
-                            >
-                                Your Pick
-                            </div>
                         ),
 
                         rewards: proposal.pricedAndNamedTributes.map(
