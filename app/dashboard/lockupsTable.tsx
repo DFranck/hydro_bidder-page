@@ -1,26 +1,16 @@
 "use client"
 
 import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
-import { Button } from "@/components/ui/button"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { PrettyTable } from "@/components/PrettyTable"
 import { fetchMyAllLockups, Validator } from "@/hooks/hooks"
-import { calculateTimeRemaining, cn } from "@/lib/utils"
-import { useChain } from "@cosmos-kit/react"
-import { TriangleAlertIcon } from "lucide-react"
-import { useEffect, useState } from "react"
-import { LockEntryWithPower } from "../ts_types/HydroBase.types"
-
-import { formatAmount } from "@/lib/utils"
+import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
+import { useChain } from "@cosmos-kit/react"
+import { TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { LockEntryWithPower } from "../ts_types/HydroBase.types"
 
 export default function LockupsTable({
     validatorMap,
@@ -112,163 +102,138 @@ function Lockups({
 
     return (
         <div>
-            <div>
-                <div className="flex w-full flex-col justify-between lg:flex-row">
-                    <h3>My Lockups</h3>
-                    <div className="flex items-center justify-between space-x-2">
-                        <p className="sr-only">
-                            Lock staked ATOM to get voting power
+            <div
+                className="
+                  -mx-3
+                  mt-10
+                  space-y-6
+                  overflow-hidden
+                  rounded-md
+                  bg-palette-text/20
+                  px-3
+                  backdrop-blur-md
+              "
+            >
+                <div
+                    className="
+                        flex
+                        justify-between
+                        gap-12
+                        p-6
+                    "
+                >
+                    <div className="space-y-6">
+                        <h3>My Lockups</h3>
+                        <p className="">
+                            The more staked ATOM you lock, and the longer you
+                            lock it, the more voting power you get. To increase
+                            your voting power, you can either lock more ATOM in
+                            a new lockup, or extend one of your existing
+                            lockups. Locked ATOM continues earning staking
+                            rewards on the Cosmos Hub as well!
                         </p>
-                        <Button
-                            asChild
-                            className="rounded-xl border-y-4 border-transparent bg-[#FFE1B8] text-black hover:border-b-[#E4B472] hover:bg-[#FFE1B8]"
+                    </div>
+
+                    <div>
+                        <Link
+                            className="
+                                whitespace-nowrap
+                                rounded-md
+                                bg-palette-beige
+                                px-6
+                                py-3
+                                text-palette-text
+                                hover:bg-palette-beige/80
+                            "
+                            href="/lock-atom"
                         >
-                            <Link href="/lock-atom">New Lockup</Link>
-                        </Button>
+                            New Lockup
+                        </Link>
                     </div>
                 </div>
-                <p className="max-w-5xl text-sm text-neutral-400">
-                    The more staked ATOM you lock, and the longer you lock it,
-                    the more voting power you get. To increase your voting
-                    power, you can either lock more ATOM in a new lockup, or
-                    extend one of your existing lockups. Locked ATOM continues
-                    earning staking rewards on the Cosmos Hub as well!
-                </p>
-            </div>
-            <Table
-                className={cn(
-                    "border-separate border-spacing-y-2",
-                    submitting && "pointer-events-none opacity-70"
-                )}
-            >
-                <TableHeader>
-                    <TableRow>
-                        {/* <TableHead>Lockup ID</TableHead> */}
-                        <TableHead className="text-center text-neutral-200">
-                            Locked ATOM
-                        </TableHead>
-                        <TableHead className="text-center text-neutral-200">
-                            Multiplier
-                        </TableHead>
-                        <TableHead className="text-center text-neutral-200">
-                            Voting Power
-                        </TableHead>
-                        {/* <TableHead>Start Date</TableHead> */}
-                        <TableHead className="text-center text-neutral-200">
-                            Expires in
-                        </TableHead>
-                        <TableHead className="text-center text-neutral-200">
-                            End Date
-                        </TableHead>
-                        <TableHead></TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {isLoading &&
-                        [...Array(5)].map((_, index) => (
-                            <TableRow
-                                key={index}
-                                className="h-20 border-b-0 bg-[#303132] hover:bg-[#555555]"
-                            >
-                                <TableCell className="rounded-l-xl">
-                                    <div className="inline-flex h-full items-center">
-                                        <div className="h-4 w-16 animate-pulse rounded bg-[#555555]"></div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="h-4 w-20 animate-pulse rounded bg-[#555555]"></div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="h-4 w-24 animate-pulse rounded bg-[#555555]"></div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="h-4 w-24 animate-pulse rounded bg-[#555555]"></div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="h-4 w-full animate-pulse rounded bg-[#555555]"></div>
-                                </TableCell>
-                                <TableCell
-                                    align="right"
-                                    className="rounded-r-xl"
-                                >
-                                    <div className="h-8 w-24 animate-pulse rounded bg-[#555555]"></div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    {myLockups && myLockups.length > 0 ? (
-                        myLockups.map((lockup, index) => (
-                            <TableRow
-                                key={index}
-                                className="h-20 border-b-0 bg-[#303132]/75 backdrop-blur hover:bg-[#0061FF]"
-                            >
-                                {/* <TableCell className="rounded-l-xl w-28">
-                                    <div className="inline-flex items-center h-full">
-                                        <LockIcon className="w-4 h-4 mr-2 text-white" />
-                                        {lockup.lock_entry.lock_id}
-                                    </div>
-                                </TableCell> */}
-                                <TableCell className="rounded-l-xl text-center">
+
+                <PrettyTable
+                    columns={[
+                        {
+                            key: "lockedATOM",
+                            label: "Locked ATOM",
+                            isSortable: true,
+                        },
+                        {
+                            key: "multiplier",
+                            label: "Multiplier",
+                            isSortable: true,
+                            textAlign: "right",
+                        },
+                        {
+                            key: "votingPower",
+                            label: "Voting Power",
+                            isSortable: true,
+                            textAlign: "right",
+                        },
+                        {
+                            key: "endDate",
+                            label: "End Date",
+                            isSortable: true,
+                            textAlign: "right",
+                        },
+                        {
+                            key: "actions",
+                            label: "Actions",
+                            textAlign: "right",
+                        },
+                    ]}
+                    rows={myLockups.map((lockup, index) => {
+                        return {
+                            lockedATOM: (
+                                <>
                                     {formatAmount(
                                         lockup.lock_entry.funds.amount
-                                    )}
-                                    <small>ATOM</small>
-                                </TableCell>
-                                <TableCell className="text-center">
+                                    )}{" "}
+                                    ATOM
+                                </>
+                            ),
+                            multiplier: (
+                                <>
                                     {(
                                         Number(lockup.current_voting_power) /
                                         Number(lockup.lock_entry.funds.amount)
-                                    ).toPrecision(3)}
-                                    x
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    {formatAmount(lockup.current_voting_power)}
-                                </TableCell>
-                                {/* <TableCell>
-                                    {formatDate(lockup.lock_entry.lock_start)}
-                                </TableCell> */}
-                                <TableCell className="text-center">
+                                    ).toPrecision(3)}{" "}
+                                    &times;
+                                </>
+                            ),
+                            votingPower: formatAmount(
+                                lockup.current_voting_power
+                            ),
+                            endDate: (
+                                <>
+                                    {formatDate(lockup.lock_entry.lock_end)} (
                                     {isExpired(lockup.lock_entry.lock_end) ? (
-                                        <div className="inline-flex items-center">
-                                            <TriangleAlertIcon className="h-8 w-8 text-white" />
-                                        </div>
+                                        <TriangleAlertIcon className="h-8 w-8 text-white" />
                                     ) : (
-                                        <p>
-                                            {calculateTimeRemaining(
-                                                lockup.lock_entry.lock_end
-                                            )}
-                                        </p>
+                                        calculateTimeRemaining(
+                                            lockup.lock_entry.lock_end
+                                        )
                                     )}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    {formatDate(lockup.lock_entry.lock_end)}
-                                </TableCell>
-                                <TableCell className="rounded-r-xl text-center">
-                                    <EditLockupDuration
-                                        validatorMap={validatorMap}
-                                        onSuccess={onSuccess}
-                                        lockup={lockup}
-                                        walletAddress={walletAddress}
-                                        getSigningCosmWasmClient={
-                                            getSigningCosmWasmClient
-                                        }
-                                        getRestEndpoint={getRestEndpoint}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    ) : (
-                        <TableRow className="h-20 w-full border-b-0 bg-[#303132] hover:bg-[#303132]">
-                            <TableCell colSpan={7} className="rounded-xl">
-                                <div className="ml-5 flex h-20 items-center justify-center rounded-xl">
-                                    <p className="text-gray-200">
-                                        No lockups found.
-                                    </p>
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+                                    )
+                                </>
+                            ),
+                            actions: (
+                                <EditLockupDuration
+                                    validatorMap={validatorMap}
+                                    onSuccess={onSuccess}
+                                    lockup={lockup}
+                                    walletAddress={walletAddress}
+                                    getSigningCosmWasmClient={
+                                        getSigningCosmWasmClient
+                                    }
+                                    getRestEndpoint={getRestEndpoint}
+                                />
+                            ),
+                        }
+                    })}
+                />
+            </div>
         </div>
     )
 }

@@ -19,9 +19,11 @@ export function TD({
                     cursor-default
                     bg-clip-padding
                     align-middle
-                    group-hover/table-row:bg-palette-beige/10
+                    first:rounded-l-md
+                    last:rounded-r-md
                     max-sm:block
                     sm:p-5
+                    sm:group-hover/table-row:bg-palette-beige/10
                 `,
 
                 textAlign === "center"
@@ -38,7 +40,10 @@ export function TD({
                 <span
                     className="
                         block
+                        text-xs
                         font-bold
+                        uppercase
+                        opacity-70
                         sm:hidden
                     "
                 >
