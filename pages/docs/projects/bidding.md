@@ -1,4 +1,4 @@
-# BIDDING
+# Bidding
 
 At the beginning of the auction round, Projects submit their bid to the Hydro smart contract and post their Tribute token. Projects can choose any type of token for bidding purposes; it does not have to be the Project's native token. For instance, a Project could pay tribute in USDC. After the auction round ends, the tribute is automatically distributed to all voters who supported the Project's bid.
 
