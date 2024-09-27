@@ -108,9 +108,9 @@ const ActiveProposals = ({
     }
 
     const classNamesForCells = `
-        group-[&.has-voted]/table-row:bg-palette-green
-        group-[&.has-voted]/table-row:text-palette-text
-        group-[&.has-voted:hover]/table-row:text-palette-text/60
+        sm:group-[&.has-voted]/table-row:bg-palette-green
+        sm:group-[&.has-voted]/table-row:text-palette-text
+        sm:group-[&.has-voted:hover]/table-row:text-palette-text/60
     `
 
     return (
@@ -174,7 +174,6 @@ const ActiveProposals = ({
                             propsForCells: {
                                 className: `
                                     ${classNamesForCells}
-                                    rounded-l-lg
                                     !pr-0
                                     w-0
                                 `,
@@ -224,15 +223,12 @@ const ActiveProposals = ({
                         },
                         {
                             key: "currentVoteShare",
-                            label: "Current Vote Share",
+                            label: "Vote Share",
                             isSortable: true,
                             initialSortDirection: "DESC",
                             textAlign: "right",
                             propsForCells: {
-                                className: `
-                                    rounded-r-lg
-                                    ${classNamesForCells}
-                                `,
+                                className: classNamesForCells,
                             },
                         },
                     ]}
@@ -292,8 +288,24 @@ const ActiveProposals = ({
 
                         rewards: proposal.pricedAndNamedTributes.map(
                             (tribute, index) => (
-                                <div key={index}>
-                                    {`${formatAmount(tribute.amount, tribute.decimals)} ${formatDenom(tribute.denom, tribute.symbol)}`}
+                                <div className="whitespace-nowrap" key={index}>
+                                    {formatAmount(
+                                        tribute.amount,
+                                        tribute.decimals
+                                    )}
+                                    <span
+                                        className="
+                                            ml-1
+                                            text-xs
+                                            uppercase
+                                            opacity-60
+                                        "
+                                    >
+                                        {formatDenom(
+                                            tribute.denom,
+                                            tribute.symbol
+                                        )}
+                                    </span>
                                 </div>
                             )
                         ),
@@ -327,7 +339,12 @@ const ActiveProposals = ({
                         <TR
                             className={
                                 row._proposal.hasVotedOnProp
-                                    ? "has-voted"
+                                    ? `
+                                        has-voted
+                                        max-sm:bg-palette-green
+                                        max-sm:text-palette-text
+                                        max-sm:hover:bg-palette-green/80
+                                    `
                                     : undefined
                             }
                             {...rowProps}

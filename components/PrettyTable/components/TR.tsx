@@ -14,13 +14,14 @@ export function TR({
             `
                 group/table-row
                 relative
+                odd:bg-palette-beige/5
                 max-sm:grid
                 max-sm:grid-flow-row
                 max-sm:grid-cols-2
                 max-sm:gap-6
                 max-sm:rounded-md
-                max-sm:border
-                max-sm:p-3
+                max-sm:p-6
+                max-sm:hover:bg-palette-beige/10
             `
         ),
 

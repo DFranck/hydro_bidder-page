@@ -1,15 +1,6 @@
 "use client"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+import { fetchDenomTrace } from "@/app/lock-atom/transactions"
+import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -19,27 +10,36 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import {
-    calculateLockupVotingPower,
-    LockupPeriod,
-    formatAmount,
-    LockupPeriodMultipler,
-} from "@/lib/utils"
-import { DialogDescription } from "@radix-ui/react-dialog"
-import { useEffect, useState } from "react"
-import { Loader2Icon } from "lucide-react"
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
 import {
     ToastAborted,
     ToastError,
     ToastExecutedTx,
     ToastProcessing,
 } from "@/components/ui/toast-wallet"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { executeExtendLockup, Validator } from "@/hooks/hooks"
-import { fetchDenomTrace } from "@/app/lock-atom/transactions"
+import {
+    calculateLockupVotingPower,
+    formatAmount,
+    LockupPeriod,
+    LockupPeriodMultipler,
+} from "@/lib/utils"
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { DialogDescription } from "@radix-ui/react-dialog"
+import { Loader2Icon } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 const formSchema = z.object({
     lockupPeriod: z.nativeEnum(LockupPeriod),
@@ -143,7 +143,7 @@ export const EditLockupDuration = ({
             }
         }
         resolveValidator()
-    }, [open, getRestEndpoint, validatorMap, lockup])
+    }, [open, getRestEndpoint, validatorMap, lockup, form])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -151,31 +151,31 @@ export const EditLockupDuration = ({
                 asChild
                 id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
             >
-                <Button className="rounded-lg text-black bg-white h-10 border-y-4 border-transparent hover:border-b-[#C7C7C7] hover:bg-white">
+                <Button className="h-10 rounded-lg border-y-4 border-transparent bg-white text-black hover:border-b-[#C7C7C7] hover:bg-white">
                     Extend Lockup
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-neutral-900 rounded-[10px] border-none w-[698px] p-12 text-white">
+            <DialogContent className="w-[698px] rounded-[10px] border-none bg-neutral-900 p-12 text-white">
                 <DialogDescription className="sr-only">
                     Extend Lockup
                 </DialogDescription>
                 <DialogHeader className="pb-[34px]">
-                    <DialogTitle className="text-[32px] not-italic font-bold leading-[120%] tracking-[-0.4px] mb-[10px]">
+                    <DialogTitle className="mb-[10px] text-[32px] font-bold not-italic leading-[120%] tracking-[-0.4px]">
                         Extend Lockup
                     </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className="grid gap-5 mt-5 [&>*:last-child]:mt-[30px]"
+                        className="mt-5 grid gap-5 [&>*:last-child]:mt-[30px]"
                     >
                         <FormField
                             control={form.control}
                             name="lockupPeriod"
                             render={({ field }) => (
                                 <FormItem>
-                                    <div className="gap-[56px] flex justify-start items-center">
-                                        <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
+                                    <div className="flex items-center justify-start gap-[56px]">
+                                        <FormLabel className="w-[100px] text-sm font-normal not-italic leading-[120%] opacity-60">
                                             Extend Lockup Time:
                                         </FormLabel>
                                         <FormControl>
@@ -192,7 +192,7 @@ export const EditLockupDuration = ({
                                                     <ToggleGroupItem
                                                         key={name}
                                                         value={value}
-                                                        className="text-[#080815] text-center text-base not-italic font-medium leading-[21px] inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 bg-[rgba(255,255,255,0.40)] px-4 py-0 rounded-[100px]"
+                                                        className="inline-flex h-[30px] shrink-0 items-center justify-center gap-2.5 rounded-[100px] bg-[rgba(255,255,255,0.40)] px-4 py-0 text-center text-base font-medium not-italic leading-[21px] text-[#080815]"
                                                         onClick={() =>
                                                             onChangeLockupPeriod(
                                                                 value as LockupPeriod
@@ -211,14 +211,14 @@ export const EditLockupDuration = ({
                         />
 
                         <div className="flex items-center gap-[56px]">
-                            <FormLabel className="text-sm opacity-60 w-[100px]">
+                            <FormLabel className="w-[100px] text-sm opacity-60">
                                 Locked ATOM:
                             </FormLabel>
                             <p className="text-xl">{form.watch("shares")}</p>
                         </div>
 
                         <div className="flex items-center gap-[56px]">
-                            <FormLabel className="text-sm opacity-60 w-[100px]">
+                            <FormLabel className="w-[100px] text-sm opacity-60">
                                 Validator:
                             </FormLabel>
                             <p className="text-xl">
@@ -227,7 +227,7 @@ export const EditLockupDuration = ({
                         </div>
 
                         <div className="flex items-center gap-[56px]">
-                            <FormLabel className="text-sm opacity-60 w-[100px]">
+                            <FormLabel className="w-[100px] text-sm opacity-60">
                                 Updated Voting Power:
                             </FormLabel>
                             <p className="text-xl">
@@ -241,7 +241,7 @@ export const EditLockupDuration = ({
                             disabled={isLoading}
                         >
                             {isLoading ? (
-                                <Loader2Icon className="w-4 h-4 animate-spin" />
+                                <Loader2Icon className="h-4 w-4 animate-spin" />
                             ) : (
                                 "Confirm"
                             )}
@@ -253,7 +253,7 @@ export const EditLockupDuration = ({
                         disabled={isLoading}
                         type="button"
                         variant="outline"
-                        className="w-full border rounded-[10px] border-solid border-white hover:bg-white hover:text-black"
+                        className="w-full rounded-[10px] border border-solid border-white hover:bg-white hover:text-black"
                     >
                         Cancel
                     </Button>
