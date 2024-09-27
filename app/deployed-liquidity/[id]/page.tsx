@@ -1,10 +1,9 @@
 import React from "react"
 import ProposalDetail from "@/components/proposalDetail"
-import { fetchDashboardData } from "@/app/dashboard/getData"
+import { fetchDashboardData } from "@/hooks/hooks"
 
 const Page = async ({ params }: { params: { id: string } }) => {
-    const { lastProposalTranches, globalState, lastProposalTributes } =
-        await fetchDashboardData()
+    const { lastProposalTranches, lastProposalTributes } = await fetchDashboardData()
 
     if (!lastProposalTranches || !lastProposalTributes) {
         return (
@@ -26,10 +25,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
     return lastProposal ? (
         <ProposalDetail
             proposal={lastProposal}
-            globalState={globalState}
-            proposalTranches={lastProposalTranches}
             deployed={true}
-            tributes={lastProposalTributes.get(lastProposal.proposal_id)!}
         />
     ) : (
         <div className="text-center py-8">

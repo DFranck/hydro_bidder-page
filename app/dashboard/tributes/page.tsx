@@ -1,15 +1,12 @@
 import { Suspense } from "react"
 import Dashboard from "../dashboard"
 import TributesTable from "./tributesTable"
-import { fetchDashboardData } from "../getData"
+import { fetchDashboardData } from "@/hooks/hooks"
+
 export default async function Page() {
     const {
-        lastProposalTranches,
         currentProposalTranches,
-        lastVotingPower,
-        currentVotingPower,
         globalState,
-        currentProposalTributes,
         lastProposalTributes,
     } = await fetchDashboardData()
     return (

@@ -73,7 +73,6 @@ export const RevertFromHubStepper = ({
     const [showErrorLog, setShowErrorLog] = useState(false)
 
     const execute = async () => {
-        console.log("execute", amount, validator, denom)
         try {
             setErrorLog(
                 `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`

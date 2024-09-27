@@ -1,18 +1,14 @@
 "use client"
 
-import { fetchDashboardData } from "@/app/dashboard/getData"
+import { fetchDashboardData } from "@/hooks/hooks"
 import { createContext, useContext } from "react"
 
 export type ProposalsContextObject = Awaited<
     ReturnType<typeof fetchDashboardData>
-> & {
-    totalTributeValue: number
-    atomPrice: number
-}
+>
 
-export const ProposalsContext = createContext<ProposalsContextObject | null>(
-    null
-)
+// Define the type for ProposalsContext
+export const ProposalsContext: React.Context<ProposalsContextObject | null> = createContext<ProposalsContextObject | null>(null);
 
 export function useProposalsContext() {
     const context = useContext(ProposalsContext)

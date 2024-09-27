@@ -1,4 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+import Nextra from "nextra"
 
-export default nextConfig;
+const withNextra = Nextra({
+    theme: "nextra-theme-docs",
+    themeConfig: "./theme.config.jsx",
+    latex: true
+})
+
+export default withNextra()

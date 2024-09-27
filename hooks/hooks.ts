@@ -1,27 +1,24 @@
-import { useQuery } from "@tanstack/react-query"
-import {
-    HydroBaseQueryClient,
-    HydroBaseClient,
-} from "../app/ts_types/HydroBase.client"
-import { TributeBaseQueryClient } from "../app/ts_types/TributeBase.client"
-import {
-    CosmWasmClient,
-    SigningCosmWasmClient,
-} from "@cosmjs/cosmwasm-stargate"
-import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
-import { Tribute } from "../app/ts_types/TributeBase.types"
-import { GlobalState, RoundState } from "../app/types"
-import { ChainContext } from "@cosmos-kit/core"
 import {
     DEFAULT_EPOCH_LENGTH,
-    DEFAULT_TOP_N,
     getPriceFeedUrl,
     HYDRO_CONTRACT_ADDRESS,
     NEUTRON_DEFAULT_RPC,
     TRIBUTE_CONTRACT_ADDRESS,
 } from "@/config"
-import { displayNeutronDenom } from "@/lib/utils"
-import { FEED_COINS_BY_SYMBOL } from "@/config/feed"
+import {
+    CosmWasmClient,
+    SigningCosmWasmClient,
+} from "@cosmjs/cosmwasm-stargate"
+import { ChainContext } from "@cosmos-kit/core"
+import { useQuery } from "@tanstack/react-query"
+import {
+    HydroBaseClient,
+    HydroBaseQueryClient,
+} from "../app/ts_types/HydroBase.client"
+import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
+import { TributeBaseQueryClient } from "../app/ts_types/TributeBase.client"
+import { Tribute } from "../app/ts_types/TributeBase.types"
+import { GlobalState, RoundState } from "../app/types"
 let clientInstance: CosmWasmClient | null = null
 
 // convenience func that allows doing contract queries on both server and client
@@ -66,6 +63,100 @@ export type ValidatorDelegation = {
         denom: string
         amount: string
     }
+}
+
+export async function fetchDashboardData() {
+    const globalState = await fetchGlobalState()
+
+    const { currentRound, tranches } = globalState
+
+    const lastRound = currentRound - 1
+    const lastRoundExists = lastRound > -1
+
+    // TODO: Lots of sequential "awaits" here, but shouldn't matter since this stuff will be fetched on the server
+    const currentProposals = await Promise.all(
+        tranches.map((tranche) => {
+            return fetchProposals(currentRound, tranche.id)
+        })
+    )
+
+    let currentRoundEnd = undefined
+    let currentVotingPower = undefined
+
+    const currentRoundData = await fetchRoundState(currentRound)
+    currentRoundEnd = currentRoundData.roundEnd
+    currentVotingPower = currentRoundData.totalVotingPower
+
+    // The first round that Hydro runs, there will be no deployed proposals
+    let lastProposalTranches = undefined
+    let lastVotingPower = undefined
+    let lastProposalTributes = undefined
+    if (lastRoundExists) {
+        const lastProposals = await Promise.all(
+            tranches.map((tranche) => fetchProposals(lastRound, tranche.id))
+        )
+        lastVotingPower = await fetchRoundState(lastRound).then(
+            (response) => response.totalVotingPower
+        )
+
+        lastProposalTranches = tranches.reduce((acc, tranche, idx) => {
+            return acc.set(tranche.id, lastProposals[idx])
+        }, new Map<number, Proposal[]>())
+
+        lastProposalTributes = await fetchProposalTributesForRound(
+            lastProposalTranches,
+            lastRound
+        )
+    }
+
+    const currentProposalTranches: Map<number, Proposal[]> = tranches.reduce(
+        (acc, tranche, idx) => {
+            return acc.set(tranche.id, currentProposals[idx])
+        },
+        new Map<number, Proposal[]>()
+    )
+
+    const currentProposalTributes = await fetchProposalTributesForRound(
+        currentProposalTranches,
+        currentRound
+    )
+
+    const assetListWithPrices = await fetchAssetListWithPrices()
+
+    return {
+        lastProposalTranches,
+        currentProposalTranches,
+        lastVotingPower,
+        currentVotingPower,
+        globalState,
+        currentProposalTributes,
+        lastProposalTributes,
+        currentRoundEnd,
+        assetListWithPrices,
+    }
+}
+
+// returns a map of proposal id to tributes
+async function fetchProposalTributesForRound(
+    proposalTranches: Map<number, Proposal[]>,
+    round: number
+): Promise<Map<number, Tribute[]>> {
+    const allProposals = Array.from(proposalTranches.values()).flat()
+    const tributePromises = allProposals.map((proposal) =>
+        fetchProposalTributes(
+            round,
+            proposal.tranche_id,
+            proposal.proposal_id
+        ).then((tributes) => ({ proposal, tributes }))
+    )
+    const tributesResults = await Promise.all(tributePromises)
+
+    const proposalTributes = new Map<number, Tribute[]>()
+    tributesResults.forEach(({ proposal, tributes }) => {
+        proposalTributes.set(proposal.proposal_id, tributes)
+    })
+
+    return proposalTributes
 }
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
@@ -163,16 +254,7 @@ export const fetchProposalTributes = async (
 
     const tributes = await tributeQueryClient.proposalTributes(query)
 
-    // Replace IBC denoms with token names
-    const tribute = tributes.tributes.map((tribute) => ({
-        ...tribute,
-        funds: {
-            ...tribute.funds,
-            denom: displayNeutronDenom(tribute.funds.denom),
-        },
-    }))
-
-    return tribute
+    return tributes.tributes
 }
 
 export const useProposals = (roundId: number, trancheId: number) => {
@@ -439,78 +521,47 @@ export const useUserVotingData = (address: string) => {
     })
 }
 
-type TributesValuePerDenom = {
-    amount: number
-    apiId: string
+type AssetListEntry = {
+    token: string
+    symbol: string
+    decimals: number
+    coingeckoId?: string
+    priceUsd?: number
 }
 
-type USDAmounts = {
-    totalTributeValue: number
-    atomPrice: number
-}
-
-export async function getTributeValuesFromPriceFeed(
-    propsalTributes: Map<number, Tribute[]>
-): Promise<USDAmounts> {
-    let atomPrice = 0
-    let totalValue = 0
-
-    const trancheDenoms = tributesValuePerDenom(propsalTributes)
-    const fetchDenoms: string[] = ["cosmos"] // always fetch atom
-    const missingDenoms: string[] = []
-    trancheDenoms.forEach((value, denom) => {
-        if (value.apiId) {
-            fetchDenoms.push(value.apiId)
-        } else {
-            missingDenoms.push(denom)
+export const fetchAssetListWithPrices = async (): Promise<
+    Map<string, AssetListEntry>
+> => {
+    // Fetch the asset list
+    const response = await fetch(
+        "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json",
+        {
+            next: { revalidate: 5 * 60 }, // Revalidate every 5 minutes
         }
+    )
+    const data: AssetListEntry[] = await response.json()
+
+    // Extract Coingecko IDs from assets that have them
+    const coingeckoIds = data
+        .filter((asset) => asset.coingeckoId)
+        .map((asset) => asset.coingeckoId as string)
+
+    // Fetch prices using getPriceFeedUrl
+    const pricesResponse = await fetch(getPriceFeedUrl(coingeckoIds), {
+        next: { revalidate: 5 * 60 }, // Revalidate every 5 minutes
+    })
+    const prices: Record<string, { usd: number }> = await pricesResponse.json()
+
+    // Create a Map with token as key and updated AssetListEntry as value
+    const assetMap = new Map<string, AssetListEntry>()
+
+    data.forEach((asset) => {
+        const updatedAsset =
+            asset.coingeckoId && prices[asset.coingeckoId]
+                ? { ...asset, priceUsd: prices[asset.coingeckoId].usd }
+                : asset
+        assetMap.set(asset.token, updatedAsset)
     })
 
-    try {
-        // responds with: { cosmos: { usd: 4.13 }, ... }
-        const res = await fetch(getPriceFeedUrl(fetchDenoms), {
-            next: {
-                revalidate: 5 * 60,
-            },
-        }).then((res) => res.json())
-        atomPrice = res["cosmos"]["usd"]
-        totalValue = Array.from(trancheDenoms.values()).reduce(
-            (acc, { amount, apiId }) => {
-                const price = res[apiId]["usd"] / 1e6
-                return acc + price * amount
-            },
-            0
-        )
-    } catch {
-        return { totalTributeValue: 0, atomPrice: 0 }
-    }
-    return { totalTributeValue: totalValue, atomPrice: atomPrice }
-}
-
-function tributesValuePerDenom(
-    proposalTributes: Map<number, Tribute[]>
-): Map<string, TributesValuePerDenom> {
-    const trancheDenoms = new Map<
-        string,
-        {
-            amount: number
-            apiId: string
-        }
-    >()
-    Array.from(proposalTributes.values())
-        .flat()
-        .forEach((t) => {
-            const denom = t.funds.denom
-            const amount = parseInt(t.funds.amount)
-            if (trancheDenoms.has(denom)) {
-                const current = trancheDenoms.get(denom)!
-                current.amount += amount
-                trancheDenoms.set(denom, current)
-            } else {
-                const apiId = FEED_COINS_BY_SYMBOL.get(denom)?.api_id
-                trancheDenoms.set(denom, { amount, apiId: apiId ?? "" })
-            }
-        })
-
-    return trancheDenoms
+    return assetMap
 }
