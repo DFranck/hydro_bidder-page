@@ -26,6 +26,7 @@ export function TopCard({
                     to-palette-blue/20
                     px-6
                     py-3
+                    backdrop-blur-sm
                 `,
                 icon &&
                     `
