@@ -2,6 +2,7 @@
 
 import { useProposalsContext } from "@/app/proposals/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
+import { Confetti } from "@/components/Confetti"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -23,7 +24,7 @@ import { useChain } from "@cosmos-kit/react"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import { CheckCircle, ChevronLeft, ScrollText, Vote } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Markdown from "react-markdown"
 import { twMerge } from "tailwind-merge"
 
@@ -45,31 +46,46 @@ const ProposalDetail = ({
     const [submitting, setSubmitting] = useState(false)
     const { isWalletConnected, address, getSigningCosmWasmClient } =
         useChain("neutron")
+    const [isLoading, setIsLoading] = useState(false)
     const tributes = currentProposalTributes.get(proposal.proposal_id)!
+    const [isCelebrating, setIsCelebrating] = useState(false)
 
-    useEffect(() => {
+    const fetchVoteStatus = useCallback(async () => {
         if (!address) {
             return
         }
-        const fetchVoteStatus = async () => {
-            const voteMap = await fetchMyVotes(
-                address || "",
-                globalState.currentRound,
-                Array.from(proposalTranches.keys())
-            )
-            if (voteMap && voteMap.size < 1) {
-                setHasVoted(false)
-                return
-            }
 
-            let voted = Array.from(voteMap.values())
-                .flat()
-                .find((vote) => vote?.prop_id === Number(proposal.proposal_id))
-            setHasVoted(true)
-            setHasVotedThisProposal(!!voted)
+        setIsLoading(true)
+
+        const voteMap = await fetchMyVotes(
+            address || "",
+            globalState.currentRound,
+            Array.from(proposalTranches.keys())
+        )
+
+        setIsLoading(false)
+
+        if (voteMap && voteMap.size < 1) {
+            setHasVoted(false)
+            return
         }
+
+        let voted = Array.from(voteMap.values())
+            .flat()
+            .find((vote) => vote?.prop_id === Number(proposal.proposal_id))
+
+        setHasVoted(true)
+        setHasVotedThisProposal(!!voted)
+    }, [
+        address,
+        globalState.currentRound,
+        proposal.proposal_id,
+        proposalTranches,
+    ])
+
+    useEffect(() => {
         fetchVoteStatus()
-    }, [address])
+    }, [fetchVoteStatus])
 
     const { data: userVotingData } = useUserVotingData(address || "")
 
@@ -80,7 +96,8 @@ const ProposalDetail = ({
         try {
             setSubmitting(true)
             ToastProcessing()
-            const res = await executeVote(
+
+            await executeVote(
                 getSigningCosmWasmClient,
                 address!,
                 proposal.proposal_id,
@@ -99,18 +116,12 @@ const ProposalDetail = ({
         } finally {
             setSubmitting(false)
             setOpenChangeVoteModal(false)
+            setIsCelebrating(true)
+            fetchVoteStatus()
         }
     }
 
-    function onVoteClicked() {
-        if (!hasVotedThisProposal && hasVoted) {
-            setOpenChangeVoteModal(true)
-        } else {
-            onVote()
-        }
-    }
-
-    function displayButton() {
+    function PrimaryActionButton() {
         if (deployed) {
             return null
         }
@@ -138,6 +149,22 @@ const ProposalDetail = ({
             return <Wallet notifyConnectedCB={() => null} />
         }
 
+        if (isLoading) {
+            return (
+                <button
+                    disabled
+                    className={twMerge(
+                        baseButtonClasses,
+                        `
+                            border-2
+                        `
+                    )}
+                >
+                    Loading...
+                </button>
+            )
+        }
+
         if (submitting) {
             return (
                 <button
@@ -156,18 +183,17 @@ const ProposalDetail = ({
 
         if (userVotingData?.votingPower === 0) {
             return (
-                <Link href="/lock-atom">
-                    <button
-                        className={twMerge(
-                            baseButtonClasses,
-                            `
-                                bg-palette-green
-                                text-palette-text
-                            `
-                        )}
-                    >
-                        Lock ATOM to vote
-                    </button>
+                <Link
+                    href="/lock-atom"
+                    className={twMerge(
+                        baseButtonClasses,
+                        `
+                            bg-palette-green
+                            text-palette-text
+                        `
+                    )}
+                >
+                    Lock ATOM to vote
                 </Link>
             )
         }
@@ -191,9 +217,17 @@ const ProposalDetail = ({
             )
         }
 
+        const hasVotedElsewhere = hasVoted && !hasVotedThisProposal
+
         return (
             <button
-                onClick={() => onVoteClicked()}
+                onClick={() => {
+                    if (hasVotedElsewhere) {
+                        setOpenChangeVoteModal(true)
+                    } else {
+                        onVote()
+                    }
+                }}
                 className={twMerge(
                     baseButtonClasses,
                     `
@@ -203,45 +237,40 @@ const ProposalDetail = ({
                 )}
             >
                 <Vote />
-                <span>Vote for proposal</span>
+                <span>Vote for Proposal</span>
             </button>
         )
     }
 
-    const ChangeVote = () => {
+    function ChangeVoteModal() {
         return (
             <Dialog
                 open={openChangeVoteModal}
                 onOpenChange={setOpenChangeVoteModal}
             >
                 <DialogTrigger asChild></DialogTrigger>
-                <DialogContent className="w-[698px] rounded-[10px] border-none bg-neutral-900 p-12 text-white">
-                    <DialogHeader className="pb-[34px]">
-                        <DialogTitle className="text-[32px] font-bold not-italic leading-[120%] tracking-[-0.4px]">
-                            Change your vote?
-                        </DialogTitle>
-                        <DialogDescription className="text-xl text-white/50">
-                            Changing your vote will reallocate your total voting
-                            power to the new project.
-                        </DialogDescription>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Change your vote?</DialogTitle>
                     </DialogHeader>
-                    <Button
-                        onClick={onVote}
-                        type="button"
-                        variant="secondary"
-                        className="w-full rounded-[10px] hover:border hover:border-white hover:bg-neutral-900 hover:text-white"
-                    >
-                        Vote for this project
-                    </Button>
-                    <DialogClose asChild>
+                    <DialogDescription>
+                        Changing your vote will reallocate your total voting
+                        power to the new project.
+                    </DialogDescription>
+                    <div className="flex flex-col gap-2">
                         <Button
                             type="button"
-                            variant="outline"
-                            className="w-full rounded-[10px] border border-solid border-white hover:bg-white hover:text-black"
+                            variant="primary"
+                            onClick={onVote}
                         >
-                            Don&rsquo;t change my vote
+                            Change Vote to This Proposal
                         </Button>
-                    </DialogClose>
+                        <DialogClose asChild>
+                            <Button type="button" variant="outline">
+                                Don&rsquo;t change my vote
+                            </Button>
+                        </DialogClose>
+                    </div>
                 </DialogContent>
             </Dialog>
         )
@@ -249,7 +278,12 @@ const ProposalDetail = ({
 
     return (
         <div className="mx-auto max-w-7xl">
-            <ChangeVote />
+            <ChangeVoteModal />
+
+            <Confetti
+                trigger={isCelebrating}
+                onComplete={() => setIsCelebrating(false)}
+            />
 
             <div
                 className="
@@ -358,7 +392,7 @@ const ProposalDetail = ({
                         "
                     >
                         <div className="w-[250px] pb-8 pt-6">
-                            {displayButton()}
+                            <PrimaryActionButton />
                         </div>
 
                         <div>

@@ -24,23 +24,23 @@ export default function RootLayout({
               src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
               async
             /> */}
-            <body className={`${inter.className}`}>
+            <body className={`${inter.className} relative overflow-x-hidden`}>
                 {/* <div className="bg-gradient-to-b from-black via-[#010006] to-[#001C47] p-5 h-screen w-screen fixed top-0 left-0 -z-10"></div> */}
                 <div
                     className="
-                        bg-cover
-                        bg-black
                         fixed
-                        top-0
                         left-0
-                        bg-no-repeat
-                        bg-[url('/images/AdobeStock_633966567.png')]
+                        top-0
+                        -z-10
                         h-screen
                         w-screen
-                        -z-10
+                        bg-black
+                        bg-[url('/images/AdobeStock_633966567.png')]
+                        bg-cover
+                        bg-no-repeat
                     "
                 ></div>
-                <div className="text-white p-5 lg:p-0">
+                <div className="p-5 text-white lg:p-0">
                     <ClientHandler>{children}</ClientHandler>
                 </div>
             </body>
