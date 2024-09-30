@@ -21,6 +21,10 @@ export enum LockupPeriodMultipler {
     // "12m" = 12,
 }
 
+export function getLockupTimeNanoseconds(lockupPeriod: LockupPeriod) {
+    return lockEpochLength * LockupPeriodMultipler[lockupPeriod]
+}
+
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
@@ -140,4 +144,84 @@ export function sumTributeAmounts(
         denom,
         amount: denomSums.get(denom)!,
     }))
+}
+
+// APR Calc: your_est_reward / price(your_atom) * 12
+// Non-user specific APR: 1_uatom_est_reward_at_specific_lock_time / price(1_uatom) * 12 (put a range?)
+// 1 top line APR calc: sum(Max(non_user_apr)) + staking APR
+export function estimatedRewardForPower(
+    proposalTotalTribute: number,
+    myVotingPower: number,
+    proposalPower: number
+) {
+    return (
+        proposalTotalTribute * (myVotingPower / proposalPower + myVotingPower)
+    )
+}
+
+export function userSpecificAPR(
+    proposalTotalTribute: number,
+    myVotingPower: number,
+    proposalPower: number,
+    myLockedAtom: number
+) {
+    return (
+        (estimatedRewardForPower(
+            proposalTotalTribute,
+            myVotingPower,
+            proposalPower
+        ) /
+            myLockedAtom) *
+        12
+    )
+}
+
+export function nonUserSpecificAPR(
+    proposalTotalTribute: number,
+    proposalPower: number,
+    lockupPeriod: LockupPeriod,
+    atomPrice: number
+) {
+    // Get the power of 1 uatom locked for the specified time
+    const oneUatomPower = scaleLockupPower(
+        getLockupTimeNanoseconds(lockupPeriod),
+        BigInt(1)
+    )
+
+    const oneUatomReward = estimatedRewardForPower(
+        proposalTotalTribute,
+        Number(oneUatomPower),
+        proposalPower
+    )
+
+    const oneUatomPrice = atomPrice / 1e6
+
+    return (oneUatomReward / oneUatomPrice) * 12
+}
+
+export function topLineAPR(
+    proposalAPRinputs: {
+        proposalTotalTribute: number
+        proposalPower: number
+    }[][],
+    lockupPeriod: LockupPeriod,
+    atomPrice: number,
+    stakingAPR: number
+) {
+    // Calculate the maximum APR
+    const maxAPR = proposalAPRinputs.reduce((acc, trancheAPRinputs) => {
+        // Calculate APR for each proposal in the current tranche
+        const proposalAPRs = trancheAPRinputs.map((input) =>
+            nonUserSpecificAPR(
+                input.proposalTotalTribute,
+                input.proposalPower,
+                lockupPeriod,
+                atomPrice
+            )
+        )
+        // Add the maximum APR from this tranche to the accumulator
+        return acc + Math.max(...proposalAPRs)
+    }, 0)
+
+    return maxAPR + stakingAPR
 }
