@@ -1,6 +1,7 @@
 "use client"
 
 import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
+import { PointingInfoBox } from "@/components/PointingInfoBox"
 import { PrettyTable } from "@/components/PrettyTable"
 import { fetchMyAllLockups, Validator } from "@/hooks/hooks"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
@@ -122,19 +123,20 @@ function Lockups({
                         p-6
                     "
                 >
-                    <div className="space-y-6">
-                        <h3>My Lockups</h3>
-                        <p className="">
-                            The more staked ATOM you lock, and the longer you
-                            lock it, the more voting power you get. To increase
-                            your voting power, you can either lock more ATOM in
-                            a new lockup, or extend one of your existing
-                            lockups. Locked ATOM continues earning staking
-                            rewards on the Cosmos Hub as well!
-                        </p>
-                    </div>
+                    <h3>My Lockups</h3>
 
-                    <div>
+                    <div className="flex w-2/3 items-center gap-12">
+                        <PointingInfoBox
+                            description={
+                                <>
+                                    Voting power is proportional to the amount
+                                    of ATOM you lock, and the duration of the
+                                    lockup(s). Plus, you continue to earn
+                                    staking rewards on your locked ATOM!
+                                </>
+                            }
+                            pointDirection="right"
+                        />
                         <Link
                             className="
                                 whitespace-nowrap
