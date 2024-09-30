@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import plugin from "tailwindcss/plugin"
 
 const config = {
     darkMode: ["class"],
@@ -86,6 +87,31 @@ const config = {
         },
     },
     plugins: [
+        plugin(function ({ addBase, theme }) {
+            addBase({
+                html: {
+                    scrollPaddingTop: theme("spacing.12"),
+                },
+                "*": {
+                    scrollbarColor: `${theme("colors.palette.green")} black`,
+                    scrollBehavior: "smooth",
+                },
+                "*::-webkit-scrollbar": {
+                    height: theme("spacing.2"),
+                    width: theme("spacing.2"),
+                },
+                "*::-webkit-scrollbar-track": {
+                    background: "black",
+                },
+                "*::-webkit-scrollbar-thumb": {
+                    background: theme("colors.palette.green"),
+                    borderRadius: theme("spacing.8"),
+                },
+                "a, button, input, textarea": {
+                    touchAction: "manipulation",
+                },
+            })
+        }),
         require("tailwindcss-animate"),
         require("@tailwindcss/typography"),
     ],
