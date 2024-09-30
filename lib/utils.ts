@@ -154,8 +154,12 @@ export function estimatedRewardForPower(
     myVotingPower: number,
     proposalPower: number
 ) {
+    if (proposalPower === 0) {
+        return proposalTotalTribute
+    }
+
     return (
-        proposalTotalTribute * (myVotingPower / proposalPower + myVotingPower)
+        proposalTotalTribute * (myVotingPower / (proposalPower + myVotingPower))
     )
 }
 
@@ -200,28 +204,35 @@ export function nonUserSpecificAPR(
 }
 
 export function topLineAPR(
-    proposalAPRinputs: {
-        proposalTotalTribute: number
-        proposalPower: number
-    }[][],
+    proposalAPRinputs: Map<
+        number,
+        {
+            proposalTotalTribute: number
+            proposalPower: number
+        }[]
+    >,
     lockupPeriod: LockupPeriod,
     atomPrice: number,
     stakingAPR: number
 ) {
     // Calculate the maximum APR
-    const maxAPR = proposalAPRinputs.reduce((acc, trancheAPRinputs) => {
-        // Calculate APR for each proposal in the current tranche
-        const proposalAPRs = trancheAPRinputs.map((input) =>
-            nonUserSpecificAPR(
-                input.proposalTotalTribute,
-                input.proposalPower,
-                lockupPeriod,
-                atomPrice
+    const maxAPR = Array.from(proposalAPRinputs, ([_, value]) => value).reduce(
+        (acc, trancheAPRinputs) => {
+            // Calculate APR for each proposal in the current tranche
+            const proposalAPRs = trancheAPRinputs.map((input) =>
+                nonUserSpecificAPR(
+                    input.proposalTotalTribute,
+                    input.proposalPower,
+                    lockupPeriod,
+                    atomPrice
+                )
             )
-        )
-        // Add the maximum APR from this tranche to the accumulator
-        return acc + Math.max(...proposalAPRs)
-    }, 0)
+
+            // Add the maximum APR from this tranche to the accumulator
+            return acc + Math.max(...proposalAPRs)
+        },
+        0
+    )
 
     return maxAPR + stakingAPR
 }
