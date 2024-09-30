@@ -4,7 +4,12 @@ import { useProposalsContext } from "@/app/proposals/context"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { TranchePagination } from "@/components/TranchePagination"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
-import { formatAmount, formatDenom, sumTributeAmounts } from "@/lib/utils"
+import {
+    estimatedRewardForPower,
+    formatAmount,
+    formatDenom,
+    sumTributeAmounts,
+} from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { CircleCheckBig, ScrollText } from "lucide-react"
 import Link from "next/link"
@@ -219,7 +224,7 @@ const ActiveProposals = ({
                         },
                         {
                             key: "currentVoteShare",
-                            label: "Vote Share",
+                            label: "Vote %",
                             isSortable: true,
                             initialSortDirection: "DESC",
                             textAlign: "right",
@@ -334,12 +339,29 @@ const ActiveProposals = ({
                                 trailingZeroDisplay: "stripIfInteger",
                             }),
 
-                        yourEstimatedReward:
-                            proposalTotalTribute(
-                                proposal.pricedAndNamedTributes
-                            ) *
-                                ((myUserVotingData?.votingPower ?? 0) /
-                                    Number(proposal.power ?? 0)) || "0.00",
+                        yourEstimatedReward: !isWalletConnected ? (
+                            <div
+                                className="
+                                            ml-1
+                                            text-xs
+                                            opacity-60
+                                        "
+                            >
+                                <div>Lock ATOM to</div>
+                                <div>see rewards</div>
+                            </div>
+                        ) : (
+                            estimatedRewardForPower(
+                                proposalTotalTribute(
+                                    proposal.pricedAndNamedTributes
+                                ),
+                                myUserVotingData?.votingPower ?? 0,
+                                Number(proposal.power ?? 0)
+                            ).toLocaleString("en-US", {
+                                style: "currency",
+                                currency: "USD",
+                            })
+                        ),
 
                         currentVoteShare: `${proposal.percentage}%`,
                     }))}
