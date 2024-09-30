@@ -108,11 +108,12 @@ const ActiveProposals = ({
     }
 
     const classNamesForCells = `
+        group-hover/table-row:text-palette-green
         sm:group-[&.has-voted]/table-row:border-palette-green
         sm:group-[&.has-voted]/table-row:border-y-2
         sm:group-[&.has-voted]/table-row:first:border-l-2
         sm:group-[&.has-voted]/table-row:last:border-r-2
-        sm:group-[&.has-voted:hover]/table-row:text-palette-green/20
+        sm:group-[&.has-voted:hover]/table-row:text-palette-green
     `
 
     return (
