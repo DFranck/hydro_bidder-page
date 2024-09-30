@@ -183,7 +183,7 @@ export default function LSMInteraction({
         (hubSigner && neutronSigner && (
             <div>
                 {stepper && stepper.type === "lock" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
                         <LockStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -198,7 +198,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromHubLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
                         <RevertFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -212,7 +212,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromNeutronLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
                         <RevertFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -227,7 +227,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromHubLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
                         <ContinueFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -241,7 +241,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromNeutronLSM" && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[100]">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
                         <ContinueFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -287,7 +287,7 @@ export default function LSMInteraction({
                                 onClick={() =>
                                     setVisibleNotices(incompleteNotices.length)
                                 }
-                                className="mb-4 text-white underline cursor-pointer bg-transparent border-none"
+                                className="mb-4 cursor-pointer border-none bg-transparent text-white underline"
                             >
                                 Show {incompleteNotices.length - visibleNotices}{" "}
                                 more
@@ -632,7 +632,7 @@ const LockForm = ({
                                                         min="0"
                                                         disabled={isDisabled}
                                                         onChange={(e) => {
-                                                            const atomValue = parseFloat(e.target.value)
+                                                            const atomValue = parseFloat(e.target.value) || 0
                                                             const uatomValue = Math.floor(atomValue * 1000000).toString()
                                                             field.onChange(uatomValue)
                                                         }}
@@ -772,8 +772,8 @@ export const ValidatorListItem: React.FC<ValidatorListItemProps> = ({
     const isDisabled = lsmCapacity <= 0 || lsmCapacity < selectedAmount
 
     return (
-        <div className="flex flex-col w-full mb-2 p-3 border border-gray-700 rounded-lg">
-            <div className="flex justify-between items-center">
+        <div className="mb-2 flex w-full flex-col rounded-lg border border-gray-700 p-3">
+            <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                     <span className="font-semibold">
                         {v.validator.description.moniker ||
@@ -831,15 +831,15 @@ const LoaderCard = ({
                 ) : haveChains ? (
                     <>
                         <div className="space-y-4">
-                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
-                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
-                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
-                            <div className="h-10 w-1/2 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="h-10 animate-pulse rounded bg-gray-300"></div>
+                            <div className="h-10 animate-pulse rounded bg-gray-300"></div>
+                            <div className="h-10 animate-pulse rounded bg-gray-300"></div>
+                            <div className="h-10 w-1/2 animate-pulse rounded bg-gray-300"></div>
                         </div>
-                        <div className="grid grid-cols-3 gap-4 mt-12">
-                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
-                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
-                            <div className="h-10 bg-gray-300 animate-pulse rounded"></div>
+                        <div className="mt-12 grid grid-cols-3 gap-4">
+                            <div className="h-10 animate-pulse rounded bg-gray-300"></div>
+                            <div className="h-10 animate-pulse rounded bg-gray-300"></div>
+                            <div className="h-10 animate-pulse rounded bg-gray-300"></div>
                         </div>
                     </>
                 ) : null}
