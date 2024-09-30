@@ -83,7 +83,7 @@ export const Header = () => {
                     <Navigation />
                 </div>
             </div>
-            {!showLockATOMBanner && (
+            {showLockATOMBanner && (
                 <div
                     className={twMerge(
                         `
