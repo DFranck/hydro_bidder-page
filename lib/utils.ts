@@ -24,6 +24,7 @@ export enum LockupPeriodMultipler {
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
+
 export function calculateTimeRemaining(lockEnd: string) {
     const now = new Date().getTime()
     const end = parseInt(lockEnd) / 1000000 // Convert nanoseconds to milliseconds
@@ -39,17 +40,6 @@ export function calculateTimeRemaining(lockEnd: string) {
     } else {
         return `${days} day${days !== 1 ? "s" : ""}`
     }
-}
-
-export const timeRemainingPercent = (start: string, end: string) => {
-    const startMilis = parseInt(start) / 1e6
-    const endMilis = parseInt(end) / 1e6
-    const nowMs = Date.now()
-    const totalDuration = endMilis - startMilis
-    const elapsedTime = nowMs - startMilis
-    const percentagePassed = (elapsedTime / totalDuration) * 100
-
-    return Math.floor(percentagePassed)
 }
 
 // Scale lockup power
@@ -77,7 +67,11 @@ export function calculateLockupVotingPower(
     }
 }
 
-export function formatAmount(amount: string | number | bigint, decimals: number = 6, digits: number = 4) {
+export function formatAmount(
+    amount: string | number | bigint,
+    decimals: number = 6,
+    digits: number = 4
+) {
     amount = Number(amount) / 10 ** decimals
     return amount.toLocaleString("en-US", {
         minimumFractionDigits: digits,
@@ -86,12 +80,7 @@ export function formatAmount(amount: string | number | bigint, decimals: number 
 }
 
 export function formatDenom(denom: string, symbol: string | undefined) {
-    return symbol || (denom.length > 20
-        ? denom.slice(
-                0,
-                17
-            ) + "..."
-        : denom)
+    return symbol || (denom.length > 20 ? denom.slice(0, 17) + "..." : denom)
 }
 
 // Ported from cosmwasm contract
@@ -151,12 +140,4 @@ export function sumTributeAmounts(
         denom,
         amount: denomSums.get(denom)!,
     }))
-}
-
-export function displayNeutronDenom(base: string): string {
-    return (
-        NEUTRON_ASSETS.assets.find(
-            (asset) => asset.base.toLowerCase() === base.toLowerCase()
-        )?.symbol ?? base
-    )
 }
