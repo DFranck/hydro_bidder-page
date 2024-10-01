@@ -29,6 +29,7 @@ import { executeExtendLockup, Validator } from "@/hooks/hooks"
 import {
     calculateLockupVotingPower,
     formatAmount,
+    getLockupTimeNanoseconds,
     LockupPeriod,
     LockupPeriodMultipler,
 } from "@/lib/utils"
@@ -174,34 +175,56 @@ export const EditLockupDuration = ({
                             name="lockupPeriod"
                             render={({ field }) => (
                                 <FormItem>
-                                    <div className="flex items-center justify-start gap-[56px]">
+                                    <div className="flex items-start justify-start gap-[56px]">
                                         <FormLabel className="w-[100px] text-sm font-normal not-italic leading-[120%] opacity-60">
-                                            Extend Lockup Time:
+                                            New end date:
                                         </FormLabel>
                                         <FormControl>
                                             <ToggleGroup
                                                 type="single"
-                                                className="gap-[10px]"
+                                                className="flex flex-col gap-[10px]"
                                                 defaultValue={form.getValues(
                                                     "lockupPeriod"
                                                 )}
                                             >
                                                 {Object.entries(
                                                     LockupPeriod
-                                                ).map(([name, value]) => (
-                                                    <ToggleGroupItem
-                                                        key={name}
-                                                        value={value}
-                                                        className="inline-flex h-[30px] shrink-0 items-center justify-center gap-2.5 rounded-[100px] bg-[rgba(255,255,255,0.40)] px-4 py-0 text-center text-base font-medium not-italic leading-[21px] text-[#080815]"
-                                                        onClick={() =>
-                                                            onChangeLockupPeriod(
-                                                                value as LockupPeriod
-                                                            )
-                                                        }
-                                                    >
-                                                        {value}
-                                                    </ToggleGroupItem>
-                                                ))}
+                                                ).map(([name, value]) => {
+                                                    const currentLockupEnd =
+                                                        Number(
+                                                            lockup.lock_entry
+                                                                .lock_end
+                                                        )
+                                                    const newLockupEnd =
+                                                        Date.now() * 1000000 +
+                                                        getLockupTimeNanoseconds(
+                                                            value
+                                                        )
+                                                    if (
+                                                        // Don't show an option to "extend" a lockup to a time before it's actual end time
+                                                        currentLockupEnd <
+                                                        newLockupEnd
+                                                    ) {
+                                                        return (
+                                                            <ToggleGroupItem
+                                                                key={name}
+                                                                value={value}
+                                                                className="h-[30px] w-full shrink-0 items-center justify-start gap-2.5 rounded-[100px] bg-[rgba(255,255,255,0.40)] px-4 py-0 text-left text-base font-medium not-italic leading-[21px] text-[#080815]"
+                                                                onClick={() =>
+                                                                    onChangeLockupPeriod(
+                                                                        value as LockupPeriod
+                                                                    )
+                                                                }
+                                                            >
+                                                                {new Date(
+                                                                    newLockupEnd /
+                                                                        1000000
+                                                                ).toLocaleDateString()}{" "}
+                                                                ({value})
+                                                            </ToggleGroupItem>
+                                                        )
+                                                    }
+                                                })}
                                             </ToggleGroup>
                                         </FormControl>
                                     </div>
@@ -223,6 +246,15 @@ export const EditLockupDuration = ({
                             </FormLabel>
                             <p className="text-xl">
                                 {form.watch("validator") || ""}
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-[56px]">
+                            <FormLabel className="w-[100px] text-sm opacity-60">
+                                Current Voting Power:
+                            </FormLabel>
+                            <p className="text-xl">
+                                {formatAmount(lockup.current_voting_power)}
                             </p>
                         </div>
 
