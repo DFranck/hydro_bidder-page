@@ -140,7 +140,6 @@ export function ProposalListTopModules() {
                           })
                 }
             />
-
             <TopCard
                 title={<>Total Locked&nbsp;ATOM</>}
                 label={
@@ -156,16 +155,16 @@ export function ProposalListTopModules() {
                     maximumFractionDigits: 2,
                 })}
             />
-
             <TopCard
-                title="Reward per ATOM"
-                label="USD Equivalent"
+                title="Average APR"
+                label="this round"
                 value={(
-                    totalTributeValue /
-                    (totalLockedTokens / 1e6)
+                    (totalTributeValue /
+                        (totalLockedTokens / 1e6) /
+                        atomPrice) *
+                    12
                 ).toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
+                    style: "percent",
                 })}
             />
 
@@ -176,7 +175,6 @@ export function ProposalListTopModules() {
                     style: "percent",
                 })}
             /> */}
-
             <TopCard
                 title="Time Remaining"
                 label={`In Round ${currentRound}`}
