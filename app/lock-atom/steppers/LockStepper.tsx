@@ -264,7 +264,7 @@ export const LockStepper = ({
                 return (
                     <Card>
                         <CardHeader>
-                            <CardTitle>Insufficient Gas</CardTitle>
+                            <CardTitle>Transfer ATOM for Gas</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p>
@@ -287,7 +287,7 @@ export const LockStepper = ({
                 return (
                     <Card>
                         <CardHeader>
-                            <CardTitle>Transferring ATOM</CardTitle>
+                            <CardTitle>Transferring ATOM for Gas</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p>
@@ -359,10 +359,10 @@ export const LockStepper = ({
                                         className="flex items-center text-sm text-gray-600 hover:text-gray-800"
                                     >
                                         Show Error Log
-                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                        <ChevronDown className="ml-1 h-4 w-4" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
+                                    <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                                         {errorLog}
                                     </pre>
                                 )}
@@ -478,7 +478,7 @@ export const LockStepper = ({
     }
 
     return (
-        <Card className="max-w-[800px] mx-auto bg-[#171717]">
+        <Card className="mx-auto max-w-[800px] bg-[#171717]">
             {renderStep()}
         </Card>
     )
