@@ -26,14 +26,13 @@ export default function Navigation() {
                 >
                     Proposals
                 </Link>
-                {/* <Link
-                    href="/deployed-liquidity"
-                    className={navigationMenuTriggerStyle(
-                        "/deployed-liquidity"
-                    )}
+                <Link
+                    href="/docs"
+                    target="_blank"
+                    className={cn(navigationMenuTriggerStyle("/docs"))}
                 >
-                    Deployed Liquidity
-                </Link> */}
+                    Documentation
+                </Link>
                 <Link
                     href="/dashboard"
                     className={cn(
