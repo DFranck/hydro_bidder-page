@@ -22,8 +22,15 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import { isEqual } from "lodash"
-import { CheckCircle, CircleSlash, Loader, Plus } from "lucide-react"
-import { ChangeEvent, FormEvent, ReactNode, useState } from "react"
+import { CheckCircle, CircleSlash, Loader } from "lucide-react"
+import {
+    ChangeEvent,
+    FormEvent,
+    ReactNode,
+    useEffect,
+    useMemo,
+    useState,
+} from "react"
 import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
 
@@ -77,6 +84,7 @@ export const EditLockupDuration = ({
     getSigningCosmWasmClient,
     onSuccess,
 }: EditLockupDurationProps) => {
+    const [hasChanged, setHasChanged] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [open, setOpen] = useState(false)
     const [toast, setToast] = useState<{
@@ -84,15 +92,29 @@ export const EditLockupDuration = ({
         message: ReactNode
     } | null>(null)
 
-    const [formValues, setFormValues] = useState<FormValues>({
-        lockupPeriod: LockupPeriod.ONE_EPOCH,
-        shares: formatAmount(lockup.lock_entry.funds.amount),
-        power: calculateLockupVotingPower(
-            parseInt(lockup.lock_entry.funds.amount),
-            LockupPeriod.ONE_EPOCH
-        ).toString(),
-        validator: "",
-    })
+    const initialFormValues = useMemo(
+        () => ({
+            lockupPeriod: LockupPeriod.ONE_EPOCH,
+            shares: formatAmount(lockup.lock_entry.funds.amount),
+            power: calculateLockupVotingPower(
+                parseInt(lockup.lock_entry.funds.amount),
+                LockupPeriod.ONE_EPOCH
+            ).toString(),
+            validator: "",
+        }),
+        [lockup.lock_entry.funds.amount]
+    )
+
+    const [formValues, setFormValues] = useState<FormValues>(initialFormValues)
+
+    useEffect(() => {
+        if (open) return
+
+        setFormValues(initialFormValues)
+        setHasChanged(false)
+        setIsLoading(false)
+        setToast(null)
+    }, [initialFormValues, open])
 
     async function handleChange(event: ChangeEvent<HTMLFormElement>) {
         const formElement = event.currentTarget as HTMLFormElement
@@ -103,6 +125,7 @@ export const EditLockupDuration = ({
             return
         }
 
+        setHasChanged(true)
         setIsLoading(true)
 
         const endpoint = await getRestEndpoint()
@@ -193,11 +216,6 @@ export const EditLockupDuration = ({
     const currentLockupEndDate = new Date(currentLockupEnd / 1000000)
     const powerDifference =
         Number(formValues.power) - Number(lockup.current_voting_power)
-    const currentDaysDifference = getDaysAway(currentLockupEnd)
-    const newDaysDifference = getDaysAway(
-        Date.now() * 1000000 + getLockupTimeNanoseconds(formValues.lockupPeriod)
-    )
-    const daysDifferenceBeforeAfter = newDaysDifference - currentDaysDifference
 
     return (
         <>
@@ -281,38 +299,32 @@ export const EditLockupDuration = ({
 
                     <form
                         className="
-                        flex
-                        flex-col
-                        gap-12
-                    "
+                            flex
+                            flex-col
+                            gap-6
+                        "
                         onChange={handleChange}
                         onSubmit={handleSubmit}
                     >
                         <div className="flex flex-col gap-2">
-                            <div className="font-bold">Select an End Date:</div>
+                            <div className="font-bold">Current End Date:</div>
 
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="lockupPeriod"
-                                    value=""
-                                    defaultChecked
-                                    className={classNamesForRadioButtons}
-                                />
-                                <span className={classNamesForRadioLabels}>
-                                    {dateFormatter.format(currentLockupEndDate)}{" "}
-                                    (
-                                    {relativeTimeFormatter.format(
-                                        Math.floor(
-                                            (currentLockupEndDate.getTime() -
-                                                new Date().getTime()) /
-                                                (1000 * 60 * 60 * 24)
-                                        ),
-                                        "day"
-                                    )}{" "}
-                                    • Current End Date)
-                                </span>
-                            </label>
+                            <div className="flex items-center gap-2 opacity-60">
+                                {dateFormatter.format(currentLockupEndDate)} (
+                                {relativeTimeFormatter.format(
+                                    Math.floor(
+                                        (currentLockupEndDate.getTime() -
+                                            new Date().getTime()) /
+                                            (1000 * 60 * 60 * 24)
+                                    ),
+                                    "day"
+                                )}
+                                )
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <div className="font-bold">New End Date:</div>
 
                             {Object.entries(LockupPeriod).map(
                                 ([name, value]) => {
@@ -365,7 +377,7 @@ export const EditLockupDuration = ({
                             )}
                         </div>
 
-                        <div className="flex -translate-y-3 items-center justify-around gap-3">
+                        <div className="flex items-center justify-around gap-3">
                             <div className="flex flex-col items-center text-center">
                                 <div>Locked ATOM</div>
                                 <div
@@ -380,83 +392,24 @@ export const EditLockupDuration = ({
                             </div>
 
                             <div className="relative flex flex-col items-center text-center">
-                                <div>New Voting Power</div>
+                                <div>{hasChanged && "New "}Voting Power</div>
                                 <div
                                     className={twMerge(
                                         `
-                                        text-4xl
-                                        font-bold
-                                        text-palette-beige
-                                    `,
+                                            text-4xl
+                                            font-bold
+                                            text-palette-beige
+                                        `,
                                         powerDifference > 0 &&
                                             "text-palette-green"
                                     )}
                                 >
-                                    {formatAmount(formValues.power)}
-                                </div>
-                                {powerDifference > 0 && (
-                                    <div
-                                        className="
-                                        absolute
-                                        left-1/2
-                                        top-full
-                                        flex
-                                        -translate-x-1/2
-                                        items-center
-                                        gap-px
-                                        rounded-full
-                                        bg-palette-green
-                                        px-2
-                                        py-1
-                                        text-xs
-                                        font-bold
-                                        text-palette-text
-                                    "
-                                    >
-                                        <Plus className="size-3" />
-                                        <span>{powerDifference * 100}%</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="relative flex flex-col items-center text-center">
-                                <div>Days Left</div>
-                                <div
-                                    className={twMerge(
-                                        `
-                                        text-4xl
-                                        font-bold
-                                        text-palette-beige
-                                    `,
-                                        daysDifferenceBeforeAfter > 0 &&
-                                            "text-palette-green"
+                                    {formatAmount(
+                                        hasChanged
+                                            ? formValues.power
+                                            : lockup.current_voting_power
                                     )}
-                                >
-                                    {newDaysDifference || currentDaysDifference}
                                 </div>
-                                {daysDifferenceBeforeAfter > 0 && (
-                                    <div
-                                        className="
-                                        absolute
-                                        left-1/2
-                                        top-full
-                                        flex
-                                        -translate-x-1/2
-                                        items-center
-                                        gap-px
-                                        rounded-full
-                                        bg-palette-green
-                                        px-2
-                                        py-1
-                                        text-xs
-                                        font-bold
-                                        text-palette-text
-                                    "
-                                    >
-                                        <Plus className="size-3" />
-                                        <span>{daysDifferenceBeforeAfter}</span>
-                                    </div>
-                                )}
                             </div>
                         </div>
 
@@ -464,7 +417,7 @@ export const EditLockupDuration = ({
                             <Button
                                 variant="secondary"
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={isLoading || !hasChanged}
                             >
                                 {isLoading ? (
                                     <Loader
