@@ -22,8 +22,9 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import { isEqual } from "lodash"
-import { Loader2Icon, Plus } from "lucide-react"
-import { ChangeEvent, FormEvent, useState } from "react"
+import { CheckCircle, CircleSlash, Loader, Plus } from "lucide-react"
+import { ChangeEvent, FormEvent, ReactNode, useState } from "react"
+import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
 
 interface FormValues {
@@ -78,6 +79,10 @@ export const EditLockupDuration = ({
 }: EditLockupDurationProps) => {
     const [isLoading, setIsLoading] = useState(false)
     const [open, setOpen] = useState(false)
+    const [toast, setToast] = useState<{
+        type: "error" | "success" | "loading"
+        message: ReactNode
+    } | null>(null)
 
     const [formValues, setFormValues] = useState<FormValues>({
         lockupPeriod: LockupPeriod.ONE_EPOCH,
@@ -134,12 +139,22 @@ export const EditLockupDuration = ({
         if (!formValues.lockupPeriod || !lockup) return
 
         try {
+            setToast({
+                type: "loading",
+                message: "Refreshing lockup...",
+            })
+
             await executeExtendLockup(
                 getSigningCosmWasmClient,
                 walletAddress || "",
                 lockup.lock_entry.lock_id,
                 LockupPeriodMultipler[formValues.lockupPeriod]
             )
+
+            setToast({
+                type: "success",
+                message: "Lockup refreshed successfully!",
+            })
             setOpen(false)
             onSuccess()
         } catch (err: any) {
@@ -148,10 +163,18 @@ export const EditLockupDuration = ({
                 err?.message &&
                 err.message.includes("Request rejected")
             ) {
+                setToast({
+                    type: "error",
+                    message: "Request rejected",
+                })
+
                 return
             }
 
-            setOpen(false)
+            setToast({
+                type: "error",
+                message: `Error refreshing lockup: ${err}`,
+            })
         } finally {
             setIsLoading(false)
         }
@@ -177,125 +200,203 @@ export const EditLockupDuration = ({
     const daysDifferenceBeforeAfter = newDaysDifference - currentDaysDifference
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger
-                asChild
-                id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
-            >
-                <Button>Refresh Lockup</Button>
-            </DialogTrigger>
-            <DialogContent className="flex flex-col gap-12">
-                <DialogHeader>
-                    <DialogTitle>Refresh Lockup</DialogTitle>
-                </DialogHeader>
-                <DialogDescription className="sr-only">
-                    Refresh Lockup
-                </DialogDescription>
+        <>
+            {toast &&
+                createPortal(
+                    <div
+                        className={twMerge(
+                            `
+                                fixed
+                                bottom-6
+                                right-6
+                                z-[50]
+                                flex
+                                w-96
+                                gap-3
+                                rounded-lg
+                                p-3
+                                text-sm
+                                text-palette-text
+                                *:shrink-0
+                            `,
+                            toast.type === "error" &&
+                                "bg-palette-red text-white",
+                            toast.type === "success" && "bg-palette-green",
+                            toast.type === "loading" && "bg-palette-beige"
+                        )}
+                    >
+                        {toast.type === "error" && (
+                            <CircleSlash
+                                className="
+                                    size-4
+                                "
+                            />
+                        )}
+                        {toast.type === "success" && (
+                            <CheckCircle
+                                className="
+                                    size-4
+                                "
+                            />
+                        )}
+                        {toast.type === "loading" && (
+                            <Loader
+                                className="
+                                    size-4
+                                    animate-spin
+                                "
+                            />
+                        )}
+                        {toast.message}
 
-                <form
-                    className="
+                        <Button
+                            className={twMerge(
+                                toast.type === "loading" && "hidden",
+                                toast.type === "success" &&
+                                    "border-palette-text text-palette-text"
+                            )}
+                            variant="outline"
+                            type="button"
+                            onClick={() => setToast(null)}
+                        >
+                            Dismiss
+                        </Button>
+                    </div>,
+                    document.body
+                )}
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger
+                    asChild
+                    id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
+                >
+                    <Button>Refresh Lockup</Button>
+                </DialogTrigger>
+                <DialogContent className="flex flex-col gap-12">
+                    <DialogHeader>
+                        <DialogTitle>Refresh Lockup</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription className="sr-only">
+                        Refresh Lockup
+                    </DialogDescription>
+
+                    <form
+                        className="
                         flex
                         flex-col
                         gap-12
                     "
-                    onChange={handleChange}
-                    onSubmit={handleSubmit}
-                >
-                    <div className="flex flex-col gap-2">
-                        <div className="font-bold">Select an End Date:</div>
+                        onChange={handleChange}
+                        onSubmit={handleSubmit}
+                    >
+                        <div className="flex flex-col gap-2">
+                            <div className="font-bold">Select an End Date:</div>
 
-                        <label className="flex items-center gap-2">
-                            <input
-                                type="radio"
-                                name="lockupPeriod"
-                                value=""
-                                defaultChecked
-                                className={classNamesForRadioButtons}
-                            />
-                            <span className={classNamesForRadioLabels}>
-                                {dateFormatter.format(currentLockupEndDate)} (
-                                {relativeTimeFormatter.format(
-                                    Math.floor(
-                                        (currentLockupEndDate.getTime() -
-                                            new Date().getTime()) /
-                                            (1000 * 60 * 60 * 24)
-                                    ),
-                                    "day"
-                                )}{" "}
-                                • Current End Date)
-                            </span>
-                        </label>
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="lockupPeriod"
+                                    value=""
+                                    defaultChecked
+                                    className={classNamesForRadioButtons}
+                                />
+                                <span className={classNamesForRadioLabels}>
+                                    {dateFormatter.format(currentLockupEndDate)}{" "}
+                                    (
+                                    {relativeTimeFormatter.format(
+                                        Math.floor(
+                                            (currentLockupEndDate.getTime() -
+                                                new Date().getTime()) /
+                                                (1000 * 60 * 60 * 24)
+                                        ),
+                                        "day"
+                                    )}{" "}
+                                    • Current End Date)
+                                </span>
+                            </label>
 
-                        {Object.entries(LockupPeriod).map(([name, value]) => {
-                            const newLockupEnd =
-                                Date.now() * 1000000 +
-                                getLockupTimeNanoseconds(value)
+                            {Object.entries(LockupPeriod).map(
+                                ([name, value]) => {
+                                    const newLockupEnd =
+                                        Date.now() * 1000000 +
+                                        getLockupTimeNanoseconds(value)
 
-                            // Don't show an option to refresh a lockup to a time before its current end time
-                            if (currentLockupEnd >= newLockupEnd) return null
+                                    // Don't show an option to refresh a lockup to a time before its current end time
+                                    if (currentLockupEnd >= newLockupEnd)
+                                        return null
 
-                            const newLockupEndDate = new Date(
-                                newLockupEnd / 1000000
-                            )
+                                    const newLockupEndDate = new Date(
+                                        newLockupEnd / 1000000
+                                    )
 
-                            const daysDifference = getDaysAway(newLockupEnd)
+                                    const daysDifference =
+                                        getDaysAway(newLockupEnd)
 
-                            return (
-                                <label
-                                    className="group flex items-center gap-2"
-                                    key={name}
-                                >
-                                    <input
-                                        type="radio"
-                                        name="lockupPeriod"
-                                        value={value}
-                                        className={classNamesForRadioButtons}
-                                    />
-                                    <span className={classNamesForRadioLabels}>
-                                        {dateFormatter.format(newLockupEndDate)}{" "}
-                                        (
-                                        {relativeTimeFormatter.format(
-                                            daysDifference,
-                                            "day"
-                                        )}
-                                        )
-                                    </span>
-                                </label>
-                            )
-                        })}
-                    </div>
+                                    return (
+                                        <label
+                                            className="group flex items-center gap-2"
+                                            key={name}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="lockupPeriod"
+                                                value={value}
+                                                className={
+                                                    classNamesForRadioButtons
+                                                }
+                                            />
+                                            <span
+                                                className={
+                                                    classNamesForRadioLabels
+                                                }
+                                            >
+                                                {dateFormatter.format(
+                                                    newLockupEndDate
+                                                )}{" "}
+                                                (
+                                                {relativeTimeFormatter.format(
+                                                    daysDifference,
+                                                    "day"
+                                                )}
+                                                )
+                                            </span>
+                                        </label>
+                                    )
+                                }
+                            )}
+                        </div>
 
-                    <div className="flex -translate-y-3 items-center justify-around gap-3">
-                        <div className="flex flex-col items-center text-center">
-                            <div>Locked ATOM</div>
-                            <div
-                                className="
+                        <div className="flex -translate-y-3 items-center justify-around gap-3">
+                            <div className="flex flex-col items-center text-center">
+                                <div>Locked ATOM</div>
+                                <div
+                                    className="
                                     text-4xl
                                     font-bold
                                     text-palette-beige
                                 "
-                            >
-                                {formValues.shares}
+                                >
+                                    {formValues.shares}
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="relative flex flex-col items-center text-center">
-                            <div>New Voting Power</div>
-                            <div
-                                className={twMerge(
-                                    `
+                            <div className="relative flex flex-col items-center text-center">
+                                <div>New Voting Power</div>
+                                <div
+                                    className={twMerge(
+                                        `
                                         text-4xl
                                         font-bold
                                         text-palette-beige
                                     `,
-                                    powerDifference > 0 && "text-palette-green"
-                                )}
-                            >
-                                {formatAmount(formValues.power)}
-                            </div>
-                            {powerDifference > 0 && (
-                                <div
-                                    className="
+                                        powerDifference > 0 &&
+                                            "text-palette-green"
+                                    )}
+                                >
+                                    {formatAmount(formValues.power)}
+                                </div>
+                                {powerDifference > 0 && (
+                                    <div
+                                        className="
                                         absolute
                                         left-1/2
                                         top-full
@@ -311,31 +412,31 @@ export const EditLockupDuration = ({
                                         font-bold
                                         text-palette-text
                                     "
-                                >
-                                    <Plus className="size-3" />
-                                    <span>{powerDifference * 100}%</span>
-                                </div>
-                            )}
-                        </div>
+                                    >
+                                        <Plus className="size-3" />
+                                        <span>{powerDifference * 100}%</span>
+                                    </div>
+                                )}
+                            </div>
 
-                        <div className="relative flex flex-col items-center text-center">
-                            <div>Days Left</div>
-                            <div
-                                className={twMerge(
-                                    `
+                            <div className="relative flex flex-col items-center text-center">
+                                <div>Days Left</div>
+                                <div
+                                    className={twMerge(
+                                        `
                                         text-4xl
                                         font-bold
                                         text-palette-beige
                                     `,
-                                    daysDifferenceBeforeAfter > 0 &&
-                                        "text-palette-green"
-                                )}
-                            >
-                                {newDaysDifference || currentDaysDifference}
-                            </div>
-                            {daysDifferenceBeforeAfter > 0 && (
-                                <div
-                                    className="
+                                        daysDifferenceBeforeAfter > 0 &&
+                                            "text-palette-green"
+                                    )}
+                                >
+                                    {newDaysDifference || currentDaysDifference}
+                                </div>
+                                {daysDifferenceBeforeAfter > 0 && (
+                                    <div
+                                        className="
                                         absolute
                                         left-1/2
                                         top-full
@@ -351,44 +452,45 @@ export const EditLockupDuration = ({
                                         font-bold
                                         text-palette-text
                                     "
-                                >
-                                    <Plus className="size-3" />
-                                    <span>{daysDifferenceBeforeAfter}</span>
-                                </div>
-                            )}
+                                    >
+                                        <Plus className="size-3" />
+                                        <span>{daysDifferenceBeforeAfter}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="flex flex-col gap-2">
-                        <Button
-                            variant="secondary"
-                            type="submit"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <Loader2Icon
-                                    className="
+                        <div className="flex flex-col gap-2">
+                            <Button
+                                variant="secondary"
+                                type="submit"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <Loader
+                                        className="
                                         size-4
                                         animate-spin
                                     "
-                                />
-                            ) : (
-                                "Confirm"
-                            )}
-                        </Button>
-
-                        <DialogClose asChild>
-                            <Button
-                                disabled={isLoading}
-                                type="button"
-                                variant="outline"
-                            >
-                                Cancel
+                                    />
+                                ) : (
+                                    "Confirm"
+                                )}
                             </Button>
-                        </DialogClose>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+
+                            <DialogClose asChild>
+                                <Button
+                                    disabled={isLoading}
+                                    type="button"
+                                    variant="outline"
+                                >
+                                    Cancel
+                                </Button>
+                            </DialogClose>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </>
     )
 }
