@@ -58,7 +58,6 @@ function Lockups({
 }) {
     const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const [submitting, setSubmitting] = useState(false)
     const [refetch, setRefetch] = useState(false)
 
     useEffect(() => {
@@ -95,10 +94,6 @@ function Lockups({
         const timestampMs = parseInt(date) / 1e6
         const dateObj = new Date(timestampMs)
         return dateObj.toISOString().split("T")[0]
-    }
-
-    const onSuccess = () => {
-        setRefetch(true)
     }
 
     return (
@@ -223,7 +218,9 @@ function Lockups({
                             actions: (
                                 <EditLockupDuration
                                     validatorMap={validatorMap}
-                                    onSuccess={onSuccess}
+                                    onSuccess={() => {
+                                        setRefetch(true)
+                                    }}
                                     lockup={lockup}
                                     walletAddress={walletAddress}
                                     getSigningCosmWasmClient={
