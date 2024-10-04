@@ -14,7 +14,8 @@ import { useChain } from "@cosmos-kit/react"
 import { CircleCheckBig, ScrollText } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { WelcomePopup } from "./welcomePopup"
 
 function proposalTotalTribute(
     pricedAndNamedTributes: {
@@ -51,10 +52,15 @@ const ActiveProposals = ({
         searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1
     )
 
-    const { isWalletConnected, address, getSigningCosmWasmClient } =
-        useChain("neutron")
+    const {
+        isWalletConnected,
+        isWalletConnecting,
+        address,
+        getSigningCosmWasmClient,
+    } = useChain("neutron")
 
-    const { data: myUserVotingData } = useUserVotingData(address ?? "")
+    const { data: myUserVotingData, isPending: myUserVotingDataIsPending } =
+        useUserVotingData(address ?? "")
 
     const { data: myVotes } = useMyVotes(
         address || "",
@@ -112,6 +118,11 @@ const ActiveProposals = ({
         updateTrancheInURL(newTranche)
     }
 
+    const showWelcomeModal =
+        !myUserVotingDataIsPending &&
+        myUserVotingData &&
+        myUserVotingData.votingPower <= 0
+
     const classNamesForCells = `
         group-hover/table-row:text-palette-green
         sm:group-[&.has-voted]/table-row:border-palette-green
@@ -122,8 +133,9 @@ const ActiveProposals = ({
     `
 
     return (
-        <div
-            className="
+        <>
+            <div
+                className="
                 -mx-3
                 mt-10
                 space-y-6
@@ -133,123 +145,133 @@ const ActiveProposals = ({
                 px-3
                 backdrop-blur-md
             "
-        >
-            <TranchePagination
-                currentTranche={currentTranche}
-                setCurrentTranche={handleTrancheChange}
-                myVotes={myVotes}
-                description={
-                    hasVotedInAll ? (
-                        <>
-                            You can still change your vote until the end of the
-                            round
-                        </>
-                    ) : hasVoted ? (
-                        <>
-                            You can vote on{" "}
-                            <span className="font-bold italic">one</span>{" "}
-                            proposal from{" "}
-                            <span className="font-bold italic">each</span>{" "}
-                            tranche!
-                        </>
-                    ) : (
-                        <>
-                            <a className="font-bold underline" href="#">
-                                Lock some ATOM
-                            </a>{" "}
-                            to vote on{" "}
-                            <span className="font-bold italic">one</span>{" "}
-                            proposal from{" "}
-                            <span className="font-bold italic">each</span>{" "}
-                            tranche!
-                        </>
-                    )
-                }
-            />
-            {decoratedProposals?.length && (
-                <PrettyTable
-                    columns={[
-                        {
-                            key: "hasVoted",
-                            label: "",
-                            isSortable: false,
-                            propsForHeaderCell: {
-                                className: `
+            >
+                {currentProposalTranches.size > 1 && (
+                    <TranchePagination
+                        currentTranche={currentTranche}
+                        setCurrentTranche={handleTrancheChange}
+                        myVotes={myVotes}
+                        description={
+                            hasVotedInAll ? (
+                                <>
+                                    You can still change your vote until the end
+                                    of the round
+                                </>
+                            ) : hasVoted ? (
+                                <>
+                                    You can vote on{" "}
+                                    <span className="font-bold italic">
+                                        one
+                                    </span>{" "}
+                                    proposal from{" "}
+                                    <span className="font-bold italic">
+                                        each
+                                    </span>{" "}
+                                    tranche!
+                                </>
+                            ) : (
+                                <>
+                                    <a className="font-bold underline" href="#">
+                                        Lock some ATOM
+                                    </a>{" "}
+                                    to vote on{" "}
+                                    <span className="font-bold italic">
+                                        one
+                                    </span>{" "}
+                                    proposal from{" "}
+                                    <span className="font-bold italic">
+                                        each
+                                    </span>{" "}
+                                    tranche!
+                                </>
+                            )
+                        }
+                    />
+                )}
+                {decoratedProposals?.length && (
+                    <PrettyTable
+                        columns={[
+                            {
+                                key: "hasVoted",
+                                label: "",
+                                isSortable: false,
+                                propsForHeaderCell: {
+                                    className: `
                                     !pr-0
                                     w-0
                                 `,
-                            },
-                            propsForCells: {
-                                className: `
+                                },
+                                propsForCells: {
+                                    className: `
                                     ${classNamesForCells}
                                     !pr-0
                                     w-0
                                 `,
+                                },
                             },
-                        },
-                        {
-                            key: "name",
-                            label: "Proposal Name",
-                            isSortable: true,
-                            propsForCells: {
-                                className: classNamesForCells,
+                            {
+                                key: "name",
+                                label: "Proposal Name",
+                                isSortable: true,
+                                propsForCells: {
+                                    className: classNamesForCells,
+                                },
                             },
-                        },
-                        {
-                            key: "rewards",
-                            label: "Rewards",
-                            isSortable: true,
-                            textAlign: "right",
-                            propsForCells: {
-                                className: classNamesForCells,
+                            {
+                                key: "rewards",
+                                label: "Rewards",
+                                isSortable: true,
+                                textAlign: "right",
+                                propsForCells: {
+                                    className: classNamesForCells,
+                                },
                             },
-                        },
-                        {
-                            key: "rewardValue",
-                            label: "Reward Value",
-                            isSortable: true,
-                            textAlign: "right",
-                            propsForCells: {
-                                className: classNamesForCells,
+                            {
+                                key: "rewardValue",
+                                label: "Reward Value",
+                                isSortable: true,
+                                textAlign: "right",
+                                propsForCells: {
+                                    className: classNamesForCells,
+                                },
                             },
-                        },
-                        {
-                            key: "yourEstimatedReward",
-                            label: "Your Est. Reward",
-                            isSortable: true,
-                            textAlign: "right",
-                            propsForCells: {
-                                className: classNamesForCells,
+                            {
+                                key: "yourEstimatedReward",
+                                label: "Your Est. Reward",
+                                isSortable: true,
+                                textAlign: "right",
+                                propsForCells: {
+                                    className: classNamesForCells,
+                                },
                             },
-                        },
-                        {
-                            key: "currentVoteShare",
-                            label: "Vote %",
-                            isSortable: true,
-                            initialSortDirection: "DESC",
-                            textAlign: "right",
-                            propsForCells: {
-                                className: classNamesForCells,
+                            {
+                                key: "currentVoteShare",
+                                label: "Vote %",
+                                isSortable: true,
+                                initialSortDirection: "DESC",
+                                textAlign: "right",
+                                propsForCells: {
+                                    className: classNamesForCells,
+                                },
                             },
-                        },
-                    ]}
-                    initialSortedColumnKey="currentVoteShare"
-                    rows={decoratedProposals.map((proposal) => ({
-                        _proposal: proposal,
+                        ]}
+                        initialSortedColumnKey="currentVoteShare"
+                        rows={decoratedProposals.map((proposal) => ({
+                            _proposal: proposal,
 
-                        hasVoted:
-                            hasVoted && proposal.hasVotedOnProp ? (
-                                <div
-                                    className="
+                            hasVoted:
+                                hasVoted && proposal.hasVotedOnProp ? (
+                                    <div
+                                        className="
                                        relative
                                        -translate-y-1/4
                                        text-palette-green
                                     "
-                                >
-                                    <CircleCheckBig />
+                                    >
+                                        <CircleCheckBig />
 
-                                    <div
-                                        className="
+                                        <div
+                                            className="
                                             absolute
                                             left-1/2
                                             top-full
@@ -267,124 +289,130 @@ const ActiveProposals = ({
                                             text-[8px]
                                             text-palette-text
                                         "
-                                    >
-                                        Your Pick
+                                        >
+                                            Your Pick
+                                        </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <ScrollText />
-                            ),
+                                ) : (
+                                    <ScrollText />
+                                ),
 
-                        name: (
-                            <>
-                                <p
-                                    className="
+                            name: (
+                                <>
+                                    <p
+                                        className="
                                         line-clamp-2
                                         text-lg
                                         font-semibold
                                     "
-                                >
-                                    {proposal.title}
-                                </p>
-                                <Link
-                                    href={`/proposals/${proposal.proposal_id}`}
-                                    className="
+                                    >
+                                        {proposal.title}
+                                    </p>
+                                    <Link
+                                        href={`/proposals/${proposal.proposal_id}`}
+                                        className="
                                         absolute
                                         inset-0
                                         z-10
                                         h-full
                                         w-full
                                     "
-                                />
-                            </>
-                        ),
+                                    />
+                                </>
+                            ),
 
-                        rewards: proposal.pricedAndNamedTributes.map(
-                            (tribute, index) => (
-                                <div className="whitespace-nowrap" key={index}>
-                                    {formatAmount(
-                                        tribute.amount,
-                                        tribute.decimals
-                                    )}
-                                    <span
-                                        className="
+                            rewards: proposal.pricedAndNamedTributes.map(
+                                (tribute, index) => (
+                                    <div
+                                        className="whitespace-nowrap"
+                                        key={index}
+                                    >
+                                        {formatAmount(
+                                            tribute.amount,
+                                            tribute.decimals
+                                        )}
+                                        <span
+                                            className="
                                             ml-1
                                             text-xs
                                             uppercase
                                             opacity-60
                                         "
-                                    >
-                                        {formatDenom(
-                                            tribute.denom,
-                                            tribute.symbol
-                                        )}
-                                    </span>
-                                </div>
-                            )
-                        ),
-
-                        rewardValue: proposal.pricedAndNamedTributes
-                            .reduce((total, tribute) => {
-                                return (
-                                    total +
-                                    ((tribute.priceUsd ?? 0) * tribute.amount) /
-                                        10 ** (tribute.decimals ?? 0)
+                                        >
+                                            {formatDenom(
+                                                tribute.denom,
+                                                tribute.symbol
+                                            )}
+                                        </span>
+                                    </div>
                                 )
-                            }, 0)
-                            .toLocaleString("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                                trailingZeroDisplay: "stripIfInteger",
-                            }),
+                            ),
 
-                        yourEstimatedReward: !isWalletConnected ? (
-                            <div
-                                className="
+                            rewardValue: proposal.pricedAndNamedTributes
+                                .reduce((total, tribute) => {
+                                    return (
+                                        total +
+                                        ((tribute.priceUsd ?? 0) *
+                                            tribute.amount) /
+                                            10 ** (tribute.decimals ?? 0)
+                                    )
+                                }, 0)
+                                .toLocaleString("en-US", {
+                                    style: "currency",
+                                    currency: "USD",
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                    trailingZeroDisplay: "stripIfInteger",
+                                }),
+
+                            yourEstimatedReward: !isWalletConnected ? (
+                                <div
+                                    className="
                                             ml-1
                                             text-xs
                                             opacity-60
                                         "
-                            >
-                                <div>Lock ATOM to</div>
-                                <div>see rewards</div>
-                            </div>
-                        ) : (
-                            estimatedRewardForPower(
-                                proposalTotalTribute(
-                                    proposal.pricedAndNamedTributes
-                                ),
-                                myUserVotingData?.votingPower ?? 0,
-                                Number(proposal.power ?? 0)
-                            ).toLocaleString("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                            })
-                        ),
+                                >
+                                    <div>Lock ATOM to</div>
+                                    <div>see rewards</div>
+                                </div>
+                            ) : (
+                                estimatedRewardForPower(
+                                    proposalTotalTribute(
+                                        proposal.pricedAndNamedTributes
+                                    ),
+                                    myUserVotingData?.votingPower ?? 0,
+                                    Number(proposal.power ?? 0)
+                                ).toLocaleString("en-US", {
+                                    style: "currency",
+                                    currency: "USD",
+                                })
+                            ),
 
-                        currentVoteShare: `${proposal.percentage}%`,
-                    }))}
-                    renderRow={({ children, row, rowProps }) => (
-                        <TR
-                            className={
-                                row._proposal.hasVotedOnProp
-                                    ? `
+                            currentVoteShare: `${proposal.percentage}%`,
+                        }))}
+                        renderRow={({ children, row, rowProps }) => (
+                            <TR
+                                className={
+                                    row._proposal.hasVotedOnProp
+                                        ? `
                                         has-voted
                                         max-sm:bg-palette-green
                                         max-sm:text-palette-text
                                         max-sm:hover:bg-palette-green/80
                                     `
-                                    : undefined
-                            }
-                            {...rowProps}
-                        >
-                            {children}
-                        </TR>
-                    )}
-                />
-            )}
-        </div>
+                                        : undefined
+                                }
+                                {...rowProps}
+                            >
+                                {children}
+                            </TR>
+                        )}
+                    />
+                )}
+            </div>
+            <WelcomePopup showModal={showWelcomeModal} />
+        </>
     )
 }
 

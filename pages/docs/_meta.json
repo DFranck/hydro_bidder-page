@@ -1,7 +1,7 @@
 {
-    "index": {
-        "display": "hidden"
-    },
-    "get-started": "Get Started",
+    "index": "Get Started",
+    "hydro-launch": "Hydro Launch",
+    "locking-lsm-shares": "Locking LSM Shares",
+    "voting-for-projects": "Voting for Projects",
     "projects": "Projects Onboarding"
 }
