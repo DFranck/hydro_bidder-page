@@ -135,4 +135,4 @@ At any moment the following information will be public on the Hydro FE Dashboard
         -   The current voting score of the proposal (i.e. how much voting support for the proposal)
         -   The bid: how much reward the Project will split among its voters (this is only paid out if the reward receives any liquidity, which it only does if it gets at least a minimal amount of support)
 
-![Hydro Dashboard](/doc/hyodro-dash.png)
+![Hydro Dashboard](/doc/hydro-voting-dash.png)
