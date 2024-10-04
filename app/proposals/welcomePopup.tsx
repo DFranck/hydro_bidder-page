@@ -12,16 +12,23 @@ import {
     CardFooter,
 } from "@/components/ui/card"
 
-export function WelcomePopup() {
+interface WelcomePopupProps {
+    showModal?: boolean
+}
+
+export function WelcomePopup({ showModal = true }: WelcomePopupProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [dontShowAgain, setDontShowAgain] = useState(false)
 
     useEffect(() => {
-        const hasSeenWelcome = localStorage.getItem("hasSeenWelcomePopup")
-        if (!hasSeenWelcome) {
-            setIsOpen(true)
+        // Only check localStorage and potentially show the modal if showModal is true
+        if (showModal) {
+            const hasSeenWelcome = localStorage.getItem("hasSeenWelcomePopup")
+            if (!hasSeenWelcome) {
+                setIsOpen(true)
+            }
         }
-    }, [])
+    }, [showModal])
 
     function closeModal() {
         setIsOpen(false)
@@ -33,13 +40,13 @@ export function WelcomePopup() {
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 z-10 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50">
             <Card className="w-full max-w-2xl">
                 <CardHeader>
                     <CardTitle>Get started on Hydro</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ol className="list-decimal p-5 space-y-2">
+                    <ol className="list-decimal space-y-2 p-5">
                         <li>
                             Lock your ATOM to get voting power. The longer you
                             lock it, the more power you get. Locked ATOM
