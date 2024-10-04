@@ -2,8 +2,8 @@
 
 import { useProposalsContext } from "@/app/proposals/context"
 import { TopCard } from "@/components/TopCard"
+import { ArrowUpRight } from "lucide-react"
 import { Timestamp } from "../ts_types/HydroBase.types"
-import { LockupPeriod, topLineAPR } from "@/lib/utils"
 export const getRoundEndText = (roundEnd: Timestamp) => {
     const now = new Date()
     const end = new Date(parseInt(roundEnd) / 1e6)
@@ -115,6 +115,7 @@ export function ProposalListTopModules() {
     return (
         <div
             className="
+                relative
                 grid
                 grid-cols-1
                 justify-between
@@ -125,7 +126,7 @@ export function ProposalListTopModules() {
         >
             <TopCard
                 title="Total Rewards"
-                label="USD Equivalent"
+                label="USD Equivalent *"
                 value={
                     totalTributeValue > 1000
                         ? totalTributeValue.toLocaleString("en-US", {
@@ -148,7 +149,7 @@ export function ProposalListTopModules() {
                             style: "currency",
                             currency: "USD",
                         }).format(atomPrice * (totalLockedTokens / 1e6))}{" "}
-                        USD Equivalent
+                        USD Equivalent *
                     </>
                 }
                 value={(totalLockedTokens / 1e6).toLocaleString("en-US", {
@@ -157,7 +158,7 @@ export function ProposalListTopModules() {
             />
             <TopCard
                 title="Average APR"
-                label="this round"
+                label="This Round"
                 value={(
                     (totalTributeValue /
                         (totalLockedTokens / 1e6) /
@@ -182,6 +183,28 @@ export function ProposalListTopModules() {
                     currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
                 }
             />
+
+            <div
+                className="
+                    absolute
+                    right-0
+                    top-full
+                    mt-3
+                    w-full
+                    whitespace-nowrap
+                    text-right
+                    text-xs
+                "
+            >
+                * Lorem ipsum dolor, sit amet consectetur{" "}
+                <a
+                    href="#"
+                    className="inline-flex gap-1 text-palette-green underline"
+                >
+                    adipisicing elit
+                    <ArrowUpRight className="size-4" />
+                </a>
+            </div>
         </div>
     )
 }
