@@ -19,7 +19,12 @@ import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
 import { TributeBaseQueryClient } from "../app/ts_types/TributeBase.client"
 import { Tribute } from "../app/ts_types/TributeBase.types"
 import { GlobalState, RoundState } from "../app/types"
+import { unstable_cache } from "next/cache"
+
 let clientInstance: CosmWasmClient | null = null
+
+// Define a constant for the revalidation period
+const CACHE_REVALIDATE_SECONDS = 5
 
 // convenience func that allows doing contract queries on both server and client
 // without the need to wait for the client side to finish executing useChain()
@@ -174,14 +179,60 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
         whitelistAdmins,
         whitelist,
     ] = await Promise.all([
-        hydroQueryClient.constants().then((response) => response.constants),
-        hydroQueryClient.currentRound().then((response) => response.round_id),
-        hydroQueryClient
-            .totalLockedTokens()
-            .then((response) => response.total_locked_tokens),
-        hydroQueryClient.tranches().then((response) => response.tranches),
-        hydroQueryClient.whitelistAdmins().then((response) => response.admins),
-        hydroQueryClient.whitelist().then((response) => response.whitelist),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .constants()
+                    .then((response) => response.constants)
+            },
+            ["constants"],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .currentRound()
+                    .then((response) => response.round_id)
+            },
+            ["currentRound"],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .totalLockedTokens()
+                    .then((response) => response.total_locked_tokens)
+            },
+            ["totalLockedTokens"],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .tranches()
+                    .then((response) => response.tranches)
+            },
+            ["tranches"],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .whitelistAdmins()
+                    .then((response) => response.admins)
+            },
+            ["whitelistAdmins"],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .whitelist()
+                    .then((response) => response.whitelist)
+            },
+            ["whitelist"],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
     ])
 
     return {
@@ -202,12 +253,24 @@ export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
     )
 
     const [roundEnd, totalVotingPower] = await Promise.all([
-        hydroQueryClient
-            .roundEnd({ roundId })
-            .then((response) => response.round_end),
-        hydroQueryClient
-            .roundTotalVotingPower({ roundId })
-            .then((response) => response.total_voting_power),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .roundEnd({ roundId })
+                    .then((response) => response.round_end)
+            },
+            ["roundEnd", roundId.toString()],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
+        unstable_cache(
+            async () => {
+                return hydroQueryClient
+                    .roundTotalVotingPower({ roundId })
+                    .then((response) => response.total_voting_power)
+            },
+            ["roundTotalVotingPower", roundId.toString()],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
     ])
 
     return {
@@ -225,11 +288,17 @@ export const fetchProposals = async (
         client,
         HYDRO_CONTRACT_ADDRESS
     )
-    const response = await hydroQueryClient.topNProposals({
-        numberOfProposals: 20,
-        roundId,
-        trancheId,
-    })
+    const response = await unstable_cache(
+        async () => {
+            return hydroQueryClient.topNProposals({
+                numberOfProposals: 20,
+                roundId,
+                trancheId,
+            })
+        },
+        ["topNProposals", roundId.toString(), trancheId.toString()],
+        { revalidate: CACHE_REVALIDATE_SECONDS }
+    )()
     return response.proposals
 }
 
@@ -536,7 +605,7 @@ export const fetchAssetListWithPrices = async (): Promise<
     const response = await fetch(
         "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json",
         {
-            next: { revalidate: 5 * 60 }, // Revalidate every 5 minutes
+            next: { revalidate: CACHE_REVALIDATE_SECONDS }, // Revalidate every 5 minutes
         }
     )
     const data: AssetListEntry[] = await response.json()
@@ -548,7 +617,7 @@ export const fetchAssetListWithPrices = async (): Promise<
 
     // Fetch prices using getPriceFeedUrl
     const pricesResponse = await fetch(getPriceFeedUrl(coingeckoIds), {
-        next: { revalidate: 5 * 60 }, // Revalidate every 5 minutes
+        next: { revalidate: CACHE_REVALIDATE_SECONDS }, // Revalidate every 5 minutes
     })
     const prices: Record<string, { usd: number }> = await pricesResponse.json()
 
