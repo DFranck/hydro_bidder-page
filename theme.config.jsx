@@ -12,8 +12,14 @@ const themeConfig = {
         />
     ),
     logoLink: "/docs",
-    project: {
-        link: "/docs",
+    editLink: {
+        component: null,
+    },
+    feedback: {
+        component: null,
+    },
+    nextThemes: {
+        defaultTheme: "dark",
     },
     head: (
         <>
