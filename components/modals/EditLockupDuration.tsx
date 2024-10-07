@@ -38,7 +38,6 @@ interface FormValues {
     lockupPeriod: LockupPeriod
     shares: string
     power: string
-    validator: string
 }
 
 type EditLockupDurationProps = {
@@ -100,7 +99,6 @@ export const EditLockupDuration = ({
                 parseInt(lockup.lock_entry.funds.amount),
                 LockupPeriod.ONE_EPOCH
             ).toString(),
-            validator: "",
         }),
         [lockup.lock_entry.funds.amount]
     )
@@ -124,19 +122,7 @@ export const EditLockupDuration = ({
         if (isEqual(formValues, values)) {
             return
         }
-
         setHasChanged(true)
-        setIsLoading(true)
-
-        const endpoint = await getRestEndpoint()
-        const trace = await fetchDenomTrace(
-            lockup.lock_entry.funds,
-            endpoint as string
-        )
-
-        setIsLoading(false)
-
-        if (!trace) return
 
         const lockupPeriod = values["lockupPeriod"] as LockupPeriod
 
@@ -148,9 +134,6 @@ export const EditLockupDuration = ({
                 parseInt(lockup.lock_entry.funds.amount),
                 lockupPeriod
             ).toString(),
-            validator:
-                validatorMap.get(trace.validator)?.description.moniker ||
-                "Unknown Validator",
         }))
     }
 
