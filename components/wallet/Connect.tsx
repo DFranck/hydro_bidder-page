@@ -69,7 +69,7 @@ export const WButtonConnected = ({ address, onClick = noop }: ConnectProps) => (
 )
 
 export const WButtonDisconnected = ({
-    text = "Connect Wallet to Vote",
+    text = "Connect Wallet",
     onClick = noop,
 }: ConnectProps) => <WButton text={text} connected={false} onClick={onClick} />
 
