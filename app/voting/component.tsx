@@ -184,24 +184,6 @@ const ActiveProposals = ({
                                 },
                             },
                             {
-                                key: "rewards",
-                                label: "Rewards",
-                                isSortable: true,
-                                textAlign: "right",
-                                propsForCells: {
-                                    className: classNamesForCells,
-                                },
-                            },
-                            {
-                                key: "rewardValue",
-                                label: "Reward Value",
-                                isSortable: true,
-                                textAlign: "right",
-                                propsForCells: {
-                                    className: classNamesForCells,
-                                },
-                            },
-                            {
                                 key: "yourEstimatedReward",
                                 label: "Your Est. Reward",
                                 isSortable: true,
@@ -219,6 +201,8 @@ const ActiveProposals = ({
                                 propsForCells: {
                                     className: classNamesForCells,
                                 },
+                                customValueGetter: (row) =>
+                                    Number(row._proposal.percentage),
                             },
                         ]}
                         initialSortedColumnKey="currentVoteShare"
