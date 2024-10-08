@@ -12,8 +12,8 @@ export const endpoints = {
     //     rest: ["https://rest-palvus.pion-1.ntrn.tech"],
     // },
     neutron: {
-        rpc: ["https://neutron-rpc.publicnode.com"],
-        rest: ["https://neutron-api.publicnode.com/"],
+        rpc: ["https://neutron-rpc.polkachu.com"],
+        rest: ["https://neutron-api.polkachu.com/"],
     },
     cosmoshub: {
         rpc: ["https://cosmos-rpc.publicnode.com/"],
@@ -27,7 +27,7 @@ export const HYDRO_CONTRACT_ADDRESS =
 export const TRIBUTE_CONTRACT_ADDRESS =
     "neutron1y8wtzufvtpccpxl8tdrg2c59zuuk93l8tl68nprukhaakc2rddqsnfd2qt"
 
-export const NEUTRON_DEFAULT_RPC = "https://neutron-rpc.publicnode.com"
+export const NEUTRON_DEFAULT_RPC = "https://rpc.neutron.quokkastake.io/"
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 
