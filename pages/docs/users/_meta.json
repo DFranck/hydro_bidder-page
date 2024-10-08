@@ -1,6 +1,6 @@
 {
-    "locking-lsm-shares": "Locking LSM Shares",
-    "voting-for-projects": "Voting for Projects",
-    "hydro-launch": "Hydro Launch",
+    "hydro-launch": "Pilot Round Details",
+    "locking-lsm-shares": "Locking & Voting Power",
+    "voting-for-projects": "Voting & Tribute",
     "calculating-staking-apr": "Calculating Staking APR",
 }
