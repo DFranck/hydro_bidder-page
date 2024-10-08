@@ -121,13 +121,13 @@ export function ProposalListTopModules() {
                 justify-between
                 gap-6
                 bg-transparent
-                lg:grid-cols-3
+                lg:grid-cols-2
             "
         >
             <TopCard
                 title={
                     <div className="flex items-center gap-1">
-                        Average APR
+                        Round APR
                         <div className="group relative">
                             <Info className="inline-block" size={14} />
                             <div
@@ -169,7 +169,7 @@ export function ProposalListTopModules() {
                         </div>
                     </div>
                 }
-                label="This Round"
+                label={`Pilot Round ${currentRound}`}
                 value={(
                     (totalTributeValue /
                         (totalLockedTokens / 1e6) /
@@ -197,14 +197,14 @@ export function ProposalListTopModules() {
                 }
             /> */}
             <TopCard
-                title="Time Remaining"
-                label={`In Round ${currentRound}`}
+                title="Remaining"
+                label={`Pilot Round ${currentRound}`}
                 value={
                     currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
                 }
             />
-            <TopCard
-                title={<>Total Locked&nbsp;ATOM</>}
+            {/* <TopCard
+                title={<>Your Locked&nbsp;ATOM</>}
                 label={
                     <>
                         {Intl.NumberFormat("en-US", {
@@ -217,7 +217,7 @@ export function ProposalListTopModules() {
                 value={(totalLockedTokens / 1e6).toLocaleString("en-US", {
                     maximumFractionDigits: 2,
                 })}
-            />
+            /> */}
 
             {/* <TopCard
                 title="APR"
