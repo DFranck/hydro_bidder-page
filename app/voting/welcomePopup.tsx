@@ -1,16 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-    CardFooter,
-} from "@/components/ui/card"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
 interface WelcomePopupProps {
     showModal?: boolean
@@ -22,7 +16,7 @@ export function WelcomePopup({ showModal = true }: WelcomePopupProps) {
 
     useEffect(() => {
         // Only check localStorage and potentially show the modal if showModal is true
-        if (showModal) {
+        if (true || showModal) {
             const hasSeenWelcome = localStorage.getItem("hasSeenWelcomePopup")
             if (!hasSeenWelcome) {
                 setIsOpen(true)
@@ -48,22 +42,20 @@ export function WelcomePopup({ showModal = true }: WelcomePopupProps) {
                 <CardContent>
                     <ol className="list-decimal space-y-2 p-5">
                         <li>
-                            Lock your ATOM to get voting power. The longer you
-                            lock it, the more power you get. Locked ATOM
-                            continues earning staking rewards on the Cosmos Hub
-                            as well!
+                            Lock your staked ATOM to get voting power. The
+                            longer you lock it, the more power you get. You
+                            continue earning all of the Cosmos Hub staking
+                            rewards.
                         </li>
                         <li>
-                            Vote for a proposal. You can use your voting power
-                            to vote for one proposal per tranche. There are
-                            multiple tranches, so make sure you look at them
-                            all.
+                            Vote for a project. You can use your voting power to
+                            vote for one project. You can change your vote as
+                            many times as you want until the round ends.
                         </li>
                         <li>
-                            Collect your reward! When the round ends, 5
-                            proposals from each tranche will win. If you voted
-                            for one of the winning proposals you be rewarded
-                            according to your voting power.
+                            Collect your rewards! When the round ends, a share
+                            of the tributes posted by the winning projects are
+                            distributed according to your voting power.
                         </li>
                     </ol>
 
