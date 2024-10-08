@@ -19,6 +19,8 @@ export function TopCard({
         <div
             className={twMerge(
                 `
+                    relative
+                    z-10
                     w-full
                     rounded-xl
                     bg-gradient-to-t
