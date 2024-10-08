@@ -1,7 +1,7 @@
 "use client"
 
-import { useProposalsContext } from "@/app/proposals/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
+import { useVotingContext } from "@/app/voting/context"
 import { Confetti } from "@/components/Confetti"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,7 +39,7 @@ const ProposalDetail = ({
         globalState,
         currentProposalTributes,
         currentProposalTranches: proposalTranches,
-    } = useProposalsContext()
+    } = useVotingContext()
     const [hasVoted, setHasVoted] = useState(false)
     const [hasVotedThisProposal, setHasVotedThisProposal] = useState(false)
     const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
@@ -321,7 +321,7 @@ const ProposalDetail = ({
                 >
                     <div>
                         <Link
-                            href="/proposals"
+                            href="/voting"
                             className="
                                 mb-12
                                 flex

@@ -21,27 +21,28 @@ export default function Navigation() {
         <nav>
             <div className="flex flex-row items-center justify-between gap-6">
                 <Link
-                    href="/proposals"
-                    className={navigationMenuTriggerStyle("/proposals")}
-                >
-                    Proposals
-                </Link>
-                <Link
                     href="/docs"
                     target="_blank"
                     className={cn(navigationMenuTriggerStyle("/docs"))}
                 >
-                    Documentation
+                    Docs
                 </Link>
+
                 <Link
-                    href="/dashboard"
-                    className={cn(
-                        navigationMenuTriggerStyle("/dashboard"),
-                        !isConnected ? "pointer-events-none opacity-50" : ""
-                    )}
+                    href="/voting"
+                    className={navigationMenuTriggerStyle("/voting")}
                 >
-                    Dashboard
+                    Voting
                 </Link>
+
+                {isConnected && (
+                    <Link
+                        href="/dashboard"
+                        className={cn(navigationMenuTriggerStyle("/dashboard"))}
+                    >
+                        Dashboard
+                    </Link>
+                )}
                 <Wallet notifyConnectedCB={setIsConnected} />
             </div>
         </nav>

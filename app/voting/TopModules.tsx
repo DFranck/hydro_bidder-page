@@ -1,6 +1,6 @@
 "use client"
 
-import { useProposalsContext } from "@/app/proposals/context"
+import { useVotingContext } from "@/app/voting/context"
 import { TopCard } from "@/components/TopCard"
 import { ArrowUpRight } from "lucide-react"
 import { Timestamp } from "../ts_types/HydroBase.types"
@@ -25,7 +25,7 @@ export function ProposalListTopModules() {
         currentRoundEnd,
         currentProposalTributes,
         currentProposalTranches,
-    } = useProposalsContext()
+    } = useVotingContext()
 
     // Calculate total tribute value
     const totalTributeValue = Array.from(currentProposalTributes.values())
@@ -157,7 +157,7 @@ export function ProposalListTopModules() {
                 })}
             />
             <TopCard
-                title="Average APR"
+                title="Average APR *"
                 label="This Round"
                 value={(
                     (totalTributeValue /
