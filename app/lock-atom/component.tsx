@@ -1,7 +1,4 @@
 "use client"
-import { useChain } from "@cosmos-kit/react"
-import { useEffect, useState } from "react"
-
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -14,8 +11,9 @@ import {
 } from "@/components/ui/form"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
+import { useChain } from "@cosmos-kit/react"
 import { cosmos } from "interchain"
-import React from "react"
+import React, { useEffect, useState } from "react"
 const txRaw = cosmos.tx.v1beta1.TxRaw
 
 import {
@@ -40,7 +38,7 @@ import { EPOCH_LENGTH } from "@/config"
 import { Delegation, useMyValidators, Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AlertTriangle, ChevronLeft } from "lucide-react"
+import { AlertTriangle, ArrowUpRight, ChevronLeft } from "lucide-react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -821,12 +819,31 @@ const LoaderCard = ({
     return (
         <Card className="bg-[#303132]/75 backdrop-blur">
             <CardHeader>
-                <CardTitle>Lock ATOM to vote in Hydro</CardTitle>
+                <CardTitle>Connect a Keplr Wallet</CardTitle>
             </CardHeader>
             <CardContent>
                 {!address && haveChains ? (
                     <div>
-                        <p>Connect your wallet to lock ATOM</p>
+                        <p>
+                            In order to use Hydro, you will need to connect a
+                            Keplr wallet.{" "}
+                            <a
+                                className="text-palette-green underline"
+                                href="https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Grab the extension{" "}
+                                <span className="whitespace-nowrap">
+                                    here{" "}
+                                    <ArrowUpRight
+                                        className="inline-block"
+                                        size={16}
+                                    />
+                                </span>
+                            </a>{" "}
+                            and connect your wallet.
+                        </p>
                     </div>
                 ) : haveChains ? (
                     <>

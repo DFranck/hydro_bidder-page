@@ -1,16 +1,13 @@
+import { fetchDashboardData } from "@/hooks/hooks"
+import { ProposalListTopModules } from "../voting/TopModules"
 import DeployedLiquidity from "./component"
-import { ProposalListTopModules } from "../proposals/TopModules"
-import { fetchDashboardData,  } from "@/hooks/hooks"
 
 export default async function DeployedProposalPage() {
-    const {
-        globalState,
-        lastProposalTranches,
-        lastProposalTributes,
-    } = await fetchDashboardData()
+    const { globalState, lastProposalTranches, lastProposalTributes } =
+        await fetchDashboardData()
 
     return (
-        <div className="pb-44 max-w-7xl mx-auto px-5 lg:px-0">
+        <div className="mx-auto max-w-7xl px-5 pb-44 lg:px-0">
             <ProposalListTopModules />
             <DeployedLiquidity
                 lastProposalTranches={lastProposalTranches}

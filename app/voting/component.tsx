@@ -1,6 +1,6 @@
 "use client"
 
-import { useProposalsContext } from "@/app/proposals/context"
+import { useVotingContext } from "@/app/voting/context"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { TranchePagination } from "@/components/TranchePagination"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
@@ -14,7 +14,7 @@ import { useChain } from "@cosmos-kit/react"
 import { CircleCheckBig, ScrollText } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { WelcomePopup } from "./welcomePopup"
 
 function proposalTotalTribute(
@@ -46,7 +46,7 @@ const ActiveProposals = ({
         currentProposalTributes,
         globalState,
         assetListWithPrices,
-    } = useProposalsContext()
+    } = useVotingContext()
 
     const [currentTranche, setCurrentTranche] = useState(
         searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1
@@ -309,7 +309,7 @@ const ActiveProposals = ({
                                         {proposal.title}
                                     </p>
                                     <Link
-                                        href={`/proposals/${proposal.proposal_id}`}
+                                        href={`/voting/${proposal.proposal_id}`}
                                         className="
                                         absolute
                                         inset-0

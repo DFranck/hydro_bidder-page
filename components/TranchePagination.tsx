@@ -1,7 +1,7 @@
 "use client"
 
-import { useProposalsContext } from "@/app/proposals/context"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
+import { useVotingContext } from "@/app/voting/context"
 import { PointingInfoBox } from "@/components/PointingInfoBox"
 import { CircleCheckBig, Clock } from "lucide-react"
 import { ReactNode } from "react"
@@ -22,7 +22,7 @@ export function TranchePagination({
 }) {
     const {
         globalState: { tranches },
-    } = useProposalsContext()
+    } = useVotingContext()
 
     const hasVotedOnAnyTranch = tranches.some((tranche) =>
         myVotes?.has(tranche.id)

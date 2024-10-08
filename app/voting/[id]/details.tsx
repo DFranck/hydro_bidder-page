@@ -1,10 +1,10 @@
 "use client"
 
-import { useProposalsContext } from "@/app/proposals/context"
+import { useVotingContext } from "@/app/voting/context"
 import ProposalDetail from "@/components/proposalDetail"
 
 export function Details({ params }: { params: { id: string } }) {
-    const { currentProposalTranches } = useProposalsContext()
+    const { currentProposalTranches } = useVotingContext()
 
     const currentProposal = Array.from(currentProposalTranches.values())
         .flat()
