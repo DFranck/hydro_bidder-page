@@ -179,15 +179,6 @@ const ActiveProposals = ({
                                 },
                             },
                             {
-                                key: "tributeValue",
-                                label: "Total Tribute Value",
-                                isSortable: true,
-                                textAlign: "right",
-                                propsForCells: {
-                                    className: classNamesForCells,
-                                },
-                            },
-                            {
                                 key: "yourEstimatedReward",
                                 label: "Your Est. Reward",
                                 isSortable: true,
@@ -195,6 +186,14 @@ const ActiveProposals = ({
                                 propsForCells: {
                                     className: classNamesForCells,
                                 },
+                                customValueGetter: (row) =>
+                                    estimatedRewardForPower(
+                                        proposalTotalTribute(
+                                            row._proposal.pricedAndNamedTributes
+                                        ),
+                                        myUserVotingData?.votingPower ?? 0,
+                                        Number(row._proposal.power ?? 0)
+                                    ),
                             },
                             {
                                 key: "currentVoteShare",
@@ -275,22 +274,6 @@ const ActiveProposals = ({
                                 </>
                             ),
 
-                            tributeValue: proposal.pricedAndNamedTributes
-                                .reduce((total, tribute) => {
-                                    return (
-                                        total +
-                                        ((tribute.priceUsd ?? 0) *
-                                            tribute.amount) /
-                                            10 ** (tribute.decimals ?? 0)
-                                    )
-                                }, 0)
-                                .toLocaleString("en-US", {
-                                    style: "currency",
-                                    currency: "USD",
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                }),
-
                             yourEstimatedReward: !isWalletConnected ? (
                                 <div
                                     className="
@@ -303,16 +286,40 @@ const ActiveProposals = ({
                                     <div>see rewards</div>
                                 </div>
                             ) : (
-                                estimatedRewardForPower(
-                                    proposalTotalTribute(
-                                        proposal.pricedAndNamedTributes
-                                    ),
-                                    myUserVotingData?.votingPower ?? 0,
-                                    Number(proposal.power ?? 0)
-                                ).toLocaleString("en-US", {
-                                    style: "currency",
-                                    currency: "USD",
-                                })
+                                <>
+                                    <div>
+                                        {estimatedRewardForPower(
+                                            proposalTotalTribute(
+                                                proposal.pricedAndNamedTributes
+                                            ),
+                                            myUserVotingData?.votingPower ?? 0,
+                                            Number(proposal.power ?? 0)
+                                        ).toLocaleString("en-US", {
+                                            style: "currency",
+                                            currency: "USD",
+                                        })}
+                                    </div>
+                                    <div className="text-xs opacity-60">
+                                        of{" "}
+                                        {proposal.pricedAndNamedTributes
+                                            .reduce((total, tribute) => {
+                                                return (
+                                                    total +
+                                                    ((tribute.priceUsd ?? 0) *
+                                                        tribute.amount) /
+                                                        10 **
+                                                            (tribute.decimals ??
+                                                                0)
+                                                )
+                                            }, 0)
+                                            .toLocaleString("en-US", {
+                                                style: "currency",
+                                                currency: "USD",
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                            })}
+                                    </div>
+                                </>
                             ),
 
                             currentVoteShare: `${proposal.percentage}%`,
