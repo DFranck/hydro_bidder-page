@@ -5,6 +5,8 @@ import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
@@ -13,6 +15,17 @@ export const Header = () => {
     const { address } = useChain("neutron")
     const { data: userVotingData } = useUserVotingData(address || "")
     const showLockATOMBanner = userVotingData?.votingPower === 0
+    const pathname = usePathname()
+    const router = useRouter()
+
+    useEffect(() => {
+        if (address && !pathname?.startsWith("/voting")) {
+            if (window.sessionStorage.getItem("redirected") !== "true") {
+                router.push("/voting")
+                window.sessionStorage.setItem("redirected", "true")
+            }
+        }
+    }, [address, pathname, router])
 
     return (
         <div
