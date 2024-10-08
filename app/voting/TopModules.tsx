@@ -2,7 +2,7 @@
 
 import { useVotingContext } from "@/app/voting/context"
 import { TopCard } from "@/components/TopCard"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, Info } from "lucide-react"
 import { Timestamp } from "../ts_types/HydroBase.types"
 export const getRoundEndText = (roundEnd: Timestamp) => {
     const now = new Date()
@@ -125,7 +125,50 @@ export function ProposalListTopModules() {
             "
         >
             <TopCard
-                title="Average APR *"
+                title={
+                    <div className="flex items-center gap-1">
+                        Average APR
+                        <div className="group relative">
+                            <Info className="inline-block" size={14} />
+                            <div
+                                className="
+                                    pointer-events-none
+                                    absolute
+                                    left-1/2
+                                    top-full
+                                    z-50
+                                    w-56
+                                    -translate-x-1/2
+                                    translate-y-full
+                                    rounded-sm
+                                    border
+                                    border-palette-beige
+                                    bg-palette-text
+                                    px-3
+                                    py-1
+                                    text-sm
+                                    font-normal
+                                    text-white
+                                    opacity-0
+                                    transition-all
+                                    group-hover:pointer-events-auto
+                                    group-hover:translate-y-0
+                                    group-hover:opacity-100
+                                "
+                            >
+                                Learn more about how this is calculated in our{" "}
+                                <a
+                                    href="/docs/users/calculating-staking-apr"
+                                    className="inline-flex gap-1 text-palette-green underline"
+                                    target="_blank"
+                                >
+                                    docs
+                                    <ArrowUpRight className="size-4" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
                 label="This Round"
                 value={(
                     (totalTributeValue /
@@ -183,28 +226,6 @@ export function ProposalListTopModules() {
                     style: "percent",
                 })}
             /> */}
-
-            <div
-                className="
-                    absolute
-                    right-0
-                    top-full
-                    mt-3
-                    w-full
-                    whitespace-nowrap
-                    text-right
-                    text-xs
-                "
-            >
-                * Lorem ipsum dolor, sit amet consectetur{" "}
-                <a
-                    href="#"
-                    className="inline-flex gap-1 text-palette-green underline"
-                >
-                    adipisicing elit
-                    <ArrowUpRight className="size-4" />
-                </a>
-            </div>
         </div>
     )
 }
