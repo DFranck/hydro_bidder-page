@@ -121,10 +121,22 @@ export function ProposalListTopModules() {
                 justify-between
                 gap-6
                 bg-transparent
-                lg:grid-cols-4
+                lg:grid-cols-3
             "
         >
             <TopCard
+                title="Average APR *"
+                label="This Round"
+                value={(
+                    (totalTributeValue /
+                        (totalLockedTokens / 1e6) /
+                        atomPrice) *
+                    12
+                ).toLocaleString("en-US", {
+                    style: "percent",
+                })}
+            />
+            {/* <TopCard
                 title="Total Rewards"
                 label="USD Equivalent *"
                 value={
@@ -139,6 +151,13 @@ export function ProposalListTopModules() {
                               style: "currency",
                               currency: "USD",
                           })
+                }
+            /> */}
+            <TopCard
+                title="Time Remaining"
+                label={`In Round ${currentRound}`}
+                value={
+                    currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
                 }
             />
             <TopCard
@@ -156,18 +175,6 @@ export function ProposalListTopModules() {
                     maximumFractionDigits: 2,
                 })}
             />
-            <TopCard
-                title="Average APR *"
-                label="This Round"
-                value={(
-                    (totalTributeValue /
-                        (totalLockedTokens / 1e6) /
-                        atomPrice) *
-                    12
-                ).toLocaleString("en-US", {
-                    style: "percent",
-                })}
-            />
 
             {/* <TopCard
                 title="APR"
@@ -176,13 +183,6 @@ export function ProposalListTopModules() {
                     style: "percent",
                 })}
             /> */}
-            <TopCard
-                title="Time Remaining"
-                label={`In Round ${currentRound}`}
-                value={
-                    currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
-                }
-            />
 
             <div
                 className="

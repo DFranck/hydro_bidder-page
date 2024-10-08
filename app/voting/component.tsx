@@ -151,41 +151,7 @@ const ActiveProposals = ({
                         currentTranche={currentTranche}
                         setCurrentTranche={handleTrancheChange}
                         myVotes={myVotes}
-                        description={
-                            hasVotedInAll ? (
-                                <>
-                                    You can still change your vote until the end
-                                    of the round
-                                </>
-                            ) : hasVoted ? (
-                                <>
-                                    You can vote on{" "}
-                                    <span className="font-bold italic">
-                                        one
-                                    </span>{" "}
-                                    proposal from{" "}
-                                    <span className="font-bold italic">
-                                        each
-                                    </span>{" "}
-                                    tranche!
-                                </>
-                            ) : (
-                                <>
-                                    <a className="font-bold underline" href="#">
-                                        Lock some ATOM
-                                    </a>{" "}
-                                    to vote on{" "}
-                                    <span className="font-bold italic">
-                                        one
-                                    </span>{" "}
-                                    proposal from{" "}
-                                    <span className="font-bold italic">
-                                        each
-                                    </span>{" "}
-                                    tranche!
-                                </>
-                            )
-                        }
+                        description={null}
                     />
                 )}
                 {decoratedProposals?.length && (
