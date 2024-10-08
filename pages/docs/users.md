@@ -1,4 +1,4 @@
-# Hydro User guide
+# Hydro User Guide Introduction
 
 The Hydro User Guide is the main resource for understanding the Hydro platform, a decentralized auction & governance system that allows ATOM staker to vote on which projects receive liquidity. By locking your staked ATOM into Liquid Staking Module (LSM) shares, you can participate in the decision-making process, support projects, and earn financial rewards in the form of tributes.
 
