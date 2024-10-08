@@ -1,7 +1,6 @@
 "use client"
 
 import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
-import { PointingInfoBox } from "@/components/PointingInfoBox"
 import { PrettyTable } from "@/components/PrettyTable"
 import { fetchMyAllLockups, Validator } from "@/hooks/hooks"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
@@ -120,33 +119,20 @@ function Lockups({
                 >
                     <h3>My Lockups</h3>
 
-                    <div className="flex w-2/3 items-center gap-12">
-                        <PointingInfoBox
-                            description={
-                                <>
-                                    Voting power is proportional to the amount
-                                    of ATOM you lock, and the duration of the
-                                    lockup(s). Plus, you continue to earn
-                                    staking rewards on your locked ATOM!
-                                </>
-                            }
-                            pointDirection="right"
-                        />
-                        <Link
-                            className="
-                                whitespace-nowrap
-                                rounded-md
-                                bg-palette-beige
-                                px-6
-                                py-3
-                                text-palette-text
-                                hover:bg-palette-beige/80
-                            "
-                            href="/lock-atom"
-                        >
-                            New Lockup
-                        </Link>
-                    </div>
+                    <Link
+                        className="
+                            whitespace-nowrap
+                            rounded-md
+                            bg-palette-beige
+                            px-6
+                            py-3
+                            text-palette-text
+                            hover:bg-palette-beige/80
+                        "
+                        href="/lock-atom"
+                    >
+                        New Lockup
+                    </Link>
                 </div>
 
                 <PrettyTable

@@ -3,7 +3,6 @@
 import { useVotingContext } from "@/app/voting/context"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { TooltipIcon } from "@/components/TooltipIcon"
-import { TranchePagination } from "@/components/TranchePagination"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
@@ -141,14 +140,14 @@ const ActiveProposals = ({
                     backdrop-blur-md
                 "
             >
-                {currentProposalTranches.size > 1 && (
+                {/* {currentProposalTranches.size > 1 && (
                     <TranchePagination
                         currentTranche={currentTranche}
                         setCurrentTranche={handleTrancheChange}
                         myVotes={myVotes}
                         description={null}
                     />
-                )}
+                )} */}
                 {decoratedProposals?.length && (
                     <PrettyTable
                         columns={[
