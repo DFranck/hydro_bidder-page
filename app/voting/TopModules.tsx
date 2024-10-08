@@ -1,8 +1,9 @@
 "use client"
 
 import { useVotingContext } from "@/app/voting/context"
+import { TooltipIcon } from "@/components/TooltipIcon"
 import { TopCard } from "@/components/TopCard"
-import { ArrowUpRight, Info } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import { Timestamp } from "../ts_types/HydroBase.types"
 export const getRoundEndText = (roundEnd: Timestamp) => {
     const now = new Date()
@@ -128,45 +129,18 @@ export function ProposalListTopModules() {
                 title={
                     <div className="flex items-center gap-1">
                         Round APR
-                        <div className="group relative">
-                            <Info className="inline-block" size={14} />
-                            <div
-                                className="
-                                    pointer-events-none
-                                    absolute
-                                    left-1/2
-                                    top-full
-                                    z-50
-                                    w-56
-                                    -translate-x-1/2
-                                    translate-y-full
-                                    rounded-sm
-                                    border
-                                    border-palette-beige
-                                    bg-palette-text
-                                    px-3
-                                    py-1
-                                    text-sm
-                                    font-normal
-                                    text-white
-                                    opacity-0
-                                    transition-all
-                                    group-hover:pointer-events-auto
-                                    group-hover:translate-y-0
-                                    group-hover:opacity-100
-                                "
+                        <TooltipIcon>
+                            This APR is calculated based the highest tribute
+                            available to voters in this round.{" "}
+                            <a
+                                href="/docs/users/calculating-staking-apr"
+                                className="inline-flex gap-1 text-palette-green underline"
+                                target="_blank"
                             >
-                                Learn more about how this is calculated in our{" "}
-                                <a
-                                    href="/docs/users/calculating-staking-apr"
-                                    className="inline-flex gap-1 text-palette-green underline"
-                                    target="_blank"
-                                >
-                                    docs
-                                    <ArrowUpRight className="size-4" />
-                                </a>
-                            </div>
-                        </div>
+                                Learn More
+                                <ArrowUpRight className="size-4" />
+                            </a>
+                        </TooltipIcon>
                     </div>
                 }
                 label={`Pilot Round ${currentRound}`}
@@ -197,7 +171,23 @@ export function ProposalListTopModules() {
                 }
             /> */}
             <TopCard
-                title="Remaining"
+                title={
+                    <div className="flex items-center gap-1">
+                        Remaining
+                        <TooltipIcon>
+                            Number of days until the round ends. Users must vote
+                            before the end of the round to receive tributes.{" "}
+                            <a
+                                href="/docs/users/voting-for-projects"
+                                className="inline-flex gap-1 text-palette-green underline"
+                                target="_blank"
+                            >
+                                Learn More
+                                <ArrowUpRight className="size-4" />
+                            </a>
+                        </TooltipIcon>
+                    </div>
+                }
                 label={`Pilot Round ${currentRound}`}
                 value={
                     currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"

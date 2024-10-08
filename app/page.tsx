@@ -1,44 +1,44 @@
-import Image from "next/image"
-import { Button as MikaButton } from "@/components/Button"
-import { HorizontalDivider } from "@/components/HorizontalDivider"
-import { Newsletter } from "@/components/Newsletter"
 import { Footer } from "@/components/Footer"
+import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import Link from "next/link"
 
 const howHydroWorksTiles = [
     {
-        title: "Connect Wallet",
-        description: "Correct your compatible wallet to the Hydro platform.",
+        title: "1. Connect Wallet",
+        description:
+            "Connect your Keplr wallet to Hydro to get started. You will need ATOM to pay for gas.",
         icon: "/images/Wallet_Light.svg",
     },
     {
-        title: "Lock stATOM",
-        description: "Lock ATOM for your chosen duration to get Voting Power.",
+        title: "2. Get Voting Power",
+        description:
+            "Use your staked ATOM to obtain Voting Power. You need at least 0.001 ATOM staked.",
         icon: "/images/Lock_Light.svg",
     },
     {
-        title: "Vote",
+        title: "3. Vote for Projects",
         description:
-            "Use your Voting Power to choose the best projects that need liquidity and are offering you rewards.",
+            "Review the bids for liquidity and pick the project with the tribute you want to receive.",
         icon: "/images/Vote_Light.svg",
     },
     {
-        title: "Earn Rewards",
+        title: "4. Earn Tributes",
         description:
-            "Receive tribute each round from projects in exchange for providing them with liquidity.",
+            "Receive tributes once per round from projects in exchange for your voting power.",
         icon: "/images/Rewards_Light.svg",
     },
     {
-        title: "Renew and Top-up",
+        title: "5. Rinse and Repeat",
         description:
-            "Sustain or increase your voting power by renewing or adding to your ATOM lockups.",
+            "Continue to vote in new rounds to  earn more tributes from projects on Hydro.",
         icon: "/images/Renew_Light.svg",
     },
     {
-        title: "Repeat",
+        title: "6. Renew  Lockups",
         description:
-            "Participate in new rounds and tranches to continue earning rewards from projects on the Hydro platform.",
+            "Optionally increase your voting power by extending or creating new ATOM lockups.",
         icon: "/images/Repeat_Light.svg",
     },
 ]
@@ -52,21 +52,21 @@ const benefitsCheckList = [
 
 const howItWorksForProjectsTiles = [
     {
-        title: "Get Allowlisted",
+        title: "Submit Your Bid",
         description:
-            "Apply to get your project allowlisted on Hydro and start the process.",
+            "Get your project approved to participate in the auction process",
         icon: "/images/Graphic_List.svg",
     },
     {
-        title: "Offer Tribute",
+        title: "Add a Tribute",
         description:
-            "Offer tribute to incentivize ATOM holders to support your project and provide liquidity.",
+            "Your tribute will incentivize ATOM holders to vote on your bid",
         icon: "/images/Graphic_Offer.svg",
     },
     {
-        title: "Gain Voter Support",
+        title: "Receive Liquidity",
         description:
-            "Attract voter support and access liquidity to your project’s growth.",
+            "Hydro deploys liquidity to your protocol for the duration of bid",
         icon: "/images/Graphic_Vote.svg",
     },
 ]
@@ -86,7 +86,7 @@ export default function Home() {
     const renderTiles = (data: TilesType) => {
         return (
             <div
-                className={`grid grid-cols-3 gap-[60px] z-10 my-[60px] mx-[90px]`}
+                className={`z-10 mx-[90px] my-[60px] grid grid-cols-3 gap-[60px]`}
             >
                 {data.tiles.map((tile, index) => {
                     return (
@@ -94,7 +94,7 @@ export default function Home() {
                             key={index}
                             className={`flex w-[${
                                 data.size === "small" ? "285px" : "330px"
-                            }] flex-col items-start gap-4 shrink-0 ${
+                            }] shrink-0 flex-col items-start gap-4 ${
                                 data.size === "small" ? "p-6" : ""
                             } rounded-[10px]`}
                         >
@@ -104,8 +104,8 @@ export default function Home() {
                                 width={data.size === "small" ? 100 : 220}
                                 height={data.size === "small" ? 100 : 220}
                             />
-                            <h3>{tile.title}</h3>
-                            <p className="text-xl font-normal leading-[30px]">
+                            <h3 className="text-2xl">{tile.title}</h3>
+                            <p className="text-base font-normal leading-[30px]">
                                 {tile.description}
                             </p>
                         </div>
@@ -122,7 +122,7 @@ export default function Home() {
                     return (
                         <div
                             key={index}
-                            className="flex flex-row items-center gap-4 shrink-0 rounded-[10px]"
+                            className="flex shrink-0 flex-row items-center gap-4 rounded-[10px]"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -147,41 +147,42 @@ export default function Home() {
     }
 
     return (
-        <main className="w-full text-white flex min-h-screen flex-col bg-[#080815] overflow-hidden">
+        <main className="flex min-h-screen w-full flex-col overflow-hidden bg-[#080815] text-white">
             <div className="relative h-screen">
-                <div className="bg-cover absolute -top-[11%] xl:-top-[15%] bg-no-repeat bg-[url('/images/AdobeStock_633966567.png')] h-full w-screen"></div>
-                <div className="mx-auto max-w-7xl relative z-10">
-                    <div className="max-w-6xl mx-auto h-[600px]">
+                <div className="absolute -top-[11%] h-full w-screen bg-[url('/images/AdobeStock_633966567.png')] bg-cover bg-no-repeat xl:-top-[15%]"></div>
+                <div className="relative z-10 mx-auto max-w-7xl">
+                    <div className="mx-auto h-[600px] max-w-6xl space-y-6">
                         <div className="mt-[155px]">
-                            <h1 className="text-6xl font-bold leading-snug">
-                                Unlock the Power of Hydro
+                            <h1 className="max-w-[64ch] text-6xl font-bold leading-[1.1]">
+                                The Interchain Platform for
+                                Liquidity&nbsp;Exports
                             </h1>
                         </div>
-                        <p className="text-xl font-normal">
-                            Hydro is a decentralized platform that allows you to
-                            lock your ATOM tokens <br />
-                            and earn rewards. Earn passive income, participate
-                            in ICS projects, and more.
+                        <p className="max-w-[64ch] text-xl font-normal">
+                            The opportunity to earn additional rewards for your
+                            ATOM tokens on top of your ATOM staking rewards.
+                            Vote and participate in the Interchain auction
+                            platform for liquidity exports.
                         </p>
                         <Button
                             asChild
-                            className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal"
+                            className="mt-12 h-14 w-36 rounded-xl text-lg font-normal capitalize"
                         >
                             <Link href="/lock-atom">Get started</Link>
                         </Button>
                     </div>
                 </div>
             </div>
-            <div className="relative before:z-[0] before:content-[''] before:absolute before:shadow-[0_0px_100px_200px_#080815] before:pointer-events-none before:bottom-12 2xl:before:bottom-24 before:inset-x-0"></div>
-            <div className="max-w-7xl mx-auto z-10">
-                <div className="max-w-6xl mx-auto">
+            <div className="relative before:pointer-events-none before:absolute before:inset-x-0 before:bottom-12 before:z-[0] before:shadow-[0_0px_100px_200px_#080815] before:content-[''] 2xl:before:bottom-24"></div>
+            <div className="z-10 mx-auto max-w-7xl">
+                <div className="mx-auto max-w-6xl">
                     <div className="text-center">
                         <h2>How Hydro Works</h2>
                     </div>
                 </div>
 
                 <div className="flex flex-col items-center">
-                    <div className="text-center text-white text-xl font-normal leading-[30px] z-[1] mt-[20px]">
+                    <div className="z-[1] mt-[20px] text-center text-xl font-normal leading-[30px] text-white">
                         Understand the step-by-step process of participating in
                         the Hydro ecosystem.
                     </div>
@@ -191,29 +192,30 @@ export default function Home() {
                     })}
                     <Button
                         asChild
-                        className="mt-12 capitalize w-36 h-14 rounded-xl text-lg font-normal"
+                        className="mt-12 h-14 w-36 rounded-xl text-lg font-normal capitalize"
                     >
                         <Link href="/lock-atom">Get started</Link>
                     </Button>
                 </div>
-                <HorizontalDivider className="mt-[60px] mb-[150px]" />
-                <div className="max-w-6xl mx-auto pb-44 flex lg:flex-row flex-col items-center">
+                <HorizontalDivider className="mb-[150px] mt-[60px]" />
+                <div className="mx-auto flex max-w-6xl flex-col items-center pb-44 lg:flex-row">
                     <div>
                         <div className="max-w-3xl space-y-3">
-                            <p className="text-[#FFE1B8] slashed-zero tracking-wide font-medium uppercase">
-                                benefits
+                            <p className="font-medium uppercase slashed-zero tracking-wide text-[#FFE1B8]">
+                                For Voters
                             </p>
-                            <h2>Unlock the Power of Liquidity</h2>
+                            <h2>Earn yield on top of your APR</h2>
                             <div className="text-lg">
-                                Hydro provides a unique opportunity to project
-                                to access liquidity and gain exposure, while
-                                rewarding ATOM holders for their participation.
+                                Hydro provides the opportunity for ATOM stakers
+                                to vote on the allocation of liquidity, and
+                                receive tributes from the projects competing in
+                                the auction process.
                             </div>
                             {renderBenefits()}
                         </div>
                         <Button
                             asChild
-                            className="mt-8 capitalize w-40 h-14 rounded-xl text-lg font-normal"
+                            className="mt-8 h-14 w-40 rounded-xl text-lg font-normal capitalize"
                         >
                             <Link href="/lock-atom">Get Allowlisted</Link>
                         </Button>
@@ -231,12 +233,12 @@ export default function Home() {
                 </div>
             </div>
             <div className="bg-gradient-to-b from-[rgba(0,21,45,0.20)] to-[rgba(0,59,147,0.40)]">
-                <div className="max-w-7xl mx-auto flex flex-col items-center ">
-                    <p className="text-[#FFE1B8] slashed-zero text-base not-italic font-medium leading-[130%] tracking-[1.28px] uppercase mt-[210px]">
+                <div className="mx-auto flex max-w-7xl flex-col items-center ">
+                    <p className="mt-[210px] text-base font-medium uppercase not-italic slashed-zero leading-[130%] tracking-[1.28px] text-[#FFE1B8]">
                         for projects
                     </p>
                     <h2 className="mt-[14px]">How it Works for Projects</h2>
-                    <p className="w-[693px] text-center text-white text-xl font-normal leading-[30px] mt-5">
+                    <p className="mt-5 w-[693px] text-center text-xl font-normal leading-[30px] text-white">
                         Hydro provides a unique opportunity for projects to
                         access liquidity and gain exposure, while rewarding ATOM
                         holders for their participation through a multi-step
@@ -246,23 +248,22 @@ export default function Home() {
                         tiles: howItWorksForProjectsTiles,
                         size: "large",
                     })}
-                    <div className="flex gap-5 mt-8 mb-44">
+                    <div className="mb-44 mt-8 flex gap-5">
                         <Button
                             asChild
-                            className="capitalize w-40 h-14 rounded-xl text-lg font-normal"
+                            className="h-14 w-40 rounded-xl text-lg font-normal capitalize"
                         >
                             <Link href="/lock-atom">Get Allowlisted</Link>
                         </Button>
                         <Button
                             asChild
-                            className="capitalize w-36 h-14 rounded-xl text-lg font-normal bg-transparent border text-white"
+                            className="h-14 w-36 rounded-xl border bg-transparent text-lg font-normal capitalize text-white"
                         >
                             <Link href="/docs">Read Docs</Link>
                         </Button>
                     </div>
                 </div>
             </div>
-            <Newsletter />
             <Footer />
         </main>
     )

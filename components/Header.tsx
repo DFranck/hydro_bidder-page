@@ -119,12 +119,14 @@ export const Header = () => {
                             `
                     )}
                 >
-                    <strong>Lock ATOM to Vote</strong> • To partake in the
-                    voting, you’ll need to{" "}
-                    <strong>lock at least 0.001 ATOM</strong>. Don’t sweat it,
-                    you’ll still collect staking rewards!
-                    <Link className="absolute inset-0 z-10" href="/lock-atom">
-                        <span className="sr-only">Lock ATOM</span>
+                    Hydro is currently running pilot rounds.{" "}
+                    <span className="font-bold underline">Learn More</span>
+                    <Link
+                        className="absolute inset-0 z-10"
+                        href="/docs"
+                        target="_blank"
+                    >
+                        <span className="sr-only">Learn More</span>
                     </Link>
                 </div>
             )}
