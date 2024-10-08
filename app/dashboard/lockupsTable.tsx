@@ -173,6 +173,9 @@ function Lockups({
                             label: "End Date",
                             isSortable: true,
                             textAlign: "right",
+                            customValueGetter: (row) => {
+                                return row._lockup.lock_entry.lock_end
+                            },
                         },
                         {
                             key: "actions",
@@ -180,8 +183,10 @@ function Lockups({
                             textAlign: "right",
                         },
                     ]}
+                    initialSortedColumnKey="endDate"
                     rows={myLockups.map((lockup, index) => {
                         return {
+                            _lockup: lockup,
                             lockedATOM: (
                                 <>
                                     {formatAmount(
