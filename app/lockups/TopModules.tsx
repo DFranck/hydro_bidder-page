@@ -1,5 +1,6 @@
 "use client"
 
+import { TooltipIcon } from "@/components/TooltipIcon"
 import { TopCard } from "@/components/TopCard"
 import { Button } from "@/components/ui/button"
 import { fetchUserVotingData, UserVotingData } from "@/hooks/hooks"
@@ -102,7 +103,15 @@ function LockedAtomCard({
                     ? formatAmount(lockedAtom)
                     : "0.00"
             }
-            title="Locked ATOM"
+            title={
+                <div className="flex items-center gap-1">
+                    Locked ATOM{" "}
+                    <TooltipIcon>
+                        Your staked ATOM locked in Hydro. The more ATOMs you
+                        lock, the higher your voting power will be
+                    </TooltipIcon>
+                </div>
+            }
             label={
                 !!lockedAtom && lockedAtom > 0
                     ? `In ${count === 1 ? "Lockup" : "Lockups"}`
@@ -135,7 +144,15 @@ function VotingPowerCard({
             value={
                 !!votingPower && votingPower > 0 && formatAmount(votingPower)
             }
-            title="Voting Power"
+            title={
+                <div className="flex items-center gap-1">
+                    Voting Power{" "}
+                    <TooltipIcon>
+                        Your Hydro voting power. The more power you have, the
+                        larger share of tributes you will receive
+                    </TooltipIcon>
+                </div>
+            }
             label={
                 votingPower === 0 ? (
                     "Lock ATOM to get Voting Power"
