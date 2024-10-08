@@ -1,3 +1,5 @@
+TO BE UPDATED WITH PILOT ROUND DETAILS
+
 # Hydro Launch
 
 The Hydro launch is divided into multiple phases, each providing opportunities for both projects and ATOM holders to participate in the platform.
