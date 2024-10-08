@@ -37,8 +37,8 @@ export default function Navigation() {
 
                 {isConnected && (
                     <Link
-                        href="/dashboard"
-                        className={cn(navigationMenuTriggerStyle("/dashboard"))}
+                        href="/lockups"
+                        className={cn(navigationMenuTriggerStyle("/lockups"))}
                     >
                         Lockups
                     </Link>
