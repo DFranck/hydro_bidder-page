@@ -16,7 +16,7 @@ const themeConfig = {
         component: null,
     },
     feedback: {
-        component: null,
+        content: null,
     },
     nextThemes: {
         defaultTheme: "dark",
