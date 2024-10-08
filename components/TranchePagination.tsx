@@ -2,7 +2,6 @@
 
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import { useVotingContext } from "@/app/voting/context"
-import { PointingInfoBox } from "@/components/PointingInfoBox"
 import { CircleCheckBig, Clock } from "lucide-react"
 import { ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
@@ -116,12 +115,6 @@ export function TranchePagination({
                         )
                     })}
                 </div>
-
-                <PointingInfoBox
-                    title={title}
-                    description={description}
-                    pointDirection="left"
-                />
             </div>
         </div>
     )
