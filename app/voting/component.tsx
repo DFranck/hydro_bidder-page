@@ -2,6 +2,7 @@
 
 import { useVotingContext } from "@/app/voting/context"
 import { PrettyTable, TR } from "@/components/PrettyTable"
+import { TooltipIcon } from "@/components/TooltipIcon"
 import { TranchePagination } from "@/components/TranchePagination"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
@@ -131,15 +132,14 @@ const ActiveProposals = ({
         <>
             <div
                 className="
-                -mx-3
-                mt-10
-                space-y-6
-                overflow-hidden
-                rounded-md
-                bg-palette-text/20
-                px-3
-                backdrop-blur-md
-            "
+                    -mx-3
+                    mt-10
+                    space-y-6
+                    rounded-md
+                    bg-palette-text/20
+                    px-3
+                    backdrop-blur-md
+                "
             >
                 {currentProposalTranches.size > 1 && (
                     <TranchePagination
@@ -164,10 +164,10 @@ const ActiveProposals = ({
                                 },
                                 propsForCells: {
                                     className: `
-                                    ${classNamesForCells}
-                                    !pr-0
-                                    w-0
-                                `,
+                                        ${classNamesForCells}
+                                        !pr-0
+                                        w-0
+                                    `,
                                 },
                             },
                             {
@@ -180,7 +180,20 @@ const ActiveProposals = ({
                             },
                             {
                                 key: "yourEstimatedReward",
-                                label: "Your Est. Reward",
+                                label: (
+                                    <div className="flex items-center gap-1">
+                                        Your Est. Reward
+                                        <TooltipIcon>
+                                            This is the tribute value that will
+                                            be paid out to you when the rounds
+                                            ends if you vote for this project.
+                                            It may increase (if the project adds
+                                            to the tribute) or decrease (if more
+                                            voters choose this project) over
+                                            time.
+                                        </TooltipIcon>
+                                    </div>
+                                ),
                                 isSortable: true,
                                 textAlign: "right",
                                 propsForCells: {
@@ -197,7 +210,18 @@ const ActiveProposals = ({
                             },
                             {
                                 key: "currentVoteShare",
-                                label: "Vote %",
+                                label: (
+                                    <div className="flex items-center gap-1">
+                                        Vote %
+                                        <TooltipIcon classNamesForTooltip="right-0 left-auto translate-x-0">
+                                            This is the percentage of votes that
+                                            this project has received so far. It
+                                            may increase or decrease if other
+                                            users decide to switch their votes
+                                            before the round ends
+                                        </TooltipIcon>
+                                    </div>
+                                ),
                                 isSortable: true,
                                 initialSortDirection: "DESC",
                                 textAlign: "right",
