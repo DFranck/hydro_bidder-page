@@ -40,7 +40,7 @@ export default function Navigation() {
                         href="/dashboard"
                         className={cn(navigationMenuTriggerStyle("/dashboard"))}
                     >
-                        Dashboard
+                        Lockups
                     </Link>
                 )}
                 <Wallet notifyConnectedCB={setIsConnected} />

@@ -300,13 +300,11 @@ const ProposalDetail = ({
                         className="
                             pointer-events-none
                             absolute
-                            inset-3
+                            inset-0
                             -z-10
                             rounded-md
-                            bg-gradient-to-bl
-                            from-palette-green
-                            via-transparent
-                            to-transparent
+                            border-t-[10px]
+                            border-palette-green
                         "
                     />
                 )}
