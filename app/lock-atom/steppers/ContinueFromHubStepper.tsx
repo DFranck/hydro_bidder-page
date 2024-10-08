@@ -1,38 +1,25 @@
 "use client"
-import { useState } from "react"
 import { ChevronDown } from "lucide-react"
+import { useState } from "react"
 
-import React from "react"
 import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { scaleLockupPower, formatAmount } from "@/lib/utils"
-import {
-    signTokenizeShares,
-    signRedeemTokensForShares,
-    signLockTokens,
-    broadcastTx,
-    signIBCTransferHubToNeutron,
-    signIBCTransferNeutronToHub,
-    broadcastAndRelayIBCHubToNeutron,
-    broadcastAndRelayIBCNeutronToHub,
-    extractLSMDenom,
-    checkForGasOnNeutron,
-    signATOMGasTransferToNeutron,
-    broadcastAndRelayIBCGasToNeutron,
-    checkForGasOnHub,
-    minimumUATOMGas,
-} from "../transactions"
 import {
     Card,
-    CardHeader,
-    CardFooter,
-    CardTitle,
     CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card"
-import { Validator } from "@/hooks/hooks"
 import { EPOCH_LENGTH } from "@/config"
+import { Validator } from "@/hooks/hooks"
+import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import {
+    broadcastAndRelayIBCHubToNeutron,
+    signIBCTransferHubToNeutron,
+    signLockTokens,
+} from "../transactions"
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -166,9 +153,8 @@ export const ContinueFromHubStepper = ({
                                             BigInt(amount)
                                         )
                                     )}{" "}
-                                    hATOM
-                                </strong>{" "}
-                                (voting power).
+                                    voting power.
+                                </strong>
                             </p>
                             <form
                                 className="mt-12"
@@ -178,7 +164,7 @@ export const ContinueFromHubStepper = ({
                                 }}
                             >
                                 <div className="mb-4">
-                                    <label className="block m">
+                                    <label className="m block">
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
@@ -301,9 +287,8 @@ export const ContinueFromHubStepper = ({
                                             BigInt(amount)
                                         )
                                     )}{" "}
-                                    hATOM
-                                </strong>{" "}
-                                (voting power).
+                                    voting power.
+                                </strong>
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -333,10 +318,10 @@ export const ContinueFromHubStepper = ({
                                         className="flex items-center text-sm text-gray-600 hover:text-gray-800"
                                     >
                                         Show Error Log
-                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                        <ChevronDown className="ml-1 h-4 w-4" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
+                                    <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                                         {errorLog}
                                     </pre>
                                 )}
@@ -355,7 +340,7 @@ export const ContinueFromHubStepper = ({
     }
 
     return (
-        <Card className="max-w-[800px] mx-auto bg-[#171717]">
+        <Card className="mx-auto max-w-[800px] bg-[#171717]">
             {renderStep()}
         </Card>
     )
