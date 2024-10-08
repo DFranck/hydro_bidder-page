@@ -28,8 +28,8 @@ export function TooltipIcon({
                         border
                         border-palette-beige
                         bg-palette-text
-                        px-3
-                        py-1
+                        px-4
+                        py-2
                         text-left
                         text-sm
                         font-normal
