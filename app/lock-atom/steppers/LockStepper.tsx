@@ -1,38 +1,34 @@
 "use client"
-import { useState } from "react"
 import { ChevronDown } from "lucide-react"
+import { useState } from "react"
 
-import React from "react"
 import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { scaleLockupPower, formatAmount } from "@/lib/utils"
-import {
-    signTokenizeShares,
-    signRedeemTokensForShares,
-    signLockTokens,
-    broadcastTx,
-    signIBCTransferHubToNeutron,
-    signIBCTransferNeutronToHub,
-    broadcastAndRelayIBCHubToNeutron,
-    broadcastAndRelayIBCNeutronToHub,
-    extractLSMDenom,
-    checkForGasOnNeutron,
-    signATOMGasTransferToNeutron,
-    broadcastAndRelayIBCGasToNeutron,
-    checkForGasOnHub,
-    minimumUATOMGas,
-} from "../transactions"
 import {
     Card,
-    CardHeader,
-    CardFooter,
-    CardTitle,
     CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card"
-import { Validator } from "@/hooks/hooks"
 import { EPOCH_LENGTH } from "@/config"
+import { Validator } from "@/hooks/hooks"
+import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { SigningStargateClient } from "@cosmjs/stargate"
+import {
+    broadcastAndRelayIBCGasToNeutron,
+    broadcastAndRelayIBCHubToNeutron,
+    broadcastTx,
+    checkForGasOnHub,
+    checkForGasOnNeutron,
+    extractLSMDenom,
+    minimumUATOMGas,
+    signATOMGasTransferToNeutron,
+    signIBCTransferHubToNeutron,
+    signLockTokens,
+    signTokenizeShares,
+} from "../transactions"
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -222,10 +218,9 @@ export const LockStepper = ({
                                             BigInt(amount)
                                         )
                                     )}{" "}
-                                    hATOM
-                                </strong>{" "}
-                                (voting power).
-                            </p>{" "}
+                                    voting power.
+                                </strong>
+                            </p>
                             <p>
                                 This should take about a minute and will require
                                 3 wallet approvals.
@@ -462,9 +457,8 @@ export const LockStepper = ({
                                             BigInt(amount)
                                         )
                                     )}{" "}
-                                    hATOM
-                                </strong>{" "}
-                                (voting power).
+                                    voting power.
+                                </strong>
                             </p>
                         </CardContent>
                         <CardFooter>
