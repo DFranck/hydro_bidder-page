@@ -4,12 +4,7 @@ import { useVotingContext } from "@/app/voting/context"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { TranchePagination } from "@/components/TranchePagination"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
-import {
-    estimatedRewardForPower,
-    formatAmount,
-    formatDenom,
-    sumTributeAmounts,
-} from "@/lib/utils"
+import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { CircleCheckBig, ScrollText } from "lucide-react"
 import Link from "next/link"
@@ -184,6 +179,15 @@ const ActiveProposals = ({
                                 },
                             },
                             {
+                                key: "tributeValue",
+                                label: "Total Tribute Value",
+                                isSortable: true,
+                                textAlign: "right",
+                                propsForCells: {
+                                    className: classNamesForCells,
+                                },
+                            },
+                            {
                                 key: "yourEstimatedReward",
                                 label: "Your Est. Reward",
                                 isSortable: true,
@@ -213,32 +217,32 @@ const ActiveProposals = ({
                                 hasVoted && proposal.hasVotedOnProp ? (
                                     <div
                                         className="
-                                       relative
-                                       -translate-y-1/4
-                                       text-palette-green
-                                    "
+                                            relative
+                                            -translate-y-1/4
+                                            text-palette-green
+                                        "
                                     >
                                         <CircleCheckBig />
 
                                         <div
                                             className="
-                                            absolute
-                                            left-1/2
-                                            top-full
-                                            flex
-                                            w-min
-                                            -translate-x-1/2
-                                            -translate-y-1/4
-                                            items-center
-                                            gap-2
-                                            whitespace-nowrap
-                                            rounded-full
-                                            bg-palette-green
-                                            p-0.5
-                                            px-1
-                                            text-[8px]
-                                            text-palette-text
-                                        "
+                                                absolute
+                                                left-1/2
+                                                top-full
+                                                flex
+                                                w-min
+                                                -translate-x-1/2
+                                                -translate-y-1/4
+                                                items-center
+                                                gap-2
+                                                whitespace-nowrap
+                                                rounded-full
+                                                bg-palette-green
+                                                p-0.5
+                                                px-1
+                                                text-[8px]
+                                                text-palette-text
+                                            "
                                         >
                                             Your Pick
                                         </div>
@@ -251,54 +255,27 @@ const ActiveProposals = ({
                                 <>
                                     <p
                                         className="
-                                        line-clamp-2
-                                        text-lg
-                                        font-semibold
-                                    "
+                                            line-clamp-2
+                                            text-lg
+                                            font-semibold
+                                        "
                                     >
                                         {proposal.title}
                                     </p>
                                     <Link
                                         href={`/voting/${proposal.proposal_id}`}
                                         className="
-                                        absolute
-                                        inset-0
-                                        z-10
-                                        h-full
-                                        w-full
-                                    "
+                                            absolute
+                                            inset-0
+                                            z-10
+                                            h-full
+                                            w-full
+                                        "
                                     />
                                 </>
                             ),
 
-                            rewards: proposal.pricedAndNamedTributes.map(
-                                (tribute, index) => (
-                                    <div
-                                        className="whitespace-nowrap"
-                                        key={index}
-                                    >
-                                        {formatAmount(
-                                            tribute.amount,
-                                            tribute.decimals
-                                        )}
-                                        <span
-                                            className="
-                                            ml-1
-                                            text-xs
-                                            uppercase
-                                            opacity-60
-                                        "
-                                        >
-                                            {formatDenom(
-                                                tribute.denom,
-                                                tribute.symbol
-                                            )}
-                                        </span>
-                                    </div>
-                                )
-                            ),
-
-                            rewardValue: proposal.pricedAndNamedTributes
+                            tributeValue: proposal.pricedAndNamedTributes
                                 .reduce((total, tribute) => {
                                     return (
                                         total +
@@ -312,7 +289,6 @@ const ActiveProposals = ({
                                     currency: "USD",
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
-                                    trailingZeroDisplay: "stripIfInteger",
                                 }),
 
                             yourEstimatedReward: !isWalletConnected ? (
