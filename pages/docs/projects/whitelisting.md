@@ -3,7 +3,7 @@
 ## Get in Touch
 
 Get in touch
-[Informal](https://informal.systems) is currently the main contributor to Hydro & Forge. If you wish to learn more about Hydro, outside this guide, you can schedule a call with [Miloš](https://calendly.com/milos-informal/30-minute-meeting-hydro)
+[Informal](https://informal.systems) is currently the main contributor to Hydro & Forge. If you wish to learn more about Hydro, outside this guide, you can schedule a call with [Milos](https://calendly.com/milos-informal/30-minute-meeting-hydro)
 
 ## Form Submission
 
