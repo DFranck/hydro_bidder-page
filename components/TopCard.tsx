@@ -94,7 +94,6 @@ export function TopCard({
                             order-3
                             text-base
                             font-medium
-                            uppercase
                             not-italic
                             slashed-zero
                             leading-[130%]
