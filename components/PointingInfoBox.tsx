@@ -20,9 +20,9 @@ export function PointingInfoBox({
                     relative
                     rounded-md
                     border-2
-                    border-palette-green
+                    border-palette-beige
                     py-1
-                    text-palette-green
+                    text-palette-beige
                 `,
                 pointDirection === "left" && "pl-6 pr-3",
                 pointDirection === "right" && "pl-3 pr-6",
@@ -40,7 +40,7 @@ export function PointingInfoBox({
                         rounded-full
                         border-2
                         border-palette-text
-                        bg-palette-green
+                        bg-palette-beige
                         p-1
                         text-palette-text
                     `,

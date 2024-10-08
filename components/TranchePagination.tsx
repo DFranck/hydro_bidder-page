@@ -2,7 +2,6 @@
 
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import { useVotingContext } from "@/app/voting/context"
-import { CircleCheckBig, Clock } from "lucide-react"
 import { ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -68,49 +67,6 @@ export function TranchePagination({
                                 )}
                             >
                                 {tranche.name}
-                                {hasVotedOnAnyTranch && (
-                                    <span
-                                        className={twMerge(
-                                            `
-                                                absolute
-                                                right-0
-                                                top-full
-                                                mt-1
-                                                flex
-                                                items-center
-                                                gap-1
-                                                px-2
-                                                py-1
-                                                text-xs
-                                                font-normal
-                                                text-white
-                                            `,
-                                            hasVotedInTranch
-                                                ? `
-                                                      text-palette-green/70
-                                                  `
-                                                : `
-                                                  `,
-                                            isSelected
-                                                ? `
-                                                  `
-                                                : `
-                                                  `
-                                        )}
-                                    >
-                                        {hasVotedInTranch ? (
-                                            <>
-                                                <CircleCheckBig size={14} />
-                                                You Voted
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Clock size={14} />
-                                                Vote Soon!
-                                            </>
-                                        )}
-                                    </span>
-                                )}
                             </button>
                         )
                     })}
