@@ -1,55 +1,22 @@
-TO BE UPDATED WITH PILOT ROUND DETAILS
+# Pilot Rounds
 
-# Hydro Launch
+As we prepare for Hydro's full launch, we are initiating a series of Pilot Rounds to test the platform, gather valuable feedback, and ensure everything is functioning as expected before deploying the total liquidity. 
 
-The Hydro launch is divided into multiple phases, each providing opportunities for both projects and ATOM holders to participate in the platform.
+The primary goal of the Pilot Round is to test all critical features of Hydro, including the voting mechanism, project bidding process, and liquidity deployment. We encourage all users to actively participate in this process by joining our Telegram channel. 
 
-## Projects Start Submitting Tributes
+The Pilot Round's smaller scale also gives us a better sense of the bidding dynamics. More generally, it’s an opportunity to thoroughly test the processes, from project setup to liquidity deployment, covering the experience of bidders, voters, and the Hydro committee. This document outlines the critical specifics of the Pilot Round and what users can expect.
 
-Once Hydro launches, projects will begin submitting their bids for liquidity along with the tributes they're offering to incentivize ATOM holders.
+## Tranches
+A tranche is a pool of liquidity for which projects compete. Each project submits a bid, and users vote to decide how the available funds are distributed.
 
-### Key Steps for Projects:
-- Submit liquidity bids, detailing the requested amount and proposed use of funds.
-- Offer tributes to attract votes and liquidity from ATOM holders.
+There will not be an ICS tranche during the Pilot Round. This will simplify the flow for users and reduce the workload of the Hydro committee, which is currently operating on a volunteer basis. Additionally, the Pilot Round has no projects directly consuming security from the Hub using ICS.
 
-## Users Can Lock and Vote
+## Committee management
+During Hydro’s pilot round, the Committee will be given decision-making authority on key parts of the allocation & deployment process. 
 
-With the first round of projects live, users can start locking up their ATOM to gain voting power and cast their votes.
+One such element is the **top-N feature**. All votes are tallied in each round, and the top projects are selected to receive liquidity from the Hydro pool. Projects that do not rank within the top 'n' will have their tribute refunded. This mechanism optimizes liquidity deployment and protects against potential Denial-of-Service (DoS) attacks. To maintain flexibility, the Hydro committee can set 'n' to a high value, such as 100, to effectively remove the cap if necessary.
 
-### Key Steps for Users:
-1. Connect your wallet to the Hydro platform.
-2. Review the projects and decide where to lock your LSM shares.
-3. Choose your lock-up period and confirm your vote.
+Once the top projects are selected, the committee must initiate a series of smart contract messages to process the liquidity exports for the winners. This manual oversight ensures that the liquidity is properly deployed while preventing small, time-consuming deployments. 
 
-## Round 1 Tributes Are Distributed to Voters
-
-At the end of the first voting round, tributes are distributed based on the amount of LSM shares locked into each project. Users receive their share of the tributes proportionally.
-
-## Projects Start Submitting Round 2 Bids
-
-After the first round of tributes is distributed, new projects can submit bids for round 2. Users who are already locked from round 1 can continue earning rewards, while new users can start locking their shares for the next round.
-
-## New Users May Lock New LSM Shares
-
-New participants can enter Hydro at any time by locking their LSM shares. Additionally, users from the first round may refresh or extend their lock-ups to continue voting power for future rounds.
-
-## Round 2 Tributes Are Distributed to Voters
-
-At the end of round 2, tributes are distributed again, and the cycle continues with more projects and new voting opportunities.
-
-### Round 1 voting power
-
-| ATOM Lock | Voting Power |
-|-----------|--------------|
-| 1 month   | 1x           |
-| 2 months  | 1.5x         |
-| 3 months  | 2x           |
-
-### Afterwards
-
-| ATOM Lock | Voting Power |
-|-----------|--------------|
-| 1 month   | 1x           |
-| 3 months  | 1.5x         |
-| 6 months  | 2x           |
-| 1 year    | 4x           |
+## Voting Power
+During the pilot round, users will only be able to lock their staked ATOM for the duration of one round, i.e., one month. This is to minimize the risks associated with users getting locked for several months as Hydro iterates quickly. As the protocol becomes more stable and progresses toward regular rounds, users will gain the ability to choose longer lock periods, granting them more voting power relative to the amount of staked ATOM. 
