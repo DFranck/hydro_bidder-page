@@ -526,187 +526,188 @@ const LockForm = ({
     // prettier-ignore
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>Lock ATOM to vote in Hydro</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(handleSubmit)}
-                        className="space-y-8"
-                    >
-                        {!selectedValidator && (
-                            <FormField
-                                control={form.control}
-                                name="validator"
-                                render={({ field }) => (
-                                    <FormItem className="space-y-3">
-                                        <FormDescription className="text-white mb-4">
-                                            This is the first step in obtaining
-                                            voting power, which you can use to
-                                            vote on proposals in Hydro and earn
-                                            rewards. Your staked ATOM will be
-                                            converted to liquid staking module
-                                            (LSM) shares and sent to be locked
-                                            in the Hydro contract on Neutron in
-                                            return for voting power. Once
-                                            locked, your ATOM remains
-                                            inaccessible until the lockup
-                                            expires, but continues to earn
-                                            staking rewards.
-                                        </FormDescription>
-                                        <FormLabel>Select Validator</FormLabel>
-                                        <FormControl>
-                                            <div className="space-y-2">
-                                                {isLoading ? (
-                                                    <p>Loading validators...</p>
-                                                ) : !validators ||
-                                                  validators.length === 0 ? (
-                                                    <p>
-                                                        You need to have some staked ATOM to participate in Hydro. Go to your wallet&apos;s staking
-                                                        interface to select a validator and stake some ATOM, then come back.
-                                                    </p>
-                                                ) : (
-                                                    validators.map((v) => (
-                                                        <ValidatorListItem
-                                                            key={v.validator.operator_address}
-                                                            validator={v}
-                                                            selectedValue={field.value}
-                                                            onChange={field.onChange}
-                                                            selectedAmount={selectedAmount}
-                                                        />
-                                                    ))
-                                                )}
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
-                        {selectedValidator && (
-                            <>
-                                <div className="flex flex-col space-y-2">
-                                    <FormLabel>
-                                        Your selected Validator
-                                    </FormLabel>
-                                    <div>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            onClick={clearSelectedValidator}
-                                            className="inline-flex mt-2 pl-1"
-                                        >
-                                            <ChevronLeft className="mr-2" />
-                                            {getValidatorMoniker(
-                                                selectedValidator,
-                                                validatorMap
-                                            )}
-                                        </Button>
-                                    </div>
-                                </div>
-                                <FormField
-                                    control={form.control}
-                                    name="amount"
-                                    render={({ field }) => {
-                                        const selectedValidator =
-                                            form.watch("validator")
-                                        const validator = validators?.find(
-                                            (v) => v.validator.operator_address === selectedValidator
-                                        )
-                                        const maxAmount = validator ? Number(validator.delegation_balance.amount) : 0
-                                        const isDisabled = !selectedValidator
+            {validators && validators.length === 0 ?
+            (
+                <div className="space-y-6 p-6">
+                    <p>You need some staked ATOM to participate in Hydro. You can go to Keplr staking
+                    interface and stake some ATOM to any active validator</p>
+                    <p>Stake now:{' '}
+                        <a href="https://wallet.keplr.app/chains/cosmos-hub" target="_blank" className="text-palette-green underline inline-flex items-center gap-1">https://wallet.keplr.app/chains/cosmos-hub <ArrowUpRight /></a></p>
+                </div>
+            ) : (
+                <>
+                    <CardHeader>
+                        <CardTitle>Get Voting Power</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(handleSubmit)}
+                                className="space-y-8"
+                            >
+                                {!selectedValidator && validators && (
+                                    <FormField
+                                        control={form.control}
+                                        name="validator"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-3">
+                                                <FormDescription className="text-white mb-4 space-y-3">
+                                                    <ol className="list-decimal list-inside">
+                                                        <li>Your ATOM staked to a validator can be locked in Hydro</li>
+                                                        <li>You get voting power</li>
+                                                        <li>You continue to earn staking rewards</li>
+                                                    </ol>
 
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Amount (ATOM)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        type="number"
-                                                        step="0.000001"
-                                                        min="0"
-                                                        disabled={isDisabled}
-                                                        onChange={(e) => {
-                                                            const atomValue = parseFloat(e.target.value) || 0
-                                                            const uatomValue = Math.floor(atomValue * 1000000).toString()
-                                                            field.onChange(uatomValue)
-                                                        }}
-                                                        value={Number(field.value) / 1000000}
-                                                    />
-                                                </FormControl>
-                                                {selectedValidator && (
-                                                    <FormDescription>
-                                                        Max: {(maxAmount / 1000000).toFixed(6)} ATOM
-                                                    </FormDescription>
-                                                )}
-                                                {selectedValidator &&
-                                                    Number(field.value) >
-                                                        maxAmount && (
-                                                        <FormMessage>Amount exceeds maximum available balance</FormMessage>
+                                                    {validators.length > 1 && (
+                                                        <p>
+                                                            Since you have multiple validators, you will need to do one at time.
+                                                        </p>
                                                     )}
-                                            </FormItem>
-                                        )
-                                    }}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="duration"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <div className="gap-[56px] flex justify-start items-center">
-                                                <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
-                                                    Lockup Period:
-                                                </FormLabel>
+                                                </FormDescription>
+                                                <FormLabel>Select Validator</FormLabel>
                                                 <FormControl>
-                                                    <ToggleGroup
-                                                        type="single"
-                                                        className="gap-[10px]"
-                                                        defaultValue={form.getValues(
-                                                            "duration"
-                                                        )}
-                                                    >
-                                                        {[1, 2, 3].map((months) => (
-                                                            <ToggleGroupItem
-                                                                key={months}
-                                                                value={months.toString()}
-                                                                className="text-[#080815] text-center text-base not-italic font-medium leading-[21px] inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 bg-[rgba(255,255,255,0.40)] px-4 py-0 rounded-[100px]"
-                                                                onClick={() =>
-                                                                    field.onChange(
-                                                                        (months * EPOCH_LENGTH).toString()
-                                                                    )
-                                                                }
-                                                            >
-                                                                {months} {months === 1 ? "month" : "months"}
-                                                            </ToggleGroupItem>
+                                                    <div className="space-y-2">
+                                                        {validators.map((v) => (
+                                                            <ValidatorListItem
+                                                                key={v.validator.operator_address}
+                                                                validator={v}
+                                                                selectedValue={field.value}
+                                                                onChange={field.onChange}
+                                                                selectedAmount={selectedAmount}
+                                                            />
                                                         ))}
-                                                    </ToggleGroup>
+                                                    </div>
                                                 </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
+                                {selectedValidator && (
+                                    <>
+                                        <div className="flex flex-col space-y-2">
+                                            <FormLabel>
+                                                Your selected Validator
+                                            </FormLabel>
+                                            <div>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={clearSelectedValidator}
+                                                    className="inline-flex mt-2 pl-1"
+                                                >
+                                                    <ChevronLeft className="mr-2" />
+                                                    {getValidatorMoniker(
+                                                        selectedValidator,
+                                                        validatorMap
+                                                    )}
+                                                </Button>
                                             </div>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="mt-6">
-                                    <FormLabel>What You&rsquo;ll Get</FormLabel>
-                                    <div className="mt-2">
-                                        Voting Power:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{formatAmount(scaleLockupPower(selectedDuration, BigInt(selectedAmount)))}
-                                    </div>
-                                </div>
-                                <div className="flex items-center">
-                                    <AlertTriangle size={50} className="mr-3" />
-                                    <p className="text-white text-sm">
-                                        Once locked, your ATOM remains inaccessible until the lockup expires, but will still earn Cosmos Hub staking rewards in addition to Hydro rewards.
-                                    </p>
-                                </div>
-                                <Button type="submit" className="w-full">Get Voting Power</Button>
-                            </>
-                        )}
-                    </form>
-                </Form>
-            </CardContent>
+                                        </div>
+                                        <FormField
+                                            control={form.control}
+                                            name="amount"
+                                            render={({ field }) => {
+                                                const selectedValidator =
+                                                    form.watch("validator")
+                                                const validator = validators?.find(
+                                                    (v) => v.validator.operator_address === selectedValidator
+                                                )
+                                                const maxAmount = validator ? Number(validator.delegation_balance.amount) : 0
+                                                const isDisabled = !selectedValidator
+
+                                                return (
+                                                    <FormItem>
+                                                        <FormLabel>
+                                                            Amount (ATOM)
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                {...field}
+                                                                type="number"
+                                                                step="0.000001"
+                                                                min="0"
+                                                                disabled={isDisabled}
+                                                                onChange={(e) => {
+                                                                    const atomValue = parseFloat(e.target.value) || 0
+                                                                    const uatomValue = Math.floor(atomValue * 1000000).toString()
+                                                                    field.onChange(uatomValue)
+                                                                }}
+                                                                value={Number(field.value) / 1000000}
+                                                            />
+                                                        </FormControl>
+                                                        {selectedValidator && (
+                                                            <FormDescription>
+                                                                Max: {(maxAmount / 1000000).toFixed(6)} ATOM
+                                                            </FormDescription>
+                                                        )}
+                                                        {selectedValidator &&
+                                                            Number(field.value) >
+                                                                maxAmount && (
+                                                                <FormMessage>Amount exceeds maximum available balance</FormMessage>
+                                                            )}
+                                                    </FormItem>
+                                                )
+                                            }}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="duration"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <div className="gap-[56px] flex justify-start items-center">
+                                                        <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
+                                                            Lockup Period:
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <ToggleGroup
+                                                                type="single"
+                                                                className="gap-[10px]"
+                                                                defaultValue={form.getValues(
+                                                                    "duration"
+                                                                )}
+                                                            >
+                                                                {[1, 2, 3].map((months) => (
+                                                                    <ToggleGroupItem
+                                                                        key={months}
+                                                                        value={months.toString()}
+                                                                        className="text-[#080815] text-center text-base not-italic font-medium leading-[21px] inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 bg-[rgba(255,255,255,0.40)] px-4 py-0 rounded-[100px]"
+                                                                        onClick={() =>
+                                                                            field.onChange(
+                                                                                (months * EPOCH_LENGTH).toString()
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        {months} {months === 1 ? "month" : "months"}
+                                                                    </ToggleGroupItem>
+                                                                ))}
+                                                            </ToggleGroup>
+                                                        </FormControl>
+                                                    </div>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <div className="mt-6">
+                                            <FormLabel>What You&rsquo;ll Get</FormLabel>
+                                            <div className="mt-2">
+                                                Voting Power:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{formatAmount(scaleLockupPower(selectedDuration, BigInt(selectedAmount)))}
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <AlertTriangle size={50} className="mr-3" />
+                                            <p className="text-white text-sm">
+                                                Once locked, your ATOM remains inaccessible until the lockup expires, but will still earn Cosmos Hub staking rewards in addition to Hydro rewards.
+                                            </p>
+                                        </div>
+                                        <Button type="submit" className="w-full">Get Voting Power</Button>
+                                    </>
+                                )}
+                            </form>
+                        </Form>
+                    </CardContent>
+                </>
+            )}
         </Card>
     )
 }
