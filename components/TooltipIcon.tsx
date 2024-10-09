@@ -5,13 +5,22 @@ import { twMerge } from "tailwind-merge"
 export function TooltipIcon({
     children,
     classNamesForTooltip,
+    icon,
 }: {
     children: ReactNode
     classNamesForTooltip?: string
+    icon?: ReactNode
 }) {
     return (
-        <div className="group relative" tabIndex={0}>
-            <Info className="inline-block" size={14} />
+        <div
+            className="
+                group/tooltip
+                relative
+                z-50
+            "
+            tabIndex={0}
+        >
+            {icon ?? <Info className="inline-block" size={14} />}
             <div
                 className={twMerge(
                     `
@@ -36,12 +45,12 @@ export function TooltipIcon({
                         text-white
                         opacity-0
                         transition-all
-                        group-hover:pointer-events-auto
-                        group-hover:translate-y-0
-                        group-hover:opacity-100
-                        group-focus:pointer-events-auto
-                        group-focus:translate-y-0
-                        group-focus:opacity-100
+                        group-hover/tooltip:pointer-events-auto
+                        group-hover/tooltip:translate-y-0
+                        group-hover/tooltip:opacity-100
+                        group-focus/tooltip:pointer-events-auto
+                        group-focus/tooltip:translate-y-0
+                        group-focus/tooltip:opacity-100
                     `,
                     classNamesForTooltip
                 )}
