@@ -1,4 +1,4 @@
-# Lockups & Voting Power
+# Lockups
 
 ## Liquid Staking Module
 

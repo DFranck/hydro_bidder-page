@@ -1,4 +1,4 @@
-# Voting & Tribute
+# Voting
 
 ## Project bids
 * **Browse bids**: Users can review active project proposals on Hydro. Each proposal represents a project seeking liquidity and offering tributes (rewards) to voters.
