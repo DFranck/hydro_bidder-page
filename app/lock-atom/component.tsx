@@ -667,7 +667,8 @@ const LockForm = ({
                                                                     "duration"
                                                                 )}
                                                             >
-                                                                {[1, 2, 3].map((months) => (
+                                                                {/* {[1, 2, 3].map((months) => ( */}
+                                                                {[1].map((months) => (
                                                                     <ToggleGroupItem
                                                                         key={months}
                                                                         value={months.toString()}
