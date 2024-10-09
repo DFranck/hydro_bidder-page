@@ -188,46 +188,64 @@ export const LockStepper = ({
                 return (
                     <>
                         <CardHeader>
-                            <CardTitle>
-                                Lock {formatAmount(amount)} ATOM
-                            </CardTitle>
+                            <CardTitle>Let&rsquo;s lock some ATOM</CardTitle>
+                            <div className="text-right text-xs opacity-60">
+                                You&rsquo;ll do three wallet approvals, and it
+                                should take about a minute.
+                            </div>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <p>
-                                Nice! You&apos;re about to lock{" "}
-                                <strong>{formatAmount(amount)} ATOM</strong>{" "}
-                                staked to{" "}
-                                <strong>
-                                    {getValidatorMoniker(
-                                        validator,
-                                        validatorMap
-                                    )}
-                                </strong>{" "}
-                                in Hydro for{" "}
-                                <strong>
-                                    {lockDuration / EPOCH_LENGTH}{" "}
-                                    {lockDuration > EPOCH_LENGTH
-                                        ? "months"
-                                        : "month"}
-                                </strong>{" "}
-                                to get{" "}
-                                <strong>
-                                    {formatAmount(
+                        <CardContent className="flex items-center justify-around gap-10">
+                            {[
+                                [formatAmount(amount), "ATOM Amount"],
+                                [
+                                    <>
+                                        {lockDuration / EPOCH_LENGTH}{" "}
+                                        {lockDuration > EPOCH_LENGTH
+                                            ? "months"
+                                            : "month"}
+                                    </>,
+                                    "Lock Duration",
+                                ],
+                                [
+                                    formatAmount(
                                         scaleLockupPower(
                                             lockDuration,
                                             BigInt(amount)
                                         )
-                                    )}{" "}
-                                    voting power.
-                                </strong>
-                            </p>
-                            <p>
-                                This should take about a minute and will require
-                                3 wallet approvals.
-                            </p>
+                                    ),
+                                    "Voting Power",
+                                ],
+                            ].map(([value, label], index) => (
+                                <div
+                                    className="
+                                        flex
+                                        flex-col-reverse
+                                        items-center
+                                        justify-center
+                                        gap-1
+                                    "
+                                    key={index}
+                                >
+                                    <div className="text-xs text-palette-beige">
+                                        {label}
+                                    </div>
+                                    <div className="text-2xl font-bold">
+                                        {value}
+                                    </div>
+                                </div>
+                            ))}
+                            {/* {getValidatorMoniker(
+                                validator,
+                                validatorMap
+                            )} */}
                         </CardContent>
-                        <CardFooter className="space-x-2">
-                            <Button onClick={execute}>Start locking</Button>
+                        <CardFooter className="flex flex-row-reverse gap-3">
+                            <Button
+                                className="bg-palette-green"
+                                onClick={execute}
+                            >
+                                Start Locking
+                            </Button>
                             <Button variant="outline" onClick={onExit}>
                                 Cancel
                             </Button>
