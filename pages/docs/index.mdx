@@ -4,3 +4,24 @@ The Hydro User Guide is the main resource for the Hydro platform, an auction pla
 As we get ready for Hydro's launch, we are initiating a series of Pilot Rounds to make sure that everything is working as expected before re-deploying the complete PoL available to Hydro.
 
 The goal of the Pilot Round is to test all critical features of Hydro, including the voting mechanism, project bidding process, and liquidity deployment. The Pilot Round's smaller scale also allows us to get a better sense of the bidding dynamics. More generally, it’s an opportunity for a full test of the processes, from project setup to liquidity deployment, covering the experience of bidders, voters, and Hydro committee. This document outlines the key specifics of the Pilot Round and what users can expect.
+
+## Pilot Rounds
+
+### Committee management
+During Hydro’s pilot round, the Committee will be given decision-making authority on key parts of the allocation & deployment process. 
+One such element is the top-N feature. In each round, all votes are tallied, and the top projects are selected to receive liquidity from the Hydro pool. Projects that do not rank within the top 'n' will have their tribute refunded. This mechanism not only optimizes liquidity deployment but also protects against potential Denial-of-Service (DoS) attacks. To maintain flexibility, the Hydro committee can set 'n' to a high value, such as 100, to effectively remove the cap if necessary.
+Once the top projects are selected, the committee must initiate a series of smart contract messages to process the liquidity exports for the winners. This manual oversight ensures that the liquidity is properly deployed while preventing small, time-consuming deployments. 
+
+### Bid submissions
+For the purpose of Hydro Pilot Rounds, the process of projects onboarding and the bid approval will be with following steps:
+1. Projects fill out and submit their bid using this template 
+2. Hydro Committee assess the bid and approves/rejects it
+3. Approved bid gets submitted to Hydro Smart Contract on behalf of the projects
+4. Projects add tributes to their bid once it’s is on-chain
+
+### Voting Power
+During pilot round, users will only be able to lock their staked ATOM for the duration of one round, i.e one month. This is to minimize the risks associated with users getting locked for several months as Hydro iterates quickly. As the protocol becomes more stable and progresses toward regular rounds, users will gain the ability to choose longer lock periods, granting them more voting power relative to the amount of staked ATOM. 
+
+### Tranches
+A tranche is a sub-pool of liquidity within a liquidity bucket. An example of that is a dedicated ICS tranche (reserved for ICS projects) within the ATOM liquidity bucket. 
+There will not be any tranche during the Pilot Round. This will simplify the flow for users and reduce the workload of the Hydro committee, which is currently operating on a volunteer basis.
