@@ -1,6 +1,6 @@
-# Locking LSM Shares
+# Lockups & Voting Power
 
-## Understanding the LSM
+## Liquid Staking Module
 
 The LSM shares (i.e Liquid Staking Module shares) represent tokenized, staked ATOM on the Cosmos Hub. By converting your staked ATOM into LSM shares, you unlock the ability to get voting power and Hydro rewards while still earning staking rewards on your staked ATOM. LSM shares are transferable, liquid versions of staked ATOM and play a crucial role in participating in Hydro.
 
@@ -9,25 +9,26 @@ The LSM shares (i.e Liquid Staking Module shares) represent tokenized, staked AT
 -   LSM shares allow you to earn rewards by voting for liquidity distribution on Hydro.
 -   By tokenizing your staked ATOM into LSM shares, you maintain the benefits of staking while gaining flexibility in using these tokens.
 
-## Staking & Tokenizing
+## LSM Shares
 
-### Staking ATOM:
+This is how to get LSM Shares:
 
-1. If you haven't already staked your ATOM, you can do so via your preferred staking platform (e.g., Keplr, Cosmostation).
-2. Choose a validator and delegate your ATOM to start earning staking rewards.\*
+### 1. Stake ATOM:
+- If you haven't already staked your ATOM, you can do so via your preferred staking platform (e.g., Keplr, Cosmostation).
+- Choose a validator and delegate your ATOM to start earning staking rewards.*
 
-### Converting to LSM Shares:
+### 2. Convert to LSM Shares:
 
-1. Navigate to the Hydro website at hydro.cosmos.network.
-2. Click "Connect Wallet" in the menu or click one of the "Get Started" buttons on the homepage.
-3. In the first modal that appears, select one of the validators that you are currently staking ATOM with.
-4. In the next modal, choose the amount of ATOM that you want to use to obtain voting power.
-    > Note: you will see the voting power update in real-time based on the Lock-up period and the amount of ATOM you input.
-5. Click "Get Voting Power".
+* Navigate to the Hydro website at [hydro.cosmos.network](https://hydro.cosmos.network).
+* Click "Connect Wallet" in the menu or click one of the "Get Started" buttons on the homepage.
+* In the first modal that appears, select one of the validators that you are currently staking ATOM with.
+* In the next modal, choose the amount of ATOM that you want to use to obtain voting power.
+    * Note: you will see the voting power update in real-time based on the Lock-up period and the amount of ATOM you input.
+* Click "Get Voting Power".
 
-**NOTE**: There are many reasons to choose your validator carefully in Cosmos. In the Hydro context, if your validator falls out of the active set, you will not receive staking rewards and will not be able to vote in Hydro anymore.
+***NOTE**: There are many reasons to choose your validator carefully in Cosmos. In the Hydro context, if your validator falls out of the active set, you will not receive staking rewards and will not be able to vote in Hydro anymore.
 
-## Locking for Voting Power
+## Voting Power
 
 When you lock your LSM shares into Hydro, you gain voting power, which enables you to vote on liquidity distribution proposals. The amount of voting power you receive depends on two factors:
 
@@ -44,11 +45,11 @@ The longer the lock-up period, the more voting power you will receive. However, 
 | >3 months                 | 2                       |
 | >6 months                 | 4                       |
 
-This means that a users voting power decays over time in steps, and behaves like this:
+This means that a user's voting power decays over time in steps, and behaves like this:
 
 ![Remaining scaling explained](/doc/remaining-lockup.png)
 
-Note: Round 1 of Hydro will have certain restrictions around lockups. Specifically, users will not be allowed in the first round to lock for 6 or 12 months. The user will only be able to lock for 1, 2, or 3 months during Round 1. In future rounds users will be able to successfully create lockups that are for 1, 2, 3, 6 and 12 months.
+**Note**: The Pilot Round of Hydro will have certain restrictions around lockups. Specifically, users will not be allowed in the first round to lock for more than 1 month. To learn more about the Pilot Rounds please read the Pilot Rounds [documentation](https://hydro.cosmos.network/docs/hydro-launch).
 
 **Key Points**:
 
