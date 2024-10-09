@@ -52,7 +52,7 @@ export default function RootLayout({
                         bg-no-repeat
                     "
                 ></div>
-                <div className="p-5 text-white lg:p-0">
+                <div className="text-white">
                     <ClientHandler>{children}</ClientHandler>
                 </div>
             </body>
