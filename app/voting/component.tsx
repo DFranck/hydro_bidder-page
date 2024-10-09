@@ -313,26 +313,19 @@ const ActiveProposals = ({
                                 </>
                             ),
 
-                            yourEstimatedReward: !isWalletConnected ? (
-                                <div
-                                    className="
-                                            ml-1
-                                            text-xs
-                                            opacity-60
-                                        "
-                                >
-                                    <div>Lock ATOM to</div>
-                                    <div>see rewards</div>
-                                </div>
-                            ) : (
+                            yourEstimatedReward: (
                                 <>
                                     <div>
-                                        {estimatedRewardForPower(
-                                            proposalTotalTribute(
-                                                proposal.pricedAndNamedTributes
-                                            ),
-                                            myUserVotingData?.votingPower ?? 0,
-                                            Number(proposal.power ?? 0)
+                                        {(!isWalletConnected
+                                            ? 0
+                                            : estimatedRewardForPower(
+                                                  proposalTotalTribute(
+                                                      proposal.pricedAndNamedTributes
+                                                  ),
+                                                  myUserVotingData?.votingPower ??
+                                                      0,
+                                                  Number(proposal.power ?? 0)
+                                              )
                                         ).toLocaleString("en-US", {
                                             style: "currency",
                                             currency: "USD",
