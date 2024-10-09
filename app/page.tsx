@@ -2,6 +2,7 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { Footer } from "@/components/Footer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Button } from "@/components/ui/button"
+import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { twMerge } from "tailwind-merge"
@@ -46,10 +47,10 @@ const howHydroWorksTiles = [
 ]
 
 const benefitsCheckList = [
-    "Participate in the growth of the Cosmos ecosystem",
-    "Provide attractive rewards for your project supporters",
-    "Access liquidity for your project",
-    "Gain exposure and visibility within the Cosmos community",
+    "Stake ATOM",
+    "Lock your staked ATOM",
+    "Vote for projects",
+    "Receive tributes",
 ]
 
 const howItWorksForProjectsTiles = [
@@ -246,12 +247,11 @@ export default function Home() {
                                 font-normal
                             "
                         >
-                            The opportunity to earn additional rewards for your
-                            ATOM tokens on top of your ATOM staking rewards.
-                            Vote and participate in the Interchain auction
-                            platform for{" "}
+                            An opportunity to earn yield on top of Cosmos Hub
+                            staking rewards. Lock ATOM, vote and allocate
+                            liquidity across{" "}
                             <span className="whitespace-nowrap">
-                                liquidity exports.
+                                the Interchain.
                             </span>
                         </p>
                     </div>
@@ -330,9 +330,9 @@ export default function Home() {
                                     For Voters
                                 </p>
                                 <h2>
-                                    Earn yield on top of{" "}
+                                    Earn Yield On Top of the{" "}
                                     <span className="sm:whitespace-nowrap">
-                                        your APR
+                                        Staking APR
                                     </span>
                                 </h2>
                             </div>
@@ -341,10 +341,13 @@ export default function Home() {
                                     text-lg
                                 "
                             >
-                                Hydro provides the opportunity for ATOM stakers
-                                to vote on the allocation of liquidity, and
-                                receive tributes from the projects competing in
-                                the auction process.
+                                Hydro gives ATOM stakers the opportunity to
+                                allocate the Hub&rsquo;s liquidity by voting on
+                                bids submitted by projects, and receive tributes
+                                for
+                                <span className="whitespace-nowrap">
+                                    their support.
+                                </span>
                             </div>
                             {renderBenefits()}
                             <Button
@@ -401,7 +404,10 @@ export default function Home() {
                         >
                             for projects
                         </p>
-                        <h2>How it Works for Projects</h2>
+                        <h2>
+                            Receive Liquidity Deployments from{" "}
+                            <span className="whitespace-nowrap">the Hub</span>
+                        </h2>
                     </div>
                     <p
                         className="
@@ -413,13 +419,10 @@ export default function Home() {
                             text-white
                         "
                     >
-                        Hydro provides a unique opportunity for projects to
-                        access liquidity and gain exposure, while rewarding ATOM
-                        holders for their participation through a multi-step
-                        process involving{" "}
-                        <span className="whitespace-nowrap">
-                            tribute auctions.
-                        </span>
+                        Hydro allocates liquidity through sequential auction
+                        rounds where projects win over user votes by
+                        distributing tributes to{" "}
+                        <span className="whitespace-nowrap">ATOM stakers.</span>
                     </p>
 
                     <div>
@@ -439,23 +442,29 @@ export default function Home() {
                             asChild
                             className="
                                 h-14
-                                w-40
                                 rounded-xl
+                                px-6
                                 text-lg
                                 font-normal
                                 capitalize
                             "
                         >
-                            <Link href="/lock-atom">Get Started</Link>
+                            <Link
+                                className="flex items-center gap-1"
+                                href="https://calendly.com/milos-informal/30-minute-meeting-hydro"
+                                target="_blank"
+                            >
+                                Get in Touch <ArrowUpRight />
+                            </Link>
                         </Button>
                         <Button
                             asChild
                             className="
                                 h-14
-                                w-36
                                 rounded-xl
                                 border
                                 bg-transparent
+                                px-6
                                 text-lg
                                 font-normal
                                 capitalize
