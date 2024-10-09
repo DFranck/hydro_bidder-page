@@ -313,7 +313,7 @@ const ActiveProposals = ({
                                 </>
                             ),
 
-                            yourEstimatedReward: !proposal.title
+                            yourEstimatedReward: proposal.title
                                 .toLowerCase()
                                 .includes("[points]") ? (
                                 <TooltipIcon
