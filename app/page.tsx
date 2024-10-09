@@ -1,8 +1,10 @@
+import { ContentContainer } from "@/components/ContentContainer"
 import { Footer } from "@/components/Footer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
+import { twMerge } from "tailwind-merge"
 
 const howHydroWorksTiles = [
     {
@@ -86,27 +88,57 @@ export default function Home() {
     const renderTiles = (data: TilesType) => {
         return (
             <div
-                className={`z-10 mx-[90px] my-[60px] grid grid-cols-3 gap-[60px]`}
+                className={`
+                    z-10
+                    my-12
+                    grid
+                    gap-16
+                    md:grid-cols-3
+                `}
             >
                 {data.tiles.map((tile, index) => {
                     return (
                         <div
                             key={index}
-                            className={`flex w-[${
-                                data.size === "small" ? "285px" : "330px"
-                            }] shrink-0 flex-col items-start gap-4 ${
-                                data.size === "small" ? "p-6" : ""
-                            } rounded-[10px]`}
+                            className={twMerge(
+                                `
+                                    flex
+                                    shrink-0
+                                    flex-col
+                                    items-center
+                                    gap-4
+                                    rounded-[10px]
+                                    text-center
+                                `
+                            )}
                         >
                             <Image
+                                className={
+                                    data.size === "small" ? "-mr-6" : "-mr-10"
+                                }
                                 src={tile.icon}
                                 alt={tile.title}
                                 width={data.size === "small" ? 100 : 220}
                                 height={data.size === "small" ? 100 : 220}
                             />
-                            <h3 className="text-2xl">{tile.title}</h3>
-                            <p className="text-base font-normal leading-[30px]">
-                                {tile.description}
+                            <h3
+                                className="
+                                    text-2xl
+                                "
+                            >
+                                {tile.title}
+                            </h3>
+                            <p
+                                className="
+                                    text-base
+                                    font-normal
+                                    leading-[30px]
+                                "
+                            >
+                                {tile.description.replace(
+                                    /[ ]([^ ]+?)$/gm,
+                                    `${String.fromCharCode(160)}$1`
+                                )}
                             </p>
                         </div>
                     )
@@ -117,12 +149,22 @@ export default function Home() {
 
     const renderBenefits = () => {
         return (
-            <div className="">
+            <div
+                className="
+                "
+            >
                 {benefitsCheckList.map((item, index) => {
                     return (
                         <div
                             key={index}
-                            className="flex shrink-0 flex-row items-center gap-4 rounded-[10px]"
+                            className="
+                                flex
+                                shrink-0
+                                flex-row
+                                items-center
+                                gap-4
+                                rounded-[10px]
+                            "
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +180,14 @@ export default function Home() {
                                     />
                                 </g>
                             </svg>
-                            <p className="text-lg font-normal">{item}</p>
+                            <p
+                                className="
+                                    text-lg
+                                    font-normal
+                                "
+                            >
+                                {item}
+                            </p>
                         </div>
                     )
                 })}
@@ -147,81 +196,170 @@ export default function Home() {
     }
 
     return (
-        <main className="flex min-h-screen w-full flex-col overflow-hidden bg-[#080815] text-white">
-            <div className="relative h-screen">
-                <div className="absolute -top-[11%] h-full w-screen bg-[url('/images/AdobeStock_633966567.png')] bg-cover bg-no-repeat xl:-top-[15%]"></div>
-                <div className="relative z-10 mx-auto max-w-7xl">
-                    <div className="mx-auto h-[600px] max-w-6xl space-y-6">
-                        <div className="mt-[155px]">
-                            <h1 className="max-w-[64ch] text-6xl font-bold leading-[1.1]">
-                                The Interchain Platform for
-                                Liquidity&nbsp;Exports
-                            </h1>
-                        </div>
-                        <p className="max-w-[64ch] text-xl font-normal">
+        <main
+            className="
+                flex
+                min-h-screen
+                w-full
+                flex-col
+                overflow-hidden
+            "
+        >
+            <div
+                className="
+                    bg-gradient-to-t
+                    from-palette-text
+                    via-transparent
+                    to-transparent
+                "
+            >
+                <ContentContainer
+                    className="
+                        relative
+                        z-10
+                        min-h-[70vh]
+                        justify-center
+                        gap-6
+                    "
+                >
+                    <div
+                        className="
+                            max-w-[64ch]
+                            space-y-6
+                        "
+                    >
+                        <h1
+                            className="
+                                text-6xl
+                                font-bold
+                                leading-[1.1]
+                            "
+                        >
+                            The Interchain Platform for{" "}
+                            <span className="sm:whitespace-nowrap">
+                                Liquidity Exports
+                            </span>
+                        </h1>
+                        <p
+                            className="
+                                text-xl
+                                font-normal
+                            "
+                        >
                             The opportunity to earn additional rewards for your
                             ATOM tokens on top of your ATOM staking rewards.
                             Vote and participate in the Interchain auction
-                            platform for liquidity exports.
+                            platform for{" "}
+                            <span className="whitespace-nowrap">
+                                liquidity exports.
+                            </span>
                         </p>
-                        <Button
-                            asChild
-                            className="mt-12 h-14 w-36 rounded-xl text-lg font-normal capitalize"
-                        >
-                            <Link href="/lock-atom">Get started</Link>
-                        </Button>
                     </div>
-                </div>
+                    <Button
+                        asChild
+                        className="
+                            h-14
+                            w-min
+                            whitespace-nowrap
+                            rounded-xl
+                            px-10
+                            text-lg
+                            font-normal
+                            capitalize
+                        "
+                    >
+                        <Link href="/lock-atom">Get started</Link>
+                    </Button>
+                </ContentContainer>
             </div>
-            <div className="relative before:pointer-events-none before:absolute before:inset-x-0 before:bottom-12 before:z-[0] before:shadow-[0_0px_100px_200px_#080815] before:content-[''] 2xl:before:bottom-24"></div>
-            <div className="z-10 mx-auto max-w-7xl">
-                <div className="mx-auto max-w-6xl">
-                    <div className="text-center">
-                        <h2>How Hydro Works</h2>
-                    </div>
-                </div>
 
-                <div className="flex flex-col items-center">
-                    <div className="z-[1] mt-[20px] text-center text-xl font-normal leading-[30px] text-white">
-                        Understand the step-by-step process of participating in
-                        the Hydro ecosystem.
-                    </div>
+            <div className="bg-palette-text">
+                <ContentContainer
+                    className="
+                        z-10
+                        items-center
+                        gap-12
+                        py-20
+                        text-center
+                        lg:py-40
+                    "
+                >
+                    <h2>How Hydro Works</h2>
                     {renderTiles({
                         tiles: howHydroWorksTiles,
                         size: "small",
                     })}
                     <Button
                         asChild
-                        className="mt-12 h-14 w-36 rounded-xl text-lg font-normal capitalize"
+                        className="
+                            h-14
+                            w-36
+                            rounded-xl
+                            text-lg
+                            font-normal
+                            capitalize
+                        "
                     >
                         <Link href="/lock-atom">Get started</Link>
                     </Button>
-                </div>
-                <HorizontalDivider className="mb-[150px] mt-[60px]" />
-                <div className="mx-auto flex max-w-6xl flex-col items-center pb-44 lg:flex-row">
-                    <div>
-                        <div className="max-w-3xl space-y-3">
-                            <p className="font-medium uppercase slashed-zero tracking-wide text-[#FFE1B8]">
-                                For Voters
-                            </p>
-                            <h2>Earn yield on top of your APR</h2>
-                            <div className="text-lg">
+                    <HorizontalDivider />
+                    <div
+                        className="
+                            grid
+                            items-center
+                            gap-6
+                            text-left
+                            lg:grid-cols-2
+                        "
+                    >
+                        <div
+                            className="
+                                space-y-6
+                            "
+                        >
+                            <div className="space-y-2">
+                                <p
+                                    className="
+                                        font-medium
+                                        uppercase
+                                        slashed-zero
+                                        tracking-wide
+                                        text-[#FFE1B8]
+                                    "
+                                >
+                                    For Voters
+                                </p>
+                                <h2>
+                                    Earn yield on top of{" "}
+                                    <span className="sm:whitespace-nowrap">
+                                        your APR
+                                    </span>
+                                </h2>
+                            </div>
+                            <div
+                                className="
+                                    text-lg
+                                "
+                            >
                                 Hydro provides the opportunity for ATOM stakers
                                 to vote on the allocation of liquidity, and
                                 receive tributes from the projects competing in
                                 the auction process.
                             </div>
                             {renderBenefits()}
+                            <Button
+                                asChild
+                                className="
+                                    h-14
+                                    rounded-xl
+                                    text-lg
+                                    font-normal
+                                    capitalize
+                                "
+                            >
+                                <Link href="/lock-atom">Get Allowlisted</Link>
+                            </Button>
                         </div>
-                        <Button
-                            asChild
-                            className="mt-8 h-14 w-40 rounded-xl text-lg font-normal capitalize"
-                        >
-                            <Link href="/lock-atom">Get Allowlisted</Link>
-                        </Button>
-                    </div>
-                    <div className="relative bg-[#080815]">
-                        <div className="bg-white"></div>
                         <Image
                             className="mix-blend-screen"
                             src="/images/side-image-dots.png"
@@ -230,40 +368,106 @@ export default function Home() {
                             height={800}
                         />
                     </div>
-                </div>
+                </ContentContainer>
             </div>
-            <div className="bg-gradient-to-b from-[rgba(0,21,45,0.20)] to-[rgba(0,59,147,0.40)]">
-                <div className="mx-auto flex max-w-7xl flex-col items-center ">
-                    <p className="mt-[210px] text-base font-medium uppercase not-italic slashed-zero leading-[130%] tracking-[1.28px] text-[#FFE1B8]">
-                        for projects
-                    </p>
-                    <h2 className="mt-[14px]">How it Works for Projects</h2>
-                    <p className="mt-5 w-[693px] text-center text-xl font-normal leading-[30px] text-white">
+
+            <div
+                className="
+                    bg-gradient-to-b
+                    from-palette-text
+                    to-[#0B1C45]
+                "
+            >
+                <ContentContainer
+                    className="
+                        items-center
+                        space-y-6
+                        py-20
+                        lg:py-40
+                    "
+                >
+                    <div className="space-y-2 text-center">
+                        <p
+                            className="
+                                text-base
+                                font-medium
+                                uppercase
+                                not-italic
+                                slashed-zero
+                                leading-[130%]
+                                tracking-[1.28px]
+                                text-palette-beige
+                            "
+                        >
+                            for projects
+                        </p>
+                        <h2>How it Works for Projects</h2>
+                    </div>
+                    <p
+                        className="
+                            max-w-[64ch]
+                            text-center
+                            text-xl
+                            font-normal
+                            leading-[30px]
+                            text-white
+                        "
+                    >
                         Hydro provides a unique opportunity for projects to
                         access liquidity and gain exposure, while rewarding ATOM
                         holders for their participation through a multi-step
-                        process involving tribute auctions.
+                        process involving{" "}
+                        <span className="whitespace-nowrap">
+                            tribute auctions.
+                        </span>
                     </p>
-                    {renderTiles({
-                        tiles: howItWorksForProjectsTiles,
-                        size: "large",
-                    })}
-                    <div className="mb-44 mt-8 flex gap-5">
+
+                    <div>
+                        {renderTiles({
+                            tiles: howItWorksForProjectsTiles,
+                            size: "large",
+                        })}
+                    </div>
+
+                    <div
+                        className="
+                            flex
+                            gap-5
+                        "
+                    >
                         <Button
                             asChild
-                            className="h-14 w-40 rounded-xl text-lg font-normal capitalize"
+                            className="
+                                h-14
+                                w-40
+                                rounded-xl
+                                text-lg
+                                font-normal
+                                capitalize
+                            "
                         >
                             <Link href="/lock-atom">Get Allowlisted</Link>
                         </Button>
                         <Button
                             asChild
-                            className="h-14 w-36 rounded-xl border bg-transparent text-lg font-normal capitalize text-white"
+                            className="
+                                h-14
+                                w-36
+                                rounded-xl
+                                border
+                                bg-transparent
+                                text-lg
+                                font-normal
+                                capitalize
+                                text-white
+                            "
                         >
                             <Link href="/docs">Read Docs</Link>
                         </Button>
                     </div>
-                </div>
+                </ContentContainer>
             </div>
+
             <Footer />
         </main>
     )

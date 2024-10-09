@@ -135,94 +135,120 @@ function Lockups({
                     </Link>
                 </div>
 
-                <PrettyTable
-                    columns={[
-                        {
-                            key: "lockedATOM",
-                            label: "Locked ATOM",
-                            isSortable: true,
-                        },
-                        {
-                            key: "multiplier",
-                            label: "Multiplier",
-                            isSortable: true,
-                            textAlign: "right",
-                        },
-                        {
-                            key: "votingPower",
-                            label: "Voting Power",
-                            isSortable: true,
-                            textAlign: "right",
-                        },
-                        {
-                            key: "endDate",
-                            label: "End Date",
-                            isSortable: true,
-                            textAlign: "right",
-                            customValueGetter: (row) => {
-                                return row._lockup.lock_entry.lock_end
+                {myLockups.length === 0 && (
+                    <div
+                        className="
+                            !mb-6
+                            rounded-md
+                            border
+                            border-dashed
+                            border-palette-beige/20
+                            py-12
+                            text-center
+                            text-white/60
+                        "
+                    >
+                        <p>Lock up your ATOM to vote with Hydro</p>
+                    </div>
+                )}
+
+                {myLockups.length > 0 && (
+                    <PrettyTable
+                        columns={[
+                            {
+                                key: "lockedATOM",
+                                label: "Locked ATOM",
+                                isSortable: true,
                             },
-                        },
-                        {
-                            key: "actions",
-                            label: "Actions",
-                            textAlign: "right",
-                        },
-                    ]}
-                    initialSortedColumnKey="endDate"
-                    rows={myLockups.map((lockup, index) => {
-                        return {
-                            _lockup: lockup,
-                            lockedATOM: (
-                                <>
-                                    {formatAmount(
-                                        lockup.lock_entry.funds.amount
-                                    )}{" "}
-                                    ATOM
-                                </>
-                            ),
-                            multiplier: (
-                                <>
-                                    {(
-                                        Number(lockup.current_voting_power) /
-                                        Number(lockup.lock_entry.funds.amount)
-                                    ).toPrecision(3)}{" "}
-                                    &times;
-                                </>
-                            ),
-                            votingPower: formatAmount(
-                                lockup.current_voting_power
-                            ),
-                            endDate: (
-                                <>
-                                    {formatDate(lockup.lock_entry.lock_end)} (
-                                    {isExpired(lockup.lock_entry.lock_end) ? (
-                                        <TriangleAlertIcon className="h-8 w-8 text-white" />
-                                    ) : (
-                                        calculateTimeRemaining(
+                            {
+                                key: "multiplier",
+                                label: "Multiplier",
+                                isSortable: true,
+                                textAlign: "right",
+                            },
+                            {
+                                key: "votingPower",
+                                label: "Voting Power",
+                                isSortable: true,
+                                textAlign: "right",
+                            },
+                            {
+                                key: "endDate",
+                                label: "End Date",
+                                isSortable: true,
+                                textAlign: "right",
+                                customValueGetter: (row) => {
+                                    return row._lockup.lock_entry.lock_end
+                                },
+                            },
+                            {
+                                key: "actions",
+                                label: "Actions",
+                                textAlign: "right",
+                            },
+                        ]}
+                        initialSortedColumnKey="endDate"
+                        rows={myLockups.map((lockup, index) => {
+                            return {
+                                _lockup: lockup,
+                                lockedATOM: (
+                                    <>
+                                        {formatAmount(
+                                            lockup.lock_entry.funds.amount
+                                        )}{" "}
+                                        ATOM
+                                    </>
+                                ),
+                                multiplier: (
+                                    <>
+                                        {(
+                                            Number(
+                                                lockup.current_voting_power
+                                            ) /
+                                            Number(
+                                                lockup.lock_entry.funds.amount
+                                            )
+                                        ).toPrecision(3)}{" "}
+                                        &times;
+                                    </>
+                                ),
+                                votingPower: formatAmount(
+                                    lockup.current_voting_power
+                                ),
+                                endDate: (
+                                    <>
+                                        {formatDate(lockup.lock_entry.lock_end)}{" "}
+                                        (
+                                        {isExpired(
                                             lockup.lock_entry.lock_end
+                                        ) ? (
+                                            <TriangleAlertIcon className="h-8 w-8 text-white" />
+                                        ) : (
+                                            calculateTimeRemaining(
+                                                lockup.lock_entry.lock_end
+                                            )
+                                        )}
                                         )
-                                    )}
-                                    )
-                                </>
-                            ),
-                            actions: (
-                                <EditLockupDuration
-                                    validatorMap={validatorMap}
-                                    onSuccess={() => {
-                                        setRefetch(true)
-                                    }}
-                                    lockup={lockup}
-                                    walletAddress={walletAddress}
-                                    getSigningCosmWasmClient={
-                                        getSigningCosmWasmClient
-                                    }
-                                    getRestEndpoint={getRestEndpoint}
-                                />
-                            ),
-                        }
-                    })}
-                />
+                                    </>
+                                ),
+                                actions: (
+                                    <EditLockupDuration
+                                        validatorMap={validatorMap}
+                                        onSuccess={() => {
+                                            setRefetch(true)
+                                        }}
+                                        lockup={lockup}
+                                        walletAddress={walletAddress}
+                                        getSigningCosmWasmClient={
+                                            getSigningCosmWasmClient
+                                        }
+                                        getRestEndpoint={getRestEndpoint}
+                                    />
+                                ),
+                            }
+                        })}
+                    />
+                )}
             </div>
         </div>
     )
