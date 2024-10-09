@@ -171,7 +171,17 @@ const ActiveProposals = ({
                             },
                             {
                                 key: "name",
-                                label: "Proposal Name",
+                                label: (
+                                    <div className="flex items-center gap-1">
+                                        Project Bid
+                                        <TooltipIcon>
+                                            Bids are submitted by projects. You
+                                            can only vote once (per bucket per
+                                            tranche) but you can switch your
+                                            vote as many times as you want
+                                        </TooltipIcon>
+                                    </div>
+                                ),
                                 isSortable: true,
                                 propsForCells: {
                                     className: classNamesForCells,
@@ -189,8 +199,10 @@ const ActiveProposals = ({
                                             ends if you vote for this project.
                                             It may increase (if the project adds
                                             to the tribute) or decrease (if more
-                                            voters choose this project) over
-                                            time.
+                                            voters choose this project){" "}
+                                            <span className="whitespace-nowrap">
+                                                over time.
+                                            </span>
                                         </TooltipIcon>
                                     </div>
                                 ),
@@ -283,7 +295,10 @@ const ActiveProposals = ({
                                             font-semibold
                                         "
                                     >
-                                        {proposal.title}
+                                        {proposal.title.replace(
+                                            /[ ]([^ ]+?)$/gm,
+                                            `${String.fromCharCode(160)}$1`
+                                        )}
                                     </p>
                                     <Link
                                         href={`/voting/${proposal.proposal_id}`}
