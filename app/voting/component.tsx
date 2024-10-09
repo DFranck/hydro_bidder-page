@@ -176,6 +176,7 @@ const ActiveProposals = ({
                                 propsForCells: {
                                     className: classNamesForCells,
                                 },
+                                customValueGetter: (row) => row._proposal.title,
                             },
                             {
                                 key: "yourEstimatedReward",
