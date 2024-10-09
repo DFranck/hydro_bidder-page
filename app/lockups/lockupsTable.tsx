@@ -145,10 +145,14 @@ function Lockups({
                             border-palette-beige/20
                             py-12
                             text-center
+                            text-xs
                             text-white/60
                         "
                     >
-                        <p>Lock up your ATOM to vote with Hydro</p>
+                        <p>
+                            You don&rsquo;t have any lockups. Use the &ldquo;New
+                            Lockup&rdquo; button on the page to add one.
+                        </p>
                     </div>
                 )}
 
