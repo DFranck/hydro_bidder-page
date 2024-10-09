@@ -587,7 +587,7 @@ const LockForm = ({
                                     <>
                                         <div className="flex flex-col space-y-2">
                                             <FormLabel>
-                                                Your selected Validator
+                                                Your Validator
                                             </FormLabel>
                                             <div>
                                                 <Button
@@ -619,7 +619,7 @@ const LockForm = ({
                                                 return (
                                                     <FormItem>
                                                         <FormLabel>
-                                                            Amount (ATOM)
+                                                            Amount
                                                         </FormLabel>
                                                         <FormControl>
                                                             <Input
@@ -657,7 +657,7 @@ const LockForm = ({
                                                 <FormItem>
                                                     <div className="gap-[56px] flex justify-start items-center">
                                                         <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
-                                                            Lockup Period:
+                                                            Lockup:
                                                         </FormLabel>
                                                         <FormControl>
                                                             <ToggleGroup
@@ -689,18 +689,18 @@ const LockForm = ({
                                             )}
                                         />
                                         <div className="mt-6">
-                                            <FormLabel>What You&rsquo;ll Get</FormLabel>
-                                            <div className="mt-2">
-                                                Voting Power:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{formatAmount(scaleLockupPower(selectedDuration, BigInt(selectedAmount)))}
+                                            <div className="mt-2 flex items-center gap-6">
+                                                <span>Voting Power:</span>
+                                                <span>{formatAmount(scaleLockupPower(selectedDuration, BigInt(selectedAmount)))}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center">
                                             <AlertTriangle size={50} className="mr-3" />
                                             <p className="text-white text-sm">
-                                                Once locked, your ATOM remains inaccessible until the lockup expires, but will still earn Cosmos Hub staking rewards in addition to Hydro rewards.
+                                              Your staked ATOM will be locked up for the selected duration. You still earn the Cosmos Hub staking rewards (in addition to Hydro&rsquo;s tributes)
                                             </p>
                                         </div>
-                                        <Button type="submit" className="w-full">Get Voting Power</Button>
+                                        <Button type="submit" className="w-full">Lock</Button>
                                     </>
                                 )}
                             </form>
