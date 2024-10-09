@@ -2,9 +2,11 @@
 
 import { Wallet } from "@/components/wallet/Wallet"
 import { cn } from "@/lib/utils"
+import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+import { twMerge } from "tailwind-merge"
 
 export default function Navigation() {
     const pathname = usePathname()
@@ -23,9 +25,12 @@ export default function Navigation() {
                 <Link
                     href="/docs"
                     target="_blank"
-                    className={navigationMenuTriggerStyle("/docs")}
+                    className={twMerge(
+                        navigationMenuTriggerStyle("/docs"),
+                        `flex items-center gap-1`
+                    )}
                 >
-                    Docs
+                    Docs <ArrowUpRight size={16} />
                 </Link>
 
                 <Link
