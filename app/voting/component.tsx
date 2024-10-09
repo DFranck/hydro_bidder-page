@@ -6,7 +6,7 @@ import { TooltipIcon } from "@/components/TooltipIcon"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { CircleCheckBig, ScrollText } from "lucide-react"
+import { CircleCheckBig, Gem, ScrollText } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -313,7 +313,15 @@ const ActiveProposals = ({
                                 </>
                             ),
 
-                            yourEstimatedReward: (
+                            yourEstimatedReward: proposal.title
+                                .toLowerCase()
+                                .includes("[points]") ? (
+                                <TooltipIcon
+                                    icon={<Gem className="inline-block" />}
+                                >
+                                    Blah blah
+                                </TooltipIcon>
+                            ) : (
                                 <>
                                     <div>
                                         {(!isWalletConnected
