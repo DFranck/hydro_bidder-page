@@ -13,7 +13,7 @@ The APR number displayed in the Hydro has two components:
 ### Top APR 
 The [Hydro voting page](https://hydro.cosmos.network/voting) displays the best APR currently available to any voter at any point in time. It is calculated using the most favorable ratio between a tribute size and the amount of voting power backing the corresponding bid. The exact formula is:
 
-(insert image)
+$\text{Top APR} = \max_{i \in \text{bids}} \left(\frac{\text{Tribute value}_i}{\text{Voting power}_i}\right) \times 12$
 
 Note that this max available APR may change drastically throughout a round:
 - It will increase if projects increase their tributes
@@ -29,6 +29,6 @@ Some projects might bid using points rather than tradable tokens, which can infl
 After the first pilot round, Hydro will start displaying historical APRs. These will likely give users a more realistic view of the expected end-of-round performance. 
 The historical APR is calculated based on the average Hydro voter APR of the last round. The exact formula is: 
  
-![historic-dash-apr](/doc/historical-apr.png)
+$\text{Historical APR} = \frac{\sum_{i \in \text{bids}} {\text{tribute value}_i}}{\text{total atom value}_i} \times 12$
 
 The interface will display APRs based on the last month, the last three months, and the last year.
