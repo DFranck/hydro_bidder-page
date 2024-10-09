@@ -23,7 +23,7 @@ export default function Navigation() {
                 <Link
                     href="/docs"
                     target="_blank"
-                    className={cn(navigationMenuTriggerStyle("/docs"))}
+                    className={navigationMenuTriggerStyle("/docs")}
                 >
                     Docs
                 </Link>
@@ -38,7 +38,7 @@ export default function Navigation() {
                 {isConnected && (
                     <Link
                         href="/lockups"
-                        className={cn(navigationMenuTriggerStyle("/lockups"))}
+                        className={navigationMenuTriggerStyle("/lockups")}
                     >
                         Lockups
                     </Link>

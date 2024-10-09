@@ -357,7 +357,7 @@ export default function Home() {
                                     capitalize
                                 "
                             >
-                                <Link href="/lock-atom">Get Allowlisted</Link>
+                                <Link href="/lock-atom">Get Started</Link>
                             </Button>
                         </div>
                         <Image
@@ -446,7 +446,7 @@ export default function Home() {
                                 capitalize
                             "
                         >
-                            <Link href="/lock-atom">Get Allowlisted</Link>
+                            <Link href="/lock-atom">Get Started</Link>
                         </Button>
                         <Button
                             asChild
