@@ -142,7 +142,10 @@ function VotingPowerCard({
             }
             isLoading={isLoading}
             value={
-                !!votingPower && votingPower > 0 && formatAmount(votingPower)
+                (!!votingPower &&
+                    votingPower > 0 &&
+                    formatAmount(votingPower)) ||
+                "0.00"
             }
             title={
                 <div className="flex items-center gap-1">
@@ -154,9 +157,8 @@ function VotingPowerCard({
                 </div>
             }
             label={
-                votingPower === 0 ? (
-                    "Lock ATOM to get Voting Power"
-                ) : firstExpireTs && firstExpireTs > 0 ? (
+                votingPower === 0 ? null : firstExpireTs &&
+                  firstExpireTs > 0 ? (
                     <>
                         until{" "}
                         {new Date(firstExpireTs / 1e6).toLocaleDateString()}
