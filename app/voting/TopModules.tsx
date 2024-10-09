@@ -122,7 +122,7 @@ export function ProposalListTopModules() {
                 justify-between
                 gap-6
                 bg-transparent
-                lg:grid-cols-2
+                lg:grid-cols-3
             "
         >
             <TopCard
@@ -152,6 +152,27 @@ export function ProposalListTopModules() {
                 ).toLocaleString("en-US", {
                     style: "percent",
                 })}
+            />
+            <TopCard
+                title={
+                    <div className="flex items-center gap-1">
+                        Historical APR
+                        <TooltipIcon>
+                            This APR is calculated based the highest tribute
+                            available to voters in this round.{" "}
+                            <a
+                                href="/docs/users/calculating-staking-apr"
+                                className="inline-flex gap-1 text-palette-green underline"
+                                target="_blank"
+                            >
+                                Learn More
+                                <ArrowUpRight className="size-4" />
+                            </a>
+                        </TooltipIcon>
+                    </div>
+                }
+                label="No history yet"
+                value="—"
             />
             {/* <TopCard
                 title="Total Rewards"
