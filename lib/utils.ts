@@ -5,10 +5,11 @@ import { NEUTRON_ASSETS } from "@/config"
 // 1 month in nanoseconds
 export const lockEpochLength = 2628000000000000
 
+
 export enum LockupPeriod {
     ONE_EPOCH = "1m",
-    TWO_EPOCHS = "2m",
-    THREE_EPOCHS = "3m",
+    // TWO_EPOCHS = "2m",
+    // THREE_EPOCHS = "3m",
     // SIX_EPOCHS = "6m",
     // TWELVE_EPOCHS = "12m",
 }
@@ -58,10 +59,10 @@ export function calculateLockupVotingPower(
     switch (lockupPeriod) {
         case LockupPeriod.ONE_EPOCH:
             return amount
-        case LockupPeriod.TWO_EPOCHS:
-            return amount * 1.25
-        case LockupPeriod.THREE_EPOCHS:
-            return amount * 1.5
+        // case LockupPeriod.TWO_EPOCHS:
+        //     return amount * 1.25
+        // case LockupPeriod.THREE_EPOCHS:
+        //     return amount * 1.5
         // case LockupPeriod.SIX_EPOCHS:
         //     return amount * 2
         // case LockupPeriod.TWELVE_EPOCHS:
