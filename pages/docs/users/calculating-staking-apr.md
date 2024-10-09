@@ -1,50 +1,34 @@
-# Understanding the Staking APR in Hydro
+# Hydro APR Explained
 
-Hydro offers ATOM holders the ability to lock their ATOM for governance and liquidity provisioning while earning rewards. The Staking APR (Annual Percentage Rate) shown on the Hydro platform reflects the potential rewards users can earn by locking their tokens. This APR is based on both regular staking rewards and the tribute rewards provided by projects bidding for liquidity. Here's a simple breakdown of how it works.
+Hydro gives the ATOM community the ability to lock their staked ATOM to decide on the allocation of liquidity. Projects submit bids, ATOM stakers vote for projects and receive tributes from the projects they vote for.
 
-## Components of Staking APR
+## The APR components 
+The APR number displayed in the Hydro has two components:
+- The **staking APR** is the standard inflationary reward you already earn from staking your ATOM. It's the same familiar Cosmos Hub staking APR that all ATOM stakers already receive from their contribution to network security. 
+- The **tribute APR** is the hydro-specific APR originating from the tributes posted by projects looking to receive liquidity via Hydro. Projects post tributes as an incentive for Hydro voters to support them. 
 
-### Regular Staking APR:
-This is the standard reward you earn from staking your ATOM, which is based on inflationary rewards from the Cosmos network. It's the familiar staking reward that all ATOM stakers receive.
 
-### Tribute Yield:
-This is an additional reward that comes from the tributes paid by projects looking to attract liquidity via Hydro. Each project offers tribute as an incentive for users to lock their ATOM into their bids. These tributes increase the overall APR that users can earn.
+## The Tribute APR
 
-## How Tribute APR is Calculated
+### Top APR 
+The [Hydro voting page](https://hydro.cosmos.network/voting) displays the best APR currently available to any voter at any point in time. It is calculated using the most favorable ratio between a tribute size and the amount of voting power backing the corresponding bid. The exact formula is:
 
-The Hydro platform provides a couple of different ways to calculate your tribute yield depending on whether you're looking at your own locked tokens or a project overall. Here's a simplified explanation of the calculations:
+(insert image)
 
-### Global APR (All Existing Voters):
-This shows the average tribute yield based on the total tributes paid by all projects compared to the total amount of ATOM locked by all voters.
+Note that this max available APR may change drastically throughout a round:
+- It will increase if projects increase their tributes
+- It will decrease if more voters lock and vote for projects
 
-**Formula:** Global Tribute APR = $\frac{\text{total\_tribute}}{\text{total\_locked\_atom}}$
+It also may not match your user-specific APR, which is based on the project bid you’ve selected, specifically, the tribute attached to the bid and your share of the voting power supporting the bid. The user-specific APR number is not currently displayed in the Hydro interface but will likely be added later.
 
-This represents a snapshot of the overall APR from tributes across all projects.
+Keep in mind that the Top APR is very dynamic. It is a snapshot at a particular point in time. The APR changes as more users vote or lock their ATOM or as projects increase their tributes. It is nearly guaranteed that you will have an APR that is **more** or **less** than the number displayed.
 
-### Your Personal Tribute APR (For the Projects You Voted For):
-If you've voted on specific projects, this calculates the tribute yield based only on the projects you supported and your percentage of the total voting power.
-
-**Formula:** Tribute APR = $\sum_{i=1}^{n} \frac{\text{tribute}_{\text{project}_i} \times \text{your\_voting\_percentage}_i}{\text{your\_staked\_locked}} \times 12$
-
-This reflects your unique APR based on your specific votes and locked ATOM.
-
-### Project-Specific APR (Logged Out View):
-If you're just browsing the Hydro platform, you'll see a project's estimated APR, which is based on the tribute offered by that project and the total voting power that's been committed to it.
-
-**Formula:**
-Project APR = $\frac{\text{tribute}_{\text{project}_i}}{\text{total\_power\_voting\_for\_project}_i}$
-
-## Important Things to Know
-
-### APR is Dynamic:
-The displayed APR is a snapshot at a particular point in time. As more users vote or lock their ATOM, or as projects increase their tributes, the APR will change. You could receive more or less than what's shown depending on these factors.
-
-### Points vs. Tokens:
 Some projects might bid using points rather than tradable tokens, which can influence the APR. The APR calculation assumes tributes are paid in tokens that can be traded or sold.
 
-### Historical APR (Coming Soon):
-In future versions of Hydro, we will display historical data, such as the Last Month's APR or Last Quarter's APR, based on past project performance and payouts. This will help provide a clearer view of long-term returns.
+### Historical APR
+After the first pilot round, Hydro will start displaying historical APRs. These will likely give users a more realistic view of the expected end-of-round performance. 
+The historical APR is calculated based on the average Hydro voter APR of the last round. The exact formula is: 
+ 
+![historic-dash-apr](/doc/historical-apr.png)
 
-## Summary
-
-The Staking APR in Hydro is designed to give users a real-time view of the rewards they can earn by locking their ATOM and participating in governance. It combines both regular staking rewards and tributes offered by projects, making it an attractive opportunity for ATOM holders to grow their assets while contributing to liquidity provisioning across the Cosmos ecosystem.
+The interface will display APRs based on the last month, the last three months, and the last year.
