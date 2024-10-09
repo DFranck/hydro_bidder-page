@@ -157,22 +157,36 @@ export function ProposalListTopModules() {
                 title={
                     <div className="flex items-center gap-1">
                         Historical APR
-                        <TooltipIcon>
-                            This APR is calculated based the highest tribute
-                            available to voters in this round.{" "}
-                            <a
-                                href="/docs/users/calculating-staking-apr"
-                                className="inline-flex gap-1 text-palette-green underline"
-                                target="_blank"
-                            >
-                                Learn More
-                                <ArrowUpRight className="size-4" />
-                            </a>
+                        <TooltipIcon classNamesForTooltip="flex flex-col gap-2">
+                            <p>Historical APRs based on</p>
+
+                            <ul>
+                                <li className="flex items-center justify-between">
+                                    <span>Last 1 month:</span> <span>-%</span>
+                                </li>
+                                <li className="flex items-center justify-between">
+                                    <span>Last 3 months:</span> <span>-%</span>
+                                </li>
+                                <li className="flex items-center justify-between">
+                                    <span>Last 1 year:</span> <span>-%</span>
+                                </li>
+                            </ul>
+
+                            <p>
+                                <a
+                                    href="/docs/users/calculating-staking-apr"
+                                    className="inline-flex gap-1 text-palette-green underline"
+                                    target="_blank"
+                                >
+                                    Learn More
+                                    <ArrowUpRight className="size-4" />
+                                </a>
+                            </p>
                         </TooltipIcon>
                     </div>
                 }
-                label="No history yet"
-                value="—"
+                label="No historical data yet"
+                value="–%"
             />
             {/* <TopCard
                 title="Total Rewards"
