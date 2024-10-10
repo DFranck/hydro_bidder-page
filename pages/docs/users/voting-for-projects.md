@@ -19,4 +19,4 @@ Tributes are distributed at the end of each voting round based on the amount of 
 
 ### Key Points:
 - The more voting power you lock, the higher your voting power and the greater your share of the tribute.
-- Tributes are financial rewards and can include tokens, liquidity, or other incentives based on the project’s offering. 
+- Tributes are financial rewards and can include tokens, liquidity, or other incentives based on the project’s offering.
