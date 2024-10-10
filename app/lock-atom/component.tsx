@@ -38,7 +38,12 @@ import { EPOCH_LENGTH } from "@/config"
 import { Delegation, useMyValidators, Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AlertTriangle, ArrowUpRight, ChevronLeft } from "lucide-react"
+import {
+    AlertTriangle,
+    ArrowUpRight,
+    ChevronLeft,
+    CircleAlert,
+} from "lucide-react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -539,7 +544,22 @@ const LockForm = ({
                     <CardHeader>
                         <CardTitle>Get Voting Power</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex flex-col gap-6">
+                        <div className="
+                            text-sm
+                            bg-palette-cyan
+                            p-3
+                            rounded-md
+                            text-palette-text
+                            flex
+                            gap-3
+                        ">
+                            <CircleAlert />
+                            <div>
+                                Heads up: just like staking, once you&rsquo;ve locked ATOM,
+                                it <strong>cannot be unlocked for the duration of the lockup.</strong>
+                            </div>
+                        </div>
                         <Form {...form}>
                             <form
                                 onSubmit={form.handleSubmit(handleSubmit)}

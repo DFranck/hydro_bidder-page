@@ -386,11 +386,11 @@ const ActiveProposals = ({
                                 className={
                                     row._proposal.hasVotedOnProp
                                         ? `
-                                        has-voted
-                                        max-sm:bg-palette-green
-                                        max-sm:text-palette-text
-                                        max-sm:hover:bg-palette-green/80
-                                    `
+                                            has-voted
+                                            max-sm:bg-palette-green
+                                            max-sm:text-palette-text
+                                            max-sm:hover:bg-palette-green/80
+                                        `
                                         : undefined
                                 }
                                 {...rowProps}
