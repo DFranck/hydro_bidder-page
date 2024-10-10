@@ -301,9 +301,10 @@ export const fetchProposals = async (
     )
     const response = await unstable_cache(
         async () => {
-            return hydroQueryClient.topNProposals({
-                numberOfProposals: 20,
+            return hydroQueryClient.roundProposals({
+                limit: 20,
                 roundId,
+                startFrom: 0,
                 trancheId,
             })
         },
