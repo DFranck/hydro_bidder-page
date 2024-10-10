@@ -371,7 +371,7 @@ const ProposalDetail = ({
                         </div>
                         <div className="pl-16">
                             <p className="mb-2 mt-6 text-sm uppercase opacity-80">
-                                Project Overview
+                                Project Details
                             </p>
                             <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                 <Markdown>
@@ -381,6 +381,21 @@ const ProposalDetail = ({
                                     )}
                                 </Markdown>
                             </div>
+                            {renderedProposal.projectDetails && (
+                                <>
+                                    <p className="mb-2 mt-6 text-sm uppercase opacity-80">
+                                        Bid Description
+                                    </p>
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                                        <Markdown>
+                                            {renderedProposal.projectDetails.replaceAll(
+                                                /\\n/g,
+                                                "\n"
+                                            )}
+                                        </Markdown>
+                                    </div>
+                                </>
+                            )}
                             {renderedProposal.committeeComments && (
                                 <>
                                     <p className="mb-2 mt-6 text-sm uppercase opacity-80">
@@ -389,6 +404,21 @@ const ProposalDetail = ({
                                     <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                         <Markdown>
                                             {renderedProposal.committeeComments.replaceAll(
+                                                /\\n/g,
+                                                "\n"
+                                            )}
+                                        </Markdown>
+                                    </div>
+                                </>
+                            )}
+                            {renderedProposal.appendix && (
+                                <>
+                                    <p className="mb-2 mt-6 text-sm uppercase opacity-80">
+                                        Appendix
+                                    </p>
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                                        <Markdown>
+                                            {renderedProposal.appendix.replaceAll(
                                                 /\\n/g,
                                                 "\n"
                                             )}

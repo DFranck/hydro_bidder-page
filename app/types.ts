@@ -27,8 +27,10 @@ export type GlobalState = {
         {
             title: string
             description: string
+            projectDetails: string
             points?: number
             pointsDenom?: string
+            pointProgramLink?: string
             committeeComments: string
             appendix: string
         }

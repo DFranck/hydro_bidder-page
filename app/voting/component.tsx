@@ -6,7 +6,7 @@ import { TooltipIcon } from "@/components/TooltipIcon"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { CircleCheckBig, Gem, ScrollText } from "lucide-react"
+import { ArrowUpRight, CircleCheckBig, Gem, ScrollText } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -318,8 +318,25 @@ const ActiveProposals = ({
                                 <TooltipIcon
                                     icon={<Gem className="inline-block" />}
                                 >
-                                    This bid is offering {proposal.points}{" "}
-                                    {proposal.pointsDenom}
+                                    This project is using a point system. Voters
+                                    get points instead of live tokens. In this
+                                    bid, This project is distributing{" "}
+                                    <var className="font-mono font-bold not-italic text-palette-cyan">
+                                        {proposal.points.toLocaleString(
+                                            "en-US"
+                                        )}{" "}
+                                        {proposal.pointsDenom}
+                                    </var>{" "}
+                                    as tribute.{" "}
+                                    {proposal.pointProgramLink && (
+                                        <a
+                                            href={proposal.pointProgramLink}
+                                            className="inline-flex items-center gap-1 text-palette-green underline"
+                                            target="_blank"
+                                        >
+                                            Learn More <ArrowUpRight />
+                                        </a>
+                                    )}
                                 </TooltipIcon>
                             ) : (
                                 <>
