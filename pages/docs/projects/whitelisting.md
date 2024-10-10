@@ -1,3 +1,5 @@
+Hydro allocates liquidity through sequential monthly auction rounds, each lasting one month. Projects compete by offering tributes to voters. This onboarding guide describes how projects may participate in the auction process. 
+
 # Approval process
 
 ## Bid approval
