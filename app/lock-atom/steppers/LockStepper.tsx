@@ -190,8 +190,8 @@ export const LockStepper = ({
                         <CardHeader>
                             <CardTitle></CardTitle>
                             <div className="text-right text-xs opacity-60">
-                                You will have to do three wallet approvals. 
-                                This should only take a few seconds.
+                                You will have to do three wallet approvals. This
+                                should only take a few seconds.
                             </div>
                         </CardHeader>
                         <CardContent className="flex items-center justify-around gap-10">
@@ -260,8 +260,9 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             <p>
-                                You do not have enough gas to complete the transaction. 
-                                Please transfer more ATOM to your wallet and try again.
+                                You do not have enough gas to complete the
+                                transaction. Please transfer more ATOM to your
+                                wallet and try again.
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -277,13 +278,12 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             <p>
-                                You do not have enough gas on Neutron (Hydro's host chain). 
-                                Approve the transaction in your wallet to transfer.
-                                {" "}
+                                You do not have enough gas on Neutron
+                                (Hydro&rsquo;s host chain). Approve the
+                                transaction in your wallet to transfer.{" "}
                                 <strong>
                                     {formatAmount(minimumUATOMGas)} ATOM
-                                </strong>
-                                {" "}
+                                </strong>{" "}
                                 to your Neutron wallet to continue.
                             </p>
                         </CardContent>
@@ -300,11 +300,11 @@ export const LockStepper = ({
                             <p>
                                 Transferring your ATOM to your Neutron wallet.
                                 This may take a few seconds (longer if the
-                                network is congested). If you exit Hydro now, this
-                                status may not be visible when you return, but
-                                the transfer will continue ; once the transfer is
-                                complete, you will need to return to initiate
-                                the staking process.
+                                network is congested). If you exit Hydro now,
+                                this status may not be visible when you return,
+                                but the transfer will continue ; once the
+                                transfer is complete, you will need to return to
+                                initiate the staking process.
                             </p>
                         </CardContent>
                     </Card>
@@ -318,7 +318,8 @@ export const LockStepper = ({
                         <CardContent>
                             <p>
                                 Approve the transaction in your wallet to
-                                continue. This will start the tokenization of your staked ATOM.
+                                continue. This will start the tokenization of
+                                your staked ATOM.
                             </p>
                         </CardContent>
                     </Card>
@@ -330,8 +331,10 @@ export const LockStepper = ({
                             <CardTitle></CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p>Tokenizing your staked ATOM. This should only take
-                            a few seconds (unless the network is congested)
+                            <p>
+                                Tokenizing your staked ATOM. This should only
+                                take a few seconds (unless the network is
+                                congested)
                             </p>
                         </CardContent>
                     </Card>
@@ -344,8 +347,8 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             <p>
-                                This transaction could not be completed. 
-                                Your staked ATOM has not been locked in Hydro.
+                                This transaction could not be completed. Your
+                                staked ATOM has not been locked in Hydro.
                                 Refresh the page to try again.
                             </p>
                             <div className="mt-4">
@@ -379,8 +382,9 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             <p>
-                                Approve the transaction in your wallet to continue.
-                                This will start the transfer of your tokenized ATOM to Hydro.
+                                Approve the transaction in your wallet to
+                                continue. This will start the transfer of your
+                                tokenized ATOM to Hydro.
                             </p>
                         </CardContent>
                     </Card>
@@ -393,11 +397,11 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             <p>
-                                Sending your staked ATOM to Hydro.
-                                This should only take a few seconds (longer if the
-                                network is congested). If you exit Hydro, this
-                                status may not be visible when you return, but
-                                the transfer will continue. Once the transfer is
+                                Sending your staked ATOM to Hydro. This should
+                                only take a few seconds (longer if the network
+                                is congested). If you exit Hydro, this status
+                                may not be visible when you return, but the
+                                transfer will continue. Once the transfer is
                                 complete, you will need to return to initiate
                                 the staking process.
                             </p>
@@ -413,8 +417,9 @@ export const LockStepper = ({
                         <CardContent>
                             <p>
                                 Approve in your wallet again to lock your ATOM.
-                                This will initiate the locking of your staked ATOM into
-                                the Hydro contract to receive voting power.
+                                This will initiate the locking of your staked
+                                ATOM into the Hydro contract to receive voting
+                                power.
                             </p>
                         </CardContent>
                     </Card>
@@ -427,8 +432,8 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             <p>
-                                Locking your ATOM. This should only take 
-                                a few seconds, unless the network is congested.
+                                Locking your ATOM. This should only take a few
+                                seconds, unless the network is congested.
                             </p>
                         </CardContent>
                     </Card>
@@ -441,11 +446,9 @@ export const LockStepper = ({
                         </CardHeader>
                         <CardContent>
                             <p>
-                                Success! You locked
-                                {" "}
+                                Success! You locked{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong> in
-                                Hydro and received
-                                {" "}
+                                Hydro and received{" "}
                                 <strong>
                                     {formatAmount(
                                         scaleLockupPower(
