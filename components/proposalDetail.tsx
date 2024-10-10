@@ -373,7 +373,7 @@ const ProposalDetail = ({
                             <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                 Project Details
                             </p>
-                            <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                            <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
                                 <Markdown>
                                     {renderedProposal.description.replaceAll(
                                         /\\n/g,
