@@ -626,7 +626,7 @@ const LockForm = ({
                                                                 {...field}
                                                                 type="number"
                                                                 step="0.000001"
-                                                                min="0"
+                                                                min="0.000001"
                                                                 disabled={isDisabled}
                                                                 onChange={(e) => {
                                                                     const atomValue = parseFloat(e.target.value) || 0
