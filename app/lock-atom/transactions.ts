@@ -2,6 +2,7 @@ import {
     DeliverTxResponse,
     SigningStargateClient,
     StargateClient,
+    StdFee,
 } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { cosmos } from "interchain"
@@ -16,6 +17,7 @@ import {
     HydroBaseQueryClient,
     HydroBaseClient,
 } from "../ts_types/HydroBase.client"
+import { MsgExecuteContract } from "interchain/dist/codegen/cosmwasm/wasm/v1/tx"
 
 const hydroContractAddress =
     "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
@@ -155,7 +157,7 @@ export async function checkForGasOnHub(hubChain: ChainContext) {
 
     const hasEnoughUatom =
         uatomBalance && Number(uatomBalance.amount) > minimumUATOMGas * 2
-        
+
     return {
         hasEnoughUatom: !!hasEnoughUatom,
         uatomBalance: uatomBalance ? uatomBalance.amount : "0",
@@ -212,7 +214,7 @@ export async function signTokenizeShares(
         },
     }
 
-    const fee = await hubChain.estimateFee([msg])
+    const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
     return await hubSigner.sign(hubChain.address, [msg], fee, "")
 }
 
@@ -264,7 +266,7 @@ export async function signRedeemTokensForShares(
         },
     }
 
-    const fee = await hubChain.estimateFee([msg])
+    const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
     return await hubSigner.sign(hubChain.address, [msg], fee, "")
 }
 
@@ -300,7 +302,7 @@ export async function signIBCTransferHubToNeutron(
         },
     }
 
-    const fee = await hubChain.estimateFee([msg])
+    const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
     return await hubSigner.sign(hubChain.address, [msg], fee, "")
 }
 
@@ -335,7 +337,7 @@ export async function signIBCTransferNeutronToHub(
             memo: "",
         },
     }
-    const fee = await neutronChain.estimateFee([msg])
+    const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
     return await neutronSigner.sign(neutronChain.address, [msg], fee, "")
 }
 
@@ -356,12 +358,41 @@ export async function signLockTokens(
         neutronChain.address,
         hydroContractAddress
     )
-    const response = await hydroClient.lockTokens(
-        { lockDuration },
-        "auto",
-        "",
-        [{ denom, amount }]
+
+    // pepare message for simulating gas
+    const simulateMsg = MsgExecuteContract.fromPartial({
+        contract: hydroContractAddress,
+        sender: neutronChain.address,
+        msg: new TextEncoder().encode(
+            JSON.stringify({
+                lock_tokens: {
+                    lock_duration: lockDuration,
+                },
+            })
+        ),
+        funds: [{ amount, denom }],
+    })
+
+    // gas estimate from simulated message
+    const gasEstimate = await hydroClient.client.simulate(
+        neutronChain.address,
+        [
+            {
+                typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+                value: simulateMsg,
+            },
+        ],
+        ""
     )
+
+    // use gas from simulated message with a gas multiplier
+    const fee: StdFee = {
+        amount: [],
+        gas: Math.round(gasEstimate * 1.55).toString(),
+    }
+    const response = await hydroClient.lockTokens({ lockDuration }, fee, "", [
+        { denom, amount },
+    ])
     return response
 }
 
@@ -394,7 +425,7 @@ export async function signATOMGasTransferToNeutron(
             memo: "",
         },
     }
-    const fee = await hubChain.estimateFee([msg])
+    const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
     return await hubSigner.sign(hubChain.address, [msg], fee, "")
 }
 
