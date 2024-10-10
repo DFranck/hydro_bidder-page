@@ -225,7 +225,7 @@ const ActiveProposals = ({
                                 label: (
                                     <div className="flex items-center gap-1">
                                         Vote %
-                                        <TooltipIcon classNamesForTooltip="right-0 left-auto translate-x-0">
+                                        <TooltipIcon classNamesForTooltip="-ml-12">
                                             This is the percentage of votes that
                                             this project has received so far. It
                                             may increase or decrease if other
@@ -313,13 +313,20 @@ const ActiveProposals = ({
                                 </>
                             ),
 
-                            yourEstimatedReward: proposal.title
+                            yourEstimatedReward: !proposal.title
                                 .toLowerCase()
                                 .includes("[points]") ? (
                                 <TooltipIcon
                                     icon={<Gem className="inline-block" />}
                                 >
-                                    Blah blah
+                                    Blah blah blah blah blah blah blah blah blah
+                                    blah blah blah blah blah blah blah blah blah
+                                    blah blah blah blah blah blah blah blah blah
+                                    blah blah blah blah blah blah blah blah blah
+                                    blah blah blah blah blah blah blah blah blah
+                                    blah blah blah blah blah blah blah blah blah
+                                    blah blah blah blah blah blah blah blah blah
+                                    blah blah blah blah blah blah blah blah blah
                                 </TooltipIcon>
                             ) : (
                                 <>
