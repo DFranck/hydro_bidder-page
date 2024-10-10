@@ -35,8 +35,11 @@ export function TooltipIcon({
     function updateCoords(element: HTMLDivElement) {
         const targetCoords = element.getBoundingClientRect()
         setCoords({
-            x: targetCoords.x,
-            y: targetCoords.y + targetCoords.height,
+            x: targetCoords.x + targetCoords.width / 2,
+            y:
+                targetCoords.y +
+                targetCoords.height +
+                document.documentElement.scrollTop,
         })
     }
 
@@ -70,6 +73,8 @@ export function TooltipIcon({
                 group/tooltip
                 relative
                 z-10
+                inline-block
+                w-min
             "
             tabIndex={0}
             onMouseEnter={handleMouseEnter}
