@@ -145,7 +145,8 @@ export const ContinueFromNeutronStepper = ({
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
-                                        {[1, 2, 3].map((months) => (
+                                        {/* {[1, 2, 3].map((months) => ( */}
+                                        {[1].map((months) => (
                                             <Button
                                                 key={months}
                                                 type="button"
