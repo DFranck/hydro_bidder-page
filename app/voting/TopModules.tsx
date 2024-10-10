@@ -130,8 +130,8 @@ export function ProposalListTopModules() {
                     <div className="flex items-center gap-1">
                         Round APR
                         <TooltipIcon>
-                            This APR is calculated based the highest tribute
-                            available to voters in this round.{" "}
+                            This number is the average APR available to Hydro
+                            voters during the current active round.{" "}
                             <a
                                 href="/docs/users/calculating-staking-apr"
                                 className="inline-flex gap-1 text-palette-green underline"
