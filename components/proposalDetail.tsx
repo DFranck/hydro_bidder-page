@@ -276,6 +276,11 @@ const ProposalDetail = ({
         )
     }
 
+    const renderedProposal = {
+        ...proposal,
+        ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
+    }
+
     return (
         <div className="mx-auto max-w-7xl">
             <ChangeVoteModal />
@@ -361,21 +366,36 @@ const ProposalDetail = ({
                                 <ScrollText />
                             </div>
                             <h1 className="max-w-lg text-2xl tracking-normal">
-                                {proposal.title}
+                                {renderedProposal.title}
                             </h1>
                         </div>
                         <div className="pl-16">
                             <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                 Project Overview
                             </p>
-                            <div className="pb-15 prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                            <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                 <Markdown>
-                                    {proposal.description.replaceAll(
+                                    {renderedProposal.description.replaceAll(
                                         /\\n/g,
                                         "\n"
                                     )}
                                 </Markdown>
                             </div>
+                            {renderedProposal.committeeComments && (
+                                <>
+                                    <p className="mb-2 mt-6 text-sm uppercase opacity-80">
+                                        Committee Review
+                                    </p>
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                                        <Markdown>
+                                            {renderedProposal.committeeComments.replaceAll(
+                                                /\\n/g,
+                                                "\n"
+                                            )}
+                                        </Markdown>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
 

@@ -532,7 +532,7 @@ const LockForm = ({
                     <p>You need some staked ATOM to participate in Hydro. You can go to Keplr staking
                     interface and stake some ATOM to any active validator</p>
                     <p>Stake now:{' '}
-                        <a href="https://wallet.keplr.app/chains/cosmos-hub" target="_blank" className="text-palette-green underline inline-flex items-center gap-1">https://wallet.keplr.app/chains/cosmos-hub <ArrowUpRight /></a></p>
+                        <a href="https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake" target="_blank" className="text-palette-green underline inline-flex items-center gap-1">https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake <ArrowUpRight /></a></p>
                 </div>
             ) : (
                 <>
