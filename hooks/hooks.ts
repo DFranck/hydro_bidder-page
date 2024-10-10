@@ -11,6 +11,7 @@ import {
 } from "@cosmjs/cosmwasm-stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useQuery } from "@tanstack/react-query"
+import { unstable_cache } from "next/cache"
 import {
     HydroBaseClient,
     HydroBaseQueryClient,
@@ -19,7 +20,6 @@ import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
 import { TributeBaseQueryClient } from "../app/ts_types/TributeBase.client"
 import { Tribute } from "../app/ts_types/TributeBase.types"
 import { GlobalState, RoundState } from "../app/types"
-import { unstable_cache } from "next/cache"
 
 let clientInstance: CosmWasmClient | null = null
 
@@ -178,6 +178,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
         tranches,
         whitelistAdmins,
         whitelist,
+        bidDescriptions,
     ] = await Promise.all([
         unstable_cache(
             async () => {
@@ -233,6 +234,15 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
             ["whitelist"],
             { revalidate: CACHE_REVALIDATE_SECONDS }
         )(),
+        unstable_cache(
+            async () => {
+                return fetch(
+                    "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/example-bid-descriptions.json"
+                ).then((response) => response.json())
+            },
+            ["bidDescriptions"],
+            { revalidate: CACHE_REVALIDATE_SECONDS }
+        )(),
     ])
 
     return {
@@ -242,6 +252,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
         tranches,
         whitelistAdmins,
         whitelist,
+        bidDescriptions,
     }
 }
 

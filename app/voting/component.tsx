@@ -86,6 +86,7 @@ const ActiveProposals = ({
 
         return {
             ...proposal,
+            ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
             pricedAndNamedTributes,
             hasVotedOnProp,
         }
@@ -313,20 +314,12 @@ const ActiveProposals = ({
                                 </>
                             ),
 
-                            yourEstimatedReward: !proposal.title
-                                .toLowerCase()
-                                .includes("[points]") ? (
+                            yourEstimatedReward: proposal.points ? (
                                 <TooltipIcon
                                     icon={<Gem className="inline-block" />}
                                 >
-                                    Blah blah blah blah blah blah blah blah blah
-                                    blah blah blah blah blah blah blah blah blah
-                                    blah blah blah blah blah blah blah blah blah
-                                    blah blah blah blah blah blah blah blah blah
-                                    blah blah blah blah blah blah blah blah blah
-                                    blah blah blah blah blah blah blah blah blah
-                                    blah blah blah blah blah blah blah blah blah
-                                    blah blah blah blah blah blah blah blah blah
+                                    This bid is offering {proposal.points}{" "}
+                                    {proposal.pointsDenom}
                                 </TooltipIcon>
                             ) : (
                                 <>
