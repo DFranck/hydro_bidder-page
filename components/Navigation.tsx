@@ -1,5 +1,6 @@
 "use client"
 
+import { TooltipIcon } from "@/components/TooltipIcon"
 import { Wallet } from "@/components/wallet/Wallet"
 import { cn } from "@/lib/utils"
 import { ArrowUpRight } from "lucide-react"
@@ -41,12 +42,29 @@ export default function Navigation() {
                 </Link>
 
                 {isConnected && (
-                    <Link
-                        href="/lockups"
-                        className={navigationMenuTriggerStyle("/lockups")}
-                    >
-                        Lockups
-                    </Link>
+                    <>
+                        <Link
+                            href="/lockups"
+                            className={navigationMenuTriggerStyle("/lockups")}
+                        >
+                            Lockups
+                        </Link>
+                        <TooltipIcon
+                            icon={
+                                <Link
+                                    href="/rewards"
+                                    className={twMerge(
+                                        navigationMenuTriggerStyle("/rewards"),
+                                        `pointer-events-none opacity-60`
+                                    )}
+                                >
+                                    Rewards
+                                </Link>
+                            }
+                        >
+                            Rewards will be available when the pilot round ends
+                        </TooltipIcon>
+                    </>
                 )}
                 <Wallet notifyConnectedCB={setIsConnected} />
             </div>
