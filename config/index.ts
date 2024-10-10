@@ -22,10 +22,14 @@ export const endpoints = {
 }
 
 export const HYDRO_CONTRACT_ADDRESS =
-    "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
+    "neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp"
+// this is a test contract
+// "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
 
 export const TRIBUTE_CONTRACT_ADDRESS =
-    "neutron1y8wtzufvtpccpxl8tdrg2c59zuuk93l8tl68nprukhaakc2rddqsnfd2qt"
+    "neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t"
+// this is a test contract
+// "neutron1y8wtzufvtpccpxl8tdrg2c59zuuk93l8tl68nprukhaakc2rddqsnfd2qt"
 
 export const NEUTRON_DEFAULT_RPC = "https://rpc.neutron.quokkastake.io/"
 
