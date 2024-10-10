@@ -432,12 +432,12 @@ const ProposalDetail = ({
                                     {proposal.percentage}%
                                 </p>
                             </div>
-                            <div className="pb-6">
+                            {/* <div className="pb-6">
                                 <p className="text-sm opacity-80">Status</p>
                                 <p className="text-xl font-bold not-italic text-[#00FFC2]">
                                     {deployed ? "Deployed" : "In voting"}
                                 </p>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
