@@ -39,6 +39,7 @@ const ProposalDetail = ({
         globalState,
         currentProposalTributes,
         currentProposalTranches: proposalTranches,
+        assetListWithPrices,
     } = useVotingContext()
     const [hasVoted, setHasVoted] = useState(false)
     const [hasVotedThisProposal, setHasVotedThisProposal] = useState(false)
@@ -281,6 +282,18 @@ const ProposalDetail = ({
         ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
     }
 
+    const summedTributes = sumTributeAmounts(tributes)
+
+    const pricedAndNamedTributes = summedTributes.map((tribute) => {
+        const assetInfo = assetListWithPrices.get(tribute.denom)
+        return {
+            ...tribute,
+            priceUsd: assetInfo?.priceUsd,
+            symbol: assetInfo?.symbol,
+            decimals: assetInfo?.decimals,
+        }
+    })
+
     return (
         <div className="mx-auto max-w-7xl">
             <ChangeVoteModal />
@@ -373,7 +386,7 @@ const ProposalDetail = ({
                             <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                 Project Details
                             </p>
-                            <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
+                            <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                 <Markdown>
                                     {renderedProposal.description.replaceAll(
                                         /\\n/g,
@@ -448,23 +461,16 @@ const ProposalDetail = ({
                                 <p className="text-sm opacity-80">
                                     Tribute to Voters
                                 </p>
-                                {sumTributeAmounts(tributes).length > 0 ? (
-                                    sumTributeAmounts(tributes).map(
+                                {pricedAndNamedTributes.length > 0 ? (
+                                    pricedAndNamedTributes.map(
                                         (tribute, index) => (
                                             <p
                                                 key={index}
                                                 className="text-xl font-bold not-italic"
                                             >
-                                                {`${formatAmount(
-                                                    tribute.amount
-                                                )} ${
-                                                    tribute.denom.length > 20
-                                                        ? tribute.denom.slice(
-                                                              0,
-                                                              17
-                                                          ) + "..."
-                                                        : tribute.denom
-                                                }`}
+                                                {formatAmount(tribute.amount)}{" "}
+                                                {tribute.symbol ||
+                                                    tribute.denom}
                                             </p>
                                         )
                                     )
