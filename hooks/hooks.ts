@@ -237,7 +237,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
         unstable_cache(
             async () => {
                 return fetch(
-                    "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/example-bid-descriptions.json"
+                    "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
                 ).then((response) => response.json())
             },
             ["bidDescriptions"],
