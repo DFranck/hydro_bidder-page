@@ -399,7 +399,7 @@ const ProposalDetail = ({
                                     <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                         Bid Description
                                     </p>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
                                         <Markdown>
                                             {renderedProposal.projectDetails.replaceAll(
                                                 /\\n/g,
@@ -414,7 +414,7 @@ const ProposalDetail = ({
                                     <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                         Committee Review
                                     </p>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
                                         <Markdown>
                                             {renderedProposal.committeeComments.replaceAll(
                                                 /\\n/g,
@@ -429,7 +429,7 @@ const ProposalDetail = ({
                                     <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                         Appendix
                                     </p>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white">
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
                                         <Markdown>
                                             {renderedProposal.appendix.replaceAll(
                                                 /\\n/g,
