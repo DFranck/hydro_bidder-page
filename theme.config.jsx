@@ -21,6 +21,9 @@ const themeConfig = {
     nextThemes: {
         defaultTheme: "dark",
     },
+    footer: {
+        component: null,
+    },
     head: (
         <>
             <meta
