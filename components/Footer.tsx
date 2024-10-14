@@ -12,7 +12,7 @@ export const Footer = () => {
                     flex-row
                     items-center
                     justify-between
-                    py-12
+                    py-6
                     text-base
                     font-normal
                     italic
