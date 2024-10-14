@@ -13,7 +13,7 @@ The APR number displayed in the Hydro has two components:
 ### Average APR 
 The [Hydro voting page](https://hydro.cosmos.network/voting) displays the average APR available to Hydro voters. It is calculated by dividing the dollar value of the sum of all available tributes posted during the active round by the total dollar value of the locked voting power in Hydro. The exact formula is:
 
-# to be updated
+$\text{Average APR} = \left(\frac{\sum_{\substack{i \in \text{current round bids}}} \text{tribute value}_i}{\text{total current round locked atom}_i}\right) \times 12$
 
 Note that this average APR may change drastically throughout a round:
 - It will increase if projects increase their tributes
@@ -29,6 +29,6 @@ Some projects might bid using points rather than tradable tokens, which can infl
 After the first pilot round, Hydro will start displaying historical APRs. These will likely give users a more realistic view of the expected end-of-round performance. 
 The historical APR is calculated based on the average Hydro voter APR of the last round. The exact formula is: 
 
-# to be updated
+$\text{Average APR} = \left(\frac{\sum_{\substack{i \in \text{last round bids}}} \text{tribute value}_i}{\text{total last round locked atom}_i}\right) \times 12$
 
 The interface will display APRs based on the last month, the last three months, and the last year.
