@@ -5,7 +5,6 @@ import {
 } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { cosmos } from "interchain"
-const txRaw = cosmos.tx.v1beta1.TxRaw
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import {
     MsgRedeemTokensForShares,
@@ -15,6 +14,7 @@ import { MsgTransfer } from "stridejs/types/codegen/ibc/applications/transfer/v1
 import { HydroBaseClient } from "../ts_types/HydroBase.client"
 import { MsgExecuteContract } from "interchain/dist/codegen/cosmwasm/wasm/v1/tx"
 
+const txRaw = cosmos.tx.v1beta1.TxRaw
 const hydroContractAddress =
     "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
 
