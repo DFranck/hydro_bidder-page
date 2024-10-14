@@ -6,23 +6,12 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { scaleLockupPower, formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/utils"
 import {
-    signTokenizeShares,
     signRedeemTokensForShares,
-    signLockTokens,
     broadcastTx,
-    signIBCTransferHubToNeutron,
     signIBCTransferNeutronToHub,
-    broadcastAndRelayIBCHubToNeutron,
     broadcastAndRelayIBCNeutronToHub,
-    extractLSMDenom,
-    checkForGasOnNeutron,
-    signATOMGasTransferToNeutron,
-    broadcastAndRelayIBCGasToNeutron,
-    checkForGasOnHub,
-    minimumUATOMGas,
 } from "../transactions"
 import {
     Card,
@@ -32,7 +21,6 @@ import {
     CardContent,
 } from "@/components/ui/card"
 import { Validator } from "@/hooks/hooks"
-import { EPOCH_LENGTH } from "@/config"
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -298,10 +286,10 @@ export const RevertFromNeutronStepper = ({
                                         className="flex items-center text-sm text-gray-600 hover:text-gray-800"
                                     >
                                         Show Error Log
-                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                        <ChevronDown className="ml-1 h-4 w-4" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
+                                    <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                                         {errorLog}
                                     </pre>
                                 )}
@@ -319,5 +307,5 @@ export const RevertFromNeutronStepper = ({
         }
     }
 
-    return <Card className="max-w-[800px] mx-auto">{renderStep()}</Card>
+    return <Card className="mx-auto max-w-[800px]">{renderStep()}</Card>
 }

@@ -1,7 +1,6 @@
 import {
     DeliverTxResponse,
     SigningStargateClient,
-    StargateClient,
     StdFee,
 } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -13,10 +12,7 @@ import {
     MsgTokenizeShares,
 } from "stridejs/types/codegen/cosmos/staking/v1beta1/tx"
 import { MsgTransfer } from "stridejs/types/codegen/ibc/applications/transfer/v1/tx"
-import {
-    HydroBaseQueryClient,
-    HydroBaseClient,
-} from "../ts_types/HydroBase.client"
+import { HydroBaseClient } from "../ts_types/HydroBase.client"
 import { MsgExecuteContract } from "interchain/dist/codegen/cosmwasm/wasm/v1/tx"
 
 const hydroContractAddress =
@@ -337,7 +333,7 @@ export async function signIBCTransferNeutronToHub(
             memo: "",
         },
     }
-    const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
+    const fee = await neutronChain.estimateFee([msg], undefined, undefined, 1.5)
     return await neutronSigner.sign(neutronChain.address, [msg], fee, "")
 }
 
