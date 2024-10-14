@@ -1,5 +1,6 @@
 "use client"
 
+import { ContentContainer } from "@/components/ContentContainer"
 import { useUserVotingData } from "@/hooks/hooks"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import { useChain } from "@cosmos-kit/react"
@@ -36,26 +37,19 @@ export const Header = () => {
                 top-0
                 z-50
                 mb-12
+                border-b
+                border-palette-beige
             "
         >
-            <div
+            <ContentContainer
                 className={twMerge(
                     `
-                        font-mono
-                        mx-auto
-                        w-full
-                        max-w-7xl
-                        items-center
+                        flex-row
                         justify-between
-                        border-b
-                        border-palette-beige
                         bg-black
-                        px-6
                         text-sm
                         transition-all
                         duration-1000
-                        lg:flex
-                        lg:px-12
                     `,
                     isScrolled
                         ? `
@@ -95,7 +89,8 @@ export const Header = () => {
                 <div className="flex flex-row items-center justify-between gap-6">
                     <Navigation />
                 </div>
-            </div>
+            </ContentContainer>
+
             {showLockATOMBanner && (
                 <div
                     className={twMerge(
