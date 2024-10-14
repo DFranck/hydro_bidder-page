@@ -13,15 +13,18 @@ import {
 import { MsgTransfer } from "stridejs/types/codegen/ibc/applications/transfer/v1/tx"
 import { HydroBaseClient } from "../ts_types/HydroBase.client"
 import { MsgExecuteContract } from "interchain/dist/codegen/cosmwasm/wasm/v1/tx"
-
-const txRaw = cosmos.tx.v1beta1.TxRaw
-const hydroContractAddress =
-    "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
+import { HYDRO_CONTRACT_ADDRESS } from "@/config"
 
 export const minimumUNTRNGas = 10000
 export const minimumUATOMGas = 10000
 export const UATOMDenom =
     "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+
+const txRaw = cosmos.tx.v1beta1.TxRaw
+
+// TODO: unlock and move tokens from this contract after the lock is complete
+// const hydroContractAddress =
+//     "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
 
 export async function checkForHubLSMShares(
     hubChain: ChainContext,
@@ -352,12 +355,12 @@ export async function signLockTokens(
     const hydroClient = new HydroBaseClient(
         client,
         neutronChain.address,
-        hydroContractAddress
+        HYDRO_CONTRACT_ADDRESS
     )
 
     // pepare message for simulating gas
     const simulateMsg = MsgExecuteContract.fromPartial({
-        contract: hydroContractAddress,
+        contract: HYDRO_CONTRACT_ADDRESS,
         sender: neutronChain.address,
         msg: new TextEncoder().encode(
             JSON.stringify({
