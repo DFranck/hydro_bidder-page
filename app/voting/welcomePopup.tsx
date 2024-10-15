@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
@@ -59,13 +60,21 @@ export function WelcomePopup({ showModal = true }: WelcomePopupProps) {
                         </li>
                     </ol>
 
-                    <div className="mt-4 flex justify-start space-x-2">
+                    <div className="mt-4 flex justify-start gap-3">
                         <Link href="/lock-atom">
                             <Button>Lock your ATOM to vote</Button>
                         </Link>
                         <Button onClick={closeModal} variant="outline">
                             Close
                         </Button>
+                        <a
+                            className="flex items-center gap-1 text-palette-green underline"
+                            href="https://hydro.cosmos.network/docs"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Learn More <ArrowUpRight />
+                        </a>
                     </div>
 
                     <div className="mt-4 flex items-center">
@@ -80,7 +89,7 @@ export function WelcomePopup({ showModal = true }: WelcomePopupProps) {
                             htmlFor="dontShowAgain"
                             className="ml-2 block text-sm text-white"
                         >
-                            {"Don't show me this again"}
+                            Don&rsquo;t show me this again
                         </label>
                     </div>
                 </CardContent>
