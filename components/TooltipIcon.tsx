@@ -57,7 +57,7 @@ export function TooltipIcon({
 
     function handleFocus(event: FocusEvent<HTMLDivElement>) {
         if (timer.current) clearTimeout(timer.current)
-        updateCoords(event.target)
+        updateCoords(event.currentTarget)
         setIsOpen(true)
     }
 
