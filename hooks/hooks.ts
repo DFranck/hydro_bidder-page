@@ -301,17 +301,17 @@ export const fetchProposals = async (
     )
     const response = await unstable_cache(
         async () => {
-            // return hydroQueryClient.roundProposals({
-            //     limit: 20,
-            //     roundId,
-            //     startFrom: 0,
-            //     trancheId,
-            // })
-            return hydroQueryClient.topNProposals({
-                numberOfProposals: 20,
+            return hydroQueryClient.roundProposals({
+                limit: 20,
                 roundId,
+                startFrom: 0,
                 trancheId,
             })
+            // return hydroQueryClient.topNProposals({
+            //     numberOfProposals: 20,
+            //     roundId,
+            //     trancheId,
+            // })
         },
         ["topNProposals", roundId.toString(), trancheId.toString()],
         { revalidate: CACHE_REVALIDATE_SECONDS }
