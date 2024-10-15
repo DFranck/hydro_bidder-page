@@ -1,18 +1,10 @@
 "use client"
-import { ChevronDown, Loader } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { ReactNode, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
-import { ConditionalWrapper } from "@/components/ConditionalWrapper"
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
@@ -21,6 +13,7 @@ import {
     signIBCTransferHubToNeutron,
     signLockTokens,
 } from "../transactions"
+import { Step } from "@/app/lock-atom/steppers/Step"
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -350,43 +343,11 @@ export const ContinueFromHubStepper = ({
     const { title, contents, buttons, isWorking } = getStepContents()
 
     return (
-        <Card className="mx-auto max-w-screen-sm border-2 border-palette-green bg-palette-text">
-            {title && (
-                <CardHeader>
-                    <CardTitle>{title}</CardTitle>
-                </CardHeader>
-            )}
-
-            <CardContent className="flex flex-col gap-3 py-6">
-                <ConditionalWrapper
-                    condition={!!isWorking}
-                    wrapper={(children) => (
-                        <div className="flex gap-6">
-                            <Loader className="animate-spin" />
-                            <div className="flex flex-col gap-3">
-                                {children}
-                            </div>
-                        </div>
-                    )}
-                >
-                    {contents}
-                </ConditionalWrapper>
-            </CardContent>
-
-            {buttons && (
-                <CardFooter className="flex flex-row-reverse gap-2">
-                    {buttons.map((button, index) => (
-                        <Button
-                            key={index}
-                            onClick={button.onClick}
-                            className={button.className}
-                            variant={index === 0 ? "primary" : "secondary"}
-                        >
-                            {button.label}
-                        </Button>
-                    ))}
-                </CardFooter>
-            )}
-        </Card>
+        <Step
+            title={title}
+            contents={contents}
+            buttons={buttons}
+            isWorking={isWorking}
+        />
     )
 }
