@@ -1,6 +1,13 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import {
     Form,
     FormControl,
     FormDescription,
@@ -9,43 +16,31 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { ChainContext } from "@cosmos-kit/core"
-import { useChain } from "@cosmos-kit/react"
-import { cosmos } from "interchain"
-import React, { useEffect, useState } from "react"
-const txRaw = cosmos.tx.v1beta1.TxRaw
-
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-
-import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
-import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
-import { LockStepper } from "./steppers/LockStepper"
-import { RevertFromHubStepper } from "./steppers/RevertFromHubStepper"
-import { RevertFromNeutronStepper } from "./steppers/RevertFromNeutronStepper"
-
-import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
-
 import { Input } from "@/components/ui/input"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { EPOCH_LENGTH } from "@/config"
 import { Delegation, useMyValidators, Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { SigningStargateClient } from "@cosmjs/stargate"
+import { ChainContext } from "@cosmos-kit/core"
+import { useChain } from "@cosmos-kit/react"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { cosmos } from "interchain"
 import {
     AlertTriangle,
     ArrowUpRight,
     ChevronLeft,
     CircleAlert,
 } from "lucide-react"
+import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
+import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
+import { LockStepper } from "./steppers/LockStepper"
+import { RevertFromHubStepper } from "./steppers/RevertFromHubStepper"
+import { RevertFromNeutronStepper } from "./steppers/RevertFromNeutronStepper"
+import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
 
 type Stepper =
     | { type: "lock"; validator: string; amount: string; duration: number }
@@ -90,6 +85,8 @@ type IncompleteNotice =
           denom: string
           baseDenom: string
       }
+
+const txRaw = cosmos.tx.v1beta1.TxRaw
 
 function getValidatorMoniker(
     validator: string,

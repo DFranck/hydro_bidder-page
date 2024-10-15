@@ -1,10 +1,6 @@
 "use client"
-import { ChevronDown } from "lucide-react"
-import { useState } from "react"
-
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Button } from "@/components/ui/button"
-import { ChainContext } from "@cosmos-kit/core"
-
 import {
     Card,
     CardContent,
@@ -16,6 +12,9 @@ import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { SigningStargateClient } from "@cosmjs/stargate"
+import { ChainContext } from "@cosmos-kit/core"
+import { ChevronDown, Loader } from "lucide-react"
+import { ReactNode, useState } from "react"
 import {
     broadcastAndRelayIBCGasToNeutron,
     broadcastAndRelayIBCHubToNeutron,
@@ -29,6 +28,7 @@ import {
     signLockTokens,
     signTokenizeShares,
 } from "../transactions"
+
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -182,170 +182,150 @@ export const LockStepper = ({
         }
     }
 
-    const renderStep = () => {
+    function getStepContents(): {
+        isWorking?: boolean
+        title?: ReactNode
+        contents: ReactNode
+        buttons?: {
+            label: ReactNode
+            onClick?: () => void
+            className?: string
+        }[]
+    } {
         switch (step) {
             case "Init":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                            <div className="text-right text-xs opacity-60">
-                                You will have to do three wallet approvals. This
-                                should only take a few seconds.
+                return {
+                    contents: (
+                        <>
+                            <p>
+                                Next, you&rsquo;ll be asked to do three wallet
+                                approvals. This should only take a few seconds.
+                            </p>
+                            <div className="flex items-center justify-around gap-10">
+                                {[
+                                    [formatAmount(amount), "ATOM Amount"],
+                                    [
+                                        <>
+                                            {lockDuration / EPOCH_LENGTH}{" "}
+                                            {lockDuration > EPOCH_LENGTH
+                                                ? "months"
+                                                : "month"}
+                                        </>,
+                                        "Lock Duration",
+                                    ],
+                                    [
+                                        formatAmount(
+                                            scaleLockupPower(
+                                                lockDuration,
+                                                BigInt(amount)
+                                            )
+                                        ),
+                                        "Voting Power",
+                                    ],
+                                ].map(([value, label], index) => (
+                                    <div
+                                        className="
+                                            flex
+                                            flex-col-reverse
+                                            items-center
+                                            justify-center
+                                            gap-1
+                                        "
+                                        key={index}
+                                    >
+                                        <div className="text-xs text-palette-beige">
+                                            {label}
+                                        </div>
+                                        <div className="text-2xl font-bold">
+                                            {value}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        </CardHeader>
-                        <CardContent className="flex items-center justify-around gap-10">
-                            {[
-                                [formatAmount(amount), "ATOM Amount"],
-                                [
-                                    <>
-                                        {lockDuration / EPOCH_LENGTH}{" "}
-                                        {lockDuration > EPOCH_LENGTH
-                                            ? "months"
-                                            : "month"}
-                                    </>,
-                                    "Lock Duration",
-                                ],
-                                [
-                                    formatAmount(
-                                        scaleLockupPower(
-                                            lockDuration,
-                                            BigInt(amount)
-                                        )
-                                    ),
-                                    "Voting Power",
-                                ],
-                            ].map(([value, label], index) => (
-                                <div
-                                    className="
-                                        flex
-                                        flex-col-reverse
-                                        items-center
-                                        justify-center
-                                        gap-1
-                                    "
-                                    key={index}
-                                >
-                                    <div className="text-xs text-palette-beige">
-                                        {label}
-                                    </div>
-                                    <div className="text-2xl font-bold">
-                                        {value}
-                                    </div>
-                                </div>
-                            ))}
-                            {/* {getValidatorMoniker(
-                                validator,
-                                validatorMap
-                            )} */}
-                        </CardContent>
-                        <CardFooter className="flex flex-row-reverse gap-3">
-                            <Button
-                                className="bg-palette-green"
-                                onClick={execute}
-                            >
-                                Start Locking
-                            </Button>
-                            <Button variant="outline" onClick={onExit}>
-                                Cancel
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Start Locking",
+                            onClick: execute,
+                            className: "bg-palette-green",
+                        },
+                        {
+                            label: "Cancel",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "NoHubGasError":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                You do not have enough gas to complete the
-                                transaction. Please transfer more ATOM to your
-                                wallet and try again.
-                            </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={onExit}>OK</Button>
-                        </CardFooter>
-                    </Card>
-                )
+                return {
+                    contents: (
+                        <p>
+                            You do not have enough gas to complete the
+                            transaction. Please transfer more ATOM to your
+                            wallet and try again.
+                        </p>
+                    ),
+                    buttons: [
+                        {
+                            label: "OK",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "WaitingForNeutronGasSigning":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                You do not have enough gas on Neutron
-                                (Hydro&rsquo;s host chain). Approve the
-                                transaction in your wallet to transfer.{" "}
-                                <strong>
-                                    {formatAmount(minimumUATOMGas)} ATOM
-                                </strong>{" "}
-                                to your Neutron wallet to continue.
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
-
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            You do not have enough gas on Neutron (Hydro&rsquo;s
+                            host chain). Approve the transaction in your wallet
+                            to transfer.{" "}
+                            <strong>
+                                {formatAmount(minimumUATOMGas)} ATOM
+                            </strong>{" "}
+                            to your Neutron wallet to continue.
+                        </p>
+                    ),
+                }
             case "WaitingForNeutronGasBroadcastAndRelay":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Transferring your ATOM to your Neutron wallet.
-                                This may take a few seconds (longer if the
-                                network is congested). If you exit Hydro now,
-                                this status may not be visible when you return,
-                                but the transfer will continue ; once the
-                                transfer is complete, you will need to return to
-                                initiate the staking process.
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            Transferring your ATOM to your Neutron wallet. This
+                            may take a few seconds (longer if the network is
+                            congested). If you exit Hydro now, this status may
+                            not be visible when you return, but the transfer
+                            will continue ; once the transfer is complete, you
+                            will need to return to initiate the staking process.
+                        </p>
+                    ),
+                }
             case "WaitingForTokenizeSigning":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Approve the transaction in your wallet to
-                                continue. This will start the tokenization of
-                                your staked ATOM.
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            Approve the transaction in your wallet to continue.
+                            This will start the tokenization of your staked
+                            ATOM.
+                        </p>
+                    ),
+                }
             case "WaitingForTokenizeBroadcast":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Tokenizing your staked ATOM. This should only
-                                take a few seconds (unless the network is
-                                congested)
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            Tokenizing your staked ATOM. This should only take a
+                            few seconds (unless the network is congested)
+                        </p>
+                    ),
+                }
             case "Error":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    contents: (
+                        <>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been locked in Hydro.
@@ -366,113 +346,133 @@ export const LockStepper = ({
                                     </pre>
                                 )}
                             </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={() => window.location.reload()}>
-                                Refresh page
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Refresh page",
+                            onClick: () => window.location.reload(),
+                        },
+                    ],
+                }
             case "WaitingForIBCSigning":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Approve the transaction in your wallet to
-                                continue. This will start the transfer of your
-                                tokenized ATOM to Hydro.
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            Approve the transaction in your wallet to continue.
+                            This will start the transfer of your tokenized ATOM
+                            to Hydro.
+                        </p>
+                    ),
+                }
             case "WaitingForIBCBroadcastAndRelay":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Sending your staked ATOM to Hydro. This should
-                                only take a few seconds (longer if the network
-                                is congested). If you exit Hydro, this status
-                                may not be visible when you return, but the
-                                transfer will continue. Once the transfer is
-                                complete, you will need to return to initiate
-                                the staking process.
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            Sending your staked ATOM to Hydro. This should only
+                            take a few seconds (longer if the network is
+                            congested). If you exit Hydro, this status may not
+                            be visible when you return, but the transfer will
+                            continue. Once the transfer is complete, you will
+                            need to return to initiate the staking process.
+                        </p>
+                    ),
+                }
             case "WaitingForLockingSigning":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Approve in your wallet again to lock your ATOM.
-                                This will initiate the locking of your staked
-                                ATOM into the Hydro contract to receive voting
-                                power.
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            Approve in your wallet again to lock your ATOM. This
+                            will initiate the locking of your staked ATOM into
+                            the Hydro contract to receive voting power.
+                        </p>
+                    ),
+                }
             case "WaitingForLockingBroadcast":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Locking your ATOM. This should only take a few
-                                seconds, unless the network is congested.
-                            </p>
-                        </CardContent>
-                    </Card>
-                )
+                return {
+                    isWorking: true,
+                    contents: (
+                        <p>
+                            Locking your ATOM. This should only take a few
+                            seconds, unless the network is congested.
+                        </p>
+                    ),
+                }
             case "Success":
-                return (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Success! You locked{" "}
-                                <strong>{formatAmount(amount)} ATOM</strong> in
-                                Hydro and received{" "}
-                                <strong>
-                                    {formatAmount(
-                                        scaleLockupPower(
-                                            lockDuration,
-                                            BigInt(amount)
-                                        )
-                                    )}{" "}
-                                    voting power.
-                                </strong>
-                            </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={onExit}>Done</Button>
-                        </CardFooter>
-                    </Card>
-                )
+                return {
+                    contents: (
+                        <p>
+                            Success! You locked{" "}
+                            <strong>{formatAmount(amount)} ATOM</strong> in
+                            Hydro and received{" "}
+                            <strong>
+                                {formatAmount(
+                                    scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    )
+                                )}{" "}
+                                voting power.
+                            </strong>
+                        </p>
+                    ),
+                    buttons: [
+                        {
+                            label: "Done",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             default:
-                return null
+                return {
+                    contents: <></>,
+                }
         }
     }
 
+    const { title, contents, buttons, isWorking } = getStepContents()
+
     return (
-        <Card className="mx-auto max-w-[800px] bg-[#171717]">
-            {renderStep()}
+        <Card className="mx-auto max-w-screen-sm border-2 border-palette-green bg-palette-text">
+            {title && (
+                <CardHeader>
+                    <CardTitle>{title}</CardTitle>
+                </CardHeader>
+            )}
+
+            <CardContent className="flex flex-col gap-3 py-6">
+                <ConditionalWrapper
+                    condition={!!isWorking}
+                    wrapper={(children) => (
+                        <div className="flex gap-6">
+                            <Loader className="animate-spin" />
+                            <div className="flex flex-col gap-3">
+                                {children}
+                            </div>
+                        </div>
+                    )}
+                >
+                    {contents}
+                </ConditionalWrapper>
+            </CardContent>
+
+            {buttons && (
+                <CardFooter className="flex flex-row-reverse gap-2">
+                    {buttons.map((button, index) => (
+                        <Button
+                            key={index}
+                            onClick={button.onClick}
+                            className={button.className}
+                            variant={index === 0 ? "primary" : "secondary"}
+                        >
+                            {button.label}
+                        </Button>
+                    ))}
+                </CardFooter>
+            )}
         </Card>
     )
 }
