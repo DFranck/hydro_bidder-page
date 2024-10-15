@@ -362,18 +362,42 @@ export default function Home() {
                                 </span>
                             </div>
                             {renderBenefits()}
-                            <Button
-                                asChild
-                                className="
-                                    h-14
-                                    rounded-xl
-                                    text-lg
-                                    font-normal
-                                    capitalize
-                                "
-                            >
-                                <Link href="/lock-atom">Get Started</Link>
-                            </Button>
+                            <div className="flex gap-6">
+                                <Button
+                                    asChild
+                                    className="
+                                        h-14
+                                        rounded-xl
+                                        text-lg
+                                        font-normal
+                                        capitalize
+                                    "
+                                >
+                                    <Link href="/lock-atom">Get Started</Link>
+                                </Button>
+                                <Button
+                                    asChild
+                                    className="
+                                        h-14
+                                        rounded-xl
+                                        border
+                                        bg-transparent
+                                        px-6
+                                        text-lg
+                                        font-normal
+                                        capitalize
+                                        text-white
+                                    "
+                                >
+                                    <Link
+                                        href="/docs/users/calculating-staking-apr"
+                                        target="_blank"
+                                    >
+                                        Learn More
+                                        <ArrowUpRight />
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                         <Image
                             className="mix-blend-screen"
@@ -456,7 +480,7 @@ export default function Home() {
                     <div
                         className="
                             flex
-                            gap-5
+                            gap-6
                         "
                     >
                         <Button
