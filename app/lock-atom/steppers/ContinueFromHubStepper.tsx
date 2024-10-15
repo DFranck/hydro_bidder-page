@@ -1,10 +1,11 @@
 "use client"
-import { ChevronDown } from "lucide-react"
-import { useState } from "react"
+import { ChevronDown, Loader } from "lucide-react"
+import { ReactNode, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import {
     Card,
     CardContent,
@@ -124,17 +125,22 @@ export const ContinueFromHubStepper = ({
         }
     }
 
-    const renderStep = () => {
+    function getStepContents(): {
+        isWorking?: boolean
+        title?: ReactNode
+        contents: ReactNode
+        buttons?: {
+            label: ReactNode
+            onClick?: () => void
+            className?: string
+        }[]
+    } {
         switch (step) {
             case "Init":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>
-                                Continue Locking {formatAmount(amount)} ATOM
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: `Continue Locking ${formatAmount(amount)} ATOM`,
+                    contents: (
+                        <>
                             <p>
                                 Nice! You&apos;re about to lock{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong>{" "}
@@ -168,7 +174,6 @@ export const ContinueFromHubStepper = ({
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
-                                        {/* {[1, 2, 3].map((months) => ( */}
                                         {[1].map((months) => (
                                             <Button
                                                 key={months}
@@ -196,22 +201,25 @@ export const ContinueFromHubStepper = ({
                                 </div>
                                 <p>This will require two wallet approvals.</p>
                             </form>
-                        </CardContent>
-                        <CardFooter className="space-x-2">
-                            <Button onClick={execute}>Lock</Button>
-                            <Button variant="outline" onClick={onExit}>
-                                Cancel
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Lock",
+                            onClick: execute,
+                        },
+                        {
+                            label: "Cancel",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "WaitingForIBCSigning":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Approve IBC Transfer</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Approve IBC Transfer",
+                    contents: (
+                        <>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -220,16 +228,15 @@ export const ContinueFromHubStepper = ({
                                 This will start the transfer of your tokenized
                                 ATOM to Hydro to start the locking process.
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "WaitingForIBCBroadcastAndRelay":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Transferring to Hydro</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Transferring to Hydro",
+                    contents: (
+                        <>
                             <p>Sending your staked ATOM to Hydro...</p>
                             <p>
                                 This could take 30 seconds or longer if the
@@ -239,44 +246,40 @@ export const ContinueFromHubStepper = ({
                                 complete, you will need to return to initiate
                                 the staking process.
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "WaitingForLockingSigning":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Approve Locking</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Approve Locking",
+                    contents: (
+                        <>
                             <p>
                                 Approve in your wallet again to lock your ATOM
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "WaitingForLockingBroadcast":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Locking in Progress</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Locking in Progress",
+                    contents: (
+                        <>
                             <p>Locking your ATOM...</p>
                             <p>
                                 Just a few seconds, unless the network is
                                 congested
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "Success":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Success!</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: "Success!",
+                    contents: (
+                        <>
                             <p>
                                 You locked{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong> in
@@ -291,19 +294,20 @@ export const ContinueFromHubStepper = ({
                                     voting power.
                                 </strong>
                             </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={onExit}>Done</Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Done",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "Error":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Transaction Error</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: "Transaction Error",
+                    contents: (
+                        <>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been locked in Hydro.
@@ -327,22 +331,62 @@ export const ContinueFromHubStepper = ({
                                     </pre>
                                 )}
                             </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={() => window.location.reload()}>
-                                Refresh page
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Refresh page",
+                            onClick: () => window.location.reload(),
+                        },
+                    ],
+                }
             default:
-                return null
+                return {
+                    contents: null,
+                }
         }
     }
 
+    const { title, contents, buttons, isWorking } = getStepContents()
+
     return (
-        <Card className="mx-auto max-w-[800px] bg-[#171717]">
-            {renderStep()}
+        <Card className="mx-auto max-w-screen-sm border-2 border-palette-green bg-palette-text">
+            {title && (
+                <CardHeader>
+                    <CardTitle>{title}</CardTitle>
+                </CardHeader>
+            )}
+
+            <CardContent className="flex flex-col gap-3 py-6">
+                <ConditionalWrapper
+                    condition={!!isWorking}
+                    wrapper={(children) => (
+                        <div className="flex gap-6">
+                            <Loader className="animate-spin" />
+                            <div className="flex flex-col gap-3">
+                                {children}
+                            </div>
+                        </div>
+                    )}
+                >
+                    {contents}
+                </ConditionalWrapper>
+            </CardContent>
+
+            {buttons && (
+                <CardFooter className="flex flex-row-reverse gap-2">
+                    {buttons.map((button, index) => (
+                        <Button
+                            key={index}
+                            onClick={button.onClick}
+                            className={button.className}
+                            variant={index === 0 ? "primary" : "secondary"}
+                        >
+                            {button.label}
+                        </Button>
+                    ))}
+                </CardFooter>
+            )}
         </Card>
     )
 }
