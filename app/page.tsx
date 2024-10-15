@@ -344,7 +344,7 @@ export default function Home() {
                                 Hydro gives ATOM stakers the opportunity to
                                 allocate the Hub&rsquo;s liquidity by voting on
                                 bids submitted by projects, and receive tributes
-                                for
+                                for{" "}
                                 <span className="whitespace-nowrap">
                                     their support.
                                 </span>
