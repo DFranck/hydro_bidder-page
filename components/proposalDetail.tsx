@@ -207,8 +207,10 @@ const ProposalDetail = ({
                     className={twMerge(
                         baseButtonClasses,
                         `
-                            bg-white
-                            text-palette-text
+                            border-2
+                            border-palette-green
+                            bg-transparent
+                            text-palette-green
                             !opacity-100
                         `
                     )}
@@ -319,11 +321,16 @@ const ProposalDetail = ({
                         className="
                             pointer-events-none
                             absolute
-                            inset-0
+                            left-0
+                            right-0
+                            top-0
                             -z-10
+                            h-96
                             rounded-md
-                            border-t-[10px]
-                            border-palette-green
+                            bg-gradient-to-bl
+                            from-palette-green/30
+                            via-palette-green/0
+                            to-palette-green/0
                         "
                     />
                 )}
