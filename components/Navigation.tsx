@@ -1,5 +1,6 @@
 "use client"
 
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { Wallet } from "@/components/wallet/Wallet"
 import { cn } from "@/lib/utils"
@@ -41,31 +42,39 @@ export default function Navigation() {
                     Voting
                 </Link>
 
-                {isConnected && (
-                    <>
-                        <Link
-                            href="/lockups"
-                            className={navigationMenuTriggerStyle("/lockups")}
-                        >
-                            Lockups
-                        </Link>
-                        <TooltipIcon
-                            icon={
-                                <Link
-                                    href="/rewards"
-                                    className={twMerge(
-                                        navigationMenuTriggerStyle("/rewards"),
-                                        `pointer-events-none opacity-60`
-                                    )}
-                                >
-                                    Rewards
-                                </Link>
-                            }
-                        >
-                            Rewards will be available when the pilot round ends
+                <ConditionalWrapper
+                    condition={!isConnected}
+                    wrapper={(children) => (
+                        <TooltipIcon icon={children}>
+                            Connect your wallet to access this feature
                         </TooltipIcon>
-                    </>
-                )}
+                    )}
+                >
+                    <Link
+                        href="/lockups"
+                        className={twMerge(
+                            navigationMenuTriggerStyle("/lockups"),
+                            !isConnected && "pointer-events-none opacity-60"
+                        )}
+                    >
+                        Lockups
+                    </Link>
+                </ConditionalWrapper>
+                <TooltipIcon
+                    icon={
+                        <Link
+                            href="/rewards"
+                            className={twMerge(
+                                navigationMenuTriggerStyle("/rewards"),
+                                `pointer-events-none opacity-60`
+                            )}
+                        >
+                            Rewards
+                        </Link>
+                    }
+                >
+                    Rewards will be available when the pilot round ends
+                </TooltipIcon>
                 <Wallet notifyConnectedCB={setIsConnected} />
             </div>
         </nav>
