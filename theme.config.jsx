@@ -1,5 +1,5 @@
-import Image from "next/image"
 import "@/app/globals.css"
+import Image from "next/image"
 
 const themeConfig = {
     logo: (
@@ -29,6 +29,12 @@ const themeConfig = {
             <meta
                 name="viewport"
                 content="width=device-width, initial-scale=1.0"
+            />
+            <link
+                rel="icon"
+                type="image/png"
+                sizes="32x32"
+                href="/favicon.png"
             />
             <meta property="og:title" content="Hydro Documentation" />
             <meta
