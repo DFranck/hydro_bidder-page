@@ -6,7 +6,7 @@ import { ClientHandler } from "./clientLayout"
 import "./globals.css"
 
 export const metadata: Metadata = {
-    title: "Hydro - Cosmos Hub Liquidity Platform",
+    title: "Hydro - The Interchain Liquidity Allocator",
     description:
         "Hydro is a Cosmos Hub liquidity platform that allows you to lock your ATOM and participate in the growth of the Cosmos ecosystem.",
 }
