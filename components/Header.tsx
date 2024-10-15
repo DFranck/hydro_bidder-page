@@ -45,6 +45,7 @@ export const Header = () => {
                 className={twMerge(
                     `
                         flex-row
+                        items-center
                         justify-between
                         bg-black
                         text-sm
