@@ -238,9 +238,9 @@ export default function Home() {
                                 leading-[1.1]
                             "
                         >
-                            The Interchain Platform for{" "}
+                            Get More From{" "}
                             <span className="sm:whitespace-nowrap">
-                                Liquidity Exports
+                                Your ATOM
                             </span>
                         </h1>
                         <p
@@ -250,9 +250,9 @@ export default function Home() {
                                 font-normal
                             "
                         >
-                            An opportunity to earn yield on top of Cosmos Hub
-                            staking rewards. Lock ATOM, vote and allocate
-                            liquidity across{" "}
+                            An opportunity for Cosmos Hub stakers to earn yield
+                            on top of their staking rewards. Lock your staked
+                            ATOM, vote, and allocate liquidity across{" "}
                             <span className="whitespace-nowrap">
                                 the Interchain.
                             </span>
