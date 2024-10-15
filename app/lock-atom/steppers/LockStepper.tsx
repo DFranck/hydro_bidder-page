@@ -1,10 +1,12 @@
 "use client"
+import { Step } from "@/app/lock-atom/steppers/Step"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { ChevronDown } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import {
     broadcastAndRelayIBCGasToNeutron,
@@ -19,7 +21,6 @@ import {
     signLockTokens,
     signTokenizeShares,
 } from "../transactions"
-import { Step } from "@/app/lock-atom/steppers/Step"
 
 function getValidatorMoniker(
     validator: string,
@@ -68,6 +69,7 @@ export const LockStepper = ({
     const [step, setStep] = useState<LockStep>(startState || "Init")
     const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
     const [showErrorLog, setShowErrorLog] = useState(false)
+    const router = useRouter()
 
     const execute = async () => {
         try {
@@ -244,7 +246,10 @@ export const LockStepper = ({
                         },
                         {
                             label: "Cancel",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                         },
                     ],
                 }
@@ -260,7 +265,10 @@ export const LockStepper = ({
                     buttons: [
                         {
                             label: "OK",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                         },
                     ],
                 }
@@ -395,9 +403,10 @@ export const LockStepper = ({
                 }
             case "Success":
                 return {
+                    title: "Success!",
                     contents: (
                         <p>
-                            Success! You locked{" "}
+                            You locked{" "}
                             <strong>{formatAmount(amount)} ATOM</strong> in
                             Hydro and received{" "}
                             <strong>
@@ -409,12 +418,18 @@ export const LockStepper = ({
                                 )}{" "}
                                 voting power.
                             </strong>
+                            <p>
+                                You can now start voting with your Hydro tokens.
+                            </p>
                         </p>
                     ),
                     buttons: [
                         {
-                            label: "Done",
-                            onClick: onExit,
+                            label: "Start Voting",
+                            onClick: () => {
+                                router.push("/voting")
+                                onExit()
+                            },
                         },
                     ],
                 }
