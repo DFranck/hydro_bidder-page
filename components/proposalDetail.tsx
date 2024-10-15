@@ -388,20 +388,20 @@ const ProposalDetail = ({
                             </p>
                             <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                 <Markdown>
-                                    {renderedProposal.description.replaceAll(
+                                    {renderedProposal.projectDetails.replaceAll(
                                         /\\n/g,
                                         "\n"
                                     )}
                                 </Markdown>
                             </div>
-                            {renderedProposal.projectDetails && (
+                            {renderedProposal.description && (
                                 <>
                                     <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                         Bid Description
                                     </p>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                         <Markdown>
-                                            {renderedProposal.projectDetails.replaceAll(
+                                            {renderedProposal.description.replaceAll(
                                                 /\\n/g,
                                                 "\n"
                                             )}
@@ -414,7 +414,7 @@ const ProposalDetail = ({
                                     <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                         Committee Review
                                     </p>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                         <Markdown>
                                             {renderedProposal.committeeComments.replaceAll(
                                                 /\\n/g,
@@ -429,7 +429,7 @@ const ProposalDetail = ({
                                     <p className="mb-2 mt-6 text-sm uppercase opacity-80">
                                         Appendix
                                     </p>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-strong:text-white prose-ol:text-white prose-li:text-white prose-a:text-white/70">
+                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                         <Markdown>
                                             {renderedProposal.appendix.replaceAll(
                                                 /\\n/g,
