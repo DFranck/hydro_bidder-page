@@ -1,38 +1,13 @@
 "use client"
-import { useState } from "react"
 import { ChevronDown } from "lucide-react"
+import { ReactNode, useState } from "react"
 
-import React from "react"
-import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { scaleLockupPower, formatAmount } from "@/lib/utils"
-import {
-    signTokenizeShares,
-    signRedeemTokensForShares,
-    signLockTokens,
-    broadcastTx,
-    signIBCTransferHubToNeutron,
-    signIBCTransferNeutronToHub,
-    broadcastAndRelayIBCHubToNeutron,
-    broadcastAndRelayIBCNeutronToHub,
-    extractLSMDenom,
-    checkForGasOnNeutron,
-    signATOMGasTransferToNeutron,
-    broadcastAndRelayIBCGasToNeutron,
-    checkForGasOnHub,
-    minimumUATOMGas,
-} from "../transactions"
-import {
-    Card,
-    CardHeader,
-    CardFooter,
-    CardTitle,
-    CardContent,
-} from "@/components/ui/card"
 import { Validator } from "@/hooks/hooks"
-import { EPOCH_LENGTH } from "@/config"
+import { formatAmount } from "@/lib/utils"
+import { broadcastTx, signRedeemTokensForShares } from "../transactions"
+import { Step } from "@/app/lock-atom/steppers/Step"
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -114,17 +89,23 @@ export const RevertFromHubStepper = ({
             setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
         }
     }
-    const renderStep = () => {
+
+    function getStepContents(): {
+        isWorking?: boolean
+        title?: ReactNode
+        contents: ReactNode
+        buttons?: {
+            label: ReactNode
+            onClick?: () => void
+            className?: string
+        }[]
+    } {
         switch (step) {
             case "Init":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>
-                                Revert {formatAmount(amount)} ATOM
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
+                return {
+                    title: `Revert ${formatAmount(amount)} ATOM`,
+                    contents: (
+                        <>
                             <p>
                                 You&apos;re about to revert{" "}
                                 <strong className="text-white">
@@ -143,22 +124,25 @@ export const RevertFromHubStepper = ({
                                 This should take about a minute and will require
                                 1 wallet approval.
                             </p>
-                        </CardContent>
-                        <CardFooter className="space-x-2">
-                            <Button onClick={execute}>Revert</Button>
-                            <Button variant="outline" onClick={onExit}>
-                                Cancel
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Revert",
+                            onClick: execute,
+                        },
+                        {
+                            label: "Cancel",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "WaitingForRedeemSigning":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Approve Redemption</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Approve Redemption",
+                    contents: (
+                        <>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -178,31 +162,28 @@ export const RevertFromHubStepper = ({
                                 </strong>
                                 .
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "WaitingForRedeemBroadcast":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Redeeming ATOM</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Redeeming ATOM",
+                    contents: (
+                        <>
                             <p>Redeeming ATOM...</p>
                             <p>
                                 Hang tight, we&apos;re restoring your previous
                                 staked position.
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "Success":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Success!</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: "Success!",
+                    contents: (
+                        <>
                             <p>
                                 Your{" "}
                                 <strong className="text-white">
@@ -211,19 +192,20 @@ export const RevertFromHubStepper = ({
                                 has been restored to your previous staked
                                 position.
                             </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={onExit}>Done</Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Done",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "Error":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Transaction Error</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: "Transaction Error",
+                    contents: (
+                        <>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been reverted.
@@ -239,30 +221,38 @@ export const RevertFromHubStepper = ({
                                         className="flex items-center text-sm text-gray-600 hover:text-gray-800"
                                     >
                                         Show Error Log
-                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                        <ChevronDown className="ml-1 h-4 w-4" />
                                     </button>
                                 ) : (
-                                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs whitespace-pre-wrap text-black">
+                                    <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                                         {errorLog}
                                     </pre>
                                 )}
                             </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={() => window.location.reload()}>
-                                Refresh page
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Refresh page",
+                            onClick: () => window.location.reload(),
+                        },
+                    ],
+                }
             default:
-                return null
+                return {
+                    contents: null,
+                }
         }
     }
 
+    const { title, contents, buttons, isWorking } = getStepContents()
+
     return (
-        <Card className="max-w-[800px] mx-auto bg-[#171717]">
-            {renderStep()}
-        </Card>
+        <Step
+            title={title}
+            contents={contents}
+            buttons={buttons}
+            isWorking={isWorking}
+        />
     )
 }
