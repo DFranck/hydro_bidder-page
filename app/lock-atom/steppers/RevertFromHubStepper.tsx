@@ -1,13 +1,13 @@
 "use client"
-import { ChevronDown } from "lucide-react"
-import { ReactNode, useState } from "react"
-
-import { ChainContext } from "@cosmos-kit/core"
-
+import { Step } from "@/app/lock-atom/steppers/Step"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount } from "@/lib/utils"
+import { ChainContext } from "@cosmos-kit/core"
+import { ChevronDown } from "lucide-react"
+import { ReactNode, useState } from "react"
 import { broadcastTx, signRedeemTokensForShares } from "../transactions"
-import { Step } from "@/app/lock-atom/steppers/Step"
+import { useRouter } from "next/router"
+
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -46,6 +46,7 @@ export const RevertFromHubStepper = ({
     const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
     const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
     const [showErrorLog, setShowErrorLog] = useState(false)
+    const router = useRouter()
 
     const execute = async () => {
         try {
@@ -133,7 +134,10 @@ export const RevertFromHubStepper = ({
                         },
                         {
                             label: "Cancel",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                         },
                     ],
                 }
@@ -197,7 +201,10 @@ export const RevertFromHubStepper = ({
                     buttons: [
                         {
                             label: "Done",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                         },
                     ],
                 }

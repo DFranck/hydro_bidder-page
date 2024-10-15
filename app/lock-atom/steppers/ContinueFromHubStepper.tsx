@@ -1,19 +1,19 @@
 "use client"
-import { ChevronDown } from "lucide-react"
-import { ReactNode, useState } from "react"
-
+import { Step } from "@/app/lock-atom/steppers/Step"
 import { Button } from "@/components/ui/button"
-import { ChainContext } from "@cosmos-kit/core"
-
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { ChainContext } from "@cosmos-kit/core"
+import { ChevronDown } from "lucide-react"
+import { useRouter } from "next/router"
+import { ReactNode, useState } from "react"
 import {
     broadcastAndRelayIBCHubToNeutron,
     signIBCTransferHubToNeutron,
     signLockTokens,
 } from "../transactions"
-import { Step } from "@/app/lock-atom/steppers/Step"
+
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -54,8 +54,8 @@ export const ContinueFromHubStepper = ({
     const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
     const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
     const [showErrorLog, setShowErrorLog] = useState(false)
-
     const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
+    const router = useRouter()
 
     const execute = async () => {
         try {
@@ -203,7 +203,10 @@ export const ContinueFromHubStepper = ({
                         },
                         {
                             label: "Cancel",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                         },
                     ],
                 }
@@ -292,7 +295,10 @@ export const ContinueFromHubStepper = ({
                     buttons: [
                         {
                             label: "Done",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/voting")
+                                onExit()
+                            },
                         },
                     ],
                 }

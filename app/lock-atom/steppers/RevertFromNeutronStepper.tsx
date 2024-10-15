@@ -1,4 +1,5 @@
 "use client"
+import { Step } from "@/app/lock-atom/steppers/Step"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
@@ -10,7 +11,7 @@ import {
     signIBCTransferNeutronToHub,
     signRedeemTokensForShares,
 } from "../transactions"
-import { Step } from "@/app/lock-atom/steppers/Step"
+import { useRouter } from "next/router"
 
 type RevertFromNeutronStep =
     | "Init"
@@ -51,6 +52,7 @@ export const RevertFromNeutronStepper = ({
     validatorMap: Map<string, Validator>
     deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
+    const router = useRouter()
     const [step, setStep] = useState<RevertFromNeutronStep>(
         startState || "Init"
     )
@@ -167,7 +169,10 @@ export const RevertFromNeutronStepper = ({
                         },
                         {
                             label: "Cancel",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                             className: "bg-gray-200 text-gray-800",
                         },
                     ],
@@ -255,7 +260,10 @@ export const RevertFromNeutronStepper = ({
                     buttons: [
                         {
                             label: "Done",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                         },
                     ],
                 }

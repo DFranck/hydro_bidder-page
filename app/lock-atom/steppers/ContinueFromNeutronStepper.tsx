@@ -1,13 +1,14 @@
 "use client"
+import { Step } from "@/app/lock-atom/steppers/Step"
 import { Button } from "@/components/ui/button"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { ChevronDown } from "lucide-react"
+import { useRouter } from "next/router"
 import { ReactNode, useState } from "react"
 import { signLockTokens } from "../transactions"
-import { Step } from "@/app/lock-atom/steppers/Step"
 
 type ContinueFromNeutronStep =
     | "Init"
@@ -46,6 +47,7 @@ export const ContinueFromNeutronStepper = ({
     validatorMap: Map<string, Validator>
     deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
+    const router = useRouter()
     const [step, setStep] = useState<ContinueFromNeutronStep>(
         startState || "Init"
     )
@@ -53,7 +55,6 @@ export const ContinueFromNeutronStepper = ({
         "ContinueFromNeutronStepper: "
     )
     const [showErrorLog, setShowErrorLog] = useState(false)
-
     const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
 
     const executeContinueFromNeutron = async () => {
@@ -179,7 +180,10 @@ export const ContinueFromNeutronStepper = ({
                         },
                         {
                             label: "Cancel",
-                            onClick: onExit,
+                            onClick: () => {
+                                router.push("/lock-atom")
+                                onExit()
+                            },
                         },
                     ],
                 }
@@ -229,8 +233,11 @@ export const ContinueFromNeutronStepper = ({
                     ),
                     buttons: [
                         {
-                            label: "Done",
-                            onClick: onExit,
+                            label: "Start Voting",
+                            onClick: () => {
+                                router.push("/voting")
+                                onExit()
+                            },
                         },
                     ],
                 }
