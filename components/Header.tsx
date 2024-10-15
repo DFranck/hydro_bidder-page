@@ -12,7 +12,7 @@ import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
 export const Header = () => {
-    const isScrolled = useIsDocumentScrolled()
+    const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
     const { address } = useChain("neutron")
     const { data: userVotingData } = useUserVotingData(address || "")
     const showLockATOMBanner = userVotingData?.votingPower === 0
