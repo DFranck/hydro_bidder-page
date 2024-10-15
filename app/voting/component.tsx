@@ -196,7 +196,7 @@ const ActiveProposals = ({
                                         Your Est. Reward
                                         <TooltipIcon>
                                             This is the tribute value that will
-                                            be paid out to you when the rounds
+                                            be paid out to you when the round
                                             ends if you vote for this project.
                                             It may increase (if the project adds
                                             to the tribute) or decrease (if more
