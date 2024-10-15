@@ -33,6 +33,7 @@ export type GlobalState = {
             pointProgramLink?: string
             committeeComments: string
             appendix: string
+            requestAmount?: string[]
         }
     >
 }

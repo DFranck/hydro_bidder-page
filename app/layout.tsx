@@ -17,7 +17,7 @@ export default function RootLayout({
     children: React.ReactNode
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" className="scroll-pt-32">
             {process.env.NODE_ENV === "production" && (
                 <>
                     <Script
@@ -26,11 +26,11 @@ export default function RootLayout({
                     ></Script>
                     <Script id="google-analytics" strategy="afterInteractive">
                         {`
-                    window.dataLayer = window.dataLayer || []
-                    function gtag(){dataLayer.push(arguments)}
-                    gtag('js', new Date())
-                    gtag('config', 'G-NZ1F6WL2PM')
-                    `}
+                            window.dataLayer = window.dataLayer || []
+                            function gtag(){dataLayer.push(arguments)}
+                            gtag('js', new Date())
+                            gtag('config', 'G-NZ1F6WL2PM')
+                        `}
                     </Script>
                     <Script
                         type="text/javascript"

@@ -22,6 +22,7 @@ import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { formatAmount, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { DialogTrigger } from "@radix-ui/react-dialog"
+import kebabCase from "lodash/kebabCase"
 import { CheckCircle, ChevronLeft, ScrollText, Vote } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
@@ -382,10 +383,13 @@ const ProposalDetail = ({
                                 {renderedProposal.title}
                             </h1>
                         </div>
-                        <div className="pl-16">
-                            <p className="mb-2 mt-6 text-sm uppercase opacity-80">
+                        <div className="js-bid-details pl-16">
+                            <h3
+                                id="project-details"
+                                className="mb-2 mt-6 text-sm uppercase opacity-80"
+                            >
                                 Project Details
-                            </p>
+                            </h3>
                             <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                 <Markdown>
                                     {renderedProposal.projectDetails.replaceAll(
@@ -396,9 +400,12 @@ const ProposalDetail = ({
                             </div>
                             {renderedProposal.description && (
                                 <>
-                                    <p className="mb-2 mt-6 text-sm uppercase opacity-80">
+                                    <h3
+                                        id="bid-description"
+                                        className="mb-2 mt-6 text-sm uppercase opacity-80"
+                                    >
                                         Bid Description
-                                    </p>
+                                    </h3>
                                     <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                         <Markdown>
                                             {renderedProposal.description.replaceAll(
@@ -411,9 +418,12 @@ const ProposalDetail = ({
                             )}
                             {renderedProposal.committeeComments && (
                                 <>
-                                    <p className="mb-2 mt-6 text-sm uppercase opacity-80">
+                                    <h3
+                                        id="committee-review"
+                                        className="mb-2 mt-6 text-sm uppercase opacity-80"
+                                    >
                                         Committee Review
-                                    </p>
+                                    </h3>
                                     <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                         <Markdown>
                                             {renderedProposal.committeeComments.replaceAll(
@@ -426,9 +436,12 @@ const ProposalDetail = ({
                             )}
                             {renderedProposal.appendix && (
                                 <>
-                                    <p className="mb-2 mt-6 text-sm uppercase opacity-80">
+                                    <h3
+                                        id="appendix"
+                                        className="mb-2 mt-6 text-sm uppercase opacity-80"
+                                    >
                                         Appendix
-                                    </p>
+                                    </h3>
                                     <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
                                         <Markdown>
                                             {renderedProposal.appendix.replaceAll(
@@ -456,8 +469,8 @@ const ProposalDetail = ({
                             <PrimaryActionButton />
                         </div>
 
-                        <div>
-                            <div className="pb-6">
+                        <div className="flex flex-col gap-6">
+                            <div>
                                 <p className="text-sm opacity-80">
                                     Tribute to Voters
                                 </p>
@@ -480,7 +493,8 @@ const ProposalDetail = ({
                                     </p>
                                 )}
                             </div>
-                            <div className="pb-6">
+
+                            <div>
                                 <p className="text-sm opacity-80">
                                     Current Vote Percentage
                                 </p>
@@ -488,12 +502,46 @@ const ProposalDetail = ({
                                     {proposal.percentage}%
                                 </p>
                             </div>
-                            {/* <div className="pb-6">
-                                <p className="text-sm opacity-80">Status</p>
-                                <p className="text-xl font-bold not-italic text-[#00FFC2]">
-                                    {deployed ? "Deployed" : "In voting"}
-                                </p>
-                            </div> */}
+
+                            {renderedProposal.requestAmount && (
+                                <div>
+                                    <p className="text-sm opacity-80">
+                                        Requested Liquidity
+                                    </p>
+                                    <div className="text-xl font-bold not-italic">
+                                        {renderedProposal.requestAmount.map(
+                                            (amount, index) => (
+                                                <p key={index}>{amount}</p>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div>
+                                <p className="text-sm opacity-80">Jump To</p>
+
+                                <div className="flex flex-col gap-2">
+                                    {[
+                                        "Project Details",
+                                        renderedProposal.description &&
+                                            "Bid Description",
+                                        renderedProposal.committeeComments &&
+                                            "Committee Review",
+                                        renderedProposal.appendix && "Appendix",
+                                    ]
+                                        .filter(Boolean)
+                                        .map((section, index) => (
+                                            <Link
+                                                key={index}
+                                                href={`#${kebabCase(section)}`}
+                                                className="text-palette-green hover:underline"
+                                            >
+                                                {section}
+                                            </Link>
+                                        ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
