@@ -553,8 +553,9 @@ const LockForm = ({
                         ">
                             <CircleAlert />
                             <div>
-                                Heads up: just like staking, once you&rsquo;ve locked ATOM,
-                                it <strong>cannot be unlocked for the duration of the lockup.</strong>
+                                Once locked, your staked ATOMs are inaccessible for the duration
+                                of the lock. They will continue to accrue staking rewards but you will
+                                not be able to vote in Cosmos Hub governance.
                             </div>
                         </div>
                         <Form {...form}>
