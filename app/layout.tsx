@@ -1,10 +1,9 @@
-import "./globals.css"
-
+import { ScrollIndicator } from "@/components/ScrollIndicator"
 import { inter } from "@/lib/font"
-import { ClientHandler } from "./clientLayout"
-
 import type { Metadata } from "next"
 import Script from "next/script"
+import { ClientHandler } from "./clientLayout"
+import "./globals.css"
 
 export const metadata: Metadata = {
     title: "Hydro - Cosmos Hub Liquidity Platform",
@@ -59,6 +58,7 @@ export default function RootLayout({
                 <div className="text-white">
                     <ClientHandler>{children}</ClientHandler>
                 </div>
+                <ScrollIndicator />
             </body>
         </html>
     )

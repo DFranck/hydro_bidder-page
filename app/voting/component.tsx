@@ -393,6 +393,7 @@ const ActiveProposals = ({
                                         `
                                         : undefined
                                 }
+                                key={row._proposal.proposal_id}
                                 {...rowProps}
                             >
                                 {children}
@@ -402,15 +403,15 @@ const ActiveProposals = ({
                 ) : (
                     <div
                         className="
-                    !mb-6
-                    rounded-md
-                    border
-                    border-dashed
-                    border-palette-beige/20
-                    py-12
-                    text-center
-                    text-white/60
-                "
+                            !mb-6
+                            rounded-md
+                            border
+                            border-dashed
+                            border-palette-beige/20
+                            py-12
+                            text-center
+                            text-white/60
+                        "
                     >
                         <p>There are no bids available at this moment.</p>
                     </div>
