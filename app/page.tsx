@@ -492,7 +492,13 @@ export default function Home() {
                                 text-white
                             "
                         >
-                            <Link href="/docs">Read Docs</Link>
+                            <Link
+                                href="/docs/projects/whitelisting"
+                                target="_blank"
+                            >
+                                Learn More
+                                <ArrowUpRight />
+                            </Link>
                         </Button>
                     </div>
                 </ContentContainer>
