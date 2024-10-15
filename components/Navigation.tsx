@@ -73,7 +73,7 @@ export default function Navigation() {
                         </Link>
                     }
                 >
-                    Rewards will be available when the pilot round ends
+                    Rewards will show here at the end of the first pilot round
                 </TooltipIcon>
                 <Wallet notifyConnectedCB={setIsConnected} />
             </div>
