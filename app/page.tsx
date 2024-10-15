@@ -419,8 +419,7 @@ export default function Home() {
                             for projects
                         </p>
                         <h2 className="text-balance">
-                            Receive Liquidity Deployments from{" "}
-                            <span className="whitespace-nowrap">the Hub</span>
+                            Get Liquidity from the Hub
                         </h2>
                     </div>
                     <p
