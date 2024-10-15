@@ -54,14 +54,7 @@ export const WButtonConnect = ({
 
 export const WButtonConnected = ({ address, onClick = noop }: ConnectProps) => (
     <WButton
-        text={
-            !!address && address.length > 0
-                ? `${address?.slice(0, 6)}...${address?.slice(
-                      address.length - 7,
-                      address.length - 1
-                  )}`
-                : "Connecting..."
-        }
+        text={!!address && address.length > 0 ? `Connected` : "Connecting..."}
         className="text-xs dark:text-white"
         connected={true}
         onClick={onClick}
