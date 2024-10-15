@@ -131,6 +131,7 @@ export default function Home() {
                             </h3>
                             <p
                                 className="
+                                    text-balance
                                     text-base
                                     font-normal
                                     leading-[30px]
@@ -231,6 +232,7 @@ export default function Home() {
                     >
                         <h1
                             className="
+                                text-balance
                                 text-6xl
                                 font-bold
                                 leading-[1.1]
@@ -243,6 +245,7 @@ export default function Home() {
                         </h1>
                         <p
                             className="
+                                text-balance
                                 text-xl
                                 font-normal
                             "
@@ -274,6 +277,8 @@ export default function Home() {
             </div>
 
             <div className="bg-palette-text">
+                <HorizontalDivider />
+
                 <ContentContainer
                     className="
                         z-10
@@ -302,14 +307,20 @@ export default function Home() {
                     >
                         <Link href="/lock-atom">Get started</Link>
                     </Button>
-                    <HorizontalDivider />
+                </ContentContainer>
+
+                <HorizontalDivider />
+
+                <ContentContainer>
                     <div
                         className="
                             grid
                             items-center
                             gap-6
+                            py-20
                             text-left
                             lg:grid-cols-2
+                            lg:py-40
                         "
                     >
                         <div
@@ -329,7 +340,7 @@ export default function Home() {
                                 >
                                     For Voters
                                 </p>
-                                <h2>
+                                <h2 className="text-balance">
                                     Earn Yield On Top of the{" "}
                                     <span className="sm:whitespace-nowrap">
                                         Staking APR
@@ -338,6 +349,7 @@ export default function Home() {
                             </div>
                             <div
                                 className="
+                                    text-balance
                                     text-lg
                                 "
                             >
@@ -372,6 +384,8 @@ export default function Home() {
                         />
                     </div>
                 </ContentContainer>
+
+                <HorizontalDivider />
             </div>
 
             <div
@@ -404,7 +418,7 @@ export default function Home() {
                         >
                             for projects
                         </p>
-                        <h2>
+                        <h2 className="text-balance">
                             Receive Liquidity Deployments from{" "}
                             <span className="whitespace-nowrap">the Hub</span>
                         </h2>
@@ -412,6 +426,7 @@ export default function Home() {
                     <p
                         className="
                             max-w-[64ch]
+                            text-balance
                             text-center
                             text-xl
                             font-normal
