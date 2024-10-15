@@ -320,14 +320,14 @@ const ActiveProposals = ({
                                 >
                                     This project is using a point system. Voters
                                     get points instead of live tokens. In this
-                                    bid, This project is distributing{" "}
+                                    bid,{" "}
                                     <var className="font-mono font-bold not-italic text-palette-cyan">
                                         {proposal.points.toLocaleString(
                                             "en-US"
                                         )}{" "}
                                         {proposal.pointsDenom}
                                     </var>{" "}
-                                    as tribute.{" "}
+                                    would be distributed as tribute.{" "}
                                     {proposal.pointProgramLink && (
                                         <a
                                             href={proposal.pointProgramLink}
