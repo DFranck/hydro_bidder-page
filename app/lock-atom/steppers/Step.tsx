@@ -37,8 +37,8 @@ export function Step({
                 <ConditionalWrapper
                     condition={!!isWorking}
                     wrapper={(children) => (
-                        <div className="flex gap-6 *:shrink-0">
-                            <div>
+                        <div className="flex gap-6">
+                            <div className="shrink-0">
                                 <Loader className="animate-spin" />
                             </div>
                             <div className="flex flex-col gap-3">
