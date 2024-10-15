@@ -1,27 +1,13 @@
 "use client"
-import { ChevronDown } from "lucide-react"
-import { useState } from "react"
-
 import { Button } from "@/components/ui/button"
-import { ChainContext } from "@cosmos-kit/core"
-
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { ChainContext } from "@cosmos-kit/core"
+import { ChevronDown } from "lucide-react"
+import { ReactNode, useState } from "react"
 import { signLockTokens } from "../transactions"
-function getValidatorMoniker(
-    validator: string,
-    validatorMap: Map<string, Validator>
-): string {
-    return validatorMap.get(validator)?.description.moniker || validator
-}
+import { Step } from "@/app/lock-atom/steppers/Step"
 
 type ContinueFromNeutronStep =
     | "Init"
@@ -29,6 +15,13 @@ type ContinueFromNeutronStep =
     | "WaitingForLockBroadcast"
     | "Success"
     | "Error"
+
+function getValidatorMoniker(
+    validator: string,
+    validatorMap: Map<string, Validator>
+): string {
+    return validatorMap.get(validator)?.description.moniker || validator
+}
 
 export const ContinueFromNeutronStepper = ({
     amount,
@@ -102,17 +95,22 @@ export const ContinueFromNeutronStepper = ({
         }
     }
 
-    const renderStep = () => {
+    function getStepContents(): {
+        isWorking?: boolean
+        title?: ReactNode
+        contents: ReactNode
+        buttons?: {
+            label: ReactNode
+            onClick?: () => void
+            className?: string
+        }[]
+    } {
         switch (step) {
             case "Init":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>
-                                Continue Locking {formatAmount(amount)} ATOM
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
+                return {
+                    title: `Continue Locking ${formatAmount(amount)} ATOM`,
+                    contents: (
+                        <>
                             <p>
                                 Nice! You&apos;re about to lock{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong>{" "}
@@ -145,7 +143,6 @@ export const ContinueFromNeutronStepper = ({
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
-                                        {/* {[1, 2, 3].map((months) => ( */}
                                         {[1].map((months) => (
                                             <Button
                                                 key={months}
@@ -173,80 +170,75 @@ export const ContinueFromNeutronStepper = ({
                                 </div>
                                 <p>This will require one wallet approval.</p>
                             </form>
-                        </CardContent>
-                        <CardFooter className="space-x-2">
-                            <Button onClick={executeContinueFromNeutron}>
-                                Lock
-                            </Button>
-                            <Button variant="outline" onClick={onExit}>
-                                Cancel
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Lock",
+                            onClick: executeContinueFromNeutron,
+                        },
+                        {
+                            label: "Cancel",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "WaitingForLockSigning":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Approve Locking</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                Approve in your wallet again to lock your ATOM
-                                into the Hydro contract to receive voting power.
-                            </p>
-                        </CardContent>
-                    </>
-                )
+                return {
+                    isWorking: true,
+                    title: "Approve Locking",
+                    contents: (
+                        <p>
+                            Approve in your wallet again to lock your ATOM into
+                            the Hydro contract to receive voting power.
+                        </p>
+                    ),
+                }
             case "WaitingForLockBroadcast":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Locking in Progress</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Locking in Progress",
+                    contents: (
+                        <>
                             <p>Locking your ATOM...</p>
                             <p>
                                 Just a few seconds, unless the network is
                                 congested
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "Success":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Success!</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>
-                                You locked{" "}
-                                <strong>{formatAmount(amount)} ATOM</strong> in
-                                Hydro and received{" "}
-                                <strong>
-                                    {formatAmount(
-                                        scaleLockupPower(
-                                            lockDuration,
-                                            BigInt(amount)
-                                        )
-                                    )}{" "}
-                                    voting power.
-                                </strong>
-                            </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={onExit}>Done</Button>
-                        </CardFooter>
-                    </>
-                )
+                return {
+                    title: "Success!",
+                    contents: (
+                        <p>
+                            You locked{" "}
+                            <strong>{formatAmount(amount)} ATOM</strong> in
+                            Hydro and received{" "}
+                            <strong>
+                                {formatAmount(
+                                    scaleLockupPower(
+                                        lockDuration,
+                                        BigInt(amount)
+                                    )
+                                )}{" "}
+                                voting power.
+                            </strong>
+                        </p>
+                    ),
+                    buttons: [
+                        {
+                            label: "Done",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "Error":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Transaction Error</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: "Transaction Error",
+                    contents: (
+                        <>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been locked in Hydro.
@@ -270,22 +262,30 @@ export const ContinueFromNeutronStepper = ({
                                     </pre>
                                 )}
                             </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={() => window.location.reload()}>
-                                Refresh page
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Refresh page",
+                            onClick: () => window.location.reload(),
+                        },
+                    ],
+                }
             default:
-                return null
+                return {
+                    contents: null,
+                }
         }
     }
 
+    const { title, contents, buttons, isWorking } = getStepContents()
+
     return (
-        <Card className="mx-auto max-w-[800px] bg-[#171717]">
-            {renderStep()}
-        </Card>
+        <Step
+            title={title}
+            contents={contents}
+            buttons={buttons}
+            isWorking={isWorking}
+        />
     )
 }

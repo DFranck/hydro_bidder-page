@@ -1,17 +1,10 @@
 "use client"
 import { ChevronDown } from "lucide-react"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { ChainContext } from "@cosmos-kit/core"
 
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
@@ -20,6 +13,7 @@ import {
     signIBCTransferHubToNeutron,
     signLockTokens,
 } from "../transactions"
+import { Step } from "@/app/lock-atom/steppers/Step"
 function getValidatorMoniker(
     validator: string,
     validatorMap: Map<string, Validator>
@@ -124,17 +118,22 @@ export const ContinueFromHubStepper = ({
         }
     }
 
-    const renderStep = () => {
+    function getStepContents(): {
+        isWorking?: boolean
+        title?: ReactNode
+        contents: ReactNode
+        buttons?: {
+            label: ReactNode
+            onClick?: () => void
+            className?: string
+        }[]
+    } {
         switch (step) {
             case "Init":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>
-                                Continue Locking {formatAmount(amount)} ATOM
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: `Continue Locking ${formatAmount(amount)} ATOM`,
+                    contents: (
+                        <>
                             <p>
                                 Nice! You&apos;re about to lock{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong>{" "}
@@ -168,7 +167,6 @@ export const ContinueFromHubStepper = ({
                                         Select Lock Duration:
                                     </label>
                                     <div className="flex space-x-2">
-                                        {/* {[1, 2, 3].map((months) => ( */}
                                         {[1].map((months) => (
                                             <Button
                                                 key={months}
@@ -196,22 +194,25 @@ export const ContinueFromHubStepper = ({
                                 </div>
                                 <p>This will require two wallet approvals.</p>
                             </form>
-                        </CardContent>
-                        <CardFooter className="space-x-2">
-                            <Button onClick={execute}>Lock</Button>
-                            <Button variant="outline" onClick={onExit}>
-                                Cancel
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Lock",
+                            onClick: execute,
+                        },
+                        {
+                            label: "Cancel",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "WaitingForIBCSigning":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Approve IBC Transfer</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Approve IBC Transfer",
+                    contents: (
+                        <>
                             <p>
                                 Approve the transaction in your wallet to
                                 continue
@@ -220,16 +221,15 @@ export const ContinueFromHubStepper = ({
                                 This will start the transfer of your tokenized
                                 ATOM to Hydro to start the locking process.
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "WaitingForIBCBroadcastAndRelay":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Transferring to Hydro</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Transferring to Hydro",
+                    contents: (
+                        <>
                             <p>Sending your staked ATOM to Hydro...</p>
                             <p>
                                 This could take 30 seconds or longer if the
@@ -239,44 +239,40 @@ export const ContinueFromHubStepper = ({
                                 complete, you will need to return to initiate
                                 the staking process.
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "WaitingForLockingSigning":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Approve Locking</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Approve Locking",
+                    contents: (
+                        <>
                             <p>
                                 Approve in your wallet again to lock your ATOM
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "WaitingForLockingBroadcast":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Locking in Progress</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    isWorking: true,
+                    title: "Locking in Progress",
+                    contents: (
+                        <>
                             <p>Locking your ATOM...</p>
                             <p>
                                 Just a few seconds, unless the network is
                                 congested
                             </p>
-                        </CardContent>
-                    </>
-                )
+                        </>
+                    ),
+                }
             case "Success":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Success!</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: "Success!",
+                    contents: (
+                        <>
                             <p>
                                 You locked{" "}
                                 <strong>{formatAmount(amount)} ATOM</strong> in
@@ -291,19 +287,20 @@ export const ContinueFromHubStepper = ({
                                     voting power.
                                 </strong>
                             </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={onExit}>Done</Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Done",
+                            onClick: onExit,
+                        },
+                    ],
+                }
             case "Error":
-                return (
-                    <>
-                        <CardHeader>
-                            <CardTitle>Transaction Error</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                return {
+                    title: "Transaction Error",
+                    contents: (
+                        <>
                             <p>
                                 This transaction could not be completed. Your
                                 staked ATOM has not been locked in Hydro.
@@ -327,22 +324,30 @@ export const ContinueFromHubStepper = ({
                                     </pre>
                                 )}
                             </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={() => window.location.reload()}>
-                                Refresh page
-                            </Button>
-                        </CardFooter>
-                    </>
-                )
+                        </>
+                    ),
+                    buttons: [
+                        {
+                            label: "Refresh page",
+                            onClick: () => window.location.reload(),
+                        },
+                    ],
+                }
             default:
-                return null
+                return {
+                    contents: null,
+                }
         }
     }
 
+    const { title, contents, buttons, isWorking } = getStepContents()
+
     return (
-        <Card className="mx-auto max-w-[800px] bg-[#171717]">
-            {renderStep()}
-        </Card>
+        <Step
+            title={title}
+            contents={contents}
+            buttons={buttons}
+            isWorking={isWorking}
+        />
     )
 }
