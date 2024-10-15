@@ -434,10 +434,17 @@ export default function Home() {
                             text-white
                         "
                     >
-                        Hydro allocates liquidity through sequential auction
-                        rounds where projects win over user votes by
-                        distributing tributes to{" "}
-                        <span className="whitespace-nowrap">ATOM stakers.</span>
+                        Hydro allocates liquidity through sequential rounds in
+                        which projects attract user votes through the
+                        distribution of tributes.{" "}
+                        <a
+                            href="/docs"
+                            className="inline-flex items-center gap-1 text-palette-green underline"
+                            target="_blank"
+                        >
+                            Learn more
+                            <ArrowUpRight />
+                        </a>
                     </p>
 
                     <div>
