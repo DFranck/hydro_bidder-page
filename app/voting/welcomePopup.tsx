@@ -11,17 +11,19 @@ interface WelcomePopupProps {
     showModal?: boolean
 }
 
-export function WelcomePopup({ showModal = true }: WelcomePopupProps) {
+export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [dontShowAgain, setDontShowAgain] = useState(false)
 
     useEffect(() => {
         // Only check localStorage and potentially show the modal if showModal is true
-        if (true || showModal) {
+        if (showModal) {
             const hasSeenWelcome = localStorage.getItem("hasSeenWelcomePopup")
             if (!hasSeenWelcome) {
                 setIsOpen(true)
             }
+        } else {
+            setIsOpen(false)
         }
     }, [showModal])
 
@@ -40,8 +42,8 @@ export function WelcomePopup({ showModal = true }: WelcomePopupProps) {
                 <CardHeader>
                     <CardTitle>Get started on Hydro</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <ol className="list-decimal space-y-2 p-5">
+                <CardContent className="flex flex-col gap-3">
+                    <ol className="list-decimal space-y-2 pl-5">
                         <li>
                             Lock your staked ATOM to get voting power. The
                             longer you lock it, the more power you get. You
