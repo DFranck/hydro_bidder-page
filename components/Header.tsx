@@ -7,26 +7,33 @@ import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useDeferredValue, useEffect } from "react"
 import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
 export const Header = () => {
     const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
     const { address } = useChain("neutron")
+    const previousAddress = useDeferredValue(address)
     const { data: userVotingData } = useUserVotingData(address || "")
     const showLockATOMBanner = userVotingData?.votingPower === 0
     const pathname = usePathname()
     const router = useRouter()
 
     useEffect(() => {
-        if (address && !pathname?.startsWith("/voting")) {
-            if (window.sessionStorage.getItem("redirected") !== "true") {
-                router.push("/voting")
-                window.sessionStorage.setItem("redirected", "true")
-            }
+        const hasRedirected =
+            window.sessionStorage.getItem("redirected") === "true"
+
+        if (!previousAddress && !!address && !hasRedirected) {
+            window.sessionStorage.setItem("redirected", "true")
+            router.push("/voting")
         }
-    }, [address, pathname, router])
+
+        if (!address && !!previousAddress && hasRedirected) {
+            window.sessionStorage.setItem("redirected", "false")
+            router.push("/voting")
+        }
+    }, [address, pathname, router, previousAddress])
 
     return (
         <div
