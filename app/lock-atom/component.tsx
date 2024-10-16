@@ -1,5 +1,7 @@
 "use client"
 
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { TooltipIcon } from "@/components/TooltipIcon"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -15,13 +17,9 @@ import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
 import { cosmos } from "interchain"
-import {
-    AlertTriangle,
-    ArrowUpRight,
-    ChevronLeft,
-    CircleAlert,
-} from "lucide-react"
+import { ArrowUpRight, CircleAlert } from "lucide-react"
 import React, { useEffect, useState } from "react"
+import { twMerge } from "tailwind-merge"
 import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
 import { LockStepper } from "./steppers/LockStepper"
@@ -37,8 +35,38 @@ const commonClassNames = {
     cardFooter: "space-x-4",
     button: "cursor-pointer border-none bg-transparent text-white underline",
     formContainer: "space-y-8",
-    label: "block",
-    input: "w-full rounded border p-2",
+    label: "font-bold whitespace-nowrap flex items-center justify-end",
+    input: `
+        w-1/2
+        rounded
+        border
+        p-2
+        bg-palette-text
+        text-white
+    `,
+    radio: `
+        peer
+        flex
+        items-center
+        text-sm
+        opacity-60
+        appearance-none
+        rounded-full
+        size-5
+        border-2
+        border-gray-300
+        checked:bg-palette-green
+        checked:border-palette-green
+        checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
+        checked:opacity-100
+    `,
+    radioLabel: `
+        opacity-60
+        cursor-pointer
+        peer-checked:opacity-100
+        peer-checked:font-bold
+        whitespace-nowrap
+    `,
     infoBox:
         "flex gap-3 rounded-md bg-palette-cyan p-3 text-sm text-palette-text",
     validatorListItem:
@@ -537,7 +565,7 @@ const LockForm = ({
                     </CardHeader>
                     <CardContent className="flex flex-col gap-6">
                         <div className={commonClassNames.infoBox}>
-                            <CircleAlert />
+                            <CircleAlert className="shrink-0" />
                             <div>
                                 Once locked, your staked ATOMs are inaccessible
                                 for the duration of the lock. They will continue
@@ -572,8 +600,13 @@ const LockForm = ({
                                             </p>
                                         )}
                                     </label>
-                                    <label className={commonClassNames.label}>
-                                        Select Validator
+                                    <label
+                                        className={twMerge(
+                                            commonClassNames.label,
+                                            "justify-start"
+                                        )}
+                                    >
+                                        Select Validator:
                                     </label>
                                     <div className="space-y-2">
                                         {validators.map((v) => (
@@ -591,53 +624,80 @@ const LockForm = ({
                                 </div>
                             )}
                             {validator && (
-                                <>
-                                    <div className="flex flex-col space-y-2">
+                                <div
+                                    className="
+                                        grid
+                                        grid-cols-[min-content,auto]
+                                        items-center
+                                        gap-6
+                                    "
+                                >
+                                    <div className="col-span-2 grid grid-cols-subgrid">
                                         <label
                                             className={commonClassNames.label}
                                         >
-                                            Your Validator
+                                            Your Validator:
                                         </label>
-                                        <div>
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={clearSelectedValidator}
-                                                className="mt-2 inline-flex pl-1"
-                                            >
-                                                <ChevronLeft className="mr-2" />
+                                        <div className="flex items-center gap-2">
+                                            <span>
                                                 {getValidatorMoniker(
                                                     validator,
                                                     validatorMap
                                                 )}
-                                            </Button>
+                                            </span>
+
+                                            <button
+                                                className="flex items-center gap-1 text-xs text-gray-500 underline hover:text-palette-green"
+                                                onClick={clearSelectedValidator}
+                                            >
+                                                Change
+                                            </button>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div className="col-span-2 grid grid-cols-subgrid">
                                         <label
                                             className={commonClassNames.label}
                                         >
-                                            Amount
+                                            Amount:
                                         </label>
-                                        <input
-                                            type="number"
-                                            step="0.000001"
-                                            min="0.000001"
-                                            value={Number(amount) / 1000000}
-                                            onChange={(e) => {
-                                                const atomValue =
-                                                    parseFloat(
-                                                        e.target.value
-                                                    ) || 0
-                                                const uatomValue = Math.floor(
-                                                    atomValue * 1000000
-                                                ).toString()
-                                                setAmount(uatomValue)
-                                            }}
-                                            className={commonClassNames.input}
-                                        />
-                                        {validator && (
-                                            <p className="mt-1 text-sm text-gray-500">
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="number"
+                                                step="0.000001"
+                                                max={
+                                                    Number(
+                                                        validators?.find(
+                                                            (v) =>
+                                                                v.validator
+                                                                    .operator_address ===
+                                                                validator
+                                                        )?.delegation_balance
+                                                            .amount
+                                                    ) / 1000000
+                                                }
+                                                min="0.000001"
+                                                value={Number(amount) / 1000000}
+                                                onChange={(e) => {
+                                                    const atomValue =
+                                                        parseFloat(
+                                                            e.target.value
+                                                        ) || 0
+                                                    const uatomValue =
+                                                        Math.floor(
+                                                            atomValue * 1000000
+                                                        ).toString()
+                                                    setAmount(uatomValue)
+                                                }}
+                                                className={
+                                                    commonClassNames.input
+                                                }
+                                            />
+                                            <p
+                                                className="
+                                                    text-sm
+                                                    text-gray-500
+                                                "
+                                            >
                                                 Max:{" "}
                                                 {(
                                                     Number(
@@ -652,67 +712,109 @@ const LockForm = ({
                                                 ).toFixed(6)}{" "}
                                                 ATOM
                                             </p>
-                                        )}
+                                        </div>
                                     </div>
-                                    <div>
+                                    <div className="col-span-2 grid grid-cols-subgrid">
                                         <label
-                                            className={commonClassNames.label}
+                                            className={twMerge(
+                                                commonClassNames.label,
+                                                "items-baseline"
+                                            )}
                                         >
                                             Lockup:
                                         </label>
-                                        <div className="mt-2 flex gap-2">
-                                            {[1].map((months) => (
-                                                <button
+                                        <div className="flex flex-col gap-2">
+                                            {[1, 3, 6, 12].map((months) => (
+                                                <label
                                                     key={months}
-                                                    type="button"
-                                                    className={`rounded px-4 py-2 ${duration === (months * EPOCH_LENGTH).toString() ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-                                                    onClick={() =>
-                                                        setDuration(
+                                                    className="flex items-center gap-2"
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        disabled={months > 1}
+                                                        value={(
+                                                            months *
+                                                            EPOCH_LENGTH
+                                                        ).toString()}
+                                                        checked={
+                                                            duration ===
                                                             (
                                                                 months *
                                                                 EPOCH_LENGTH
                                                             ).toString()
-                                                        )
-                                                    }
-                                                >
-                                                    {months}{" "}
-                                                    {months === 1
-                                                        ? "month"
-                                                        : "months"}
-                                                </button>
+                                                        }
+                                                        onChange={() =>
+                                                            setDuration(
+                                                                (
+                                                                    months *
+                                                                    EPOCH_LENGTH
+                                                                ).toString()
+                                                            )
+                                                        }
+                                                        className={
+                                                            commonClassNames.radio
+                                                        }
+                                                    />
+                                                    <span
+                                                        className={
+                                                            commonClassNames.radioLabel
+                                                        }
+                                                    >
+                                                        <ConditionalWrapper
+                                                            condition={
+                                                                months > 1
+                                                            }
+                                                            wrapper={(
+                                                                children
+                                                            ) => (
+                                                                <TooltipIcon
+                                                                    icon={
+                                                                        children
+                                                                    }
+                                                                >
+                                                                    Longer
+                                                                    durations
+                                                                    will be
+                                                                    available
+                                                                    after the
+                                                                    pilot rounds
+                                                                </TooltipIcon>
+                                                            )}
+                                                        >
+                                                            {months}{" "}
+                                                            {months === 1
+                                                                ? "month"
+                                                                : "months"}
+                                                        </ConditionalWrapper>
+                                                    </span>
+                                                </label>
                                             ))}
                                         </div>
                                     </div>
-                                    <div className="mt-6">
-                                        <div className="mt-2 flex items-center gap-6">
-                                            <span>Voting Power:</span>
-                                            <span>
-                                                {formatAmount(
-                                                    scaleLockupPower(
-                                                        selectedDuration,
-                                                        BigInt(selectedAmount)
-                                                    )
-                                                )}
-                                            </span>
-                                        </div>
+                                    <div className="col-span-2 grid grid-cols-subgrid">
+                                        <label
+                                            className={commonClassNames.label}
+                                        >
+                                            Voting Power:
+                                        </label>
+                                        <span>
+                                            {formatAmount(
+                                                scaleLockupPower(
+                                                    selectedDuration,
+                                                    BigInt(selectedAmount)
+                                                )
+                                            )}
+                                        </span>
                                     </div>
-                                    <div className="flex items-center">
-                                        <AlertTriangle
-                                            size={50}
-                                            className="mr-3"
-                                        />
-                                        <p className="text-sm text-white">
-                                            Your staked ATOM will be locked up
-                                            for the selected duration. You still
-                                            earn the Cosmos Hub staking rewards
-                                            (in addition to Hydro&rsquo;s
-                                            tributes)
-                                        </p>
+                                    <div className="col-span-2">
+                                        <Button
+                                            type="submit"
+                                            className="w-full bg-palette-green"
+                                        >
+                                            Lock
+                                        </Button>
                                     </div>
-                                    <Button type="submit" className="w-full">
-                                        Lock
-                                    </Button>
-                                </>
+                                </div>
                             )}
                         </form>
                     </CardContent>
