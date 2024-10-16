@@ -507,7 +507,7 @@ const LockForm = ({
         onSubmit(validator, amount, parseInt(duration))
     }
 
-    const { data: validators, isLoading } = useMyValidators(
+    const { data: validators } = useMyValidators(
         hubChain,
         hubChain.address || ""
     )
