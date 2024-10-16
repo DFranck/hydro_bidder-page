@@ -1,5 +1,4 @@
 "use client"
-import { fetchDenomTrace } from "@/app/lock-atom/transactions"
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { Button } from "@/components/ui/button"
 import {
@@ -74,6 +73,15 @@ const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
 const dateFormatter = new Intl.DateTimeFormat("en", {
     dateStyle: "medium",
 })
+
+function isToday(date: Date): boolean {
+    const today = new Date()
+    return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+    )
+}
 
 export const EditLockupDuration = ({
     lockup,
@@ -199,6 +207,13 @@ export const EditLockupDuration = ({
     const currentLockupEndDate = new Date(currentLockupEnd / 1000000)
     const powerDifference =
         Number(formValues.power) - Number(lockup.current_voting_power)
+    const isLockupFromToday = isToday(
+        new Date(Number(lockup?.lock_entry.lock_start ?? 0) / 1000000)
+    )
+
+    if (isLockupFromToday) {
+        return <div>Lockup created today</div>
+    }
 
     return (
         <>
