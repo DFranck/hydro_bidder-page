@@ -4,6 +4,7 @@ import { Validator } from "@/hooks/hooks"
 import { formatAmount } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { ChevronDown } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import {
     broadcastAndRelayIBCNeutronToHub,
@@ -11,7 +12,6 @@ import {
     signIBCTransferNeutronToHub,
     signRedeemTokensForShares,
 } from "../transactions"
-import { useRouter } from "next/router"
 
 type RevertFromNeutronStep =
     | "Init"

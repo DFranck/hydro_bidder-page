@@ -28,7 +28,7 @@ export function Step({
     return (
         <Card className="mx-auto max-w-screen-sm border-2 border-palette-green bg-palette-text">
             {title && (
-                <CardHeader>
+                <CardHeader className="pb-0">
                     <CardTitle>{title}</CardTitle>
                 </CardHeader>
             )}
