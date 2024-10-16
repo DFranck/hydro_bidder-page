@@ -1,5 +1,4 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import { Footer } from "@/components/Footer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Button } from "@/components/ui/button"
 import { ArrowUpRight } from "lucide-react"
@@ -527,8 +526,6 @@ export default function Home() {
                     </div>
                 </ContentContainer>
             </div>
-
-            <Footer />
         </main>
     )
 }

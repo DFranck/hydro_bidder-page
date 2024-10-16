@@ -1,10 +1,11 @@
 "use client"
 
-import { Header } from "../components/Header"
-import { WalletHandler } from "./wallet"
+import { Footer } from "@/components/Footer"
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useState } from "react"
+import { Header } from "../components/Header"
+import { WalletHandler } from "./wallet"
 
 // allows us to wrap children into a client context while the normal layout stays in a server component
 // this allows the normal layout to use fonts, meta fields (for icons, title texts etc.)
@@ -19,8 +20,20 @@ export function ClientHandler({
         <>
             <WalletHandler>
                 <QueryClientProvider client={queryClient}>
-                    <Header />
-                    {children}
+                    <div
+                        className="
+                            grid
+                            h-screen
+                            w-screen
+                            grid-rows-[auto,min-content]
+                        "
+                    >
+                        <div>
+                            <Header />
+                            {children}
+                        </div>
+                        <Footer />
+                    </div>
                     <Toaster />
                 </QueryClientProvider>
             </WalletHandler>

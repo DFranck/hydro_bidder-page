@@ -22,10 +22,11 @@ export const Footer = () => {
             >
                 <Link href={"/"}>
                     <Image
+                        className="object-contain"
                         src={"/images/logo.svg"}
-                        alt="twitter"
-                        width={220}
-                        height={45}
+                        alt="Hydro Logo"
+                        width={160}
+                        height={35}
                     />
                 </Link>
 

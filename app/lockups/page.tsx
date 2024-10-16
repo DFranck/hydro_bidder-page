@@ -1,3 +1,4 @@
+import { ContentContainer } from "@/components/ContentContainer"
 import { endpoints } from "@/config"
 import { fetchAllValidators } from "@/hooks/hooks"
 import LockupsTable from "./lockupsTable"
@@ -11,11 +12,11 @@ export default async function Page() {
     )
 
     return (
-        <div className="mx-auto max-w-7xl px-6 pb-20 lg:px-12">
+        <ContentContainer>
             <DashboardTopModules />
             <div className="mt-12 pb-20">
                 <LockupsTable validatorMap={validatorMap} />
             </div>
-        </div>
+        </ContentContainer>
     )
 }
