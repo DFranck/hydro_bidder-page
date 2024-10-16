@@ -298,7 +298,7 @@ const ProposalDetail = ({
     })
 
     return (
-        <div className="mx-auto max-w-7xl">
+        <>
             <ChangeVoteModal />
 
             <Confetti
@@ -553,7 +553,7 @@ const ProposalDetail = ({
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

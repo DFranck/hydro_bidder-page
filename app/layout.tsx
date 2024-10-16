@@ -39,7 +39,9 @@ export default function RootLayout({
                     ></Script>
                 </>
             )}
-            <body className={`${inter.className} relative overflow-x-hidden`}>
+            <body
+                className={`${inter.className} relative overflow-x-hidden text-white`}
+            >
                 {/* <div className="bg-gradient-to-b from-black via-[#010006] to-[#001C47] p-5 h-screen w-screen fixed top-0 left-0 -z-10"></div> */}
                 <div
                     className="
@@ -55,9 +57,7 @@ export default function RootLayout({
                         bg-no-repeat
                     "
                 ></div>
-                <div className="text-white">
-                    <ClientHandler>{children}</ClientHandler>
-                </div>
+                <ClientHandler>{children}</ClientHandler>
                 <ScrollIndicator />
             </body>
         </html>

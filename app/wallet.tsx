@@ -1,22 +1,22 @@
 "use client"
 import "@interchain-ui/react/styles"
 
-import { ChainProvider } from "@cosmos-kit/react"
-import { wallets as keplr } from "@cosmos-kit/keplr-extension"
-import { AminoTypes } from "@cosmjs/stargate"
-import { ChainName } from "@cosmos-kit/core"
 import { Chain } from "@chain-registry/types"
 import { Registry } from "@cosmjs/proto-signing"
+import { AminoTypes } from "@cosmjs/stargate"
+import { ChainName } from "@cosmos-kit/core"
+import { wallets as keplr } from "@cosmos-kit/keplr-extension"
+import { ChainProvider } from "@cosmos-kit/react"
 import * as stride from "stridejs"
 
 import { GasPrice } from "@cosmjs/stargate"
 
-import { wallets as leap } from "@cosmos-kit/leap-extension"
 import { wallets as cosmostation } from "@cosmos-kit/cosmostation-extension"
+import { wallets as leap } from "@cosmos-kit/leap-extension"
 import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
 import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
 
-import { hubChain, neutronChain, endpoints } from "@/config"
+import { endpoints, hubChain, neutronChain } from "@/config"
 import { cosmwasmAminoConverters } from "interchain"
 
 function gasPrices(chain: Chain | ChainName) {
@@ -119,10 +119,7 @@ export function WalletHandler({
                 isLazy: true,
             }}
         >
-            <div className="max-w-screen mx-auto">
-                <div className="mx-auto flex items-center"></div>
-                {children}
-            </div>
+            {children}
         </ChainProvider>
     )
 }
