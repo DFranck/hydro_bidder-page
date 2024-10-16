@@ -6,7 +6,7 @@ import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { ChevronDown } from "lucide-react"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import {
     broadcastAndRelayIBCHubToNeutron,
