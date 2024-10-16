@@ -128,7 +128,7 @@ export function ProposalListTopModules() {
             <TopCard
                 title={
                     <div className="flex items-center gap-1">
-                        Round APR
+                        Average APR
                         <TooltipIcon>
                             This number is the average APR available to Hydro
                             voters during the current active round.{" "}
