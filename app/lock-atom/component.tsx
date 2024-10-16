@@ -1,4 +1,5 @@
 "use client"
+
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -7,24 +8,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { EPOCH_LENGTH } from "@/config"
 import { Delegation, useMyValidators, Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { cosmos } from "interchain"
 import {
     AlertTriangle,
@@ -33,14 +22,29 @@ import {
     CircleAlert,
 } from "lucide-react"
 import React, { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
 import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
 import { LockStepper } from "./steppers/LockStepper"
 import { RevertFromHubStepper } from "./steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "./steppers/RevertFromNeutronStepper"
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
+
+const commonClassNames = {
+    fixedOverlay:
+        "fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70",
+    card: "mb-4",
+    cardContent: "space-y-4",
+    cardFooter: "space-x-4",
+    button: "cursor-pointer border-none bg-transparent text-white underline",
+    formContainer: "space-y-8",
+    label: "block",
+    input: "w-full rounded border p-2",
+    infoBox:
+        "flex gap-3 rounded-md bg-palette-cyan p-3 text-sm text-palette-text",
+    validatorListItem:
+        "mb-2 flex w-full flex-col rounded-lg border border-gray-700 p-3",
+    loaderCard: "bg-[#303132]/75 backdrop-blur",
+}
 
 type Stepper =
     | { type: "lock"; validator: string; amount: string; duration: number }
@@ -183,7 +187,7 @@ export default function LSMInteraction({
         (hubSigner && neutronSigner && (
             <div>
                 {stepper && stepper.type === "lock" && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
+                    <div className={commonClassNames.fixedOverlay}>
                         <LockStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -198,7 +202,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromHubLSM" && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
+                    <div className={commonClassNames.fixedOverlay}>
                         <RevertFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -212,7 +216,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "revertFromNeutronLSM" && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
+                    <div className={commonClassNames.fixedOverlay}>
                         <RevertFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -227,7 +231,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromHubLSM" && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
+                    <div className={commonClassNames.fixedOverlay}>
                         <ContinueFromHubStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -241,7 +245,7 @@ export default function LSMInteraction({
                     </div>
                 )}
                 {stepper && stepper.type === "continueFromNeutronLSM" && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
+                    <div className={commonClassNames.fixedOverlay}>
                         <ContinueFromNeutronStepper
                             amount={stepper.amount}
                             validator={stepper.validator}
@@ -287,7 +291,7 @@ export default function LSMInteraction({
                                 onClick={() =>
                                     setVisibleNotices(incompleteNotices.length)
                                 }
-                                className="mb-4 cursor-pointer border-none bg-transparent text-white underline"
+                                className={commonClassNames.button}
                             >
                                 Show {incompleteNotices.length - visibleNotices}{" "}
                                 more
@@ -330,11 +334,11 @@ const HubIncompleteNotice = ({
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
-        <Card className="mb-4">
+        <Card className={commonClassNames.card}>
             <CardHeader>
                 <CardTitle>Incomplete ATOM Locking</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className={commonClassNames.cardContent}>
                 <p>
                     Looks like you might have been interrupted while locking
                     your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}
@@ -349,7 +353,7 @@ const HubIncompleteNotice = ({
                     revert to get back your staked ATOM?
                 </p>
             </CardContent>
-            <CardFooter className="space-x-4">
+            <CardFooter className={commonClassNames.cardFooter}>
                 <Button
                     onClick={() =>
                         setStepper({
@@ -397,11 +401,11 @@ const NeutronIncompleteNotice = ({
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
-        <Card className="mb-4">
+        <Card className={commonClassNames.card}>
             <CardHeader>
                 <CardTitle>Incomplete ATOM Locking</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className={commonClassNames.cardContent}>
                 <p>
                     Looks like you might have been interrupted while locking
                     your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}
@@ -416,7 +420,7 @@ const NeutronIncompleteNotice = ({
                     revert to get back your staked ATOM?
                 </p>
             </CardContent>
-            <CardFooter className="space-x-4">
+            <CardFooter className={commonClassNames.cardFooter}>
                 <Button
                     onClick={() =>
                         setStepper({
@@ -466,33 +470,13 @@ const LockForm = ({
     hubChain: ChainContext
     validatorMap: Map<string, Validator>
 }) => {
-    const formSchema = z.object({
-        validator: z.string().min(1, "Validator address is required"),
-        amount: z.string().refine((val) => {
-            const amount = Number(val)
-            const selectedValidator: string = form.getValues("validator")
-            const validator = validators?.find(
-                (v) => v.validator.operator_address === selectedValidator
-            )
-            const maxAmount = validator
-                ? Number(validator.delegation_balance.amount)
-                : 0
-            return amount <= maxAmount
-        }, "Amount exceeds maximum available balance"),
-        duration: z.string().min(1, "Duration is required"),
-    })
+    const [validator, setValidator] = useState("")
+    const [amount, setAmount] = useState("")
+    const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            validator: "",
-            // amount: "0", // Set the default amount to "0"
-            duration: EPOCH_LENGTH.toString(),
-        },
-    })
-
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        onSubmit(values.validator, values.amount, parseInt(values.duration))
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        onSubmit(validator, amount, parseInt(duration))
     }
 
     const { data: validators, isLoading } = useMyValidators(
@@ -500,41 +484,51 @@ const LockForm = ({
         hubChain.address || ""
     )
 
-    const selectedAmount = parseInt(form.watch("amount") || "0")
-    const selectedDuration = parseInt(form.watch("duration") || "0")
-    const selectedValidator = form.watch("validator")
+    const selectedAmount = parseInt(amount || "0")
+    const selectedDuration = parseInt(duration || "0")
 
     useEffect(() => {
-        if (selectedValidator && validators) {
-            const validator = validators.find(
-                (v) => v.validator.operator_address === selectedValidator
+        if (validator && validators) {
+            const selectedValidator = validators.find(
+                (v) => v.validator.operator_address === validator
             )
-            if (validator) {
+            if (selectedValidator) {
                 const lsmCapacity = calculateLsmCapacity(
-                    validator.validator.validator_bond_shares,
-                    validator.validator.liquid_shares
+                    selectedValidator.validator.validator_bond_shares,
+                    selectedValidator.validator.liquid_shares
                 )
-                if (lsmCapacity < selectedAmount) {
-                    form.setValue("validator", "")
+                if (lsmCapacity < selectedAmount && selectedAmount > 0) {
+                    // Instead of resetting, you could set an error state or show a warning
+                    console.warn("Selected amount exceeds LSM capacity")
                 }
             }
         }
-    }, [selectedAmount, selectedValidator, validators])
+    }, [selectedAmount, validator, validators])
 
     const clearSelectedValidator = () => {
-        form.setValue("validator", "")
+        setValidator("")
     }
 
-    // prettier-ignore
     return (
         <Card>
-            {validators && validators.length === 0 ?
-            (
+            {validators?.length === 0 ? (
                 <div className="space-y-6 p-6">
-                    <p>You need some staked ATOM to participate in Hydro. You can go to Keplr staking
-                    interface and stake some ATOM to any active validator</p>
-                    <p>Stake now:{' '}
-                        <a href="https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake" target="_blank" className="text-palette-green underline inline-flex items-center gap-1">https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake <ArrowUpRight /></a></p>
+                    <p>
+                        You need some staked ATOM to participate in Hydro. You
+                        can go to Keplr staking interface and stake some ATOM to
+                        any active validator
+                    </p>
+                    <p>
+                        Stake now:{" "}
+                        <a
+                            href="https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake"
+                            target="_blank"
+                            className="inline-flex items-center gap-1 text-palette-green underline"
+                        >
+                            https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake{" "}
+                            <ArrowUpRight />
+                        </a>
+                    </p>
                 </div>
             ) : (
                 <>
@@ -542,229 +536,191 @@ const LockForm = ({
                         <CardTitle>Get Voting Power</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-6">
-                        <div className="
-                            text-sm
-                            bg-palette-cyan
-                            p-3
-                            rounded-md
-                            text-palette-text
-                            flex
-                            gap-3
-                        ">
+                        <div className={commonClassNames.infoBox}>
                             <CircleAlert />
                             <div>
-                                Once locked, your staked ATOMs are inaccessible for the duration
-                                of the lock. They will continue to accrue staking rewards but you will
-                                not be able to vote in Cosmos Hub governance.
+                                Once locked, your staked ATOMs are inaccessible
+                                for the duration of the lock. They will continue
+                                to accrue staking rewards but you will not be
+                                able to vote in Cosmos Hub governance.
                             </div>
                         </div>
-                        <Form {...form}>
-                            <form
-                                onSubmit={form.handleSubmit(handleSubmit)}
-                                className="space-y-8"
-                            >
-                                {!selectedValidator && validators && (
-                                    <FormField
-                                        control={form.control}
-                                        name="validator"
-                                        render={({ field }) => (
-                                            <FormItem className="space-y-3">
-                                                <FormDescription className="text-white mb-4 space-y-3">
-                                                    <ol className="list-decimal list-inside">
-                                                        <li>Your ATOM staked to a validator can be locked in Hydro</li>
-                                                        <li>You get voting power</li>
-                                                        <li>You continue to earn staking rewards</li>
-                                                    </ol>
+                        <form
+                            onSubmit={handleSubmit}
+                            className={commonClassNames.formContainer}
+                        >
+                            {!validator && validators && (
+                                <div className="space-y-3">
+                                    <label className="mb-4 block space-y-3 text-white">
+                                        <ol className="list-inside list-decimal">
+                                            <li>
+                                                Your ATOM staked to a validator
+                                                can be locked in Hydro
+                                            </li>
+                                            <li>You get voting power</li>
+                                            <li>
+                                                You continue to earn staking
+                                                rewards
+                                            </li>
+                                        </ol>
 
-                                                    {validators.length > 1 && (
-                                                        <p>
-                                                            Since you have multiple validators, you will need to do one at time.
-                                                        </p>
-                                                    )}
-                                                </FormDescription>
-                                                <FormLabel>Select Validator</FormLabel>
-                                                <FormControl>
-                                                    <div className="space-y-2">
-                                                        {validators.map((v) => (
-                                                            <ValidatorListItem
-                                                                key={v.validator.operator_address}
-                                                                validator={v}
-                                                                selectedValue={field.value}
-                                                                onChange={field.onChange}
-                                                                selectedAmount={selectedAmount}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
-                                {selectedValidator && (
-                                    <>
-                                        <div className="flex flex-col space-y-2">
-                                            <FormLabel>
-                                                Your Validator
-                                            </FormLabel>
-                                            <div>
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    onClick={clearSelectedValidator}
-                                                    className="inline-flex mt-2 pl-1"
-                                                >
-                                                    <ChevronLeft className="mr-2" />
-                                                    {getValidatorMoniker(
-                                                        selectedValidator,
-                                                        validatorMap
-                                                    )}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <FormField
-                                            control={form.control}
-                                            name="amount"
-                                            render={({ field }) => {
-                                                const selectedValidator =
-                                                    form.watch("validator")
-                                                const validator = validators?.find(
-                                                    (v) => v.validator.operator_address === selectedValidator
-                                                )
-                                                const maxAmount = validator ? Number(validator.delegation_balance.amount) : 0
-                                                const isDisabled = !selectedValidator
-
-                                                return (
-                                                    <FormItem>
-                                                        <FormLabel>
-                                                            Amount
-                                                        </FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                {...field}
-                                                                type="number"
-                                                                step="0.000001"
-                                                                min="0.000001"
-                                                                disabled={isDisabled}
-                                                                onChange={(e) => {
-                                                                    const atomValue = parseFloat(e.target.value) || 0
-                                                                    const uatomValue = Math.floor(atomValue * 1000000).toString()
-                                                                    field.onChange(uatomValue)
-                                                                }}
-                                                                value={Number(field.value) / 1000000}
-                                                            />
-                                                        </FormControl>
-                                                        {selectedValidator && (
-                                                            <FormDescription>
-                                                                Max: {(maxAmount / 1000000).toFixed(6)} ATOM
-                                                            </FormDescription>
-                                                        )}
-                                                        {selectedValidator &&
-                                                            Number(field.value) >
-                                                                maxAmount && (
-                                                                <FormMessage>Amount exceeds maximum available balance</FormMessage>
-                                                            )}
-                                                    </FormItem>
-                                                )
-                                            }}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="duration"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <div className="gap-[56px] flex justify-start items-center">
-                                                        <FormLabel className="text-sm not-italic font-normal leading-[120%] opacity-60 w-[100px]">
-                                                            Lockup:
-                                                        </FormLabel>
-                                                        <FormControl>
-                                                            <ToggleGroup
-                                                                type="single"
-                                                                className="gap-[10px]"
-                                                                defaultValue={form.getValues(
-                                                                    "duration"
-                                                                )}
-                                                            >
-                                                                {/* {[1, 2, 3].map((months) => ( */}
-                                                                {[1].map((months) => (
-                                                                    <ToggleGroupItem
-                                                                        key={months}
-                                                                        value={months.toString()}
-                                                                        className="text-[#080815] text-center text-base not-italic font-medium leading-[21px] inline-flex h-[30px] justify-center items-center gap-2.5 shrink-0 bg-[rgba(255,255,255,0.40)] px-4 py-0 rounded-[100px]"
-                                                                        onClick={() =>
-                                                                            field.onChange(
-                                                                                (months * EPOCH_LENGTH).toString()
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        {months} {months === 1 ? "month" : "months"}
-                                                                    </ToggleGroupItem>
-                                                                ))}
-                                                            </ToggleGroup>
-                                                        </FormControl>
-                                                    </div>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <div className="mt-6">
-                                            <div className="mt-2 flex items-center gap-6">
-                                                <span>Voting Power:</span>
-                                                <span>{formatAmount(scaleLockupPower(selectedDuration, BigInt(selectedAmount)))}</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <AlertTriangle size={50} className="mr-3" />
-                                            <p className="text-white text-sm">
-                                              Your staked ATOM will be locked up for the selected duration. You still earn the Cosmos Hub staking rewards (in addition to Hydro&rsquo;s tributes)
+                                        {validators.length > 1 && (
+                                            <p>
+                                                Since you have multiple
+                                                validators, you will need to do
+                                                one at time.
                                             </p>
+                                        )}
+                                    </label>
+                                    <label className={commonClassNames.label}>
+                                        Select Validator
+                                    </label>
+                                    <div className="space-y-2">
+                                        {validators.map((v) => (
+                                            <ValidatorListItem
+                                                key={
+                                                    v.validator.operator_address
+                                                }
+                                                validator={v}
+                                                selectedValue={validator}
+                                                onChange={setValidator}
+                                                selectedAmount={selectedAmount}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {validator && (
+                                <>
+                                    <div className="flex flex-col space-y-2">
+                                        <label
+                                            className={commonClassNames.label}
+                                        >
+                                            Your Validator
+                                        </label>
+                                        <div>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={clearSelectedValidator}
+                                                className="mt-2 inline-flex pl-1"
+                                            >
+                                                <ChevronLeft className="mr-2" />
+                                                {getValidatorMoniker(
+                                                    validator,
+                                                    validatorMap
+                                                )}
+                                            </Button>
                                         </div>
-                                        <Button type="submit" className="w-full">Lock</Button>
-                                    </>
-                                )}
-                            </form>
-                        </Form>
+                                    </div>
+                                    <div>
+                                        <label
+                                            className={commonClassNames.label}
+                                        >
+                                            Amount
+                                        </label>
+                                        <input
+                                            type="number"
+                                            step="0.000001"
+                                            min="0.000001"
+                                            value={Number(amount) / 1000000}
+                                            onChange={(e) => {
+                                                const atomValue =
+                                                    parseFloat(
+                                                        e.target.value
+                                                    ) || 0
+                                                const uatomValue = Math.floor(
+                                                    atomValue * 1000000
+                                                ).toString()
+                                                setAmount(uatomValue)
+                                            }}
+                                            className={commonClassNames.input}
+                                        />
+                                        {validator && (
+                                            <p className="mt-1 text-sm text-gray-500">
+                                                Max:{" "}
+                                                {(
+                                                    Number(
+                                                        validators?.find(
+                                                            (v) =>
+                                                                v.validator
+                                                                    .operator_address ===
+                                                                validator
+                                                        )?.delegation_balance
+                                                            .amount
+                                                    ) / 1000000
+                                                ).toFixed(6)}{" "}
+                                                ATOM
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label
+                                            className={commonClassNames.label}
+                                        >
+                                            Lockup:
+                                        </label>
+                                        <div className="mt-2 flex gap-2">
+                                            {[1].map((months) => (
+                                                <button
+                                                    key={months}
+                                                    type="button"
+                                                    className={`rounded px-4 py-2 ${duration === (months * EPOCH_LENGTH).toString() ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                                                    onClick={() =>
+                                                        setDuration(
+                                                            (
+                                                                months *
+                                                                EPOCH_LENGTH
+                                                            ).toString()
+                                                        )
+                                                    }
+                                                >
+                                                    {months}{" "}
+                                                    {months === 1
+                                                        ? "month"
+                                                        : "months"}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="mt-6">
+                                        <div className="mt-2 flex items-center gap-6">
+                                            <span>Voting Power:</span>
+                                            <span>
+                                                {formatAmount(
+                                                    scaleLockupPower(
+                                                        selectedDuration,
+                                                        BigInt(selectedAmount)
+                                                    )
+                                                )}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <AlertTriangle
+                                            size={50}
+                                            className="mr-3"
+                                        />
+                                        <p className="text-sm text-white">
+                                            Your staked ATOM will be locked up
+                                            for the selected duration. You still
+                                            earn the Cosmos Hub staking rewards
+                                            (in addition to Hydro&rsquo;s
+                                            tributes)
+                                        </p>
+                                    </div>
+                                    <Button type="submit" className="w-full">
+                                        Lock
+                                    </Button>
+                                </>
+                            )}
+                        </form>
                     </CardContent>
                 </>
             )}
         </Card>
     )
 }
-
-// ;<FormField
-//     control={form.control}
-//     name="duration"
-//     render={({ field }) => (
-//         <FormItem>
-//             <FormLabel>Duration</FormLabel>
-//             <FormControl>
-//                 <div className="flex space-x-2">
-//                     {[1, 2, 3].map((months) => (
-//                         <Button
-//                             key={months}
-//                             type="button"
-//                             variant={
-//                                 field.value ===
-//                                 (months * EPOCH_LENGTH).toString()
-//                                     ? "default"
-//                                     : "outline"
-//                             }
-//                             onClick={() =>
-//                                 field.onChange(
-//                                     (months * EPOCH_LENGTH).toString()
-//                                 )
-//                             }
-//                             className="flex-1"
-//                         >
-//                             {months} {months === 1 ? "month" : "months"}
-//                         </Button>
-//                     ))}
-//                 </div>
-//             </FormControl>
-//             <FormMessage />
-//         </FormItem>
-//     )}
-// />
 
 interface ValidatorListItemProps {
     validator: {
@@ -790,7 +746,7 @@ export const ValidatorListItem: React.FC<ValidatorListItemProps> = ({
     const isDisabled = lsmCapacity <= 0 || lsmCapacity < selectedAmount
 
     return (
-        <div className="mb-2 flex w-full flex-col rounded-lg border border-gray-700 p-3">
+        <div className={commonClassNames.validatorListItem}>
             <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                     <span className="font-semibold">
@@ -837,7 +793,7 @@ const LoaderCard = ({
     haveChains: boolean
 }) => {
     return (
-        <Card className="bg-[#303132]/75 backdrop-blur">
+        <Card className={commonClassNames.loaderCard}>
             <CardHeader>
                 <CardTitle>Connect a Keplr Wallet</CardTitle>
             </CardHeader>
