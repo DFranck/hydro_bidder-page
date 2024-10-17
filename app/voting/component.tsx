@@ -135,6 +135,10 @@ const ActiveProposals = ({
         sm:group-[&.has-voted:hover]/table-row:text-palette-green
     `
 
+    const percentageOfNonVoters =
+        100 -
+        sum(decoratedProposals?.map((proposal) => Number(proposal.percentage)))
+
     return (
         <>
             <div
@@ -160,10 +164,11 @@ const ActiveProposals = ({
                     <PrettyTable
                         initialSortedColumnKey="currentVoteShare"
                         contentForFirstRow={
-                            <tr>
-                                <td colSpan={99}>
-                                    <div
-                                        className="
+                            percentageOfNonVoters && (
+                                <tr>
+                                    <td colSpan={99}>
+                                        <div
+                                            className="
                                             flex
                                             items-center
                                             justify-center
@@ -174,26 +179,18 @@ const ActiveProposals = ({
                                             text-sm
                                             text-white
                                         "
-                                    >
-                                        <Ghost size={18} />
-                                        <span>
-                                            <strong>
-                                                {100 -
-                                                    sum(
-                                                        decoratedProposals.map(
-                                                            (proposal) =>
-                                                                Number(
-                                                                    proposal.percentage
-                                                                )
-                                                        )
-                                                    )}
-                                                %
-                                            </strong>{" "}
-                                            have not voted yet
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
+                                        >
+                                            <Ghost size={18} />
+                                            <span>
+                                                <strong>
+                                                    {percentageOfNonVoters}%
+                                                </strong>{" "}
+                                                have not voted yet
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )
                         }
                         columns={[
                             {
