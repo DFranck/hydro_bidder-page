@@ -6,7 +6,14 @@ import { TooltipIcon } from "@/components/TooltipIcon"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { ArrowUpRight, CircleCheckBig, Gem, ScrollText } from "lucide-react"
+import { sum } from "lodash"
+import {
+    ArrowUpRight,
+    CircleCheckBig,
+    Gem,
+    Ghost,
+    ScrollText,
+} from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -151,6 +158,43 @@ const ActiveProposals = ({
                 )} */}
                 {decoratedProposals?.length ? (
                     <PrettyTable
+                        initialSortedColumnKey="currentVoteShare"
+                        contentForFirstRow={
+                            <tr>
+                                <td colSpan={99}>
+                                    <div
+                                        className="
+                                            flex
+                                            items-center
+                                            justify-center
+                                            gap-2
+                                            rounded-md
+                                            bg-palette-blue/20
+                                            p-3
+                                            text-sm
+                                            text-white
+                                        "
+                                    >
+                                        <Ghost size={18} />
+                                        <span>
+                                            <strong>
+                                                {100 -
+                                                    sum(
+                                                        decoratedProposals.map(
+                                                            (proposal) =>
+                                                                Number(
+                                                                    proposal.percentage
+                                                                )
+                                                        )
+                                                    )}
+                                                %
+                                            </strong>{" "}
+                                            have not voted yet
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                         columns={[
                             {
                                 key: "hasVoted",
@@ -245,7 +289,6 @@ const ActiveProposals = ({
                                     Number(row._proposal.percentage),
                             },
                         ]}
-                        initialSortedColumnKey="currentVoteShare"
                         rows={decoratedProposals.map((proposal) => ({
                             _proposal: proposal,
 
