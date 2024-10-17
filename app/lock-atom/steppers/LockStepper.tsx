@@ -193,7 +193,7 @@ export const LockStepper = ({
                         <>
                             <p>
                                 Next, you&rsquo;ll be asked to do three wallet
-                                approvals. This should only take a few seconds.
+                                approvals. This takes a minute or two, tops.
                             </p>
                             <div className="flex items-center justify-around gap-10">
                                 {[
@@ -293,10 +293,10 @@ export const LockStepper = ({
                     contents: (
                         <p>
                             Transferring your ATOM to your Neutron wallet. This
-                            may take a few seconds (longer if the network is
-                            congested). If you exit Hydro now, this status may
+                            may take a minute or two, depending on network
+                            congestion. If you exit Hydro now, this status may
                             not be visible when you return, but the transfer
-                            will continue ; once the transfer is complete, you
+                            will continue. Once the transfer is complete, you
                             will need to return to initiate the staking process.
                         </p>
                     ),
@@ -371,12 +371,12 @@ export const LockStepper = ({
                     isWorking: true,
                     contents: (
                         <p>
-                            Sending your staked ATOM to Hydro. This should only
-                            take a few seconds (longer if the network is
-                            congested). If you exit Hydro, this status may not
-                            be visible when you return, but the transfer will
-                            continue. Once the transfer is complete, you will
-                            need to return to initiate the staking process.
+                            Sending your staked ATOM to Hydro. This may take a
+                            minute or two, depending on network congestion. If
+                            you exit Hydro, this status may not be visible when
+                            you return, but the transfer will continue. Once the
+                            transfer is complete, you will need to return to
+                            initiate the staking process.
                         </p>
                     ),
                 }
