@@ -510,21 +510,6 @@ const ProposalDetail = ({
                                 </p>
                             </div>
 
-                            {renderedProposal.requestAmount && (
-                                <div>
-                                    <p className="text-sm opacity-80">
-                                        Requested Liquidity
-                                    </p>
-                                    <div className="text-xl font-bold not-italic">
-                                        {renderedProposal.requestAmount.map(
-                                            (amount, index) => (
-                                                <p key={index}>{amount}</p>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
                             <div>
                                 <p className="text-sm opacity-80">Jump To</p>
 
