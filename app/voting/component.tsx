@@ -169,16 +169,16 @@ const ActiveProposals = ({
                                     <td colSpan={99}>
                                         <div
                                             className="
-                                            flex
-                                            items-center
-                                            justify-center
-                                            gap-2
-                                            rounded-md
-                                            bg-palette-blue/20
-                                            p-3
-                                            text-sm
-                                            text-white
-                                        "
+                                                flex
+                                                items-center
+                                                justify-center
+                                                gap-2
+                                                rounded-md
+                                                bg-palette-blue/20
+                                                p-3
+                                                text-sm
+                                                text-white
+                                            "
                                         >
                                             <Ghost size={18} />
                                             <span>
