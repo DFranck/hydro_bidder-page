@@ -6,17 +6,17 @@ import { Confetti } from "@/components/Confetti"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  ToastAborted,
-  ToastError,
-  ToastProcessing,
+    ToastAborted,
+    ToastError,
+    ToastProcessing,
 } from "@/components/ui/toast-wallet"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
@@ -25,12 +25,12 @@ import { useChain } from "@cosmos-kit/react"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import kebabCase from "lodash/kebabCase"
 import {
-  ArrowUpRight,
-  CheckCircle,
-  ChevronLeft,
-  LinkIcon,
-  ScrollText,
-  Vote,
+    ArrowUpRight,
+    CheckCircle,
+    ChevronLeft,
+    LinkIcon,
+    ScrollText,
+    Vote,
 } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
@@ -443,7 +443,6 @@ const ProposalDetail = ({
                                             </dd>
                                         </>
                                     )}
-                                </dl>
                                 </dl>
                             </div>
                             {renderedProposal.description && (
