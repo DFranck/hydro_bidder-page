@@ -9,15 +9,17 @@ export const Footer = () => {
             <ContentContainer
                 className="
                     z-10
-                    flex-row
+                    flex-col
                     items-center
                     justify-between
+                    gap-1
                     py-6
                     text-base
                     font-normal
                     italic
                     leading-[160%]
                     text-white/60
+                    md:flex-row
                 "
             >
                 <Link href={"/"}>
