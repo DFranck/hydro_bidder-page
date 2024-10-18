@@ -507,7 +507,7 @@ const ProposalDetail = ({
                                         (tribute, index) => (
                                             <p
                                                 key={index}
-                                                className="text-xl font-bold not-italic"
+                                                className="text-xl font-bold not-italic text-white/80 break-words"
                                             >
                                                 {formatAmount(tribute.amount)}{" "}
                                                 {tribute.symbol ||
