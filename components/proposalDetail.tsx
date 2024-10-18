@@ -397,13 +397,34 @@ const ProposalDetail = ({
                             >
                                 Project Details
                             </h3>
-                            <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
-                                <Markdown>
-                                    {renderedProposal.projectDetails.replaceAll(
-                                        /\\n/g,
-                                        "\n"
+                            <div className="text-white">
+                                <dl className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-lg">
+                                    <dt className="font-bold">Name</dt>
+                                    <dd className="font-bold">
+                                        {renderedProposal.projectName.trim()}
+                                    </dd>
+
+                                    <dt className="font-bold">Website</dt>
+                                    <dd>
+                                        <a
+                                            href={renderedProposal.projectUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-palette-green hover:underline"
+                                        >
+                                            {renderedProposal.projectUrl}
+                                        </a>
+                                    </dd>
+
+                                    {renderedProposal.projectType && (
+                                        <>
+                                            <dt className="font-bold">Type</dt>
+                                            <dd>
+                                                {renderedProposal.projectType}
+                                            </dd>
+                                        </>
                                     )}
-                                </Markdown>
+                                </dl>
                             </div>
                             {renderedProposal.description && (
                                 <>
