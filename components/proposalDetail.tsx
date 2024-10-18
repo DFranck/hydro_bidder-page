@@ -546,7 +546,7 @@ const ProposalDetail = ({
                                         (tribute, index) => (
                                             <p
                                                 key={index}
-                                                className="break-words text-xl font-bold not-italic text-white/80"
+                                                className="break-words text-xl font-bold not-italic"
                                             >
                                                 {formatAmount(tribute.amount)}{" "}
                                                 {tribute.symbol ||
@@ -593,6 +593,23 @@ const ProposalDetail = ({
                                                 {section}
                                             </Link>
                                         ))}
+                                    <Link
+                                        href={renderedProposal.projectUrl}
+                                        target="_blank"
+                                        className="
+                                            flex
+                                            items-center
+                                            gap-2
+                                            border-t
+                                            border-white/20
+                                            pt-2
+                                            text-palette-green
+                                            hover:underline
+                                        "
+                                    >
+                                        <ArrowUpRight size={18} />
+                                        Project Website
+                                    </Link>
                                 </div>
                             </div>
                         </div>
