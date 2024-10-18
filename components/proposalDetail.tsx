@@ -3,6 +3,7 @@
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { useVotingContext } from "@/app/voting/context"
 import { Confetti } from "@/components/Confetti"
+import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -23,10 +24,16 @@ import { formatAmount, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import kebabCase from "lodash/kebabCase"
-import { CheckCircle, ChevronLeft, ScrollText, Vote } from "lucide-react"
+import {
+    ArrowUpRight,
+    CheckCircle,
+    ChevronLeft,
+    LinkIcon,
+    ScrollText,
+    Vote,
+} from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
-import Markdown from "react-markdown"
 import { twMerge } from "tailwind-merge"
 
 const ProposalDetail = ({
@@ -391,12 +398,23 @@ const ProposalDetail = ({
                             </h1>
                         </div>
                         <div className="js-bid-details pl-16">
-                            <h3
+                            <h2
                                 id="project-details"
-                                className="mb-2 mt-6 text-sm uppercase opacity-80"
+                                className="
+                                    mb-2
+                                    mt-6
+                                    text-sm
+                                    uppercase
+                                    opacity-80
+                                    [body:has(a[href='#project-details']:focus)_&]:rounded-sm
+                                    [body:has(a[href='#project-details']:focus)_&]:outline
+                                    [body:has(a[href='#project-details']:focus)_&]:outline-2
+                                    [body:has(a[href='#project-details']:focus)_&]:outline-offset-4
+                                    [body:has(a[href='#project-details']:focus)_&]:outline-palette-green
+                                "
                             >
                                 Project Details
-                            </h3>
+                            </h2>
                             <div className="text-white">
                                 <dl className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-lg">
                                     <dt className="font-bold">Name</dt>
@@ -410,9 +428,10 @@ const ProposalDetail = ({
                                             href={renderedProposal.projectUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-palette-green hover:underline"
+                                            className="flex items-center gap-1 text-palette-green hover:underline"
                                         >
                                             {renderedProposal.projectUrl}
+                                            <ArrowUpRight />
                                         </a>
                                     </dd>
 
@@ -428,56 +447,76 @@ const ProposalDetail = ({
                             </div>
                             {renderedProposal.description && (
                                 <>
-                                    <h3
+                                    <h2
                                         id="bid-description"
-                                        className="mb-2 mt-6 text-sm uppercase opacity-80"
+                                        className="
+                                            mb-2
+                                            mt-6
+                                            text-sm
+                                            uppercase
+                                            opacity-80
+                                            [body:has(a[href='#bid-description']:focus)_&]:rounded-sm
+                                            [body:has(a[href='#bid-description']:focus)_&]:outline
+                                            [body:has(a[href='#bid-description']:focus)_&]:outline-2
+                                            [body:has(a[href='#bid-description']:focus)_&]:outline-offset-4
+                                            [body:has(a[href='#bid-description']:focus)_&]:outline-palette-green
+                                        "
                                     >
                                         Bid Description
-                                    </h3>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
-                                        <Markdown>
-                                            {renderedProposal.description.replaceAll(
-                                                /\\n/g,
-                                                "\n"
-                                            )}
-                                        </Markdown>
-                                    </div>
+                                    </h2>
+                                    <MarkdownContainer
+                                        content={renderedProposal.description}
+                                    />
                                 </>
                             )}
                             {renderedProposal.committeeComments && (
                                 <>
-                                    <h3
+                                    <h2
                                         id="committee-review"
-                                        className="mb-2 mt-6 text-sm uppercase opacity-80"
+                                        className="
+                                            mb-2
+                                            mt-6
+                                            text-sm
+                                            uppercase
+                                            opacity-80
+                                            [body:has(a[href='#committee-review']:focus)_&]:rounded-sm
+                                            [body:has(a[href='#committee-review']:focus)_&]:outline
+                                            [body:has(a[href='#committee-review']:focus)_&]:outline-2
+                                            [body:has(a[href='#committee-review']:focus)_&]:outline-offset-4
+                                            [body:has(a[href='#committee-review']:focus)_&]:outline-palette-green
+                                        "
                                     >
                                         Committee Review
-                                    </h3>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
-                                        <Markdown>
-                                            {renderedProposal.committeeComments.replaceAll(
-                                                /\\n/g,
-                                                "\n"
-                                            )}
-                                        </Markdown>
-                                    </div>
+                                    </h2>
+                                    <MarkdownContainer
+                                        content={
+                                            renderedProposal.committeeComments
+                                        }
+                                    />
                                 </>
                             )}
                             {renderedProposal.appendix && (
                                 <>
-                                    <h3
+                                    <h2
                                         id="appendix"
-                                        className="mb-2 mt-6 text-sm uppercase opacity-80"
+                                        className="
+                                            mb-2
+                                            mt-6
+                                            text-sm
+                                            uppercase
+                                            opacity-80
+                                            [body:has(a[href='#appendix']:focus)_&]:rounded-sm
+                                            [body:has(a[href='#appendix']:focus)_&]:outline
+                                            [body:has(a[href='#appendix']:focus)_&]:outline-2
+                                            [body:has(a[href='#appendix']:focus)_&]:outline-offset-4
+                                            [body:has(a[href='#appendix']:focus)_&]:outline-palette-green
+                                        "
                                     >
                                         Appendix
-                                    </h3>
-                                    <div className="prose text-white marker:text-white prose-headings:text-white prose-h1:tracking-normal prose-a:text-white/70 prose-strong:text-white prose-ol:text-white prose-li:text-white">
-                                        <Markdown>
-                                            {renderedProposal.appendix.replaceAll(
-                                                /\\n/g,
-                                                "\n"
-                                            )}
-                                        </Markdown>
-                                    </div>
+                                    </h2>
+                                    <MarkdownContainer
+                                        content={renderedProposal.appendix}
+                                    />
                                 </>
                             )}
                         </div>
@@ -507,7 +546,7 @@ const ProposalDetail = ({
                                         (tribute, index) => (
                                             <p
                                                 key={index}
-                                                className="text-xl font-bold not-italic text-white/80 break-words"
+                                                className="break-words text-xl font-bold not-italic text-white/80"
                                             >
                                                 {formatAmount(tribute.amount)}{" "}
                                                 {tribute.symbol ||
@@ -531,9 +570,8 @@ const ProposalDetail = ({
                                 </p>
                             </div>
 
-                            <div>
+                            <div className="flex flex-col gap-2">
                                 <p className="text-sm opacity-80">Jump To</p>
-
                                 <div className="flex flex-col gap-2">
                                     {[
                                         "Project Details",
@@ -548,8 +586,10 @@ const ProposalDetail = ({
                                             <Link
                                                 key={index}
                                                 href={`#${kebabCase(section)}`}
-                                                className="text-palette-green hover:underline"
+                                                className="flex items-center gap-2 text-palette-green hover:underline"
                                             >
+                                                <LinkIcon size={18} />
+
                                                 {section}
                                             </Link>
                                         ))}
