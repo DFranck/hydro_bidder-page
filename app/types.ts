@@ -22,21 +22,27 @@ export type GlobalState = {
     tranches: Tranche[]
     whitelistAdmins: Addr[]
     whitelist: Addr[]
-    bidDescriptions: Record<
-        number, // bid ID
-        {
-            title: string
-            description: string
-            projectDetails: string
-            points?: number
-            pointsDenom?: string
-            pointProgramLink?: string
-            committeeComments: string
-            appendix: string
-            requestAmount?: string[]
-        }
-    >
+    bidDescriptions: Record<number, BidDescription> // bid ID
 }
+
+// amount, description
+export type RequestAmount = [number, string]
+
+export type BidDescription = {
+    title: string
+    description: string
+    projectName: string
+    projectUrl: string
+    committeeComments?: string
+    requestAmount: RequestAmount[]
+    points?: number
+    pointProgramUrl?: string
+    appendix?: string
+
+    // not available for all proposals (soft deprecated but still used)
+    projectType?: string
+}
+
 export type RoundState = {
     roundEnd: Timestamp
     totalVotingPower: BigInt
