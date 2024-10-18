@@ -35,7 +35,7 @@ export type BidDescription = {
     projectUrl: string
     committeeComments?: string
     requestAmount: RequestAmount[]
-    points?: number
+    points?: RequestAmount
     pointProgramUrl?: string
     appendix?: string
 

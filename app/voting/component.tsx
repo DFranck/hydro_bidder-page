@@ -362,15 +362,15 @@ const ActiveProposals = ({
                                     get points instead of live tokens. In this
                                     bid,{" "}
                                     <var className="font-mono font-bold not-italic text-palette-cyan">
-                                        {proposal.points.toLocaleString(
+                                        {proposal.points[0].toLocaleString(
                                             "en-US"
                                         )}{" "}
-                                        {proposal.pointsDenom}
+                                        {proposal.points[1]}
                                     </var>{" "}
                                     would be distributed as tribute.{" "}
-                                    {proposal.pointProgramLink && (
+                                    {proposal.pointProgramUrl && (
                                         <a
-                                            href={proposal.pointProgramLink}
+                                            href={proposal.pointProgramUrl}
                                             className="inline-flex items-center gap-1 text-palette-green underline"
                                             target="_blank"
                                         >
