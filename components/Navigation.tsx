@@ -37,7 +37,7 @@ export default function Navigation() {
                 max-md:w-12
                 max-md:overflow-hidden
                 max-md:transition-all
-                max-md:duration-1000
+                max-md:duration-500
                 max-md:focus-within:size-auto
                 max-md:focus-within:h-full
                 max-md:focus-within:w-1/2
@@ -57,7 +57,7 @@ export default function Navigation() {
                     size-12
                     cursor-pointer
                     transition-all
-                    duration-1000
+                    duration-500
                     group-focus-within/navbar:rotate-180
                     md:hidden
                 "
@@ -71,7 +71,7 @@ export default function Navigation() {
                         justify-center
                         opacity-100
                         transition-all
-                        duration-1000
+                        duration-500
                         group-focus-within/navbar:opacity-0
                     "
                 >
@@ -87,7 +87,7 @@ export default function Navigation() {
                         justify-center
                         opacity-0
                         transition-all
-                        duration-1000
+                        duration-500
                         group-focus-within/navbar:pointer-events-auto
                         group-focus-within/navbar:opacity-100
                     "
@@ -107,7 +107,7 @@ export default function Navigation() {
                     opacity-0
                     backdrop-blur-md
                     transition-all
-                    duration-1000
+                    duration-500
                     group-focus-within/navbar:pointer-events-auto
                     group-focus-within/navbar:opacity-100
                     md:hidden
@@ -124,7 +124,7 @@ export default function Navigation() {
                     bg-palette-blue/80
                     opacity-0
                     transition-all
-                    duration-1000
+                    duration-500
                     group-focus-within/navbar:opacity-100
                     md:hidden
                 "
@@ -142,7 +142,7 @@ export default function Navigation() {
                     max-md:py-12
                     max-md:indent-96
                     max-md:transition-all
-                    max-md:duration-1000
+                    max-md:duration-500
                     max-md:group-focus-within/navbar:indent-0
                     md:flex-row
                 "
