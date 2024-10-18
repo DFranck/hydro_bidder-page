@@ -95,6 +95,7 @@ export function TooltipIcon({
                             w-56
                             -translate-x-1/2
                             whitespace-normal
+                            text-balance
                             rounded-sm
                             border
                             border-palette-beige

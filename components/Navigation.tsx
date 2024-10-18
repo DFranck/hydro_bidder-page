@@ -75,6 +75,22 @@ export default function Navigation() {
                 >
                     Rewards will show here at the end of the first pilot round
                 </TooltipIcon>
+                <TooltipIcon
+                    icon={
+                        <Link
+                            href="/exports"
+                            className={twMerge(
+                                navigationMenuTriggerStyle("/rewards"),
+                                `pointer-events-none opacity-60`
+                            )}
+                        >
+                            Exports
+                        </Link>
+                    }
+                >
+                    Performance metrics of Hydro&rsquo;s liquidity deployments
+                    will be shown here
+                </TooltipIcon>
                 <Wallet notifyConnectedCB={setIsConnected} />
             </div>
         </nav>
