@@ -267,7 +267,7 @@ const ActiveProposals = ({
                                 label: (
                                     <div className="flex items-center gap-1">
                                         Vote %
-                                        <TooltipIcon classNamesForTooltip="-ml-12">
+                                        <TooltipIcon classNamesForTooltip="-ml-24">
                                             This is the percentage of votes that
                                             this project has received so far. It
                                             may increase or decrease if other
