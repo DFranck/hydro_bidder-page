@@ -144,7 +144,6 @@ const ActiveProposals = ({
             <div
                 className="
                     -mx-3
-                    mt-10
                     space-y-6
                     rounded-md
                     bg-palette-text/20

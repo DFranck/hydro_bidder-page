@@ -12,11 +12,9 @@ export default async function Page() {
     )
 
     return (
-        <ContentContainer>
+        <ContentContainer className="gap-12 py-12">
             <DashboardTopModules />
-            <div className="mt-12 pb-20">
-                <LockupsTable validatorMap={validatorMap} />
-            </div>
+            <LockupsTable validatorMap={validatorMap} />
         </ContentContainer>
     )
 }
