@@ -122,7 +122,7 @@ export function ProposalListTopModules() {
                 justify-between
                 gap-6
                 bg-transparent
-                lg:grid-cols-3
+                md:grid-cols-3
             "
         >
             <TopCard
