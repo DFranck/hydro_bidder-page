@@ -129,9 +129,30 @@ export function ProposalListTopModules() {
                 title={
                     <div className="flex items-center gap-1">
                         Average APR
-                        <TooltipIcon>
-                            This number is the average APR available to Hydro
-                            voters during the current active round.{" "}
+                        <TooltipIcon classNamesForTooltip="flex flex-col gap-2">
+                            <p>
+                                This number is the average APR available to
+                                Hydro voters during the current active round.
+                            </p>
+
+                            <ul>
+                                {[1, 3, 12].map((months) => (
+                                    <li
+                                        key={months}
+                                        className="flex items-center justify-between"
+                                    >
+                                        <span>
+                                            Last{" "}
+                                            <strong>
+                                                {months} month
+                                                {months > 1 ? "s" : ""}:
+                                            </strong>
+                                        </span>{" "}
+                                        <span>-%</span>
+                                    </li>
+                                ))}
+                            </ul>
+
                             <a
                                 href="/docs/users/calculating-staking-apr"
                                 className="inline-flex gap-1 text-palette-green underline"
@@ -161,15 +182,21 @@ export function ProposalListTopModules() {
                             <p>Historical APRs based on</p>
 
                             <ul>
-                                <li className="flex items-center justify-between">
-                                    <span>Last 1 month:</span> <span>-%</span>
-                                </li>
-                                <li className="flex items-center justify-between">
-                                    <span>Last 3 months:</span> <span>-%</span>
-                                </li>
-                                <li className="flex items-center justify-between">
-                                    <span>Last 1 year:</span> <span>-%</span>
-                                </li>
+                                {[1, 3, 12].map((months) => (
+                                    <li
+                                        key={months}
+                                        className="flex items-center justify-between"
+                                    >
+                                        <span>
+                                            Last{" "}
+                                            <strong>
+                                                {months} month
+                                                {months > 1 ? "s" : ""}:
+                                            </strong>
+                                        </span>{" "}
+                                        <span>-%</span>
+                                    </li>
+                                ))}
                             </ul>
 
                             <p>
