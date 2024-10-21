@@ -341,12 +341,13 @@ const ProposalDetail = ({
                         "
                     />
                 )}
+
                 <div
                     className="
                         flex
                         flex-col
                         justify-between
-                        gap-8
+                        gap-12
                         md:flex-row
                     "
                 >
@@ -517,24 +518,28 @@ const ProposalDetail = ({
                                 <p className="text-sm opacity-80">
                                     Tribute to Voters
                                 </p>
-                                {pricedAndNamedTributes.length > 0 ? (
-                                    pricedAndNamedTributes.map(
-                                        (tribute, index) => (
-                                            <p
-                                                key={index}
-                                                className="break-words text-xl font-bold not-italic"
-                                            >
-                                                {formatAmount(tribute.amount)}{" "}
-                                                {tribute.symbol ||
-                                                    tribute.denom}
-                                            </p>
+                                <div className="max-w-64 overflow-x-auto">
+                                    {pricedAndNamedTributes.length > 0 ? (
+                                        pricedAndNamedTributes.map(
+                                            (tribute, index) => (
+                                                <p
+                                                    key={index}
+                                                    className="break-words text-xl font-bold not-italic"
+                                                >
+                                                    {formatAmount(
+                                                        tribute.amount
+                                                    )}{" "}
+                                                    {tribute.symbol ||
+                                                        tribute.denom}
+                                                </p>
+                                            )
                                         )
-                                    )
-                                ) : (
-                                    <p className="text-xl font-bold not-italic">
-                                        None
-                                    </p>
-                                )}
+                                    ) : (
+                                        <p className="text-xl font-bold not-italic">
+                                            None
+                                        </p>
+                                    )}
+                                </div>
                             </div>
 
                             <div>

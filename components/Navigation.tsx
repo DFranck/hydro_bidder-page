@@ -184,6 +184,7 @@ export default function Navigation() {
                         Lockups
                     </Link>
                 </ConditionalWrapper>
+
                 <TooltipIcon
                     icon={
                         <Link
@@ -199,6 +200,7 @@ export default function Navigation() {
                 >
                     Rewards will show here at the end of the first pilot round
                 </TooltipIcon>
+
                 <TooltipIcon
                     icon={
                         <Link
@@ -215,6 +217,7 @@ export default function Navigation() {
                     Performance metrics of Hydro&rsquo;s liquidity deployments
                     will be shown here
                 </TooltipIcon>
+
                 <Wallet notifyConnectedCB={setIsConnected} />
             </div>
         </nav>
