@@ -398,53 +398,6 @@ const ProposalDetail = ({
                             </h1>
                         </div>
                         <div className="js-bid-details pl-16">
-                            <h2
-                                id="project-details"
-                                className="
-                                    mb-2
-                                    mt-6
-                                    text-sm
-                                    uppercase
-                                    opacity-80
-                                    [body:has(a[href='#project-details']:focus)_&]:rounded-sm
-                                    [body:has(a[href='#project-details']:focus)_&]:outline
-                                    [body:has(a[href='#project-details']:focus)_&]:outline-2
-                                    [body:has(a[href='#project-details']:focus)_&]:outline-offset-4
-                                    [body:has(a[href='#project-details']:focus)_&]:outline-palette-green
-                                "
-                            >
-                                Project Details
-                            </h2>
-                            <div className="text-white">
-                                <dl className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-lg">
-                                    <dt className="font-bold">Name</dt>
-                                    <dd className="font-bold">
-                                        {renderedProposal.projectName.trim()}
-                                    </dd>
-
-                                    <dt className="font-bold">Website</dt>
-                                    <dd>
-                                        <a
-                                            href={renderedProposal.projectUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-1 text-palette-green hover:underline"
-                                        >
-                                            {renderedProposal.projectUrl}
-                                            <ArrowUpRight />
-                                        </a>
-                                    </dd>
-
-                                    {renderedProposal.projectType && (
-                                        <>
-                                            <dt className="font-bold">Type</dt>
-                                            <dd>
-                                                {renderedProposal.projectType}
-                                            </dd>
-                                        </>
-                                    )}
-                                </dl>
-                            </div>
                             {renderedProposal.description && (
                                 <>
                                     <h2
@@ -539,6 +492,26 @@ const ProposalDetail = ({
                         <div className="flex flex-col gap-6">
                             <div>
                                 <p className="text-sm opacity-80">
+                                    Project Name
+                                </p>
+                                <p className="text-xl font-bold not-italic">
+                                    {renderedProposal.projectName.trim()}
+                                </p>
+                            </div>
+
+                            {renderedProposal.projectType && (
+                                <div>
+                                    <p className="text-sm opacity-80">
+                                        Project Type
+                                    </p>
+                                    <p className="text-xl font-bold not-italic">
+                                        {renderedProposal.projectType}
+                                    </p>
+                                </div>
+                            )}
+
+                            <div>
+                                <p className="text-sm opacity-80">
                                     Tribute to Voters
                                 </p>
                                 {pricedAndNamedTributes.length > 0 ? (
@@ -574,7 +547,6 @@ const ProposalDetail = ({
                                 <p className="text-sm opacity-80">Jump To</p>
                                 <div className="flex flex-col gap-2">
                                     {[
-                                        "Project Details",
                                         renderedProposal.description &&
                                             "Bid Description",
                                         renderedProposal.committeeComments &&
