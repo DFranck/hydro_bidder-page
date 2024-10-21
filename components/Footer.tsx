@@ -1,5 +1,5 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import { ArrowUpRight, Globe, Twitter } from "lucide-react"
+import { ArrowUpRight, Globe, Send, Twitter } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -59,11 +59,26 @@ export const Footer = () => {
                         gap-3
                     "
                 >
-                    <a href="https://cosmos.network" target="_blank">
+                    <a
+                        href="https://cosmos.network"
+                        target="_blank"
+                        title="Cosmos Hub"
+                    >
                         <Globe />
                     </a>
-                    <a href="https://twitter.com/cosmoshub" target="_blank">
+                    <a
+                        href="https://twitter.com/cosmoshub"
+                        target="_blank"
+                        title="Twitter"
+                    >
                         <Twitter />
+                    </a>
+                    <a
+                        href="https://t.me/+xUzNOTZjUNw5Mzhk"
+                        target="_blank"
+                        title="Telegram"
+                    >
+                        <Send />
                     </a>
                 </div>
             </ContentContainer>
