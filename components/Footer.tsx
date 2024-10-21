@@ -33,7 +33,7 @@ export const Footer = () => {
                 </Link>
 
                 <div className="flex items-center gap-1">
-                    Built by{" "}
+                    Built for the Cosmos Hub by{" "}
                     <a
                         className="
                             inline-flex
@@ -59,7 +59,6 @@ export const Footer = () => {
                         gap-3
                     "
                 >
-                    <span>Funded by the Cosmos Hub</span>
                     <a href="https://cosmos.network" target="_blank">
                         <Globe />
                     </a>
