@@ -407,6 +407,7 @@ const ProposalDetail = ({
                                             mt-6
                                             text-sm
                                             uppercase
+                                            tracking-normal
                                             opacity-80
                                             [body:has(a[href='#bid-description']:focus)_&]:rounded-sm
                                             [body:has(a[href='#bid-description']:focus)_&]:outline
@@ -431,6 +432,7 @@ const ProposalDetail = ({
                                             mt-6
                                             text-sm
                                             uppercase
+                                            tracking-normal
                                             opacity-80
                                             [body:has(a[href='#committee-review']:focus)_&]:rounded-sm
                                             [body:has(a[href='#committee-review']:focus)_&]:outline
@@ -457,6 +459,7 @@ const ProposalDetail = ({
                                             mt-6
                                             text-sm
                                             uppercase
+                                            tracking-normal
                                             opacity-80
                                             [body:has(a[href='#appendix']:focus)_&]:rounded-sm
                                             [body:has(a[href='#appendix']:focus)_&]:outline
