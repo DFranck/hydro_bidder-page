@@ -172,6 +172,7 @@ const ActiveProposals = ({
                                                 items-center
                                                 justify-center
                                                 gap-2
+                                                whitespace-nowrap
                                                 rounded-md
                                                 bg-palette-blue/20
                                                 p-3
@@ -180,12 +181,38 @@ const ActiveProposals = ({
                                             "
                                         >
                                             <Ghost size={18} />
-                                            <span>
-                                                <strong>
-                                                    {percentageOfNonVoters}%
-                                                </strong>{" "}
-                                                have not voted yet
-                                            </span>
+                                            <TooltipIcon
+                                                icon={
+                                                    <span>
+                                                        <strong>
+                                                            {
+                                                                percentageOfNonVoters
+                                                            }
+                                                            %
+                                                        </strong>{" "}
+                                                        have not voted yet
+                                                    </span>
+                                                }
+                                            >
+                                                <span>
+                                                    <strong>
+                                                        {percentageOfNonVoters}%
+                                                    </strong>{" "}
+                                                    of total voting power has
+                                                    not been allocated to
+                                                    project bids yet.{" "}
+                                                    <a
+                                                        href="/docs/users/voting-for-projects"
+                                                        target="_blank"
+                                                        className="inline-flex items-center gap-1 text-palette-green underline"
+                                                    >
+                                                        Learn more
+                                                        <ArrowUpRight
+                                                            size={16}
+                                                        />
+                                                    </a>
+                                                </span>
+                                            </TooltipIcon>
                                         </div>
                                     </td>
                                 </tr>
