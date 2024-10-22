@@ -341,12 +341,13 @@ const ProposalDetail = ({
                         "
                     />
                 )}
+
                 <div
                     className="
                         flex
                         flex-col
                         justify-between
-                        gap-8
+                        gap-12
                         md:flex-row
                     "
                 >
@@ -398,53 +399,6 @@ const ProposalDetail = ({
                             </h1>
                         </div>
                         <div className="js-bid-details pl-16">
-                            <h2
-                                id="project-details"
-                                className="
-                                    mb-2
-                                    mt-6
-                                    text-sm
-                                    uppercase
-                                    opacity-80
-                                    [body:has(a[href='#project-details']:focus)_&]:rounded-sm
-                                    [body:has(a[href='#project-details']:focus)_&]:outline
-                                    [body:has(a[href='#project-details']:focus)_&]:outline-2
-                                    [body:has(a[href='#project-details']:focus)_&]:outline-offset-4
-                                    [body:has(a[href='#project-details']:focus)_&]:outline-palette-green
-                                "
-                            >
-                                Project Details
-                            </h2>
-                            <div className="text-white">
-                                <dl className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2 text-lg">
-                                    <dt className="font-bold">Name</dt>
-                                    <dd className="font-bold">
-                                        {renderedProposal.projectName.trim()}
-                                    </dd>
-
-                                    <dt className="font-bold">Website</dt>
-                                    <dd>
-                                        <a
-                                            href={renderedProposal.projectUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-1 text-palette-green hover:underline"
-                                        >
-                                            {renderedProposal.projectUrl}
-                                            <ArrowUpRight />
-                                        </a>
-                                    </dd>
-
-                                    {renderedProposal.projectType && (
-                                        <>
-                                            <dt className="font-bold">Type</dt>
-                                            <dd>
-                                                {renderedProposal.projectType}
-                                            </dd>
-                                        </>
-                                    )}
-                                </dl>
-                            </div>
                             {renderedProposal.description && (
                                 <>
                                     <h2
@@ -454,6 +408,7 @@ const ProposalDetail = ({
                                             mt-6
                                             text-sm
                                             uppercase
+                                            tracking-normal
                                             opacity-80
                                             [body:has(a[href='#bid-description']:focus)_&]:rounded-sm
                                             [body:has(a[href='#bid-description']:focus)_&]:outline
@@ -478,6 +433,7 @@ const ProposalDetail = ({
                                             mt-6
                                             text-sm
                                             uppercase
+                                            tracking-normal
                                             opacity-80
                                             [body:has(a[href='#committee-review']:focus)_&]:rounded-sm
                                             [body:has(a[href='#committee-review']:focus)_&]:outline
@@ -504,6 +460,7 @@ const ProposalDetail = ({
                                             mt-6
                                             text-sm
                                             uppercase
+                                            tracking-normal
                                             opacity-80
                                             [body:has(a[href='#appendix']:focus)_&]:rounded-sm
                                             [body:has(a[href='#appendix']:focus)_&]:outline
@@ -539,26 +496,50 @@ const ProposalDetail = ({
                         <div className="flex flex-col gap-6">
                             <div>
                                 <p className="text-sm opacity-80">
+                                    Project Name
+                                </p>
+                                <p className="text-xl font-bold not-italic">
+                                    {renderedProposal.projectName.trim()}
+                                </p>
+                            </div>
+
+                            {renderedProposal.projectType && (
+                                <div>
+                                    <p className="text-sm opacity-80">
+                                        Project Type
+                                    </p>
+                                    <p className="text-xl font-bold not-italic">
+                                        {renderedProposal.projectType}
+                                    </p>
+                                </div>
+                            )}
+
+                            <div>
+                                <p className="text-sm opacity-80">
                                     Tribute to Voters
                                 </p>
-                                {pricedAndNamedTributes.length > 0 ? (
-                                    pricedAndNamedTributes.map(
-                                        (tribute, index) => (
-                                            <p
-                                                key={index}
-                                                className="break-words text-xl font-bold not-italic"
-                                            >
-                                                {formatAmount(tribute.amount)}{" "}
-                                                {tribute.symbol ||
-                                                    tribute.denom}
-                                            </p>
+                                <div className="max-w-64 overflow-x-auto">
+                                    {pricedAndNamedTributes.length > 0 ? (
+                                        pricedAndNamedTributes.map(
+                                            (tribute, index) => (
+                                                <p
+                                                    key={index}
+                                                    className="break-words text-xl font-bold not-italic"
+                                                >
+                                                    {formatAmount(
+                                                        tribute.amount
+                                                    )}{" "}
+                                                    {tribute.symbol ||
+                                                        tribute.denom}
+                                                </p>
+                                            )
                                         )
-                                    )
-                                ) : (
-                                    <p className="text-xl font-bold not-italic">
-                                        None
-                                    </p>
-                                )}
+                                    ) : (
+                                        <p className="text-xl font-bold not-italic">
+                                            None
+                                        </p>
+                                    )}
+                                </div>
                             </div>
 
                             <div>
@@ -574,7 +555,6 @@ const ProposalDetail = ({
                                 <p className="text-sm opacity-80">Jump To</p>
                                 <div className="flex flex-col gap-2">
                                     {[
-                                        "Project Details",
                                         renderedProposal.description &&
                                             "Bid Description",
                                         renderedProposal.committeeComments &&

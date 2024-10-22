@@ -240,7 +240,7 @@ export const ContinueFromHubStepper = ({
                                 status may not be visible when you return, but
                                 the transfer will continue. Once the transfer is
                                 complete, you will need to return to initiate
-                                the staking process.
+                                the lockup process.
                             </p>
                         </>
                     ),

@@ -8,7 +8,7 @@ export default function VotingProposalSinglePage({
     params: { id: string }
 }) {
     return (
-        <ContentContainer>
+        <ContentContainer className="gap-6 py-12">
             <ProposalListTopModules />
             <Details params={params} />
         </ContentContainer>

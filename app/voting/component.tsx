@@ -144,7 +144,6 @@ const ActiveProposals = ({
             <div
                 className="
                     -mx-3
-                    mt-10
                     space-y-6
                     rounded-md
                     bg-palette-text/20
@@ -173,6 +172,7 @@ const ActiveProposals = ({
                                                 items-center
                                                 justify-center
                                                 gap-2
+                                                whitespace-nowrap
                                                 rounded-md
                                                 bg-palette-blue/20
                                                 p-3
@@ -181,12 +181,38 @@ const ActiveProposals = ({
                                             "
                                         >
                                             <Ghost size={18} />
-                                            <span>
-                                                <strong>
-                                                    {percentageOfNonVoters}%
-                                                </strong>{" "}
-                                                have not voted yet
-                                            </span>
+                                            <TooltipIcon
+                                                icon={
+                                                    <span>
+                                                        <strong>
+                                                            {
+                                                                percentageOfNonVoters
+                                                            }
+                                                            %
+                                                        </strong>{" "}
+                                                        have not voted yet
+                                                    </span>
+                                                }
+                                            >
+                                                <span>
+                                                    <strong>
+                                                        {percentageOfNonVoters}%
+                                                    </strong>{" "}
+                                                    of total voting power has
+                                                    not been allocated to
+                                                    project bids yet.{" "}
+                                                    <a
+                                                        href="/docs/users/voting-for-projects"
+                                                        target="_blank"
+                                                        className="inline-flex items-center gap-1 text-palette-green underline"
+                                                    >
+                                                        Learn more
+                                                        <ArrowUpRight
+                                                            size={16}
+                                                        />
+                                                    </a>
+                                                </span>
+                                            </TooltipIcon>
                                         </div>
                                     </td>
                                 </tr>
@@ -267,7 +293,7 @@ const ActiveProposals = ({
                                 label: (
                                     <div className="flex items-center gap-1">
                                         Vote %
-                                        <TooltipIcon classNamesForTooltip="-ml-12">
+                                        <TooltipIcon classNamesForTooltip="-ml-24">
                                             This is the percentage of votes that
                                             this project has received so far. It
                                             may increase or decrease if other

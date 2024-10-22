@@ -15,7 +15,7 @@ export function ScrollIndicator() {
                     fixed
                     bottom-0
                     left-1/2
-                    z-50
+                    z-10
                     -translate-x-1/2
                     -translate-y-1/2
                     text-white

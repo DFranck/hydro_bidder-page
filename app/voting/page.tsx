@@ -8,7 +8,7 @@ export default async function ActiveProposalsPage({
     searchParams: { [key: string]: string | string[] | undefined }
 }) {
     return (
-        <ContentContainer>
+        <ContentContainer className="gap-12 py-12">
             <ProposalListTopModules />
             <ActiveProposals searchParams={searchParams} />
         </ContentContainer>

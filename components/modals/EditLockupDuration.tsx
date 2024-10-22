@@ -380,10 +380,10 @@ export const EditLockupDuration = ({
                                 <div>Locked ATOM</div>
                                 <div
                                     className="
-                                    text-4xl
-                                    font-bold
-                                    text-palette-beige
-                                "
+                                        text-4xl
+                                        font-bold
+                                        text-palette-beige
+                                    "
                                 >
                                     {formValues.shares}
                                 </div>
