@@ -10,7 +10,7 @@ import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { TriangleAlertIcon } from "lucide-react"
+import { ArrowUpRight, TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
@@ -160,15 +160,34 @@ function Lockups({
                                     }}
                                 />
                             </div>
-                            <span
-                                className={`
-                                    text-sm
-                                    ${lockedPercentage >= 98 ? "text-red-500" : "text-palette-beige"}
-                                `}
-                            >
-                                {(lockedAtom / 1e6).toFixed(2)} /{" "}
-                                {(maxLockedTokens / 1e6).toFixed(2)} ATOM max.
-                            </span>
+                            <div className="flex items-center gap-1">
+                                <span
+                                    className={twMerge(
+                                        `
+                                            text-sm
+                                        `,
+                                        lockedPercentage >= 98
+                                            ? "text-red-500"
+                                            : "text-palette-beige"
+                                    )}
+                                >
+                                    {(lockedAtom / 1e6).toFixed(2)} /{" "}
+                                    {(maxLockedTokens / 1e6).toFixed(2)} ATOM
+                                    max.
+                                </span>
+
+                                <TooltipIcon>
+                                    For the pilot round, there is a maximum
+                                    limit of ATOM you can lockup.{" "}
+                                    <a
+                                        href="/docs#pilot-rounds"
+                                        className="inline-flex items-center gap-1 text-palette-green underline"
+                                    >
+                                        Learn More
+                                        <ArrowUpRight size={16} />
+                                    </a>
+                                </TooltipIcon>
+                            </div>
                         </div>
 
                         <ConditionalWrapper
