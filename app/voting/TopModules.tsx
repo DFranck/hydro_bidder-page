@@ -250,21 +250,6 @@ export function ProposalListTopModules() {
                     currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"
                 }
             />
-            {/* <TopCard
-                title={<>Your Locked&nbsp;ATOM</>}
-                label={
-                    <>
-                        {Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                        }).format(atomPrice * (totalLockedTokens / 1e6))}{" "}
-                        USD Equivalent *
-                    </>
-                }
-                value={(totalLockedTokens / 1e6).toLocaleString("en-US", {
-                    maximumFractionDigits: 2,
-                })}
-            /> */}
 
             {/* <TopCard
                 title="APR"
@@ -272,7 +257,7 @@ export function ProposalListTopModules() {
                 value={lowTopLineAPR.toLocaleString("en-US", {
                     style: "percent",
                 })}
-            /> */}
+            />*/}
         </div>
     )
 }

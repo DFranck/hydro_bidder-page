@@ -1,5 +1,6 @@
 "use client"
 
+import { useAppContext } from "@/app/context"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { Button } from "@/components/ui/button"
@@ -498,13 +499,19 @@ const LockForm = ({
     hubChain: ChainContext
     validatorMap: Map<string, Validator>
 }) => {
+    const {
+        globalState: {
+            constants: { max_locked_tokens_per_address = 1 },
+        },
+    } = useAppContext()
     const [validator, setValidator] = useState("")
     const [amount, setAmount] = useState("")
     const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSubmit(validator, amount, parseInt(duration))
+        const uatomAmount = Math.floor(parseFloat(amount) * 1000000).toString()
+        onSubmit(validator, uatomAmount, parseInt(duration))
     }
 
     const { data: validators } = useMyValidators(
@@ -536,6 +543,14 @@ const LockForm = ({
     const clearSelectedValidator = () => {
         setValidator("")
     }
+
+    const delegationBalance = Number(
+        validators?.find((v) => v.validator.operator_address === validator)
+            ?.delegation_balance.amount
+    )
+
+    const maxATOMAmount =
+        Math.min(delegationBalance, max_locked_tokens_per_address) / 1e6
 
     return (
         <Card>
@@ -663,30 +678,19 @@ const LockForm = ({
                                         <div className="flex items-center gap-3">
                                             <input
                                                 type="number"
-                                                step="0.000001"
-                                                max={
-                                                    Number(
-                                                        validators?.find(
-                                                            (v) =>
-                                                                v.validator
-                                                                    .operator_address ===
-                                                                validator
-                                                        )?.delegation_balance
-                                                            .amount
-                                                    ) / 1000000
-                                                }
-                                                min="0.000001"
-                                                value={Number(amount) / 1000000}
+                                                step={0.000001}
+                                                max={maxATOMAmount}
+                                                min={0.000001}
+                                                value={amount}
                                                 onChange={(e) => {
-                                                    const atomValue =
-                                                        parseFloat(
-                                                            e.target.value
-                                                        ) || 0
-                                                    const uatomValue =
-                                                        Math.floor(
-                                                            atomValue * 1000000
+                                                    setAmount(
+                                                        Math.min(
+                                                            parseFloat(
+                                                                e.target.value
+                                                            ),
+                                                            maxATOMAmount
                                                         ).toString()
-                                                    setAmount(uatomValue)
+                                                    )
                                                 }}
                                                 className={
                                                     commonClassNames.input
@@ -698,19 +702,7 @@ const LockForm = ({
                                                     text-gray-500
                                                 "
                                             >
-                                                Max:{" "}
-                                                {(
-                                                    Number(
-                                                        validators?.find(
-                                                            (v) =>
-                                                                v.validator
-                                                                    .operator_address ===
-                                                                validator
-                                                        )?.delegation_balance
-                                                            .amount
-                                                    ) / 1000000
-                                                ).toFixed(6)}{" "}
-                                                ATOM
+                                                Max: {maxATOMAmount} ATOM
                                             </p>
                                         </div>
                                     </div>
@@ -801,7 +793,10 @@ const LockForm = ({
                                             {formatAmount(
                                                 scaleLockupPower(
                                                     selectedDuration,
-                                                    BigInt(selectedAmount)
+                                                    BigInt(
+                                                        selectedAmount * 1e6 ||
+                                                            0
+                                                    )
                                                 )
                                             )}
                                         </span>

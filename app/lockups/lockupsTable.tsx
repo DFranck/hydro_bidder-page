@@ -1,15 +1,19 @@
 "use client"
 
+import { useAppContext } from "@/app/context"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
 import { PrettyTable } from "@/components/PrettyTable"
-import { fetchMyAllLockups, Validator } from "@/hooks/hooks"
+import { TooltipIcon } from "@/components/TooltipIcon"
+import { fetchMyAllLockups, useUserVotingData, Validator } from "@/hooks/hooks"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { TriangleAlertIcon } from "lucide-react"
+import { ArrowUpRight, TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { twMerge } from "tailwind-merge"
 import { LockEntryWithPower } from "../ts_types/HydroBase.types"
 
 export default function LockupsTable({
@@ -51,9 +55,18 @@ function Lockups({
     validatorMap: Map<string, Validator>
     getRestEndpoint: () => Promise<string | ExtendedHttpEndpoint>
 }) {
+    const {
+        globalState: {
+            constants: { max_locked_tokens_per_address = 0 },
+        },
+    } = useAppContext()
+    const { data: userVotingData } = useUserVotingData(walletAddress)
     const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [refetch, setRefetch] = useState(false)
+    const lockedAtom = userVotingData?.lockups.lockedAtom ?? 0
+    const maxLockedTokens = max_locked_tokens_per_address ?? 1
+    const lockedPercentage = Math.min((lockedAtom / maxLockedTokens) * 100, 100)
 
     useEffect(() => {
         const fetchLockups = async () => {
@@ -78,14 +91,14 @@ function Lockups({
         }
     }, [walletAddress, refetch])
 
-    const isExpired = (lockEnd: string) => {
+    function isExpired(lockEnd: string) {
         const now = new Date().getTime()
         const end = parseInt(lockEnd) / 1000000 // Convert nanoseconds to milliseconds
         const diff = end - now
         return diff < 0
     }
 
-    const formatDate = (date: string) => {
+    function formatDate(date: string) {
         const timestampMs = parseInt(date) / 1e6
         const dateObj = new Date(timestampMs)
         return dateObj.toISOString().split("T")[0]
@@ -106,27 +119,117 @@ function Lockups({
                 <div
                     className="
                         flex
+                        flex-col
                         justify-between
-                        gap-12
+                        gap-3
                         p-6
+                        lg:flex-row
                     "
                 >
                     <h3>My Lockups</h3>
 
-                    <Link
+                    <div
                         className="
-                            whitespace-nowrap
-                            rounded-md
-                            bg-palette-beige
-                            px-6
-                            py-3
-                            text-palette-text
-                            hover:bg-palette-beige/80
+                            flex
+                            flex-col
+                            items-end
+                            justify-end
+                            gap-6
+                            md:flex-row
+                            md:items-center
                         "
-                        href="/lock-atom"
                     >
-                        New Lockup
-                    </Link>
+                        <div className="flex items-center gap-4">
+                            <div
+                                className={twMerge(
+                                    "h-4 w-64 overflow-hidden rounded-full",
+                                    lockedPercentage >= 98
+                                        ? "bg-red-500/20"
+                                        : "bg-palette-beige/20"
+                                )}
+                            >
+                                <div
+                                    className={twMerge(
+                                        "h-full",
+                                        lockedPercentage >= 98
+                                            ? "bg-red-500"
+                                            : "bg-palette-beige"
+                                    )}
+                                    style={{
+                                        width: `${lockedPercentage}%`,
+                                    }}
+                                />
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span
+                                    className={twMerge(
+                                        `
+                                            text-sm
+                                        `,
+                                        lockedPercentage >= 98
+                                            ? "text-red-500"
+                                            : "text-palette-beige"
+                                    )}
+                                >
+                                    {(lockedAtom / 1e6).toFixed(2)} /{" "}
+                                    {(maxLockedTokens / 1e6).toFixed(2)} ATOM
+                                    max.
+                                </span>
+
+                                <TooltipIcon>
+                                    For the pilot round, there is a maximum
+                                    limit of ATOM you can lockup.{" "}
+                                    <a
+                                        href="/docs#pilot-rounds"
+                                        className="inline-flex items-center gap-1 text-palette-green underline"
+                                    >
+                                        Learn More
+                                        <ArrowUpRight size={16} />
+                                    </a>
+                                </TooltipIcon>
+                            </div>
+                        </div>
+
+                        <ConditionalWrapper
+                            condition={lockedPercentage >= 85}
+                            wrapper={(children) => (
+                                <TooltipIcon
+                                    classNamesForTooltip="-ml-12"
+                                    icon={
+                                        <div
+                                            className="
+                                                pointer-events-none
+                                                cursor-not-allowed
+                                                opacity-50
+                                            "
+                                        >
+                                            {children}
+                                        </div>
+                                    }
+                                >
+                                    You&apos;ve reached the maximum locked
+                                    tokens
+                                </TooltipIcon>
+                            )}
+                        >
+                            <Link
+                                className={twMerge(
+                                    `
+                                        whitespace-nowrap
+                                        rounded-md
+                                        bg-palette-beige
+                                        px-6
+                                        py-3
+                                        text-palette-text
+                                        hover:bg-palette-beige/80
+                                    `
+                                )}
+                                href="/lock-atom"
+                            >
+                                New Lockup
+                            </Link>
+                        </ConditionalWrapper>
+                    </div>
                 </div>
 
                 {myLockups.length === 0 && (
