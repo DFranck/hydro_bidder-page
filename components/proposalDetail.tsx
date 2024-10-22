@@ -1,7 +1,7 @@
 "use client"
 
+import { useAppContext } from "@/app/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
-import { useVotingContext } from "@/app/voting/context"
 import { Confetti } from "@/components/Confetti"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { Button } from "@/components/ui/button"
@@ -48,7 +48,7 @@ const ProposalDetail = ({
         currentProposalTributes,
         currentProposalTranches: proposalTranches,
         assetListWithPrices,
-    } = useVotingContext()
+    } = useAppContext()
     const [hasVoted, setHasVoted] = useState(false)
     const [hasVotedThisProposal, setHasVotedThisProposal] = useState(false)
     const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)

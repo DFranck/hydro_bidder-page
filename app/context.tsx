@@ -1,0 +1,28 @@
+"use client"
+
+import { fetchDashboardData } from "@/hooks/hooks"
+import { createContext, useContext } from "react"
+
+export type AppContextObject = Awaited<ReturnType<typeof fetchDashboardData>>
+
+// Define the type for AppContext
+export const AppContext: React.Context<AppContextObject | null> =
+    createContext<AppContextObject | null>(null)
+
+export function useAppContext() {
+    const context = useContext(AppContext)
+    if (!context) {
+        throw new Error("useAppContext must be used within a AppProvider")
+    }
+    return context
+}
+
+export function AppContextProvider({
+    children,
+    value,
+}: {
+    children: React.ReactNode
+    value: AppContextObject
+}) {
+    return <AppContext.Provider value={value}>{children}</AppContext.Provider>
+}
