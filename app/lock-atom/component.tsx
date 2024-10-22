@@ -793,7 +793,7 @@ const LockForm = ({
                                             {formatAmount(
                                                 scaleLockupPower(
                                                     selectedDuration,
-                                                    BigInt(selectedAmount)
+                                                    BigInt(selectedAmount || 0)
                                                 )
                                             )}
                                         </span>
