@@ -1,6 +1,6 @@
 "use client"
 
-import { useVotingContext } from "@/app/voting/context"
+import { useAppContext } from "@/app/context"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
@@ -48,7 +48,7 @@ const ActiveProposals = ({
         currentProposalTributes,
         globalState,
         assetListWithPrices,
-    } = useVotingContext()
+    } = useAppContext()
 
     const [currentTranche, setCurrentTranche] = useState(
         searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1
