@@ -510,7 +510,8 @@ const LockForm = ({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSubmit(validator, amount, parseInt(duration))
+        const uatomAmount = Math.floor(parseFloat(amount) * 1000000).toString()
+        onSubmit(validator, uatomAmount, parseInt(duration))
     }
 
     const { data: validators } = useMyValidators(
@@ -542,6 +543,14 @@ const LockForm = ({
     const clearSelectedValidator = () => {
         setValidator("")
     }
+
+    const delegationBalance =
+        Number(
+            validators?.find((v) => v.validator.operator_address === validator)
+                ?.delegation_balance.amount
+        ) / 1000000
+
+    const maxAmount = Math.min(delegationBalance, max_locked_tokens_per_address)
 
     return (
         <Card>
@@ -669,31 +678,19 @@ const LockForm = ({
                                         <div className="flex items-center gap-3">
                                             <input
                                                 type="number"
-                                                step="0.000001"
-                                                max={Math.min(
-                                                    Number(
-                                                        validators?.find(
-                                                            (v) =>
-                                                                v.validator
-                                                                    .operator_address ===
-                                                                validator
-                                                        )?.delegation_balance
-                                                            .amount
-                                                    ) / 1000000,
-                                                    max_locked_tokens_per_address
-                                                )}
-                                                min="0.000001"
-                                                value={Number(amount) / 1000000}
+                                                step={0.000001}
+                                                max={maxAmount}
+                                                min={0.000001}
+                                                value={amount}
                                                 onChange={(e) => {
-                                                    const atomValue =
-                                                        parseFloat(
-                                                            e.target.value
-                                                        ) || 0
-                                                    const uatomValue =
-                                                        Math.floor(
-                                                            atomValue * 1000000
+                                                    setAmount(
+                                                        Math.min(
+                                                            parseFloat(
+                                                                e.target.value
+                                                            ),
+                                                            maxAmount
                                                         ).toString()
-                                                    setAmount(uatomValue)
+                                                    )
                                                 }}
                                                 className={
                                                     commonClassNames.input
@@ -705,19 +702,7 @@ const LockForm = ({
                                                     text-gray-500
                                                 "
                                             >
-                                                Max:{" "}
-                                                {(
-                                                    Number(
-                                                        validators?.find(
-                                                            (v) =>
-                                                                v.validator
-                                                                    .operator_address ===
-                                                                validator
-                                                        )?.delegation_balance
-                                                            .amount
-                                                    ) / 1000000
-                                                ).toFixed(6)}{" "}
-                                                ATOM
+                                                Max: {maxAmount} ATOM
                                             </p>
                                         </div>
                                     </div>
