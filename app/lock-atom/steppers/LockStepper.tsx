@@ -370,14 +370,17 @@ export const LockStepper = ({
                 return {
                     isWorking: true,
                     contents: (
-                        <p>
-                            Sending your staked ATOM to Hydro. This may take a
-                            minute or two, depending on network congestion. If
-                            you exit Hydro, this status may not be visible when
-                            you return, but the transfer will continue. Once the
-                            transfer is complete, you will need to return to
-                            initiate the staking process.
-                        </p>
+                        <>
+                            <p>Sending your staked ATOM to Hydro...</p>
+                            <p>
+                                This could take 30 seconds or longer if the
+                                network is congested. If you exit Hydro, this
+                                status may not be visible when you return, but
+                                the transfer will continue. Once the transfer is
+                                complete, you will need to return to initiate
+                                the lockup process.
+                            </p>
+                        </>
                     ),
                 }
             case "WaitingForLockingSigning":

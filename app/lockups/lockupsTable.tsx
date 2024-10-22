@@ -27,18 +27,14 @@ export default function LockupsTable({
     return (
         <>
             {isWalletConnected && address ? (
-                <div className="mt-10">
-                    <Lockups
-                        walletAddress={address}
-                        getSigningCosmWasmClient={getSigningCosmWasmClient}
-                        validatorMap={validatorMap}
-                        getRestEndpoint={getRestEndpoint}
-                    />
-                </div>
+                <Lockups
+                    walletAddress={address}
+                    getSigningCosmWasmClient={getSigningCosmWasmClient}
+                    validatorMap={validatorMap}
+                    getRestEndpoint={getRestEndpoint}
+                />
             ) : (
-                <div className="mt-10">
-                    <p>Connect your wallet to view your lockups</p>
-                </div>
+                <p>Connect your wallet to view your lockups</p>
             )}
         </>
     )
@@ -100,8 +96,6 @@ function Lockups({
             <div
                 className="
                   -mx-3
-                  mt-10
-                  space-y-6
                   overflow-hidden
                   rounded-md
                   bg-palette-text/20
