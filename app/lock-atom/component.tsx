@@ -544,13 +544,13 @@ const LockForm = ({
         setValidator("")
     }
 
-    const delegationBalance =
-        Number(
-            validators?.find((v) => v.validator.operator_address === validator)
-                ?.delegation_balance.amount
-        ) / 1000000
+    const delegationBalance = Number(
+        validators?.find((v) => v.validator.operator_address === validator)
+            ?.delegation_balance.amount
+    )
 
-    const maxAmount = Math.min(delegationBalance, max_locked_tokens_per_address)
+    const maxATOMAmount =
+        Math.min(delegationBalance, max_locked_tokens_per_address) / 1e6
 
     return (
         <Card>
@@ -679,7 +679,7 @@ const LockForm = ({
                                             <input
                                                 type="number"
                                                 step={0.000001}
-                                                max={maxAmount}
+                                                max={maxATOMAmount}
                                                 min={0.000001}
                                                 value={amount}
                                                 onChange={(e) => {
@@ -688,7 +688,7 @@ const LockForm = ({
                                                             parseFloat(
                                                                 e.target.value
                                                             ),
-                                                            maxAmount
+                                                            maxATOMAmount
                                                         ).toString()
                                                     )
                                                 }}
@@ -702,7 +702,7 @@ const LockForm = ({
                                                     text-gray-500
                                                 "
                                             >
-                                                Max: {maxAmount} ATOM
+                                                Max: {maxATOMAmount} ATOM
                                             </p>
                                         </div>
                                     </div>
@@ -793,7 +793,10 @@ const LockForm = ({
                                             {formatAmount(
                                                 scaleLockupPower(
                                                     selectedDuration,
-                                                    BigInt(selectedAmount || 0)
+                                                    BigInt(
+                                                        selectedAmount * 1e6 ||
+                                                            0
+                                                    )
                                                 )
                                             )}
                                         </span>
