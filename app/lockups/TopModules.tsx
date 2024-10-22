@@ -195,7 +195,7 @@ function TotalLockedATOMCard({ isLoading }: { isLoading: boolean }) {
         <TopCard
             icon={
                 <Image
-                    alt="Total Locked ATOM"
+                    alt="Total ATOM in Hydro"
                     className="translate-x-4"
                     src={"/images/Lock_Light.svg"}
                     fill={true}
@@ -204,7 +204,9 @@ function TotalLockedATOMCard({ isLoading }: { isLoading: boolean }) {
             isLoading={isLoading}
             value={((totalLockedATOM ?? 0) / 1e6).toFixed(0)}
             title={
-                <div className="flex items-center gap-1">Total Locked ATOM</div>
+                <div className="flex items-center gap-1">
+                    Total ATOM in Hydro
+                </div>
             }
             label={
                 <>
