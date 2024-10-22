@@ -143,7 +143,7 @@ function Lockups({
                             <div
                                 className={twMerge(
                                     "h-4 w-64 overflow-hidden rounded-full",
-                                    lockedPercentage >= 85
+                                    lockedPercentage >= 98
                                         ? "bg-red-500/20"
                                         : "bg-palette-beige/20"
                                 )}
@@ -151,7 +151,7 @@ function Lockups({
                                 <div
                                     className={twMerge(
                                         "h-full",
-                                        lockedPercentage >= 85
+                                        lockedPercentage >= 98
                                             ? "bg-red-500"
                                             : "bg-palette-beige"
                                     )}
@@ -160,7 +160,12 @@ function Lockups({
                                     }}
                                 />
                             </div>
-                            <span className="text-sm text-palette-beige">
+                            <span
+                                className={`
+                                    text-sm
+                                    ${lockedPercentage >= 98 ? "text-red-500" : "text-palette-beige"}
+                                `}
+                            >
                                 {(lockedAtom / 1e6).toFixed(2)} /{" "}
                                 {(maxLockedTokens / 1e6).toFixed(2)} ATOM max.
                             </span>
