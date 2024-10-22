@@ -1,13 +1,13 @@
 "use client"
 
+import { useAppContext } from "@/app/context"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { TopCard } from "@/components/TopCard"
 import { Button } from "@/components/ui/button"
-import { fetchUserVotingData, UserVotingData } from "@/hooks/hooks"
+import { UserVotingData, useUserVotingData } from "@/hooks/hooks"
 import { cn, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
 
 export enum TabLabel {
     VOTING = "voting",
@@ -17,25 +17,14 @@ export enum TabLabel {
 }
 
 export const DashboardTopModules = () => {
-    const { isWalletConnected, address } = useChain("neutron")
-    const [userVotingData, setUserVotingData] = useState<UserVotingData>()
-
-    useEffect(() => {
-        const getUserVotingData = async (address: string) => {
-            const data = await fetchUserVotingData(address)
-            setUserVotingData(data)
-        }
-        if (isWalletConnected && address) {
-            getUserVotingData(address)
-        }
-    }, [isWalletConnected, address])
+    const { address } = useChain("neutron")
+    const { data: userVotingData } = useUserVotingData(address ?? "")
 
     return (
         <div className="grid gap-6 lg:grid-cols-2">
-            <LockedAtomCard
+            <LockedAtomValueCard
+                userVotingData={userVotingData}
                 isLoading={!userVotingData}
-                count={userVotingData?.lockups.count}
-                lockedAtom={userVotingData?.lockups.lockedAtom}
             />
             <VotingPowerCard
                 isLoading={!userVotingData}
@@ -91,7 +80,7 @@ function LockedAtomCard({
         <TopCard
             icon={
                 <Image
-                    alt="Locked ATOM"
+                    alt="Your Locked ATOM"
                     className="translate-x-4"
                     src={"/images/Lock_Light.svg"}
                     fill={true}
@@ -99,13 +88,17 @@ function LockedAtomCard({
             }
             isLoading={isLoading}
             value={
-                !!lockedAtom && lockedAtom > 0
-                    ? formatAmount(lockedAtom)
-                    : "0.00"
+                <>
+                    {/* {Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+            }).format(atomPrice * (lockedAtom / 1e6))} */}
+                    Test
+                </>
             }
             title={
                 <div className="flex items-center gap-1">
-                    Locked ATOM{" "}
+                    Your Locked ATOM{" "}
                     <TooltipIcon>
                         Your staked ATOM locked in Hydro. The more ATOMs you
                         lock, the higher your voting power will be
@@ -167,6 +160,49 @@ function VotingPowerCard({
                     "Your current Voting Power"
                 )
             }
+        />
+    )
+}
+
+function LockedAtomValueCard({
+    userVotingData,
+    isLoading,
+}: {
+    userVotingData: UserVotingData | undefined
+    isLoading: boolean
+}) {
+    const {
+        globalState: {
+            constants: { max_locked_tokens },
+            totalLockedTokens,
+        },
+    } = useAppContext()
+
+    const [totalLockedATOM, maxLockedATOM] = [
+        totalLockedTokens ?? 0,
+        max_locked_tokens ?? 0,
+    ]
+
+    console.log(totalLockedATOM, maxLockedATOM)
+
+    return (
+        <TopCard
+            icon={
+                <Image
+                    alt="Your Locked ATOM"
+                    className="translate-x-4"
+                    src={"/images/Lock_Light.svg"}
+                    fill={true}
+                />
+            }
+            isLoading={isLoading}
+            value={((totalLockedATOM ?? 0) / 1e6).toFixed(0)}
+            title={
+                <div className="flex items-center gap-1">
+                    Locked ATOM in Hydro
+                </div>
+            }
+            label={`${((totalLockedATOM / maxLockedATOM) * 100).toFixed(0)}% of ${formatAmount(maxLockedATOM)} Maximum`}
         />
     )
 }
