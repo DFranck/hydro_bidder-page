@@ -1,6 +1,6 @@
 "use client"
 
-import { useVotingContext } from "@/app/voting/context"
+import { useAppContext } from "@/app/context"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { TopCard } from "@/components/TopCard"
 import { ArrowUpRight } from "lucide-react"
@@ -22,11 +22,11 @@ export const getRoundEndText = (roundEnd: Timestamp) => {
 export function ProposalListTopModules() {
     const {
         assetListWithPrices,
-        globalState: { totalLockedTokens, currentRound },
+        globalState: { atomPrice, totalLockedTokens, currentRound },
         currentRoundEnd,
         currentProposalTributes,
         currentProposalTranches,
-    } = useVotingContext()
+    } = useAppContext()
 
     // Calculate total tribute value
     const totalTributeValue = Array.from(currentProposalTributes.values())
@@ -45,11 +45,6 @@ export function ProposalListTopModules() {
                     assetPrice
             )
         }, 0)
-
-    const atomPrice =
-        assetListWithPrices.get(
-            "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-        )?.priceUsd ?? 0
 
     // TODO: Commenting this out until we can get to the bottom of APR
     // Calculate APR inputs for each proposal in each tranche

@@ -1,7 +1,7 @@
 "use client"
 
+import { useAppContext } from "@/app/context"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
-import { useVotingContext } from "@/app/voting/context"
 import { ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -20,7 +20,7 @@ export function TranchePagination({
 }) {
     const {
         globalState: { tranches },
-    } = useVotingContext()
+    } = useAppContext()
 
     const hasVotedOnAnyTranch = tranches.some((tranche) =>
         myVotes?.has(tranche.id)
