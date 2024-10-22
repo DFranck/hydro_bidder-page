@@ -254,7 +254,10 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     ])
 
     return {
-        constants,
+        constants: {
+            ...constants,
+            max_locked_tokens_per_address: 200 * 1e6,
+        },
         currentRound,
         totalLockedTokens,
         tranches,

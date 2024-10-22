@@ -4,7 +4,7 @@ import { useAppContext } from "@/app/context"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { TopCard } from "@/components/TopCard"
 import { Button } from "@/components/ui/button"
-import { UserVotingData, useUserVotingData } from "@/hooks/hooks"
+import { useUserVotingData } from "@/hooks/hooks"
 import { cn, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
@@ -21,9 +21,11 @@ export const DashboardTopModules = () => {
     const { data: userVotingData } = useUserVotingData(address ?? "")
 
     return (
-        <div className="grid gap-6 lg:grid-cols-2">
-            <LockedAtomValueCard
-                userVotingData={userVotingData}
+        <div className="grid gap-6 lg:grid-cols-3">
+            <TotalLockedATOMCard isLoading={!userVotingData} />
+            <YourLockedATOMCard
+                count={userVotingData?.lockups.count}
+                lockedAtom={userVotingData?.lockups.lockedAtom}
                 isLoading={!userVotingData}
             />
             <VotingPowerCard
@@ -67,7 +69,7 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
     )
 }
 
-function LockedAtomCard({
+function YourLockedATOMCard({
     count,
     lockedAtom,
     isLoading,
@@ -76,6 +78,16 @@ function LockedAtomCard({
     lockedAtom?: number
     isLoading: boolean
 }) {
+    const {
+        globalState: {
+            constants: { max_locked_tokens_per_address },
+        },
+    } = useAppContext()
+
+    const percentLocked = max_locked_tokens_per_address
+        ? ((lockedAtom ?? 0) / max_locked_tokens_per_address) * 100
+        : 0
+
     return (
         <TopCard
             icon={
@@ -89,11 +101,9 @@ function LockedAtomCard({
             isLoading={isLoading}
             value={
                 <>
-                    {/* {Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-            }).format(atomPrice * (lockedAtom / 1e6))} */}
-                    Test
+                    {((lockedAtom ?? 0) / 1e6).toLocaleString("en-US", {
+                        maximumFractionDigits: 4,
+                    })}
                 </>
             }
             title={
@@ -106,9 +116,13 @@ function LockedAtomCard({
                 </div>
             }
             label={
-                !!lockedAtom && lockedAtom > 0
-                    ? `In ${count === 1 ? "Lockup" : "Lockups"}`
-                    : undefined
+                <>
+                    <strong>{percentLocked.toFixed(2)}%</strong> of{" "}
+                    <strong>
+                        {formatAmount(max_locked_tokens_per_address ?? 0)}
+                    </strong>{" "}
+                    max.
+                </>
             }
         />
     )
@@ -164,13 +178,7 @@ function VotingPowerCard({
     )
 }
 
-function LockedAtomValueCard({
-    userVotingData,
-    isLoading,
-}: {
-    userVotingData: UserVotingData | undefined
-    isLoading: boolean
-}) {
+function TotalLockedATOMCard({ isLoading }: { isLoading: boolean }) {
     const {
         globalState: {
             constants: { max_locked_tokens },
@@ -183,13 +191,11 @@ function LockedAtomValueCard({
         max_locked_tokens ?? 0,
     ]
 
-    console.log(totalLockedATOM, maxLockedATOM)
-
     return (
         <TopCard
             icon={
                 <Image
-                    alt="Your Locked ATOM"
+                    alt="Total Locked ATOM"
                     className="translate-x-4"
                     src={"/images/Lock_Light.svg"}
                     fill={true}
@@ -198,11 +204,16 @@ function LockedAtomValueCard({
             isLoading={isLoading}
             value={((totalLockedATOM ?? 0) / 1e6).toFixed(0)}
             title={
-                <div className="flex items-center gap-1">
-                    Locked ATOM in Hydro
-                </div>
+                <div className="flex items-center gap-1">Total Locked ATOM</div>
             }
-            label={`${((totalLockedATOM / maxLockedATOM) * 100).toFixed(0)}% of ${formatAmount(maxLockedATOM)} Maximum`}
+            label={
+                <>
+                    <strong>
+                        {((totalLockedATOM / maxLockedATOM) * 100).toFixed(0)}%
+                    </strong>{" "}
+                    of <strong>{formatAmount(maxLockedATOM)}</strong> max.
+                </>
+            }
         />
     )
 }

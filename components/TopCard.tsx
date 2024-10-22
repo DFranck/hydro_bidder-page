@@ -26,9 +26,11 @@ export function TopCard({
                     bg-gradient-to-t
                     from-palette-blue/80
                     to-palette-blue/20
-                    px-6
-                    py-3
+                    px-3
+                    py-1
                     backdrop-blur-sm
+                    xl:px-6
+                    xl:py-3
                 `,
                 icon &&
                     `
@@ -62,9 +64,9 @@ export function TopCard({
                             relative
                             order-2
                             whitespace-pre-wrap
-                            text-xl
+                            text-lg
                             text-white
-                            lg:text-2xl
+                            lg:text-xl
                         "
                     >
                         {isLoading ? <Skeleton /> : title}
@@ -75,13 +77,14 @@ export function TopCard({
                         className="
                             relative
                             order-1
-                            text-5xl
+                            text-4xl
                             font-bold
                             not-italic
                             slashed-zero
                             leading-[124.7%]
                             tracking-[-1.296px]
                             text-palette-beige
+                            lg:text-5xl
                         "
                     >
                         {isLoading ? <Skeleton /> : value}
