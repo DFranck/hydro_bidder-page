@@ -1,7 +1,7 @@
 import { AppContextProvider } from "@/app/context"
 import { fetchDashboardData } from "@/hooks/hooks"
 
-export default async function VotingLayout({
+export default async function LockupsLayout({
     children,
 }: {
     children: React.ReactNode

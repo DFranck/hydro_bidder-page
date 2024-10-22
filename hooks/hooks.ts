@@ -128,12 +128,20 @@ export async function fetchDashboardData() {
 
     const assetListWithPrices = await fetchAssetListWithPrices()
 
+    const atomPrice =
+        assetListWithPrices.get(
+            "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+        )?.priceUsd ?? 0
+
     return {
         lastProposalTranches,
         currentProposalTranches,
         lastVotingPower,
         currentVotingPower,
-        globalState,
+        globalState: {
+            ...globalState,
+            atomPrice,
+        },
         currentProposalTributes,
         lastProposalTributes,
         currentRoundEnd,
