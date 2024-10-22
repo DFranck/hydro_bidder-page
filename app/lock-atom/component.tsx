@@ -1,5 +1,6 @@
 "use client"
 
+import { useAppContext } from "@/app/context"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { Button } from "@/components/ui/button"
@@ -498,6 +499,11 @@ const LockForm = ({
     hubChain: ChainContext
     validatorMap: Map<string, Validator>
 }) => {
+    const {
+        globalState: {
+            constants: { max_locked_tokens_per_address = 1 },
+        },
+    } = useAppContext()
     const [validator, setValidator] = useState("")
     const [amount, setAmount] = useState("")
     const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
@@ -664,7 +670,7 @@ const LockForm = ({
                                             <input
                                                 type="number"
                                                 step="0.000001"
-                                                max={
+                                                max={Math.min(
                                                     Number(
                                                         validators?.find(
                                                             (v) =>
@@ -673,8 +679,9 @@ const LockForm = ({
                                                                 validator
                                                         )?.delegation_balance
                                                             .amount
-                                                    ) / 1000000
-                                                }
+                                                    ) / 1000000,
+                                                    max_locked_tokens_per_address
+                                                )}
                                                 min="0.000001"
                                                 value={Number(amount) / 1000000}
                                                 onChange={(e) => {
