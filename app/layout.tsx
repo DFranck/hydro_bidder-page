@@ -8,7 +8,7 @@ import "./globals.css"
 export const metadata: Metadata = {
     title: "Hydro - The Interchain Liquidity Allocator",
     description:
-        "Hydro is a Cosmos Hub liquidity platform that allows you to lock your ATOM and participate in the growth of the Cosmos ecosystem.",
+        "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote & earn today!",
 }
 
 export default function RootLayout({
