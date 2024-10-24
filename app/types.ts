@@ -31,6 +31,7 @@ export type RequestAmount = [number, string]
 export type BidDescription = {
     title: string
     description: string
+    projectLogoUrl?: string
     projectName: string
     projectUrl: string
     committeeComments?: string
@@ -38,7 +39,6 @@ export type BidDescription = {
     points?: RequestAmount
     pointProgramUrl?: string
     appendix?: string
-
     // not available for all proposals (soft deprecated but still used)
     projectType?: string
 }

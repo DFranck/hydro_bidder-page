@@ -14,6 +14,7 @@ import {
     Ghost,
     ScrollText,
 } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -355,18 +356,32 @@ const ActiveProposals = ({
 
                             name: (
                                 <>
-                                    <p
-                                        className="
-                                            line-clamp-2
-                                            text-lg
-                                            font-semibold
-                                        "
-                                    >
-                                        {proposal.title.replace(
-                                            /[ ]([^ ]+?)$/gm,
-                                            `${String.fromCharCode(160)}$1`
+                                    <div className="flex items-center gap-6">
+                                        {proposal.projectLogoUrl && (
+                                            <div className="relative size-12">
+                                                <Image
+                                                    className="object-contain"
+                                                    src={
+                                                        proposal.projectLogoUrl
+                                                    }
+                                                    alt={proposal.projectName}
+                                                    fill={true}
+                                                />
+                                            </div>
                                         )}
-                                    </p>
+                                        <p
+                                            className="
+                                                line-clamp-2
+                                                text-lg
+                                                font-semibold
+                                            "
+                                        >
+                                            {proposal.title.replace(
+                                                /[ ]([^ ]+?)$/gm,
+                                                `${String.fromCharCode(160)}$1`
+                                            )}
+                                        </p>
+                                    </div>
                                     <Link
                                         href={`/voting/${proposal.proposal_id}`}
                                         className="
