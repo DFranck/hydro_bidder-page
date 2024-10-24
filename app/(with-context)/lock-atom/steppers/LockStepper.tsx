@@ -1,5 +1,5 @@
 "use client"
-import { Step } from "@/app/lock-atom/steppers/Step"
+import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"

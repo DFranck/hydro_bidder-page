@@ -43,7 +43,6 @@ export default function RootLayout({
             <body
                 className={`${inter.className} relative overflow-x-hidden text-white`}
             >
-                {/* <div className="bg-gradient-to-b from-black via-[#010006] to-[#001C47] p-5 h-screen w-screen fixed top-0 left-0 -z-10"></div> */}
                 <div
                     className="
                         fixed
