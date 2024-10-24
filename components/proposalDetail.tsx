@@ -32,6 +32,7 @@ import {
     ScrollText,
     Vote,
 } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
@@ -494,13 +495,29 @@ const ProposalDetail = ({
                         </div>
 
                         <div className="flex flex-col gap-6">
-                            <div>
+                            <div className="flex flex-col gap-2">
                                 <p className="text-sm opacity-80">
                                     Project Name
                                 </p>
-                                <p className="text-xl font-bold not-italic">
-                                    {renderedProposal.projectName.trim()}
-                                </p>
+                                <div className="flex flex-row items-center gap-3">
+                                    {renderedProposal.projectLogoUrl && (
+                                        <div className="relative size-12">
+                                            <Image
+                                                className="object-contain"
+                                                src={
+                                                    renderedProposal.projectLogoUrl
+                                                }
+                                                alt={
+                                                    renderedProposal.projectName
+                                                }
+                                                fill={true}
+                                            />
+                                        </div>
+                                    )}
+                                    <p className="text-xl font-bold not-italic">
+                                        {renderedProposal.projectName.trim()}
+                                    </p>
+                                </div>
                             </div>
 
                             {renderedProposal.projectType && (
