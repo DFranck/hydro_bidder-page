@@ -42,7 +42,6 @@ export default function Navigation() {
                 max-md:focus-within:h-full
                 max-md:focus-within:w-1/2
                 md:relative
-                md:overflow-auto
                 md:bg-transparent
             "
             tabIndex={0}

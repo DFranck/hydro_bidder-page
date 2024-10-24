@@ -1,6 +1,6 @@
 import { ContentContainer } from "@/components/ContentContainer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
-import { Button } from "@/components/ui/button"
+import { StyledText } from "@/components/StyledText"
 import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -257,21 +257,14 @@ export default function Home() {
                             </span>
                         </p>
                     </div>
-                    <Button
-                        asChild
-                        className="
-                            h-14
-                            w-min
-                            whitespace-nowrap
-                            rounded-xl
-                            px-10
-                            text-lg
-                            font-normal
-                            capitalize
-                        "
+
+                    <StyledText
+                        as={Link}
+                        href="/lock-atom"
+                        variant="button.primary.large"
                     >
-                        <Link href="/lock-atom">Get started</Link>
-                    </Button>
+                        Get started
+                    </StyledText>
                 </ContentContainer>
             </div>
 
@@ -293,19 +286,13 @@ export default function Home() {
                         tiles: howHydroWorksTiles,
                         size: "small",
                     })}
-                    <Button
-                        asChild
-                        className="
-                            h-14
-                            w-36
-                            rounded-xl
-                            text-lg
-                            font-normal
-                            capitalize
-                        "
+                    <StyledText
+                        as="a"
+                        variant="button.primary.large"
+                        href="/lock-atom"
                     >
-                        <Link href="/lock-atom">Get started</Link>
-                    </Button>
+                        Get Started
+                    </StyledText>
                 </ContentContainer>
 
                 <HorizontalDivider />
@@ -362,40 +349,22 @@ export default function Home() {
                             </div>
                             {renderBenefits()}
                             <div className="flex gap-6">
-                                <Button
-                                    asChild
-                                    className="
-                                        h-14
-                                        rounded-xl
-                                        text-lg
-                                        font-normal
-                                        capitalize
-                                    "
+                                <StyledText
+                                    as="a"
+                                    variant="button.primary.large"
+                                    href="/lock-atom"
                                 >
-                                    <Link href="/lock-atom">Get Started</Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    className="
-                                        h-14
-                                        rounded-xl
-                                        border
-                                        bg-transparent
-                                        px-6
-                                        text-lg
-                                        font-normal
-                                        capitalize
-                                        text-white
-                                    "
+                                    Get Started
+                                </StyledText>
+                                <StyledText
+                                    as="a"
+                                    variant="button.secondary.large"
+                                    href="/docs/users/calculating-staking-apr"
+                                    target="_blank"
                                 >
-                                    <Link
-                                        href="/docs/users/calculating-staking-apr"
-                                        target="_blank"
-                                    >
-                                        Learn More
-                                        <ArrowUpRight />
-                                    </Link>
-                                </Button>
+                                    Learn More
+                                    <ArrowUpRight />
+                                </StyledText>
                             </div>
                         </div>
                         <Image
@@ -482,47 +451,22 @@ export default function Home() {
                             gap-6
                         "
                     >
-                        <Button
-                            asChild
-                            className="
-                                h-14
-                                rounded-xl
-                                px-6
-                                text-lg
-                                font-normal
-                                capitalize
-                            "
+                        <StyledText
+                            as="a"
+                            variant="button.primary.large"
+                            href="https://calendly.com/milos-informal/30-minute-meeting-hydro"
+                            target="_blank"
                         >
-                            <Link
-                                className="flex items-center gap-1"
-                                href="https://calendly.com/milos-informal/30-minute-meeting-hydro"
-                                target="_blank"
-                            >
-                                Get in Touch <ArrowUpRight />
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            className="
-                                h-14
-                                rounded-xl
-                                border
-                                bg-transparent
-                                px-6
-                                text-lg
-                                font-normal
-                                capitalize
-                                text-white
-                            "
+                            Get in Touch <ArrowUpRight />
+                        </StyledText>
+                        <StyledText
+                            as="a"
+                            variant="button.secondary.large"
+                            href="/docs/projects/whitelisting"
+                            target="_blank"
                         >
-                            <Link
-                                href="/docs/projects/whitelisting"
-                                target="_blank"
-                            >
-                                Learn More
-                                <ArrowUpRight />
-                            </Link>
-                        </Button>
+                            Learn More <ArrowUpRight />
+                        </StyledText>
                     </div>
                 </ContentContainer>
             </div>

@@ -1,7 +1,6 @@
-import { cn } from "@/lib/utils"
+import { StyledText } from "@/components/StyledText"
 import { LinkIcon, LoaderCircleIcon } from "lucide-react"
 import { MouseEventHandler } from "react"
-import { Button } from "../ui/button"
 
 export type ButtonProps = {
     text?: string
@@ -23,27 +22,24 @@ function noop() {}
 export function WButton({
     text,
     address,
-    className,
     connected,
     loading,
     disabled,
     onClick = noop,
 }: ButtonProps) {
     return (
-        <Button
+        <StyledText
+            as="button"
+            variant="button.neutral.small"
             disabled={disabled}
             onClick={onClick}
-            className={cn(
-                "text-md inline-flex items-center bg-palette-blue text-white hover:bg-palette-blue/80",
-                className
-            )}
         >
             {connected && <LinkIcon className="mr-2 h-4 w-4" />}
             {loading && (
                 <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {address ? address : text}
-        </Button>
+            <span>{address ? address : text}</span>
+        </StyledText>
     )
 }
 

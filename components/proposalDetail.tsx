@@ -4,7 +4,7 @@ import { useAppContext } from "@/app/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { Confetti } from "@/components/Confetti"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
-import { Button } from "@/components/ui/button"
+import { StyledText } from "@/components/StyledText"
 import {
     Dialog,
     DialogClose,
@@ -35,7 +35,6 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
-import { twMerge } from "tailwind-merge"
 
 const ProposalDetail = ({
     proposal,
@@ -136,103 +135,52 @@ const ProposalDetail = ({
             return null
         }
 
-        const baseButtonClasses = twMerge(
-            `
-                flex
-                w-full
-                items-center
-                justify-center
-                gap-2
-                rounded-md
-                px-6
-                py-3
-                text-center
-                text-lg
-                font-medium
-                disabled:pointer-events-none
-                disabled:cursor-not-allowed
-                disabled:opacity-60
-            `
-        )
-
         if (!isWalletConnected) {
             return <Wallet notifyConnectedCB={() => null} />
         }
 
         if (isLoading) {
             return (
-                <button
-                    disabled
-                    className={twMerge(
-                        baseButtonClasses,
-                        `
-                            border-2
-                        `
-                    )}
-                >
+                <StyledText variant="button.secondary" as="button" disabled>
                     Loading...
-                </button>
+                </StyledText>
             )
         }
 
         if (submitting) {
             return (
-                <button
-                    disabled
-                    className={twMerge(
-                        baseButtonClasses,
-                        `
-                            border-2
-                        `
-                    )}
-                >
+                <StyledText as="button" disabled variant="button.secondary">
                     Submitting...
-                </button>
+                </StyledText>
             )
         }
 
         if (userVotingData?.votingPower === 0) {
             return (
-                <Link
+                <StyledText
+                    as={Link}
                     href="/lock-atom"
-                    className={twMerge(
-                        baseButtonClasses,
-                        `
-                            bg-palette-green
-                            text-palette-text
-                        `
-                    )}
+                    variant="button.primary"
                 >
                     Lock ATOM to vote
-                </Link>
+                </StyledText>
             )
         }
 
         if (hasVotedThisProposal) {
             return (
-                <button
-                    disabled
-                    className={twMerge(
-                        baseButtonClasses,
-                        `
-                            border-2
-                            border-palette-green
-                            bg-transparent
-                            text-palette-green
-                            !opacity-100
-                        `
-                    )}
-                >
+                <StyledText as="button" disabled variant="button.secondary">
                     <CheckCircle />
                     <span>Voted!</span>
-                </button>
+                </StyledText>
             )
         }
 
         const hasVotedElsewhere = hasVoted && !hasVotedThisProposal
 
         return (
-            <button
+            <StyledText
+                as="button"
                 onClick={() => {
                     if (hasVotedElsewhere) {
                         setOpenChangeVoteModal(true)
@@ -240,17 +188,11 @@ const ProposalDetail = ({
                         onVote()
                     }
                 }}
-                className={twMerge(
-                    baseButtonClasses,
-                    `
-                        bg-palette-green
-                        text-palette-text
-                    `
-                )}
+                variant="button.primary"
             >
                 <Vote />
                 <span>Vote for Proposal</span>
-            </button>
+            </StyledText>
         )
     }
 
@@ -270,17 +212,17 @@ const ProposalDetail = ({
                         power to the new project.
                     </DialogDescription>
                     <div className="flex flex-col gap-2">
-                        <Button
-                            type="button"
-                            variant="primary"
+                        <StyledText
+                            as="button"
                             onClick={onVote}
+                            variant="button.primary"
                         >
                             Change Vote to This Proposal
-                        </Button>
+                        </StyledText>
                         <DialogClose asChild>
-                            <Button type="button" variant="outline">
+                            <StyledText as="button" variant="button.secondary">
                                 Don&rsquo;t change my vote
-                            </Button>
+                            </StyledText>
                         </DialogClose>
                     </div>
                 </DialogContent>
@@ -345,43 +287,25 @@ const ProposalDetail = ({
 
                 <div
                     className="
-                        flex
-                        flex-col
-                        justify-between
+                        grid
                         gap-12
-                        md:flex-row
+                        md:grid-cols-[3fr_1fr]
                     "
                 >
-                    <div>
-                        <Link
+                    {/* Main Content */}
+                    <div className="flex flex-col gap-12">
+                        <StyledText
+                            as={Link}
                             href="/voting"
-                            className="
-                                mb-12
-                                flex
-                                w-min
-                                items-center
-                                gap-1
-                                rounded-md
-                                border-2
-                                border-palette-beige
-                                px-3
-                                py-px
-                                text-palette-beige
-                                opacity-80
-                                transition-all
-                                hover:-translate-x-1
-                                hover:scale-105
-                                hover:bg-palette-beige
-                                hover:text-palette-text
-                                hover:opacity-100
-                            "
+                            variant="button.secondary.small"
                         >
                             <ChevronLeft
                                 className="transition-all group-hover:-ml-1"
                                 size={14}
                             />
                             Back
-                        </Link>
+                        </StyledText>
+
                         <div className="flex flex-row items-center gap-4 pb-5">
                             <div
                                 className="
@@ -399,6 +323,7 @@ const ProposalDetail = ({
                                 {renderedProposal.title}
                             </h1>
                         </div>
+
                         <div className="js-bid-details pl-16">
                             {renderedProposal.description && (
                                 <>
@@ -481,119 +406,104 @@ const ProposalDetail = ({
                     </div>
 
                     {/* Sidebar */}
-                    <div
-                        className="
-                            mt-6
-                            w-full
-                            pb-10
-                            md:mt-0
-                            md:w-[30%]
-                        "
-                    >
-                        <div className="w-[250px] pb-8 pt-6">
+                    <div className="flex flex-col gap-6">
+                        <div className="*:!w-full">
                             <PrimaryActionButton />
                         </div>
 
-                        <div className="flex flex-col gap-6">
-                            <div className="flex flex-col gap-2">
-                                <p className="text-sm opacity-80">
-                                    Project Name
+                        <div className="flex flex-col gap-2">
+                            <p className="text-sm opacity-80">Project Name</p>
+                            <div className="flex flex-row items-center gap-3">
+                                {renderedProposal.projectLogoUrl && (
+                                    <div className="relative size-12">
+                                        <Image
+                                            className="object-contain"
+                                            src={
+                                                renderedProposal.projectLogoUrl
+                                            }
+                                            alt={renderedProposal.projectName}
+                                            fill={true}
+                                        />
+                                    </div>
+                                )}
+                                <p className="text-xl font-bold not-italic">
+                                    {renderedProposal.projectName.trim()}
                                 </p>
-                                <div className="flex flex-row items-center gap-3">
-                                    {renderedProposal.projectLogoUrl && (
-                                        <div className="relative size-12">
-                                            <Image
-                                                className="object-contain"
-                                                src={
-                                                    renderedProposal.projectLogoUrl
-                                                }
-                                                alt={
-                                                    renderedProposal.projectName
-                                                }
-                                                fill={true}
-                                            />
-                                        </div>
-                                    )}
-                                    <p className="text-xl font-bold not-italic">
-                                        {renderedProposal.projectName.trim()}
-                                    </p>
-                                </div>
                             </div>
+                        </div>
 
-                            {renderedProposal.projectType && (
-                                <div>
-                                    <p className="text-sm opacity-80">
-                                        Project Type
-                                    </p>
-                                    <p className="text-xl font-bold not-italic">
-                                        {renderedProposal.projectType}
-                                    </p>
-                                </div>
-                            )}
-
+                        {renderedProposal.projectType && (
                             <div>
                                 <p className="text-sm opacity-80">
-                                    Tribute to Voters
-                                </p>
-                                <div className="max-w-64 overflow-x-auto">
-                                    {pricedAndNamedTributes.length > 0 ? (
-                                        pricedAndNamedTributes.map(
-                                            (tribute, index) => (
-                                                <p
-                                                    key={index}
-                                                    className="break-words text-xl font-bold not-italic"
-                                                >
-                                                    {formatAmount(
-                                                        tribute.amount
-                                                    )}{" "}
-                                                    {tribute.symbol ||
-                                                        tribute.denom}
-                                                </p>
-                                            )
-                                        )
-                                    ) : (
-                                        <p className="text-xl font-bold not-italic">
-                                            None
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <p className="text-sm opacity-80">
-                                    Current Vote Percentage
+                                    Project Type
                                 </p>
                                 <p className="text-xl font-bold not-italic">
-                                    {proposal.percentage}%
+                                    {renderedProposal.projectType}
                                 </p>
                             </div>
+                        )}
 
-                            <div className="flex flex-col gap-2">
-                                <p className="text-sm opacity-80">Jump To</p>
-                                <div className="flex flex-col gap-2">
-                                    {[
-                                        renderedProposal.description &&
-                                            "Bid Description",
-                                        renderedProposal.committeeComments &&
-                                            "Committee Review",
-                                        renderedProposal.appendix && "Appendix",
-                                    ]
-                                        .filter(Boolean)
-                                        .map((section, index) => (
-                                            <Link
+                        <div>
+                            <p className="text-sm opacity-80">
+                                Tribute to Voters
+                            </p>
+                            <div className="max-w-64 overflow-x-auto">
+                                {pricedAndNamedTributes.length > 0 ? (
+                                    pricedAndNamedTributes.map(
+                                        (tribute, index) => (
+                                            <p
                                                 key={index}
-                                                href={`#${kebabCase(section)}`}
-                                                className="flex items-center gap-2 text-palette-green hover:underline"
+                                                className="break-words text-xl font-bold not-italic"
                                             >
-                                                <LinkIcon size={18} />
+                                                {formatAmount(tribute.amount)}{" "}
+                                                {tribute.symbol ||
+                                                    tribute.denom}
+                                            </p>
+                                        )
+                                    )
+                                ) : (
+                                    <p className="text-xl font-bold not-italic">
+                                        None
+                                    </p>
+                                )}
+                            </div>
+                        </div>
 
-                                                {section}
-                                            </Link>
-                                        ))}
-                                    <Link
-                                        href={renderedProposal.projectUrl}
-                                        target="_blank"
-                                        className="
+                        <div>
+                            <p className="text-sm opacity-80">
+                                Current Vote Percentage
+                            </p>
+                            <p className="text-xl font-bold not-italic">
+                                {proposal.percentage}%
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <p className="text-sm opacity-80">Jump To</p>
+                            <div className="flex flex-col gap-2">
+                                {[
+                                    renderedProposal.description &&
+                                        "Bid Description",
+                                    renderedProposal.committeeComments &&
+                                        "Committee Review",
+                                    renderedProposal.appendix && "Appendix",
+                                ]
+                                    .filter(Boolean)
+                                    .map((section, index) => (
+                                        <Link
+                                            key={index}
+                                            href={`#${kebabCase(section)}`}
+                                            className="flex items-center gap-2 text-palette-green hover:underline"
+                                        >
+                                            <LinkIcon size={18} />
+
+                                            {section}
+                                        </Link>
+                                    ))}
+                                <Link
+                                    href={renderedProposal.projectUrl}
+                                    target="_blank"
+                                    className="
                                             flex
                                             items-center
                                             gap-2
@@ -603,11 +513,10 @@ const ProposalDetail = ({
                                             text-palette-green
                                             hover:underline
                                         "
-                                    >
-                                        <ArrowUpRight size={18} />
-                                        Project Website
-                                    </Link>
-                                </div>
+                                >
+                                    <ArrowUpRight size={18} />
+                                    Project Website
+                                </Link>
                             </div>
                         </div>
                     </div>
