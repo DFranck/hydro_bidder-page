@@ -20,6 +20,92 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { WelcomePopup } from "./welcomePopup"
 
+const commonClassNames = {
+    container: `
+        -mx-3
+        space-y-6
+        rounded-md
+        bg-palette-text/20
+        px-3
+        backdrop-blur-md
+    `,
+    percentageOfNonVoters: `
+        flex
+        items-center
+        justify-center
+        gap-2
+        whitespace-nowrap
+        rounded-md
+        bg-palette-blue/20
+        p-3
+        text-sm
+        text-white
+    `,
+    classNamesForCells: `
+        group-hover/table-row:text-palette-green
+        sm:group-[&.has-voted]/table-row:border-palette-green
+        sm:group-[&.has-voted]/table-row:border-y-2
+        sm:group-[&.has-voted]/table-row:first:border-l-2
+        sm:group-[&.has-voted]/table-row:last:border-r-2
+        sm:group-[&.has-voted:hover]/table-row:text-palette-green
+    `,
+    hasVotedIcon: `
+        relative
+        -translate-y-1/4
+        text-palette-green
+    `,
+    hasVotedLabel: `
+        absolute
+        left-1/2
+        top-full
+        flex
+        w-min
+        -translate-x-1/2
+        -translate-y-1/4
+        items-center
+        gap-2
+        whitespace-nowrap
+        rounded-full
+        bg-palette-green
+        p-0.5
+        px-1
+        text-[8px]
+        text-palette-text
+    `,
+    projectLogo: `
+        relative
+        size-12
+    `,
+    projectTitle: `
+        line-clamp-2
+        text-lg
+        font-semibold
+    `,
+    projectLink: `
+        absolute
+        inset-0
+        z-10
+        h-full
+        w-full
+    `,
+    noBids: `
+        !mb-6
+        rounded-md
+        border
+        border-dashed
+        border-palette-beige/20
+        py-12
+        text-center
+        text-white/60
+    `,
+    hasVotedRow: `
+        has-voted
+        max-sm:bg-palette-green
+        max-sm:text-palette-text
+        max-sm:hover:bg-palette-green/80
+    `,
+}
+
 function proposalTotalTribute(
     pricedAndNamedTributes: {
         priceUsd: number | undefined
@@ -55,12 +141,7 @@ const ActiveProposals = ({
         searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1
     )
 
-    const {
-        isWalletConnected,
-        isWalletConnecting,
-        address,
-        getSigningCosmWasmClient,
-    } = useChain("neutron")
+    const { isWalletConnected, address } = useChain("neutron")
 
     const { data: myUserVotingData, isPending: myUserVotingDataIsPending } =
         useUserVotingData(address ?? "")
@@ -104,10 +185,6 @@ const ActiveProposals = ({
         (proposal) => proposal.hasVotedOnProp
     )
 
-    const hasVotedInAll = decoratedProposals?.every(
-        (proposal) => proposal.hasVotedOnProp
-    )
-
     const updateTrancheInURL = (tranche: number) => {
         const newSearchParams = new URLSearchParams(window.location.search)
         newSearchParams.set("tranche", tranche.toString())
@@ -127,39 +204,13 @@ const ActiveProposals = ({
         myUserVotingData &&
         myUserVotingData.votingPower <= 0
 
-    const classNamesForCells = `
-        group-hover/table-row:text-palette-green
-        sm:group-[&.has-voted]/table-row:border-palette-green
-        sm:group-[&.has-voted]/table-row:border-y-2
-        sm:group-[&.has-voted]/table-row:first:border-l-2
-        sm:group-[&.has-voted]/table-row:last:border-r-2
-        sm:group-[&.has-voted:hover]/table-row:text-palette-green
-    `
-
     const percentageOfNonVoters =
         100 -
         sum(decoratedProposals?.map((proposal) => Number(proposal.percentage)))
 
     return (
         <>
-            <div
-                className="
-                    -mx-3
-                    space-y-6
-                    rounded-md
-                    bg-palette-text/20
-                    px-3
-                    backdrop-blur-md
-                "
-            >
-                {/* {currentProposalTranches.size > 1 && (
-                    <TranchePagination
-                        currentTranche={currentTranche}
-                        setCurrentTranche={handleTrancheChange}
-                        myVotes={myVotes}
-                        description={null}
-                    />
-                )} */}
+            <div className={commonClassNames.container}>
                 {decoratedProposals?.length ? (
                     <PrettyTable
                         initialSortedColumnKey="currentVoteShare"
@@ -168,18 +219,9 @@ const ActiveProposals = ({
                                 <tr>
                                     <td colSpan={99}>
                                         <div
-                                            className="
-                                                flex
-                                                items-center
-                                                justify-center
-                                                gap-2
-                                                whitespace-nowrap
-                                                rounded-md
-                                                bg-palette-blue/20
-                                                p-3
-                                                text-sm
-                                                text-white
-                                            "
+                                            className={
+                                                commonClassNames.percentageOfNonVoters
+                                            }
                                         >
                                             <Ghost size={18} />
                                             <TooltipIcon
@@ -232,7 +274,7 @@ const ActiveProposals = ({
                                 },
                                 propsForCells: {
                                     className: `
-                                        ${classNamesForCells}
+                                        ${commonClassNames.classNamesForCells}
                                         !pr-0
                                         w-0
                                     `,
@@ -253,7 +295,8 @@ const ActiveProposals = ({
                                 ),
                                 isSortable: true,
                                 propsForCells: {
-                                    className: classNamesForCells,
+                                    className:
+                                        commonClassNames.classNamesForCells,
                                 },
                                 customValueGetter: (row) => row._proposal.title,
                             },
@@ -278,7 +321,8 @@ const ActiveProposals = ({
                                 isSortable: true,
                                 textAlign: "right",
                                 propsForCells: {
-                                    className: classNamesForCells,
+                                    className:
+                                        commonClassNames.classNamesForCells,
                                 },
                                 customValueGetter: (row) =>
                                     estimatedRewardForPower(
@@ -307,7 +351,8 @@ const ActiveProposals = ({
                                 initialSortDirection: "DESC",
                                 textAlign: "right",
                                 propsForCells: {
-                                    className: classNamesForCells,
+                                    className:
+                                        commonClassNames.classNamesForCells,
                                 },
                                 customValueGetter: (row) =>
                                     Number(row._proposal.percentage),
@@ -319,33 +364,16 @@ const ActiveProposals = ({
                             hasVoted:
                                 hasVoted && proposal.hasVotedOnProp ? (
                                     <div
-                                        className="
-                                            relative
-                                            -translate-y-1/4
-                                            text-palette-green
-                                        "
+                                        className={
+                                            commonClassNames.hasVotedIcon
+                                        }
                                     >
                                         <CircleCheckBig />
 
                                         <div
-                                            className="
-                                                absolute
-                                                left-1/2
-                                                top-full
-                                                flex
-                                                w-min
-                                                -translate-x-1/2
-                                                -translate-y-1/4
-                                                items-center
-                                                gap-2
-                                                whitespace-nowrap
-                                                rounded-full
-                                                bg-palette-green
-                                                p-0.5
-                                                px-1
-                                                text-[8px]
-                                                text-palette-text
-                                            "
+                                            className={
+                                                commonClassNames.hasVotedLabel
+                                            }
                                         >
                                             Your Pick
                                         </div>
@@ -358,7 +386,11 @@ const ActiveProposals = ({
                                 <>
                                     <div className="flex items-center gap-6">
                                         {proposal.projectLogoUrl && (
-                                            <div className="relative size-12">
+                                            <div
+                                                className={
+                                                    commonClassNames.projectLogo
+                                                }
+                                            >
                                                 <Image
                                                     className="object-contain"
                                                     src={
@@ -370,11 +402,9 @@ const ActiveProposals = ({
                                             </div>
                                         )}
                                         <p
-                                            className="
-                                                line-clamp-2
-                                                text-lg
-                                                font-semibold
-                                            "
+                                            className={
+                                                commonClassNames.projectTitle
+                                            }
                                         >
                                             {proposal.title.replace(
                                                 /[ ]([^ ]+?)$/gm,
@@ -384,13 +414,7 @@ const ActiveProposals = ({
                                     </div>
                                     <Link
                                         href={`/voting/${proposal.proposal_id}`}
-                                        className="
-                                            absolute
-                                            inset-0
-                                            z-10
-                                            h-full
-                                            w-full
-                                        "
+                                        className={commonClassNames.projectLink}
                                     />
                                 </>
                             ),
@@ -466,12 +490,7 @@ const ActiveProposals = ({
                             <TR
                                 className={
                                     row._proposal.hasVotedOnProp
-                                        ? `
-                                            has-voted
-                                            max-sm:bg-palette-green
-                                            max-sm:text-palette-text
-                                            max-sm:hover:bg-palette-green/80
-                                        `
+                                        ? commonClassNames.hasVotedRow
                                         : undefined
                                 }
                                 key={row._proposal.proposal_id}
@@ -482,18 +501,7 @@ const ActiveProposals = ({
                         )}
                     />
                 ) : (
-                    <div
-                        className="
-                            !mb-6
-                            rounded-md
-                            border
-                            border-dashed
-                            border-palette-beige/20
-                            py-12
-                            text-center
-                            text-white/60
-                        "
-                    >
+                    <div className={commonClassNames.noBids}>
                         <p>There are no bids available at this moment.</p>
                     </div>
                 )}
