@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     title: "Hydro - The Interchain Liquidity Allocator",
     description:
         "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote & earn today!",
+    metadataBase: new URL("https://hydro.cosmos.network"),
 }
 
 export default function RootLayout({
