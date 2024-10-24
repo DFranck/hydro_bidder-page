@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { StyledText } from "@/components/StyledText"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowUpRight } from "lucide-react"
@@ -42,7 +42,7 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
                 <CardHeader>
                     <CardTitle>Get started on Hydro</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-3">
+                <CardContent className="flex flex-col gap-6">
                     <ol className="list-decimal space-y-2 pl-5">
                         <li>
                             Lock your staked ATOM to get voting power. The
@@ -62,24 +62,34 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
                         </li>
                     </ol>
 
-                    <div className="mt-4 flex justify-start gap-3">
-                        <Link href="/lock-atom">
-                            <Button>Lock your ATOM to vote</Button>
-                        </Link>
-                        <Button onClick={closeModal} variant="outline">
+                    <div className="flex items-center justify-start gap-3">
+                        <StyledText
+                            variant="button.primary"
+                            as={Link}
+                            href="/lock-atom"
+                        >
+                            Lock your ATOM to vote
+                        </StyledText>
+                        <StyledText
+                            variant="button.secondary"
+                            as="button"
+                            onClick={closeModal}
+                        >
                             Close
-                        </Button>
-                        <a
-                            className="flex items-center gap-1 text-palette-green underline"
-                            href="https://hydro.cosmos.network/docs"
+                        </StyledText>
+                        <StyledText
+                            className="flex items-center gap-1 whitespace-nowrap"
+                            variant="link"
+                            as="a"
+                            href="/docs"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            Learn More <ArrowUpRight />
-                        </a>
+                            <span>Learn More</span> <ArrowUpRight />
+                        </StyledText>
                     </div>
 
-                    <div className="mt-4 flex items-center">
+                    <div className="flex items-center gap-2">
                         <Checkbox
                             id="dontShowAgain"
                             checked={dontShowAgain}
@@ -87,12 +97,13 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
                                 setDontShowAgain(checked)
                             }
                         />
-                        <label
+                        <StyledText
+                            as="label"
                             htmlFor="dontShowAgain"
-                            className="ml-2 block text-sm text-white"
+                            variant="label"
                         >
                             Don&rsquo;t show me this again
-                        </label>
+                        </StyledText>
                     </div>
                 </CardContent>
             </Card>

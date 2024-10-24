@@ -18,7 +18,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { WelcomePopup } from "./welcomePopup"
+import { WelcomePopup } from "../../../components/WelcomePopup"
 
 const commonClassNames = {
     container: `
@@ -506,6 +506,7 @@ const ActiveProposals = ({
                     </div>
                 )}
             </div>
+
             <WelcomePopup showModal={showWelcomeModal} />
         </>
     )
