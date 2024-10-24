@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppContext } from "@/app/context"
+import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
 import { PrettyTable } from "@/components/PrettyTable"
@@ -14,7 +15,6 @@ import { ArrowUpRight, TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { LockEntryWithPower } from "../ts_types/HydroBase.types"
 
 export default function LockupsTable({
     validatorMap,
