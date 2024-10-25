@@ -19,27 +19,36 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="scroll-pt-32">
-            {process.env.NODE_ENV === "production" && (
-                <>
-                    <Script
-                        async
-                        src="https://www.googletagmanager.com/gtag/js?id=G-NZ1F6WL2PM"
-                    ></Script>
-                    <Script id="google-analytics" strategy="afterInteractive">
-                        {`
+            <head>
+                <Script
+                    crossOrigin="anonymous"
+                    src="https://kit.fontawesome.com/401fb1e734.js"
+                />
+                {process.env.NODE_ENV === "production" && (
+                    <>
+                        <Script
+                            async
+                            src="https://www.googletagmanager.com/gtag/js?id=G-NZ1F6WL2PM"
+                        ></Script>
+                        <Script
+                            id="google-analytics"
+                            strategy="afterInteractive"
+                        >
+                            {`
                             window.dataLayer = window.dataLayer || []
                             function gtag(){dataLayer.push(arguments)}
                             gtag('js', new Date())
                             gtag('config', 'G-NZ1F6WL2PM')
                         `}
-                    </Script>
-                    <Script
-                        type="text/javascript"
-                        src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
-                        async
-                    ></Script>
-                </>
-            )}
+                        </Script>
+                        <Script
+                            type="text/javascript"
+                            src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
+                            async
+                        ></Script>
+                    </>
+                )}
+            </head>
             <body
                 className={`${inter.className} relative overflow-x-hidden text-white`}
             >

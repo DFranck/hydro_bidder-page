@@ -1,11 +1,12 @@
 "use client"
+
 import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
-import { ChevronDown } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { signLockTokens } from "../transactions"
@@ -262,7 +263,7 @@ export const ContinueFromNeutronStepper = ({
                                         onClick={() => setShowErrorLog(true)}
                                     >
                                         Show Error Log
-                                        <ChevronDown className="ml-1 h-4 w-4" />
+                                        <Icon name="solid:chevron-down" />
                                     </StyledText>
                                 ) : (
                                     <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">

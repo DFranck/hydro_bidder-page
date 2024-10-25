@@ -1,16 +1,12 @@
 "use client"
 
 import { useAppContext } from "@/app/context"
+import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { TooltipIcon } from "@/components/TooltipIcon"
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+import { Toasts } from "@/components/Toasts"
+import { Tooltip } from "@/components/Tooltip"
 import { EPOCH_LENGTH } from "@/config"
 import { Delegation, useMyValidators, Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
@@ -18,9 +14,7 @@ import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
 import { cosmos } from "interchain"
-import { ArrowUpRight, CircleAlert } from "lucide-react"
 import React, { useEffect, useState } from "react"
-import { twMerge } from "tailwind-merge"
 import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
 import { LockStepper } from "./steppers/LockStepper"
@@ -70,8 +64,7 @@ const commonClassNames = {
     `,
     infoBox:
         "flex gap-3 rounded-md bg-palette-cyan p-3 text-sm text-palette-text",
-    validatorListItem:
-        "mb-2 flex w-full flex-col rounded-lg border border-gray-700 p-3",
+    validatorListItem: "mb-2 flex w-full flex-col rounded-lg border p-3",
     loaderCard: "bg-[#303132]/75 backdrop-blur",
 }
 
@@ -364,11 +357,9 @@ const HubIncompleteNotice = ({
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
-        <Card className={commonClassNames.card}>
-            <CardHeader>
-                <CardTitle>Incomplete ATOM Locking</CardTitle>
-            </CardHeader>
-            <CardContent className={commonClassNames.cardContent}>
+        <Card>
+            <Card.Header title="Incomplete ATOM Locking" />
+            <Card.Body>
                 <p>
                     Looks like you might have been interrupted while locking
                     your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}
@@ -382,11 +373,11 @@ const HubIncompleteNotice = ({
                     Would you like to continue from where you left off, or
                     revert to get back your staked ATOM?
                 </p>
-            </CardContent>
-            <CardFooter className={commonClassNames.cardFooter}>
+            </Card.Body>
+            <Card.Footer>
                 <StyledText
                     as="button"
-                    variant="button.neutral"
+                    variant="button.primary"
                     onClick={() =>
                         setStepper({
                             type: "continueFromHubLSM",
@@ -412,7 +403,7 @@ const HubIncompleteNotice = ({
                 >
                     Revert {formatAmount(amount)} ATOM
                 </StyledText>
-            </CardFooter>
+            </Card.Footer>
         </Card>
     )
 }
@@ -433,11 +424,13 @@ const NeutronIncompleteNotice = ({
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
-        <Card className={commonClassNames.card}>
-            <CardHeader>
-                <CardTitle>Incomplete ATOM Locking</CardTitle>
-            </CardHeader>
-            <CardContent className={commonClassNames.cardContent}>
+        <Card
+            className={`
+            mb-4
+        `}
+        >
+            <Card.Header title="Incomplete ATOM Locking" />
+            <Card.Body>
                 <p>
                     Looks like you might have been interrupted while locking
                     your ATOM. You have <strong>{formatAmount(amount)}</strong>{" "}
@@ -451,11 +444,11 @@ const NeutronIncompleteNotice = ({
                     Would you like to continue from where you left off, or
                     revert to get back your staked ATOM?
                 </p>
-            </CardContent>
-            <CardFooter className={commonClassNames.cardFooter}>
+            </Card.Body>
+            <Card.Footer>
                 <StyledText
                     as="button"
-                    variant="button.neutral"
+                    variant="button.primary"
                     onClick={() =>
                         setStepper({
                             type: "continueFromNeutronLSM",
@@ -483,7 +476,7 @@ const NeutronIncompleteNotice = ({
                 >
                     Revert {formatAmount(amount)} ATOM
                 </StyledText>
-            </CardFooter>
+            </Card.Footer>
         </Card>
     )
 }
@@ -560,7 +553,7 @@ const LockForm = ({
     return (
         <Card>
             {validators?.length === 0 ? (
-                <div className="space-y-6 p-6">
+                <Card.Body className="space-y-6 p-6">
                     <p>
                         You need some staked ATOM to participate in Hydro. You
                         can go to Keplr staking interface and stake some ATOM to
@@ -571,63 +564,64 @@ const LockForm = ({
                         <a
                             href="https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake"
                             target="_blank"
-                            className="inline-flex items-center gap-1 text-palette-green underline"
+                            className={`
+                                inline-flex
+                                items-center
+                                gap-1
+                                text-palette-green
+                                underline
+                            `}
                         >
                             https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake{" "}
-                            <ArrowUpRight />
+                            <Icon name="solid:arrow-up-right" />
                         </a>
                     </p>
-                </div>
+                </Card.Body>
             ) : (
                 <>
-                    <CardHeader>
-                        <CardTitle>Get Voting Power</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-6">
-                        <div className={commonClassNames.infoBox}>
-                            <CircleAlert className="shrink-0" />
-                            <div>
-                                Once locked, your staked ATOMs are inaccessible
-                                for the duration of the lock. They will continue
-                                to accrue staking rewards but you will not be
-                                able to vote in Cosmos Hub governance.
-                            </div>
-                        </div>
-                        <form
-                            onSubmit={handleSubmit}
-                            className={commonClassNames.formContainer}
-                        >
+                    <Card.Header title="Get Voting Power" />
+                    <Card.Body>
+                        <Toasts.Toast variant="info">
+                            Once locked, your staked ATOMs are inaccessible for
+                            the duration of the lock. They will continue to
+                            accrue staking rewards but you will not be able to
+                            vote in Cosmos Hub governance.
+                        </Toasts.Toast>
+                        <form onSubmit={handleSubmit}>
                             {!validator && validators && (
                                 <div className="space-y-3">
-                                    <label className="mb-4 block space-y-3 text-white">
-                                        <ol className="list-inside list-decimal">
-                                            <li>
-                                                Your ATOM staked to a validator
-                                                can be locked in Hydro
-                                            </li>
-                                            <li>You get voting power</li>
-                                            <li>
-                                                You continue to earn staking
-                                                rewards
-                                            </li>
-                                        </ol>
+                                    <ol className="list-inside list-decimal">
+                                        <li>
+                                            Your ATOM staked to a validator can
+                                            be locked in Hydro
+                                        </li>
+                                        <li>You get voting power</li>
+                                        <li>
+                                            You continue to earn staking rewards
+                                        </li>
+                                    </ol>
 
-                                        {validators.length > 1 && (
-                                            <p>
-                                                Since you have multiple
-                                                validators, you will need to do
-                                                one at time.
-                                            </p>
-                                        )}
-                                    </label>
-                                    <label
-                                        className={twMerge(
-                                            commonClassNames.label,
-                                            "justify-start"
-                                        )}
+                                    {validators.length > 1 && (
+                                        <p>
+                                            Since you have multiple validators,
+                                            you will need to do one at time.
+                                        </p>
+                                    )}
+
+                                    <StyledText
+                                        as="label"
+                                        variant="label"
+                                        className={`
+                                            flex
+                                            items-center
+                                            justify-start
+                                            whitespace-nowrap
+                                            font-bold
+                                        `}
                                     >
                                         Select Validator:
-                                    </label>
+                                    </StyledText>
+
                                     <div className="space-y-2">
                                         {validators.map((v) => (
                                             <ValidatorListItem
@@ -645,19 +639,27 @@ const LockForm = ({
                             )}
                             {validator && (
                                 <div
-                                    className="
+                                    className={`
                                         grid
                                         grid-cols-[min-content,auto]
                                         items-center
                                         gap-6
-                                    "
+                                    `}
                                 >
                                     <div className="col-span-2 grid grid-cols-subgrid">
-                                        <label
-                                            className={commonClassNames.label}
+                                        <StyledText
+                                            as="label"
+                                            variant="label"
+                                            className={`
+                                                flex
+                                                items-center
+                                                justify-end
+                                                whitespace-nowrap
+                                                font-bold
+                                            `}
                                         >
                                             Your Validator:
-                                        </label>
+                                        </StyledText>
                                         <div className="flex items-center gap-2">
                                             <span>
                                                 {getValidatorMoniker(
@@ -676,11 +678,19 @@ const LockForm = ({
                                         </div>
                                     </div>
                                     <div className="col-span-2 grid grid-cols-subgrid">
-                                        <label
-                                            className={commonClassNames.label}
+                                        <StyledText
+                                            as="label"
+                                            variant="label"
+                                            className={`
+                                                flex
+                                                items-center
+                                                justify-end
+                                                whitespace-nowrap
+                                                font-bold
+                                            `}
                                         >
                                             Amount:
-                                        </label>
+                                        </StyledText>
                                         <div className="flex items-center gap-3">
                                             <input
                                                 type="number"
@@ -698,32 +708,44 @@ const LockForm = ({
                                                         ).toString()
                                                     )
                                                 }}
-                                                className={
-                                                    commonClassNames.input
-                                                }
+                                                className={`
+                                                    w-1/2
+                                                    rounded
+                                                    border
+                                                    bg-palette-text
+                                                    p-2
+                                                    text-white
+                                                `}
                                             />
                                             <p
-                                                className="
-                                                    text-sm
-                                                    text-gray-500
-                                                "
+                                                className={`
+                                                text-sm
+                                                text-gray-500
+                                            `}
                                             >
                                                 Max: {maxATOMAmount} ATOM
                                             </p>
                                         </div>
                                     </div>
                                     <div className="col-span-2 grid grid-cols-subgrid">
-                                        <label
-                                            className={twMerge(
-                                                commonClassNames.label,
-                                                "items-baseline"
-                                            )}
+                                        <StyledText
+                                            as="label"
+                                            variant="label"
+                                            className={`
+                                                flex
+                                                items-baseline
+                                                justify-end
+                                                whitespace-nowrap
+                                                font-bold
+                                            `}
                                         >
                                             Lockup:
-                                        </label>
+                                        </StyledText>
                                         <div className="flex flex-col gap-2">
                                             {[1, 3, 6, 12].map((months) => (
-                                                <label
+                                                <StyledText
+                                                    as="label"
+                                                    variant="label"
                                                     key={months}
                                                     className="flex items-center gap-2"
                                                 >
@@ -749,14 +771,30 @@ const LockForm = ({
                                                                 ).toString()
                                                             )
                                                         }
-                                                        className={
-                                                            commonClassNames.radio
-                                                        }
+                                                        className={`
+                                                            peer
+                                                            flex
+                                                            size-5
+                                                            appearance-none
+                                                            items-center
+                                                            rounded-full
+                                                            border-2
+                                                            border-gray-300
+                                                            text-sm
+                                                            opacity-60
+                                                            checked:border-palette-green
+                                                            checked:bg-palette-green
+                                                            checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
+                                                        `}
                                                     />
                                                     <span
-                                                        className={
-                                                            commonClassNames.radioLabel
-                                                        }
+                                                        className={`
+                                                            flex
+                                                            items-center
+                                                            justify-end
+                                                            whitespace-nowrap
+                                                            font-bold
+                                                        `}
                                                     >
                                                         <ConditionalWrapper
                                                             condition={
@@ -765,18 +803,9 @@ const LockForm = ({
                                                             wrapper={(
                                                                 children
                                                             ) => (
-                                                                <TooltipIcon
-                                                                    icon={
-                                                                        children
-                                                                    }
-                                                                >
-                                                                    Longer
-                                                                    durations
-                                                                    will be
-                                                                    available
-                                                                    after the
-                                                                    pilot rounds
-                                                                </TooltipIcon>
+                                                                <Tooltip tipContents="Longer durations will be available after the pilot rounds">
+                                                                    {children}
+                                                                </Tooltip>
                                                             )}
                                                         >
                                                             {months}{" "}
@@ -785,16 +814,24 @@ const LockForm = ({
                                                                 : "months"}
                                                         </ConditionalWrapper>
                                                     </span>
-                                                </label>
+                                                </StyledText>
                                             ))}
                                         </div>
                                     </div>
                                     <div className="col-span-2 grid grid-cols-subgrid">
-                                        <label
-                                            className={commonClassNames.label}
+                                        <StyledText
+                                            as="label"
+                                            variant="label"
+                                            className={`
+                                                flex
+                                                items-center
+                                                justify-end
+                                                whitespace-nowrap
+                                                font-bold
+                                            `}
                                         >
                                             Voting Power:
-                                        </label>
+                                        </StyledText>
                                         <span>
                                             {formatAmount(
                                                 scaleLockupPower(
@@ -820,7 +857,7 @@ const LockForm = ({
                                 </div>
                             )}
                         </form>
-                    </CardContent>
+                    </Card.Body>
                 </>
             )}
         </Card>
@@ -875,7 +912,7 @@ export const ValidatorListItem: React.FC<ValidatorListItemProps> = ({
                     }}
                     variant={
                         selectedValue === v.validator.operator_address
-                            ? "button.neutral"
+                            ? "button.primary"
                             : "button.secondary"
                     }
                     disabled={isDisabled}
@@ -897,34 +934,29 @@ const LoaderCard = ({
     haveChains: boolean
 }) => {
     return (
-        <Card className={commonClassNames.loaderCard}>
-            <CardHeader>
-                <CardTitle>Connect a Keplr Wallet</CardTitle>
-            </CardHeader>
-            <CardContent>
+        <Card>
+            <Card.Header title="Connect a Keplr Wallet" />
+            <Card.Body>
                 {!address && haveChains ? (
-                    <div>
-                        <p>
-                            In order to use Hydro, you will need to connect a
-                            Keplr wallet.{" "}
-                            <a
-                                className="text-palette-green underline"
-                                href="https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Grab the extension{" "}
-                                <span className="whitespace-nowrap">
-                                    here{" "}
-                                    <ArrowUpRight
-                                        className="inline-block"
-                                        size={16}
-                                    />
-                                </span>
-                            </a>{" "}
-                            and connect your wallet.
-                        </p>
-                    </div>
+                    <p>
+                        In order to use Hydro, you will need to connect a Keplr
+                        wallet.{" "}
+                        <a
+                            className={`
+                                    text-palette-green
+                                    underline
+                                `}
+                            href="https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Grab the extension{" "}
+                            <span className="whitespace-nowrap">
+                                here <Icon name="solid:arrow-up-right" />
+                            </span>
+                        </a>{" "}
+                        and connect your wallet.
+                    </p>
                 ) : haveChains ? (
                     <>
                         <div className="space-y-4">
@@ -940,7 +972,7 @@ const LoaderCard = ({
                         </div>
                     </>
                 ) : null}
-            </CardContent>
+            </Card.Body>
         </Card>
     )
 }

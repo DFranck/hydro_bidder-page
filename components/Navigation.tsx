@@ -1,10 +1,10 @@
 "use client"
 
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
-import { TooltipIcon } from "@/components/TooltipIcon"
+import { Icon } from "@/components/Icon"
+import { Tooltip } from "@/components/Tooltip"
 import { Wallet } from "@/components/wallet/Wallet"
 import { cn } from "@/lib/utils"
-import { ArrowUpRight, Menu, X } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -68,13 +68,14 @@ export default function Navigation() {
                         flex
                         items-center
                         justify-center
+                        text-2xl
                         opacity-100
                         transition-all
                         duration-500
                         group-focus-within/navbar:opacity-0
                     "
                 >
-                    <Menu size={24} />
+                    <Icon name="solid:bars" />
                 </span>
                 <span
                     className="
@@ -84,6 +85,7 @@ export default function Navigation() {
                         flex
                         items-center
                         justify-center
+                        text-2xl
                         opacity-0
                         transition-all
                         duration-500
@@ -92,7 +94,7 @@ export default function Navigation() {
                     "
                     onClick={blurActiveElement}
                 >
-                    <X size={24} />
+                    <Icon name="solid:xmark" />
                 </span>
             </button>
 
@@ -155,7 +157,7 @@ export default function Navigation() {
                         `flex items-center gap-1`
                     )}
                 >
-                    Docs <ArrowUpRight size={16} />
+                    Docs <Icon name="solid:arrow-up-right" />
                 </Link>
 
                 <Link
@@ -168,9 +170,9 @@ export default function Navigation() {
                 <ConditionalWrapper
                     condition={!isConnected}
                     wrapper={(children) => (
-                        <TooltipIcon icon={children}>
-                            Connect your wallet to access this feature
-                        </TooltipIcon>
+                        <Tooltip tipContents="Connect your wallet to access this feature">
+                            {children}
+                        </Tooltip>
                     )}
                 >
                     <Link
@@ -184,38 +186,43 @@ export default function Navigation() {
                     </Link>
                 </ConditionalWrapper>
 
-                <TooltipIcon
-                    icon={
-                        <Link
-                            href="/rewards"
-                            className={twMerge(
-                                navigationMenuTriggerStyle("/rewards"),
-                                `pointer-events-none opacity-60`
-                            )}
-                        >
-                            Rewards
-                        </Link>
+                <Tooltip
+                    tipContents={
+                        <>
+                            Rewards will show here at the end of the first pilot
+                            round
+                        </>
                     }
                 >
-                    Rewards will show here at the end of the first pilot round
-                </TooltipIcon>
+                    <Link
+                        href="/rewards"
+                        className={twMerge(
+                            navigationMenuTriggerStyle("/rewards"),
+                            `pointer-events-none opacity-60`
+                        )}
+                    >
+                        Rewards
+                    </Link>
+                </Tooltip>
 
-                <TooltipIcon
-                    icon={
-                        <Link
-                            href="/exports"
-                            className={twMerge(
-                                navigationMenuTriggerStyle("/rewards"),
-                                `pointer-events-none opacity-60`
-                            )}
-                        >
-                            Exports
-                        </Link>
+                <Tooltip
+                    tipContents={
+                        <>
+                            Performance metrics of liquidity deployments will be
+                            shown here.
+                        </>
                     }
                 >
-                    Performance metrics of liquidity deployments will be shown
-                    here.
-                </TooltipIcon>
+                    <Link
+                        href="/exports"
+                        className={twMerge(
+                            navigationMenuTriggerStyle("/rewards"),
+                            `pointer-events-none opacity-60`
+                        )}
+                    >
+                        Exports
+                    </Link>
+                </Tooltip>
 
                 <Wallet notifyConnectedCB={setIsConnected} />
             </div>

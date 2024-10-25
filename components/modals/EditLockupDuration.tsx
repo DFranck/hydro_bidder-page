@@ -1,14 +1,11 @@
 "use client"
+
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
+import { Card } from "@/components/Card"
+import { Icon } from "@/components/Icon"
+import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import { Toasts } from "@/components/Toasts"
 import { executeExtendLockup, Validator } from "@/hooks/hooks"
 import {
     calculateLockupVotingPower,
@@ -19,9 +16,7 @@ import {
 } from "@/lib/utils"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
-import { DialogDescription } from "@radix-ui/react-dialog"
 import { isEqual } from "lodash"
-import { CheckCircle, CircleSlash, Loader } from "lucide-react"
 import {
     ChangeEvent,
     FormEvent,
@@ -30,7 +25,6 @@ import {
     useMemo,
     useState,
 } from "react"
-import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
 
 interface FormValues {
@@ -86,18 +80,18 @@ function isToday(date: Date): boolean {
 export const EditLockupDuration = ({
     lockup,
     walletAddress,
-    validatorMap,
-    getRestEndpoint,
     getSigningCosmWasmClient,
     onSuccess,
 }: EditLockupDurationProps) => {
     const [hasChanged, setHasChanged] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [open, setOpen] = useState(false)
-    const [toast, setToast] = useState<{
-        type: "error" | "success" | "loading"
-        message: ReactNode
-    } | null>(null)
+    const [isLockupModalOpen, setIsLockupModalOpen] = useState(false)
+    const [toasts, setToasts] = useState<
+        {
+            variant: "working" | "success" | "error" | "info"
+            message: ReactNode
+        }[]
+    >([])
 
     const initialFormValues = useMemo(
         () => ({
@@ -114,13 +108,13 @@ export const EditLockupDuration = ({
     const [formValues, setFormValues] = useState<FormValues>(initialFormValues)
 
     useEffect(() => {
-        if (open) return
+        if (isLockupModalOpen) return
 
         setFormValues(initialFormValues)
         setHasChanged(false)
         setIsLoading(false)
-        setToast(null)
-    }, [initialFormValues, open])
+        setToasts([])
+    }, [initialFormValues, isLockupModalOpen])
 
     async function handleChange(event: ChangeEvent<HTMLFormElement>) {
         const formElement = event.currentTarget as HTMLFormElement
@@ -153,10 +147,13 @@ export const EditLockupDuration = ({
         if (!formValues.lockupPeriod || !lockup) return
 
         try {
-            setToast({
-                type: "loading",
-                message: "Refreshing lockup...",
-            })
+            setToasts((prevToasts) => [
+                ...prevToasts,
+                {
+                    variant: "working",
+                    message: "Refreshing lockup...",
+                },
+            ])
 
             await executeExtendLockup(
                 getSigningCosmWasmClient,
@@ -165,11 +162,14 @@ export const EditLockupDuration = ({
                 LockupPeriodMultipler[formValues.lockupPeriod]
             )
 
-            setToast({
-                type: "success",
-                message: "Lockup refreshed successfully!",
-            })
-            setOpen(false)
+            setToasts((prevToasts) => [
+                ...prevToasts,
+                {
+                    variant: "success",
+                    message: "Lockup refreshed successfully!",
+                },
+            ])
+            setIsLockupModalOpen(false)
             onSuccess()
         } catch (err: any) {
             if (
@@ -177,18 +177,24 @@ export const EditLockupDuration = ({
                 err?.message &&
                 err.message.includes("Request rejected")
             ) {
-                setToast({
-                    type: "error",
-                    message: "Request rejected",
-                })
+                setToasts((prevToasts) => [
+                    ...prevToasts,
+                    {
+                        variant: "error",
+                        message: "Request rejected",
+                    },
+                ])
 
                 return
             }
 
-            setToast({
-                type: "error",
-                message: `Error refreshing lockup: ${err}`,
-            })
+            setToasts((prevToasts) => [
+                ...prevToasts,
+                {
+                    variant: "error",
+                    message: `Error refreshing lockup: ${err}`,
+                },
+            ])
         } finally {
             setIsLoading(false)
         }
@@ -217,232 +223,176 @@ export const EditLockupDuration = ({
 
     return (
         <>
-            {toast &&
-                createPortal(
-                    <div
-                        className={twMerge(
-                            `
-                                fixed
-                                bottom-6
-                                right-6
-                                z-[50]
-                                flex
-                                w-96
-                                gap-3
-                                rounded-lg
-                                p-3
-                                text-sm
-                                text-palette-text
-                                *:shrink-0
-                            `,
-                            toast.type === "error" &&
-                                "bg-palette-red text-white",
-                            toast.type === "success" && "bg-palette-green",
-                            toast.type === "loading" && "bg-palette-beige"
-                        )}
-                    >
-                        {toast.type === "error" && (
-                            <CircleSlash
-                                className="
-                                    size-4
-                                "
-                            />
-                        )}
-                        {toast.type === "success" && (
-                            <CheckCircle
-                                className="
-                                    size-4
-                                "
-                            />
-                        )}
-                        {toast.type === "loading" && (
-                            <Loader
-                                className="
-                                    size-4
-                                    animate-spin
-                                "
-                            />
-                        )}
+            <Toasts>
+                {toasts.map((toast, index) => (
+                    <Toasts.Toast key={index} variant={toast.variant}>
                         {toast.message}
-
-                        <StyledText
-                            as="button"
-                            disabled={toast.type === "loading"}
-                            variant="button.secondary"
-                            type="button"
-                            onClick={() => setToast(null)}
+                    </Toasts.Toast>
+                ))}
+            </Toasts>
+            <ModalWindow
+                isOpen={isLockupModalOpen}
+                onClose={() => setIsLockupModalOpen(false)}
+            >
+                <Card>
+                    <Card.Header title="Refresh Lockup" />
+                    <Card.Body>
+                        <form
+                            className="
+                                flex
+                                flex-col
+                                gap-6
+                            "
+                            onChange={handleChange}
+                            onSubmit={handleSubmit}
                         >
-                            Dismiss
-                        </StyledText>
-                    </div>,
-                    document.body
-                )}
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger
-                    asChild
-                    id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
-                >
-                    <StyledText variant="button.neutral">
-                        Refresh Lockup
-                    </StyledText>
-                </DialogTrigger>
-                <DialogContent className="flex flex-col gap-12">
-                    <DialogHeader>
-                        <DialogTitle>Refresh Lockup</DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription className="sr-only">
-                        Refresh Lockup
-                    </DialogDescription>
+                            <div className="flex flex-col gap-2">
+                                <div className="font-bold">
+                                    Current End Date:
+                                </div>
 
-                    <form
-                        className="
-                            flex
-                            flex-col
-                            gap-6
-                        "
-                        onChange={handleChange}
-                        onSubmit={handleSubmit}
-                    >
-                        <div className="flex flex-col gap-2">
-                            <div className="font-bold">Current End Date:</div>
-
-                            <div className="flex items-center gap-2 opacity-60">
-                                {dateFormatter.format(currentLockupEndDate)} (
-                                {relativeTimeFormatter.format(
-                                    Math.floor(
-                                        (currentLockupEndDate.getTime() -
-                                            new Date().getTime()) /
-                                            (1000 * 60 * 60 * 24)
-                                    ),
-                                    "day"
-                                )}
-                                )
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <div className="font-bold">New End Date:</div>
-
-                            {Object.entries(LockupPeriod).map(
-                                ([name, value]) => {
-                                    const newLockupEnd =
-                                        Date.now() * 1000000 +
-                                        getLockupTimeNanoseconds(value)
-
-                                    // Don't show an option to refresh a lockup to a time before its current end time
-                                    if (currentLockupEnd >= newLockupEnd)
-                                        return null
-
-                                    const newLockupEndDate = new Date(
-                                        newLockupEnd / 1000000
+                                <div className="flex items-center gap-2 opacity-60">
+                                    {dateFormatter.format(currentLockupEndDate)}{" "}
+                                    (
+                                    {relativeTimeFormatter.format(
+                                        Math.floor(
+                                            (currentLockupEndDate.getTime() -
+                                                new Date().getTime()) /
+                                                (1000 * 60 * 60 * 24)
+                                        ),
+                                        "day"
+                                    )}
                                     )
-
-                                    const daysDifference =
-                                        getDaysAway(newLockupEnd)
-
-                                    return (
-                                        <label
-                                            className="group flex items-center gap-2"
-                                            key={name}
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="lockupPeriod"
-                                                value={value}
-                                                className={
-                                                    classNamesForRadioButtons
-                                                }
-                                            />
-                                            <span
-                                                className={
-                                                    classNamesForRadioLabels
-                                                }
-                                            >
-                                                {dateFormatter.format(
-                                                    newLockupEndDate
-                                                )}{" "}
-                                                (
-                                                {relativeTimeFormatter.format(
-                                                    daysDifference,
-                                                    "day"
-                                                )}
-                                                )
-                                            </span>
-                                        </label>
-                                    )
-                                }
-                            )}
-                        </div>
-
-                        <div className="flex items-center justify-around gap-3">
-                            <div className="flex flex-col items-center text-center">
-                                <div>Locked ATOM</div>
-                                <div
-                                    className="
-                                        text-4xl
-                                        font-bold
-                                        text-palette-beige
-                                    "
-                                >
-                                    {formValues.shares}
                                 </div>
                             </div>
 
-                            <div className="relative flex flex-col items-center text-center">
-                                <div>{hasChanged && "New "}Voting Power</div>
-                                <div
-                                    className={twMerge(
-                                        `
+                            <div className="flex flex-col gap-2">
+                                <div className="font-bold">New End Date:</div>
+
+                                {Object.entries(LockupPeriod).map(
+                                    ([name, value]) => {
+                                        const newLockupEnd =
+                                            Date.now() * 1000000 +
+                                            getLockupTimeNanoseconds(value)
+
+                                        // Don't show an option to refresh a lockup to a time before its current end time
+                                        if (currentLockupEnd >= newLockupEnd)
+                                            return null
+
+                                        const newLockupEndDate = new Date(
+                                            newLockupEnd / 1000000
+                                        )
+
+                                        const daysDifference =
+                                            getDaysAway(newLockupEnd)
+
+                                        return (
+                                            <label
+                                                className="group flex items-center gap-2"
+                                                key={name}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="lockupPeriod"
+                                                    value={value}
+                                                    className={
+                                                        classNamesForRadioButtons
+                                                    }
+                                                />
+                                                <span
+                                                    className={
+                                                        classNamesForRadioLabels
+                                                    }
+                                                >
+                                                    {dateFormatter.format(
+                                                        newLockupEndDate
+                                                    )}{" "}
+                                                    (
+                                                    {relativeTimeFormatter.format(
+                                                        daysDifference,
+                                                        "day"
+                                                    )}
+                                                    )
+                                                </span>
+                                            </label>
+                                        )
+                                    }
+                                )}
+                            </div>
+
+                            <div className="flex items-center justify-around gap-3">
+                                <div className="flex flex-col items-center text-center">
+                                    <div>Locked ATOM</div>
+                                    <div
+                                        className="
                                             text-4xl
                                             font-bold
                                             text-palette-beige
-                                        `,
-                                        powerDifference > 0 &&
-                                            "text-palette-green"
-                                    )}
-                                >
-                                    {formatAmount(
-                                        hasChanged
-                                            ? formValues.power
-                                            : lockup.current_voting_power
-                                    )}
+                                        "
+                                    >
+                                        {formValues.shares}
+                                    </div>
+                                </div>
+
+                                <div className="relative flex flex-col items-center text-center">
+                                    <div>
+                                        {hasChanged && "New "}Voting Power
+                                    </div>
+                                    <div
+                                        className={twMerge(
+                                            `
+                                                text-4xl
+                                                font-bold
+                                                text-palette-beige
+                                            `,
+                                            powerDifference > 0 &&
+                                                "text-palette-green"
+                                        )}
+                                    >
+                                        {formatAmount(
+                                            hasChanged
+                                                ? formValues.power
+                                                : lockup.current_voting_power
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="flex flex-col gap-2">
-                            <StyledText
-                                as="button"
-                                variant="button.neutral"
-                                type="submit"
-                                disabled={isLoading || !hasChanged}
-                            >
-                                {isLoading ? (
-                                    <Loader
-                                        className="
-                                        size-4
-                                        animate-spin
-                                    "
-                                    />
-                                ) : (
-                                    "Confirm"
-                                )}
-                            </StyledText>
+                            <div className="flex flex-col gap-2">
+                                <StyledText
+                                    as="button"
+                                    variant="button.primary"
+                                    type="submit"
+                                    disabled={isLoading || !hasChanged}
+                                >
+                                    {isLoading ? (
+                                        <div
+                                            className={`
+                                                animate-spin
+                                                text-lg
+                                            `}
+                                        >
+                                            <Icon name="solid:loader" />
+                                        </div>
+                                    ) : (
+                                        "Confirm"
+                                    )}
+                                </StyledText>
 
-                            <DialogClose asChild>
                                 <StyledText
                                     as="button"
                                     variant="button.secondary"
                                     type="button"
                                     disabled={isLoading}
+                                    onClick={() => setIsLockupModalOpen(false)}
                                 >
                                     Cancel
                                 </StyledText>
-                            </DialogClose>
-                        </div>
-                    </form>
-                </DialogContent>
-            </Dialog>
+                            </div>
+                        </form>
+                    </Card.Body>
+                </Card>
+            </ModalWindow>
         </>
     )
 }

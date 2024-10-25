@@ -1,5 +1,5 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import { ArrowUpRight, Globe, Send, Twitter } from "lucide-react"
+import { Icon } from "@/components/Icon"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -46,7 +46,7 @@ export const Footer = () => {
                         target="_blank"
                     >
                         <span>Informal Systems</span>
-                        <ArrowUpRight />
+                        <Icon name="solid:arrow-up-right" />
                     </a>
                 </div>
 
@@ -64,21 +64,21 @@ export const Footer = () => {
                         target="_blank"
                         title="Cosmos Hub"
                     >
-                        <Globe />
+                        <Icon name="solid:globe" />
                     </a>
                     <a
                         href="https://twitter.com/cosmoshub"
                         target="_blank"
                         title="Twitter"
                     >
-                        <Twitter />
+                        <Icon name="brands:twitter" />
                     </a>
                     <a
                         href="https://t.me/+xUzNOTZjUNw5Mzhk"
                         target="_blank"
                         title="Telegram"
                     >
-                        <Send />
+                        <Icon name="solid:paper-plane" />
                     </a>
                 </div>
             </ContentContainer>

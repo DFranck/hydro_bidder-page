@@ -2,7 +2,7 @@
 
 import { useAppContext } from "@/app/context"
 import { StyledText } from "@/components/StyledText"
-import { TooltipIcon } from "@/components/TooltipIcon"
+import { Tooltip } from "@/components/Tooltip"
 import { TopCard } from "@/components/TopCard"
 import { useUserVotingData } from "@/hooks/hooks"
 import { cn, formatAmount } from "@/lib/utils"
@@ -109,10 +109,14 @@ function YourLockedATOMCard({
             title={
                 <div className="flex items-center gap-1">
                     Your Locked ATOM{" "}
-                    <TooltipIcon>
-                        Your staked ATOM locked in Hydro. The more ATOMs you
-                        lock, the higher your voting power will be
-                    </TooltipIcon>
+                    <Tooltip
+                        tipContents={
+                            <>
+                                Your staked ATOM locked in Hydro. The more ATOMs
+                                you lock, the higher your voting power will be
+                            </>
+                        }
+                    />
                 </div>
             }
             label={
@@ -157,10 +161,15 @@ function VotingPowerCard({
             title={
                 <div className="flex items-center gap-1">
                     Voting Power{" "}
-                    <TooltipIcon>
-                        Your Hydro voting power. The more power you have, the
-                        larger share of tributes you will receive
-                    </TooltipIcon>
+                    <Tooltip
+                        tipContents={
+                            <>
+                                Your Hydro voting power. The more power you
+                                have, the larger share of tributes you will
+                                receive
+                            </>
+                        }
+                    />
                 </div>
             }
             label={

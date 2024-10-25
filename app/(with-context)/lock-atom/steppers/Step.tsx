@@ -1,13 +1,7 @@
+import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import { Loader } from "lucide-react"
 import { ReactNode } from "react"
 
 export function Step({
@@ -26,20 +20,21 @@ export function Step({
     isWorking?: boolean
 }) {
     return (
-        <Card className="mx-auto max-w-screen-sm border-2 border-palette-green bg-palette-text">
-            {title && (
-                <CardHeader className="pb-0">
-                    <CardTitle>{title}</CardTitle>
-                </CardHeader>
-            )}
+        <Card
+            className={`
+                mx-auto
+                max-w-screen-sm
+            `}
+        >
+            <Card.Header title={title} />
 
-            <CardContent className="flex flex-col gap-3 py-6">
+            <Card.Body>
                 <ConditionalWrapper
                     condition={!!isWorking}
                     wrapper={(children) => (
-                        <div className="flex gap-6">
-                            <div className="shrink-0">
-                                <Loader className="animate-spin" />
+                        <div className="flex items-center gap-6">
+                            <div className="shrink-0 animate-spin text-2xl">
+                                <Icon name="solid:loader" />
                             </div>
                             <div className="flex flex-col gap-3">
                                 {children}
@@ -49,10 +44,10 @@ export function Step({
                 >
                     {contents}
                 </ConditionalWrapper>
-            </CardContent>
+            </Card.Body>
 
             {buttons && (
-                <CardFooter className="flex flex-row-reverse gap-2">
+                <Card.Footer>
                     {buttons.map((button, index) => (
                         <StyledText
                             as="button"
@@ -68,7 +63,7 @@ export function Step({
                             {button.label}
                         </StyledText>
                     ))}
-                </CardFooter>
+                </Card.Footer>
             )}
         </Card>
     )

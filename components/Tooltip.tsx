@@ -1,34 +1,24 @@
 "use client"
 
-import { Info } from "lucide-react"
-import {
-    FocusEvent,
-    MouseEvent,
-    ReactNode,
-    useEffect,
-    useRef,
-    useState,
-} from "react"
+import { Icon } from "@/components/Icon"
+import { FocusEvent, MouseEvent, ReactNode, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
+import { useIsClient } from "usehooks-ts"
 
-export function TooltipIcon({
+export function Tooltip({
     children,
     classNamesForTooltip,
-    icon,
+    tipContents,
 }: {
-    children: ReactNode
+    children?: ReactNode
     classNamesForTooltip?: string
-    icon?: ReactNode
+    tipContents: ReactNode
 }) {
-    const [isClient, setIsClient] = useState(false)
+    const isClient = useIsClient()
     const [coords, setCoords] = useState({ x: 0, y: 0 })
     const [isOpen, setIsOpen] = useState(false)
     const timer = useRef<NodeJS.Timeout | null>(null)
-
-    useEffect(() => {
-        setIsClient(true)
-    }, [])
 
     if (!isClient) return null
 
@@ -82,7 +72,7 @@ export function TooltipIcon({
             onFocus={handleFocus}
             onBlur={handleBlur}
         >
-            {icon ?? <Info className="inline-block" size={14} />}
+            {children ?? <Icon name="regular:circle-info" />}
             {createPortal(
                 <div
                     className={twMerge(
@@ -121,7 +111,7 @@ export function TooltipIcon({
                         left: coords.x,
                     }}
                 >
-                    {children}
+                    {tipContents}
                 </div>,
                 document.body
             )}

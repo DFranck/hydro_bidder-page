@@ -1,10 +1,10 @@
 "use client"
 
 import { ContentContainer } from "@/components/ContentContainer"
+import { Icon } from "@/components/Icon"
 import { useUserVotingData } from "@/hooks/hooks"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import { useChain } from "@cosmos-kit/react"
-import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -122,7 +122,7 @@ export const Header = () => {
             >
                 Hydro is currently in view-only mode.{" "}
                 <span className="inline-flex items-center gap-1 font-bold underline">
-                    Learn More <ArrowUpRight size={16} />
+                    Learn More <Icon name="solid:arrow-up-right" />
                 </span>
                 <Link
                     className="absolute inset-0 z-10"

@@ -1,7 +1,7 @@
 "use client"
 
+import { Icon } from "@/components/Icon"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
-import { ChevronDown } from "lucide-react"
 import { twMerge } from "tailwind-merge"
 
 export function ScrollIndicator() {
@@ -38,7 +38,7 @@ export function ScrollIndicator() {
                     text-palette-text
                 "
             >
-                <ChevronDown />
+                <Icon name="solid:chevron-down" />
             </div>
         </div>
     )

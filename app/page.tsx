@@ -1,7 +1,7 @@
 import { ContentContainer } from "@/components/ContentContainer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { twMerge } from "tailwind-merge"
@@ -121,13 +121,9 @@ export default function Home() {
                                 width={data.size === "small" ? 100 : 220}
                                 height={data.size === "small" ? 100 : 220}
                             />
-                            <h3
-                                className="
-                                    text-2xl
-                                "
-                            >
+                            <StyledText as="h3" variant="h3">
                                 {tile.title}
-                            </h3>
+                            </StyledText>
                             <p
                                 className="
                                     text-balance
@@ -229,19 +225,12 @@ export default function Home() {
                             space-y-6
                         "
                     >
-                        <h1
-                            className="
-                                text-balance
-                                text-6xl
-                                font-bold
-                                leading-[1.1]
-                            "
-                        >
+                        <StyledText as="h1" variant="h1">
                             Get More From{" "}
                             <span className="sm:whitespace-nowrap">
                                 Your ATOM
                             </span>
-                        </h1>
+                        </StyledText>
                         <p
                             className="
                                 text-balance
@@ -281,7 +270,9 @@ export default function Home() {
                         lg:py-40
                     "
                 >
-                    <h2>How Hydro Works</h2>
+                    <StyledText as="h2" variant="h2">
+                        How Hydro Works
+                    </StyledText>
                     {renderTiles({
                         tiles: howHydroWorksTiles,
                         size: "small",
@@ -315,23 +306,15 @@ export default function Home() {
                             "
                         >
                             <div className="space-y-2">
-                                <p
-                                    className="
-                                        font-medium
-                                        uppercase
-                                        slashed-zero
-                                        tracking-wide
-                                        text-[#FFE1B8]
-                                    "
-                                >
+                                <StyledText as="div" variant="superHeading">
                                     For Voters
-                                </p>
-                                <h2 className="text-balance">
+                                </StyledText>
+                                <StyledText as="h2" variant="h2">
                                     Earn Yield On Top of the{" "}
                                     <span className="sm:whitespace-nowrap">
                                         Staking APR
                                     </span>
-                                </h2>
+                                </StyledText>
                             </div>
                             <div
                                 className="
@@ -363,7 +346,7 @@ export default function Home() {
                                     target="_blank"
                                 >
                                     Learn More
-                                    <ArrowUpRight />
+                                    <Icon name="solid:arrow-up-right" />
                                 </StyledText>
                             </div>
                         </div>
@@ -396,23 +379,12 @@ export default function Home() {
                     "
                 >
                     <div className="space-y-2 text-center">
-                        <p
-                            className="
-                                text-base
-                                font-medium
-                                uppercase
-                                not-italic
-                                slashed-zero
-                                leading-[130%]
-                                tracking-[1.28px]
-                                text-palette-beige
-                            "
-                        >
+                        <StyledText as="div" variant="superHeading">
                             for projects
-                        </p>
-                        <h2 className="text-balance">
+                        </StyledText>
+                        <StyledText as="h2" variant="h2">
                             Get Liquidity from the Hub
-                        </h2>
+                        </StyledText>
                     </div>
                     <p
                         className="
@@ -428,14 +400,16 @@ export default function Home() {
                         Hydro allocates liquidity through sequential rounds in
                         which projects attract user votes through the
                         distribution of tributes.{" "}
-                        <a
+                        <StyledText
+                            as="a"
+                            className="flex items-center gap-1"
+                            variant="link"
                             href="/docs"
-                            className="inline-flex items-center gap-1 text-palette-green underline"
                             target="_blank"
                         >
                             Learn more
-                            <ArrowUpRight />
-                        </a>
+                            <Icon name="solid:arrow-up-right" />
+                        </StyledText>
                     </p>
 
                     <div>
@@ -457,7 +431,7 @@ export default function Home() {
                             href="https://calendly.com/milos-informal/30-minute-meeting-hydro"
                             target="_blank"
                         >
-                            Get in Touch <ArrowUpRight />
+                            Get in Touch <Icon name="solid:arrow-up-right" />
                         </StyledText>
                         <StyledText
                             as="a"
@@ -465,7 +439,7 @@ export default function Home() {
                             href="/docs/projects/whitelisting"
                             target="_blank"
                         >
-                            Learn More <ArrowUpRight />
+                            Learn More <Icon name="solid:arrow-up-right" />
                         </StyledText>
                     </div>
                 </ContentContainer>

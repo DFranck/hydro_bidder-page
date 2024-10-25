@@ -1,35 +1,30 @@
 "use client"
 
 import { useAppContext } from "@/app/context"
+import { Icon } from "@/components/Icon"
 import { PrettyTable, TR } from "@/components/PrettyTable"
-import { TooltipIcon } from "@/components/TooltipIcon"
+import { Tooltip } from "@/components/Tooltip"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { sum } from "lodash"
-import {
-    ArrowUpRight,
-    CircleCheckBig,
-    Gem,
-    Ghost,
-    ScrollText,
-} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { twJoin } from "tailwind-merge"
 import { WelcomePopup } from "../../../components/WelcomePopup"
 
 const commonClassNames = {
-    container: `
+    container: twJoin(`
         -mx-3
         space-y-6
         rounded-md
         bg-palette-text/20
         px-3
         backdrop-blur-md
-    `,
-    percentageOfNonVoters: `
+    `),
+    percentageOfNonVoters: twJoin(`
         flex
         items-center
         justify-center
@@ -40,55 +35,56 @@ const commonClassNames = {
         p-3
         text-sm
         text-white
-    `,
-    classNamesForCells: `
+    `),
+    classNamesForCells: twJoin(`
         group-hover/table-row:text-palette-green
-        sm:group-[&.has-voted]/table-row:border-palette-green
         sm:group-[&.has-voted]/table-row:border-y-2
+        sm:group-[&.has-voted]/table-row:border-palette-green
+        sm:group-[&.has-voted:hover]/table-row:text-palette-green
         sm:group-[&.has-voted]/table-row:first:border-l-2
         sm:group-[&.has-voted]/table-row:last:border-r-2
-        sm:group-[&.has-voted:hover]/table-row:text-palette-green
-    `,
-    hasVotedIcon: `
+    `),
+    hasVotedIcon: twJoin(`
         relative
-        -translate-y-1/4
+        -translate-y-1
+        text-3xl
         text-palette-green
-    `,
-    hasVotedLabel: `
+    `),
+    hasVotedLabel: twJoin(`
         absolute
         left-1/2
         top-full
         flex
         w-min
         -translate-x-1/2
-        -translate-y-1/4
+        -translate-y-1/2
         items-center
         gap-2
         whitespace-nowrap
         rounded-full
         bg-palette-green
-        p-0.5
-        px-1
+        p-1
         text-[8px]
+        leading-none
         text-palette-text
-    `,
-    projectLogo: `
+    `),
+    projectLogo: twJoin(`
         relative
         size-12
-    `,
-    projectTitle: `
+    `),
+    projectTitle: twJoin(`
         line-clamp-2
         text-lg
         font-semibold
-    `,
-    projectLink: `
+    `),
+    projectLink: twJoin(`
         absolute
         inset-0
         z-10
         h-full
         w-full
-    `,
-    noBids: `
+    `),
+    noBids: twJoin(`
         !mb-6
         rounded-md
         border
@@ -97,13 +93,13 @@ const commonClassNames = {
         py-12
         text-center
         text-white/60
-    `,
-    hasVotedRow: `
+    `),
+    hasVotedRow: twJoin(`
         has-voted
         max-sm:bg-palette-green
         max-sm:text-palette-text
         max-sm:hover:bg-palette-green/80
-    `,
+    `),
 }
 
 function proposalTotalTribute(
@@ -223,9 +219,9 @@ const ActiveProposals = ({
                                                 commonClassNames.percentageOfNonVoters
                                             }
                                         >
-                                            <Ghost size={18} />
-                                            <TooltipIcon
-                                                icon={
+                                            <Icon name="solid:ghost" />
+                                            <Tooltip
+                                                tipContents={
                                                     <span>
                                                         <strong>
                                                             {
@@ -233,7 +229,17 @@ const ActiveProposals = ({
                                                             }
                                                             %
                                                         </strong>{" "}
-                                                        have not voted yet
+                                                        of total voting power
+                                                        has not been allocated
+                                                        to project bids yet.{" "}
+                                                        <a
+                                                            href="/docs/users/voting-for-projects"
+                                                            target="_blank"
+                                                            className="inline-flex items-center gap-1 text-palette-green underline"
+                                                        >
+                                                            Learn more
+                                                            <Icon name="solid:arrow-up-right" />
+                                                        </a>
                                                     </span>
                                                 }
                                             >
@@ -241,21 +247,9 @@ const ActiveProposals = ({
                                                     <strong>
                                                         {percentageOfNonVoters}%
                                                     </strong>{" "}
-                                                    of total voting power has
-                                                    not been allocated to
-                                                    project bids yet.{" "}
-                                                    <a
-                                                        href="/docs/users/voting-for-projects"
-                                                        target="_blank"
-                                                        className="inline-flex items-center gap-1 text-palette-green underline"
-                                                    >
-                                                        Learn more
-                                                        <ArrowUpRight
-                                                            size={16}
-                                                        />
-                                                    </a>
+                                                    have not voted yet
                                                 </span>
-                                            </TooltipIcon>
+                                            </Tooltip>
                                         </div>
                                     </td>
                                 </tr>
@@ -267,17 +261,17 @@ const ActiveProposals = ({
                                 label: "",
                                 isSortable: false,
                                 propsForHeaderCell: {
-                                    className: `
-                                    !pr-0
+                                    className: twJoin(`
                                     w-0
-                                `,
+                                    !pr-0
+                                `),
                                 },
                                 propsForCells: {
-                                    className: `
+                                    className: twJoin(`
                                         ${commonClassNames.classNamesForCells}
-                                        !pr-0
                                         w-0
-                                    `,
+                                        !pr-0
+                                    `),
                                 },
                             },
                             {
@@ -285,12 +279,18 @@ const ActiveProposals = ({
                                 label: (
                                     <div className="flex items-center gap-1">
                                         Project Bid
-                                        <TooltipIcon>
-                                            Bids are submitted by projects. You
-                                            can only vote once (per bucket per
-                                            tranche) but you can switch your
-                                            vote as many times as you want
-                                        </TooltipIcon>
+                                        <Tooltip
+                                            tipContents={
+                                                <>
+                                                    Bids are submitted by
+                                                    projects. You can only vote
+                                                    once (per bucket per
+                                                    tranche) but you can switch
+                                                    your vote as many times as
+                                                    you want
+                                                </>
+                                            }
+                                        />
                                     </div>
                                 ),
                                 isSortable: true,
@@ -305,17 +305,23 @@ const ActiveProposals = ({
                                 label: (
                                     <div className="flex items-center gap-1">
                                         Your Est. Reward
-                                        <TooltipIcon>
-                                            This is the tribute value that will
-                                            be paid out to you when the round
-                                            ends if you vote for this project.
-                                            It may increase (if the project adds
-                                            to the tribute) or decrease (if more
-                                            voters choose this project){" "}
-                                            <span className="whitespace-nowrap">
-                                                over time.
-                                            </span>
-                                        </TooltipIcon>
+                                        <Tooltip
+                                            tipContents={
+                                                <>
+                                                    This is the tribute value
+                                                    that will be paid out to you
+                                                    when the round ends if you
+                                                    vote for this project. It
+                                                    may increase (if the project
+                                                    adds to the tribute) or
+                                                    decrease (if more voters
+                                                    choose this project){" "}
+                                                    <span className="whitespace-nowrap">
+                                                        over time.
+                                                    </span>
+                                                </>
+                                            }
+                                        />
                                     </div>
                                 ),
                                 isSortable: true,
@@ -338,13 +344,20 @@ const ActiveProposals = ({
                                 label: (
                                     <div className="flex items-center gap-1">
                                         Vote %
-                                        <TooltipIcon classNamesForTooltip="-ml-24">
-                                            This is the percentage of votes that
-                                            this project has received so far. It
-                                            may increase or decrease if other
-                                            users decide to switch their votes
-                                            before the round ends
-                                        </TooltipIcon>
+                                        <Tooltip
+                                            classNamesForTooltip="-ml-24"
+                                            tipContents={
+                                                <>
+                                                    This is the percentage of
+                                                    votes that this project has
+                                                    received so far. It may
+                                                    increase or decrease if
+                                                    other users decide to switch
+                                                    their votes before the round
+                                                    ends
+                                                </>
+                                            }
+                                        />
                                     </div>
                                 ),
                                 isSortable: true,
@@ -368,7 +381,7 @@ const ActiveProposals = ({
                                             commonClassNames.hasVotedIcon
                                         }
                                     >
-                                        <CircleCheckBig />
+                                        <Icon name="regular:circle-check" />
 
                                         <div
                                             className={
@@ -379,7 +392,10 @@ const ActiveProposals = ({
                                         </div>
                                     </div>
                                 ) : (
-                                    <ScrollText />
+                                    <Icon
+                                        className="text-2xl"
+                                        name="regular:scroll"
+                                    />
                                 ),
 
                             name: (
@@ -420,29 +436,36 @@ const ActiveProposals = ({
                             ),
 
                             yourEstimatedReward: proposal.points ? (
-                                <TooltipIcon
-                                    icon={<Gem className="inline-block" />}
+                                <Tooltip
+                                    tipContents={
+                                        <>
+                                            This project is using a point
+                                            system. Voters get points instead of
+                                            live tokens. In this bid,{" "}
+                                            <var className="font-mono font-bold not-italic text-palette-cyan">
+                                                {proposal.points[0].toLocaleString(
+                                                    "en-US"
+                                                )}{" "}
+                                                {proposal.points[1]}
+                                            </var>{" "}
+                                            would be distributed as tribute.{" "}
+                                            {proposal.pointProgramUrl && (
+                                                <a
+                                                    href={
+                                                        proposal.pointProgramUrl
+                                                    }
+                                                    className="inline-flex items-center gap-1 text-palette-green underline"
+                                                    target="_blank"
+                                                >
+                                                    Learn More{" "}
+                                                    <Icon name="solid:arrow-up-right" />
+                                                </a>
+                                            )}
+                                        </>
+                                    }
                                 >
-                                    This project is using a point system. Voters
-                                    get points instead of live tokens. In this
-                                    bid,{" "}
-                                    <var className="font-mono font-bold not-italic text-palette-cyan">
-                                        {proposal.points[0].toLocaleString(
-                                            "en-US"
-                                        )}{" "}
-                                        {proposal.points[1]}
-                                    </var>{" "}
-                                    would be distributed as tribute.{" "}
-                                    {proposal.pointProgramUrl && (
-                                        <a
-                                            href={proposal.pointProgramUrl}
-                                            className="inline-flex items-center gap-1 text-palette-green underline"
-                                            target="_blank"
-                                        >
-                                            Learn More <ArrowUpRight />
-                                        </a>
-                                    )}
-                                </TooltipIcon>
+                                    <Icon name="solid:gem" />
+                                </Tooltip>
                             ) : (
                                 <>
                                     <div>

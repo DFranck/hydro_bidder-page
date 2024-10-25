@@ -1,4 +1,4 @@
-import { ChevronUp } from "lucide-react"
+import { Icon } from "@/components/Icon"
 import { ComponentProps } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -52,10 +52,9 @@ export function TH({
                         inline-flex
                         flex-row
                         items-center
-                        gap-3
+                        gap-1
                         whitespace-nowrap
                     `,
-
                     textAlign === "center"
                         ? "text-center"
                         : textAlign === "right"
@@ -68,31 +67,15 @@ export function TH({
                     <div
                         className={twMerge(
                             `
-                                relative
-                                h-3
-                                w-0
+                                transition-all
+                                group-hover/table-cell:opacity-50
                             `,
+                            isSorted ? "!opacity-100" : "opacity-0",
+                            sortDirection === "ASC" ? "rotate-0" : "rotate-180",
                             textAlign === "right" && "-order-1"
                         )}
                     >
-                        <ChevronUp
-                            className={twMerge(
-                                `
-                                    absolute
-                                    left-1/2
-                                    top-1/2
-                                    -translate-x-1/2
-                                    -translate-y-1/2
-                                    transition-all
-                                    group-hover/table-cell:opacity-50
-                                `,
-                                isSorted ? "!opacity-100" : "opacity-0",
-                                sortDirection === "ASC"
-                                    ? "rotate-0"
-                                    : "rotate-180"
-                            )}
-                            size={18}
-                        />
+                        <Icon name="solid:chevron-up" />
                     </div>
                 )}
             </span>
