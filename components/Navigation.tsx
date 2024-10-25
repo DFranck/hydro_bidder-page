@@ -225,23 +225,7 @@ export default function Navigation() {
                     here.
                 </TooltipIcon>
 
-                <TooltipIcon
-                    icon={
-                        <div className="pointer-events-none opacity-60">
-                            <Wallet notifyConnectedCB={setIsConnected} />
-                        </div>
-                    }
-                    classNamesForTooltip="-ml-12"
-                >
-                    Hydro is currently in view-only mode.{" "}
-                    <a
-                        href="/docs"
-                        target="_blank"
-                        className="inline-flex items-center gap-1 font-bold text-palette-green underline"
-                    >
-                        Learn More <ArrowUpRight size={16} />
-                    </a>
-                </TooltipIcon>
+                <Wallet notifyConnectedCB={setIsConnected} />
             </div>
         </nav>
     )
