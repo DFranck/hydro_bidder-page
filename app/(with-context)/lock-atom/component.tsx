@@ -31,37 +31,10 @@ const commonClassNames = {
     button: "cursor-pointer border-none bg-transparent text-white underline",
     formContainer: "space-y-8",
     label: "font-bold whitespace-nowrap flex items-center justify-end",
-    input: `
-        w-1/2
-        rounded
-        border
-        p-2
-        bg-palette-text
-        text-white
-    `,
-    radio: `
-        peer
-        flex
-        items-center
-        text-sm
-        opacity-60
-        appearance-none
-        rounded-full
-        size-5
-        border-2
-        border-gray-300
-        checked:bg-palette-green
-        checked:border-palette-green
-        checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
-        checked:opacity-100
-    `,
-    radioLabel: `
-        opacity-60
-        cursor-pointer
-        peer-checked:opacity-100
-        peer-checked:font-bold
-        whitespace-nowrap
-    `,
+    input: "w-1/2 rounded border p-2 bg-palette-text text-white",
+    radio: "peer flex items-center text-sm opacity-60 appearance-none rounded-full size-5 border-2 border-gray-300 checked:bg-palette-green checked:border-palette-green checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset] checked:opacity-100",
+    radioLabel:
+        "opacity-60 cursor-pointer peer-checked:opacity-100 peer-checked:font-bold whitespace-nowrap",
     infoBox:
         "flex gap-3 rounded-md bg-palette-cyan p-3 text-sm text-palette-text",
     validatorListItem: "mb-2 flex w-full flex-col rounded-lg border p-3",
@@ -424,11 +397,7 @@ const NeutronIncompleteNotice = ({
     setStepper: (stepper: Stepper) => void
 }) => {
     return (
-        <Card
-            className={`
-            mb-4
-        `}
-        >
+        <Card className="mb-4">
             <Card.Header title="Incomplete ATOM Locking" />
             <Card.Body>
                 <p>
@@ -564,13 +533,7 @@ const LockForm = ({
                         <a
                             href="https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake"
                             target="_blank"
-                            className={`
-                                inline-flex
-                                items-center
-                                gap-1
-                                text-palette-green
-                                underline
-                            `}
+                            className="inline-flex items-center gap-1 text-palette-green underline"
                         >
                             https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake{" "}
                             <Icon name="solid:arrow-up-right" />
@@ -611,13 +574,7 @@ const LockForm = ({
                                     <StyledText
                                         as="label"
                                         variant="label"
-                                        className={`
-                                            flex
-                                            items-center
-                                            justify-start
-                                            whitespace-nowrap
-                                            font-bold
-                                        `}
+                                        className="flex items-center justify-start whitespace-nowrap font-bold"
                                     >
                                         Select Validator:
                                     </StyledText>
@@ -638,25 +595,12 @@ const LockForm = ({
                                 </div>
                             )}
                             {validator && (
-                                <div
-                                    className={`
-                                        grid
-                                        grid-cols-[min-content,auto]
-                                        items-center
-                                        gap-6
-                                    `}
-                                >
+                                <div className="grid grid-cols-[min-content,auto] items-center gap-6">
                                     <div className="col-span-2 grid grid-cols-subgrid">
                                         <StyledText
                                             as="label"
                                             variant="label"
-                                            className={`
-                                                flex
-                                                items-center
-                                                justify-end
-                                                whitespace-nowrap
-                                                font-bold
-                                            `}
+                                            className="flex items-center justify-end whitespace-nowrap font-bold"
                                         >
                                             Your Validator:
                                         </StyledText>
@@ -681,13 +625,7 @@ const LockForm = ({
                                         <StyledText
                                             as="label"
                                             variant="label"
-                                            className={`
-                                                flex
-                                                items-center
-                                                justify-end
-                                                whitespace-nowrap
-                                                font-bold
-                                            `}
+                                            className="flex items-center justify-end whitespace-nowrap font-bold"
                                         >
                                             Amount:
                                         </StyledText>
@@ -708,21 +646,9 @@ const LockForm = ({
                                                         ).toString()
                                                     )
                                                 }}
-                                                className={`
-                                                    w-1/2
-                                                    rounded
-                                                    border
-                                                    bg-palette-text
-                                                    p-2
-                                                    text-white
-                                                `}
+                                                className="w-1/2 rounded border bg-palette-text p-2 text-white"
                                             />
-                                            <p
-                                                className={`
-                                                text-sm
-                                                text-gray-500
-                                            `}
-                                            >
+                                            <p className="text-sm text-gray-500">
                                                 Max: {maxATOMAmount} ATOM
                                             </p>
                                         </div>
@@ -731,13 +657,7 @@ const LockForm = ({
                                         <StyledText
                                             as="label"
                                             variant="label"
-                                            className={`
-                                                flex
-                                                items-baseline
-                                                justify-end
-                                                whitespace-nowrap
-                                                font-bold
-                                            `}
+                                            className="flex items-baseline justify-end whitespace-nowrap font-bold"
                                         >
                                             Lockup:
                                         </StyledText>
@@ -771,31 +691,9 @@ const LockForm = ({
                                                                 ).toString()
                                                             )
                                                         }
-                                                        className={`
-                                                            peer
-                                                            flex
-                                                            size-5
-                                                            appearance-none
-                                                            items-center
-                                                            rounded-full
-                                                            border-2
-                                                            border-gray-300
-                                                            text-sm
-                                                            opacity-60
-                                                            checked:border-palette-green
-                                                            checked:bg-palette-green
-                                                            checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
-                                                        `}
+                                                        className="peer flex size-5 appearance-none items-center rounded-full border-2 border-gray-300 text-sm opacity-60 checked:border-palette-green checked:bg-palette-green checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]"
                                                     />
-                                                    <span
-                                                        className={`
-                                                            flex
-                                                            items-center
-                                                            justify-end
-                                                            whitespace-nowrap
-                                                            font-bold
-                                                        `}
-                                                    >
+                                                    <span className="flex items-center justify-end whitespace-nowrap font-bold">
                                                         <ConditionalWrapper
                                                             condition={
                                                                 months > 1
@@ -822,13 +720,7 @@ const LockForm = ({
                                         <StyledText
                                             as="label"
                                             variant="label"
-                                            className={`
-                                                flex
-                                                items-center
-                                                justify-end
-                                                whitespace-nowrap
-                                                font-bold
-                                            `}
+                                            className="flex items-center justify-end whitespace-nowrap font-bold"
                                         >
                                             Voting Power:
                                         </StyledText>
@@ -942,10 +834,7 @@ const LoaderCard = ({
                         In order to use Hydro, you will need to connect a Keplr
                         wallet.{" "}
                         <a
-                            className={`
-                                    text-palette-green
-                                    underline
-                                `}
+                            className="text-palette-green underline"
                             href="https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en"
                             target="_blank"
                             rel="noopener noreferrer"
