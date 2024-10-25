@@ -1,6 +1,6 @@
 "use client"
 import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
-import { Button } from "@/components/ui/button"
+import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
@@ -145,27 +145,27 @@ export const ContinueFromNeutronStepper = ({
                                     </label>
                                     <div className="flex space-x-2">
                                         {[1].map((months) => (
-                                            <Button
+                                            <StyledText
+                                                as="button"
                                                 key={months}
                                                 type="button"
                                                 variant={
                                                     lockDuration ===
                                                     months * EPOCH_LENGTH
-                                                        ? "default"
-                                                        : "outline"
+                                                        ? "button.primary"
+                                                        : "button.secondary"
                                                 }
                                                 onClick={() =>
                                                     setLockDuration(
                                                         months * EPOCH_LENGTH
                                                     )
                                                 }
-                                                className="flex-1"
                                             >
                                                 {months}{" "}
                                                 {months === 1
                                                     ? "month"
                                                     : "months"}
-                                            </Button>
+                                            </StyledText>
                                         ))}
                                     </div>
                                 </div>
@@ -256,13 +256,14 @@ export const ContinueFromNeutronStepper = ({
                             </p>
                             <div className="mt-4">
                                 {!showErrorLog ? (
-                                    <button
+                                    <StyledText
+                                        as="button"
+                                        variant="link.subtle"
                                         onClick={() => setShowErrorLog(true)}
-                                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
                                     >
                                         Show Error Log
                                         <ChevronDown className="ml-1 h-4 w-4" />
-                                    </button>
+                                    </StyledText>
                                 ) : (
                                     <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                                         {errorLog}

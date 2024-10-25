@@ -91,6 +91,7 @@ export const classNames = {
         allClickableText,
         `
             inline
+            text-white/80
             hover:underline
         `
     ),

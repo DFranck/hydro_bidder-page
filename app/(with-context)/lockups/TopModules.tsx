@@ -1,9 +1,9 @@
 "use client"
 
 import { useAppContext } from "@/app/context"
+import { StyledText } from "@/components/StyledText"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { TopCard } from "@/components/TopCard"
-import { Button } from "@/components/ui/button"
 import { useUserVotingData } from "@/hooks/hooks"
 import { cn, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
@@ -48,9 +48,9 @@ function RewardsSnapshotCard({ amount }: { amount: number }) {
                         width={100}
                         height={100}
                     />
-                    <Button className="h-10 rounded-full bg-[#00FFC2] text-center text-lg font-medium text-[#080815]">
+                    <StyledText as="button" variant="button.primary.large">
                         Claim Rewards
-                    </Button>
+                    </StyledText>
                 </div>
                 <h3 className="py-4 text-white">Rewards Snapshot</h3>
                 <p className="text-xl font-normal">ROI on your locked ATOM</p>

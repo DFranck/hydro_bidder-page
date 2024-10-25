@@ -215,7 +215,7 @@ function Lockups({
                         >
                             <StyledText
                                 as={Link}
-                                variant="link"
+                                variant="button.neutral"
                                 href="/lock-atom"
                             >
                                 New Lockup

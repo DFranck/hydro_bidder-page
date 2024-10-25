@@ -120,13 +120,13 @@ export const Header = () => {
                         `
                 )}
             >
-                Hydro is currently running pilot rounds.{" "}
+                Hydro is currently in view-only mode.{" "}
                 <span className="inline-flex items-center gap-1 font-bold underline">
                     Learn More <ArrowUpRight size={16} />
                 </span>
                 <Link
                     className="absolute inset-0 z-10"
-                    href="/docs#pilot-rounds"
+                    href="/docs"
                     target="_blank"
                 >
                     <span className="sr-only">Learn More</span>
