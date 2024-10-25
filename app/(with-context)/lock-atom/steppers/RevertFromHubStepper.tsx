@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { broadcastTx, signRedeemTokensForShares } from "../transactions"
+import { StyledText } from "@/components/StyledText"
 
 function getValidatorMoniker(
     validator: string,
@@ -223,13 +224,14 @@ export const RevertFromHubStepper = ({
                             </p>
                             <div className="mt-4">
                                 {!showErrorLog ? (
-                                    <button
+                                    <StyledText
+                                        as="button"
+                                        variant="link.subtle"
                                         onClick={() => setShowErrorLog(true)}
-                                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
                                     >
                                         Show Error Log
                                         <ChevronDown className="ml-1 h-4 w-4" />
-                                    </button>
+                                    </StyledText>
                                 ) : (
                                     <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                                         {errorLog}

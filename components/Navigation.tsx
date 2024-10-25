@@ -213,8 +213,8 @@ export default function Navigation() {
                         </Link>
                     }
                 >
-                    Performance metrics of Hydro&rsquo;s liquidity deployments
-                    will be shown here
+                    Performance metrics of liquidity deployments will be shown
+                    here.
                 </TooltipIcon>
 
                 <Wallet notifyConnectedCB={setIsConnected} />

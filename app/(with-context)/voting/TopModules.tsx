@@ -65,26 +65,11 @@ export function ProposalListTopModules() {
                         <TooltipIcon classNamesForTooltip="flex flex-col gap-2">
                             <p>
                                 This number is the average APR available to
-                                Hydro voters during the current active round.
+                                Hydro voters during the current active round. It
+                                includes the regular Cosmos Hub staking APR
+                                which Hydro lockers continue to receive
+                                automatically.
                             </p>
-
-                            <ul>
-                                {[1, 3, 12].map((months) => (
-                                    <li
-                                        key={months}
-                                        className="flex items-center justify-between"
-                                    >
-                                        <span>
-                                            Last{" "}
-                                            <strong>
-                                                {months} month
-                                                {months > 1 ? "s" : ""}:
-                                            </strong>
-                                        </span>{" "}
-                                        <span>-%</span>
-                                    </li>
-                                ))}
-                            </ul>
 
                             <a
                                 href="/docs/users/calculating-staking-apr"

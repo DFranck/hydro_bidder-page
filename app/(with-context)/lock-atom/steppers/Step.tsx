@@ -1,5 +1,5 @@
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
-import { Button } from "@/components/ui/button"
+import { StyledText } from "@/components/StyledText"
 import {
     Card,
     CardContent,
@@ -54,14 +54,19 @@ export function Step({
             {buttons && (
                 <CardFooter className="flex flex-row-reverse gap-2">
                     {buttons.map((button, index) => (
-                        <Button
+                        <StyledText
+                            as="button"
                             key={index}
-                            onClick={button.onClick}
                             className={button.className}
-                            variant={index === 0 ? "primary" : "secondary"}
+                            variant={
+                                index === 0
+                                    ? "button.primary"
+                                    : "button.secondary"
+                            }
+                            onClick={button.onClick}
                         >
                             {button.label}
-                        </Button>
+                        </StyledText>
                     ))}
                 </CardFooter>
             )}

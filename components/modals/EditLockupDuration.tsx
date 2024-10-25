@@ -1,6 +1,6 @@
 "use client"
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
-import { Button } from "@/components/ui/button"
+import { StyledText } from "@/components/StyledText"
 import {
     Dialog,
     DialogClose,
@@ -265,18 +265,15 @@ export const EditLockupDuration = ({
                         )}
                         {toast.message}
 
-                        <Button
-                            className={twMerge(
-                                toast.type === "loading" && "hidden",
-                                toast.type === "success" &&
-                                    "border-palette-text text-palette-text"
-                            )}
-                            variant="outline"
+                        <StyledText
+                            as="button"
+                            disabled={toast.type === "loading"}
+                            variant="button.secondary"
                             type="button"
                             onClick={() => setToast(null)}
                         >
                             Dismiss
-                        </Button>
+                        </StyledText>
                     </div>,
                     document.body
                 )}
@@ -285,7 +282,9 @@ export const EditLockupDuration = ({
                     asChild
                     id={`edit-lockup-duration-${lockup.lock_entry.lock_id}`}
                 >
-                    <Button>Refresh Lockup</Button>
+                    <StyledText variant="button.neutral">
+                        Refresh Lockup
+                    </StyledText>
                 </DialogTrigger>
                 <DialogContent className="flex flex-col gap-12">
                     <DialogHeader>
@@ -412,8 +411,9 @@ export const EditLockupDuration = ({
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <Button
-                                variant="secondary"
+                            <StyledText
+                                as="button"
+                                variant="button.neutral"
                                 type="submit"
                                 disabled={isLoading || !hasChanged}
                             >
@@ -427,16 +427,17 @@ export const EditLockupDuration = ({
                                 ) : (
                                     "Confirm"
                                 )}
-                            </Button>
+                            </StyledText>
 
                             <DialogClose asChild>
-                                <Button
-                                    disabled={isLoading}
+                                <StyledText
+                                    as="button"
+                                    variant="button.secondary"
                                     type="button"
-                                    variant="outline"
+                                    disabled={isLoading}
                                 >
                                     Cancel
-                                </Button>
+                                </StyledText>
                             </DialogClose>
                         </div>
                     </form>

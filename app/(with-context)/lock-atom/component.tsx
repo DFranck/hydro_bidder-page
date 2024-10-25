@@ -2,8 +2,8 @@
 
 import { useAppContext } from "@/app/context"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { StyledText } from "@/components/StyledText"
 import { TooltipIcon } from "@/components/TooltipIcon"
-import { Button } from "@/components/ui/button"
 import {
     Card,
     CardContent,
@@ -316,15 +316,16 @@ export default function LSMInteraction({
                         ))}
                     {incompleteNotices.length > 2 &&
                         visibleNotices < incompleteNotices.length && (
-                            <button
+                            <StyledText
+                                as="button"
+                                variant="link.subtle"
                                 onClick={() =>
                                     setVisibleNotices(incompleteNotices.length)
                                 }
-                                className={commonClassNames.button}
                             >
                                 Show {incompleteNotices.length - visibleNotices}{" "}
                                 more
-                            </button>
+                            </StyledText>
                         )}
                     <LockForm
                         onSubmit={(validator, amount, duration) =>
@@ -383,7 +384,9 @@ const HubIncompleteNotice = ({
                 </p>
             </CardContent>
             <CardFooter className={commonClassNames.cardFooter}>
-                <Button
+                <StyledText
+                    as="button"
+                    variant="button.neutral"
                     onClick={() =>
                         setStepper({
                             type: "continueFromHubLSM",
@@ -392,11 +395,12 @@ const HubIncompleteNotice = ({
                             denom,
                         })
                     }
-                    variant="default"
                 >
                     Continue Locking {formatAmount(amount)} ATOM
-                </Button>
-                <Button
+                </StyledText>
+                <StyledText
+                    as="button"
+                    variant="button.secondary"
                     onClick={() =>
                         setStepper({
                             type: "revertFromHubLSM",
@@ -405,10 +409,9 @@ const HubIncompleteNotice = ({
                             denom,
                         })
                     }
-                    variant="outline"
                 >
                     Revert {formatAmount(amount)} ATOM
-                </Button>
+                </StyledText>
             </CardFooter>
         </Card>
     )
@@ -450,7 +453,9 @@ const NeutronIncompleteNotice = ({
                 </p>
             </CardContent>
             <CardFooter className={commonClassNames.cardFooter}>
-                <Button
+                <StyledText
+                    as="button"
+                    variant="button.neutral"
                     onClick={() =>
                         setStepper({
                             type: "continueFromNeutronLSM",
@@ -460,11 +465,12 @@ const NeutronIncompleteNotice = ({
                             baseDenom,
                         })
                     }
-                    variant="default"
                 >
                     Continue Locking {formatAmount(amount)} ATOM
-                </Button>
-                <Button
+                </StyledText>
+                <StyledText
+                    as="button"
+                    variant="button.secondary"
                     onClick={() =>
                         setStepper({
                             type: "revertFromNeutronLSM",
@@ -474,10 +480,9 @@ const NeutronIncompleteNotice = ({
                             baseDenom,
                         })
                     }
-                    variant="outline"
                 >
                     Revert {formatAmount(amount)} ATOM
-                </Button>
+                </StyledText>
             </CardFooter>
         </Card>
     )
@@ -661,12 +666,13 @@ const LockForm = ({
                                                 )}
                                             </span>
 
-                                            <button
-                                                className="flex items-center gap-1 text-xs text-gray-500 underline hover:text-palette-green"
+                                            <StyledText
+                                                as="button"
+                                                variant="link.subtle"
                                                 onClick={clearSelectedValidator}
                                             >
                                                 Change
-                                            </button>
+                                            </StyledText>
                                         </div>
                                     </div>
                                     <div className="col-span-2 grid grid-cols-subgrid">
@@ -802,12 +808,14 @@ const LockForm = ({
                                         </span>
                                     </div>
                                     <div className="col-span-2">
-                                        <Button
+                                        <StyledText
+                                            as="button"
+                                            variant="button.primary"
                                             type="submit"
-                                            className="w-full bg-palette-green"
+                                            className="!w-full"
                                         >
                                             Lock
-                                        </Button>
+                                        </StyledText>
                                     </div>
                                 </div>
                             )}
@@ -858,8 +866,8 @@ export const ValidatorListItem: React.FC<ValidatorListItemProps> = ({
                               )} ATOM staked`}
                     </span>
                 </div>
-                <Button
-                    type="button"
+                <StyledText
+                    as="button"
                     onClick={() => {
                         if (!isDisabled) {
                             onChange(v.validator.operator_address)
@@ -867,16 +875,15 @@ export const ValidatorListItem: React.FC<ValidatorListItemProps> = ({
                     }}
                     variant={
                         selectedValue === v.validator.operator_address
-                            ? "default"
-                            : "outline"
+                            ? "button.neutral"
+                            : "button.secondary"
                     }
-                    className="w-24"
                     disabled={isDisabled}
                 >
                     {selectedValue === v.validator.operator_address
                         ? "Selected"
                         : "Select"}
-                </Button>
+                </StyledText>
             </div>
         </div>
     )
