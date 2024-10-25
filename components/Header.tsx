@@ -85,7 +85,7 @@ export const Header = () => {
                             `
                     )}
                 >
-                    <Link href={"/"}>
+                    <Link href="/">
                         <Image
                             src={"/images/logo.svg"}
                             alt="twitter"

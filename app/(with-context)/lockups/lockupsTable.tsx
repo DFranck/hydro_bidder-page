@@ -5,6 +5,7 @@ import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
 import { PrettyTable } from "@/components/PrettyTable"
+import { StyledText } from "@/components/StyledText"
 import { TooltipIcon } from "@/components/TooltipIcon"
 import { fetchMyAllLockups, useUserVotingData, Validator } from "@/hooks/hooks"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
@@ -212,22 +213,13 @@ function Lockups({
                                 </TooltipIcon>
                             )}
                         >
-                            <Link
-                                className={twMerge(
-                                    `
-                                        whitespace-nowrap
-                                        rounded-md
-                                        bg-palette-beige
-                                        px-6
-                                        py-3
-                                        text-palette-text
-                                        hover:bg-palette-beige/80
-                                    `
-                                )}
+                            <StyledText
+                                as={Link}
+                                variant="link"
                                 href="/lock-atom"
                             >
                                 New Lockup
-                            </Link>
+                            </StyledText>
                         </ConditionalWrapper>
                     </div>
                 </div>
