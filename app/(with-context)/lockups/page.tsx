@@ -1,7 +1,7 @@
 import { ContentContainer } from "@/components/ContentContainer"
 import { endpoints } from "@/config"
 import { fetchAllValidators } from "@/hooks/hooks"
-import LockupsTable from "./LockupsTable"
+import { LockupsTable } from "./LockupsTable"
 import { DashboardTopModules } from "./TopModules"
 
 export default async function Page() {

@@ -17,7 +17,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
-export default function LockupsTable({
+export function LockupsTable({
     validatorMap,
 }: {
     validatorMap: Map<string, Validator>
