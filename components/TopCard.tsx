@@ -65,6 +65,7 @@ export function TopCard({
                             order-2
                             whitespace-pre-wrap
                             text-lg
+                            font-bold
                             text-white
                             lg:text-xl
                         "

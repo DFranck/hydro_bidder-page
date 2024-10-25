@@ -72,6 +72,7 @@ const buttonStyles = {
 
 const classNamesForAllHeadings = twJoin(`
     font-display
+    text-balance
     font-bold
 `)
 
@@ -163,28 +164,31 @@ export const classNames = {
         leading-relaxed
         text-white/60
     `),
+    superHeading: twMerge(
+        classNamesForAllHeadings,
+        `
+            font-medium
+            uppercase
+            tracking-wide
+            text-palette-beige
+        `
+    ),
     h1: twMerge(
         classNamesForAllHeadings,
         `
-            text-5xl
-            [&>strong]:font-normal
-            [&>strong]:text-palette-green/60
+            text-6xl
         `
     ),
     h2: twMerge(
         classNamesForAllHeadings,
         `
             text-4xl
-            [&>strong]:font-normal
-            [&>strong]:text-palette-green/60
         `
     ),
     h3: twMerge(
         classNamesForAllHeadings,
         `
             text-3xl
-            [&>strong]:font-normal
-            [&>strong]:text-palette-green/60
         `
     ),
     h4: twMerge(
@@ -206,6 +210,7 @@ export const classNames = {
     `),
     label: twJoin(`
         text-sm
-        text-white/80
+        font-semibold
+        text-palette-beige/80
     `),
 }

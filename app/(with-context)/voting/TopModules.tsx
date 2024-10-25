@@ -2,9 +2,9 @@
 
 import { useAppContext } from "@/app/context"
 import { Timestamp } from "@/app/ts_types/HydroBase.types"
-import { TooltipIcon } from "@/components/TooltipIcon"
+import { Icon } from "@/components/Icon"
+import { Tooltip } from "@/components/Tooltip"
 import { TopCard } from "@/components/TopCard"
-import { ArrowUpRight } from "lucide-react"
 
 export const getRoundEndText = (roundEnd: Timestamp) => {
     const now = new Date()
@@ -62,24 +62,30 @@ export function ProposalListTopModules() {
                 title={
                     <div className="flex items-center gap-1">
                         Average APR
-                        <TooltipIcon classNamesForTooltip="flex flex-col gap-2">
-                            <p>
-                                This number is the average APR available to
-                                Hydro voters during the current active round. It
-                                includes the regular Cosmos Hub staking APR
-                                which Hydro lockers continue to receive
-                                automatically.
-                            </p>
+                        <Tooltip
+                            classNamesForTooltip="flex flex-col gap-2"
+                            tipContents={
+                                <>
+                                    <p>
+                                        This number is the average APR available
+                                        to Hydro voters during the current
+                                        active round. It includes the regular
+                                        Cosmos Hub staking APR which Hydro
+                                        lockers continue to receive
+                                        automatically.
+                                    </p>
 
-                            <a
-                                href="/docs/users/calculating-staking-apr"
-                                className="inline-flex gap-1 text-palette-green underline"
-                                target="_blank"
-                            >
-                                Learn More
-                                <ArrowUpRight className="size-4" />
-                            </a>
-                        </TooltipIcon>
+                                    <a
+                                        href="/docs/users/calculating-staking-apr"
+                                        className="inline-flex gap-1 text-palette-green underline"
+                                        target="_blank"
+                                    >
+                                        Learn More
+                                        <Icon name="solid:arrow-up-right" />
+                                    </a>
+                                </>
+                            }
+                        />
                     </div>
                 }
                 label={`Pilot Round ${currentRound}`}
@@ -96,38 +102,43 @@ export function ProposalListTopModules() {
                 title={
                     <div className="flex items-center gap-1">
                         Historical APR
-                        <TooltipIcon classNamesForTooltip="flex flex-col gap-2">
-                            <p>Historical APRs based on</p>
+                        <Tooltip
+                            classNamesForTooltip="flex flex-col gap-2"
+                            tipContents={
+                                <>
+                                    <p>Historical APRs based on</p>
 
-                            <ul>
-                                {[1, 3, 12].map((months) => (
-                                    <li
-                                        key={months}
-                                        className="flex items-center justify-between"
-                                    >
-                                        <span>
-                                            Last{" "}
-                                            <strong>
-                                                {months} month
-                                                {months > 1 ? "s" : ""}:
-                                            </strong>
-                                        </span>{" "}
-                                        <span>-%</span>
-                                    </li>
-                                ))}
-                            </ul>
+                                    <ul>
+                                        {[1, 3, 12].map((months) => (
+                                            <li
+                                                key={months}
+                                                className="flex items-center justify-between"
+                                            >
+                                                <span>
+                                                    Last{" "}
+                                                    <strong>
+                                                        {months} month
+                                                        {months > 1 ? "s" : ""}:
+                                                    </strong>
+                                                </span>{" "}
+                                                <span>-%</span>
+                                            </li>
+                                        ))}
+                                    </ul>
 
-                            <p>
-                                <a
-                                    href="/docs/users/calculating-staking-apr"
-                                    className="inline-flex gap-1 text-palette-green underline"
-                                    target="_blank"
-                                >
-                                    Learn More
-                                    <ArrowUpRight className="size-4" />
-                                </a>
-                            </p>
-                        </TooltipIcon>
+                                    <p>
+                                        <a
+                                            href="/docs/users/calculating-staking-apr"
+                                            className="inline-flex gap-1 text-palette-green underline"
+                                            target="_blank"
+                                        >
+                                            Learn More
+                                            <Icon name="solid:arrow-up-right" />
+                                        </a>
+                                    </p>
+                                </>
+                            }
+                        />
                     </div>
                 }
                 label="No historical data yet"
@@ -137,18 +148,23 @@ export function ProposalListTopModules() {
                 title={
                     <div className="flex items-center gap-1">
                         Remaining
-                        <TooltipIcon>
-                            Number of days until the round ends. Users must vote
-                            before the end of the round to receive tributes.{" "}
-                            <a
-                                href="/docs/users/voting-for-projects"
-                                className="inline-flex gap-1 text-palette-green underline"
-                                target="_blank"
-                            >
-                                Learn More
-                                <ArrowUpRight className="size-4" />
-                            </a>
-                        </TooltipIcon>
+                        <Tooltip
+                            tipContents={
+                                <>
+                                    Number of days until the round ends. Users
+                                    must vote before the end of the round to
+                                    receive tributes.{" "}
+                                    <a
+                                        href="/docs/users/voting-for-projects"
+                                        className="inline-flex gap-1 text-palette-green underline"
+                                        target="_blank"
+                                    >
+                                        Learn More
+                                        <Icon name="solid:arrow-up-right" />
+                                    </a>
+                                </>
+                            }
+                        />
                     </div>
                 }
                 label={`Pilot Round ${currentRound}`}

@@ -3,16 +3,16 @@
 import { useAppContext } from "@/app/context"
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Icon } from "@/components/Icon"
 import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
 import { PrettyTable } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
-import { TooltipIcon } from "@/components/TooltipIcon"
+import { Tooltip } from "@/components/Tooltip"
 import { fetchMyAllLockups, useUserVotingData, Validator } from "@/hooks/hooks"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { ArrowUpRight, TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
@@ -177,45 +177,47 @@ function Lockups({
                                     max.
                                 </span>
 
-                                <TooltipIcon>
-                                    For the pilot round, there is a maximum
-                                    limit of ATOM you can lockup.{" "}
-                                    <a
-                                        href="/docs#pilot-rounds"
-                                        className="inline-flex items-center gap-1 text-palette-green underline"
-                                    >
-                                        Learn More
-                                        <ArrowUpRight size={16} />
-                                    </a>
-                                </TooltipIcon>
+                                <Tooltip
+                                    tipContents={
+                                        <>
+                                            For the pilot round, there is a
+                                            maximum limit of ATOM you can
+                                            lockup.{" "}
+                                            <a
+                                                href="/docs#pilot-rounds"
+                                                className="inline-flex items-center gap-1 text-palette-green underline"
+                                            >
+                                                Learn More
+                                                <Icon name="solid:arrow-up-right" />
+                                            </a>
+                                        </>
+                                    }
+                                />
                             </div>
                         </div>
 
                         <ConditionalWrapper
                             condition={lockedPercentage >= 85}
                             wrapper={(children) => (
-                                <TooltipIcon
+                                <Tooltip
                                     classNamesForTooltip="-ml-12"
-                                    icon={
-                                        <div
-                                            className="
+                                    tipContents="You&rsquo;ve reached the maximum locked tokens"
+                                >
+                                    <div
+                                        className="
                                                 pointer-events-none
                                                 cursor-not-allowed
                                                 opacity-50
                                             "
-                                        >
-                                            {children}
-                                        </div>
-                                    }
-                                >
-                                    You&apos;ve reached the maximum locked
-                                    tokens
-                                </TooltipIcon>
+                                    >
+                                        {children}
+                                    </div>
+                                </Tooltip>
                             )}
                         >
                             <StyledText
                                 as={Link}
-                                variant="button.neutral"
+                                variant="button.primary"
                                 href="/lock-atom"
                             >
                                 New Lockup
@@ -315,7 +317,7 @@ function Lockups({
                                         {isExpired(
                                             lockup.lock_entry.lock_end
                                         ) ? (
-                                            <TriangleAlertIcon className="h-8 w-8 text-white" />
+                                            <Icon name="solid:triangle-exclamation" />
                                         ) : (
                                             calculateTimeRemaining(
                                                 lockup.lock_entry.lock_end

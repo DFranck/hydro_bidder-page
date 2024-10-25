@@ -1,4 +1,4 @@
-import { Loader } from "lucide-react"
+import { Icon } from "@/components/Icon"
 
 export default function LoadingState() {
     return (
@@ -6,20 +6,16 @@ export default function LoadingState() {
             className="
                 fixed
                 inset-0
-                text-white
-                bg-palette-text
                 flex
                 items-center
                 justify-center
+                bg-palette-text
+                text-2xl
+                text-white
             "
         >
-            <div
-                className="
-                    animate-spin
-                    animate
-                "
-            >
-                <Loader size={40} />
+            <div className="animate-spin">
+                <Icon name="solid:loader" />
             </div>
         </div>
     )

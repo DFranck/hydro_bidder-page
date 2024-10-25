@@ -1,10 +1,11 @@
 "use client"
+
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { MouseEventHandler, useEffect } from "react"
+import { MouseEventHandler, ReactNode, useEffect, useState } from "react"
 
 import { StyledTextVariant } from "@/components/StyledText/StyledText"
-import { useToast } from "../ui/use-toast"
+import { toast } from "@interchain-ui/react"
 import {
     WButtonConnect,
     WButtonConnected,
@@ -14,6 +15,7 @@ import {
     WButtonNotExist,
     WButtonRejected,
 } from "./Connect"
+import { Toasts } from "@/components/Toasts"
 
 export type WalletProps = {
     chainName?: string
@@ -22,11 +24,16 @@ export type WalletProps = {
 }
 
 export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
+    const [toasts, setToasts] = useState<
+        {
+            variant: "working" | "success" | "error" | "info"
+            message: ReactNode
+        }[]
+    >([])
+
     const { connect, openView, status, address, message } = useChain(
         chainName || "neutron"
     )
-
-    const { toast } = useToast()
 
     // Events
     const onClickConnect: MouseEventHandler = async (e) => {
@@ -44,11 +51,18 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
             message &&
             [WalletStatus.Error, WalletStatus.Rejected].includes(status)
         ) {
-            toast({
-                title: "Wallet Connection Error",
-                description: message,
-                variant: "destructive",
-            })
+            setToasts((prevToasts) => [
+                ...prevToasts,
+                {
+                    variant: "error",
+                    message: (
+                        <>
+                            <strong>Wallet Connection Error</strong>
+                            <p>{message}</p>
+                        </>
+                    ),
+                },
+            ])
         } else {
             notifyConnectedCB?.(status === WalletStatus.Connected)
         }
@@ -77,5 +91,16 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
         ),
     }[status] || <WButtonConnect variant={variant} onClick={onClickConnect} />
 
-    return <>{ConnectButton}</>
+    return (
+        <>
+            <Toasts>
+                {toasts.map((toast, index) => (
+                    <Toasts.Toast key={index} variant={toast.variant}>
+                        {toast.message}
+                    </Toasts.Toast>
+                ))}
+            </Toasts>
+            {ConnectButton}
+        </>
+    )
 }

@@ -1,6 +1,6 @@
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { StyledTextVariant } from "@/components/StyledText/StyledText"
-import { LinkIcon, LoaderCircleIcon } from "lucide-react"
 import { MouseEventHandler } from "react"
 
 export type ButtonProps = {
@@ -27,7 +27,7 @@ export function WButton({
     connected,
     loading,
     disabled,
-    variant = "button.neutral.small",
+    variant = "button.primary.small",
     onClick = noop,
 }: ButtonProps) {
     return (
@@ -37,9 +37,11 @@ export function WButton({
             disabled={disabled}
             onClick={onClick}
         >
-            {connected && <LinkIcon className="mr-2 h-4 w-4" />}
+            {connected && <Icon name="solid:link" />}
             {loading && (
-                <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
+                <span className="animate-spin">
+                    <Icon name="solid:loader" />
+                </span>
             )}
             <span>{address ? address : text}</span>
         </StyledText>

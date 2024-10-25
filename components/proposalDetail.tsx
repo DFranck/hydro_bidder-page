@@ -2,39 +2,22 @@
 
 import { useAppContext } from "@/app/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
+import { Card } from "@/components/Card"
 import { Confetti } from "@/components/Confetti"
+import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
+import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
-import {
-    ToastAborted,
-    ToastError,
-    ToastProcessing,
-} from "@/components/ui/toast-wallet"
+import { Toasts } from "@/components/Toasts"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { formatAmount, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { DialogTrigger } from "@radix-ui/react-dialog"
+import { DialogClose } from "@radix-ui/react-dialog"
 import kebabCase from "lodash/kebabCase"
-import {
-    ArrowUpRight,
-    CheckCircle,
-    ChevronLeft,
-    LinkIcon,
-    ScrollText,
-    Vote,
-} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { useCallback, useEffect, useState } from "react"
+import { ReactNode, useCallback, useEffect, useState } from "react"
 
 const ProposalDetail = ({
     proposal,
@@ -58,6 +41,12 @@ const ProposalDetail = ({
     const [isLoading, setIsLoading] = useState(false)
     const tributes = currentProposalTributes.get(proposal.proposal_id)!
     const [isCelebrating, setIsCelebrating] = useState(false)
+    const [toasts, setToasts] = useState<
+        {
+            variant: "working" | "success" | "error" | "info"
+            message: ReactNode
+        }[]
+    >([])
 
     const fetchVoteStatus = useCallback(async () => {
         if (!address) {
@@ -104,7 +93,13 @@ const ProposalDetail = ({
         }
         try {
             setSubmitting(true)
-            ToastProcessing()
+            setToasts((prevToasts) => [
+                ...prevToasts,
+                {
+                    variant: "working",
+                    message: "Processing your vote...",
+                },
+            ])
 
             await executeVote(
                 getSigningCosmWasmClient,
@@ -118,10 +113,21 @@ const ProposalDetail = ({
                 err?.message &&
                 err.message.includes("Request rejected")
             ) {
-                ToastAborted()
+                setToasts([
+                    {
+                        variant: "error",
+                        message: "Vote rejected",
+                    },
+                ])
                 return
             }
-            ToastError(err)
+            setToasts((prevToasts) => [
+                ...prevToasts,
+                {
+                    variant: "error",
+                    message: "Vote rejected",
+                },
+            ])
         } finally {
             setSubmitting(false)
             setOpenChangeVoteModal(false)
@@ -138,7 +144,7 @@ const ProposalDetail = ({
         if (!isWalletConnected) {
             return (
                 <Wallet
-                    variant="button.neutral.large"
+                    variant="button.primary.large"
                     notifyConnectedCB={() => null}
                 />
             )
@@ -187,7 +193,7 @@ const ProposalDetail = ({
                     disabled
                     variant="button.secondary.large"
                 >
-                    <CheckCircle />
+                    <Icon name="solid:circle-check" />
                     <span>Voted!</span>
                 </StyledText>
             )
@@ -207,7 +213,7 @@ const ProposalDetail = ({
                 }}
                 variant="button.primary.large"
             >
-                <Vote />
+                <Icon name="solid:ballot-check" />
                 <span>Vote for Proposal</span>
             </StyledText>
         )
@@ -215,20 +221,17 @@ const ProposalDetail = ({
 
     function ChangeVoteModal() {
         return (
-            <Dialog
-                open={openChangeVoteModal}
-                onOpenChange={setOpenChangeVoteModal}
+            <ModalWindow
+                isOpen={openChangeVoteModal}
+                onClose={() => setOpenChangeVoteModal(false)}
             >
-                <DialogTrigger asChild></DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Change your vote?</DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription>
+                <Card>
+                    <Card.Header title="Change your vote?" />
+                    <Card.Body>
                         Changing your vote will reallocate your total voting
                         power to the new project.
-                    </DialogDescription>
-                    <div className="flex flex-col gap-2">
+                    </Card.Body>
+                    <Card.Footer>
                         <StyledText
                             as="button"
                             onClick={onVote}
@@ -241,9 +244,9 @@ const ProposalDetail = ({
                                 Don&rsquo;t change my vote
                             </StyledText>
                         </DialogClose>
-                    </div>
-                </DialogContent>
-            </Dialog>
+                    </Card.Footer>
+                </Card>
+            </ModalWindow>
         )
     }
 
@@ -266,6 +269,14 @@ const ProposalDetail = ({
 
     return (
         <>
+            <Toasts>
+                {toasts.map((toast, index) => (
+                    <Toasts.Toast key={index} variant={toast.variant}>
+                        {toast.message}
+                    </Toasts.Toast>
+                ))}
+            </Toasts>
+
             <ChangeVoteModal />
 
             <Confetti
@@ -316,10 +327,7 @@ const ProposalDetail = ({
                             href="/voting"
                             variant="button.secondary.small"
                         >
-                            <ChevronLeft
-                                className="transition-all group-hover:-ml-1"
-                                size={14}
-                            />
+                            <Icon name="solid:chevron-left" />
                             Back
                         </StyledText>
 
@@ -335,16 +343,16 @@ const ProposalDetail = ({
                                     bg-palette-beige/20
                                 "
                             >
-                                <ScrollText />
+                                <Icon name="solid:scroll" />
                             </div>
                             <h1 className="max-w-lg text-2xl tracking-normal">
                                 {renderedProposal.title}
                             </h1>
                         </div>
 
-                        <div className="js-bid-details pl-16">
+                        <div className="js-bid-details flex flex-col gap-6 pl-16">
                             {renderedProposal.description && (
-                                <>
+                                <div className="flex flex-col gap-3">
                                     <StyledText
                                         variant="label"
                                         as="h2"
@@ -362,10 +370,10 @@ const ProposalDetail = ({
                                     <MarkdownContainer
                                         content={renderedProposal.description}
                                     />
-                                </>
+                                </div>
                             )}
                             {renderedProposal.committeeComments && (
-                                <>
+                                <div className="flex flex-col gap-3">
                                     <StyledText
                                         variant="label"
                                         as="h2"
@@ -385,10 +393,10 @@ const ProposalDetail = ({
                                             renderedProposal.committeeComments
                                         }
                                     />
-                                </>
+                                </div>
                             )}
                             {renderedProposal.appendix && (
-                                <>
+                                <div className="flex flex-col gap-3">
                                     <StyledText
                                         variant="label"
                                         as="h2"
@@ -406,7 +414,7 @@ const ProposalDetail = ({
                                     <MarkdownContainer
                                         content={renderedProposal.appendix}
                                     />
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -508,7 +516,7 @@ const ProposalDetail = ({
                                             href={`#${kebabCase(section)}`}
                                             variant="link"
                                         >
-                                            <LinkIcon size={18} />
+                                            <Icon name="solid:link" />
                                             <span>{section}</span>
                                         </StyledText>
                                     ))}
@@ -526,7 +534,7 @@ const ProposalDetail = ({
                                         pt-2
                                     `}
                                 >
-                                    <ArrowUpRight size={18} />
+                                    <Icon name="solid:arrow-up-right" />
                                     Project Website
                                 </StyledText>
                             </div>
