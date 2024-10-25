@@ -19,7 +19,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ReactNode, useCallback, useEffect, useState } from "react"
 
-const ProposalDetail = ({
+export const ProposalDetail = ({
     proposal,
     deployed,
 }: {
@@ -545,5 +545,3 @@ const ProposalDetail = ({
         </>
     )
 }
-
-export default ProposalDetail

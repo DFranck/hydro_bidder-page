@@ -1,7 +1,7 @@
 "use client"
 
 import { useAppContext } from "@/app/context"
-import ProposalDetail from "@/components/ProposalDetail"
+import { ProposalDetail } from "@/components/ProposalDetail"
 
 export function Details({ params }: { params: { id: string } }) {
     const { currentProposalTranches } = useAppContext()
