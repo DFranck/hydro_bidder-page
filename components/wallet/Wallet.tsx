@@ -1,8 +1,10 @@
 "use client"
-import { MouseEventHandler, useEffect } from "react"
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
+import { MouseEventHandler, useEffect } from "react"
 
+import { StyledTextVariant } from "@/components/StyledText/StyledText"
+import { useToast } from "../ui/use-toast"
 import {
     WButtonConnect,
     WButtonConnected,
@@ -12,14 +14,14 @@ import {
     WButtonNotExist,
     WButtonRejected,
 } from "./Connect"
-import { useToast } from "../ui/use-toast"
 
 export type WalletProps = {
     chainName?: string
+    variant?: StyledTextVariant
     notifyConnectedCB: (isConnected: boolean) => void
 }
 
-export function Wallet({ chainName, notifyConnectedCB }: WalletProps) {
+export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
     const { connect, openView, status, address, message } = useChain(
         chainName || "neutron"
     )
@@ -54,16 +56,26 @@ export function Wallet({ chainName, notifyConnectedCB }: WalletProps) {
 
     const ConnectButton = {
         [WalletStatus.Connected]: (
-            <WButtonConnected address={address} onClick={onClickOpenView} />
+            <WButtonConnected
+                address={address}
+                variant={variant}
+                onClick={onClickOpenView}
+            />
         ),
-        [WalletStatus.Connecting]: <WButtonConnecting />,
+        [WalletStatus.Connecting]: <WButtonConnecting variant={variant} />,
         [WalletStatus.Disconnected]: (
-            <WButtonDisconnected onClick={onClickConnect} />
+            <WButtonDisconnected variant={variant} onClick={onClickConnect} />
         ),
-        [WalletStatus.Error]: <WButtonError onClick={onClickOpenView} />,
-        [WalletStatus.Rejected]: <WButtonRejected onClick={onClickConnect} />,
-        [WalletStatus.NotExist]: <WButtonNotExist onClick={onClickOpenView} />,
-    }[status] || <WButtonConnect onClick={onClickConnect} />
+        [WalletStatus.Error]: (
+            <WButtonError variant={variant} onClick={onClickOpenView} />
+        ),
+        [WalletStatus.Rejected]: (
+            <WButtonRejected variant={variant} onClick={onClickConnect} />
+        ),
+        [WalletStatus.NotExist]: (
+            <WButtonNotExist variant={variant} onClick={onClickOpenView} />
+        ),
+    }[status] || <WButtonConnect variant={variant} onClick={onClickConnect} />
 
     return <>{ConnectButton}</>
 }

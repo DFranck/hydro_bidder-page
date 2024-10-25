@@ -136,12 +136,21 @@ const ProposalDetail = ({
         }
 
         if (!isWalletConnected) {
-            return <Wallet notifyConnectedCB={() => null} />
+            return (
+                <Wallet
+                    variant="button.neutral.large"
+                    notifyConnectedCB={() => null}
+                />
+            )
         }
 
         if (isLoading) {
             return (
-                <StyledText variant="button.secondary" as="button" disabled>
+                <StyledText
+                    variant="button.secondary.large"
+                    as="button"
+                    disabled
+                >
                     Loading...
                 </StyledText>
             )
@@ -149,7 +158,11 @@ const ProposalDetail = ({
 
         if (submitting) {
             return (
-                <StyledText as="button" disabled variant="button.secondary">
+                <StyledText
+                    as="button"
+                    disabled
+                    variant="button.secondary.large"
+                >
                     Submitting...
                 </StyledText>
             )
@@ -160,7 +173,7 @@ const ProposalDetail = ({
                 <StyledText
                     as={Link}
                     href="/lock-atom"
-                    variant="button.primary"
+                    variant="button.primary.large"
                 >
                     Lock ATOM to vote
                 </StyledText>
@@ -169,7 +182,11 @@ const ProposalDetail = ({
 
         if (hasVotedThisProposal) {
             return (
-                <StyledText as="button" disabled variant="button.secondary">
+                <StyledText
+                    as="button"
+                    disabled
+                    variant="button.secondary.large"
+                >
                     <CheckCircle />
                     <span>Voted!</span>
                 </StyledText>
@@ -188,7 +205,7 @@ const ProposalDetail = ({
                         onVote()
                     }
                 }}
-                variant="button.primary"
+                variant="button.primary.large"
             >
                 <Vote />
                 <span>Vote for Proposal</span>
@@ -306,11 +323,12 @@ const ProposalDetail = ({
                             Back
                         </StyledText>
 
-                        <div className="flex flex-row items-center gap-4 pb-5">
+                        <div className="flex flex-row items-center gap-4">
                             <div
                                 className="
                                     flex
                                     size-12
+                                    shrink-0
                                     items-center
                                     justify-center
                                     rounded-full
@@ -327,24 +345,20 @@ const ProposalDetail = ({
                         <div className="js-bid-details pl-16">
                             {renderedProposal.description && (
                                 <>
-                                    <h2
+                                    <StyledText
+                                        variant="label"
+                                        as="h2"
                                         id="bid-description"
-                                        className="
-                                            mb-2
-                                            mt-6
-                                            text-sm
-                                            uppercase
-                                            tracking-normal
-                                            opacity-80
+                                        className={`
                                             [body:has(a[href='#bid-description']:focus)_&]:rounded-sm
                                             [body:has(a[href='#bid-description']:focus)_&]:outline
                                             [body:has(a[href='#bid-description']:focus)_&]:outline-2
                                             [body:has(a[href='#bid-description']:focus)_&]:outline-offset-4
                                             [body:has(a[href='#bid-description']:focus)_&]:outline-palette-green
-                                        "
+                                        `}
                                     >
                                         Bid Description
-                                    </h2>
+                                    </StyledText>
                                     <MarkdownContainer
                                         content={renderedProposal.description}
                                     />
@@ -352,15 +366,11 @@ const ProposalDetail = ({
                             )}
                             {renderedProposal.committeeComments && (
                                 <>
-                                    <h2
+                                    <StyledText
+                                        variant="label"
+                                        as="h2"
                                         id="committee-review"
                                         className="
-                                            mb-2
-                                            mt-6
-                                            text-sm
-                                            uppercase
-                                            tracking-normal
-                                            opacity-80
                                             [body:has(a[href='#committee-review']:focus)_&]:rounded-sm
                                             [body:has(a[href='#committee-review']:focus)_&]:outline
                                             [body:has(a[href='#committee-review']:focus)_&]:outline-2
@@ -369,7 +379,7 @@ const ProposalDetail = ({
                                         "
                                     >
                                         Committee Review
-                                    </h2>
+                                    </StyledText>
                                     <MarkdownContainer
                                         content={
                                             renderedProposal.committeeComments
@@ -379,15 +389,11 @@ const ProposalDetail = ({
                             )}
                             {renderedProposal.appendix && (
                                 <>
-                                    <h2
+                                    <StyledText
+                                        variant="label"
+                                        as="h2"
                                         id="appendix"
                                         className="
-                                            mb-2
-                                            mt-6
-                                            text-sm
-                                            uppercase
-                                            tracking-normal
-                                            opacity-80
                                             [body:has(a[href='#appendix']:focus)_&]:rounded-sm
                                             [body:has(a[href='#appendix']:focus)_&]:outline
                                             [body:has(a[href='#appendix']:focus)_&]:outline-2
@@ -396,7 +402,7 @@ const ProposalDetail = ({
                                         "
                                     >
                                         Appendix
-                                    </h2>
+                                    </StyledText>
                                     <MarkdownContainer
                                         content={renderedProposal.appendix}
                                     />
@@ -412,7 +418,10 @@ const ProposalDetail = ({
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <p className="text-sm opacity-80">Project Name</p>
+                            <StyledText as="h3" variant="label">
+                                Project Name
+                            </StyledText>
+
                             <div className="flex flex-row items-center gap-3">
                                 {renderedProposal.projectLogoUrl && (
                                     <div className="relative size-12">
@@ -426,17 +435,17 @@ const ProposalDetail = ({
                                         />
                                     </div>
                                 )}
-                                <p className="text-xl font-bold not-italic">
+                                <StyledText className="text-xl font-bold not-italic">
                                     {renderedProposal.projectName.trim()}
-                                </p>
+                                </StyledText>
                             </div>
                         </div>
 
                         {renderedProposal.projectType && (
                             <div>
-                                <p className="text-sm opacity-80">
+                                <StyledText as="h3" variant="label">
                                     Project Type
-                                </p>
+                                </StyledText>
                                 <p className="text-xl font-bold not-italic">
                                     {renderedProposal.projectType}
                                 </p>
@@ -444,9 +453,9 @@ const ProposalDetail = ({
                         )}
 
                         <div>
-                            <p className="text-sm opacity-80">
+                            <StyledText as="h3" variant="label">
                                 Tribute to Voters
-                            </p>
+                            </StyledText>
                             <div className="max-w-64 overflow-x-auto">
                                 {pricedAndNamedTributes.length > 0 ? (
                                     pricedAndNamedTributes.map(
@@ -470,17 +479,19 @@ const ProposalDetail = ({
                         </div>
 
                         <div>
-                            <p className="text-sm opacity-80">
+                            <StyledText as="h3" variant="label">
                                 Current Vote Percentage
-                            </p>
+                            </StyledText>
                             <p className="text-xl font-bold not-italic">
                                 {proposal.percentage}%
                             </p>
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <p className="text-sm opacity-80">Jump To</p>
-                            <div className="flex flex-col gap-2">
+                            <StyledText as="h3" variant="label">
+                                Jump To
+                            </StyledText>
+                            <div className="flex flex-col items-start gap-2">
                                 {[
                                     renderedProposal.description &&
                                         "Bid Description",
@@ -490,33 +501,34 @@ const ProposalDetail = ({
                                 ]
                                     .filter(Boolean)
                                     .map((section, index) => (
-                                        <Link
+                                        <StyledText
+                                            as={Link}
+                                            className="flex flex-row items-center gap-2"
                                             key={index}
                                             href={`#${kebabCase(section)}`}
-                                            className="flex items-center gap-2 text-palette-green hover:underline"
+                                            variant="link"
                                         >
                                             <LinkIcon size={18} />
-
-                                            {section}
-                                        </Link>
+                                            <span>{section}</span>
+                                        </StyledText>
                                     ))}
-                                <Link
+                                <StyledText
+                                    as={Link}
                                     href={renderedProposal.projectUrl}
                                     target="_blank"
-                                    className="
-                                            flex
-                                            items-center
-                                            gap-2
-                                            border-t
-                                            border-white/20
-                                            pt-2
-                                            text-palette-green
-                                            hover:underline
-                                        "
+                                    variant="link"
+                                    className={`
+                                        flex
+                                        items-center
+                                        gap-2
+                                        border-t
+                                        border-white/20
+                                        pt-2
+                                    `}
                                 >
                                     <ArrowUpRight size={18} />
                                     Project Website
-                                </Link>
+                                </StyledText>
                             </div>
                         </div>
                     </div>

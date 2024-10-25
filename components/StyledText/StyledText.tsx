@@ -2,7 +2,7 @@ import { ComponentProps, ElementType } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
 
-type StyledTextVariant = keyof typeof classNames
+export type StyledTextVariant = keyof typeof classNames
 
 export type StyledTextProps<T extends ElementType = "span"> = Omit<
     ComponentProps<T>,
