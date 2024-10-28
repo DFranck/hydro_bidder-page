@@ -44,6 +44,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.1",
     "react-markdown": "^9.0.1",
+    "sharp": "^0.33.5",
     "stride": "^2.1.0",
     "stridejs": "^0.11.4",
     "tailwind-merge": "^2.5.4",
