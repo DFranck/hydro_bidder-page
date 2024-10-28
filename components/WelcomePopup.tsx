@@ -5,7 +5,7 @@ import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 
 interface WelcomePopupProps {
     showModal?: boolean
@@ -112,11 +112,15 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
                             gap-2
                         `}
                     >
-                        <input
+                        <StyledText
+                            variant="input.checkbox"
+                            as="input"
                             type="checkbox"
                             id="dontShowAgain"
                             checked={dontShowAgain}
-                            onChange={(e) => setDontShowAgain(e.target.checked)}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                setDontShowAgain(event.target.checked)
+                            }
                         />
                         <StyledText
                             as="label"

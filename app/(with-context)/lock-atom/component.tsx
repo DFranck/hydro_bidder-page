@@ -14,7 +14,7 @@ import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
 import { cosmos } from "interchain"
-import React, { useEffect, useState } from "react"
+import React, { ChangeEvent, useEffect, useState } from "react"
 import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
 import { LockStepper } from "./steppers/LockStepper"
@@ -596,12 +596,8 @@ const LockForm = ({
                             )}
                             {validator && (
                                 <div className="grid grid-cols-[min-content,auto] items-center gap-6">
-                                    <div className="col-span-2 grid grid-cols-subgrid">
-                                        <StyledText
-                                            as="label"
-                                            variant="label"
-                                            className="flex items-center justify-end whitespace-nowrap font-bold"
-                                        >
+                                    <div className="col-span-2 grid grid-cols-subgrid items-center">
+                                        <StyledText as="label" variant="label">
                                             Your Validator:
                                         </StyledText>
                                         <div className="flex items-center gap-2">
@@ -621,26 +617,27 @@ const LockForm = ({
                                             </StyledText>
                                         </div>
                                     </div>
-                                    <div className="col-span-2 grid grid-cols-subgrid">
-                                        <StyledText
-                                            as="label"
-                                            variant="label"
-                                            className="flex items-center justify-end whitespace-nowrap font-bold"
-                                        >
+                                    <div className="col-span-2 grid grid-cols-subgrid items-center">
+                                        <StyledText as="label" variant="label">
                                             Amount:
                                         </StyledText>
                                         <div className="flex items-center gap-3">
-                                            <input
+                                            <StyledText
+                                                as="input"
+                                                variant="input.text"
                                                 type="number"
                                                 step={0.000001}
                                                 max={maxATOMAmount}
                                                 min={0.000001}
                                                 value={amount}
-                                                onChange={(e) => {
+                                                onChange={(
+                                                    event: ChangeEvent<HTMLInputElement>
+                                                ) => {
                                                     setAmount(
                                                         Math.min(
                                                             parseFloat(
-                                                                e.target.value
+                                                                event.target
+                                                                    .value
                                                             ),
                                                             maxATOMAmount
                                                         ).toString()
@@ -654,11 +651,7 @@ const LockForm = ({
                                         </div>
                                     </div>
                                     <div className="col-span-2 grid grid-cols-subgrid">
-                                        <StyledText
-                                            as="label"
-                                            variant="label"
-                                            className="flex items-baseline justify-end whitespace-nowrap font-bold"
-                                        >
+                                        <StyledText as="label" variant="label">
                                             Lockup:
                                         </StyledText>
                                         <div className="flex flex-col gap-2">
@@ -669,7 +662,9 @@ const LockForm = ({
                                                     key={months}
                                                     className="flex items-center gap-2"
                                                 >
-                                                    <input
+                                                    <StyledText
+                                                        variant="input.radio"
+                                                        as="input"
                                                         type="radio"
                                                         disabled={months > 1}
                                                         value={(
@@ -691,9 +686,8 @@ const LockForm = ({
                                                                 ).toString()
                                                             )
                                                         }
-                                                        className="peer flex size-5 appearance-none items-center rounded-full border-2 border-gray-300 text-sm opacity-60 checked:border-palette-green checked:bg-palette-green checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]"
                                                     />
-                                                    <span className="flex items-center justify-end whitespace-nowrap font-bold">
+                                                    <span>
                                                         <ConditionalWrapper
                                                             condition={
                                                                 months > 1
@@ -716,15 +710,11 @@ const LockForm = ({
                                             ))}
                                         </div>
                                     </div>
-                                    <div className="col-span-2 grid grid-cols-subgrid">
-                                        <StyledText
-                                            as="label"
-                                            variant="label"
-                                            className="flex items-center justify-end whitespace-nowrap font-bold"
-                                        >
+                                    <div className="col-span-2 grid grid-cols-subgrid items-center">
+                                        <StyledText as="label" variant="label">
                                             Voting Power:
                                         </StyledText>
-                                        <span>
+                                        <StyledText variant="importantValue">
                                             {formatAmount(
                                                 scaleLockupPower(
                                                     selectedDuration,
@@ -734,7 +724,7 @@ const LockForm = ({
                                                     )
                                                 )
                                             )}
-                                        </span>
+                                        </StyledText>
                                     </div>
                                     <div className="col-span-2">
                                         <StyledText

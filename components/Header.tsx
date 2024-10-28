@@ -56,7 +56,7 @@ export const Header = () => {
                         bg-black
                         text-sm
                         transition-all
-                        duration-1000
+                        duration-300
                     `,
                     isScrolled
                         ? `
@@ -72,7 +72,7 @@ export const Header = () => {
                         `
                             relative
                             transition-all
-                            duration-1000
+                            duration-300
                         `,
                         isScrolled
                             ? `
@@ -107,7 +107,7 @@ export const Header = () => {
                         text-center
                         text-palette-text
                         transition-all
-                        duration-1000
+                        duration-300
                     `,
                     isScrolled
                         ? `

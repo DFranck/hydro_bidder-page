@@ -68,6 +68,32 @@ const buttonStyles = {
             text-palette-text
         `
     ),
+    circularPrimary: twMerge(
+        commonBaseButtonStyles,
+        `
+            !size-10
+            rounded-full
+            border-2
+            border-transparent
+            bg-palette-green
+            !p-0
+            text-palette-text
+            hover:bg-palette-green/80
+        `
+    ),
+    circularSecondary: twMerge(
+        commonBaseButtonStyles,
+        `
+            !size-10
+            rounded-full
+            border-2
+            border-palette-green
+            !p-0
+            text-palette-green
+            hover:bg-palette-green
+            hover:text-palette-text
+        `
+    ),
 }
 
 const classNamesForAllHeadings = twJoin(`
@@ -75,6 +101,28 @@ const classNamesForAllHeadings = twJoin(`
     text-balance
     font-bold
 `)
+
+const generateButtonClassNames = (
+    type:
+        | "primary"
+        | "secondary"
+        | "neutral"
+        | "circular-primary"
+        | "circular-secondary",
+    size: "small" | "medium" | "large" = "medium"
+) => {
+    const baseStyles = {
+        primary: buttonStyles.primaryBase,
+        secondary: buttonStyles.secondaryBase,
+        neutral: buttonStyles.neutralBase,
+        "circular-primary": buttonStyles.circularPrimary,
+        "circular-secondary": buttonStyles.circularSecondary,
+    }
+
+    const sizeStyles = buttonStyles.sizeVariants[size]
+
+    return twMerge(allClickableText, baseStyles[type], sizeStyles)
+}
 
 export const classNames = {
     link: twMerge(
@@ -96,69 +144,17 @@ export const classNames = {
             hover:underline
         `
     ),
-    "button.primary": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.medium,
-        buttonStyles.primaryBase
-    ),
-    "button.primary.large": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.large,
-        buttonStyles.primaryBase
-    ),
-    "button.primary.small": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.small,
-        buttonStyles.primaryBase
-    ),
-    "button.secondary": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.medium,
-        buttonStyles.secondaryBase
-    ),
-    "button.secondary.large": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.large,
-        buttonStyles.secondaryBase
-    ),
-    "button.secondary.small": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.small,
-        buttonStyles.secondaryBase
-    ),
-    "button.neutral": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.medium,
-        buttonStyles.neutralBase
-    ),
-    "button.neutral.large": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.large,
-        buttonStyles.neutralBase
-    ),
-    "button.neutral.small": twMerge(
-        allClickableText,
-        buttonStyles.sizeVariants.small,
-        buttonStyles.neutralBase
-    ),
-    "button.circular.primary": twMerge(
-        allClickableText,
-        `
-            size-10
-            rounded-full
-            bg-palette-green
-            hover:bg-palette-green/80
-        `
-    ),
-    "button.circular.secondary": twMerge(
-        allClickableText,
-        `
-            size-10
-            rounded-full
-            text-white
-            hover:bg-palette-beige/20
-        `
-    ),
+    "button.primary": generateButtonClassNames("primary"),
+    "button.primary.large": generateButtonClassNames("primary", "large"),
+    "button.primary.small": generateButtonClassNames("primary", "small"),
+    "button.secondary": generateButtonClassNames("secondary"),
+    "button.secondary.large": generateButtonClassNames("secondary", "large"),
+    "button.secondary.small": generateButtonClassNames("secondary", "small"),
+    "button.neutral": generateButtonClassNames("neutral"),
+    "button.neutral.large": generateButtonClassNames("neutral", "large"),
+    "button.neutral.small": generateButtonClassNames("neutral", "small"),
+    "button.circular.primary": generateButtonClassNames("circular-primary"),
+    "button.circular.secondary": generateButtonClassNames("circular-secondary"),
     footnote: twJoin(`
         text-xs
         leading-relaxed
@@ -209,8 +205,35 @@ export const classNames = {
         text-xs
     `),
     label: twJoin(`
+        whitespace-nowrap
         text-sm
-        font-semibold
-        text-palette-beige/80
+        text-white/80
+        has-[:checked]:font-bold
+        has-[:checked]:text-white
+    `),
+    "input.text": twJoin(`
+        rounded
+        border-2
+        p-2
+        focus:outline-none
+        focus:ring-2
+        focus:ring-palette-green
+    `),
+    "input.checkbox": twJoin(`
+        size-5
+        appearance-none
+        rounded
+        border-2
+        checked:border-transparent
+        checked:bg-palette-green
+    `),
+    "input.radio": twJoin(`
+        size-5
+        appearance-none
+        rounded-full
+        border-2
+        checked:border-transparent
+        checked:bg-palette-green
+        checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
     `),
 }
