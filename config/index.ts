@@ -51,6 +51,7 @@ export const DEFAULT_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN || "localchain"
 
 export const testnetChain: Chain = {
     $schema: "../../chain.schema.json",
+    chain_type: "cosmos",
     chain_name: "cosmoshubtestnet",
     chain_id: "theta-testnet-001",
     pretty_name: "Cosmos Hub Public Testnet",
@@ -357,6 +358,7 @@ export const testnetAssets = {
 
 export const localnetChain: Chain = {
     $schema: "../../chain.schema.json",
+    chain_type: "cosmos",
     chain_name: "localchain",
     chain_id: "theta-testnet-001",
     pretty_name: "Cosmos Hub Public Testnet",
@@ -611,7 +613,7 @@ export const pionChain: Chain = {
     status: "live",
     network_type: "testnet",
     pretty_name: "Neutron Testnet",
-    // "chain_type": "cosmos",
+    chain_type: "cosmos",
     chain_id: "pion-1",
     bech32_prefix: "neutron",
     daemon_name: "neutrond",
@@ -902,10 +904,10 @@ export const pionChain: Chain = {
     ],
 }
 
-export const hubChain: Chain = {
+export const hubChain = {
     $schema: "../chain.schema.json",
     chain_name: "cosmoshub",
-    // "chain_type": "cosmos",
+    chain_type: "cosmos",
     chain_id: "cosmoshub-4",
     website: "https://cosmos.network/",
     pretty_name: "Cosmos Hub",
@@ -1933,7 +1935,7 @@ export const hubChain: Chain = {
             },
         },
     ],
-}
+} as any
 
 export const neutronChain = {
     $schema: "../chain.schema.json",
@@ -2413,7 +2415,7 @@ export const neutronChain = {
             svg: "https://raw.githubusercontent.com/cosmos/chain-registry/master/neutron/images/neutron-black-logo.svg",
         },
     ],
-}
+} as any
 
 export const NEUTRON_ASSETS = {
     $schema: "../assetlist.schema.json",
