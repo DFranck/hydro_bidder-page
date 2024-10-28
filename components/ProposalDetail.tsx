@@ -13,7 +13,6 @@ import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { formatAmount, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { DialogClose } from "@radix-ui/react-dialog"
 import kebabCase from "lodash/kebabCase"
 import Image from "next/image"
 import Link from "next/link"
@@ -239,11 +238,9 @@ export const ProposalDetail = ({
                         >
                             Change Vote to This Proposal
                         </StyledText>
-                        <DialogClose asChild>
-                            <StyledText as="button" variant="button.secondary">
-                                Don&rsquo;t change my vote
-                            </StyledText>
-                        </DialogClose>
+                        <StyledText as="button" variant="button.secondary" onClick={() => setOpenChangeVoteModal(false)}>
+                            Don&rsquo;t change my vote
+                        </StyledText>
                     </Card.Footer>
                 </Card>
             </ModalWindow>
