@@ -291,13 +291,12 @@ export const EditLockupDuration = ({
                                                 className="group flex items-center gap-2"
                                                 key={name}
                                             >
-                                                <input
+                                                <StyledText
+                                                    as="input"
+                                                    variant="input.radio"
                                                     type="radio"
                                                     name="lockupPeriod"
                                                     value={value}
-                                                    className={
-                                                        classNamesForRadioButtons
-                                                    }
                                                 />
                                                 <span
                                                     className={
