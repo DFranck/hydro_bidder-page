@@ -70,7 +70,7 @@ export function WalletHandler({
             assetLists={[hubAssets, neutronAssets]}
             wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
             signerOptions={{
-                signingStargate: (chain: Chain | ChainName) => {
+                signingStargate: (chain: any) => {
                     const chainName =
                         typeof chain === "string" ? chain : chain.chain_name
                     switch (chainName) {
@@ -110,7 +110,7 @@ export function WalletHandler({
                             return void 0
                     }
                 },
-                signingCosmwasm: (chain: Chain | ChainName) => {
+                signingCosmwasm: (chain: any) => {
                     return gasPrices(chain)
                 },
             }}
