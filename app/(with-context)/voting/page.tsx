@@ -1,5 +1,5 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import ActiveProposals from "./component"
+import { ActiveProposals } from "./ActiveProposals"
 import { ProposalListTopModules } from "./TopModules"
 
 export default async function ActiveProposalsPage({

@@ -214,6 +214,7 @@ export const classNames = {
     "input.text": twJoin(`
         rounded
         border-2
+        bg-palette-text
         p-2
         focus:outline-none
         focus:ring-2

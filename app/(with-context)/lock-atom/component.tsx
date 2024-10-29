@@ -30,8 +30,7 @@ const commonClassNames = {
     cardFooter: "space-x-4",
     button: "cursor-pointer border-none bg-transparent text-white underline",
     formContainer: "space-y-8",
-    label: "font-bold whitespace-nowrap flex items-center justify-end",
-    input: "w-1/2 rounded border p-2 bg-palette-text text-white",
+    input: "w-1/2",
     radio: "peer flex items-center text-sm opacity-60 appearance-none rounded-full size-5 border-2 border-gray-300 checked:bg-palette-green checked:border-palette-green checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset] checked:opacity-100",
     radioLabel:
         "opacity-60 cursor-pointer peer-checked:opacity-100 peer-checked:font-bold whitespace-nowrap",
@@ -522,7 +521,7 @@ const LockForm = ({
     return (
         <Card>
             {validators?.length === 0 ? (
-                <Card.Body className="space-y-6 p-6">
+                <Card.Body className={commonClassNames.cardContent}>
                     <p>
                         You need some staked ATOM to participate in Hydro. You
                         can go to Keplr staking interface and stake some ATOM to
@@ -530,20 +529,21 @@ const LockForm = ({
                     </p>
                     <p>
                         Stake now:{" "}
-                        <a
+                        <StyledText
+                            variant="link"
+                            as="a"
                             href="https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake"
                             target="_blank"
-                            className="inline-flex items-center gap-1 text-palette-green underline"
                         >
                             https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake{" "}
                             <Icon name="solid:arrow-up-right" />
-                        </a>
+                        </StyledText>
                     </p>
                 </Card.Body>
             ) : (
                 <>
                     <Card.Header title="Get Voting Power" />
-                    <Card.Body className="space-y-6">
+                    <Card.Body className={commonClassNames.cardContent}>
                         <Toasts.Toast variant="info" isDismissible={false}>
                             Once locked, your staked ATOMs are inaccessible for
                             the duration of the lock. They will continue to
@@ -552,7 +552,7 @@ const LockForm = ({
                         </Toasts.Toast>
                         <form onSubmit={handleSubmit}>
                             {!validator && validators && (
-                                <div className="space-y-3">
+                                <div className={commonClassNames.formContainer}>
                                     <ol className="list-inside list-decimal">
                                         <li>
                                             Your ATOM staked to a validator can
@@ -571,15 +571,13 @@ const LockForm = ({
                                         </p>
                                     )}
 
-                                    <StyledText
-                                        as="label"
-                                        variant="label"
-                                        className="flex items-center justify-start whitespace-nowrap font-bold"
-                                    >
+                                    <StyledText as="label" variant="label">
                                         Select Validator:
                                     </StyledText>
 
-                                    <div className="space-y-2">
+                                    <div
+                                        className={commonClassNames.cardContent}
+                                    >
                                         {validators.map((v) => (
                                             <ValidatorListItem
                                                 key={
@@ -643,11 +641,16 @@ const LockForm = ({
                                                         ).toString()
                                                     )
                                                 }}
-                                                className="w-1/2 rounded border bg-palette-text p-2 text-white"
+                                                className={
+                                                    commonClassNames.input
+                                                }
                                             />
-                                            <p className="text-sm text-gray-500">
+                                            <StyledText
+                                                as="p"
+                                                variant="footnote"
+                                            >
                                                 Max: {maxATOMAmount} ATOM
-                                            </p>
+                                            </StyledText>
                                         </div>
                                     </div>
                                     <div className="col-span-2 grid grid-cols-subgrid">
