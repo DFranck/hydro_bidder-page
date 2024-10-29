@@ -5,7 +5,10 @@ import { Icon } from "@/components/Icon"
 import {
     ComponentProps,
     createContext,
+    Dispatch,
     ReactNode,
+    SetStateAction,
+    useCallback,
     useContext,
     useState,
 } from "react"
@@ -15,7 +18,10 @@ import { useIsClient } from "usehooks-ts"
 
 interface ToastsProps extends ComponentProps<"div"> {}
 
-const ToastContext = createContext(false)
+export interface Toast {
+    variant: keyof typeof classNamesByVariant
+    message: ReactNode
+}
 
 const classNamesByVariant = {
     error: {
@@ -40,65 +46,104 @@ const classNamesByVariant = {
     },
 } satisfies Record<string, { container: string; icon: ReactNode }>
 
+const ToastContext = createContext<{
+    toasts: Toast[]
+    setToasts: Dispatch<SetStateAction<Toast[]>>
+}>({
+    toasts: [],
+    setToasts: () => {},
+})
+
+export function ToastContextProvider({ children }: { children: ReactNode }) {
+    const [toasts, setToasts] = useState<Toast[]>([])
+
+    const ToastPrinter = useCallback(
+        () => (
+            <Toasts>
+                {toasts.map((toast, index) => (
+                    <Toasts.Toast key={index} variant={toast.variant}>
+                        {toast.message}
+                    </Toasts.Toast>
+                ))}
+            </Toasts>
+        ),
+        [toasts]
+    )
+
+    return (
+        <ToastContext.Provider value={{ toasts, setToasts }}>
+            {children}
+            {createPortal(<ToastPrinter />, document.body)}
+        </ToastContext.Provider>
+    )
+}
+
+export function useToasts() {
+    const context = useContext(ToastContext)
+    if (!context) {
+        throw new Error("useToasts must be used within a ToastContextProvider")
+    }
+    return context
+}
+
 export function Toasts({ children, className, ...otherProps }: ToastsProps) {
     const isClient = useIsClient()
 
     if (!isClient) return null
 
-    return createPortal(
-        <ToastContext.Provider value={true}>
+    return (
+        <div
+            className={twMerge(
+                `
+                    group
+                    fixed
+                    bottom-6
+                    right-6
+                    top-6
+                    z-50
+                    flex
+                    w-96
+                    flex-col-reverse
+                    items-end
+                    transition-opacity
+                    [&:not(:has(.js-toast))]:pointer-events-none
+                    [&:not(:has(.js-toast))]:opacity-0
+                `,
+                className
+            )}
+            {...otherProps}
+        >
             <div
-                className={twMerge(
-                    `
-                        group
-                        fixed
-                        inset-0
-                        z-50
-                        flex
-                        w-96
-                        flex-col-reverse
-                        items-end
-                        p-6
-                        transition-opacity
-                        [&:not(:has(.js-toast))]:pointer-events-none
-                        [&:not(:has(.js-toast))]:opacity-0
-                    `,
-                    className
-                )}
-                {...otherProps}
-            >
-                <div
-                    className="
-                        from-accent-brand-500
-                        pointer-events-none
-                        absolute
-                        bottom-0
-                        left-0
-                        right-0
-                        -z-10
-                        h-1/3
-                        bg-gradient-to-tl
-                        via-transparent
-                        to-transparent
-                    "
-                />
+                className="
+                    from-accent-brand-500
+                    pointer-events-none
+                    absolute
+                    bottom-0
+                    left-0
+                    right-0
+                    -z-10
+                    h-1/3
+                    bg-gradient-to-tl
+                    via-transparent
+                    to-transparent
+                "
+            />
 
-                {children}
-            </div>
-        </ToastContext.Provider>,
-        document.body
+            {children}
+        </div>
     )
 }
 
 Toasts.Toast = function Toast({
     children,
     className,
+    isDismissible = true,
     variant = "info",
     ...otherProps
 }: ComponentProps<"div"> & {
-    variant?: "error" | "success" | "info" | "working"
+    isDismissible?: boolean
+    variant?: keyof typeof classNamesByVariant
 }) {
-    const isToastContext = useContext(ToastContext)
     const [isDismissed, setIsDismissed] = useState(false)
 
     function handleDismiss() {
@@ -148,7 +193,7 @@ Toasts.Toast = function Toast({
                     {children}
                 </div>
 
-                {isToastContext && (
+                {isDismissible && (
                     <div
                         className="
                             row-span-2

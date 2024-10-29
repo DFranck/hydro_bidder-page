@@ -2,7 +2,7 @@
 
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { MouseEventHandler, ReactNode, useEffect, useState } from "react"
+import { MouseEventHandler, useEffect } from "react"
 
 import { StyledTextVariant } from "@/components/StyledText/StyledText"
 import { toast } from "@interchain-ui/react"
@@ -15,7 +15,7 @@ import {
     WButtonNotExist,
     WButtonRejected,
 } from "./Connect"
-import { Toasts } from "@/components/Toasts"
+import { useToasts } from "@/components/Toasts/Toasts"
 
 export type WalletProps = {
     chainName?: string
@@ -24,12 +24,7 @@ export type WalletProps = {
 }
 
 export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
-    const [toasts, setToasts] = useState<
-        {
-            variant: "working" | "success" | "error" | "info"
-            message: ReactNode
-        }[]
-    >([])
+    const { setToasts } = useToasts()
 
     const { connect, openView, status, address, message } = useChain(
         chainName || "neutron"
@@ -91,16 +86,5 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
         ),
     }[status] || <WButtonConnect variant={variant} onClick={onClickConnect} />
 
-    return (
-        <>
-            <Toasts>
-                {toasts.map((toast, index) => (
-                    <Toasts.Toast key={index} variant={toast.variant}>
-                        {toast.message}
-                    </Toasts.Toast>
-                ))}
-            </Toasts>
-            {ConnectButton}
-        </>
-    )
+    return <>{ConnectButton}</>
 }

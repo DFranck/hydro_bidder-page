@@ -1,6 +1,6 @@
 "use client"
 
-import { useAppContext } from "@/app/context"
+import { useAppContext } from "@/app/(with-context)/context"
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"

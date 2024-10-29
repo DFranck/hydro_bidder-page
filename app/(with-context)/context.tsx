@@ -1,5 +1,6 @@
 "use client"
 
+import { ToastContextProvider } from "@/components/Toasts/Toasts"
 import { fetchDashboardData } from "@/hooks/hooks"
 import { createContext, useContext } from "react"
 
@@ -24,5 +25,9 @@ export function AppContextProvider({
     children: React.ReactNode
     value: AppContextObject
 }) {
-    return <AppContext.Provider value={value}>{children}</AppContext.Provider>
+    return (
+        <AppContext.Provider value={{ ...value }}>
+            <ToastContextProvider>{children}</ToastContextProvider>
+        </AppContext.Provider>
+    )
 }

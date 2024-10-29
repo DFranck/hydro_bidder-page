@@ -1,6 +1,6 @@
 "use client"
 
-import { useAppContext } from "@/app/context"
+import { useAppContext } from "@/app/(with-context)/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { Card } from "@/components/Card"
 import { Confetti } from "@/components/Confetti"
@@ -8,7 +8,7 @@ import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { Toasts } from "@/components/Toasts"
+import { useToasts } from "@/components/Toasts/Toasts"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { formatAmount, sumTributeAmounts } from "@/lib/utils"
@@ -16,7 +16,7 @@ import { useChain } from "@cosmos-kit/react"
 import kebabCase from "lodash/kebabCase"
 import Image from "next/image"
 import Link from "next/link"
-import { ReactNode, useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 export const ProposalDetail = ({
     proposal,
@@ -40,12 +40,7 @@ export const ProposalDetail = ({
     const [isLoading, setIsLoading] = useState(false)
     const tributes = currentProposalTributes.get(proposal.proposal_id)!
     const [isCelebrating, setIsCelebrating] = useState(false)
-    const [toasts, setToasts] = useState<
-        {
-            variant: "working" | "success" | "error" | "info"
-            message: ReactNode
-        }[]
-    >([])
+    const { setToasts } = useToasts()
 
     const fetchVoteStatus = useCallback(async () => {
         if (!address) {
@@ -238,7 +233,11 @@ export const ProposalDetail = ({
                         >
                             Change Vote to This Proposal
                         </StyledText>
-                        <StyledText as="button" variant="button.secondary" onClick={() => setOpenChangeVoteModal(false)}>
+                        <StyledText
+                            as="button"
+                            variant="button.secondary"
+                            onClick={() => setOpenChangeVoteModal(false)}
+                        >
                             Don&rsquo;t change my vote
                         </StyledText>
                     </Card.Footer>
@@ -266,14 +265,6 @@ export const ProposalDetail = ({
 
     return (
         <>
-            <Toasts>
-                {toasts.map((toast, index) => (
-                    <Toasts.Toast key={index} variant={toast.variant}>
-                        {toast.message}
-                    </Toasts.Toast>
-                ))}
-            </Toasts>
-
             <ChangeVoteModal />
 
             <Confetti

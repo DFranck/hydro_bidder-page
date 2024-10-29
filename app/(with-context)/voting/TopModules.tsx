@@ -1,6 +1,6 @@
 "use client"
 
-import { useAppContext } from "@/app/context"
+import { useAppContext } from "@/app/(with-context)/context"
 import { Timestamp } from "@/app/ts_types/HydroBase.types"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"

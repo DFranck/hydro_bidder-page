@@ -1,4 +1,4 @@
-import { AppContextProvider } from "@/app/context"
+import { AppContextProvider } from "@/app/(with-context)/context"
 import { fetchDashboardData } from "@/hooks/hooks"
 
 export default async function VotingLayout({

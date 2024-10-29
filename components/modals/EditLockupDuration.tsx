@@ -5,7 +5,7 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { Toasts } from "@/components/Toasts"
+import { useToasts } from "@/components/Toasts/Toasts"
 import { executeExtendLockup, Validator } from "@/hooks/hooks"
 import {
     calculateLockupVotingPower,
@@ -17,14 +17,7 @@ import {
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { isEqual } from "lodash"
-import {
-    ChangeEvent,
-    FormEvent,
-    ReactNode,
-    useEffect,
-    useMemo,
-    useState,
-} from "react"
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 interface FormValues {
@@ -41,17 +34,6 @@ type EditLockupDurationProps = {
     getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
     onSuccess: () => void
 }
-
-const classNamesForRadioButtons = `
-    peer
-    size-6
-    appearance-none
-    rounded-full
-    border-2
-    border-palette-green
-    checked:bg-palette-green
-    checked:[box-shadow:0_0_0_2px_black_inset]
-`
 
 const classNamesForRadioLabels = `
     transition-all
@@ -86,12 +68,7 @@ export const EditLockupDuration = ({
     const [hasChanged, setHasChanged] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isLockupModalOpen, setIsLockupModalOpen] = useState(false)
-    const [toasts, setToasts] = useState<
-        {
-            variant: "working" | "success" | "error" | "info"
-            message: ReactNode
-        }[]
-    >([])
+    const { setToasts } = useToasts()
 
     const initialFormValues = useMemo(
         () => ({
@@ -223,13 +200,6 @@ export const EditLockupDuration = ({
 
     return (
         <>
-            <Toasts>
-                {toasts.map((toast, index) => (
-                    <Toasts.Toast key={index} variant={toast.variant}>
-                        {toast.message}
-                    </Toasts.Toast>
-                ))}
-            </Toasts>
             <ModalWindow
                 isOpen={isLockupModalOpen}
                 onClose={() => setIsLockupModalOpen(false)}
