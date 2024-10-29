@@ -1,6 +1,6 @@
 "use client"
 
-import { useAppContext } from "@/app/context"
+import { useAppContext } from "@/app/(with-context)/context"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
@@ -544,7 +544,7 @@ const LockForm = ({
                 <>
                     <Card.Header title="Get Voting Power" />
                     <Card.Body className="space-y-6">
-                        <Toasts.Toast variant="info">
+                        <Toasts.Toast variant="info" isDismissible={false}>
                             Once locked, your staked ATOMs are inaccessible for
                             the duration of the lock. They will continue to
                             accrue staking rewards but you will not be able to

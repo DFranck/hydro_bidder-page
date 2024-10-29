@@ -1,6 +1,6 @@
 "use client"
 
-import { useAppContext } from "@/app/context"
+import { useAppContext } from "@/app/(with-context)/context"
 import { ProposalDetail } from "@/components/ProposalDetail" // try now
 
 export function Details({ params }: { params: { id: string } }) {

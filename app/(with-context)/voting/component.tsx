@@ -1,6 +1,6 @@
 "use client"
 
-import { useAppContext } from "@/app/context"
+import { useAppContext } from "@/app/(with-context)/context"
 import { Icon } from "@/components/Icon"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { Tooltip } from "@/components/Tooltip"
