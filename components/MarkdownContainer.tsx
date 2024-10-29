@@ -12,6 +12,7 @@ export function MarkdownContainer({ content }: { content?: string }) {
                 prose-a:font-normal
                 prose-a:text-palette-green/70
                 prose-strong:text-white
+                prose-code:text-palette-beige
                 prose-ol:text-white
                 prose-li:text-white
                 [&_a:hover]:text-palette-green

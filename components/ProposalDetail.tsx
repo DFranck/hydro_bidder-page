@@ -466,10 +466,31 @@ export const ProposalDetail = ({
                                             </p>
                                         )
                                     )
+                                ) : renderedProposal.points ? (
+                                    <>
+                                        <p className="font-mono text-xl font-bold not-italic text-palette-cyan">
+                                            {renderedProposal.points[0].toLocaleString(
+                                                "en-US"
+                                            )}{" "}
+                                            {renderedProposal.points[1]}
+                                        </p>
+                                        {renderedProposal.pointProgramUrl && (
+                                            <p>
+                                                <a
+                                                    href={
+                                                        renderedProposal.pointProgramUrl
+                                                    }
+                                                    className="inline-flex items-center gap-1 text-palette-green underline"
+                                                    target="_blank"
+                                                >
+                                                    Learn More{" "}
+                                                    <Icon name="solid:arrow-up-right" />
+                                                </a>
+                                            </p>
+                                        )}
+                                    </>
                                 ) : (
-                                    <p className="text-xl font-bold not-italic">
-                                        None
-                                    </p>
+                                    "None"
                                 )}
                             </div>
                         </div>
