@@ -543,7 +543,7 @@ const LockForm = ({
             ) : (
                 <>
                     <Card.Header title="Get Voting Power" />
-                    <Card.Body>
+                    <Card.Body className="space-y-6">
                         <Toasts.Toast variant="info">
                             Once locked, your staked ATOMs are inaccessible for
                             the duration of the lock. They will continue to
