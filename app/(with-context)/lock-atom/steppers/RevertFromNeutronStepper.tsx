@@ -175,7 +175,6 @@ export const RevertFromNeutronStepper = ({
                                 router.push("/lock-atom")
                                 onExit()
                             },
-                            className: "bg-gray-200 text-gray-800",
                         },
                     ],
                 }

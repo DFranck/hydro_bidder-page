@@ -213,8 +213,25 @@ export const ProposalDetail = ({
         )
     }
 
-    function ChangeVoteModal() {
-        return (
+    const renderedProposal = {
+        ...proposal,
+        ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
+    }
+
+    const summedTributes = sumTributeAmounts(tributes)
+
+    const pricedAndNamedTributes = summedTributes.map((tribute) => {
+        const assetInfo = assetListWithPrices.get(tribute.denom)
+        return {
+            ...tribute,
+            priceUsd: assetInfo?.priceUsd,
+            symbol: assetInfo?.symbol,
+            decimals: assetInfo?.decimals,
+        }
+    })
+
+    return (
+        <>
             <ModalWindow
                 isOpen={openChangeVoteModal}
                 onClose={() => setOpenChangeVoteModal(false)}
@@ -243,29 +260,6 @@ export const ProposalDetail = ({
                     </Card.Footer>
                 </Card>
             </ModalWindow>
-        )
-    }
-
-    const renderedProposal = {
-        ...proposal,
-        ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
-    }
-
-    const summedTributes = sumTributeAmounts(tributes)
-
-    const pricedAndNamedTributes = summedTributes.map((tribute) => {
-        const assetInfo = assetListWithPrices.get(tribute.denom)
-        return {
-            ...tribute,
-            priceUsd: assetInfo?.priceUsd,
-            symbol: assetInfo?.symbol,
-            decimals: assetInfo?.decimals,
-        }
-    })
-
-    return (
-        <>
-            <ChangeVoteModal />
 
             <Confetti
                 trigger={isCelebrating}

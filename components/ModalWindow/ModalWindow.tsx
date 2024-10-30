@@ -19,6 +19,7 @@ export function ModalWindow<T extends ElementType = "section">({
     isOpen,
     propsForBackdrop,
     onClose,
+    duration = 500,
     ...otherProps
 }: ModalWindowProps<T>) {
     const isClient = useIsClient()
@@ -28,6 +29,21 @@ export function ModalWindow<T extends ElementType = "section">({
     const isOpenOrOpening = ["open", "opening"].includes(modalState)
     const isClosedOrClosing = ["closed", "closing"].includes(modalState)
     const timerRef = useRef<ReturnType<typeof setTimeout>>()
+
+    useEffect(() => {
+        if (isOpen) {
+            clearTimer()
+            setModalState("opening")
+
+            timerRef.current = setTimeout(() => {
+                setModalState("open")
+            }, duration)
+
+            return clearTimer
+        } else {
+            handleClickClose()
+        }
+    }, [isOpen, duration])
 
     useEffect(() => {
         const shortcuts: Record<string, () => void> = {
@@ -47,21 +63,6 @@ export function ModalWindow<T extends ElementType = "section">({
         }
     }, [])
 
-    useEffect(() => {
-        if (isOpen) {
-            clearTimer()
-            setModalState("opening")
-
-            timerRef.current = setTimeout(() => {
-                setModalState("open")
-            }, 500)
-
-            return clearTimer
-        } else {
-            handleClickClose()
-        }
-    }, [isOpen])
-
     function handleClickClose() {
         clearTimer()
         setModalState("closing")
@@ -69,7 +70,7 @@ export function ModalWindow<T extends ElementType = "section">({
         timerRef.current = setTimeout(() => {
             setModalState("closed")
             onClose()
-        }, 500)
+        }, duration)
     }
 
     function clearTimer() {
@@ -86,18 +87,18 @@ export function ModalWindow<T extends ElementType = "section">({
                       {...propsForBackdrop}
                       className={twMerge(
                           `
-                pointer-events-none
-                opacity-0
-                transition-all
-                duration-500
-              `,
+                              pointer-events-none
+                              opacity-0
+                              transition-all
+                          `,
                           isOpenOrOpening &&
                               `
-                  pointer-events-auto
-                  opacity-100
-                `,
+                                  pointer-events-auto
+                                  opacity-100
+                              `,
                           propsForBackdrop?.className
                       )}
+                      style={{ transitionDuration: duration }}
                       onClick={(...args) => {
                           handleClickClose()
                           propsForBackdrop?.onClick?.(...args)
@@ -107,28 +108,28 @@ export function ModalWindow<T extends ElementType = "section">({
                   <Component
                       className={twMerge(
                           `
-                fixed
-                left-1/2
-                top-1/2
-                z-[1000]
-                -translate-x-1/2
-                -translate-y-1/2
-                transition-all
-                duration-500
-              `,
+                              fixed
+                              left-1/2
+                              top-1/2
+                              z-[1000]
+                              -translate-x-1/2
+                              -translate-y-1/2
+                              transition-all
+                          `,
                           isOpenOrOpening &&
                               `
-                  scale-100
-                  opacity-100
-                `,
+                                  scale-100
+                                  opacity-100
+                              `,
                           isClosedOrClosing &&
                               `
-                  pointer-events-none
-                  scale-75
-                  opacity-0
-                `,
+                                  pointer-events-none
+                                  scale-75
+                                  opacity-0
+                              `,
                           className
                       )}
+                      style={{ transitionDuration: duration }}
                       {...otherProps}
                   >
                       {children}
@@ -146,11 +147,11 @@ ModalWindow.Backdrop = function Backdrop({
         <div
             className={twMerge(
                 `
-          fixed
-          inset-0
-          z-[999]
-          backdrop-blur-md
-        `,
+                    fixed
+                    inset-0
+                    z-[999]
+                    backdrop-blur-md
+                `,
                 className
             )}
             {...otherProps}
