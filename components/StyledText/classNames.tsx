@@ -214,25 +214,27 @@ export const classNames = {
     "input.text": twJoin(`
         rounded
         border-2
-        bg-palette-text
+        bg-white/20
         p-2
-        focus:outline-none
-        focus:ring-2
-        focus:ring-palette-green
+        outline-none
+        focus:border-palette-green
     `),
     "input.checkbox": twJoin(`
         size-5
         appearance-none
         rounded
         border-2
+        outline-none
         checked:border-transparent
         checked:bg-palette-green
+        checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
     `),
     "input.radio": twJoin(`
         size-5
         appearance-none
         rounded-full
         border-2
+        outline-none
         checked:border-transparent
         checked:bg-palette-green
         checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]

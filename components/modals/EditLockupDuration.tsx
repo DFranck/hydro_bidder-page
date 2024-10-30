@@ -199,169 +199,162 @@ export const EditLockupDuration = ({
     }
 
     return (
-        <>
-            <ModalWindow
-                isOpen={isLockupModalOpen}
-                onClose={() => setIsLockupModalOpen(false)}
-            >
-                <Card>
-                    <Card.Header title="Refresh Lockup" />
-                    <Card.Body>
-                        <form
-                            className="
-                                flex
-                                flex-col
-                                gap-6
-                            "
-                            onChange={handleChange}
-                            onSubmit={handleSubmit}
-                        >
-                            <div className="flex flex-col gap-2">
-                                <div className="font-bold">
-                                    Current End Date:
-                                </div>
+        <ModalWindow
+            isOpen={isLockupModalOpen}
+            onClose={() => setIsLockupModalOpen(false)}
+        >
+            <Card>
+                <Card.Header title="Refresh Lockup" />
+                <Card.Body>
+                    <form
+                        className="
+                            flex
+                            flex-col
+                            gap-6
+                        "
+                        onChange={handleChange}
+                        onSubmit={handleSubmit}
+                    >
+                        <div className="flex flex-col gap-2">
+                            <div className="font-bold">Current End Date:</div>
 
-                                <div className="flex items-center gap-2 opacity-60">
-                                    {dateFormatter.format(currentLockupEndDate)}{" "}
-                                    (
-                                    {relativeTimeFormatter.format(
-                                        Math.floor(
-                                            (currentLockupEndDate.getTime() -
-                                                new Date().getTime()) /
-                                                (1000 * 60 * 60 * 24)
-                                        ),
-                                        "day"
-                                    )}
-                                    )
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <div className="font-bold">New End Date:</div>
-
-                                {Object.entries(LockupPeriod).map(
-                                    ([name, value]) => {
-                                        const newLockupEnd =
-                                            Date.now() * 1000000 +
-                                            getLockupTimeNanoseconds(value)
-
-                                        // Don't show an option to refresh a lockup to a time before its current end time
-                                        if (currentLockupEnd >= newLockupEnd)
-                                            return null
-
-                                        const newLockupEndDate = new Date(
-                                            newLockupEnd / 1000000
-                                        )
-
-                                        const daysDifference =
-                                            getDaysAway(newLockupEnd)
-
-                                        return (
-                                            <label
-                                                className="group flex items-center gap-2"
-                                                key={name}
-                                            >
-                                                <StyledText
-                                                    as="input"
-                                                    variant="input.radio"
-                                                    type="radio"
-                                                    name="lockupPeriod"
-                                                    value={value}
-                                                />
-                                                <span
-                                                    className={
-                                                        classNamesForRadioLabels
-                                                    }
-                                                >
-                                                    {dateFormatter.format(
-                                                        newLockupEndDate
-                                                    )}{" "}
-                                                    (
-                                                    {relativeTimeFormatter.format(
-                                                        daysDifference,
-                                                        "day"
-                                                    )}
-                                                    )
-                                                </span>
-                                            </label>
-                                        )
-                                    }
+                            <div className="flex items-center gap-2 opacity-60">
+                                {dateFormatter.format(currentLockupEndDate)} (
+                                {relativeTimeFormatter.format(
+                                    Math.floor(
+                                        (currentLockupEndDate.getTime() -
+                                            new Date().getTime()) /
+                                            (1000 * 60 * 60 * 24)
+                                    ),
+                                    "day"
                                 )}
+                                )
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <div className="font-bold">New End Date:</div>
+
+                            {Object.entries(LockupPeriod).map(
+                                ([name, value]) => {
+                                    const newLockupEnd =
+                                        Date.now() * 1000000 +
+                                        getLockupTimeNanoseconds(value)
+
+                                    // Don't show an option to refresh a lockup to a time before its current end time
+                                    if (currentLockupEnd >= newLockupEnd)
+                                        return null
+
+                                    const newLockupEndDate = new Date(
+                                        newLockupEnd / 1000000
+                                    )
+
+                                    const daysDifference =
+                                        getDaysAway(newLockupEnd)
+
+                                    return (
+                                        <label
+                                            className="group flex items-center gap-2"
+                                            key={name}
+                                        >
+                                            <StyledText
+                                                as="input"
+                                                variant="input.radio"
+                                                type="radio"
+                                                name="lockupPeriod"
+                                                value={value}
+                                            />
+                                            <span
+                                                className={
+                                                    classNamesForRadioLabels
+                                                }
+                                            >
+                                                {dateFormatter.format(
+                                                    newLockupEndDate
+                                                )}{" "}
+                                                (
+                                                {relativeTimeFormatter.format(
+                                                    daysDifference,
+                                                    "day"
+                                                )}
+                                                )
+                                            </span>
+                                        </label>
+                                    )
+                                }
+                            )}
+                        </div>
+
+                        <div className="flex items-center justify-around gap-3">
+                            <div className="flex flex-col items-center text-center">
+                                <div>Locked ATOM</div>
+                                <div
+                                    className="
+                                        text-4xl
+                                        font-bold
+                                        text-palette-beige
+                                    "
+                                >
+                                    {formValues.shares}
+                                </div>
                             </div>
 
-                            <div className="flex items-center justify-around gap-3">
-                                <div className="flex flex-col items-center text-center">
-                                    <div>Locked ATOM</div>
-                                    <div
-                                        className="
+                            <div className="relative flex flex-col items-center text-center">
+                                <div>{hasChanged && "New "}Voting Power</div>
+                                <div
+                                    className={twMerge(
+                                        `
                                             text-4xl
                                             font-bold
                                             text-palette-beige
-                                        "
-                                    >
-                                        {formValues.shares}
-                                    </div>
-                                </div>
-
-                                <div className="relative flex flex-col items-center text-center">
-                                    <div>
-                                        {hasChanged && "New "}Voting Power
-                                    </div>
-                                    <div
-                                        className={twMerge(
-                                            `
-                                                text-4xl
-                                                font-bold
-                                                text-palette-beige
-                                            `,
-                                            powerDifference > 0 &&
-                                                "text-palette-green"
-                                        )}
-                                    >
-                                        {formatAmount(
-                                            hasChanged
-                                                ? formValues.power
-                                                : lockup.current_voting_power
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <StyledText
-                                    as="button"
-                                    variant="button.primary"
-                                    type="submit"
-                                    disabled={isLoading || !hasChanged}
-                                >
-                                    {isLoading ? (
-                                        <div
-                                            className={`
-                                                animate-spin
-                                                text-lg
-                                            `}
-                                        >
-                                            <Icon name="solid:loader" />
-                                        </div>
-                                    ) : (
-                                        "Confirm"
+                                        `,
+                                        powerDifference > 0 &&
+                                            "text-palette-green"
                                     )}
-                                </StyledText>
-
-                                <StyledText
-                                    as="button"
-                                    variant="button.secondary"
-                                    type="button"
-                                    disabled={isLoading}
-                                    onClick={() => setIsLockupModalOpen(false)}
                                 >
-                                    Cancel
-                                </StyledText>
+                                    {formatAmount(
+                                        hasChanged
+                                            ? formValues.power
+                                            : lockup.current_voting_power
+                                    )}
+                                </div>
                             </div>
-                        </form>
-                    </Card.Body>
-                </Card>
-            </ModalWindow>
-        </>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <StyledText
+                                as="button"
+                                variant="button.primary"
+                                type="submit"
+                                disabled={isLoading || !hasChanged}
+                            >
+                                {isLoading ? (
+                                    <div
+                                        className={`
+                                            animate-spin
+                                            text-lg
+                                        `}
+                                    >
+                                        <Icon name="solid:loader" />
+                                    </div>
+                                ) : (
+                                    "Confirm"
+                                )}
+                            </StyledText>
+
+                            <StyledText
+                                as="button"
+                                variant="button.secondary"
+                                type="button"
+                                disabled={isLoading}
+                                onClick={() => setIsLockupModalOpen(false)}
+                            >
+                                Cancel
+                            </StyledText>
+                        </div>
+                    </form>
+                </Card.Body>
+            </Card>
+        </ModalWindow>
     )
 }

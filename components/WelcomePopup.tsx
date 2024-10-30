@@ -16,7 +16,6 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
     const [dontShowAgain, setDontShowAgain] = useState(false)
 
     useEffect(() => {
-        // Only check localStorage and potentially show the modal if showModal is true
         if (showModal) {
             const hasSeenWelcome = localStorage.getItem("hasSeenWelcomePopup")
             if (!hasSeenWelcome) {
@@ -33,8 +32,6 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
             localStorage.setItem("hasSeenWelcomePopup", "true")
         }
     }
-
-    if (!isOpen) return null
 
     return (
         <ModalWindow isOpen={isOpen} onClose={closeModal}>

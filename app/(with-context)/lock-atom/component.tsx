@@ -553,27 +553,33 @@ const LockForm = ({
                         <form onSubmit={handleSubmit}>
                             {!validator && validators && (
                                 <div className={commonClassNames.formContainer}>
-                                    <ol className="list-inside list-decimal">
-                                        <li>
-                                            Your ATOM staked to a validator can
-                                            be locked in Hydro
-                                        </li>
-                                        <li>You get voting power</li>
-                                        <li>
-                                            You continue to earn staking rewards
-                                        </li>
-                                    </ol>
+                                    <div className="space-y-3">
+                                        <ol className="list-inside list-decimal">
+                                            <li>
+                                                Your ATOM staked to a validator
+                                                can be locked in Hydro
+                                            </li>
+                                            <li>You get voting power</li>
+                                            <li>
+                                                You continue to earn staking
+                                                rewards
+                                            </li>
+                                        </ol>
 
-                                    {validators.length > 1 && (
-                                        <p>
-                                            Since you have multiple validators,
-                                            you will need to do one at time.
-                                        </p>
-                                    )}
+                                        {validators.length > 1 && (
+                                            <p>
+                                                Since you have multiple
+                                                validators, you will need to do
+                                                one at time.
+                                            </p>
+                                        )}
+                                    </div>
 
-                                    <StyledText as="label" variant="label">
-                                        Select Validator:
-                                    </StyledText>
+                                    <p>
+                                        <StyledText as="label" variant="label">
+                                            Select Validator:
+                                        </StyledText>
+                                    </p>
 
                                     <div
                                         className={commonClassNames.cardContent}
@@ -608,7 +614,7 @@ const LockForm = ({
 
                                             <StyledText
                                                 as="button"
-                                                variant="link.subtle"
+                                                variant="link"
                                                 onClick={clearSelectedValidator}
                                             >
                                                 Change
@@ -729,14 +735,13 @@ const LockForm = ({
                                             )}
                                         </StyledText>
                                     </div>
-                                    <div className="col-span-2">
+                                    <div className="col-span-2 flex flex-row-reverse">
                                         <StyledText
                                             as="button"
                                             variant="button.primary"
                                             type="submit"
-                                            className="!w-full"
                                         >
-                                            Lock
+                                            Lock ATOM...
                                         </StyledText>
                                     </div>
                                 </div>
