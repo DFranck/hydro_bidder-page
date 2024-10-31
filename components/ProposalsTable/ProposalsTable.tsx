@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppContext } from "@/app/(with-context)/context"
+import { classNames } from "@/app/(with-context)/voting/classNames"
 import { Icon } from "@/components/Icon"
 import { PrettyTable, TR } from "@/components/PrettyTable"
 import { Tooltip } from "@/components/Tooltip"
@@ -13,28 +14,10 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { twJoin } from "tailwind-merge"
-import { WelcomePopup } from "../../../components/WelcomePopup"
-import { classNames } from "./classNames"
+import { WelcomePopup } from "../WelcomePopup"
+import { proposalTotalTribute } from "./proposalTotalTribute"
 
-function proposalTotalTribute(
-    pricedAndNamedTributes: {
-        priceUsd: number | undefined
-        symbol: string | undefined
-        decimals: number | undefined
-        denom: string
-        amount: number
-    }[]
-) {
-    return pricedAndNamedTributes.reduce((total, tribute) => {
-        return (
-            total +
-            ((tribute.priceUsd ?? 0) * tribute.amount) /
-                10 ** (tribute.decimals ?? 0)
-        )
-    }, 0)
-}
-
-export function ActiveProposals({
+export function ProposalsTable({
     searchParams,
 }: {
     searchParams: { [key: string]: string | string[] | undefined }
@@ -383,27 +366,20 @@ export function ActiveProposals({
                                         ).toLocaleString("en-US", {
                                             style: "currency",
                                             currency: "USD",
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
                                         })}
                                     </div>
                                     <div className="text-xs opacity-60">
                                         of{" "}
-                                        {proposal.pricedAndNamedTributes
-                                            .reduce((total, tribute) => {
-                                                return (
-                                                    total +
-                                                    ((tribute.priceUsd ?? 0) *
-                                                        tribute.amount) /
-                                                        10 **
-                                                            (tribute.decimals ??
-                                                                0)
-                                                )
-                                            }, 0)
-                                            .toLocaleString("en-US", {
-                                                style: "currency",
-                                                currency: "USD",
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: 2,
-                                            })}
+                                        {proposalTotalTribute(
+                                            proposal.pricedAndNamedTributes
+                                        ).toLocaleString("en-US", {
+                                            style: "currency",
+                                            currency: "USD",
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                        })}
                                     </div>
                                 </>
                             ),

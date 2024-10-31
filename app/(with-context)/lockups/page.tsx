@@ -1,8 +1,8 @@
 import { ContentContainer } from "@/components/ContentContainer"
+import { LockupsTable } from "@/components/LockupsTable"
 import { endpoints } from "@/config"
 import { fetchAllValidators } from "@/hooks/hooks"
-import { LockupsTable } from "./LockupsTable"
-import { DashboardTopModules } from "./TopModules"
+import { TopModulesForLockups } from "../../../components/TopModulesForLockups"
 
 export default async function Page() {
     const validators = await fetchAllValidators(endpoints.cosmoshub.rest[0])
@@ -13,7 +13,7 @@ export default async function Page() {
 
     return (
         <ContentContainer className="gap-12 py-12">
-            <DashboardTopModules />
+            <TopModulesForLockups />
             <LockupsTable validatorMap={validatorMap} />
         </ContentContainer>
     )
