@@ -7,9 +7,14 @@ import { Confetti } from "@/components/Confetti"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { ModalWindow } from "@/components/ModalWindow"
+import {
+    VOTE_SHARE_THRESHOLD,
+    voteThresholdTooltip,
+} from "@/components/ProposalsTable/ProposalsTable"
 import { proposalTotalTribute } from "@/components/ProposalsTable/proposalTotalTribute"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts/Toasts"
+import { Tooltip } from "@/components/Tooltip"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { formatAmount, sumTributeAmounts } from "@/lib/utils"
@@ -222,6 +227,10 @@ export function ProposalDetail({
     const summedTributes = sumTributeAmounts(tributes)
 
     const pricedAndNamedTributes = summedTributes.map((tribute) => {
+        console.log(
+            `Getting price for ${tribute.denom} from ${assetListWithPrices.size} assets`,
+            assetListWithPrices.entries()
+        )
         const assetInfo = assetListWithPrices.get(tribute.denom)
         return {
             ...tribute,
@@ -230,6 +239,8 @@ export function ProposalDetail({
             decimals: assetInfo?.decimals,
         }
     })
+
+    console.log(pricedAndNamedTributes)
 
     return (
         <>
@@ -511,8 +522,20 @@ export function ProposalDetail({
                             <StyledText as="h3" variant="label">
                                 Current Vote Percentage
                             </StyledText>
-                            <p className="text-xl font-bold not-italic">
-                                {proposal.percentage}%
+                            <p className="flex flex-row items-center gap-2 text-xl font-bold not-italic">
+                                <span>{proposal.percentage}%</span>
+                                {Number(proposal.percentage) <
+                                    VOTE_SHARE_THRESHOLD && (
+                                    <Tooltip
+                                        tipContents={voteThresholdTooltip}
+                                        classNamesForTooltip="-ml-24"
+                                    >
+                                        <Icon
+                                            name="solid:triangle-exclamation"
+                                            className="text-palette-beige"
+                                        />
+                                    </Tooltip>
+                                )}
                             </p>
                         </div>
 
