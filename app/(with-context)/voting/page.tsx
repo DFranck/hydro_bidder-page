@@ -1,6 +1,6 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import { ActiveProposals } from "./ActiveProposals"
-import { ProposalListTopModules } from "./TopModules"
+import { ProposalsTable } from "../../../components/ProposalsTable/ProposalsTable"
+import { TopModulesForVoting } from "../../../components/TopModulesForVoting"
 
 export default async function ActiveProposalsPage({
     searchParams,
@@ -9,8 +9,8 @@ export default async function ActiveProposalsPage({
 }) {
     return (
         <ContentContainer className="gap-12 py-12">
-            <ProposalListTopModules />
-            <ActiveProposals searchParams={searchParams} />
+            <TopModulesForVoting />
+            <ProposalsTable searchParams={searchParams} />
         </ContentContainer>
     )
 }

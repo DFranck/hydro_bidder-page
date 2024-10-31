@@ -20,7 +20,7 @@ export const getRoundEndText = (roundEnd: Timestamp) => {
     }
 }
 
-export function ProposalListTopModules() {
+export function TopModulesForVoting() {
     const {
         assetListWithPrices,
         globalState: { atomPrice, totalLockedTokens, currentRound },

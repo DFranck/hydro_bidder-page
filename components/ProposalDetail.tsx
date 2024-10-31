@@ -7,6 +7,7 @@ import { Confetti } from "@/components/Confetti"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { ModalWindow } from "@/components/ModalWindow"
+import { proposalTotalTribute } from "@/components/ProposalsTable/proposalTotalTribute"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts/Toasts"
 import { Wallet } from "@/components/wallet/Wallet"
@@ -18,17 +19,17 @@ import Image from "next/image"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 
-export const ProposalDetail = ({
+export function ProposalDetail({
     proposal,
     deployed,
 }: {
     proposal: Proposal
     deployed: boolean
-}) => {
+}) {
     const {
         globalState,
         currentProposalTributes,
-        currentProposalTranches: proposalTranches,
+        currentProposalTranches,
         assetListWithPrices,
     } = useAppContext()
     const [hasVoted, setHasVoted] = useState(false)
@@ -52,7 +53,7 @@ export const ProposalDetail = ({
         const voteMap = await fetchMyVotes(
             address || "",
             globalState.currentRound,
-            Array.from(proposalTranches.keys())
+            Array.from(currentProposalTranches.keys())
         )
 
         setIsLoading(false)
@@ -72,7 +73,7 @@ export const ProposalDetail = ({
         address,
         globalState.currentRound,
         proposal.proposal_id,
-        proposalTranches,
+        currentProposalTranches,
     ])
 
     useEffect(() => {
@@ -448,18 +449,34 @@ export const ProposalDetail = ({
                             </StyledText>
                             <div className="max-w-64 overflow-x-auto">
                                 {pricedAndNamedTributes.length > 0 ? (
-                                    pricedAndNamedTributes.map(
-                                        (tribute, index) => (
-                                            <p
-                                                key={index}
-                                                className="break-words text-xl font-bold not-italic"
-                                            >
-                                                {formatAmount(tribute.amount)}{" "}
-                                                {tribute.symbol ||
-                                                    tribute.denom}
-                                            </p>
-                                        )
-                                    )
+                                    <>
+                                        {pricedAndNamedTributes.map(
+                                            (tribute, index) => (
+                                                <p
+                                                    key={index}
+                                                    className="break-words text-xl font-bold not-italic"
+                                                >
+                                                    {formatAmount(
+                                                        tribute.amount
+                                                    )}{" "}
+                                                    {tribute.symbol ||
+                                                        tribute.denom}
+                                                </p>
+                                            )
+                                        )}
+                                        <p>
+                                            ≈{" "}
+                                            {proposalTotalTribute(
+                                                pricedAndNamedTributes
+                                            ).toLocaleString("en-US", {
+                                                style: "currency",
+                                                currency: "USD",
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                            })}{" "}
+                                            USD
+                                        </p>
+                                    </>
                                 ) : renderedProposal.points ? (
                                     <>
                                         <p className="font-mono text-xl font-bold not-italic text-palette-cyan">
@@ -470,16 +487,17 @@ export const ProposalDetail = ({
                                         </p>
                                         {renderedProposal.pointProgramUrl && (
                                             <p>
-                                                <a
+                                                <StyledText
+                                                    variant="link"
+                                                    as="a"
                                                     href={
                                                         renderedProposal.pointProgramUrl
                                                     }
-                                                    className="inline-flex items-center gap-1 text-palette-green underline"
                                                     target="_blank"
                                                 >
                                                     Learn More{" "}
                                                     <Icon name="solid:arrow-up-right" />
-                                                </a>
+                                                </StyledText>
                                             </p>
                                         )}
                                     </>

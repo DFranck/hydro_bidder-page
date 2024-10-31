@@ -16,7 +16,7 @@ export enum TabLabel {
     TRIBUTE = "tribute",
 }
 
-export const DashboardTopModules = () => {
+export function TopModulesForLockups() {
     const { address } = useChain("neutron")
     const { data: userVotingData } = useUserVotingData(address ?? "")
 
