@@ -3,7 +3,7 @@
 import { useAppContext } from "@/app/(with-context)/context"
 import { classNames } from "@/app/(with-context)/voting/classNames"
 import { Icon } from "@/components/Icon"
-import { PrettyTable, TR } from "@/components/PrettyTable"
+import { PrettyTable, TD, TR } from "@/components/PrettyTable"
 import { Tooltip } from "@/components/Tooltip"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
@@ -12,10 +12,20 @@ import { sum } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { twJoin } from "tailwind-merge"
+import { Fragment, useState } from "react"
+import { twJoin, twMerge } from "tailwind-merge"
 import { WelcomePopup } from "../WelcomePopup"
 import { proposalTotalTribute } from "./proposalTotalTribute"
+
+export const VOTE_SHARE_THRESHOLD = 5
+
+export const voteThresholdTooltip = (
+    <>
+        Bids below the minimum threshold to receive liquidity of{" "}
+        <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will have
+        their tributes refunded to them.
+    </>
+)
 
 export function ProposalsTable({
     searchParams,
@@ -265,7 +275,7 @@ export function ProposalsTable({
                                     Number(row._proposal.percentage),
                             },
                         ]}
-                        rows={decoratedProposals.map((proposal) => ({
+                        rows={decoratedProposals.map((proposal, index) => ({
                             _proposal: proposal,
 
                             hasVoted:
@@ -384,20 +394,101 @@ export function ProposalsTable({
                                 </>
                             ),
 
-                            currentVoteShare: `${proposal.percentage}%`,
+                            currentVoteShare: (
+                                <div className="flex flex-row-reverse items-center gap-1">
+                                    {proposal.percentage}%
+                                    {Number(proposal.percentage) <
+                                        VOTE_SHARE_THRESHOLD && (
+                                        <Tooltip
+                                            tipContents={voteThresholdTooltip}
+                                            classNamesForTooltip="-ml-24"
+                                        >
+                                            <Icon
+                                                name="solid:triangle-exclamation"
+                                                className="text-palette-beige"
+                                            />
+                                        </Tooltip>
+                                    )}
+                                </div>
+                            ),
                         }))}
                         renderRow={({ children, row, rowProps }) => (
-                            <TR
-                                className={
-                                    row._proposal.hasVotedOnProp
-                                        ? classNames.hasVotedRow
-                                        : undefined
-                                }
-                                key={row._proposal.proposal_id}
-                                {...rowProps}
-                            >
-                                {children}
-                            </TR>
+                            <Fragment key={row._proposal.proposal_id}>
+                                {Number(row._proposal.percentage) <
+                                    VOTE_SHARE_THRESHOLD && (
+                                    <TR
+                                        className="
+                                            group/table-row
+                                            hidden
+                                            [.js-is-above-threshold+&]:table-row
+                                        "
+                                    >
+                                        <TD colSpan={99} className="!p-0">
+                                            <div
+                                                className="
+                                                    flex
+                                                    items-center
+                                                    justify-between
+                                                    gap-3
+                                                    whitespace-nowrap
+                                                    text-xs
+                                                    text-palette-beige
+                                                "
+                                            >
+                                                <div
+                                                    className="
+                                                        w-full
+                                                        border-t-2
+                                                        border-palette-beige
+                                                    "
+                                                />
+
+                                                <div className="flex items-center gap-1">
+                                                    <Icon name="solid:triangle-exclamation" />
+                                                    <span>
+                                                        These bids are below the{" "}
+                                                        <strong>
+                                                            {
+                                                                VOTE_SHARE_THRESHOLD
+                                                            }
+                                                            % vote share
+                                                            threshold
+                                                        </strong>
+                                                    </span>
+                                                    <Tooltip
+                                                        tipContents={
+                                                            voteThresholdTooltip
+                                                        }
+                                                    />
+                                                </div>
+
+                                                <div
+                                                    className="
+                                                        w-full
+                                                        border-t-2
+                                                        border-palette-beige
+                                                    "
+                                                />
+                                            </div>
+                                        </TD>
+                                    </TR>
+                                )}
+                                <TR
+                                    className={twMerge(
+                                        row._proposal.hasVotedOnProp
+                                            ? classNames.hasVotedRow
+                                            : undefined,
+                                        Number(row._proposal.percentage) >=
+                                            VOTE_SHARE_THRESHOLD
+                                            ? "js-is-above-threshold"
+                                            : "js-is-below-threshold"
+                                    )}
+                                    key={row._proposal.proposal_id}
+                                    {...rowProps}
+                                >
+                                    {children}
+                                </TR>
+                            </Fragment>
                         )}
                     />
                 ) : (
