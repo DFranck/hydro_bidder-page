@@ -731,7 +731,7 @@ const LockForm = ({
                                         <StyledText as="label" variant="label">
                                             Voting Power:
                                         </StyledText>
-                                        <StyledText variant="importantValue">
+                                        <strong>
                                             {formatAmount(
                                                 scaleLockupPower(
                                                     selectedDuration,
@@ -741,7 +741,7 @@ const LockForm = ({
                                                     )
                                                 )
                                             )}
-                                        </StyledText>
+                                        </strong>
                                     </div>
                                     <div className="col-span-2 flex flex-row-reverse">
                                         <StyledText
