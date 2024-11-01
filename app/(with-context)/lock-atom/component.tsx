@@ -554,6 +554,10 @@ const LockForm = ({
                             {!validator && validators && (
                                 <div className={commonClassNames.formContainer}>
                                     <div className="space-y-3">
+                                        <StyledText variant="label">
+                                            How to get voting power:
+                                        </StyledText>
+
                                         <ol className="list-inside list-decimal">
                                             <li>
                                                 Your ATOM staked to a validator
@@ -576,15 +580,18 @@ const LockForm = ({
                                         )}
                                     </div>
 
-                                    <p>
-                                        <StyledText as="label" variant="label">
-                                            Select Validator:
-                                        </StyledText>
-                                    </p>
-
                                     <div
                                         className={commonClassNames.cardContent}
                                     >
+                                        <p>
+                                            <StyledText
+                                                as="label"
+                                                variant="label"
+                                            >
+                                                Select a Validator:
+                                            </StyledText>
+                                        </p>
+
                                         {validators.map((v) => (
                                             <ValidatorListItem
                                                 key={
