@@ -569,8 +569,9 @@ const LockForm = ({
                                         {validators.length > 1 && (
                                             <p>
                                                 Since you have multiple
-                                                validators, you will need to do
-                                                one at time.
+                                                validators, you will need to
+                                                select one with staked ATOM to
+                                                use for your voting power.
                                             </p>
                                         )}
                                     </div>
