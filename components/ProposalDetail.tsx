@@ -522,18 +522,38 @@ export function ProposalDetail({
                             <StyledText as="h3" variant="label">
                                 Current Vote Percentage
                             </StyledText>
-                            <p className="flex flex-row items-center gap-2 text-xl font-bold not-italic">
+                            <p
+                                className="
+                                    flex
+                                    flex-row
+                                    items-center
+                                    gap-2
+                                    text-xl
+                                    font-bold
+                                    not-italic
+                                "
+                            >
                                 <span>{proposal.percentage}%</span>
                                 {Number(proposal.percentage) <
                                     VOTE_SHARE_THRESHOLD && (
-                                    <Tooltip
-                                        tipContents={voteThresholdTooltip}
-                                        classNamesForTooltip="-ml-24"
-                                    >
-                                        <Icon
-                                            name="solid:triangle-exclamation"
-                                            className="text-palette-beige"
-                                        />
+                                    <Tooltip tipContents={voteThresholdTooltip}>
+                                        <span
+                                            className="
+                                                flex
+                                                items-center
+                                                gap-1
+                                                whitespace-nowrap
+                                                text-xs
+                                                font-normal
+                                                text-palette-beige
+                                            "
+                                        >
+                                            <Icon
+                                                name="solid:triangle-exclamation"
+                                                className="text-palette-beige"
+                                            />
+                                            <span>Below Threshold</span>
+                                        </span>
                                     </Tooltip>
                                 )}
                             </p>
