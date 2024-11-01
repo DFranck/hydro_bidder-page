@@ -114,14 +114,22 @@ export function PrettyTable<R extends BaseRowObject, K extends keyof R>({
                 ))
 
                 return renderRow ? (
-                    renderRow({ children: renderedCells, row, rowProps })
+                    renderRow({
+                        children: renderedCells,
+                        row,
+                        rowIndex,
+                        rowProps,
+                        sortDirection,
+                        sortedColumnKey,
+                        sortedRows,
+                    })
                 ) : (
                     <TR key={rowIndex} variant="tbody" {...rowProps}>
                         {renderedCells}
                     </TR>
                 )
             }),
-        [columnsInState, renderRow, sortedRows]
+        [columnsInState, renderRow, sortedRows, sortDirection, sortedColumnKey]
     )
 
     return (
