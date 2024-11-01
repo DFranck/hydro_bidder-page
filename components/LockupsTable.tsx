@@ -109,13 +109,13 @@ function Lockups({
         <div>
             <div
                 className="
-                  -mx-3
-                  overflow-hidden
-                  rounded-md
-                  bg-palette-text/20
-                  px-3
-                  backdrop-blur-md
-              "
+                    -mx-3
+                    overflow-hidden
+                    rounded-md
+                    bg-palette-text/20
+                    px-3
+                    backdrop-blur-md
+                "
             >
                 <div
                     className="
@@ -123,11 +123,13 @@ function Lockups({
                         flex-col
                         justify-between
                         gap-3
-                        p-6
+                        p-5
                         lg:flex-row
                     "
                 >
-                    <h3>My Lockups</h3>
+                    <StyledText as="h2" variant="h3">
+                        Your Lockups
+                    </StyledText>
 
                     <div
                         className="
