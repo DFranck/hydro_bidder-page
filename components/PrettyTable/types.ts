@@ -83,7 +83,11 @@ export interface RowRenderFunction<R extends BaseRowObject, K extends keyof R> {
     (renderProps: {
         children: ReactNode
         row: R
+        rowIndex: number
         rowProps: ComponentPropsWithRef<"tr">
+        sortDirection: SortDirection | null
+        sortedColumnKey: K
+        sortedRows: R[]
     }): ReactNode
 }
 
