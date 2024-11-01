@@ -3,8 +3,8 @@
 import { useAppContext } from "@/app/(with-context)/context"
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { Icon } from "@/components/Icon"
-import { EditLockupDuration } from "@/components/modals/EditLockupDuration"
 import { PrettyTable } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
@@ -327,7 +327,7 @@ function Lockups({
                                     </>
                                 ),
                                 actions: (
-                                    <EditLockupDuration
+                                    <EditLockupDurationModal
                                         validatorMap={validatorMap}
                                         onSuccess={() => {
                                             setRefetch(true)
