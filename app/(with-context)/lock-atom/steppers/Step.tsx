@@ -26,25 +26,27 @@ export function Step({
                 max-w-screen-sm
             `}
         >
-            <Card.Header title={title} />
+            {title && <Card.Header title={title} />}
 
-            <Card.Body>
-                <ConditionalWrapper
-                    condition={!!isWorking}
-                    wrapper={(children) => (
-                        <div className="flex items-center gap-6">
-                            <div className="shrink-0 animate-spin text-2xl">
-                                <Icon name="solid:loader" />
+            {contents && (
+                <Card.Body>
+                    <ConditionalWrapper
+                        condition={!!isWorking}
+                        wrapper={(children) => (
+                            <div className="flex items-center gap-6">
+                                <div className="shrink-0 animate-spin text-2xl">
+                                    <Icon name="solid:loader" />
+                                </div>
+                                <div className="flex flex-col gap-3">
+                                    {children}
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-3">
-                                {children}
-                            </div>
-                        </div>
-                    )}
-                >
-                    {contents}
-                </ConditionalWrapper>
-            </Card.Body>
+                        )}
+                    >
+                        {contents}
+                    </ConditionalWrapper>
+                </Card.Body>
+            )}
 
             {buttons && (
                 <Card.Footer>
