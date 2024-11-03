@@ -484,7 +484,7 @@ const LockForm = ({
         hubChain.address || ""
     )
 
-    const selectedAmount = parseInt(amount || "0")
+    const selectedAmount = parseFloat(amount || "0")
     const selectedDuration = parseInt(duration || "0")
 
     useEffect(() => {
@@ -514,8 +514,6 @@ const LockForm = ({
         const formattedValue = parseFloat(inputValue) || 0
         setAmount(Math.min(formattedValue, maxATOMAmount).toString())
     }
-
-    console.log(amount)
 
     const delegationBalance = Number(
         validators?.find((v) => v.validator.operator_address === validator)
@@ -733,14 +731,18 @@ const LockForm = ({
                                                                 1e6 || 0
                                                         )
                                                     )
+
                                                 console.log(
                                                     selectedAmount,
-                                                    BigInt(
-                                                        selectedAmount * 1e6
-                                                    ),
                                                     selectedDuration,
-                                                    lockupPower
+                                                    BigInt(
+                                                        selectedAmount * 1e6 ||
+                                                            0
+                                                    ),
+                                                    lockupPower,
+                                                    formatAmount(lockupPower, 6)
                                                 )
+
                                                 return formatAmount(
                                                     lockupPower,
                                                     6
