@@ -240,8 +240,6 @@ export function ProposalDetail({
         }
     })
 
-    console.log(pricedAndNamedTributes)
-
     return (
         <>
             <ModalWindow
