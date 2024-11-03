@@ -30,7 +30,6 @@ const commonClassNames = {
     cardFooter: "space-x-4",
     button: "cursor-pointer border-none bg-transparent text-white underline",
     formContainer: "space-y-8",
-    input: "w-1/2",
     radio: "peer flex items-center text-sm opacity-60 appearance-none rounded-full size-5 border-2 border-gray-300 checked:bg-palette-green checked:border-palette-green checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset] checked:opacity-100",
     radioLabel:
         "opacity-60 cursor-pointer peer-checked:opacity-100 peer-checked:font-bold whitespace-nowrap",
@@ -476,7 +475,7 @@ const LockForm = ({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        const uatomAmount = Math.floor(parseFloat(amount) * 1000000).toString()
+        const uatomAmount = Math.floor(parseFloat(amount) * 1e6).toString()
         onSubmit(validator, uatomAmount, parseInt(duration))
     }
 
@@ -506,9 +505,17 @@ const LockForm = ({
         }
     }, [selectedAmount, validator, validators])
 
-    const clearSelectedValidator = () => {
+    function clearSelectedValidator() {
         setValidator("")
     }
+
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+        const inputValue = e.target.value
+        const formattedValue = parseFloat(inputValue) || 0
+        setAmount(Math.min(formattedValue, maxATOMAmount).toString())
+    }
+
+    console.log(amount)
 
     const delegationBalance = Number(
         validators?.find((v) => v.validator.operator_address === validator)
@@ -636,28 +643,13 @@ const LockForm = ({
                                         <div className="flex items-center gap-3">
                                             <StyledText
                                                 as="input"
-                                                variant="input.text"
                                                 type="number"
-                                                step={0.000001}
-                                                max={maxATOMAmount}
+                                                variant="input.text"
                                                 min={0.000001}
+                                                max={maxATOMAmount}
+                                                step={0.000001}
                                                 value={amount}
-                                                onChange={(
-                                                    event: ChangeEvent<HTMLInputElement>
-                                                ) => {
-                                                    setAmount(
-                                                        Math.min(
-                                                            parseFloat(
-                                                                event.target
-                                                                    .value
-                                                            ),
-                                                            maxATOMAmount
-                                                        ).toString()
-                                                    )
-                                                }}
-                                                className={
-                                                    commonClassNames.input
-                                                }
+                                                onChange={handleChange}
                                             />
                                             <StyledText
                                                 as="p"
@@ -732,15 +724,28 @@ const LockForm = ({
                                             Voting Power:
                                         </StyledText>
                                         <strong>
-                                            {formatAmount(
-                                                scaleLockupPower(
-                                                    selectedDuration,
-                                                    BigInt(
-                                                        selectedAmount * 1e6 ||
-                                                            0
+                                            {(() => {
+                                                const lockupPower =
+                                                    scaleLockupPower(
+                                                        selectedDuration,
+                                                        BigInt(
+                                                            selectedAmount *
+                                                                1e6 || 0
+                                                        )
                                                     )
+                                                console.log(
+                                                    selectedAmount,
+                                                    BigInt(
+                                                        selectedAmount * 1e6
+                                                    ),
+                                                    selectedDuration,
+                                                    lockupPower
                                                 )
-                                            )}
+                                                return formatAmount(
+                                                    lockupPower,
+                                                    6
+                                                )
+                                            })()}
                                         </strong>
                                     </div>
                                     <div className="col-span-2 flex flex-row-reverse">

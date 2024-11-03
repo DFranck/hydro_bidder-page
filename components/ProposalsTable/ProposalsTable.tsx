@@ -27,6 +27,13 @@ export const voteThresholdTooltip = (
     </>
 )
 
+export const usdDisclaimerTooltip = (
+    <>
+        USD equivalent values are estimates and may not reflect the actual
+        current value.
+    </>
+)
+
 export function ProposalsTable({
     searchParams,
 }: {
@@ -447,7 +454,7 @@ export function ProposalsTable({
                                     <Icon name="solid:gem" />
                                 </Tooltip>
                             ) : (
-                                <>
+                                <Tooltip tipContents={usdDisclaimerTooltip}>
                                     <div>
                                         {(!isWalletConnected
                                             ? 0
@@ -466,7 +473,7 @@ export function ProposalsTable({
                                             maximumFractionDigits: 2,
                                         })}
                                     </div>
-                                    <div className="text-xs opacity-60">
+                                    <div className="whitespace-nowrap text-xs opacity-60">
                                         of{" "}
                                         {proposalTotalTribute(
                                             proposal.pricedAndNamedTributes
@@ -477,7 +484,7 @@ export function ProposalsTable({
                                             maximumFractionDigits: 2,
                                         })}
                                     </div>
-                                </>
+                                </Tooltip>
                             ),
 
                             currentVoteShare: (
