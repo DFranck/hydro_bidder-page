@@ -732,17 +732,6 @@ const LockForm = ({
                                                         )
                                                     )
 
-                                                console.log(
-                                                    selectedAmount,
-                                                    selectedDuration,
-                                                    BigInt(
-                                                        selectedAmount * 1e6 ||
-                                                            0
-                                                    ),
-                                                    lockupPower,
-                                                    formatAmount(lockupPower, 6)
-                                                )
-
                                                 return formatAmount(
                                                     lockupPower,
                                                     6
