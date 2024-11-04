@@ -484,8 +484,14 @@ const LockForm = ({
         hubChain.address || ""
     )
 
-    const selectedAmount = parseFloat(amount || "0")
     const selectedDuration = parseInt(duration || "0")
+    const delegationBalance = Number(
+        validators?.find((v) => v.validator.operator_address === validator)
+            ?.delegation_balance.amount
+    )
+    const maxATOMAmount =
+        Math.min(delegationBalance, max_locked_tokens_per_address) / 1e6
+    const selectedAmount = Math.min(parseFloat(amount || "0"), maxATOMAmount)
 
     useEffect(() => {
         if (validator && validators) {
@@ -513,13 +519,11 @@ const LockForm = ({
         setAmount(e.target.value)
     }
 
-    const delegationBalance = Number(
-        validators?.find((v) => v.validator.operator_address === validator)
-            ?.delegation_balance.amount
-    )
-
-    const maxATOMAmount =
-        Math.min(delegationBalance, max_locked_tokens_per_address) / 1e6
+    function handleBlur(e: ChangeEvent<HTMLInputElement>) {
+        setAmount(
+            Math.min(parseFloat(e.target.value), maxATOMAmount).toString()
+        )
+    }
 
     return (
         <Card>
@@ -644,6 +648,7 @@ const LockForm = ({
                                                 pattern="^\d+(\.\d{1,6})?$"
                                                 variant="input.text"
                                                 value={amount}
+                                                onBlur={handleBlur}
                                                 onChange={handleChange}
                                             />
                                             <StyledText
