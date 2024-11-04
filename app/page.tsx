@@ -333,7 +333,7 @@ export default function Home() {
             </div>
             <Image
               className="mix-blend-screen"
-              src="/images/side-image-dots.png"
+              src="/images/side-image-dots.jpg"
               alt="Hydro"
               width={800}
               height={800}

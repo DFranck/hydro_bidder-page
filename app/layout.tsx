@@ -58,7 +58,7 @@ export default function RootLayout({
             h-screen
             w-screen
             bg-black
-            bg-[url('/images/AdobeStock_633966567.png')]
+            bg-[url('/images/AdobeStock_633966567.jpg')]
             bg-cover
             bg-no-repeat
           "
