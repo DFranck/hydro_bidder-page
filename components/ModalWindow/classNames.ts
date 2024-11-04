@@ -1,7 +1,7 @@
-import { twJoin, twMerge } from 'tailwind-merge'
+import { twJoin, twMerge } from "tailwind-merge"
 
 export const classNames = {
-  backdrop: ({ modalState = 'closed' }) =>
+  backdrop: ({ modalState = "closed" }) =>
     twMerge(
       `
       fixed
@@ -13,10 +13,10 @@ export const classNames = {
       transition-all
       duration-500
     `,
-      modalState === 'opening' || modalState === 'open'
+      modalState === "opening" || modalState === "open"
         ? `
-          pointer-events-auto
           bg-shadedBgColor
+          pointer-events-auto
           opacity-100
           backdrop-blur-md
         `
@@ -25,10 +25,10 @@ export const classNames = {
           bg-transparent
           opacity-0
           backdrop-blur-none
-        `,
+        `
     ),
 
-  container: ({ modalState = 'closed' }) =>
+  container: ({ modalState = "closed" }) =>
     twMerge(
       `
       bg-appBgColor
@@ -43,7 +43,7 @@ export const classNames = {
       shadow-xl
       duration-500
     `,
-      modalState === 'opening' || modalState === 'open'
+      modalState === "opening" || modalState === "open"
         ? `
           -translate-y-1/2
           opacity-100
@@ -52,7 +52,7 @@ export const classNames = {
           pointer-events-none
           -translate-y-full
           opacity-0
-        `,
+        `
     ),
 
   header: twJoin(`

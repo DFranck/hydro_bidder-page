@@ -3,14 +3,14 @@ import { ProposalsTable } from "../../../components/ProposalsTable/ProposalsTabl
 import { TopModulesForVoting } from "../../../components/TopModulesForVoting"
 
 export default async function ActiveProposalsPage({
-    searchParams,
+  searchParams,
 }: {
-    searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: { [key: string]: string | string[] | undefined }
 }) {
-    return (
-        <ContentContainer className="gap-12 py-12">
-            <TopModulesForVoting />
-            <ProposalsTable searchParams={searchParams} />
-        </ContentContainer>
-    )
+  return (
+    <ContentContainer className="gap-12 py-12">
+      <TopModulesForVoting />
+      <ProposalsTable searchParams={searchParams} />
+    </ContentContainer>
+  )
 }

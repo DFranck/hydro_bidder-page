@@ -3,30 +3,28 @@
 import { useEffect, useState } from "react"
 
 export function useIsDocumentScrolled() {
-    const [isDocumentScrolled, setIsDocumentScrolled] = useState(false)
-    const [canDocumentScroll, setCanDocumentScroll] = useState(false)
+  const [isDocumentScrolled, setIsDocumentScrolled] = useState(false)
+  const [canDocumentScroll, setCanDocumentScroll] = useState(false)
 
-    useEffect(() => {
-        function handleScroll() {
-            setIsDocumentScrolled(window.scrollY > 50)
-            setCanDocumentScroll(
-                window.innerHeight < document.body.scrollHeight
-            )
-        }
+  useEffect(() => {
+    function handleScroll() {
+      setIsDocumentScrolled(window.scrollY > 50)
+      setCanDocumentScroll(window.innerHeight < document.body.scrollHeight)
+    }
 
-        window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll)
 
-        const interval = setInterval(() => {
-            handleScroll()
-        }, 1000)
+    const interval = setInterval(() => {
+      handleScroll()
+    }, 1000)
 
-        handleScroll()
+    handleScroll()
 
-        return () => {
-            window.removeEventListener("scroll", handleScroll)
-            clearInterval(interval)
-        }
-    }, [])
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      clearInterval(interval)
+    }
+  }, [])
 
-    return { isDocumentScrolled, canDocumentScroll }
+  return { isDocumentScrolled, canDocumentScroll }
 }

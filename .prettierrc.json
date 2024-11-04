@@ -1,9 +1,9 @@
 {
-    "plugins": ["prettier-plugin-tailwindcss"],
-    "tailwindFunctions": ["twJoin", "twMerge"],
-    "tailwindPreserveWhitespace": true,
-    "trailingComma": "es5",
-    "tabWidth": 4,
-    "semi": false,
-    "singleQuote": false
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindFunctions": ["twJoin", "twMerge"],
+  "tailwindPreserveWhitespace": true,
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": false
 }

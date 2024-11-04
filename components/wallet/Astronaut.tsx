@@ -153,4 +153,4 @@ export const Astronaut = (props: any) => (
       fill="#DAE0DF"
     />
   </svg>
-);
+)

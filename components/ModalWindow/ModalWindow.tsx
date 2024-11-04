@@ -6,155 +6,155 @@ import { twMerge } from "tailwind-merge"
 import { useIsClient } from "usehooks-ts"
 
 type ModalWindowProps<T extends ElementType = "section"> = ComponentProps<T> & {
-    as?: T
-    isOpen: boolean
-    propsForBackdrop?: ComponentProps<"div">
-    onClose: () => void
+  as?: T
+  isOpen: boolean
+  propsForBackdrop?: ComponentProps<"div">
+  onClose: () => void
 }
 
 export function ModalWindow<T extends ElementType = "section">({
-    as,
-    children,
-    className,
-    isOpen,
-    propsForBackdrop,
-    onClose,
-    duration = 500,
-    ...otherProps
+  as,
+  children,
+  className,
+  isOpen,
+  propsForBackdrop,
+  onClose,
+  duration = 500,
+  ...otherProps
 }: ModalWindowProps<T>) {
-    const isClient = useIsClient()
-    const [modalState, setModalState] = useState<
-        "closed" | "opening" | "open" | "closing"
-    >("closed")
-    const isOpenOrOpening = ["open", "opening"].includes(modalState)
-    const isClosedOrClosing = ["closed", "closing"].includes(modalState)
-    const timerRef = useRef<ReturnType<typeof setTimeout>>()
+  const isClient = useIsClient()
+  const [modalState, setModalState] = useState<
+    "closed" | "opening" | "open" | "closing"
+  >("closed")
+  const isOpenOrOpening = ["open", "opening"].includes(modalState)
+  const isClosedOrClosing = ["closed", "closing"].includes(modalState)
+  const timerRef = useRef<ReturnType<typeof setTimeout>>()
 
-    useEffect(() => {
-        if (isOpen) {
-            clearTimer()
-            setModalState("opening")
+  useEffect(() => {
+    if (isOpen) {
+      clearTimer()
+      setModalState("opening")
 
-            timerRef.current = setTimeout(() => {
-                setModalState("open")
-            }, duration)
+      timerRef.current = setTimeout(() => {
+        setModalState("open")
+      }, duration)
 
-            return clearTimer
-        } else {
-            handleClickClose()
-        }
-    }, [isOpen, duration])
+      return clearTimer
+    } else {
+      handleClickClose()
+    }
+  }, [isOpen, duration])
 
-    useEffect(() => {
-        const shortcuts: Record<string, () => void> = {
-            Escape: handleClickClose,
-        }
-
-        function handleKeyDown(event: KeyboardEvent) {
-            if (event.key in shortcuts) {
-                shortcuts[event.key]()
-            }
-        }
-
-        window.addEventListener("keydown", handleKeyDown)
-
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown)
-        }
-    }, [])
-
-    function handleClickClose() {
-        clearTimer()
-        setModalState("closing")
-
-        timerRef.current = setTimeout(() => {
-            setModalState("closed")
-            onClose()
-        }, duration)
+  useEffect(() => {
+    const shortcuts: Record<string, () => void> = {
+      Escape: handleClickClose,
     }
 
-    function clearTimer() {
-        clearTimeout(timerRef.current ?? 0)
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key in shortcuts) {
+        shortcuts[event.key]()
+      }
     }
 
-    const Component = String(as || "section") as ElementType
+    window.addEventListener("keydown", handleKeyDown)
 
-    return !isClient
-        ? null
-        : createPortal(
-              <>
-                  <ModalWindow.Backdrop
-                      {...propsForBackdrop}
-                      className={twMerge(
-                          `
-                              pointer-events-none
-                              opacity-0
-                              transition-all
-                          `,
-                          isOpenOrOpening &&
-                              `
-                                  pointer-events-auto
-                                  opacity-100
-                              `,
-                          propsForBackdrop?.className
-                      )}
-                      style={{ transitionDuration: duration }}
-                      onClick={(...args) => {
-                          handleClickClose()
-                          propsForBackdrop?.onClick?.(...args)
-                      }}
-                  />
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
 
-                  <Component
-                      className={twMerge(
-                          `
-                              fixed
-                              left-1/2
-                              top-1/2
-                              z-[1000]
-                              -translate-x-1/2
-                              -translate-y-1/2
-                              transition-all
-                          `,
-                          isOpenOrOpening &&
-                              `
-                                  scale-100
-                                  opacity-100
-                              `,
-                          isClosedOrClosing &&
-                              `
-                                  pointer-events-none
-                                  scale-75
-                                  opacity-0
-                              `,
-                          className
-                      )}
-                      style={{ transitionDuration: duration }}
-                      {...otherProps}
-                  >
-                      {children}
-                  </Component>
-              </>,
-              document.body
-          )
+  function handleClickClose() {
+    clearTimer()
+    setModalState("closing")
+
+    timerRef.current = setTimeout(() => {
+      setModalState("closed")
+      onClose()
+    }, duration)
+  }
+
+  function clearTimer() {
+    clearTimeout(timerRef.current ?? 0)
+  }
+
+  const Component = String(as || "section") as ElementType
+
+  return !isClient
+    ? null
+    : createPortal(
+        <>
+          <ModalWindow.Backdrop
+            {...propsForBackdrop}
+            className={twMerge(
+              `
+                pointer-events-none
+                opacity-0
+                transition-all
+              `,
+              isOpenOrOpening &&
+                `
+                  pointer-events-auto
+                  opacity-100
+                `,
+              propsForBackdrop?.className
+            )}
+            style={{ transitionDuration: duration }}
+            onClick={(...args) => {
+              handleClickClose()
+              propsForBackdrop?.onClick?.(...args)
+            }}
+          />
+
+          <Component
+            className={twMerge(
+              `
+                fixed
+                left-1/2
+                top-1/2
+                z-[1000]
+                -translate-x-1/2
+                -translate-y-1/2
+                transition-all
+              `,
+              isOpenOrOpening &&
+                `
+                  scale-100
+                  opacity-100
+                `,
+              isClosedOrClosing &&
+                `
+                  pointer-events-none
+                  scale-75
+                  opacity-0
+                `,
+              className
+            )}
+            style={{ transitionDuration: duration }}
+            {...otherProps}
+          >
+            {children}
+          </Component>
+        </>,
+        document.body
+      )
 }
 
 ModalWindow.Backdrop = function Backdrop({
-    className,
-    ...otherProps
+  className,
+  ...otherProps
 }: ComponentProps<"div">) {
-    return (
-        <div
-            className={twMerge(
-                `
-                    fixed
-                    inset-0
-                    z-[999]
-                    backdrop-blur-md
-                `,
-                className
-            )}
-            {...otherProps}
-        />
-    )
+  return (
+    <div
+      className={twMerge(
+        `
+          fixed
+          inset-0
+          z-[999]
+          backdrop-blur-md
+        `,
+        className
+      )}
+      {...otherProps}
+    />
+  )
 }

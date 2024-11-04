@@ -4,84 +4,80 @@ import Image from "next/image"
 import Link from "next/link"
 
 export const Footer = () => {
-    return (
-        <div className="bg-black">
-            <ContentContainer
-                className="
-                    z-10
-                    flex-col
-                    items-center
-                    justify-between
-                    gap-1
-                    py-6
-                    text-base
-                    font-normal
-                    italic
-                    leading-[160%]
-                    text-white/60
-                    md:flex-row
-                "
-            >
-                <Link href={"/"}>
-                    <Image
-                        className="object-contain"
-                        src={"/images/logo.svg"}
-                        alt="Hydro Logo"
-                        width={160}
-                        height={35}
-                    />
-                </Link>
+  return (
+    <div className="bg-black">
+      <ContentContainer
+        className="
+          z-10
+          flex-col
+          items-center
+          justify-between
+          gap-1
+          py-6
+          text-base
+          font-normal
+          italic
+          leading-[160%]
+          text-white/60
+          md:flex-row
+        "
+      >
+        <Link href={"/"}>
+          <Image
+            className="object-contain"
+            src={"/images/logo.svg"}
+            alt="Hydro Logo"
+            width={160}
+            height={35}
+          />
+        </Link>
 
-                <div className="flex items-center gap-1">
-                    Built for the Cosmos Hub by{" "}
-                    <a
-                        className="
-                            inline-flex
-                            items-center
-                            gap-1
-                            underline
-                            hover:text-white
-                        "
-                        href="https://informal.systems"
-                        target="_blank"
-                    >
-                        <span>Informal Systems</span>
-                        <Icon name="solid:arrow-up-right" />
-                    </a>
-                </div>
-
-                <div
-                    className="
-                        flex
-                        flex-row
-                        items-center
-                        justify-between
-                        gap-3
-                    "
-                >
-                    <a
-                        href="https://cosmos.network"
-                        target="_blank"
-                        title="Cosmos Hub"
-                    >
-                        <Icon name="solid:globe" />
-                    </a>
-                    <a
-                        href="https://twitter.com/cosmoshub"
-                        target="_blank"
-                        title="Twitter"
-                    >
-                        <Icon name="brands:twitter" />
-                    </a>
-                    <a
-                        href="https://t.me/+xUzNOTZjUNw5Mzhk"
-                        target="_blank"
-                        title="Telegram"
-                    >
-                        <Icon name="solid:paper-plane" />
-                    </a>
-                </div>
-            </ContentContainer>
+        <div className="flex items-center gap-1">
+          Built for the Cosmos Hub by{" "}
+          <a
+            className="
+              inline-flex
+              items-center
+              gap-1
+              underline
+              hover:text-white
+            "
+            href="https://informal.systems"
+            target="_blank"
+          >
+            <span>Informal Systems</span>
+            <Icon name="solid:arrow-up-right" />
+          </a>
         </div>
-    )
+
+        <div
+          className="
+            flex
+            flex-row
+            items-center
+            justify-between
+            gap-3
+          "
+        >
+          <a href="https://cosmos.network" target="_blank" title="Cosmos Hub">
+            <Icon name="solid:globe" />
+          </a>
+          <a
+            href="https://twitter.com/cosmoshub"
+            target="_blank"
+            title="Twitter"
+          >
+            <Icon name="brands:twitter" />
+          </a>
+          <a
+            href="https://t.me/+xUzNOTZjUNw5Mzhk"
+            target="_blank"
+            title="Telegram"
+          >
+            <Icon name="solid:paper-plane" />
+          </a>
+        </div>
+      </ContentContainer>
+    </div>
+  )
 }

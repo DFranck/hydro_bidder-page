@@ -4,137 +4,107 @@ import { StyledTextVariant } from "@/components/StyledText/StyledText"
 import { MouseEventHandler } from "react"
 
 export type ButtonProps = {
-    text?: string
-    className?: string
-    address?: string
-    connected: boolean
-    loading?: boolean
-    disabled?: boolean
-    variant?: StyledTextVariant
-    onClick?: MouseEventHandler<HTMLButtonElement>
+  text?: string
+  className?: string
+  address?: string
+  connected: boolean
+  loading?: boolean
+  disabled?: boolean
+  variant?: StyledTextVariant
+  onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
 export type ConnectProps = Pick<
-    ButtonProps,
-    "text" | "loading" | "address" | "className" | "onClick"
+  ButtonProps,
+  "text" | "loading" | "address" | "className" | "onClick"
 >
 
 function noop() {}
 
 export function WButton({
-    text,
-    address,
-    connected,
-    loading,
-    disabled,
-    variant = "button.primary.small",
-    onClick = noop,
+  text,
+  address,
+  connected,
+  loading,
+  disabled,
+  variant = "button.primary.small",
+  onClick = noop,
 }: ButtonProps) {
-    return (
-        <StyledText
-            as="button"
-            variant={variant}
-            disabled={disabled}
-            onClick={onClick}
-        >
-            {connected && <Icon name="solid:link" />}
-            {loading && (
-                <span className="animate-spin">
-                    <Icon name="solid:loader" />
-                </span>
-            )}
-            <span>{address ? address : text}</span>
-        </StyledText>
-    )
+  return (
+    <StyledText
+      as="button"
+      variant={variant}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      {connected && <Icon name="solid:link" />}
+      {loading && (
+        <span className="animate-spin">
+          <Icon name="solid:loader" />
+        </span>
+      )}
+      <span>{address ? address : text}</span>
+    </StyledText>
+  )
 }
 
 export const WButtonConnect = ({
-    text = "Connect Wallet",
-    variant,
-    onClick = noop,
+  text = "Connect Wallet",
+  variant,
+  onClick = noop,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
-    <WButton
-        text={text}
-        connected={false}
-        onClick={onClick}
-        variant={variant}
-    />
+  <WButton text={text} connected={false} onClick={onClick} variant={variant} />
 )
 
 export const WButtonConnected = ({
-    address,
-    variant,
-    onClick = noop,
+  address,
+  variant,
+  onClick = noop,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
-    <WButton
-        text={!!address && address.length > 0 ? `Connected` : "Connecting..."}
-        connected={true}
-        onClick={onClick}
-        variant={variant}
-    />
+  <WButton
+    text={!!address && address.length > 0 ? `Connected` : "Connecting..."}
+    connected={true}
+    onClick={onClick}
+    variant={variant}
+  />
 )
 
 export const WButtonDisconnected = ({
-    text = "Connect Wallet",
-    variant,
-    onClick = noop,
+  text = "Connect Wallet",
+  variant,
+  onClick = noop,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
-    <WButton
-        text={text}
-        connected={false}
-        onClick={onClick}
-        variant={variant}
-    />
+  <WButton text={text} connected={false} onClick={onClick} variant={variant} />
 )
 
 export const WButtonConnecting = ({
-    text = "Connecting",
-    loading = true,
-    variant,
+  text = "Connecting",
+  loading = true,
+  variant,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
-    <WButton
-        text={text}
-        connected={false}
-        loading={loading}
-        variant={variant}
-    />
+  <WButton text={text} connected={false} loading={loading} variant={variant} />
 )
 
 export const WButtonRejected = ({
-    text = "Reconnect",
-    variant,
-    onClick = noop,
+  text = "Reconnect",
+  variant,
+  onClick = noop,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
-    <WButton
-        text={text}
-        connected={false}
-        onClick={onClick}
-        variant={variant}
-    />
+  <WButton text={text} connected={false} onClick={onClick} variant={variant} />
 )
 
 export const WButtonError = ({
-    text = "Change",
-    variant,
-    onClick = noop,
+  text = "Change",
+  variant,
+  onClick = noop,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
-    <WButton
-        text={text}
-        connected={false}
-        onClick={onClick}
-        variant={variant}
-    />
+  <WButton text={text} connected={false} onClick={onClick} variant={variant} />
 )
 
 export const WButtonNotExist = ({
-    text = "Install Wallet",
-    variant,
-    onClick = noop,
+  text = "Install Wallet",
+  variant,
+  onClick = noop,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
-    <WButton
-        text={text}
-        connected={false}
-        onClick={onClick}
-        variant={variant}
-    />
+  <WButton text={text} connected={false} onClick={onClick} variant={variant} />
 )

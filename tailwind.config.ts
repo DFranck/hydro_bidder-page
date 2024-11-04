@@ -2,84 +2,84 @@ import type { Config } from "tailwindcss"
 import plugin from "tailwindcss/plugin"
 
 const config = {
-    darkMode: ["class"],
-    content: [
-        "./pages/**/*.{ts,tsx,js,jsx,mdx}",
-        "./components/**/*.{ts,tsx,js,jsx,mdx}",
-        "./app/**/*.{ts,tsx,js,jsx,mdx}",
-        "./src/**/*.{ts,tsx,js,jsx,mdx}",
-    ],
-    prefix: "",
-    theme: {
-        fontFamily: {
-            inter: ["Inter"],
-        },
-        container: {
-            center: true,
-            padding: "2rem",
-            screens: {
-                "2xl": "1400px",
-            },
-        },
-        extend: {
-            borderColor: {
-                DEFAULT: "rgba(255, 255, 255, 0.2)",
-            },
-            colors: {
-                palette: {
-                    beige: "#FFE1B8",
-                    cyan: "#00D1FF",
-                    blue: "#0061FF",
-                    green: "#00FFC2",
-                    red: "#FF7B51",
-                    text: "#080815",
-                },
-            },
-            keyframes: {
-                "accordion-down": {
-                    from: { height: "0" },
-                    to: { height: "var(--radix-accordion-content-height)" },
-                },
-                "accordion-up": {
-                    from: { height: "var(--radix-accordion-content-height)" },
-                    to: { height: "0" },
-                },
-            },
-            animation: {
-                "accordion-down": "accordion-down 0.2s ease-out",
-                "accordion-up": "accordion-up 0.2s ease-out",
-            },
-        },
+  darkMode: ["class"],
+  content: [
+    "./pages/**/*.{ts,tsx,js,jsx,mdx}",
+    "./components/**/*.{ts,tsx,js,jsx,mdx}",
+    "./app/**/*.{ts,tsx,js,jsx,mdx}",
+    "./src/**/*.{ts,tsx,js,jsx,mdx}",
+  ],
+  prefix: "",
+  theme: {
+    fontFamily: {
+      inter: ["Inter"],
     },
-    plugins: [
-        plugin(function ({ addBase, theme }) {
-            addBase({
-                html: {
-                    scrollPaddingTop: theme("spacing.12"),
-                },
-                "*": {
-                    scrollbarColor: `${theme("colors.palette.green")} black`,
-                    scrollBehavior: "smooth",
-                },
-                "*::-webkit-scrollbar": {
-                    height: theme("spacing.2"),
-                    width: theme("spacing.2"),
-                },
-                "*::-webkit-scrollbar-track": {
-                    background: "black",
-                },
-                "*::-webkit-scrollbar-thumb": {
-                    background: theme("colors.palette.green"),
-                    borderRadius: theme("spacing.8"),
-                },
-                "a, button, input, textarea": {
-                    touchAction: "manipulation",
-                },
-            })
-        }),
-        require("tailwindcss-animate"),
-        require("@tailwindcss/typography"),
-    ],
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      borderColor: {
+        DEFAULT: "rgba(255, 255, 255, 0.2)",
+      },
+      colors: {
+        palette: {
+          beige: "#FFE1B8",
+          cyan: "#00D1FF",
+          blue: "#0061FF",
+          green: "#00FFC2",
+          red: "#FF7B51",
+          text: "#080815",
+        },
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [
+    plugin(function ({ addBase, theme }) {
+      addBase({
+        html: {
+          scrollPaddingTop: theme("spacing.12"),
+        },
+        "*": {
+          scrollbarColor: `${theme("colors.palette.green")} black`,
+          scrollBehavior: "smooth",
+        },
+        "*::-webkit-scrollbar": {
+          height: theme("spacing.2"),
+          width: theme("spacing.2"),
+        },
+        "*::-webkit-scrollbar-track": {
+          background: "black",
+        },
+        "*::-webkit-scrollbar-thumb": {
+          background: theme("colors.palette.green"),
+          borderRadius: theme("spacing.8"),
+        },
+        "a, button, input, textarea": {
+          touchAction: "manipulation",
+        },
+      })
+    }),
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+  ],
 } satisfies Config
 
 export default config

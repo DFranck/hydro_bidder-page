@@ -1,18 +1,12 @@
-import { ReactNode } from "react";
-import {
-  Box,
-  Icon,
-  Stack,
-  Text,
-  useColorModeValue,
-} from "@interchain-ui/react";
+import { ReactNode } from "react"
+import { Box, Icon, Stack, Text, useColorModeValue } from "@interchain-ui/react"
 
 export type WarningProps = {
-  text: string;
-  icon?: ReactNode;
-};
+  text: string
+  icon?: ReactNode
+}
 
-export const WarningIcon = <Icon name="errorWarningLine" size="$lg" />;
+export const WarningIcon = <Icon name="errorWarningLine" size="$lg" />
 
 export function Warning({ text, icon = WarningIcon }: WarningProps) {
   return (
@@ -35,5 +29,5 @@ export function Warning({ text, icon = WarningIcon }: WarningProps) {
         </Box>
       </Stack>
     </Box>
-  );
+  )
 }

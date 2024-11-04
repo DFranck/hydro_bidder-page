@@ -1,21 +1,21 @@
-'use client'
+"use client"
 
-import { ComponentProps, ElementType } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { ComponentProps, ElementType } from "react"
+import { twMerge } from "tailwind-merge"
 
-type CollapsibleBoxProps<T extends ElementType = 'div'> = ComponentProps<T> & {
+type CollapsibleBoxProps<T extends ElementType = "div"> = ComponentProps<T> & {
   as?: T
   isCollapsed?: boolean
 }
 
-export function CollapsibleBox<T extends ElementType = 'div'>({
+export function CollapsibleBox<T extends ElementType = "div">({
   as,
   children,
   className,
   isCollapsed,
   ...otherProps
 }: CollapsibleBoxProps<T>) {
-  const Component = String(as || 'div') as ElementType
+  const Component = String(as || "div") as ElementType
 
   return (
     <Component
@@ -29,7 +29,7 @@ export function CollapsibleBox<T extends ElementType = 'div'>({
           `
             grid-rows-[1fr]
           `,
-        className,
+        className
       )}
       {...otherProps}
     >
