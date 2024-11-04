@@ -217,6 +217,7 @@ export const classNames = {
         bg-white/20
         p-2
         outline-none
+        invalid:!border-palette-red
         focus:border-palette-green
     `),
     "input.checkbox": twJoin(`

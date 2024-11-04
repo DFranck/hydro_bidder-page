@@ -510,9 +510,7 @@ const LockForm = ({
     }
 
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
-        const inputValue = e.target.value
-        const formattedValue = parseFloat(inputValue) || 0
-        setAmount(Math.min(formattedValue, maxATOMAmount).toString())
+        setAmount(e.target.value)
     }
 
     const delegationBalance = Number(
@@ -641,14 +639,25 @@ const LockForm = ({
                                         <div className="flex items-center gap-3">
                                             <StyledText
                                                 as="input"
-                                                type="number"
+                                                className="peer"
+                                                type="text"
+                                                pattern="^\d+(\.\d{1,6})?$"
                                                 variant="input.text"
-                                                min={0.000001}
-                                                max={maxATOMAmount}
-                                                step={0.000001}
                                                 value={amount}
                                                 onChange={handleChange}
                                             />
+                                            <StyledText
+                                                as="p"
+                                                className="
+                                                    hidden
+                                                    text-palette-red
+                                                    peer-invalid:block
+                                                "
+                                                variant="footnote"
+                                            >
+                                                <Icon name="triangle-exclamation" />{" "}
+                                                Invalid amount
+                                            </StyledText>
                                             <StyledText
                                                 as="p"
                                                 variant="footnote"
