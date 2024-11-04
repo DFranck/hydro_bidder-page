@@ -1,5 +1,4 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import { TopModulesForVoting } from "../../../../components/TopModulesForVoting"
 import { Details } from "./details"
 
 export default function VotingProposalSinglePage({
@@ -8,8 +7,7 @@ export default function VotingProposalSinglePage({
     params: { id: string }
 }) {
     return (
-        <ContentContainer className="gap-6 py-12">
-            <TopModulesForVoting />
+        <ContentContainer className="py-6">
             <Details params={params} />
         </ContentContainer>
     )
