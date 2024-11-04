@@ -13,142 +13,138 @@ import { initialTableState, tableStateReducer } from "./reducer"
 import { BaseRowObject, TableProps } from "./types"
 
 export function PrettyTable<R extends BaseRowObject, K extends keyof R>({
-    className,
-    columns,
-    contentForFirstRow = null,
-    contentForFooterRow = null,
-    contentAfterHeaderRow = null,
-    contentBeforeHeaderRow = null,
-    contentForLastRow = null,
-    initialSortedColumnKey,
-    renderRow,
-    rows,
-    ...otherProps
+  className,
+  columns,
+  contentForFirstRow = null,
+  contentForFooterRow = null,
+  contentAfterHeaderRow = null,
+  contentBeforeHeaderRow = null,
+  contentForLastRow = null,
+  initialSortedColumnKey,
+  renderRow,
+  rows,
+  ...otherProps
 }: TableProps<R, K>) {
-    const [tableState, tableDispatch] = useReducer(
-        tableStateReducer,
-        initialTableState
-    )
+  const [tableState, tableDispatch] = useReducer(
+    tableStateReducer,
+    initialTableState
+  )
 
-    const {
-        columns: columnsInState,
-        rows: rowsInState,
-        sortDirection,
-        sortedColumnKey,
-        sortedRows,
-    } = tableState
+  const {
+    columns: columnsInState,
+    rows: rowsInState,
+    sortDirection,
+    sortedColumnKey,
+    sortedRows,
+  } = tableState
 
-    useEffect(() => {
-        if (
-            columns.length === 0 ||
-            rows.length === 0 ||
-            (isEqual(columns, columnsInState) && isEqual(rows, rowsInState))
-        ) {
-            return
+  useEffect(() => {
+    if (
+      columns.length === 0 ||
+      rows.length === 0 ||
+      (isEqual(columns, columnsInState) && isEqual(rows, rowsInState))
+    ) {
+      return
+    }
+
+    tableDispatch({
+      type: "setTableData",
+      payload: {
+        columns,
+        dispatch: tableDispatch,
+        initialSortedColumnKey,
+        rows,
+      },
+    })
+  }, [columns, columnsInState, initialSortedColumnKey, rows, rowsInState])
+
+  const renderedHeaderCells = useMemo(() => {
+    function handleClickToSort(
+      columnKey: K,
+      event: MouseEvent<HTMLTableCellElement>
+    ) {
+      event.preventDefault()
+
+      tableDispatch({
+        type: "setSortedColumnKey",
+        payload: {
+          sortDirection: sortDirection === "ASC" ? "DESC" : "ASC",
+          sortedColumnKey: columnKey,
+        },
+      })
+    }
+
+    return columnsInState.map((column) => (
+      <TH
+        {...column.propsForHeaderCell}
+        isSortable={column.isSortable}
+        isSorted={column.key === sortedColumnKey}
+        key={String(column.key)}
+        sortDirection={sortDirection ?? column.initialSortDirection}
+        textAlign={column.textAlign}
+        onClick={
+          column.isSortable
+            ? handleClickToSort.bind(null, column.key)
+            : undefined
         }
+      >
+        {column.label || <>&nbsp;</>}
+      </TH>
+    ))
+  }, [columnsInState, sortDirection, sortedColumnKey])
 
-        tableDispatch({
-            type: "setTableData",
-            payload: {
-                columns,
-                dispatch: tableDispatch,
-                initialSortedColumnKey,
-                rows,
-            },
-        })
-    }, [columns, columnsInState, initialSortedColumnKey, rows, rowsInState])
+  const renderedRows = useMemo(
+    () =>
+      sortedRows.map((row, rowIndex) => {
+        const rowProps = row.propsForRow ?? {}
 
-    const renderedHeaderCells = useMemo(() => {
-        function handleClickToSort(
-            columnKey: K,
-            event: MouseEvent<HTMLTableCellElement>
-        ) {
-            event.preventDefault()
-
-            tableDispatch({
-                type: "setSortedColumnKey",
-                payload: {
-                    sortDirection: sortDirection === "ASC" ? "DESC" : "ASC",
-                    sortedColumnKey: columnKey,
-                },
-            })
-        }
-
-        return columnsInState.map((column) => (
-            <TH
-                {...column.propsForHeaderCell}
-                isSortable={column.isSortable}
-                isSorted={column.key === sortedColumnKey}
-                key={String(column.key)}
-                sortDirection={sortDirection ?? column.initialSortDirection}
-                textAlign={column.textAlign}
-                onClick={
-                    column.isSortable
-                        ? handleClickToSort.bind(null, column.key)
-                        : undefined
-                }
-            >
-                {column.label || <>&nbsp;</>}
-            </TH>
+        const renderedCells = columnsInState.map((column) => (
+          <TD
+            key={String(column.key)}
+            label={column.key !== "selectorInput" ? column.label : undefined}
+            textAlign={column.textAlign}
+            {...(column.propsForCells ?? {})}
+          >
+            {row[column.key]}
+          </TD>
         ))
-    }, [columnsInState, sortDirection, sortedColumnKey])
 
-    const renderedRows = useMemo(
-        () =>
-            sortedRows.map((row, rowIndex) => {
-                const rowProps = row.propsForRow ?? {}
+        return renderRow ? (
+          renderRow({
+            children: renderedCells,
+            row,
+            rowIndex,
+            rowProps,
+            sortDirection,
+            sortedColumnKey,
+            sortedRows,
+          })
+        ) : (
+          <TR key={rowIndex} variant="tbody" {...rowProps}>
+            {renderedCells}
+          </TR>
+        )
+      }),
+    [columnsInState, renderRow, sortedRows, sortDirection, sortedColumnKey]
+  )
 
-                const renderedCells = columnsInState.map((column) => (
-                    <TD
-                        key={String(column.key)}
-                        label={
-                            column.key !== "selectorInput"
-                                ? column.label
-                                : undefined
-                        }
-                        textAlign={column.textAlign}
-                        {...(column.propsForCells ?? {})}
-                    >
-                        {row[column.key]}
-                    </TD>
-                ))
+  return (
+    <TABLE {...otherProps}>
+      <THEAD>
+        {contentBeforeHeaderRow}
+        <TR className="max-sm:hidden" variant="thead">
+          {renderedHeaderCells}
+        </TR>
+        {contentAfterHeaderRow}
+      </THEAD>
 
-                return renderRow ? (
-                    renderRow({
-                        children: renderedCells,
-                        row,
-                        rowIndex,
-                        rowProps,
-                        sortDirection,
-                        sortedColumnKey,
-                        sortedRows,
-                    })
-                ) : (
-                    <TR key={rowIndex} variant="tbody" {...rowProps}>
-                        {renderedCells}
-                    </TR>
-                )
-            }),
-        [columnsInState, renderRow, sortedRows, sortDirection, sortedColumnKey]
-    )
+      <TBODY>
+        {contentForFirstRow}
+        {renderedRows}
+        {contentForLastRow}
+      </TBODY>
 
-    return (
-        <TABLE {...otherProps}>
-            <THEAD>
-                {contentBeforeHeaderRow}
-                <TR className="max-sm:hidden" variant="thead">
-                    {renderedHeaderCells}
-                </TR>
-                {contentAfterHeaderRow}
-            </THEAD>
-
-            <TBODY>
-                {contentForFirstRow}
-                {renderedRows}
-                {contentForLastRow}
-            </TBODY>
-
-            {contentForFooterRow && <TFOOT>{contentForFooterRow}</TFOOT>}
-        </TABLE>
-    )
+      {contentForFooterRow && <TFOOT>{contentForFooterRow}</TFOOT>}
+    </TABLE>
+  )
 }

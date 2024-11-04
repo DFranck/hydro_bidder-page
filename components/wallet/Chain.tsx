@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Chains } from '@chain-registry/types';
-import { matchSorter } from 'match-sorter';
+import { useEffect, useMemo, useState } from "react"
+import { Chains } from "@chain-registry/types"
+import { matchSorter } from "match-sorter"
 import {
   Avatar,
   Box,
@@ -10,22 +10,22 @@ import {
   Text,
   ThemeProvider,
   useTheme,
-} from '@interchain-ui/react';
+} from "@interchain-ui/react"
 
 export type ChainSelectProps = {
-  chains: Chains;
-  chainName?: string;
-  onChange?: (chainName?: string) => void;
-};
+  chains: Chains
+  chainName?: string
+  onChange?: (chainName?: string) => void
+}
 
 export function ChainSelect({
   chainName,
   chains = [],
-  onChange = () => { },
+  onChange = () => {},
 }: ChainSelectProps) {
-  const { themeClass } = useTheme();
-  const [value, setValue] = useState<string>();
-  const [input, setInput] = useState<string>('');
+  const { themeClass } = useTheme()
+  const [value, setValue] = useState<string>()
+  const [input, setInput] = useState<string>("")
 
   const cache = useMemo(
     () =>
@@ -34,38 +34,38 @@ export function ChainSelect({
         {} as Record<string, Chains[number]>
       ),
     [chains]
-  );
+  )
 
   const options = useMemo(
     () =>
       matchSorter(
         chains
           .map((chain) => ({
-            logo: chain.logo_URIs?.png || chain.logo_URIs?.svg || '',
+            logo: chain.logo_URIs?.png || chain.logo_URIs?.svg || "",
             value: chain.chain_name,
             label: chain.pretty_name,
           }))
           .filter((chain) => chain.value && chain.label),
         input,
-        { keys: ['value', 'label'] }
+        { keys: ["value", "label"] }
       ),
     [chains, input]
-  );
+  )
 
   useEffect(() => {
-    if (!chainName) setValue(undefined);
+    if (!chainName) setValue(undefined)
 
     if (chainName && chains.length > 0) {
-      const chain = cache[chainName];
+      const chain = cache[chainName]
 
       if (chain) {
-        setValue(chain.chain_name);
-        setInput(chain.pretty_name);
+        setValue(chain.chain_name)
+        setInput(chain.pretty_name)
       }
     }
-  }, [chains, chainName]);
+  }, [chains, chainName])
 
-  const avatar = cache[value!]?.logo_URIs?.png || cache[value!]?.logo_URIs?.svg;
+  const avatar = cache[value!]?.logo_URIs?.png || cache[value!]?.logo_URIs?.svg
 
   return (
     <ThemeProvider>
@@ -79,15 +79,15 @@ export function ChainSelect({
           selectedKey={value}
           inputValue={input}
           onInputChange={(input) => {
-            setInput(input);
-            if (!input) setValue(undefined);
+            setInput(input)
+            if (!input) setValue(undefined)
           }}
           onSelectionChange={(value) => {
-            const name = value as string;
+            const name = value as string
             if (name) {
-              setValue(name);
+              setValue(name)
               if (cache[name]) {
-                onChange(cache[name].chain_name);
+                onChange(cache[name].chain_name)
               }
             }
           }}
@@ -100,7 +100,7 @@ export function ChainSelect({
                 src={avatar}
                 fallbackMode="bg"
                 attributes={{
-                  paddingX: '$4',
+                  paddingX: "$4",
                 }}
               />
             ) : (
@@ -116,20 +116,20 @@ export function ChainSelect({
           }
           styleProps={{
             width: {
-              mobile: '100%',
-              mdMobile: '350px',
+              mobile: "100%",
+              mdMobile: "350px",
             },
           }}
         >
           {options.map((option) => (
             <Combobox.Item key={option.value} textValue={option.label}>
-              <ChainOption logo={option.logo ?? ''} label={option.label} />
+              <ChainOption logo={option.logo ?? ""} label={option.label} />
             </Combobox.Item>
           ))}
         </Combobox>
       </Box>
     </ThemeProvider>
-  );
+  )
 }
 
 function ChainOption({ logo, label }: { logo: string; label: string }) {
@@ -137,7 +137,7 @@ function ChainOption({ logo, label }: { logo: string; label: string }) {
     <Stack
       direction="horizontal"
       space="$4"
-      attributes={{ alignItems: 'center' }}
+      attributes={{ alignItems: "center" }}
     >
       <Avatar
         name={label}
@@ -151,5 +151,5 @@ function ChainOption({ logo, label }: { logo: string; label: string }) {
         {label}
       </Text>
     </Stack>
-  );
+  )
 }

@@ -9,32 +9,32 @@ import { WalletHandler } from "./wallet"
 // allows us to wrap children into a client context while the normal layout stays in a server component
 // this allows the normal layout to use fonts, meta fields (for icons, title texts etc.)
 export function ClientHandler({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode
+  children: React.ReactNode
 }>) {
-    const [queryClient] = useState(() => new QueryClient())
+  const [queryClient] = useState(() => new QueryClient())
 
-    return (
-        <>
-            <WalletHandler>
-                <QueryClientProvider client={queryClient}>
-                    <div
-                        className="
-                            grid
-                            h-screen
-                            w-screen
-                            grid-rows-[auto,min-content]
-                        "
-                    >
-                        <div>
-                            <Header />
-                            {children}
-                        </div>
-                        <Footer />
-                    </div>
-                </QueryClientProvider>
-            </WalletHandler>
-        </>
-    )
+  return (
+    <>
+      <WalletHandler>
+        <QueryClientProvider client={queryClient}>
+          <div
+            className="
+              grid
+              h-screen
+              w-screen
+              grid-rows-[auto,min-content]
+            "
+          >
+            <div>
+              <Header />
+              {children}
+            </div>
+            <Footer />
+          </div>
+        </QueryClientProvider>
+      </WalletHandler>
+    </>
+  )
 }

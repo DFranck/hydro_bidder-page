@@ -1,11 +1,11 @@
-import { ReactNode } from "react";
-import { Box, Stack, Text, useColorModeValue } from "@interchain-ui/react";
-import { Astronaut } from "./Astronaut";
+import { ReactNode } from "react"
+import { Box, Stack, Text, useColorModeValue } from "@interchain-ui/react"
+import { Astronaut } from "./Astronaut"
 
 export type UserProps = {
-  name: string;
-  icon?: ReactNode;
-};
+  name: string
+  icon?: ReactNode
+}
 
 export function User({ name, icon = <Astronaut /> }: UserProps) {
   return (
@@ -23,5 +23,5 @@ export function User({ name, icon = <Astronaut /> }: UserProps) {
         </Text>
       </Box>
     </Stack>
-  );
+  )
 }

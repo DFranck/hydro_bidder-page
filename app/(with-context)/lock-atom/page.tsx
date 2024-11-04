@@ -3,15 +3,15 @@ import { fetchAllValidators } from "@/hooks/hooks"
 import LSMInteraction from "./component"
 
 export default async function LockPage() {
-    const validators = await fetchAllValidators(endpoints.cosmoshub.rest[0])
+  const validators = await fetchAllValidators(endpoints.cosmoshub.rest[0])
 
-    const validatorMap = new Map(
-        validators.map((validator) => [validator.operator_address, validator])
-    )
+  const validatorMap = new Map(
+    validators.map((validator) => [validator.operator_address, validator])
+  )
 
-    return (
-        <div className="mx-auto max-w-[800px] py-12">
-            <LSMInteraction validatorMap={validatorMap} />
-        </div>
-    )
+  return (
+    <div className="mx-auto max-w-[800px] py-12">
+      <LSMInteraction validatorMap={validatorMap} />
+    </div>
+  )
 }
