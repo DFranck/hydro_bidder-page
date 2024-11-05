@@ -658,9 +658,12 @@ export const fetchAssetListWithPrices = async (): Promise<
     .map((asset) => asset.coingeckoId as string)
 
   // Fetch prices using getPriceFeedUrl
-  const pricesResponse = await fetch(getPriceFeedUrl(coingeckoIds), {
-    next: { revalidate: CACHE_REVALIDATE_SECONDS }, // Revalidate every 5 minutes
-  })
+  const pricesResponse = await fetch(
+    getPriceFeedUrl([...coingeckoIds, "switcheo"]),
+    {
+      next: { revalidate: CACHE_REVALIDATE_SECONDS }, // Revalidate every 5 minutes
+    }
+  )
   const prices: Record<string, { usd: number }> = await pricesResponse.json()
 
   // Create a Map with token as key and updated AssetListEntry as value
