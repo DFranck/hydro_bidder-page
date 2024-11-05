@@ -21,9 +21,9 @@ export const VOTE_SHARE_THRESHOLD = 5
 
 export const voteThresholdTooltip = (
   <>
-    Bids below the minimum threshold to receive liquidity of{" "}
-    <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will have their
-    tributes refunded to them.
+    Bids below the minimum threshold of{" "}
+    <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
+    liquidity, and will not pay out rewards to users.
   </>
 )
 
