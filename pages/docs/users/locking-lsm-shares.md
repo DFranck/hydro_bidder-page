@@ -6,28 +6,27 @@ The LSM shares (i.e Liquid Staking Module shares) represent tokenized, staked AT
 
 ### Key Points:
 
-- LSM shares allow you to earn rewards by voting for liquidity distribution on Hydro.
-- By tokenizing your staked ATOM into LSM shares, you maintain the benefits of staking while gaining flexibility in using these tokens.
+-   LSM shares allow you to earn rewards by voting for liquidity distribution on Hydro.
+-   By tokenizing your staked ATOM into LSM shares, you maintain the benefits of staking while gaining flexibility in using these tokens.
 
 ## LSM Shares
 
 This is how to get LSM Shares:
 
 ### 1. Stake ATOM:
-
 - If you haven't already staked your ATOM, you can do so via your preferred staking platform (e.g., Keplr, Cosmostation).
-- Choose a validator and delegate your ATOM to start earning staking rewards.\*
+- Choose a validator and delegate your ATOM to start earning staking rewards.*
 
 ### 2. Convert to LSM Shares:
 
-- Navigate to the Hydro website at [hydro.cosmos.network](https://hydro.cosmos.network).
-- Click "Connect Wallet" in the menu or click one of the "Get Started" buttons on the homepage.
-- In the first modal that appears, select one of the validators that you are currently staking ATOM with.
-- In the next modal, choose the amount of ATOM that you want to use to obtain voting power.
-  - Note: you will see the voting power update in real-time based on the Lock-up period and the amount of ATOM you input.
-- Click "Get Voting Power".
+* Navigate to the Hydro website at [hydro.cosmos.network](https://hydro.cosmos.network).
+* Click "Connect Wallet" in the menu or click one of the "Get Started" buttons on the homepage.
+* In the first modal that appears, select one of the validators that you are currently staking ATOM with.
+* In the next modal, choose the amount of ATOM that you want to use to obtain voting power.
+    * Note: you will see the voting power update in real-time based on the Lock-up period and the amount of ATOM you input.
+* Click "Get Voting Power".
 
-**\*NOTE**: There are many reasons to choose your validator carefully in Cosmos. In the Hydro context, if your validator falls out of the active set, you will not receive staking rewards and will not be able to vote in Hydro anymore.
+***NOTE**: There are many reasons to choose your validator carefully in Cosmos. In the Hydro context, if your validator falls out of the active set, you will not receive staking rewards and will not be able to vote in Hydro anymore.
 
 ## Voting Power
 
@@ -54,8 +53,9 @@ This means that a user's voting power decays over time in steps, and behaves lik
 
 **Key Points**:
 
-- Locking for longer periods (e.g., 12 months) grants more voting power than shorter periods.
-- As lock-ups age, voting power decreases, requiring users to refresh or extend their lock-up to maintain influence.
+-   Locking for longer periods (e.g., 12 months) grants more voting power than shorter periods.
+-   As lock-ups age, voting power decreases, requiring users to refresh or extend their lock-up to maintain influence.
+
 
 ### Example Scenarios
 
@@ -64,7 +64,7 @@ This means that a user's voting power decays over time in steps, and behaves lik
 A user locks 1000 LSM shares for 1 month on 7-Oct. They receive 1000 in voting power. By the end of the one month, their voting power has diminished, and they can either refresh or unlock their shares.
 
 | Short Lock-Up | On 7-Oct | On 7-Nov |
-| ------------- | -------- | -------- |
+|---------------|----------|----------|
 | Month         | 0        | 1        |
 | Voting power  | 1000     | 0        |
 
@@ -72,10 +72,10 @@ A user locks 1000 LSM shares for 1 month on 7-Oct. They receive 1000 in voting p
 
 #### Long Lock-Up
 
-A user locks 5000 LSM shares for 6 months during a round on 7-Oct. They receive 10,000 voting power. Over time, their voting power gradually diminishes but remains significantly higher than shorter lock-ups due to the longer duration.
+A user locks 5000 LSM shares for 6 months during a round on 7-Oct. They receive 10,000 voting power. Over time, their voting power gradually diminishes but remains significantly higher than shorter lock-ups due to the longer duration. 
 
 | Long Lock-Up | On 7-Oct | On 7-Nov | On 7-Dec | On 7-Jan | On 7-Feb | On 7-Mar | On 7-Apr |
-| ------------ | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+|--------------|----------|----------|----------|----------|----------|----------|----------|
 | Month        | 0        | 1        | 2        | 3        | 4        | 5        | 6        |
 | Voting power | 10000    | 10000    | 10000    | 7500     | 6250     | 5000     | 0        |
 
@@ -84,7 +84,6 @@ A user locks 5000 LSM shares for 6 months during a round on 7-Oct. They receive 
 #### Multiple Lock-Ups
 
 A user creates three lock-ups on 7-Oct:
-
 - 500 LSM shares locked for 1 month
 - 1000 LSM shares locked for 3 months
 - 2000 LSM shares locked for 6 months
@@ -92,7 +91,7 @@ A user creates three lock-ups on 7-Oct:
 Each lock-up provides different voting power; the user can monitor their combined voting power on the Hydro dashboard.
 
 | Multiple Lock-Ups | On 7-Oct | On 7-Nov | On 7-Dec | On 7-Jan | On 7-Feb | On 7-Mar | On 7-Apr |
-| ----------------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+|-------------------|----------|----------|----------|----------|----------|----------|----------|
 | Month             | 0        | 1        | 2        | 3        | 4        | 5        | 6        |
 | Voting power 1    | 500      | 0        | 0        | 0        | 0        | 0        | 0        |
 | Voting power 2    | 1500     | 1250     | 1000     | 0        | 0        | 0        | 0        |

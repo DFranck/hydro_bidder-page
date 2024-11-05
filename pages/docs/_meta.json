@@ -1,8 +1,8 @@
 {
-  "index": {
-    "display": "hidden"
-  },
-  "users": "User Guide",
-  "projects": "Project Guide",
-  "committee": "Hydro Committee"
+    "index": {
+        "display": "hidden"
+    },
+    "users": "User Guide",
+    "projects": "Project Guide",
+    "committee": "Hydro Committee"
 }
