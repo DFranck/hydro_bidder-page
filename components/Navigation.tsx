@@ -207,13 +207,13 @@ export default function Navigation() {
           }
         >
           <Link
-            href="/exports"
+            href="/metrics"
             className={twMerge(
-              navigationMenuTriggerStyle("/rewards"),
+              navigationMenuTriggerStyle("/metrics"),
               `pointer-events-none opacity-60`
             )}
           >
-            Exports
+            Metrics
           </Link>
         </Tooltip>
 
