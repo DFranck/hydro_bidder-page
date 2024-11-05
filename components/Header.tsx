@@ -115,7 +115,7 @@ export const Header = () => {
             `
         )}
       >
-        Hydro is currently in Pilot Rounds.{" "}
+        Hydro is currently running its first pilot round.{" "}
         <span className="inline-flex items-center gap-1 font-bold underline">
           Learn More <Icon name="solid:arrow-up-right" />
         </span>
