@@ -503,7 +503,9 @@ const LockForm = ({
   }
 
   function handleBlur(e: ChangeEvent<HTMLInputElement>) {
-    setAmount(Math.min(parseFloat(e.target.value), maxATOMAmount).toString())
+    setAmount(
+      Math.min(parseFloat(e.target.value) || 0, maxATOMAmount).toString()
+    )
   }
 
   return (
@@ -690,6 +692,7 @@ const LockForm = ({
                   <div className="col-span-2 flex flex-row-reverse">
                     <StyledText
                       as="button"
+                      disabled={!validator || !selectedAmount || !duration}
                       variant="button.primary"
                       type="submit"
                     >
