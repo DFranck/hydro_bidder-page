@@ -56,6 +56,7 @@ export function TopCard({
           flex
           w-full
           flex-col
+          gap-1
         "
       >
         {(isLoading || title) && (
