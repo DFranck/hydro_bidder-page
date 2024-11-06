@@ -8,7 +8,12 @@ import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { EPOCH_LENGTH } from "@/config"
-import { Delegation, useMyValidators, Validator } from "@/hooks/hooks"
+import {
+  Delegation,
+  useMyValidators,
+  useUserVotingData,
+  Validator,
+} from "@/hooks/hooks"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -460,22 +465,18 @@ const LockForm = ({
   const [validator, setValidator] = useState("")
   const [amount, setAmount] = useState("")
   const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const uatomAmount = Math.floor(parseFloat(amount) * 1e6).toString()
-    onSubmit(validator, uatomAmount, parseInt(duration))
-  }
-
   const { data: validators } = useMyValidators(hubChain, hubChain.address || "")
-
   const selectedDuration = parseInt(duration || "0")
   const delegationBalance = Number(
     validators?.find((v) => v.validator.operator_address === validator)
       ?.delegation_balance.amount
   )
-  const maxATOMAmount =
-    Math.min(delegationBalance, max_locked_tokens_per_address) / 1e6
+  const { address } = useChain("neutron")
+  const { data: userVotingData } = useUserVotingData(address ?? "")
+  const lockedAtom = userVotingData?.lockups.lockedAtom ?? 0
+  const maxLockedTokens = max_locked_tokens_per_address ?? 1
+  const usersMaxLockedTokens = Math.max(0, maxLockedTokens - lockedAtom)
+  const maxATOMAmount = Math.min(delegationBalance, usersMaxLockedTokens) / 1e6
   const selectedAmount = Math.min(parseFloat(amount || "0"), maxATOMAmount)
 
   useEffect(() => {
@@ -508,6 +509,12 @@ const LockForm = ({
     setAmount(
       Math.min(parseFloat(e.target.value) || 0, maxATOMAmount).toString()
     )
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const uatomAmount = Math.floor(parseFloat(amount) * 1e6).toString()
+    onSubmit(validator, uatomAmount, parseInt(duration))
   }
 
   return (
