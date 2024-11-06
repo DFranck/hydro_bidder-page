@@ -19,7 +19,7 @@ export function Confetti({
 
   return (
     <ReactConfetti
-      className="fixed inset-3 z-[100]"
+      className="fixed inset-3 z-50"
       colors={[
         "#FFE1B8", // beige
         "#00D1FF", // cyan
