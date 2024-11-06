@@ -4,6 +4,7 @@ import { useAppContext } from "@/app/(with-context)/context"
 import { classNames } from "@/app/(with-context)/voting/classNames"
 import { Icon } from "@/components/Icon"
 import { PrettyTable, TD, TR } from "@/components/PrettyTable"
+import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { WelcomePopup } from "@/components/WelcomePopup"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
@@ -16,7 +17,6 @@ import { useRouter } from "next/navigation"
 import { Fragment, useState } from "react"
 import { twJoin } from "tailwind-merge"
 import { proposalTotalTribute } from "./proposalTotalTribute"
-import { StyledText } from "@/components/StyledText"
 
 export const VOTE_SHARE_THRESHOLD = 5
 
@@ -25,7 +25,13 @@ export const voteThresholdTooltip = (
     Bids below the minimum threshold of{" "}
     <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
     liquidity, and will not pay out rewards to users.{" "}
-    <StyledText as="a" href="/docs#tribute-refunds" variant="link">
+    <StyledText
+      as="a"
+      href="/docs#tribute-refunds"
+      variant="link"
+      target="_blank"
+      className="whitespace-nowrap"
+    >
       Learn more
       <Icon name="solid:arrow-up-right" />
     </StyledText>
