@@ -37,7 +37,7 @@ const classNamesByVariant = {
     icon: <Icon name="regular:circle-info" />,
   },
   working: {
-    container: "bg-palette-beige",
+    container: "bg-palette-beige text-palette-black",
     icon: (
       <div className="inline-flex animate-spin">
         <Icon name="regular:loader" />
