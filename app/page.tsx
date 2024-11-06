@@ -10,7 +10,7 @@ const howHydroWorksTiles = [
   {
     title: "1. Connect Wallet",
     description:
-      "Connect your Keplr wallet to Hydro to get started. You will need ATOM to pay for gas.",
+      "Connect your compatible wallet to Hydro to get started. You will need ATOM to pay for gas.",
     icon: "/images/Wallet_Light.svg",
   },
   {
