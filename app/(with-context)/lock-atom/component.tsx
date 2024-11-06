@@ -249,7 +249,7 @@ export default function LSMInteraction({
             />
           </div>
         )}
-        <div>
+        <div className="flex flex-col gap-6">
           {incompleteNotices.slice(0, visibleNotices).map((notice, index) => (
             <div key={index}>
               {notice.type === "LSMSharesOnHub" && (
@@ -273,6 +273,7 @@ export default function LSMInteraction({
               )}
             </div>
           ))}
+
           {incompleteNotices.length > 2 &&
             visibleNotices < incompleteNotices.length && (
               <StyledText
@@ -283,6 +284,7 @@ export default function LSMInteraction({
                 Show {incompleteNotices.length - visibleNotices} more
               </StyledText>
             )}
+
           <LockForm
             onSubmit={(validator, amount, duration) =>
               setStepper({
@@ -384,7 +386,7 @@ const NeutronIncompleteNotice = ({
   setStepper: (stepper: Stepper) => void
 }) => {
   return (
-    <Card className="mb-4">
+    <Card>
       <Card.Header title="Incomplete ATOM Locking" />
       <Card.Body>
         <p>

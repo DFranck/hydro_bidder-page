@@ -1,5 +1,4 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
-import { HYDRO_CONTRACT_ADDRESS } from "@/config"
 import {
   DeliverTxResponse,
   SigningStargateClient,
@@ -343,19 +342,24 @@ export async function signLockTokens(
   amount: string
 ) {
   const client = await neutronChain.getSigningCosmWasmClient()
+
   if (!neutronChain.address) {
     throw new Error("Neutron chain address not set")
+  }
+
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
   }
 
   const hydroClient = new HydroBaseClient(
     client,
     neutronChain.address,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
   // pepare message for simulating gas
   const simulateMsg = MsgExecuteContract.fromPartial({
-    contract: HYDRO_CONTRACT_ADDRESS,
+    contract: process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS,
     sender: neutronChain.address,
     msg: new TextEncoder().encode(
       JSON.stringify({

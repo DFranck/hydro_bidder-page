@@ -21,14 +21,6 @@ export const endpoints = {
   },
 }
 
-export const HYDRO_CONTRACT_ADDRESS =
-  "neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp"
-// "neutron1gskgv0dyfum7f4wdzaw7lhjvqnj2dc5v3raf49wudatlqtu56ems5jkdv7"
-
-export const TRIBUTE_CONTRACT_ADDRESS =
-  "neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t"
-// "neutron10sxj4rg3zx4l7z0nd0nmvqf6dle0yptjp2h76n2kalnja6kjglks6apu40"
-
 export const NEUTRON_DEFAULT_RPC = "https://rpc.neutron.quokkastake.io/"
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000

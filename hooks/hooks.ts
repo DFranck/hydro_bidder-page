@@ -9,9 +9,7 @@ import { GlobalState, RoundState } from "@/app/types"
 import {
   DEFAULT_EPOCH_LENGTH,
   getPriceFeedUrl,
-  HYDRO_CONTRACT_ADDRESS,
   NEUTRON_DEFAULT_RPC,
-  TRIBUTE_CONTRACT_ADDRESS,
 } from "@/config"
 import {
   CosmWasmClient,
@@ -173,10 +171,14 @@ async function fetchProposalTributesForRound(
 }
 
 export const fetchGlobalState = async (): Promise<GlobalState> => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
   const [
@@ -267,10 +269,14 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
 }
 
 export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
   const [roundEnd, totalVotingPower] = await Promise.all([
@@ -304,10 +310,14 @@ export const fetchProposals = async (
   roundId: number,
   trancheId: number
 ): Promise<Proposal[]> => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
   // query all proposals and enrich with topNProposals percentage data
   // return proposals sorted by percentage in descending order
@@ -351,10 +361,14 @@ export const fetchProposalTributes = async (
   trancheId: number,
   proposalId: number
 ): Promise<Tribute[]> => {
+  if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
+    throw new Error("Tribute contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const tributeQueryClient = new TributeBaseQueryClient(
     client,
-    TRIBUTE_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
   )
 
   const query = {
@@ -391,10 +405,14 @@ export const fetchMyVotes = async (
   roundId: number,
   trancheIds: number[]
 ) => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
   const votePromises = trancheIds.map((trancheId) => {
@@ -425,10 +443,14 @@ export const fetchMyVotes = async (
 }
 
 export const fetchMyAllLockups = async (myAddress: string) => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
   const lockups = await hydroQueryClient.allUserLockups({
     address: myAddress,
@@ -439,10 +461,14 @@ export const fetchMyAllLockups = async (myAddress: string) => {
 }
 
 export const fetchMyExpiredLockups = async (myAddress: string) => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
   const response = await hydroQueryClient.expiredUserLockups({
@@ -479,11 +505,15 @@ export const executeVote = async (
   proposalId: number,
   trancheId: number
 ) => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getSigningCosmWasmClient()
   const hydroClient = new HydroBaseClient(
     client,
     address,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
   const response = await hydroClient.vote({ proposalId, trancheId }, "auto")
   return response
@@ -495,12 +525,16 @@ export const executeExtendLockup = async (
   lockId: number,
   lockDuration: number
 ) => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getSigningCosmWasmClient()
 
   const hydroClient = new HydroBaseClient(
     client,
     address,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
   const response = await hydroClient.refreshLockDuration(
     { lockDuration: DEFAULT_EPOCH_LENGTH * lockDuration, lockId },
@@ -588,10 +622,14 @@ export type UserVotingData = {
 export const fetchUserVotingData = async (
   address: string
 ): Promise<UserVotingData> => {
+  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+    throw new Error("Hydro contract address not set")
+  }
+
   const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
   let votingPower = 0
