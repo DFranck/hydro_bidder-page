@@ -93,8 +93,7 @@ export function ProposalDetail({
     }
     try {
       setSubmitting(true)
-      setToasts((prevToasts) => [
-        ...prevToasts,
+      setToasts([
         {
           variant: "working",
           message: "Processing your vote...",
@@ -107,6 +106,13 @@ export function ProposalDetail({
         proposal.proposal_id,
         proposal.tranche_id
       )
+
+      setToasts([
+        {
+          variant: "success",
+          message: "Vote submitted",
+        },
+      ])
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
         setToasts([
@@ -117,8 +123,7 @@ export function ProposalDetail({
         ])
         return
       }
-      setToasts((prevToasts) => [
-        ...prevToasts,
+      setToasts([
         {
           variant: "error",
           message: "Vote rejected",
