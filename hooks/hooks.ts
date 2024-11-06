@@ -537,7 +537,7 @@ export const executeExtendLockup = async (
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
   const response = await hydroClient.refreshLockDuration(
-    { lockDuration: DEFAULT_EPOCH_LENGTH * lockDuration, lockId },
+    { lockDuration: DEFAULT_EPOCH_LENGTH * lockDuration, lockIds: [lockId] },
     "auto"
   )
   return response

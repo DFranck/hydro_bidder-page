@@ -326,10 +326,10 @@ export interface HydroBaseInterface extends HydroBaseReadOnlyInterface {
   refreshLockDuration: (
     {
       lockDuration,
-      lockId,
+      lockIds,
     }: {
       lockDuration: number
-      lockId: number
+      lockIds: number[]
     },
     fee?: number | StdFee | "auto",
     memo?: string,
@@ -524,10 +524,10 @@ export class HydroBaseClient
   refreshLockDuration = async (
     {
       lockDuration,
-      lockId,
+      lockIds,
     }: {
       lockDuration: number
-      lockId: number
+      lockIds: number[]
     },
     fee: number | StdFee | "auto" = "auto",
     memo?: string,
@@ -539,7 +539,7 @@ export class HydroBaseClient
       {
         refresh_lock_duration: {
           lock_duration: lockDuration,
-          lock_id: lockId,
+          lock_ids: lockIds,
         },
       },
       fee,
