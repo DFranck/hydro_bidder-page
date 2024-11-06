@@ -31,18 +31,18 @@ export const classNames = {
   container: ({ modalState = "closed" }) =>
     twMerge(
       `
-      bg-appBgColor
-      fixed
-      left-1/2
-      top-1/2
-      z-10
-      min-w-64
-      -translate-x-1/2
-      overflow-hidden
-      rounded-lg
-      shadow-xl
-      duration-500
-    `,
+        bg-appBgColor
+        fixed
+        left-1/2
+        top-1/2
+        z-10
+        min-w-64
+        -translate-x-1/2
+        overflow-hidden
+        rounded-lg
+        shadow-xl
+        duration-500
+      `,
       modalState === "opening" || modalState === "open"
         ? `
           -translate-y-1/2

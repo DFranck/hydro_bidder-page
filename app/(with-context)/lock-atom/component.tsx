@@ -24,7 +24,7 @@ import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
 
 const commonClassNames = {
   fixedOverlay:
-    "fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70",
+    "fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-md",
   card: "mb-4",
   cardContent: "space-y-4",
   cardFooter: "space-x-4",
