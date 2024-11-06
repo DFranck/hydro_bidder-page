@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 import { Fragment, useState } from "react"
 import { twJoin } from "tailwind-merge"
 import { proposalTotalTribute } from "./proposalTotalTribute"
+import { StyledText } from "@/components/StyledText"
 
 export const VOTE_SHARE_THRESHOLD = 5
 
@@ -23,7 +24,11 @@ export const voteThresholdTooltip = (
   <>
     Bids below the minimum threshold of{" "}
     <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
-    liquidity, and will not pay out rewards to users.
+    liquidity, and will not pay out rewards to users.{" "}
+    <StyledText as="a" href="/docs#tribute-refunds" variant="link">
+      Learn more
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
