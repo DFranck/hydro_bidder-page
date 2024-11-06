@@ -205,7 +205,7 @@ export function ProposalsTable({
           <PrettyTable
             initialSortedColumnKey="currentVoteShare"
             contentForFirstRow={
-              percentageOfNonVoters && (
+              !!percentageOfNonVoters && (
                 <tr>
                   <td colSpan={99}>
                     <div className={classNames.percentageOfNonVoters}>
@@ -467,7 +467,7 @@ export function ProposalsTable({
 
               return (
                 <Fragment key={row._proposal.proposal_id}>
-                  {shouldShowThresholdLine && (
+                  {!!shouldShowThresholdLine && (
                     <TR>
                       <TD colSpan={99} className="!p-0">
                         <div
