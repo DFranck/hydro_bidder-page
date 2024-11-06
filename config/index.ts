@@ -22,12 +22,12 @@ export const endpoints = {
 }
 
 export const HYDRO_CONTRACT_ADDRESS =
-  "neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp"
+  "neutron1gskgv0dyfum7f4wdzaw7lhjvqnj2dc5v3raf49wudatlqtu56ems5jkdv7"
 // this is a test contract
 // "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
 
 export const TRIBUTE_CONTRACT_ADDRESS =
-  "neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t"
+  "neutron10sxj4rg3zx4l7z0nd0nmvqf6dle0yptjp2h76n2kalnja6kjglks6apu40"
 // this is a test contract
 // "neutron1y8wtzufvtpccpxl8tdrg2c59zuuk93l8tl68nprukhaakc2rddqsnfd2qt"
 
