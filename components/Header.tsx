@@ -41,7 +41,7 @@ export const Header = () => {
         left-0
         right-0
         top-0
-        z-50
+        z-40
         border-b
         border-palette-beige
       "

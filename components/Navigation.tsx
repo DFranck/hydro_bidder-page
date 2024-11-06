@@ -29,7 +29,7 @@ export default function Navigation() {
     <nav
       className="
         group/navbar
-        z-50
+        z-40
         max-md:fixed
         max-md:right-0
         max-md:top-0
@@ -51,7 +51,7 @@ export default function Navigation() {
           fixed
           right-0
           top-0
-          z-50
+          z-40
           flex
           size-12
           cursor-pointer
