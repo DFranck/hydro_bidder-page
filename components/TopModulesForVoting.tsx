@@ -85,7 +85,8 @@ export function TopModulesForVoting() {
             />
           </div>
         }
-        label={`Pilot Round ${currentRound}`}
+        // label={`Pilot Round ${currentRound}`}
+        label={`Pilot Round 1`}
         value={(
           (totalTributeValue / (totalLockedTokens / 1e6) / atomPrice) *
           12
@@ -161,7 +162,8 @@ export function TopModulesForVoting() {
             />
           </div>
         }
-        label={`Pilot Round ${currentRound}`}
+        // label={`Pilot Round ${currentRound}`}
+        label={`Pilot Round 1`}
         value={currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"}
       />
     </div>
