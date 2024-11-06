@@ -1,4 +1,12 @@
 import {
+  HydroBaseClient,
+  HydroBaseQueryClient,
+} from "@/app/ts_types/HydroBase.client"
+import { Proposal, VoteWithPower } from "@/app/ts_types/HydroBase.types"
+import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
+import { Tribute } from "@/app/ts_types/TributeBase.types"
+import { GlobalState, RoundState } from "@/app/types"
+import {
   DEFAULT_EPOCH_LENGTH,
   getPriceFeedUrl,
   HYDRO_CONTRACT_ADDRESS,
@@ -12,14 +20,6 @@ import {
 import { ChainContext } from "@cosmos-kit/core"
 import { useQuery } from "@tanstack/react-query"
 import { unstable_cache } from "next/cache"
-import {
-  HydroBaseClient,
-  HydroBaseQueryClient,
-} from "../app/ts_types/HydroBase.client"
-import { Proposal, VoteWithPower } from "../app/ts_types/HydroBase.types"
-import { TributeBaseQueryClient } from "../app/ts_types/TributeBase.client"
-import { Tribute } from "../app/ts_types/TributeBase.types"
-import { GlobalState, RoundState } from "../app/types"
 
 let clientInstance: CosmWasmClient | null = null
 

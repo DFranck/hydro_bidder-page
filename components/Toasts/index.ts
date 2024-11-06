@@ -1,1 +1,1 @@
-export { Toasts } from "./Toasts"
+export { ToastContextProvider, Toasts, useToasts } from "./Toasts"
