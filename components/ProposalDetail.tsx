@@ -506,7 +506,7 @@ export function ProposalDetail({
                       "
                     >
                       <Icon
-                        name="solid:triangle-exclamation"
+                        name="solid:circle"
                         className="text-palette-beige"
                       />
                       <span>Below Threshold</span>

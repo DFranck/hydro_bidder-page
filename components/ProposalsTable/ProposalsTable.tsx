@@ -371,8 +371,8 @@ export function ProposalsTable({
                       classNamesForTooltip="-ml-24"
                     >
                       <Icon
-                        name="solid:triangle-exclamation"
-                        className="text-palette-beige"
+                        name="solid:circle"
+                        className="text-xs text-palette-beige"
                       />
                     </Tooltip>
                   )}
@@ -420,7 +420,7 @@ export function ProposalsTable({
                           />
 
                           <div className="flex items-center gap-1">
-                            <Icon name="solid:triangle-exclamation" />
+                            <Icon name="solid:circle" />
                             <span>
                               These bids are below the{" "}
                               <strong>
