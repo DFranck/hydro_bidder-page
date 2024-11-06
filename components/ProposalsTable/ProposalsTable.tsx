@@ -5,6 +5,7 @@ import { classNames } from "@/app/(with-context)/voting/classNames"
 import { Icon } from "@/components/Icon"
 import { PrettyTable, TD, TR } from "@/components/PrettyTable"
 import { Tooltip } from "@/components/Tooltip"
+import { WelcomePopup } from "@/components/WelcomePopup"
 import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
@@ -14,7 +15,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Fragment, useState } from "react"
 import { twJoin } from "tailwind-merge"
-import { WelcomePopup } from "../WelcomePopup"
 import { proposalTotalTribute } from "./proposalTotalTribute"
 
 export const VOTE_SHARE_THRESHOLD = 5
@@ -116,87 +116,6 @@ export function ProposalsTable({
   const percentageOfNonVoters =
     100 -
     sum(decoratedProposals?.map((proposal) => Number(proposal.percentage)))
-
-  function renderRow({
-    children,
-    row,
-    rowIndex,
-    rowProps,
-    sortedColumnKey,
-    sortedRows,
-  }: {
-    children: React.ReactNode
-    row: any
-    rowIndex: number
-    rowProps: React.ComponentPropsWithRef<"tr">
-    sortedColumnKey: keyof typeof row
-    sortedRows: typeof decoratedProposals
-  }) {
-    const previousRow = sortedRows?.[rowIndex - 1] as any
-    const shouldShowThresholdLine =
-      sortedColumnKey === "currentVoteShare" &&
-      previousRow &&
-      Number(previousRow._proposal.percentage) >= VOTE_SHARE_THRESHOLD &&
-      Number(row._proposal.percentage) < VOTE_SHARE_THRESHOLD
-
-    return (
-      <Fragment key={row._proposal.proposal_id}>
-        {shouldShowThresholdLine && (
-          <TR>
-            <TD colSpan={99} className="!p-0">
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  gap-3
-                  whitespace-nowrap
-                  text-xs
-                  text-palette-beige
-                "
-              >
-                <div
-                  className="
-                    w-full
-                    border-t-2
-                    border-palette-beige
-                  "
-                />
-
-                <div className="flex items-center gap-1">
-                  <Icon name="solid:triangle-exclamation" />
-                  <span>
-                    These bids are below the{" "}
-                    <strong>
-                      {VOTE_SHARE_THRESHOLD}% vote share threshold
-                    </strong>
-                  </span>
-                  <Tooltip tipContents={voteThresholdTooltip} />
-                </div>
-
-                <div
-                  className="
-                    w-full
-                    border-t-2
-                    border-palette-beige
-                  "
-                />
-              </div>
-            </TD>
-          </TR>
-        )}
-        <TR
-          className={
-            row._proposal.hasVotedOnProp ? classNames.hasVotedRow : undefined
-          }
-          key={row._proposal.proposal_id}
-          {...rowProps}
-        >
-          {children}
-        </TR>
-      </Fragment>
-    )
-  }
 
   return (
     <>

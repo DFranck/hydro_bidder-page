@@ -1,9 +1,9 @@
 "use client"
 
 import { Footer } from "@/components/Footer"
+import { Header } from "@/components/Header"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useState } from "react"
-import { Header } from "../components/Header"
 import { WalletHandler } from "./wallet"
 
 // allows us to wrap children into a client context while the normal layout stays in a server component

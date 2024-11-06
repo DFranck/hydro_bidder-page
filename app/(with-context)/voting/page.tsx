@@ -1,6 +1,6 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import { ProposalsTable } from "../../../components/ProposalsTable/ProposalsTable"
-import { TopModulesForVoting } from "../../../components/TopModulesForVoting"
+import { ProposalsTable } from "@/components/ProposalsTable/ProposalsTable"
+import { TopModulesForVoting } from "@/components/TopModulesForVoting"
 
 export default async function ActiveProposalsPage({
   searchParams,
