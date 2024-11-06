@@ -172,7 +172,7 @@ function Lockups({
                       : "text-palette-beige"
                   )}
                 >
-                  {(lockedAtom / 1e6).toFixed(2)} /{" "}
+                  {(lockedAtom / 1e6).toFixed(4)} /{" "}
                   {(maxLockedTokens / 1e6).toFixed(2)} ATOM max.
                 </span>
 
