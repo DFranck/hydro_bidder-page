@@ -125,7 +125,7 @@ export function ProposalsTable({
   }
 
   const showWelcomeModal =
-    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 100 &&
+    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 99 &&
     !myUserVotingDataIsPending &&
     myUserVotingData &&
     myUserVotingData.votingPower <= 0
