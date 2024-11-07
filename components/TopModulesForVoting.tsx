@@ -48,14 +48,12 @@ export function TopModulesForVoting() {
   return (
     <div
       className="
-                relative
-                grid
-                grid-cols-1
-                justify-between
-                gap-6
-                bg-transparent
-                md:grid-cols-3
-            "
+        relative
+        grid
+        grid-cols-1
+        gap-6
+        md:grid-cols-3
+      "
     >
       <TopCard
         title={
