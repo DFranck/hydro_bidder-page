@@ -37,7 +37,7 @@ export function WButton({
       disabled={disabled}
       onClick={onClick}
     >
-      {connected && <Icon name="solid:link" />}
+      <Icon name={`regular:${connected ? "link" : "wallet"}`} />
       {loading && (
         <span className="animate-spin">
           <Icon name="solid:loader" />
@@ -58,7 +58,7 @@ export const WButtonConnect = ({
 
 export const WButtonConnected = ({
   address,
-  variant,
+  variant = "button.secondary.small",
   onClick = noop,
 }: ConnectProps & { variant?: StyledTextVariant }) => (
   <WButton

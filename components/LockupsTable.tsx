@@ -7,37 +7,22 @@ import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { Icon } from "@/components/Icon"
 import { PrettyTable } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
+import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { fetchMyAllLockups, useUserVotingData, Validator } from "@/hooks/hooks"
+import { fetchMyAllLockups, useUserVotingData } from "@/hooks/hooks"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
-export function LockupsTable({
-  validatorMap,
-}: {
-  validatorMap: Map<string, Validator>
-}) {
-  const {
-    isWalletConnected,
-    address,
-    getSigningCosmWasmClient,
-    getRestEndpoint,
-  } = useChain("neutron")
+export function LockupsTable() {
+  const { address, isWalletConnected } = useChain("neutron")
 
   return (
     <>
       {isWalletConnected && address ? (
-        <Lockups
-          walletAddress={address}
-          getSigningCosmWasmClient={getSigningCosmWasmClient}
-          validatorMap={validatorMap}
-          getRestEndpoint={getRestEndpoint}
-        />
+        <Lockups />
       ) : (
         <p>Connect your wallet to view your lockups</p>
       )}
@@ -45,55 +30,54 @@ export function LockupsTable({
   )
 }
 
-function Lockups({
-  walletAddress,
-  getSigningCosmWasmClient,
-  validatorMap,
-  getRestEndpoint,
-}: {
-  walletAddress: string
-  getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
-  validatorMap: Map<string, Validator>
-  getRestEndpoint: () => Promise<string | ExtendedHttpEndpoint>
-}) {
+function Lockups() {
   const {
     globalState: {
       constants: { max_locked_tokens, max_locked_tokens_per_address = 0 },
       totalLockedTokens,
     },
   } = useAppContext()
-  const { data: userVotingData } = useUserVotingData(walletAddress)
+  const { address } = useChain("neutron")
+  const { data: userVotingData } = useUserVotingData(address!)
   const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [refetch, setRefetch] = useState(false)
+  const [refetch, setRefetch] = useState(true)
   const lockedAtom = userVotingData?.lockups.lockedAtom ?? 0
   const maxLockedTokens = max_locked_tokens_per_address ?? 1
   const lockedPercentage = Math.min((lockedAtom / maxLockedTokens) * 100, 100)
   const totalNetworkLockedPercentage =
     (totalLockedTokens / (max_locked_tokens ?? 1)) * 100
+  const { setToasts } = useToasts()
 
   useEffect(() => {
     const fetchLockups = async () => {
+      setToasts([
+        {
+          variant: "working",
+          message: "Loading lockups...",
+        },
+      ])
       try {
-        const myLockups = await fetchMyAllLockups(walletAddress)
+        const myLockups = await fetchMyAllLockups(address!)
         setMyLockups(myLockups)
       } catch (error) {
         console.log(error)
+        setToasts([
+          {
+            variant: "error",
+            message: `Error loading lockups: ${error}`,
+          },
+        ])
       } finally {
-        setIsLoading(false)
+        setToasts([])
       }
     }
 
-    if (walletAddress && refetch) {
+    if (address && refetch) {
       fetchLockups()
       setRefetch(false)
       return
     }
-
-    if (walletAddress) {
-      fetchLockups()
-    }
-  }, [walletAddress, refetch])
+  }, [address, refetch])
 
   function isExpired(lockEnd: string) {
     const now = new Date().getTime()
@@ -311,14 +295,10 @@ function Lockups({
                 ),
                 actions: (
                   <EditLockupDurationModal
-                    validatorMap={validatorMap}
                     onSuccess={() => {
                       setRefetch(true)
                     }}
                     lockup={lockup}
-                    walletAddress={walletAddress}
-                    getSigningCosmWasmClient={getSigningCosmWasmClient}
-                    getRestEndpoint={getRestEndpoint}
                   />
                 ),
               }

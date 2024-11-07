@@ -315,16 +315,16 @@ export function ProposalDetail({
               >
                 <Icon name="solid:scroll" />
               </div>
-              <h1 className="max-w-lg text-2xl tracking-normal">
+              <StyledText as="h2" variant="h2">
                 {renderedProposal.title}
-              </h1>
+              </StyledText>
             </div>
 
-            <div className="js-bid-details flex flex-col gap-6 pl-16">
+            <div className="flex flex-col gap-6 pl-16">
               {renderedProposal.description && (
                 <div className="flex flex-col gap-3">
                   <StyledText
-                    variant="label"
+                    variant="superHeading"
                     as="h2"
                     id="bid-description"
                     className={`
@@ -343,7 +343,7 @@ export function ProposalDetail({
               {renderedProposal.committeeComments && (
                 <div className="flex flex-col gap-3">
                   <StyledText
-                    variant="label"
+                    variant="superHeading"
                     as="h2"
                     id="committee-review"
                     className="
@@ -364,7 +364,7 @@ export function ProposalDetail({
               {renderedProposal.appendix && (
                 <div className="flex flex-col gap-3">
                   <StyledText
-                    variant="label"
+                    variant="superHeading"
                     as="h2"
                     id="appendix"
                     className="

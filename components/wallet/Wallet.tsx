@@ -1,11 +1,11 @@
 "use client"
 
+import { StyledTextVariant } from "@/components/StyledText/StyledText"
+import { useToasts } from "@/components/Toasts/Toasts"
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { MouseEventHandler, useEffect } from "react"
-
-import { StyledTextVariant } from "@/components/StyledText/StyledText"
 import { toast } from "@interchain-ui/react"
+import { MouseEventHandler, useEffect } from "react"
 import {
   WButtonConnect,
   WButtonConnected,
@@ -15,7 +15,6 @@ import {
   WButtonNotExist,
   WButtonRejected,
 } from "./Connect"
-import { useToasts } from "@/components/Toasts/Toasts"
 
 export type WalletProps = {
   chainName?: string

@@ -1,10 +1,14 @@
 "use client"
 
 import { ToastContextProvider } from "@/components/Toasts/Toasts"
-import { fetchDashboardData } from "@/hooks/hooks"
+import { fetchDashboardData, Validator } from "@/hooks/hooks"
 import { createContext, useContext } from "react"
 
-export type AppContextObject = Awaited<ReturnType<typeof fetchDashboardData>>
+export type AppContextObject = Awaited<
+  ReturnType<typeof fetchDashboardData>
+> & {
+  validatorMap: Map<string, Validator>
+}
 
 // Define the type for AppContext
 export const AppContext: React.Context<AppContextObject | null> =
