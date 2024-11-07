@@ -58,6 +58,11 @@ export function ProposalsTable({
     assetListWithPrices,
   } = useAppContext()
 
+  const {
+    totalLockedTokens,
+    constants: { max_locked_tokens },
+  } = globalState
+
   const [currentTranche, setCurrentTranche] = useState(
     searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1
   )
@@ -120,6 +125,7 @@ export function ProposalsTable({
   }
 
   const showWelcomeModal =
+    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 100 &&
     !myUserVotingDataIsPending &&
     myUserVotingData &&
     myUserVotingData.votingPower <= 0
