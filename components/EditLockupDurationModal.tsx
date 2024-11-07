@@ -6,7 +6,7 @@ import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts/Toasts"
-import { executeExtendLockup, Validator } from "@/hooks/hooks"
+import { executeExtendLockup } from "@/hooks/hooks"
 import {
   calculateLockupVotingPower,
   formatAmount,
@@ -14,8 +14,7 @@ import {
   LockupPeriod,
   LockupPeriodMultipler,
 } from "@/lib/utils"
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
+import { useChain } from "@cosmos-kit/react"
 import { isEqual } from "lodash"
 import {
   ChangeEvent,
@@ -35,10 +34,6 @@ interface FormValues {
 
 type EditLockupDurationProps = {
   lockup: LockEntryWithPower
-  walletAddress: string
-  validatorMap: Map<string, Validator>
-  getRestEndpoint: () => Promise<string | ExtendedHttpEndpoint>
-  getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
   onSuccess: () => void
 }
 
@@ -68,8 +63,6 @@ function isToday(date: Date): boolean {
 
 export function EditLockupDurationModal({
   lockup,
-  walletAddress,
-  getSigningCosmWasmClient,
   onSuccess,
 }: EditLockupDurationProps) {
   const [hasChanged, setHasChanged] = useState(false)
@@ -77,6 +70,7 @@ export function EditLockupDurationModal({
   const [isLockupModalOpen, setIsLockupModalOpen] = useState(false)
   const { setToasts } = useToasts()
   const formElementRef = useRef<HTMLFormElement>(null)
+  const { address, getSigningCosmWasmClient } = useChain("neutron")
 
   const initialFormValues = useMemo(
     () => ({
@@ -91,6 +85,13 @@ export function EditLockupDurationModal({
   )
 
   const [formValues, setFormValues] = useState<FormValues>(initialFormValues)
+  const currentLockupEnd = Number(lockup.lock_entry.lock_end)
+  const currentLockupEndDate = new Date(currentLockupEnd / 1000000)
+  const powerDifference =
+    Number(formValues.power) - Number(lockup.current_voting_power)
+  const isLockupFromToday = isToday(
+    new Date(Number(lockup?.lock_entry.lock_start ?? 0) / 1000000)
+  )
 
   useEffect(() => {
     if (isLockupModalOpen) return
@@ -142,7 +143,7 @@ export function EditLockupDurationModal({
 
       await executeExtendLockup(
         getSigningCosmWasmClient,
-        walletAddress || "",
+        address || "",
         lockup.lock_entry.lock_id,
         LockupPeriodMultipler[formValues.lockupPeriod]
       )
@@ -186,14 +187,6 @@ export function EditLockupDurationModal({
         (1000 * 60 * 60 * 24)
     )
   }
-
-  const currentLockupEnd = Number(lockup.lock_entry.lock_end)
-  const currentLockupEndDate = new Date(currentLockupEnd / 1000000)
-  const powerDifference =
-    Number(formValues.power) - Number(lockup.current_voting_power)
-  const isLockupFromToday = isToday(
-    new Date(Number(lockup?.lock_entry.lock_start ?? 0) / 1000000)
-  )
 
   if (isLockupFromToday) {
     return <div>Lockup created today</div>

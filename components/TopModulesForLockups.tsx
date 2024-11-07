@@ -1,11 +1,10 @@
 "use client"
 
 import { useAppContext } from "@/app/(with-context)/context"
-import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { TopCard } from "@/components/TopCard"
 import { useUserVotingData } from "@/hooks/hooks"
-import { cn, formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 
@@ -31,7 +30,6 @@ export function TopModulesForLockups() {
     >
       <TotalLockedATOMCard isLoading={!userVotingData} />
       <YourLockedATOMCard
-        count={userVotingData?.lockups.count}
         lockedAtom={userVotingData?.lockups.lockedAtom}
         isLoading={!userVotingData}
       />
@@ -44,44 +42,10 @@ export function TopModulesForLockups() {
   )
 }
 
-function RewardsSnapshotCard({ amount }: { amount: number }) {
-  return (
-    <div className={cn("flex h-full flex-col rounded-xl p-8")}>
-      <div className="flex flex-1 flex-col justify-between text-white">
-        <div className="flex w-full justify-between">
-          <Image
-            alt="Locked ATOM"
-            src="/images/Rewards_Light.svg"
-            width={100}
-            height={100}
-          />
-          <StyledText as="button" variant="button.primary.large">
-            Claim Rewards
-          </StyledText>
-        </div>
-        <h3 className="py-4 text-white">Rewards Snapshot</h3>
-        <p className="text-xl font-normal">ROI on your locked ATOM</p>
-        <p className="pt-[30px] text-5xl font-bold not-italic slashed-zero leading-[124.7%] tracking-[-1.296px] text-[#E4B472]">
-          {Intl.NumberFormat("en-US", {
-            maximumFractionDigits: 0,
-            style: "currency",
-            currency: "USD",
-          }).format(amount)}
-        </p>
-        <p className="text-base font-medium uppercase not-italic slashed-zero leading-[130%] text-[#FFE1B8]">
-          USD EQUIVALENT
-        </p>
-      </div>
-    </div>
-  )
-}
-
 function YourLockedATOMCard({
-  count,
   lockedAtom,
   isLoading,
 }: {
-  count?: number
   lockedAtom?: number
   isLoading: boolean
 }) {
