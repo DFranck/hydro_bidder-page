@@ -58,7 +58,8 @@ function Lockups({
 }) {
   const {
     globalState: {
-      constants: { max_locked_tokens_per_address = 0 },
+      constants: { max_locked_tokens, max_locked_tokens_per_address = 0 },
+      totalLockedTokens,
     },
   } = useAppContext()
   const { data: userVotingData } = useUserVotingData(walletAddress)
@@ -68,6 +69,8 @@ function Lockups({
   const lockedAtom = userVotingData?.lockups.lockedAtom ?? 0
   const maxLockedTokens = max_locked_tokens_per_address ?? 1
   const lockedPercentage = Math.min((lockedAtom / maxLockedTokens) * 100, 100)
+  const totalNetworkLockedPercentage =
+    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100
 
   useEffect(() => {
     const fetchLockups = async () => {
@@ -195,7 +198,9 @@ function Lockups({
             </div>
 
             <ConditionalWrapper
-              condition={lockedPercentage >= 85}
+              condition={
+                lockedPercentage === 100 || totalNetworkLockedPercentage >= 99
+              }
               wrapper={(children) => (
                 <Tooltip
                   classNamesForTooltip="-ml-12"
