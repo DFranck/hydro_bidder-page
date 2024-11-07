@@ -26,17 +26,16 @@ export function TopCard({
           bg-gradient-to-t
           from-palette-blue/80
           to-palette-blue/20
-          px-3
-          py-1
+          px-6
+          py-3
           backdrop-blur-sm
-          xl:px-6
-          xl:py-3
         `,
         icon &&
           `
             flex
             items-center
-            gap-6
+            gap-3
+            xl:gap-6
           `
       )}
     >
@@ -44,7 +43,8 @@ export function TopCard({
         <div
           className="
             relative
-            size-32
+            size-24
+            xl:size-32
           "
         >
           {icon}
@@ -56,7 +56,7 @@ export function TopCard({
           flex
           w-full
           flex-col
-          gap-1
+          xl:gap-1
         "
       >
         {(isLoading || title) && (
