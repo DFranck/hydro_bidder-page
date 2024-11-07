@@ -194,16 +194,6 @@ export const classNames = {
       text-lg
     `
   ),
-  importantValue: twJoin(`
-    font-display
-    text-5xl
-    font-bold
-  `),
-  importantValueLabel: twJoin(`
-    border-b-2
-    pb-2
-    text-xs
-  `),
   label: twJoin(`
     whitespace-nowrap
     text-sm

@@ -7,14 +7,14 @@ import { PrettyTable, TD, TR } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { WelcomePopup } from "@/components/WelcomePopup"
-import { useMyVotes, useUserVotingData } from "@/hooks/hooks"
-import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
+import { useUserVotingData } from "@/hooks/hooks"
+import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
+import { estimatedRewardForPower } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { sum } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Fragment, useState } from "react"
+import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
 import { proposalTotalTribute } from "./proposalTotalTribute"
 
@@ -50,86 +50,25 @@ export function ProposalsTable({
 }: {
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
-  const router = useRouter()
-  const {
-    currentProposalTranches,
-    currentProposalTributes,
-    globalState,
-    assetListWithPrices,
-  } = useAppContext()
-
+  const { globalState } = useAppContext()
   const {
     totalLockedTokens,
     constants: { max_locked_tokens },
   } = globalState
-
-  const [currentTranche, setCurrentTranche] = useState(
-    searchParams.tranche ? parseInt(searchParams.tranche as string, 10) : 1
-  )
-
   const { isWalletConnected, address } = useChain("neutron")
-
   const { data: myUserVotingData, isPending: myUserVotingDataIsPending } =
     useUserVotingData(address ?? "")
-
-  const { data: myVotes } = useMyVotes(
-    address || "",
-    globalState.currentRound,
-    Array.from(currentProposalTranches.keys())
-  )
-
-  const proposals = currentProposalTranches.get(currentTranche)
-
-  const decoratedProposals = proposals?.map((proposal, index) => {
-    const tributes = currentProposalTributes.get(proposal.proposal_id)!
-
-    const summedTributes = sumTributeAmounts(tributes)
-
-    const pricedAndNamedTributes = summedTributes.map((tribute) => {
-      const assetInfo = assetListWithPrices.get(tribute.denom)
-      return {
-        ...tribute,
-        priceUsd: assetInfo?.priceUsd,
-        symbol: assetInfo?.symbol,
-        decimals: assetInfo?.decimals,
-      }
-    })
-
-    const hasVotedOnProp =
-      myVotes?.get(currentTranche) &&
-      myVotes.get(currentTranche)?.prop_id === proposal.proposal_id
-
-    return {
-      ...proposal,
-      ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
-      pricedAndNamedTributes,
-      hasVotedOnProp,
-    }
+  const decoratedProposals = useDecoratedProposals({
+    trancheId: 1,
   })
-
   const hasVoted = decoratedProposals?.some(
     (proposal) => proposal.hasVotedOnProp
   )
-
-  const updateTrancheInURL = (tranche: number) => {
-    const newSearchParams = new URLSearchParams(window.location.search)
-    newSearchParams.set("tranche", tranche.toString())
-    router.push(`${window.location.pathname}?${newSearchParams.toString()}`, {
-      scroll: false,
-    })
-  }
-
-  const handleTrancheChange = (newTranche: number) => {
-    setCurrentTranche(newTranche)
-    updateTrancheInURL(newTranche)
-  }
-
   const showWelcomeModal =
     (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 100 &&
     !myUserVotingDataIsPending &&
     myUserVotingData &&
     myUserVotingData.votingPower <= 0
-
   const percentageOfNonVoters =
     100 -
     sum(decoratedProposals?.map((proposal) => Number(proposal.percentage)))
