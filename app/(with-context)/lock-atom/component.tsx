@@ -19,6 +19,7 @@ import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
 import { cosmos } from "interchain"
+import { useRouter } from "next/navigation"
 import React, { ChangeEvent, useEffect, useState } from "react"
 import { ContinueFromHubStepper } from "./steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "./steppers/ContinueFromNeutronStepper"
@@ -103,6 +104,12 @@ export default function LSMInteraction({
 }: {
   validatorMap: Map<string, Validator>
 }) {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push("/voting")
+  }, [])
+
   const hubChain = useChain("cosmoshub")
   const neutronChain = useChain("neutron")
 
