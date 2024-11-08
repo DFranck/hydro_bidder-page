@@ -1,6 +1,6 @@
 "use client"
 
-import { StyledTextVariant } from "@/components/StyledText/StyledText"
+import { StyledTextVariant } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts/Toasts"
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"

@@ -11,7 +11,7 @@ export function Details({ params }: { params: { id: string } }) {
     .find((proposal) => proposal.proposal_id === Number(params.id))
 
   return currentProposal ? (
-    <ProposalDetail proposal={currentProposal} deployed={false} />
+    <ProposalDetail proposal={currentProposal} />
   ) : (
     <div className="py-8 text-center">
       <h2 className="text-2xl font-bold text-red-500">

@@ -1,0 +1,195 @@
+"use client"
+
+import { useAppContext } from "@/app/(with-context)/context"
+import { Proposal } from "@/app/ts_types/HydroBase.types"
+import { Card } from "@/components/Card"
+import { Confetti } from "@/components/Confetti"
+import { Icon } from "@/components/Icon"
+import { ModalWindow } from "@/components/ModalWindow"
+import { StyledText, StyledTextVariant } from "@/components/StyledText"
+import { useToasts } from "@/components/Toasts"
+import { Wallet } from "@/components/wallet/Wallet"
+import { executeVote, useMyVotes, useUserVotingData } from "@/hooks/hooks"
+import { useChain } from "@cosmos-kit/react"
+import Link from "next/link"
+import { useState } from "react"
+
+export function VoteButton({
+  proposal,
+  size,
+  type,
+}: {
+  proposal: Proposal
+  size?: "large" | "small"
+  type?: "primary" | "secondary"
+}) {
+  const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
+  const [isCelebrating, setIsCelebrating] = useState(false)
+  const { globalState, currentProposalTranches } = useAppContext()
+  const { isWalletConnected, address, getSigningCosmWasmClient } =
+    useChain("neutron")
+  const { data: userVotingData } = useUserVotingData(address || "")
+  const { toasts, setToasts } = useToasts()
+  const { data: myVotes } = useMyVotes(
+    address || "",
+    globalState.currentRound,
+    Array.from(currentProposalTranches.keys())
+  )
+  const hasVotedThisProposal =
+    myVotes?.get(proposal.tranche_id)?.prop_id === proposal.proposal_id
+  const hasVotedAtAll = myVotes && myVotes.size > 0
+  const isLoading = toasts.some((toast) => toast.variant === "working")
+
+  async function handleClickVote() {
+    if (!proposal) {
+      return
+    }
+
+    try {
+      setToasts([
+        {
+          isDismissible: false,
+          variant: "working",
+          message: "Processing your vote...",
+        },
+      ])
+
+      await executeVote(
+        getSigningCosmWasmClient,
+        address!,
+        proposal.proposal_id,
+        proposal.tranche_id
+      )
+
+      setToasts([
+        {
+          variant: "success",
+          message: "Vote submitted",
+        },
+      ])
+    } catch (err: any) {
+      if (err && err?.message && err.message.includes("Request rejected")) {
+        setToasts([
+          {
+            variant: "error",
+            message: "Vote rejected",
+          },
+        ])
+        return
+      }
+      setToasts([
+        {
+          variant: "error",
+          message: "Vote rejected",
+        },
+      ])
+    } finally {
+      setOpenChangeVoteModal(false)
+      setIsCelebrating(true)
+    }
+  }
+
+  let Button = null
+
+  if (!isWalletConnected) {
+    Button = (
+      <Wallet
+        variant={`button.primary${size ? `.${size}` : ""}` as StyledTextVariant}
+        notifyConnectedCB={() => null}
+      />
+    )
+  } else if (isLoading) {
+    Button = (
+      <StyledText
+        variant={
+          `button.secondary${size ? `.${size}` : ""}` as StyledTextVariant
+        }
+        as="button"
+        disabled
+      >
+        Loading...
+      </StyledText>
+    )
+  } else if (userVotingData?.votingPower === 0) {
+    Button = (
+      <StyledText
+        as={Link}
+        href="/lock-atom"
+        variant={`button.primary${size ? `.${size}` : ""}` as StyledTextVariant}
+      >
+        Lock ATOM to Vote
+      </StyledText>
+    )
+  } else if (hasVotedThisProposal) {
+    Button = (
+      <StyledText
+        variant={`button.neutral${size ? `.${size}` : ""}` as StyledTextVariant}
+        as="button"
+        className="pointer-events-none"
+      >
+        <Icon name="solid:check" />
+        <span>Your Pick!</span>
+      </StyledText>
+    )
+  } else {
+    const hasVotedElsewhere = hasVotedAtAll && !hasVotedThisProposal
+    Button = (
+      <StyledText
+        as="button"
+        onClick={() => {
+          if (hasVotedElsewhere) {
+            setOpenChangeVoteModal(true)
+          } else {
+            handleClickVote()
+          }
+        }}
+        variant={
+          `button.${hasVotedElsewhere ? "secondary" : "primary"}${size ? `.${size}` : ""}` as StyledTextVariant
+        }
+      >
+        <Icon name={`solid:${hasVotedElsewhere ? "pencil" : "circle-check"}`} />
+        <span>{hasVotedElsewhere ? "Change Vote" : "Vote for Project"}</span>
+      </StyledText>
+    )
+  }
+
+  return (
+    <>
+      <ModalWindow
+        isOpen={openChangeVoteModal}
+        onClose={() => setOpenChangeVoteModal(false)}
+      >
+        <Card>
+          <Card.Header title="Change your vote?" />
+          <Card.Body>
+            Changing your vote will reallocate your total voting power to the
+            new project.
+          </Card.Body>
+          <Card.Footer>
+            <StyledText
+              as="button"
+              onClick={handleClickVote}
+              variant="button.primary"
+            >
+              Change Vote to This Proposal
+            </StyledText>
+            <StyledText
+              as="button"
+              variant="button.secondary"
+              onClick={() => setOpenChangeVoteModal(false)}
+            >
+              Don&rsquo;t change my vote
+            </StyledText>
+          </Card.Footer>
+        </Card>
+      </ModalWindow>
+
+      <Confetti
+        trigger={isCelebrating}
+        onComplete={() => setIsCelebrating(false)}
+      />
+
+      {Button}
+    </>
+  )
+}

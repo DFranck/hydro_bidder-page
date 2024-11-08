@@ -2,204 +2,33 @@
 
 import { useAppContext } from "@/app/(with-context)/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
-import { Card } from "@/components/Card"
-import { Confetti } from "@/components/Confetti"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
-import { ModalWindow } from "@/components/ModalWindow"
 import {
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ProposalsTable/ProposalsTable"
 import { proposalTotalTribute } from "@/components/ProposalsTable/proposalTotalTribute"
 import { StyledText } from "@/components/StyledText"
-import { useToasts } from "@/components/Toasts/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { Wallet } from "@/components/wallet/Wallet"
-import { executeVote, fetchMyVotes, useUserVotingData } from "@/hooks/hooks"
+import { VoteButton } from "@/components/VoteButton"
+import { useMyVotes } from "@/hooks/hooks"
+import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import kebabCase from "lodash/kebabCase"
 import Image from "next/image"
 import Link from "next/link"
-import { useCallback, useEffect, useState } from "react"
 
-export function ProposalDetail({
-  proposal,
-  deployed,
-}: {
-  proposal: Proposal
-  deployed: boolean
-}) {
+export function ProposalDetail({ proposal }: { proposal: Proposal }) {
   const {
     globalState,
     currentProposalTributes,
     currentProposalTranches,
     assetListWithPrices,
   } = useAppContext()
-  const [hasVoted, setHasVoted] = useState(false)
-  const [hasVotedThisProposal, setHasVotedThisProposal] = useState(false)
-  const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
-  const { isWalletConnected, address, getSigningCosmWasmClient } =
-    useChain("neutron")
-  const [isLoading, setIsLoading] = useState(false)
+
   const tributes = currentProposalTributes.get(proposal.proposal_id)!
-  const [isCelebrating, setIsCelebrating] = useState(false)
-  const { setToasts } = useToasts()
-
-  const fetchVoteStatus = useCallback(async () => {
-    if (!address) {
-      return
-    }
-
-    setIsLoading(true)
-
-    const voteMap = await fetchMyVotes(
-      address || "",
-      globalState.currentRound,
-      Array.from(currentProposalTranches.keys())
-    )
-
-    setIsLoading(false)
-
-    if (voteMap && voteMap.size < 1) {
-      setHasVoted(false)
-      return
-    }
-
-    let voted = Array.from(voteMap.values())
-      .flat()
-      .find((vote) => vote?.prop_id === Number(proposal.proposal_id))
-
-    setHasVoted(true)
-    setHasVotedThisProposal(!!voted)
-  }, [
-    address,
-    globalState.currentRound,
-    proposal.proposal_id,
-    currentProposalTranches,
-  ])
-
-  useEffect(() => {
-    fetchVoteStatus()
-  }, [fetchVoteStatus])
-
-  const { data: userVotingData } = useUserVotingData(address || "")
-
-  async function onVote() {
-    if (!proposal) {
-      return
-    }
-    try {
-      setSubmitting(true)
-      setToasts([
-        {
-          variant: "working",
-          message: "Processing your vote...",
-        },
-      ])
-
-      await executeVote(
-        getSigningCosmWasmClient,
-        address!,
-        proposal.proposal_id,
-        proposal.tranche_id
-      )
-
-      setToasts([
-        {
-          variant: "success",
-          message: "Vote submitted",
-        },
-      ])
-    } catch (err: any) {
-      if (err && err?.message && err.message.includes("Request rejected")) {
-        setToasts([
-          {
-            variant: "error",
-            message: "Vote rejected",
-          },
-        ])
-        return
-      }
-      setToasts([
-        {
-          variant: "error",
-          message: "Vote rejected",
-        },
-      ])
-    } finally {
-      setSubmitting(false)
-      setOpenChangeVoteModal(false)
-      setIsCelebrating(true)
-      fetchVoteStatus()
-    }
-  }
-
-  function PrimaryActionButton() {
-    if (deployed) {
-      return null
-    }
-
-    if (!isWalletConnected) {
-      return (
-        <Wallet variant="button.primary.large" notifyConnectedCB={() => null} />
-      )
-    }
-
-    if (isLoading) {
-      return (
-        <StyledText variant="button.secondary.large" as="button" disabled>
-          Loading...
-        </StyledText>
-      )
-    }
-
-    if (submitting) {
-      return (
-        <StyledText as="button" disabled variant="button.secondary.large">
-          Submitting...
-        </StyledText>
-      )
-    }
-
-    if (userVotingData?.votingPower === 0) {
-      return (
-        <StyledText as={Link} href="/lock-atom" variant="button.primary.large">
-          Lock ATOM to vote
-        </StyledText>
-      )
-    }
-
-    if (hasVotedThisProposal) {
-      return (
-        <StyledText as="button" disabled variant="button.secondary.large">
-          <Icon name="solid:circle-check" />
-          <span>Voted!</span>
-        </StyledText>
-      )
-    }
-
-    const hasVotedElsewhere = hasVoted && !hasVotedThisProposal
-
-    return (
-      <StyledText
-        as="button"
-        onClick={() => {
-          if (hasVotedElsewhere) {
-            setOpenChangeVoteModal(true)
-          } else {
-            onVote()
-          }
-        }}
-        variant="button.primary.large"
-      >
-        <Icon name="solid:ballot-check" />
-        <span>Vote for Proposal</span>
-      </StyledText>
-    )
-  }
 
   const renderedProposal = {
     ...proposal,
@@ -213,7 +42,9 @@ export function ProposalDetail({
       `Getting price for ${tribute.denom} from ${assetListWithPrices.size} assets`,
       assetListWithPrices.entries()
     )
+
     const assetInfo = assetListWithPrices.get(tribute.denom)
+
     return {
       ...tribute,
       priceUsd: assetInfo?.priceUsd,
@@ -222,38 +53,19 @@ export function ProposalDetail({
     }
   })
 
+  const { address } = useChain("neutron")
+
+  const { data: myVotes } = useMyVotes(
+    address || "",
+    globalState.currentRound,
+    Array.from(currentProposalTranches.keys())
+  )
+
+  const hasVotedThisProposal =
+    myVotes?.get(proposal.tranche_id)?.prop_id === proposal.proposal_id
+
   return (
     <>
-      <ModalWindow
-        isOpen={openChangeVoteModal}
-        onClose={() => setOpenChangeVoteModal(false)}
-      >
-        <Card>
-          <Card.Header title="Change your vote?" />
-          <Card.Body>
-            Changing your vote will reallocate your total voting power to the
-            new project.
-          </Card.Body>
-          <Card.Footer>
-            <StyledText as="button" onClick={onVote} variant="button.primary">
-              Change Vote to This Proposal
-            </StyledText>
-            <StyledText
-              as="button"
-              variant="button.secondary"
-              onClick={() => setOpenChangeVoteModal(false)}
-            >
-              Don&rsquo;t change my vote
-            </StyledText>
-          </Card.Footer>
-        </Card>
-      </ModalWindow>
-
-      <Confetti
-        trigger={isCelebrating}
-        onComplete={() => setIsCelebrating(false)}
-      />
-
       <div
         className="
           relative
@@ -386,7 +198,7 @@ export function ProposalDetail({
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
             <div className="*:!w-full">
-              <PrimaryActionButton />
+              <VoteButton proposal={proposal} size="large" />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -440,15 +252,9 @@ export function ProposalDetail({
                     ))}
                     <p>
                       ≈{" "}
-                      {proposalTotalTribute(
-                        pricedAndNamedTributes
-                      ).toLocaleString("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}{" "}
-                      USD
+                      {amountToUSDString(
+                        proposalTotalTribute(pricedAndNamedTributes)
+                      )}
                     </p>
                   </>
                 ) : renderedProposal.points ? (

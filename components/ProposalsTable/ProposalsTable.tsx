@@ -6,8 +6,10 @@ import { Icon } from "@/components/Icon"
 import { PrettyTable, TD, TR } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
+import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
 import { useUserVotingData } from "@/hooks/hooks"
+import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import { estimatedRewardForPower } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
@@ -15,6 +17,7 @@ import { sum } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment } from "react"
+import { twMerge } from "tailwind-merge"
 import { proposalTotalTribute } from "./proposalTotalTribute"
 
 export const VOTE_SHARE_THRESHOLD = 5
@@ -63,11 +66,11 @@ export function ProposalsTable({
   const hasVoted = decoratedProposals?.some(
     (proposal) => proposal.hasVotedOnProp
   )
+  const votingPower = myUserVotingData?.votingPower ?? 0
   const showWelcomeModal =
     (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 100 &&
     !myUserVotingDataIsPending &&
-    myUserVotingData &&
-    myUserVotingData.votingPower <= 0
+    votingPower <= 0
   const percentageOfNonVoters =
     100 -
     sum(decoratedProposals?.map((proposal) => Number(proposal.percentage)))
@@ -138,7 +141,7 @@ export function ProposalsTable({
                 key: "yourEstimatedReward",
                 label: (
                   <div className="flex items-center gap-1">
-                    Your Est. Reward
+                    {isWalletConnected ? "Your" : "Total"} Est. Reward
                     <Tooltip
                       tipContents={
                         <>
@@ -161,7 +164,7 @@ export function ProposalsTable({
                 customValueGetter: (row) =>
                   estimatedRewardForPower(
                     proposalTotalTribute(row._proposal.pricedAndNamedTributes),
-                    myUserVotingData?.votingPower ?? 0,
+                    votingPower,
                     Number(row._proposal.power ?? 0)
                   ),
               },
@@ -201,124 +204,137 @@ export function ProposalsTable({
                 },
               },
             ]}
-            rows={decoratedProposals.map((proposal, index) => ({
-              _proposal: proposal,
-
-              name: (
-                <>
-                  <div className="flex items-center gap-6">
-                    {proposal.projectLogoUrl && (
-                      <div className={classNames.projectLogo}>
-                        <Image
-                          className="object-contain"
-                          src={proposal.projectLogoUrl}
-                          alt={proposal.projectName}
-                          fill={true}
-                        />
-                      </div>
-                    )}
-                    <p className={classNames.projectTitle}>
-                      {proposal.title.replace(
-                        /[ ]([^ ]+?)$/gm,
-                        `${String.fromCharCode(160)}$1`
-                      )}
-                    </p>
-                  </div>
-                  <Link
-                    href={`/voting/${proposal.proposal_id}`}
-                    className={classNames.projectLink}
+            rows={decoratedProposals.map((proposal, index) => {
+              const projectLogo = proposal.projectLogoUrl ? (
+                <div className={classNames.projectLogo}>
+                  <Image
+                    className="object-contain"
+                    src={proposal.projectLogoUrl}
+                    alt={proposal.projectName}
+                    fill={true}
                   />
-                </>
-              ),
-
-              yourEstimatedReward: proposal.points ? (
-                <Tooltip
-                  tipContents={
-                    <>
-                      This project is using a point system. Voters get points
-                      instead of live tokens. In this bid,{" "}
-                      <var className="font-mono font-bold not-italic text-palette-cyan">
-                        {proposal.points[0].toLocaleString("en-US")}{" "}
-                        {proposal.points[1]}
-                      </var>{" "}
-                      would be distributed as tribute.{" "}
-                      {proposal.pointProgramUrl && (
-                        <a
-                          href={proposal.pointProgramUrl}
-                          className="inline-flex items-center gap-1 text-palette-green underline"
-                          target="_blank"
-                        >
-                          Learn More <Icon name="solid:arrow-up-right" />
-                        </a>
-                      )}
-                    </>
-                  }
-                >
-                  <Icon name="solid:gem" />
-                </Tooltip>
-              ) : (
-                <Tooltip tipContents={usdDisclaimerTooltip}>
-                  <div>
-                    {(!isWalletConnected
-                      ? 0
-                      : estimatedRewardForPower(
-                          proposalTotalTribute(proposal.pricedAndNamedTributes),
-                          myUserVotingData?.votingPower ?? 0,
-                          Number(proposal.power ?? 0)
-                        )
-                    ).toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </div>
-                  <div className="whitespace-nowrap text-xs opacity-60">
-                    of{" "}
-                    {proposalTotalTribute(
-                      proposal.pricedAndNamedTributes
-                    ).toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </div>
-                </Tooltip>
-              ),
-
-              currentVoteShare: (
-                <div className="flex flex-row-reverse items-center gap-1">
-                  {proposal.percentage}%
-                  {Number(proposal.percentage) < VOTE_SHARE_THRESHOLD && (
-                    <Tooltip
-                      tipContents={voteThresholdTooltip}
-                      classNamesForTooltip="-ml-24"
-                    >
-                      <Icon
-                        name="solid:circle"
-                        className="text-xs text-palette-beige"
-                      />
-                    </Tooltip>
-                  )}
                 </div>
-              ),
+              ) : null
 
-              actions: (
+              const projectTitle = proposal.title.replace(
+                /[ ]([^ ]+?)$/gm,
+                `${String.fromCharCode(160)}$1`
+              )
+
+              const projectLink = `/voting/${proposal.proposal_id}`
+
+              const pointSystemTooltip = (
                 <>
-                  {!proposal.hasVotedOnProp && (
-                    <StyledText variant="button.secondary.small" as="button">
-                      {hasVoted ? "Change Vote" : "Vote"}
-                    </StyledText>
-                  )}
-                  {proposal.hasVotedOnProp && (
-                    <>
-                      <Icon name="solid:circle-check" /> Your Pick
-                    </>
+                  This project is using a point system. Voters get points
+                  instead of live tokens. In this bid,{" "}
+                  <var className="font-mono font-bold not-italic text-palette-cyan">
+                    {proposal.points?.[0].toLocaleString("en-US")}{" "}
+                    {proposal.points?.[1]}
+                  </var>{" "}
+                  would be distributed as tribute.{" "}
+                  {proposal.pointProgramUrl && (
+                    <a
+                      href={proposal.pointProgramUrl}
+                      className="inline-flex items-center gap-1 text-palette-green underline"
+                      target="_blank"
+                    >
+                      Learn More <Icon name="solid:arrow-up-right" />
+                    </a>
                   )}
                 </>
-              ),
-            }))}
+              )
+
+              const voteShareTooltip =
+                Number(proposal.percentage) < VOTE_SHARE_THRESHOLD ? (
+                  <Tooltip
+                    tipContents={voteThresholdTooltip}
+                    classNamesForTooltip="-ml-24"
+                  >
+                    <Icon
+                      name="solid:circle"
+                      className="text-xs text-palette-beige"
+                    />
+                  </Tooltip>
+                ) : null
+
+              return {
+                _proposal: proposal,
+
+                name: (
+                  <>
+                    <div className="flex items-center gap-6">
+                      {projectLogo}
+                      <p className={classNames.projectTitle}>{projectTitle}</p>
+                    </div>
+                    <Link
+                      href={projectLink}
+                      className={classNames.projectLink}
+                    />
+                  </>
+                ),
+
+                yourEstimatedReward: proposal.points ? (
+                  <Tooltip tipContents={pointSystemTooltip}>
+                    <Icon name="solid:gem" />
+                  </Tooltip>
+                ) : (
+                  <Tooltip tipContents={usdDisclaimerTooltip}>
+                    {!isWalletConnected ? (
+                      amountToUSDString(
+                        proposalTotalTribute(proposal.pricedAndNamedTributes)
+                      )
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2">
+                          {proposal.percentDifferenceRewardForUser !== 0 && (
+                            <span
+                              className={twMerge(
+                                `
+                                  flex
+                                  items-center
+                                  gap-1
+                                  text-xs
+                                `,
+                                proposal.percentDifferenceRewardForUser &&
+                                  proposal.percentDifferenceRewardForUser > 0
+                                  ? "text-palette-green"
+                                  : "text-palette-red"
+                              )}
+                            >
+                              <Icon
+                                name={
+                                  proposal?.percentDifferenceRewardForUser &&
+                                  proposal.percentDifferenceRewardForUser > 0
+                                    ? "solid:arrow-up"
+                                    : "solid:arrow-down"
+                                }
+                              />
+                              {proposal.percentDifferenceRewardForUser}%
+                            </span>
+                          )}
+                          {hasVoted
+                            ? amountToUSDString(
+                                proposal.estimatedRewardForUser ?? 0
+                              )
+                            : "???"}
+                        </div>
+                        <div className="whitespace-nowrap text-xs opacity-60">
+                          of {amountToUSDString(proposal.totalTributeValue)}
+                        </div>
+                      </>
+                    )}
+                  </Tooltip>
+                ),
+
+                currentVoteShare: (
+                  <div className="flex flex-row-reverse items-center gap-1">
+                    {proposal.percentage}%{voteShareTooltip}
+                  </div>
+                ),
+
+                actions: <VoteButton proposal={proposal} size="small" />,
+              }
+            })}
             renderRow={({
               children,
               row,

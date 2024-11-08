@@ -1,2 +1,3 @@
+export { classNames } from "./classNames"
 export { StyledText } from "./StyledText"
-export type { StyledTextProps } from "./StyledText"
+export type { StyledTextProps, StyledTextVariant } from "./StyledText"
