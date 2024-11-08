@@ -12,14 +12,12 @@ import { WelcomePopup } from "@/components/WelcomePopup"
 import { useUserVotingData } from "@/hooks/hooks"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
-import { estimatedRewardForPower } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { sum } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twMerge } from "tailwind-merge"
-import { proposalTotalTribute } from "./proposalTotalTribute"
 
 export const VOTE_SHARE_THRESHOLD = 5
 
@@ -177,13 +175,9 @@ export function ProposalsTable() {
               customValueGetter: (row) =>
                 !!row._proposal.points
                   ? -1
-                  : estimatedRewardForPower(
-                      proposalTotalTribute(
-                        row._proposal.pricedAndNamedTributes
-                      ),
-                      votingPower,
-                      Number(row._proposal.power ?? 0)
-                    ),
+                  : hasVoted
+                    ? (row._proposal.estimatedRewardForUser ?? 0)
+                    : (row._proposal.totalTributeValue ?? 0),
             },
             {
               key: "currentVoteShare",
@@ -303,32 +297,33 @@ export function ProposalsTable() {
                   ) : (
                     <>
                       <div className="flex items-center justify-end gap-2">
-                        {proposal.percentDifferenceRewardForUser !== 0 && (
-                          <span
-                            className={twMerge(
-                              `
+                        {hasVoted &&
+                          proposal.percentDifferenceRewardForUser !== 0 && (
+                            <span
+                              className={twMerge(
+                                `
                                   flex
                                   items-center
                                   gap-1
                                   text-xs
                                 `,
-                              proposal.percentDifferenceRewardForUser &&
-                                proposal.percentDifferenceRewardForUser > 0
-                                ? "text-palette-green"
-                                : "text-palette-red"
-                            )}
-                          >
-                            <Icon
-                              name={
-                                proposal?.percentDifferenceRewardForUser &&
-                                proposal.percentDifferenceRewardForUser > 0
-                                  ? "solid:arrow-up"
-                                  : "solid:arrow-down"
-                              }
-                            />
-                            {proposal.percentDifferenceRewardForUser}%
-                          </span>
-                        )}
+                                proposal.percentDifferenceRewardForUser &&
+                                  proposal.percentDifferenceRewardForUser > 0
+                                  ? "text-palette-green"
+                                  : "text-palette-red"
+                              )}
+                            >
+                              <Icon
+                                name={
+                                  proposal?.percentDifferenceRewardForUser &&
+                                  proposal.percentDifferenceRewardForUser > 0
+                                    ? "solid:arrow-up"
+                                    : "solid:arrow-down"
+                                }
+                              />
+                              {proposal.percentDifferenceRewardForUser}%
+                            </span>
+                          )}
                         {amountToUSDString(
                           proposal.estimatedRewardForUser ?? 0
                         )}
