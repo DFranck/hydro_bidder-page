@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="scroll-pt-32">
+    <html lang="en" className="scroll-pt-32 border-2 border-amber-400">
       <head>
         <Script
           crossOrigin="anonymous"
@@ -29,20 +29,20 @@ export default function RootLayout({
             <Script
               async
               src="https://www.googletagmanager.com/gtag/js?id=G-NZ1F6WL2PM"
-            ></Script>
+            />
             <Script id="google-analytics" strategy="afterInteractive">
               {`
-                            window.dataLayer = window.dataLayer || []
-                            function gtag(){dataLayer.push(arguments)}
-                            gtag('js', new Date())
-                            gtag('config', 'G-NZ1F6WL2PM')
-                        `}
+                  window.dataLayer = window.dataLayer || []
+                  function gtag(){dataLayer.push(arguments)}
+                  gtag('js', new Date())
+                  gtag('config', 'G-NZ1F6WL2PM')
+              `}
             </Script>
             <Script
               type="text/javascript"
               src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
               async
-            ></Script>
+            />
           </>
         )}
       </head>
@@ -62,7 +62,7 @@ export default function RootLayout({
             bg-cover
             bg-no-repeat
           "
-        ></div>
+        />
         <ClientHandler>{children}</ClientHandler>
         <ScrollIndicator />
       </body>
