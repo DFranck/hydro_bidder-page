@@ -211,11 +211,15 @@ export function ProposalsTable() {
                 className: classNames.classNamesForCells,
               },
               customValueGetter: (row) =>
-                estimatedRewardForPower(
-                  proposalTotalTribute(row._proposal.pricedAndNamedTributes),
-                  votingPower,
-                  Number(row._proposal.power ?? 0)
-                ),
+                !!row._proposal.points
+                  ? -1
+                  : estimatedRewardForPower(
+                      proposalTotalTribute(
+                        row._proposal.pricedAndNamedTributes
+                      ),
+                      votingPower,
+                      Number(row._proposal.power ?? 0)
+                    ),
             },
             {
               key: "currentVoteShare",

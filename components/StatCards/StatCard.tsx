@@ -14,7 +14,20 @@ export function StatCard({
   subTitle?: ReactNode
 }) {
   return (
-    <div className="relative">
+    <div
+      className="
+        relative
+        z-10
+        w-full
+        rounded-xl
+        bg-gradient-to-t
+        from-palette-blue/80
+        to-palette-blue/20
+        px-6
+        py-3
+        backdrop-blur-sm
+      "
+    >
       <div
         className={twMerge(
           `
@@ -33,13 +46,11 @@ export function StatCard({
       >
         <Icon className="animate-spin" name="solid:loader" />
       </div>
-
       <div
         className={twMerge(
           `
             flex
             flex-col
-            items-center
             opacity-100
             transition-all
           `,
