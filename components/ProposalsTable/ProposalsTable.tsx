@@ -2,7 +2,9 @@
 
 import { useAppContext } from "@/app/(with-context)/context"
 import { classNames } from "@/app/(with-context)/voting/classNames"
+import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
+import { ModalWindow } from "@/components/ModalWindow"
 import { PrettyTable, TD, TR } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
@@ -73,7 +75,58 @@ export function ProposalsTable() {
 
   return (
     <div className={classNames.container}>
+      <ModalWindow isOpen={true} onClose={() => {}}>
+        <Card>
+          <Card.Header>Pilot Round 1 Lock Cap Reached</Card.Header>
+          <Card.Body>
+            <div className="prose prose-invert">
+              <p>
+                The maximum amount of ATOM that can be locked in this round has
+                been reached. But things are far from over!
+              </p>
+              <p>
+                Keep optimizing your votes to ensure they go to the most
+                rewarding projects. Remember, projects may increase their
+                tribute to attract more votes before the round ends, so check
+                back often.
+              </p>
+              <p>Don&rsquo;t miss out on the next phase:</p>
+              <ul>
+                <li>
+                  <strong>Have a lockup?</strong> Continue optimizing your
+                  strategy and join our{" "}
+                  <StyledText
+                    variant="link"
+                    as={Link}
+                    href="https://t.me/+xUzNOTZjUNw5Mzhk"
+                    target="_blank"
+                  >
+                    Telegram Group
+                    <Icon name="solid:arrow-up-right" />
+                  </StyledText>{" "}
+                  to stay updated.
+                </li>
+                <li>
+                  <strong>No lockup yet?</strong> Join the{" "}
+                  <StyledText
+                    variant="link"
+                    as={Link}
+                    href="https://t.me/+xUzNOTZjUNw5Mzhk"
+                    target="_blank"
+                  >
+                    Telegram Group
+                    <Icon name="solid:arrow-up-right" />
+                  </StyledText>{" "}
+                  to be the first to know when Pilot Round 2 kicks off!
+                </li>
+              </ul>
+            </div>
+          </Card.Body>
+        </Card>
+      </ModalWindow>
+
       <WelcomePopup showModal={showWelcomeModal} />
+
       {decoratedProposals?.length ? (
         <PrettyTable
           initialSortedColumnKey="yourEstimatedReward"
