@@ -2,11 +2,7 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { ProposalsTable } from "@/components/ProposalsTable/ProposalsTable"
 import { StatCards } from "@/components/StatCards"
 
-export default async function ActiveProposalsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
+export default async function ActiveProposalsPage() {
   return (
     <ContentContainer className="gap-12 py-12">
       <div
@@ -22,7 +18,7 @@ export default async function ActiveProposalsPage({
         <StatCards.DaysRemaining />
       </div>
 
-      <ProposalsTable searchParams={searchParams} />
+      <ProposalsTable />
     </ContentContainer>
   )
 }

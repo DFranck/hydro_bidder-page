@@ -22,9 +22,10 @@ export function ClientHandler({
           <div
             className="
               grid
-              h-screen
               w-screen
               grid-rows-[auto,min-content]
+              border-2
+              border-amber-400
             "
           >
             <div>
