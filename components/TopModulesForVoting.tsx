@@ -67,9 +67,8 @@ export function TopModulesForVoting() {
                 <>
                   <p>
                     This number is the average APR available to Hydro voters
-                    during the current active round. It includes the regular
-                    Cosmos Hub staking APR which Hydro lockers continue to
-                    receive automatically.
+                    during the current active round. This is separate and
+                    additional to your standard staking APR as an ATOM staker.
                   </p>
 
                   <a
