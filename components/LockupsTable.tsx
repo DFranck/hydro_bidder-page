@@ -196,9 +196,23 @@ function Lockups() {
                 <Tooltip
                   classNamesForTooltip="-ml-12"
                   tipContents={
-                    percentageLockedInWallet === 100
-                      ? "You&rsquo;ve reached the maximum locked tokens"
-                      : "The maximum locked tokens overall has been reached"
+                    percentageLockedInWallet === 100 ? (
+                      "You&rsquo;ve reached the maximum locked tokens"
+                    ) : (
+                      <>
+                        The cap has been reached for this round. Join the{" "}
+                        <StyledText
+                          variant="link"
+                          as={Link}
+                          href="https://t.me/+xUzNOTZjUNw5Mzhk"
+                          target="_blank"
+                        >
+                          Hydro Telegram Group
+                          <Icon name="solid:arrow-up-right" />
+                        </StyledText>{" "}
+                        to get notified when the next round starts.
+                      </>
+                    )
                   }
                 >
                   <div
