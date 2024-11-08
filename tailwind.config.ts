@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss"
 import plugin from "tailwindcss/plugin"
+import { PluginUtils } from "tailwindcss/types/config"
 
 const config = {
   darkMode: ["class"],
@@ -49,6 +50,13 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      typography: ({ theme }: PluginUtils) => ({
+        DEFAULT: {
+          css: {
+            "--tw-prose-invert-bullets": theme("colors.palette.green"),
+          },
+        },
+      }),
     },
   },
   plugins: [
