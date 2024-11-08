@@ -37,9 +37,9 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
     <ModalWindow isOpen={isOpen} onClose={closeModal}>
       <Card
         className={`
-                    w-full
-                    max-w-2xl
-                `}
+          w-full
+          max-w-2xl
+        `}
       >
         <Card.Header title="Get started on Hydro" />
         <Card.Body>
@@ -63,11 +63,11 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
 
           <div
             className={`
-                            flex
-                            items-center
-                            justify-start
-                            gap-3
-                        `}
+              flex
+              items-center
+              justify-start
+              gap-3
+            `}
           >
             <StyledText variant="button.primary" as={Link} href="/lock-atom">
               Lock your ATOM to vote
@@ -81,11 +81,11 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
             </StyledText>
             <StyledText
               className={`
-                                flex
-                                items-center
-                                gap-1
-                                whitespace-nowrap
-                            `}
+                flex
+                items-center
+                gap-1
+                whitespace-nowrap
+              `}
               variant="link"
               as="a"
               href="/docs"
@@ -98,10 +98,10 @@ export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
 
           <div
             className={`
-                            flex
-                            items-center
-                            gap-2
-                        `}
+              flex
+              items-center
+              gap-2
+            `}
           >
             <StyledText
               variant="input.checkbox"
