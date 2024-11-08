@@ -64,7 +64,7 @@ export function ProposalsTable() {
   )
   const votingPower = myUserVotingData?.votingPower ?? 0
   const showWelcomeModal =
-    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 100 &&
+    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 99 &&
     !myUserVotingDataIsPending &&
     votingPower <= 0
   const percentageOfNonVoters =
