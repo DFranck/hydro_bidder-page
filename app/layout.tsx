@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="scroll-pt-32 border-2 border-amber-400">
+    <html lang="en" className="scroll-pt-32">
       <head>
         <Script
           crossOrigin="anonymous"

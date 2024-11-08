@@ -9,7 +9,9 @@ export function useIsDocumentScrolled() {
   useEffect(() => {
     function handleScroll() {
       setIsDocumentScrolled(window.scrollY > 50)
-      setCanDocumentScroll(window.innerHeight < document.body.scrollHeight)
+      setCanDocumentScroll(
+        window.innerHeight < document.documentElement.scrollHeight
+      )
     }
 
     window.addEventListener("scroll", handleScroll)
