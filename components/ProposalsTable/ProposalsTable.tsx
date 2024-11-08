@@ -3,6 +3,7 @@
 import { useAppContext } from "@/app/(with-context)/context"
 import { classNames } from "@/app/(with-context)/voting/classNames"
 import { Icon } from "@/components/Icon"
+import { MaxReachedPopup } from "@/components/MaxReachedPopup"
 import { PrettyTable, TD, TR } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
@@ -19,7 +20,6 @@ import Link from "next/link"
 import { Fragment } from "react"
 import { twMerge } from "tailwind-merge"
 import { proposalTotalTribute } from "./proposalTotalTribute"
-import { MaxReachedPopup } from "@/components/MaxReachedPopup"
 
 export const VOTE_SHARE_THRESHOLD = 5
 
@@ -45,6 +45,23 @@ export const usdDisclaimerTooltip = (
   <>
     USD equivalent values are estimates and may not reflect the actual current
     value.
+  </>
+)
+
+export const totalEstimatedRewardTooltip = (
+  <>
+    This is the total tribute value this project has included in their proposal.
+    It may increase if the project adds to{" "}
+    <span className="whitespace-nowrap">their tribute.</span>
+  </>
+)
+
+export const yourEstimatedRewardTooltip = (
+  <>
+    This is the tribute value that will be paid out to you when the round ends
+    if you vote for this project. It may increase (if the project adds to the
+    tribute) or decrease (if more voters choose this project){" "}
+    <span className="whitespace-nowrap">over time.</span>
   </>
 )
 
@@ -144,13 +161,9 @@ export function ProposalsTable() {
                   {isWalletConnected ? "Your" : "Total"} Est. Reward
                   <Tooltip
                     tipContents={
-                      <>
-                        This is the tribute value that will be paid out to you
-                        when the round ends if you vote for this project. It may
-                        increase (if the project adds to the tribute) or
-                        decrease (if more voters choose this project){" "}
-                        <span className="whitespace-nowrap">over time.</span>
-                      </>
+                      isWalletConnected
+                        ? yourEstimatedRewardTooltip
+                        : totalEstimatedRewardTooltip
                     }
                   />
                 </div>
@@ -278,7 +291,13 @@ export function ProposalsTable() {
                   <Icon name="solid:gem" />
                 </Tooltip>
               ) : (
-                <Tooltip tipContents={usdDisclaimerTooltip}>
+                <Tooltip
+                  tipContents={
+                    !isWalletConnected
+                      ? totalEstimatedRewardTooltip
+                      : usdDisclaimerTooltip
+                  }
+                >
                   {!isWalletConnected ? (
                     amountToUSDString(
                       proposalTotalTribute(proposal.pricedAndNamedTributes)
