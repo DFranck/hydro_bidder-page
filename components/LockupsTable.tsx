@@ -33,19 +33,23 @@ export function LockupsTable() {
 function Lockups() {
   const {
     globalState: {
-      constants: { max_locked_tokens, max_locked_tokens_per_address = 0 },
-      totalLockedTokens,
+      constants: { max_locked_tokens, max_locked_tokens_per_address },
+      totalLockedTokens: atomLockedOverall,
     },
   } = useAppContext()
   const { address } = useChain("neutron")
   const { data: userVotingData } = useUserVotingData(address!)
   const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
   const [refetch, setRefetch] = useState(true)
-  const lockedAtom = userVotingData?.lockups.lockedAtom ?? 0
-  const maxLockedTokens = max_locked_tokens_per_address ?? 1
-  const lockedPercentage = Math.min((lockedAtom / maxLockedTokens) * 100, 100)
-  const totalNetworkLockedPercentage =
-    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100
+  const lockedAtomInWallet = userVotingData?.lockups.lockedAtom ?? 0
+  const maxLockedAtomOverall = max_locked_tokens ?? 0
+  const maxLockedAtomPerWallet = max_locked_tokens_per_address ?? 0
+  const percentageLockedInWallet = Math.round(
+    (lockedAtomInWallet / maxLockedAtomPerWallet) * 100
+  )
+  const percentageLockedOverall = Math.round(
+    (atomLockedOverall / maxLockedAtomOverall) * 100
+  )
   const { setToasts } = useToasts()
 
   useEffect(() => {
@@ -133,7 +137,7 @@ function Lockups() {
               <div
                 className={twMerge(
                   "h-4 w-64 overflow-hidden rounded-full",
-                  lockedPercentage >= 98
+                  percentageLockedInWallet >= 98
                     ? "bg-red-500/20"
                     : "bg-palette-beige/20"
                 )}
@@ -141,10 +145,12 @@ function Lockups() {
                 <div
                   className={twMerge(
                     "h-full",
-                    lockedPercentage >= 98 ? "bg-red-500" : "bg-palette-beige"
+                    percentageLockedInWallet >= 98
+                      ? "bg-red-500"
+                      : "bg-palette-beige"
                   )}
                   style={{
-                    width: `${lockedPercentage}%`,
+                    width: `${percentageLockedInWallet}%`,
                   }}
                 />
               </div>
@@ -154,13 +160,13 @@ function Lockups() {
                     `
                       text-sm
                     `,
-                    lockedPercentage >= 98
+                    percentageLockedInWallet >= 98
                       ? "text-red-500"
                       : "text-palette-beige"
                   )}
                 >
-                  {(lockedAtom / 1e6).toFixed(4)} /{" "}
-                  {(maxLockedTokens / 1e6).toFixed(2)} ATOM max.
+                  {(lockedAtomInWallet / 1e6).toFixed(4)} /{" "}
+                  {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
                 </span>
 
                 <Tooltip
@@ -183,12 +189,17 @@ function Lockups() {
 
             <ConditionalWrapper
               condition={
-                lockedPercentage === 100 || totalNetworkLockedPercentage >= 99
+                percentageLockedInWallet === 100 ||
+                percentageLockedOverall === 100
               }
               wrapper={(children) => (
                 <Tooltip
                   classNamesForTooltip="-ml-12"
-                  tipContents="You&rsquo;ve reached the maximum locked tokens"
+                  tipContents={
+                    percentageLockedInWallet === 100
+                      ? "You&rsquo;ve reached the maximum locked tokens"
+                      : "The maximum locked tokens overall has been reached"
+                  }
                 >
                   <div
                     className="

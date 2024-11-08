@@ -15,7 +15,6 @@ import { sum } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment } from "react"
-import { twJoin } from "tailwind-merge"
 import { proposalTotalTribute } from "./proposalTotalTribute"
 
 export const VOTE_SHARE_THRESHOLD = 5
@@ -78,7 +77,7 @@ export function ProposalsTable({
       <div className={classNames.container}>
         {decoratedProposals?.length ? (
           <PrettyTable
-            initialSortedColumnKey="currentVoteShare"
+            initialSortedColumnKey="yourEstimatedReward"
             contentForFirstRow={
               !!percentageOfNonVoters && (
                 <tr>
@@ -113,24 +112,6 @@ export function ProposalsTable({
               )
             }
             columns={[
-              {
-                key: "hasVoted",
-                label: "",
-                isSortable: false,
-                propsForHeaderCell: {
-                  className: twJoin(`
-                    w-0
-                    !pr-0
-                  `),
-                },
-                propsForCells: {
-                  className: twJoin(`
-                    ${classNames.classNamesForCells}
-                    w-0
-                    !pr-0
-                  `),
-                },
-              },
               {
                 key: "name",
                 label: (
@@ -173,6 +154,7 @@ export function ProposalsTable({
                 ),
                 isSortable: true,
                 textAlign: "right",
+                initialSortDirection: "DESC",
                 propsForCells: {
                   className: classNames.classNamesForCells,
                 },
@@ -209,20 +191,18 @@ export function ProposalsTable({
                 },
                 customValueGetter: (row) => Number(row._proposal.percentage),
               },
+              {
+                key: "actions",
+                label: "Actions",
+                isSortable: false,
+                textAlign: "right",
+                propsForCells: {
+                  className: classNames.classNamesForCells,
+                },
+              },
             ]}
             rows={decoratedProposals.map((proposal, index) => ({
               _proposal: proposal,
-
-              hasVoted:
-                hasVoted && proposal.hasVotedOnProp ? (
-                  <div className={classNames.hasVotedIcon}>
-                    <Icon name="regular:circle-check" />
-
-                    <div className={classNames.hasVotedLabel}>Your Pick</div>
-                  </div>
-                ) : (
-                  <Icon className="text-2xl" name="regular:scroll" />
-                ),
 
               name: (
                 <>
@@ -322,6 +302,21 @@ export function ProposalsTable({
                     </Tooltip>
                   )}
                 </div>
+              ),
+
+              actions: (
+                <>
+                  {!proposal.hasVotedOnProp && (
+                    <StyledText variant="button.secondary.small" as="button">
+                      {hasVoted ? "Change Vote" : "Vote"}
+                    </StyledText>
+                  )}
+                  {proposal.hasVotedOnProp && (
+                    <>
+                      <Icon name="solid:circle-check" /> Your Pick
+                    </>
+                  )}
+                </>
               ),
             }))}
             renderRow={({
