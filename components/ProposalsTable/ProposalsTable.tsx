@@ -299,9 +299,7 @@ export function ProposalsTable() {
                   }
                 >
                   {!isWalletConnected ? (
-                    amountToUSDString(
-                      proposalTotalTribute(proposal.pricedAndNamedTributes)
-                    )
+                    amountToUSDString(proposal.totalTributeValue)
                   ) : (
                     <>
                       <div className="flex items-center justify-end gap-2">
@@ -331,14 +329,9 @@ export function ProposalsTable() {
                             {proposal.percentDifferenceRewardForUser}%
                           </span>
                         )}
-                        {hasVoted
-                          ? amountToUSDString(
-                              proposal.estimatedRewardForUser ?? 0
-                            )
-                          : "???"}
-                      </div>
-                      <div className="whitespace-nowrap text-xs opacity-60">
-                        of {amountToUSDString(proposal.totalTributeValue)}
+                        {amountToUSDString(
+                          proposal.estimatedRewardForUser ?? 0
+                        )}
                       </div>
                     </>
                   )}
