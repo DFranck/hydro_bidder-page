@@ -32,15 +32,16 @@ export function StatCards({
         className={twMerge(
           `
             grid
+            grid-cols-1
             items-center
             justify-center
             gap-4
           `,
-          childCount === 1
-            ? "grid-cols-1"
-            : childCount % 2 === 0
-              ? "sm:grid-cols-2"
-              : "md:grid-cols-3"
+          childCount % 2 === 0
+            ? "sm:grid-cols-2"
+            : childCount > 2
+              ? "md:grid-cols-3"
+              : ""
         )}
       >
         {children}

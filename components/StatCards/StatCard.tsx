@@ -21,6 +21,7 @@ export function StatCard({
         `
           relative
           z-10
+          w-full
           p-6
           @container
         `,
