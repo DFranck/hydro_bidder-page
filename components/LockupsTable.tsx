@@ -9,6 +9,7 @@ import { PrettyTable } from "@/components/PrettyTable"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
+import { networkLimitReachedTooltip } from "@/components/ToolTips"
 import { fetchMyAllLockups, useUserVotingData } from "@/hooks/hooks"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
@@ -196,23 +197,9 @@ function Lockups() {
                 <Tooltip
                   classNamesForTooltip="-ml-12"
                   tipContents={
-                    percentageLockedInWallet === 100 ? (
-                      "You&rsquo;ve reached the maximum locked tokens"
-                    ) : (
-                      <>
-                        The cap has been reached for this round. Join the{" "}
-                        <StyledText
-                          variant="link"
-                          as={Link}
-                          href="https://t.me/+xUzNOTZjUNw5Mzhk"
-                          target="_blank"
-                        >
-                          Hydro Telegram Group
-                          <Icon name="solid:arrow-up-right" />
-                        </StyledText>{" "}
-                        to get notified when the next round starts.
-                      </>
-                    )
+                    percentageLockedInWallet === 100
+                      ? "You&rsquo;ve reached the maximum locked tokens"
+                      : networkLimitReachedTooltip
                   }
                 >
                   <div

@@ -3,11 +3,14 @@
 import { useAppContext } from "@/app/(with-context)/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { Card } from "@/components/Card"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Confetti } from "@/components/Confetti"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText, StyledTextVariant } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
+import { Tooltip } from "@/components/Tooltip"
+import { networkLimitReachedTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote, useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { useChain } from "@cosmos-kit/react"
@@ -17,15 +20,20 @@ import { useState } from "react"
 export function VoteButton({
   proposal,
   size,
-  type,
 }: {
   proposal: Proposal
   size?: "large" | "small"
-  type?: "primary" | "secondary"
 }) {
   const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { globalState, currentProposalTranches } = useAppContext()
+  const {
+    constants: { max_locked_tokens },
+    totalLockedTokens,
+  } = globalState
+  const percentageLocked = Math.round(
+    ((totalLockedTokens ?? 0) / (max_locked_tokens ?? 0)) * 100
+  )
   const { isWalletConnected, address, getSigningCosmWasmClient } =
     useChain("neutron")
   const { data: userVotingData } = useUserVotingData(address || "")
@@ -112,13 +120,24 @@ export function VoteButton({
     )
   } else if (userVotingData?.votingPower === 0) {
     Button = (
-      <StyledText
-        as={Link}
-        href="/lock-atom"
-        variant={`button.primary${size ? `.${size}` : ""}` as StyledTextVariant}
+      <ConditionalWrapper
+        condition={percentageLocked === 100}
+        wrapper={(children) => (
+          <Tooltip tipContents={networkLimitReachedTooltip}>
+            <div className="pointer-events-none opacity-60">{children}</div>
+          </Tooltip>
+        )}
       >
-        Lock ATOM to Vote
-      </StyledText>
+        <StyledText
+          as={Link}
+          href="/lock-atom"
+          variant={
+            `button.primary${size ? `.${size}` : ""}` as StyledTextVariant
+          }
+        >
+          Lock ATOM to Vote
+        </StyledText>
+      </ConditionalWrapper>
     )
   } else if (hasVotedThisProposal) {
     Button = (
