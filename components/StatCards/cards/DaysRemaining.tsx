@@ -14,9 +14,9 @@ const getRoundEndText = (roundEnd: Timestamp) => {
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
 
   if (days > 0) {
-    return `${days} day${days > 1 ? "s" : ""}`
+    return `${days} d`
   } else {
-    return `${hours} hour${hours > 1 ? "s" : ""}`
+    return `${hours} h`
   }
 }
 
@@ -30,7 +30,7 @@ export function DaysRemaining() {
     <StatCard
       title={
         <div className="flex items-center gap-1">
-          Remaining
+          Time Remaining
           <Tooltip
             tipContents={
               <>
