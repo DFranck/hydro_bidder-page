@@ -19,20 +19,9 @@ export function ClientHandler({
     <>
       <WalletHandler>
         <QueryClientProvider client={queryClient}>
-          <div
-            className="
-              grid
-              h-screen
-              w-screen
-              grid-rows-[auto,min-content]
-            "
-          >
-            <div>
-              <Header />
-              {children}
-            </div>
-            <Footer />
-          </div>
+          <Header />
+          {children}
+          <Footer />
         </QueryClientProvider>
       </WalletHandler>
     </>

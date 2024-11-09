@@ -7,27 +7,27 @@ export function StatCard({
   title,
   value,
   subTitle,
+  className,
 }: {
   isLoading?: boolean
   title?: ReactNode
   value?: ReactNode
   subTitle?: ReactNode
+  className?: string
 }) {
   return (
     <div
-      className="
-        relative
-        z-10
-        w-full
-        rounded-xl
-        bg-gradient-to-t
-        from-palette-blue/80
-        to-palette-blue/20
-        px-6
-        py-3
-        backdrop-blur-sm
-      "
+      className={twMerge(
+        `
+          relative
+          z-10
+          p-6
+          @container
+        `,
+        className
+      )}
     >
+      {/* Loading spinner */}
       <div
         className={twMerge(
           `
@@ -46,41 +46,53 @@ export function StatCard({
       >
         <Icon className="animate-spin" name="solid:loader" />
       </div>
+
+      {/* Content */}
       <div
         className={twMerge(
           `
             flex
-            flex-col
+            flex-col-reverse
+            items-center
+            justify-center
+            gap-1
+            text-center
             opacity-100
             transition-all
+            @xs:flex-row-reverse
+            @xs:gap-3
+            @xs:text-left
           `,
           isLoading && "opacity-0"
         )}
       >
-        <h3
-          className="
-            order-2
-            text-base
-            font-bold
-            xl:text-lg
-          "
-        >
-          {title}
-        </h3>
-        <div
-          className="
-            order-3
-            text-sm
-            font-bold
-            text-palette-beige
-          "
-        >
-          {subTitle}
+        <div className="whitespace-nowrap">
+          <h3
+            className="
+              text-sm
+              font-bold
+              transition-all
+              xl:text-base
+            "
+          >
+            {title}
+          </h3>
+          <div
+            className="
+              text-xs
+              font-bold
+              text-palette-beige
+              transition-all
+              xl:text-sm
+            "
+          >
+            {subTitle}
+          </div>
         </div>
+
         <div
           className="
             font-display
-            order-1
             text-4xl
             font-bold
             text-palette-beige
