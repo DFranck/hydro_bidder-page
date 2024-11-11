@@ -43,7 +43,7 @@ export function ProposalsTable() {
   )
   const votingPower = myUserVotingData?.votingPower ?? 0
   const showWelcomeModal =
-    (totalLockedTokens / (max_locked_tokens ?? 1)) * 100 < 99 &&
+    Math.round((totalLockedTokens / (max_locked_tokens ?? 1)) * 100) < 100 &&
     !myUserVotingDataIsPending &&
     votingPower <= 0
   const percentageOfNonVoters =
@@ -54,7 +54,7 @@ export function ProposalsTable() {
     <div className={classNames.container}>
       <MaxReachedPopup />
 
-      <WelcomePopup showModal={showWelcomeModal} />
+      <WelcomePopup showModal={false} />
 
       {decoratedProposals?.length ? (
         <PrettyTable
