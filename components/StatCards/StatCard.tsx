@@ -23,7 +23,6 @@ export function StatCard({
           z-10
           w-full
           p-6
-          @container
         `,
         className
       )}
@@ -60,9 +59,6 @@ export function StatCard({
             text-center
             opacity-100
             transition-all
-            @xs:flex-row-reverse
-            @xs:gap-3
-            @xs:text-left
           `,
           isLoading && "opacity-0"
         )}
