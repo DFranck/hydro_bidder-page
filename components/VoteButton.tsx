@@ -15,6 +15,7 @@ import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote, useMyVotes, useUserVotingData } from "@/hooks/hooks"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export function VoteButton({
@@ -47,6 +48,7 @@ export function VoteButton({
     myVotes?.get(proposal.tranche_id)?.prop_id === proposal.proposal_id
   const hasVotedAtAll = myVotes && myVotes.size > 0
   const isLoading = toasts.some((toast) => toast.variant === "working")
+  const router = useRouter()
 
   async function handleClickVote() {
     if (!proposal) {
@@ -72,9 +74,13 @@ export function VoteButton({
       setToasts([
         {
           variant: "success",
-          message: "Vote submitted",
+          message: "Vote submitted. Reloading page...",
         },
       ])
+
+      setTimeout(() => {
+        router.refresh()
+      }, 1500)
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
         setToasts([
