@@ -334,6 +334,7 @@ export function ProposalsTable() {
             const shouldShowVoteThresholdLine =
               sortedColumnKey === "currentVoteShare" &&
               previousRow &&
+              nextRow &&
               Number(previousRow._proposal.percentage) >=
                 VOTE_SHARE_THRESHOLD &&
               Number(row._proposal.percentage) < VOTE_SHARE_THRESHOLD
@@ -341,7 +342,6 @@ export function ProposalsTable() {
             const shouldShowRewardThresholdLine =
               sortedColumnKey === "yourEstimatedReward" &&
               sortDirection === "DESC" &&
-              previousRow &&
               nextRow &&
               row._proposal.hasVotedOnProp
 
