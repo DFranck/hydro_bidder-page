@@ -5,6 +5,7 @@ import { classNames } from "@/app/(with-context)/voting/classNames"
 import { Icon } from "@/components/Icon"
 import { MaxReachedPopup } from "@/components/MaxReachedPopup"
 import { PrettyTable, TD, TR } from "@/components/PrettyTable"
+import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   totalEstimatedRewardTooltip,
@@ -291,6 +292,15 @@ export function ProposalsTable() {
                           proposal.estimatedRewardForUser ?? 0
                         )}
                       </div>
+                      {isWalletConnected && votingPower === 0 && (
+                        <StyledText
+                          variant="footnote"
+                          as="div"
+                          className="whitespace-nowrap"
+                        >
+                          of {amountToUSDString(proposal.totalTributeValue)}
+                        </StyledText>
+                      )}
                     </>
                   )}
                 </Tooltip>
