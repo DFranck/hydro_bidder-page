@@ -4,13 +4,13 @@ import { useAppContext } from "@/app/(with-context)/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ProposalsTable/ProposalsTable"
 import { proposalTotalTribute } from "@/components/ProposalsTable/proposalTotalTribute"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
+import {
+  VOTE_SHARE_THRESHOLD,
+  voteThresholdTooltip,
+} from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { useMyVotes } from "@/hooks/hooks"
 import { amountToUSDString } from "@/lib/amountToUSDString"
