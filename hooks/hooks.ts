@@ -479,18 +479,6 @@ export const fetchMyExpiredLockups = async (myAddress: string) => {
   return response.lockups
 }
 
-export const useMyVotes = (
-  myAddress: string,
-  roundId: number,
-  trancheIds: number[]
-) => {
-  return useQuery({
-    queryKey: ["myVotes", myAddress, roundId, trancheIds],
-    queryFn: () => fetchMyVotes(myAddress, roundId, trancheIds),
-    staleTime,
-  })
-}
-
 export const useMyLockups = (myAddress: string) => {
   return useQuery({
     queryKey: ["myLockups", myAddress],
@@ -667,6 +655,18 @@ export const useUserVotingData = (address: string) => {
   return useQuery({
     queryKey: ["userVotingData", address],
     queryFn: () => fetchUserVotingData(address),
+    staleTime,
+  })
+}
+
+export const useMyVotes = (
+  myAddress: string,
+  roundId: number,
+  trancheIds: number[]
+) => {
+  return useQuery({
+    queryKey: ["myVotes", myAddress, roundId, trancheIds],
+    queryFn: () => fetchMyVotes(myAddress, roundId, trancheIds),
     staleTime,
   })
 }
