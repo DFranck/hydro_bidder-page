@@ -35,7 +35,9 @@ export default function Page({
     ? preHydroProposals.map((proposal) => ({
         title: proposal.title,
         projectName: proposal.project,
-        polValue: proposal.initial_allocation,
+        polValue: `${proposal.initial_allocation.toLocaleString(undefined, {
+          maximumFractionDigits: 4,
+        })} ATOM`,
         duration: (proposal.duration_days / 30).toFixed(1),
         polRewards: proposal.current_allocation - proposal.initial_allocation,
         apr: proposal.apr,
@@ -49,15 +51,25 @@ export default function Page({
         duration: 1,
         polRewards: 0,
         apr: 0,
-        tribute: (
-          proposal.pricedAndNamedTributes.reduce(
-            (acc, t) => acc + t.amount,
-            0
-          ) / 1e6
-        ).toLocaleString(undefined, {
-          maximumFractionDigits: 4,
-        }),
-        status: "???",
+        tribute: proposal.points ? (
+          <>
+            {proposal.points?.[0].toLocaleString("en-US")}{" "}
+            {proposal.points?.[1]}
+          </>
+        ) : (
+          <>
+            {(
+              proposal.pricedAndNamedTributes.reduce(
+                (acc, t) => acc + t.amount,
+                0
+              ) / 1e6
+            ).toLocaleString(undefined, {
+              maximumFractionDigits: 4,
+            })}{" "}
+            ATOM
+          </>
+        ),
+        status: "Round Ongoing",
       }))
 
   const rows = normalizedProposals.map((proposal) => ({
@@ -68,15 +80,13 @@ export default function Page({
         <StyledText variant="footnote">{proposal.projectName}</StyledText>
       </div>
     ),
-    polValue: `${proposal.polValue.toLocaleString(undefined, {
-      maximumFractionDigits: 4,
-    })} ATOM`,
+    polValue: proposal.polValue,
     duration: `${proposal.duration} months`,
     polRewards: `${proposal.polRewards.toLocaleString(undefined, {
       maximumFractionDigits: 4,
     })} ATOM`,
     apr: `${proposal.apr}%`,
-    tribute: `${proposal.tribute}`,
+    tribute: proposal.tribute,
     status: proposal.status,
   }))
 
@@ -119,11 +129,17 @@ export default function Page({
       key: "tribute",
       label: "Tribute",
       textAlign: "right",
+      propsForCells: {
+        className: "whitespace-nowrap",
+      },
     },
     {
       key: "status",
       label: "Status",
       textAlign: "right",
+      propsForCells: {
+        className: "whitespace-nowrap",
+      },
     },
   ]
 
