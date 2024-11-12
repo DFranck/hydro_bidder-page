@@ -173,7 +173,7 @@ export function ProposalsTable() {
                     )}
                   {amountToUSDString(proposal.estimatedRewardForUser ?? 0)}
                 </div>
-                {isWalletConnected && votingPower === 0 && (
+                {isWalletConnected && (
                   <StyledText
                     variant="footnote"
                     as="div"
