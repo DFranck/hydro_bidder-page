@@ -5,6 +5,7 @@ import { Timestamp } from "@/app/ts_types/HydroBase.types"
 import { Icon } from "@/components/Icon"
 import { StatCard } from "@/components/StatCards/StatCard"
 import { Tooltip } from "@/components/Tooltip"
+import { sum } from "lodash"
 
 const getRoundEndText = (roundEnd: Timestamp) => {
   const now = new Date()
@@ -23,14 +24,24 @@ const getRoundEndText = (roundEnd: Timestamp) => {
 export function DaysRemaining() {
   const {
     globalState: { currentRound },
+    currentProposalTranches,
     currentRoundEnd,
   } = useAppContext()
+
+  const percentageOfNonVoters =
+    100 -
+    sum(
+      currentProposalTranches
+        .get(1) // TODO: make this dynamic
+        ?.map((proposal) => Number(proposal.percentage)) ?? []
+    )
 
   return (
     <StatCard
       title={
         <div className="flex items-center gap-1">
-          Time Remaining
+          {/* TODO: make this dynamic */}
+          Time Left in Pilot Round 1
           <Tooltip
             tipContents={
               <>
@@ -49,8 +60,11 @@ export function DaysRemaining() {
           />
         </div>
       }
-      // label={`Pilot Round ${currentRound}`}
-      subTitle={`Pilot Round 1`}
+      subTitle={
+        <>
+          <strong>{percentageOfNonVoters}%</strong> have not yet voted
+        </>
+      }
       value={currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"}
     />
   )
