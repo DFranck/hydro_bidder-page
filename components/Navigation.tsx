@@ -199,23 +199,12 @@ export default function Navigation() {
           </Link>
         </Tooltip>
 
-        <Tooltip
-          tipContents={
-            <>
-              Performance metrics of liquidity deployments will be shown here.
-            </>
-          }
+        <Link
+          href="/metrics"
+          className={twMerge(navigationMenuTriggerStyle("/metrics"))}
         >
-          <Link
-            href="/metrics"
-            className={twMerge(
-              navigationMenuTriggerStyle("/metrics"),
-              `pointer-events-none opacity-60`
-            )}
-          >
-            Metrics
-          </Link>
-        </Tooltip>
+          Metrics
+        </Link>
 
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>
