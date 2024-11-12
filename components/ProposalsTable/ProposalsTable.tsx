@@ -20,7 +20,6 @@ import { useUserVotingData } from "@/hooks/hooks"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import { useChain } from "@cosmos-kit/react"
-import { sum } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, ReactNode, useCallback, useMemo } from "react"
@@ -49,9 +48,6 @@ export function ProposalsTable() {
     Math.round((totalLockedTokens / (max_locked_tokens ?? 1)) * 100) < 100 &&
     !myUserVotingDataIsPending &&
     votingPower <= 0
-  const percentageOfNonVoters =
-    100 -
-    sum(decoratedProposals?.map((proposal) => Number(proposal.percentage)))
 
   type Row = {
     _proposal: (typeof decoratedProposals)[number]
@@ -125,11 +121,30 @@ export function ProposalsTable() {
 
         yourEstimatedReward: proposal.points ? (
           <Tooltip tipContents={pointSystemTooltip}>
-            <div className="whitespace-nowrap">
-              <Icon name="solid:gem" />{" "}
-              {proposal.points?.[0].toLocaleString("en-US")}{" "}
-              {proposal.points?.[1]}
-            </div>
+            {votingPower ? (
+              <>
+                <div className="whitespace-nowrap">
+                  <Icon name="solid:gem" />{" "}
+                  {(
+                    Number(proposal.points?.[0] ?? 0) *
+                    (votingPower / (Number(proposal.power ?? 0) + votingPower))
+                  ).toLocaleString("en-US")}
+                </div>
+                <StyledText
+                  variant="footnote"
+                  as="div"
+                  className="whitespace-nowrap"
+                >
+                  of {proposal.points?.[0].toLocaleString("en-US")}{" "}
+                  {proposal.points?.[1]}
+                </StyledText>
+              </>
+            ) : (
+              <>
+                {proposal.points?.[0].toLocaleString("en-US")}{" "}
+                {proposal.points?.[1]}
+              </>
+            )}
           </Tooltip>
         ) : (
           <Tooltip
@@ -206,18 +221,18 @@ export function ProposalsTable() {
     return [withoutPoints, withPoints]
   }, [decoratedProposals, isWalletConnected, hasVoted, votingPower])
 
-  const columns = useMemo<
-    ColumnObject<
+  const buildColumns = useCallback(
+    (
+      projectBidLabel: string
+    ): ColumnObject<
       (typeof rowsWithoutPoints)[number],
       keyof (typeof rowsWithoutPoints)[number]
-    >[]
-  >(
-    () => [
+    >[] => [
       {
         key: "name",
         label: (
           <div className="flex items-center gap-1">
-            Project Bid
+            {projectBidLabel}
             <Tooltip
               tipContents={
                 <>
@@ -404,13 +419,13 @@ export function ProposalsTable() {
         <>
           <PrettyTable
             initialSortedColumnKey="yourEstimatedReward"
-            columns={columns}
+            columns={buildColumns("Points-Based Project Bid")}
             rows={rowsWithPoints}
             renderRow={renderRow}
           />
           <PrettyTable
             initialSortedColumnKey="yourEstimatedReward"
-            columns={columns}
+            columns={buildColumns("Token-Based Project Bid")}
             rows={rowsWithoutPoints}
             renderRow={renderRow}
           />
