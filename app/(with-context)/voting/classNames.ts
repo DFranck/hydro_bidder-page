@@ -22,6 +22,7 @@ export const classNames = {
     text-white
   `),
   classNamesForCells: twJoin(`
+    relative
     group-hover/table-row:text-palette-green
     sm:group-[&.has-voted]/table-row:border-y-2
     sm:group-[&.has-voted]/table-row:border-palette-green
