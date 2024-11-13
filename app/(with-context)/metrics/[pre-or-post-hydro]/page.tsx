@@ -2,9 +2,12 @@
 
 import { useMetricsContext } from "@/app/(with-context)/metrics/context"
 import { ContentContainer } from "@/components/ContentContainer"
+import { Icon } from "@/components/Icon"
+import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { pluralize } from "@/lib/pluralize"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import startCase from "lodash/startCase"
 import Image from "next/image"
@@ -40,7 +43,7 @@ export default function Page({
         polValue: `${proposal.initial_allocation.toLocaleString(undefined, {
           maximumFractionDigits: 4,
         })} ATOM`,
-        duration: (proposal.duration_days / 30).toFixed(1),
+        duration: proposal.duration_days / 30,
         polRewards: proposal.current_allocation - proposal.initial_allocation,
         apr: proposal.apr,
         tribute: 0,
@@ -60,7 +63,7 @@ export default function Page({
         ) : null,
         title: proposal.title,
         projectName: proposal.projectName,
-        polValue: "Pending Round Closure", // TODO: compute this
+        polValue: "–", // TODO: compute this
         duration: 1,
         polRewards: 0,
         apr: 0,
@@ -84,14 +87,19 @@ export default function Page({
       </div>
     ),
     polValue: proposal.polValue,
-    duration: `${proposal.duration} months`,
+    duration: pluralize({
+      count: proposal.duration ?? 0,
+      singular: "month",
+      prefixCount: true,
+    }),
     polRewards: `${proposal.polRewards.toLocaleString(undefined, {
       maximumFractionDigits: 4,
     })} ATOM`,
     apr: `${proposal.apr}%`,
     tribute: proposal.points ? (
       <>
-        {proposal.tribute.toLocaleString("en-US")} {proposal.points?.[1]}
+        <Icon name="solid:gem" /> {proposal.tribute.toLocaleString("en-US")}{" "}
+        {proposal.points?.[1]}
       </>
     ) : (
       <>
@@ -164,9 +172,6 @@ export default function Page({
       key: "tribute",
       label: "Tribute",
       textAlign: "right",
-      propsForCells: {
-        className: "whitespace-nowrap",
-      },
       isSortable: true,
       initialSortDirection: "DESC",
       customValueGetter: (row) => row._proposal.tribute,
@@ -185,51 +190,59 @@ export default function Page({
   ]
 
   return (
-    <ContentContainer className="gap-12 py-12">
-      <div className="flex items-center justify-between">
-        <StyledText variant="h2">Metrics</StyledText>
-        <div>
-          {["pre-hydro", "post-hydro"].map((preOrPostHydro) => {
-            const isActive =
-              (isPreHydro && preOrPostHydro === "pre-hydro") ||
-              (!isPreHydro && preOrPostHydro === "post-hydro")
+    <>
+      <StatCards>
+        <StatCards.PoLAvailable />
+        <StatCards.PoLDeployed />
+        <StatCards.AverageAPR />
+      </StatCards>
 
-            return (
-              <StyledText
-                as={Link}
-                variant={isActive ? "button.primary" : "button.secondary"}
-                href={`/metrics/${preOrPostHydro}`}
-                key={preOrPostHydro}
-                className={twMerge(
-                  `
-                    rounded-none
-                    first:rounded-l-full
-                    last:rounded-r-full
-                  `,
-                  !isActive && "opacity-60"
-                )}
-              >
-                {startCase(preOrPostHydro)}
-              </StyledText>
-            )
-          })}
+      <ContentContainer className="gap-12 py-12">
+        <div className="flex items-center justify-between">
+          <StyledText variant="h2">PoL Metrics</StyledText>
+          <div>
+            {["pre-hydro", "post-hydro"].map((preOrPostHydro) => {
+              const isActive =
+                (isPreHydro && preOrPostHydro === "pre-hydro") ||
+                (!isPreHydro && preOrPostHydro === "post-hydro")
+
+              return (
+                <StyledText
+                  as={Link}
+                  variant={isActive ? "button.primary" : "button.secondary"}
+                  href={`/metrics/${preOrPostHydro}`}
+                  key={preOrPostHydro}
+                  className={twMerge(
+                    `
+                      rounded-none
+                      first:rounded-l-full
+                      last:rounded-r-full
+                    `,
+                    !isActive && "opacity-60"
+                  )}
+                >
+                  {startCase(preOrPostHydro)}
+                </StyledText>
+              )
+            })}
+          </div>
         </div>
-      </div>
-      <div
-        className="
-          -mx-3
-          rounded-xl
-          bg-palette-text/20
-          p-3
-          backdrop-blur-md
-        "
-      >
-        <StyledTable
-          columns={columns}
-          rows={rows}
-          initialSortedColumnKey="polValue"
-        />
-      </div>
-    </ContentContainer>
+        <div
+          className="
+            -mx-3
+            rounded-xl
+            bg-palette-text/20
+            p-3
+            backdrop-blur-md
+          "
+        >
+          <StyledTable
+            columns={columns}
+            rows={rows}
+            initialSortedColumnKey="polValue"
+          />
+        </div>
+      </ContentContainer>
+    </>
   )
 }

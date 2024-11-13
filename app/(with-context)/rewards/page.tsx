@@ -1,5 +1,6 @@
 "use client"
 
+import { classNames } from "@/app/(with-context)/voting/classNames"
 import { ContentContainer } from "@/components/ContentContainer"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
@@ -7,62 +8,134 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
+import Image from "next/image"
+import Link from "next/link"
 
 export default function Page() {
   const decoratedProposals = useDecoratedProposals({ trancheId: 1 }) ?? []
 
-  const rows = decoratedProposals.map((proposal) => ({
-    _proposal: proposal,
+  const rows = decoratedProposals.map((proposal) => {
+    const projectLink = `/voting/${proposal.proposal_id}`
 
-    votingRound: 1,
+    return {
+      _proposal: proposal,
 
-    bidTitleAndProjectName: (
-      <div className="flex flex-col">
-        <StyledText variant="h4">{proposal.title}</StyledText>
-        <StyledText variant="footnote">{proposal.projectName}</StyledText>
-      </div>
-    ),
+      roundNumber: (
+        <>
+          1
+          <Link href={projectLink} className={classNames.projectLink} />
+        </>
+      ),
 
-    token: proposal.points
-      ? proposal.points[1]
-      : proposal.pricedAndNamedTributes.map((tribute, index) => (
-          <div key={index}>{tribute.symbol || tribute.denom}</div>
-        )),
+      logo: (
+        <>
+          {proposal.projectLogoUrl ? (
+            <div className="relative size-12">
+              <Image
+                className="object-contain"
+                src={proposal.projectLogoUrl}
+                alt={proposal.projectName}
+                fill={true}
+              />
+            </div>
+          ) : null}
+          <Link href={projectLink} className={classNames.projectLink} />
+        </>
+      ),
 
-    yieldRewards: `${proposal.estimatedRewardForUser?.toLocaleString(
-      undefined,
-      { maximumFractionDigits: 4 }
-    )} ATOM`,
+      bidTitleAndProjectName: (
+        <>
+          <div className="flex flex-col">
+            <StyledText variant="h4">{proposal.title}</StyledText>
+            <StyledText variant="footnote">{proposal.projectName}</StyledText>
+          </div>
+          <Link href={projectLink} className={classNames.projectLink} />
+        </>
+      ),
 
-    tributeRewards: amountToUSDString(proposal.totalTributeValue),
+      token: (
+        <>
+          {proposal.points
+            ? proposal.points[1]
+            : proposal.pricedAndNamedTributes.map((tribute, index) => (
+                <div key={index}>{tribute.symbol || tribute.denom}</div>
+              ))}
+          <Link href={projectLink} className={classNames.projectLink} />
+        </>
+      ),
 
-    actions: <StyledText variant="button.primary.small">Claim</StyledText>,
-  }))
+      yieldRewards: (
+        <>
+          {amountToUSDString(proposal.estimatedRewardForUser ?? 0)}
+          <Link href={projectLink} className={classNames.projectLink} />
+        </>
+      ),
+
+      tributeRewards: (
+        <>
+          {amountToUSDString(proposal.totalTributeValue)}
+          <Link href={projectLink} className={classNames.projectLink} />
+        </>
+      ),
+
+      actions: (
+        <>
+          {<StyledText variant="button.primary.small">Claim</StyledText>}
+          <Link href={projectLink} className={classNames.projectLink} />
+        </>
+      ),
+    }
+  })
 
   type Row = (typeof rows)[number]
 
   const columns: ColumnObject<Row, keyof Row>[] = [
     {
-      key: "votingRound",
-      label: "Voting Round",
+      key: "roundNumber",
+      label: "Round",
       textAlign: "center",
+      isSortable: true,
+      propsForCells: {
+        className: "relative",
+      },
+      customValueGetter: () => 1,
+    },
+    {
+      key: "logo",
+      label: "",
+      propsForCells: {
+        className: "w-min",
+      },
     },
     {
       key: "bidTitleAndProjectName",
       label: "Bid Title / Project Name",
+      isSortable: true,
+      propsForCells: {
+        className: "relative",
+      },
+      customValueGetter: (row) => row._proposal.title,
     },
     {
       key: "token",
       label: "Token",
       textAlign: "center",
+      isSortable: true,
+      propsForCells: {
+        className: "relative whitespace-nowrap",
+      },
+      customValueGetter: (row) =>
+        row._proposal.points ? row._proposal.points[1] : "",
     },
     {
       key: "yieldRewards",
       label: "Yield Rewards ($)",
       textAlign: "right",
+      isSortable: true,
       propsForCells: {
         className: "whitespace-nowrap",
       },
+      customValueGetter: (row) => row._proposal.estimatedRewardForUser ?? 0,
     },
     {
       key: "tributeRewards",
@@ -71,6 +144,8 @@ export default function Page() {
       propsForCells: {
         className: "whitespace-nowrap",
       },
+      isSortable: true,
+      customValueGetter: (row) => row._proposal.totalTributeValue ?? 0,
     },
     {
       key: "actions",
@@ -92,7 +167,7 @@ export default function Page() {
 
       <ContentContainer className="gap-12 py-12">
         <div className="flex items-center justify-between">
-          <StyledText variant="h2">Rewards</StyledText>
+          <StyledText variant="h2">Your Rewards</StyledText>
 
           <div className="flex items-center gap-6">
             <div className="text-palette-beige">You have unclaimed rewards</div>
