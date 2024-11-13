@@ -7,6 +7,7 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import startCase from "lodash/startCase"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -33,6 +34,7 @@ export default function Page({
 
   const normalizedProposals = isPreHydro
     ? preHydroProposals.map((proposal) => ({
+        logo: null,
         title: proposal.title,
         projectName: proposal.project,
         polValue: `${proposal.initial_allocation.toLocaleString(undefined, {
@@ -43,37 +45,38 @@ export default function Page({
         apr: proposal.apr,
         tribute: 0,
         status: proposal.concluded === "true" ? "Deployed" : "Concluded",
+        points: null,
       }))
     : decoratedProposals.map((proposal) => ({
+        logo: proposal.projectLogoUrl ? (
+          <div className="relative size-12">
+            <Image
+              className="object-contain"
+              src={proposal.projectLogoUrl}
+              alt={proposal.projectName}
+              fill={true}
+            />
+          </div>
+        ) : null,
         title: proposal.title,
         projectName: proposal.projectName,
         polValue: "Pending Round Closure", // TODO: compute this
         duration: 1,
         polRewards: 0,
         apr: 0,
-        tribute: proposal.points ? (
-          <>
-            {proposal.points?.[0].toLocaleString("en-US")}{" "}
-            {proposal.points?.[1]}
-          </>
-        ) : (
-          <>
-            {(
-              proposal.pricedAndNamedTributes.reduce(
-                (acc, t) => acc + t.amount,
-                0
-              ) / 1e6
-            ).toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}{" "}
-            ATOM
-          </>
-        ),
+        tribute: proposal.points
+          ? proposal.points?.[0]
+          : proposal.pricedAndNamedTributes.reduce(
+              (acc, t) => acc + t.amount,
+              0
+            ) / 1e6,
         status: "Round Ongoing",
+        points: proposal.points,
       }))
 
   const rows = normalizedProposals.map((proposal) => ({
     _proposal: proposal,
+    logo: proposal.logo,
     bidTitleAndProjectName: (
       <div className="flex flex-col">
         <StyledText variant="h4">{proposal.title}</StyledText>
@@ -86,7 +89,18 @@ export default function Page({
       maximumFractionDigits: 4,
     })} ATOM`,
     apr: `${proposal.apr}%`,
-    tribute: proposal.tribute,
+    tribute: proposal.points ? (
+      <>
+        {proposal.tribute.toLocaleString("en-US")} {proposal.points?.[1]}
+      </>
+    ) : (
+      <>
+        {proposal.tribute.toLocaleString(undefined, {
+          maximumFractionDigits: 4,
+        })}{" "}
+        ATOM
+      </>
+    ),
     status: proposal.status,
   }))
 
@@ -94,16 +108,28 @@ export default function Page({
 
   const columns: ColumnObject<Row, keyof Row>[] = [
     {
+      key: "logo",
+      label: "",
+      propsForCells: {
+        className: "w-min",
+      },
+    },
+    {
       key: "bidTitleAndProjectName",
       label: "Bid Title / Project Name",
+      isSortable: true,
+      initialSortDirection: "ASC",
     },
     {
       key: "polValue",
       label: "PoL Value",
       textAlign: "right",
       propsForCells: {
-        className: "whitespace-nowrap",
+        className: "text-balance",
       },
+      isSortable: true,
+      initialSortDirection: "DESC",
+      customValueGetter: (row) => Number(row._proposal.polValue),
     },
     {
       key: "duration",
@@ -111,6 +137,9 @@ export default function Page({
       propsForCells: {
         className: "whitespace-nowrap",
       },
+      isSortable: true,
+      initialSortDirection: "ASC",
+      customValueGetter: (row) => row._proposal.duration,
     },
     {
       key: "polRewards",
@@ -119,11 +148,17 @@ export default function Page({
       propsForCells: {
         className: "whitespace-nowrap",
       },
+      isSortable: true,
+      initialSortDirection: "DESC",
+      customValueGetter: (row) => row._proposal.polRewards,
     },
     {
       key: "apr",
       label: "APR",
       textAlign: "right",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      customValueGetter: (row) => row._proposal.apr,
     },
     {
       key: "tribute",
@@ -132,14 +167,20 @@ export default function Page({
       propsForCells: {
         className: "whitespace-nowrap",
       },
+      isSortable: true,
+      initialSortDirection: "DESC",
+      customValueGetter: (row) => row._proposal.tribute,
     },
     {
       key: "status",
       label: "Status",
       textAlign: "right",
       propsForCells: {
-        className: "whitespace-nowrap",
+        className: "text-balance",
       },
+      isSortable: true,
+      initialSortDirection: "ASC",
+      customValueGetter: (row) => row._proposal.status,
     },
   ]
 
@@ -183,7 +224,11 @@ export default function Page({
           backdrop-blur-md
         "
       >
-        <StyledTable columns={columns} rows={rows} />
+        <StyledTable
+          columns={columns}
+          rows={rows}
+          initialSortedColumnKey="polValue"
+        />
       </div>
     </ContentContainer>
   )
