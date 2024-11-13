@@ -183,21 +183,24 @@ export default function Navigation() {
           </Link>
         </ConditionalWrapper>
 
-        <Tooltip
-          tipContents={
-            <>Rewards will show here at the end of the first pilot round</>
-          }
+        <ConditionalWrapper
+          condition={!isConnected}
+          wrapper={(children) => (
+            <Tooltip tipContents="Connect your wallet to access this feature">
+              {children}
+            </Tooltip>
+          )}
         >
           <Link
             href="/rewards"
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              `pointer-events-none opacity-60`
+              !isConnected && "pointer-events-none opacity-60"
             )}
           >
             Rewards
           </Link>
-        </Tooltip>
+        </ConditionalWrapper>
 
         <Link
           href="/metrics"

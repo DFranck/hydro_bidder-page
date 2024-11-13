@@ -12,7 +12,7 @@ import { TR } from "./components/TR"
 import { initialTableState, tableStateReducer } from "./reducer"
 import { BaseRowObject, TableProps } from "./types"
 
-export function PrettyTable<R extends BaseRowObject, K extends keyof R>({
+export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   className,
   columns,
   contentForFirstRow = null,
