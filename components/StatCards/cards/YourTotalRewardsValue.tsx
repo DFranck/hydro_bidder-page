@@ -8,7 +8,7 @@ export function YourTotalRewardsValue() {
     <StatCard
       title={
         <div className="flex items-center gap-1">
-          Total Rewards Value
+          Your Total Rewards Value
           <Tooltip
             tipContents={
               <>

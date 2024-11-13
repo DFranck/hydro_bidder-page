@@ -87,9 +87,11 @@ export const useDecoratedProposals = ({ trancheId }: { trancheId: number }) => {
     const hasVotedOnProp =
       myVotes?.get(trancheId)?.prop_id === proposal.proposal_id
 
+    const totalTributeValue = proposalTotalTribute(pricedAndNamedTributes)
+
     const estimatedRewardForUser = trancheId
       ? estimatedRewardForPower(
-          proposalTotalTribute(pricedAndNamedTributes),
+          totalTributeValue,
           Number(myVotes?.get(trancheId)?.power ?? 0),
           Number(proposal.power ?? 0)
         )
@@ -102,8 +104,6 @@ export const useDecoratedProposals = ({ trancheId }: { trancheId: number }) => {
             100
         )
       : undefined
-
-    const totalTributeValue = proposalTotalTribute(pricedAndNamedTributes)
 
     return {
       ...proposal,
