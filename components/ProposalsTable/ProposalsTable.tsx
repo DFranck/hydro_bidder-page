@@ -4,8 +4,8 @@ import { useAppContext } from "@/app/(with-context)/context"
 import { classNames } from "@/app/(with-context)/voting/classNames"
 import { Icon } from "@/components/Icon"
 import { MaxReachedPopup } from "@/components/MaxReachedPopup"
-import { PrettyTable, TD, TR } from "@/components/PrettyTable"
-import { ColumnObject, RowRenderFunction } from "@/components/PrettyTable/types"
+import { StyledTable, TD, TR } from "@/components/StyledTable"
+import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -167,11 +167,11 @@ export function ProposalsTable() {
                           <span
                             className={twMerge(
                               `
-                          flex
-                          items-center
-                          gap-1
-                          text-xs
-                        `,
+                                flex
+                                items-center
+                                gap-1
+                                text-xs
+                              `,
                               proposal.percentDifferenceRewardForUser &&
                                 proposal.percentDifferenceRewardForUser > 0
                                 ? "text-palette-green"
@@ -431,13 +431,13 @@ export function ProposalsTable() {
 
       {decoratedProposals?.length ? (
         <>
-          <PrettyTable
+          <StyledTable
             initialSortedColumnKey="yourEstimatedReward"
             columns={buildColumns("Points-Based Project Bid")}
             rows={rowsWithPoints}
             renderRow={renderRow}
           />
-          <PrettyTable
+          <StyledTable
             initialSortedColumnKey="yourEstimatedReward"
             columns={buildColumns("Token-Based Project Bid")}
             rows={rowsWithoutPoints}

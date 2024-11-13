@@ -2,8 +2,8 @@
 
 import { useMetricsContext } from "@/app/(with-context)/metrics/context"
 import { ContentContainer } from "@/components/ContentContainer"
-import { PrettyTable } from "@/components/PrettyTable"
-import { ColumnObject } from "@/components/PrettyTable/types"
+import { StyledTable } from "@/components/StyledTable"
+import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import startCase from "lodash/startCase"
@@ -183,7 +183,7 @@ export default function Page({
           backdrop-blur-md
         "
       >
-        <PrettyTable columns={columns} rows={rows} />
+        <StyledTable columns={columns} rows={rows} />
       </div>
     </ContentContainer>
   )

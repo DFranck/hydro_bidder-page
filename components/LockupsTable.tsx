@@ -5,7 +5,7 @@ import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { Icon } from "@/components/Icon"
-import { PrettyTable } from "@/components/PrettyTable"
+import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
@@ -243,7 +243,7 @@ function Lockups() {
         )}
 
         {myLockups.length > 0 && (
-          <PrettyTable
+          <StyledTable
             columns={[
               {
                 key: "lockedATOM",

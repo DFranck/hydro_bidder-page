@@ -1,12 +1,6 @@
 import { ContentContainer } from "@/components/ContentContainer"
 import { Children, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
-import { AverageAPR } from "./cards/AverageAPR"
-import { DaysRemaining } from "./cards/DaysRemaining"
-import { HistoricalAPR } from "./cards/HistoricalAPR"
-import { TotalATOMLocked } from "./cards/TotalATOMLocked"
-import { YourTotalATOMLocked } from "./cards/YourTotalATOMLocked"
-import { YourVotingPower } from "./cards/YourVotingPower"
 
 export function StatCards({
   children,
@@ -49,10 +43,3 @@ export function StatCards({
     </div>
   )
 }
-
-StatCards.AverageAPR = AverageAPR
-StatCards.DaysRemaining = DaysRemaining
-StatCards.HistoricalAPR = HistoricalAPR
-StatCards.TotalATOMLocked = TotalATOMLocked
-StatCards.YourTotalATOMLocked = YourTotalATOMLocked
-StatCards.YourVotingPower = YourVotingPower

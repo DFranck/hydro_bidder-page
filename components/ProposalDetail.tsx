@@ -1,10 +1,8 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
-import { proposalTotalTribute } from "@/components/ProposalsTable/proposalTotalTribute"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -12,57 +10,25 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { useMyVotes } from "@/hooks/hooks"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { formatAmount, sumTributeAmounts } from "@/lib/utils"
-import { useChain } from "@cosmos-kit/react"
+import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
+import { formatAmount } from "@/lib/utils"
 import kebabCase from "lodash/kebabCase"
 import Image from "next/image"
 import Link from "next/link"
 
 export function ProposalDetail({ proposal }: { proposal: Proposal }) {
-  const {
-    globalState,
-    currentProposalTributes,
-    currentProposalTranches,
-    assetListWithPrices,
-  } = useAppContext()
-
-  const tributes = currentProposalTributes.get(proposal.proposal_id)!
-
-  const renderedProposal = {
-    ...proposal,
-    ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
-  }
-
-  const summedTributes = sumTributeAmounts(tributes)
-
-  const pricedAndNamedTributes = summedTributes.map((tribute) => {
-    console.log(
-      `Getting price for ${tribute.denom} from ${assetListWithPrices.size} assets`,
-      assetListWithPrices.entries()
-    )
-
-    const assetInfo = assetListWithPrices.get(tribute.denom)
-
-    return {
-      ...tribute,
-      priceUsd: assetInfo?.priceUsd,
-      symbol: assetInfo?.symbol,
-      decimals: assetInfo?.decimals,
-    }
+  const decoratedProposals = useDecoratedProposals({
+    trancheId: proposal.tranche_id,
   })
 
-  const { address } = useChain("neutron")
-
-  const { data: myVotes } = useMyVotes(
-    address || "",
-    globalState.currentRound,
-    Array.from(currentProposalTranches.keys())
+  const renderedProposal = decoratedProposals?.find(
+    (p) => p.proposal_id === proposal.proposal_id
   )
 
-  const hasVotedThisProposal =
-    myVotes?.get(proposal.tranche_id)?.prop_id === proposal.proposal_id
+  if (!renderedProposal) {
+    return null
+  }
 
   return (
     <>
@@ -76,7 +42,7 @@ export function ProposalDetail({ proposal }: { proposal: Proposal }) {
           backdrop-blur-md
         "
       >
-        {hasVotedThisProposal && (
+        {renderedProposal.hasVotedOnProp && (
           <div
             className="
               pointer-events-none
@@ -239,22 +205,21 @@ export function ProposalDetail({ proposal }: { proposal: Proposal }) {
                 Tribute to Voters
               </StyledText>
               <div className="max-w-64 overflow-x-auto">
-                {pricedAndNamedTributes.length > 0 ? (
+                {renderedProposal.pricedAndNamedTributes.length > 0 ? (
                   <>
-                    {pricedAndNamedTributes.map((tribute, index) => (
-                      <p
-                        key={index}
-                        className="break-words text-xl font-bold not-italic"
-                      >
-                        {formatAmount(tribute.amount)}{" "}
-                        {tribute.symbol || tribute.denom}
-                      </p>
-                    ))}
+                    {renderedProposal.pricedAndNamedTributes.map(
+                      (tribute, index) => (
+                        <p
+                          key={index}
+                          className="break-words text-xl font-bold not-italic"
+                        >
+                          {formatAmount(tribute.amount)}{" "}
+                          {tribute.symbol || tribute.denom}
+                        </p>
+                      )
+                    )}
                     <p>
-                      ≈{" "}
-                      {amountToUSDString(
-                        proposalTotalTribute(pricedAndNamedTributes)
-                      )}
+                      ≈ {amountToUSDString(renderedProposal.totalTributeValue)}
                     </p>
                   </>
                 ) : renderedProposal.points ? (
@@ -297,8 +262,8 @@ export function ProposalDetail({ proposal }: { proposal: Proposal }) {
                   not-italic
                 "
               >
-                <span>{proposal.percentage}%</span>
-                {Number(proposal.percentage) < VOTE_SHARE_THRESHOLD && (
+                <span>{renderedProposal.percentage}%</span>
+                {Number(renderedProposal.percentage) < VOTE_SHARE_THRESHOLD && (
                   <Tooltip tipContents={voteThresholdTooltip}>
                     <span
                       className="
