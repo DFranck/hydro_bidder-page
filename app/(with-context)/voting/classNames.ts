@@ -66,7 +66,7 @@ export const classNames = {
   projectLink: twJoin(`
     absolute
     inset-0
-    z-10
+    z-0
     h-full
     w-full
   `),

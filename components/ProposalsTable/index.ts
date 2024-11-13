@@ -1,1 +1,0 @@
-export { ProposalsTable } from "./ProposalsTable"

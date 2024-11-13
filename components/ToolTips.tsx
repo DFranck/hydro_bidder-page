@@ -29,20 +29,16 @@ export const usdDisclaimerTooltip = (
   </>
 )
 
-export const totalEstimatedRewardTooltip = (
+export const estimatedRewardsTooltip = ({
+  isWalletConnected,
+}: {
+  isWalletConnected: boolean
+}) => (
   <>
-    This is the total tribute value this project has included in their proposal.
-    It may increase if the project adds to{" "}
-    <span className="whitespace-nowrap">their tribute.</span>
-  </>
-)
-
-export const yourEstimatedRewardTooltip = (
-  <>
-    This is the tribute value that will be paid out to you when the round ends
-    if you vote for this project. It may increase (if the project adds to the
-    tribute) or decrease (if more voters choose this project){" "}
-    <span className="whitespace-nowrap">over time.</span>
+    This is the expected USD-equivalent value of rewards. It represents a
+    percentage of the total tribute provided by the project. Over time, the
+    value may increase if the project adds tributes or decrease if more voters
+    choose <span className="whitespace-nowrap">the projec.</span>
   </>
 )
 

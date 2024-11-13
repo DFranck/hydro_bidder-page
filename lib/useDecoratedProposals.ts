@@ -2,10 +2,26 @@
 
 import { useAppContext } from "@/app/(with-context)/context"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { proposalTotalTribute } from "@/components/ProposalsTable/proposalTotalTribute"
 import { fetchAssetListWithPrices, useMyVotes } from "@/hooks/hooks"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
+
+function proposalTotalTribute(
+  pricedAndNamedTributes: {
+    priceUsd: number | undefined
+    symbol: string | undefined
+    decimals: number | undefined
+    denom: string
+    amount: number
+  }[]
+) {
+  return pricedAndNamedTributes.reduce((total, tribute) => {
+    return (
+      total +
+      ((tribute.priceUsd ?? 0) * tribute.amount) / 10 ** (tribute.decimals ?? 0)
+    )
+  }, 0)
+}
 
 const getPricedAndNamedTributes = (
   tributes: Tribute[],
