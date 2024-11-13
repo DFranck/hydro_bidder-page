@@ -119,96 +119,110 @@ export function ProposalsTable() {
           </>
         ),
 
-        yourEstimatedReward: proposal.points ? (
-          <Tooltip tipContents={pointSystemTooltip}>
-            {votingPower ? (
-              <>
-                <div className="whitespace-nowrap">
-                  <Icon name="solid:gem" />{" "}
-                  {(
-                    Number(proposal.points?.[0] ?? 0) *
-                    (votingPower / (Number(proposal.power ?? 0) + votingPower))
-                  ).toLocaleString("en-US")}
-                </div>
-                <StyledText
-                  variant="footnote"
-                  as="div"
-                  className="whitespace-nowrap"
-                >
-                  of {proposal.points?.[0].toLocaleString("en-US")}{" "}
-                  {proposal.points?.[1]}
-                </StyledText>
-              </>
+        yourEstimatedReward: (
+          <>
+            {proposal.points ? (
+              <Tooltip tipContents={pointSystemTooltip}>
+                {votingPower ? (
+                  <>
+                    <div className="whitespace-nowrap">
+                      <Icon name="solid:gem" />{" "}
+                      {(
+                        Number(proposal.points?.[0] ?? 0) *
+                        (votingPower /
+                          (Number(proposal.power ?? 0) + votingPower))
+                      ).toLocaleString("en-US")}
+                    </div>
+                    <StyledText
+                      variant="footnote"
+                      as="div"
+                      className="whitespace-nowrap"
+                    >
+                      of {proposal.points?.[0].toLocaleString("en-US")}{" "}
+                      {proposal.points?.[1]}
+                    </StyledText>
+                  </>
+                ) : (
+                  <>
+                    {proposal.points?.[0].toLocaleString("en-US")}{" "}
+                    {proposal.points?.[1]}
+                  </>
+                )}
+              </Tooltip>
             ) : (
-              <>
-                {proposal.points?.[0].toLocaleString("en-US")}{" "}
-                {proposal.points?.[1]}
-              </>
-            )}
-          </Tooltip>
-        ) : (
-          <Tooltip
-            tipContents={
-              !isWalletConnected
-                ? totalEstimatedRewardTooltip
-                : usdDisclaimerTooltip
-            }
-          >
-            {!isWalletConnected ? (
-              amountToUSDString(proposal.totalTributeValue)
-            ) : (
-              <>
-                <div className="flex items-center justify-end gap-2">
-                  {hasVoted &&
-                    proposal.percentDifferenceRewardForUser !== 0 && (
-                      <span
-                        className={twMerge(
-                          `
+              <Tooltip
+                tipContents={
+                  !isWalletConnected
+                    ? totalEstimatedRewardTooltip
+                    : usdDisclaimerTooltip
+                }
+              >
+                {!isWalletConnected ? (
+                  amountToUSDString(proposal.totalTributeValue)
+                ) : (
+                  <>
+                    <div className="flex items-center justify-end gap-2">
+                      {hasVoted &&
+                        proposal.percentDifferenceRewardForUser !== 0 && (
+                          <span
+                            className={twMerge(
+                              `
                           flex
                           items-center
                           gap-1
                           text-xs
                         `,
-                          proposal.percentDifferenceRewardForUser &&
-                            proposal.percentDifferenceRewardForUser > 0
-                            ? "text-palette-green"
-                            : "text-palette-red"
+                              proposal.percentDifferenceRewardForUser &&
+                                proposal.percentDifferenceRewardForUser > 0
+                                ? "text-palette-green"
+                                : "text-palette-red"
+                            )}
+                          >
+                            <Icon
+                              name={
+                                proposal?.percentDifferenceRewardForUser &&
+                                proposal.percentDifferenceRewardForUser > 0
+                                  ? "solid:arrow-up"
+                                  : "solid:arrow-down"
+                              }
+                            />
+                            {proposal.percentDifferenceRewardForUser}%
+                          </span>
                         )}
+                      {amountToUSDString(proposal.estimatedRewardForUser ?? 0)}
+                    </div>
+                    {isWalletConnected && (
+                      <StyledText
+                        variant="footnote"
+                        as="div"
+                        className="whitespace-nowrap"
                       >
-                        <Icon
-                          name={
-                            proposal?.percentDifferenceRewardForUser &&
-                            proposal.percentDifferenceRewardForUser > 0
-                              ? "solid:arrow-up"
-                              : "solid:arrow-down"
-                          }
-                        />
-                        {proposal.percentDifferenceRewardForUser}%
-                      </span>
+                        of {amountToUSDString(proposal.totalTributeValue)}
+                      </StyledText>
                     )}
-                  {amountToUSDString(proposal.estimatedRewardForUser ?? 0)}
-                </div>
-                {isWalletConnected && (
-                  <StyledText
-                    variant="footnote"
-                    as="div"
-                    className="whitespace-nowrap"
-                  >
-                    of {amountToUSDString(proposal.totalTributeValue)}
-                  </StyledText>
+                  </>
                 )}
-              </>
+              </Tooltip>
             )}
-          </Tooltip>
+            <Link href={projectLink} className={classNames.projectLink} />
+          </>
         ),
 
         currentVoteShare: (
-          <div className="flex flex-row-reverse items-center gap-1">
-            {proposal.percentage}%{voteShareTooltip}
-          </div>
+          <>
+            <div className="flex flex-row-reverse items-center gap-1">
+              {proposal.percentage}%{voteShareTooltip}
+            </div>
+            <Link href={projectLink} className={classNames.projectLink} />
+          </>
         ),
 
-        actions: <VoteButton proposal={proposal} size="small" />,
+        actions: (
+          <>
+            <VoteButton proposal={proposal} size="small" />
+            <Link href={projectLink} className={classNames.projectLink} />
+          </>
+        ),
       }
 
       if (proposal.points) {

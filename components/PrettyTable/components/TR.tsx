@@ -7,7 +7,7 @@ export function TR({
   variant = "tbody",
   ...otherProps
 }: ComponentProps<"tr"> & {
-  variant?: "tbody" | "thead"
+  variant?: "tbody" | "thead" | "tfoot"
 }) {
   const classNamesByVariant = {
     tbody: twJoin(
