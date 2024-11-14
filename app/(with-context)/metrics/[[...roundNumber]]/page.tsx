@@ -1,5 +1,6 @@
 "use client"
 
+import { useAppContext } from "@/app/(with-context)/context"
 import { useMetricsContext } from "@/app/(with-context)/metrics/context"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -9,33 +10,34 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { pluralize } from "@/lib/pluralize"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
-import startCase from "lodash/startCase"
+import { range } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { notFound } from "next/navigation"
 import { twMerge } from "tailwind-merge"
 
-export default function Page({
-  params,
-}: {
-  params: { "pre-or-post-hydro": string }
-}) {
-  const router = useRouter()
-  const preOrPostHydro = params["pre-or-post-hydro"]
-  const isPreHydro = preOrPostHydro === "pre-hydro"
-  const isPostHydro = preOrPostHydro === "post-hydro"
-
-  useEffect(() => {
-    if (!isPreHydro && !isPostHydro) {
-      router.push("/metrics/pre-hydro")
-    }
-  }, [isPreHydro, isPostHydro])
-
+export default function Page({ params }: { params: { roundNumber?: string } }) {
+  const {
+    globalState: { currentRound: currentRoundUnderHood },
+  } = useAppContext()
   const decoratedProposals = useDecoratedProposals({ trancheId: 1 }) ?? []
+  const requestedRoundNumber =
+    typeof params.roundNumber === "undefined"
+      ? null
+      : Number(params.roundNumber)
+  const requestedRoundNumberUnderHood = requestedRoundNumber
+    ? requestedRoundNumber - 1
+    : null
   const { preHydroProposals } = useMetricsContext()
 
-  const normalizedProposals = isPreHydro
+  if (
+    requestedRoundNumberUnderHood &&
+    requestedRoundNumberUnderHood > currentRoundUnderHood
+  ) {
+    notFound()
+  }
+
+  const normalizedProposals = !requestedRoundNumber
     ? preHydroProposals.map((proposal) => ({
         logo: null,
         title: proposal.title,
@@ -199,32 +201,32 @@ export default function Page({
 
       <ContentContainer className="gap-12 py-12">
         <div className="flex items-center justify-between">
-          <StyledText variant="h2">PoL Metrics</StyledText>
+          <StyledText variant="h2">PoL Metrics by Round</StyledText>
           <div>
-            {["pre-hydro", "post-hydro"].map((preOrPostHydro) => {
-              const isActive =
-                (isPreHydro && preOrPostHydro === "pre-hydro") ||
-                (!isPreHydro && preOrPostHydro === "post-hydro")
+            {[null, ...range(0, currentRoundUnderHood + 1)].map(
+              (roundNumber) => {
+                const isActive = roundNumber === requestedRoundNumberUnderHood
 
-              return (
-                <StyledText
-                  as={Link}
-                  variant={isActive ? "button.primary" : "button.secondary"}
-                  href={`/metrics/${preOrPostHydro}`}
-                  key={preOrPostHydro}
-                  className={twMerge(
-                    `
-                      rounded-none
-                      first:rounded-l-full
-                      last:rounded-r-full
-                    `,
-                    !isActive && "opacity-60"
-                  )}
-                >
-                  {startCase(preOrPostHydro)}
-                </StyledText>
-              )
-            })}
+                return (
+                  <StyledText
+                    as={Link}
+                    variant={isActive ? "button.primary" : "button.secondary"}
+                    href={`/metrics/${roundNumber === null ? "" : roundNumber + 1}`}
+                    key={roundNumber ?? "pre-hydro"}
+                    className={twMerge(
+                      `
+                        rounded-none
+                        first:rounded-l-full
+                        last:rounded-r-full
+                      `,
+                      !isActive && "opacity-60"
+                    )}
+                  >
+                    {roundNumber === null ? "Pre-Hydro" : roundNumber + 1}
+                  </StyledText>
+                )
+              }
+            )}
           </div>
         </div>
         <div

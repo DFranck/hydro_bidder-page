@@ -151,7 +151,12 @@ export default function ActiveProposalsPage() {
                 )}
               </Tooltip>
             ) : (
-              <Tooltip tipContents={estimatedRewardsTooltip}>
+              <Tooltip
+                tipContents={estimatedRewardsTooltip({
+                  totalTribute: proposal.totalTributeValue,
+                  percentageOfTribute: Number(proposal.percentage),
+                })}
+              >
                 {!isWalletConnected ? (
                   amountToUSDString(proposal.totalTributeValue)
                 ) : (
@@ -264,7 +269,7 @@ export default function ActiveProposalsPage() {
         label: (
           <div className="flex items-center gap-1">
             {isWalletConnected ? "Your" : "Total"} Est. Reward
-            <Tooltip tipContents={estimatedRewardsTooltip} />
+            <Tooltip tipContents={estimatedRewardsTooltip()} />
           </div>
         ),
         isSortable: true,
