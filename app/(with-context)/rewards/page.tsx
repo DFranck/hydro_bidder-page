@@ -231,7 +231,7 @@ export default function Page() {
       </ContentContainer>
 
       <ModalWindow
-        isOpen={true || isShowingClaimRewardsModal}
+        isOpen={isShowingClaimRewardsModal}
         onClose={handleClickCloseClaimRewardsModal}
       >
         <form>
