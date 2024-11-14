@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppContext } from "@/app/(with-context)/context"
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
@@ -39,16 +40,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
 
   return (
     <ContentContainer className="py-6">
-      <div
-        className="
-          relative
-          overflow-hidden
-          rounded-[10px]
-          bg-palette-text/20
-          p-12
-          backdrop-blur-md
-        "
-      >
+      <BlurryBackdropBox className="p-12">
         {renderedProposal.hasVotedOnProp && (
           <div
             className="
@@ -338,7 +330,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
-      </div>
+      </BlurryBackdropBox>
     </ContentContainer>
   )
 }

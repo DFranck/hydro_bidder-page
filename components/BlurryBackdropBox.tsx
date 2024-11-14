@@ -1,16 +1,26 @@
 import { ReactNode } from "react"
+import { twMerge } from "tailwind-merge"
 
-export function BlurryBackdropBox({ children }: { children: ReactNode }) {
+export function BlurryBackdropBox({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
   return (
     <div
-      className="
-        -mx-3
-        overflow-hidden
-        rounded-md
-        bg-palette-text/60
-        px-3
-        backdrop-blur-md
-      "
+      className={twMerge(
+        `
+          -mx-3
+          overflow-hidden
+          rounded-md
+          bg-palette-text/60
+          px-3
+          backdrop-blur-md
+        `,
+        className
+      )}
     >
       {children}
     </div>
