@@ -222,7 +222,9 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
                       !isActive && "opacity-60"
                     )}
                   >
-                    {roundNumber === null ? "Pre-Hydro" : roundNumber + 1}
+                    {roundNumber === null
+                      ? "Pre-Hydro"
+                      : `Round ${roundNumber + 1}`}
                   </StyledText>
                 )
               }
