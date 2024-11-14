@@ -87,11 +87,11 @@ export default function Page({
       </div>
     ),
     polValue: proposal.polValue,
-    duration: pluralize({
-      count: proposal.duration ?? 0,
+    duration: `~${pluralize({
+      count: Math.round(proposal.duration ?? 0),
       singular: "month",
       prefixCount: true,
-    }),
+    })}`,
     polRewards: `${proposal.polRewards.toLocaleString(undefined, {
       maximumFractionDigits: 4,
     })} ATOM`,
