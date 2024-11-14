@@ -2,6 +2,7 @@
 
 import { useAppContext } from "@/app/(with-context)/context"
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
@@ -97,25 +98,16 @@ export default function LockupsPage() {
         <StatCards.HistoricalAPR />
       </StatCards>
       <ContentContainer className="gap-12 py-12">
-        <div
-          className="
-          -mx-3
-          overflow-hidden
-          rounded-md
-          bg-palette-text/20
-          px-3
-          backdrop-blur-md
-        "
-        >
+        <BlurryBackdropBox>
           <div
             className="
-            flex
-            flex-col
-            justify-between
-            gap-3
-            p-5
-            lg:flex-row
-          "
+              flex
+              flex-col
+              justify-between
+              gap-3
+              p-5
+              lg:flex-row
+            "
           >
             <StyledText as="h2" variant="h3">
               Your Lockups
@@ -123,14 +115,14 @@ export default function LockupsPage() {
 
             <div
               className="
-              flex
-              flex-col
-              items-end
-              justify-end
-              gap-6
-              md:flex-row
-              md:items-center
-            "
+                flex
+                flex-col
+                items-end
+                justify-end
+                gap-6
+                md:flex-row
+                md:items-center
+              "
             >
               <div className="flex items-center gap-4">
                 <div
@@ -157,8 +149,8 @@ export default function LockupsPage() {
                   <span
                     className={twMerge(
                       `
-                      text-sm
-                    `,
+                        text-sm
+                      `,
                       percentageLockedInWallet >= 98
                         ? "text-red-500"
                         : "text-palette-beige"
@@ -202,10 +194,10 @@ export default function LockupsPage() {
                   >
                     <div
                       className="
-                      pointer-events-none
-                      cursor-not-allowed
-                      opacity-50
-                    "
+                        pointer-events-none
+                        cursor-not-allowed
+                        opacity-50
+                      "
                     >
                       {children}
                     </div>
@@ -226,16 +218,16 @@ export default function LockupsPage() {
           {myLockups.length === 0 && (
             <div
               className="
-              !mb-6
-              rounded-md
-              border
-              border-dashed
-              border-palette-beige/20
-              py-12
-              text-center
-              text-xs
-              text-white/60
-            "
+                !mb-6
+                rounded-md
+                border
+                border-dashed
+                border-palette-beige/20
+                py-12
+                text-center
+                text-xs
+                text-white/60
+              "
             >
               <p>
                 You don&rsquo;t have any lockups. Use the &ldquo;New
@@ -319,7 +311,7 @@ export default function LockupsPage() {
               })}
             />
           )}
-        </div>
+        </BlurryBackdropBox>
       </ContentContainer>
     </>
   )

@@ -22,9 +22,9 @@ export function Step({
   return (
     <Card
       className={`
-                mx-auto
-                max-w-screen-sm
-            `}
+        mx-auto
+        max-w-screen-sm
+      `}
     >
       {title && <Card.Header title={title} />}
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { classNames } from "@/app/(with-context)/voting/classNames"
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
 import { ModalWindow } from "@/components/ModalWindow"
@@ -217,17 +218,9 @@ export default function Page() {
           </div>
         </div>
 
-        <div
-          className="
-            -mx-3
-            rounded-xl
-            bg-palette-text/20
-            p-3
-            backdrop-blur-md
-          "
-        >
+        <BlurryBackdropBox>
           <StyledTable columns={columns} rows={rows} />
-        </div>
+        </BlurryBackdropBox>
       </ContentContainer>
 
       <ModalWindow
