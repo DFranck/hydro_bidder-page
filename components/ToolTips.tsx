@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
+import { amountToUSDString } from "@/lib/amountToUSDString"
 import Link from "next/link"
 
 export const VOTE_SHARE_THRESHOLD = 5
@@ -29,12 +30,31 @@ export const usdDisclaimerTooltip = (
   </>
 )
 
-export const estimatedRewardsTooltip = (
+export const estimatedRewardsTooltip = ({
+  totalTribute,
+  percentageOfTribute,
+}: {
+  totalTribute?: number
+  percentageOfTribute?: number
+} = {}) => (
   <>
-    This is the expected USD-equivalent value of rewards. It represents a
-    percentage of the total tribute provided by the project. Over time, the
-    value may increase if the project adds tributes or decrease if more voters
-    choose <span className="whitespace-nowrap">the projec.</span>
+    This is the expected USD-equivalent value of rewards. It represents{" "}
+    {percentageOfTribute ? (
+      <strong className="text-palette-beige">{percentageOfTribute}%</strong>
+    ) : (
+      `a percentage`
+    )}{" "}
+    of the{" "}
+    {totalTribute ? (
+      <strong className="text-palette-beige">
+        {amountToUSDString(totalTribute)}
+      </strong>
+    ) : (
+      `total`
+    )}{" "}
+    tribute provided by the project. Over time, the value may increase if the
+    project adds tributes or decrease if more voters choose{" "}
+    <span className="whitespace-nowrap">the project.</span>
   </>
 )
 
