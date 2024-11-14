@@ -2,6 +2,7 @@
 
 import { useAppContext } from "@/app/(with-context)/context"
 import { useMetricsContext } from "@/app/(with-context)/metrics/context"
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { StatCards } from "@/components/StatCards"
@@ -97,7 +98,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     polRewards: `${proposal.polRewards.toLocaleString(undefined, {
       maximumFractionDigits: 4,
     })} ATOM`,
-    apr: `${proposal.apr}%`,
+    apr: <>{proposal.apr}%</>,
     tribute: proposal.points ? (
       <>
         <Icon name="solid:gem" /> {proposal.tribute.toLocaleString("en-US")}{" "}
@@ -166,6 +167,9 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       key: "apr",
       label: "APR",
       textAlign: "right",
+      propsForCells: {
+        className: "text-palette-beige font-bold",
+      },
       isSortable: true,
       initialSortDirection: "DESC",
       customValueGetter: (row) => row._proposal.apr,
@@ -231,21 +235,13 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
             )}
           </div>
         </div>
-        <div
-          className="
-            -mx-3
-            rounded-xl
-            bg-palette-text/20
-            p-3
-            backdrop-blur-md
-          "
-        >
+        <BlurryBackdropBox>
           <StyledTable
             columns={columns}
             rows={rows}
             initialSortedColumnKey="polValue"
           />
-        </div>
+        </BlurryBackdropBox>
       </ContentContainer>
     </>
   )

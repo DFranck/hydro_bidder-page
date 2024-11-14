@@ -1,14 +1,6 @@
 import { twJoin } from "tailwind-merge"
 
 export const classNames = {
-  container: twJoin(`
-    -mx-3
-    space-y-6
-    rounded-md
-    bg-palette-text/20
-    px-3
-    backdrop-blur-md
-  `),
   percentageOfNonVoters: twJoin(`
     flex
     items-center

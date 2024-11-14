@@ -25,6 +25,7 @@ import Link from "next/link"
 import { Fragment, ReactNode, useCallback, useMemo } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 
 export default function ActiveProposalsPage() {
   const { globalState } = useAppContext()
@@ -423,7 +424,7 @@ export default function ActiveProposalsPage() {
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <div className={classNames.container}>
+        <BlurryBackdropBox>
           {decoratedProposals?.length ? (
             <>
               <StyledTable
@@ -438,16 +439,16 @@ export default function ActiveProposalsPage() {
               <p>There are no bids available at this moment.</p>
             </div>
           )}
-        </div>
+        </BlurryBackdropBox>
 
-        <div className={classNames.container}>
+        <BlurryBackdropBox>
           <StyledTable
             initialSortedColumnKey="yourEstimatedReward"
             columns={buildColumns("Points-Based Tributes")}
             rows={rowsWithPointBasedTributes}
             renderRow={renderRow}
           />
-        </div>
+        </BlurryBackdropBox>
       </ContentContainer>
     </>
   )
