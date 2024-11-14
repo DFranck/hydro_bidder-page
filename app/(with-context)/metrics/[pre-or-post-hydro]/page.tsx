@@ -88,7 +88,7 @@ export default function Page({
     ),
     polValue: proposal.polValue,
     duration: `~${pluralize({
-      count: Math.round(proposal.duration ?? 0),
+      count: parseFloat((proposal.duration ?? 0).toFixed(1)),
       singular: "month",
       prefixCount: true,
     })}`,
