@@ -8,7 +8,7 @@ import { Tooltip } from "@/components/Tooltip"
 export function AverageAPR() {
   const {
     assetListWithPrices,
-    globalState: { atomPrice, totalLockedTokens },
+    globalState: { currentRound, atomPrice, totalLockedTokens },
     currentProposalTributes,
   } = useAppContext()
 
@@ -57,8 +57,7 @@ export function AverageAPR() {
           />
         </div>
       }
-      // label={`Pilot Round ${currentRound}`}
-      subTitle={`Pilot Round 1`}
+      subTitle={`Pilot Round ${currentRound + 1}`}
       value={(
         (totalTributeValue / (totalLockedTokens / 1e6) / atomPrice) *
         12

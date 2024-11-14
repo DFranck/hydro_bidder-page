@@ -10,6 +10,7 @@ export default async function Page() {
         <StatCards.YourTotalATOMLocked />
         <StatCards.HistoricalAPR />
       </StatCards>
+
       <ContentContainer className="gap-12 py-12">
         <LockupsTable />
       </ContentContainer>

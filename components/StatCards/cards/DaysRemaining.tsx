@@ -40,8 +40,7 @@ export function DaysRemaining() {
     <StatCard
       title={
         <div className="flex items-center gap-1">
-          {/* TODO: make this dynamic */}
-          Time Left in Pilot Round 1
+          Time Left in Pilot Round {currentRound + 1}
           <Tooltip
             tipContents={
               <>

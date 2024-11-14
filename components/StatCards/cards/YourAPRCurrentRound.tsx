@@ -1,9 +1,14 @@
 "use client"
 
+import { useAppContext } from "@/app/(with-context)/context"
 import { Tooltip } from "@/components/Tooltip"
 import { StatCard } from "../StatCard"
 
 export function YourAPRCurrentRound() {
+  const {
+    globalState: { currentRound },
+  } = useAppContext()
+
   return (
     <StatCard
       title={
@@ -19,7 +24,7 @@ export function YourAPRCurrentRound() {
           />
         </div>
       }
-      subTitle="Pilot Round 1"
+      subTitle={`Pilot Round ${currentRound + 1}`}
       value="–%"
     />
   )

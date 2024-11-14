@@ -29,11 +29,7 @@ export const usdDisclaimerTooltip = (
   </>
 )
 
-export const estimatedRewardsTooltip = ({
-  isWalletConnected,
-}: {
-  isWalletConnected: boolean
-}) => (
+export const estimatedRewardsTooltip = (
   <>
     This is the expected USD-equivalent value of rewards. It represents a
     percentage of the total tribute provided by the project. Over time, the

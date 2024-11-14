@@ -108,7 +108,7 @@ export const Header = () => {
           className={twMerge(
             `
               relative
-              bg-palette-green
+              bg-palette-beige
               px-24
               text-center
               text-palette-text
@@ -126,7 +126,8 @@ export const Header = () => {
               `
           )}
         >
-          Hydro is currently running its first pilot round.{" "}
+          Round 1 caps have been reached. Continue optimizing your vote to
+          maximize your rewards!{" "}
           <span className="inline-flex items-center gap-1 font-bold underline">
             Learn More <Icon name="solid:arrow-up-right" />
           </span>
