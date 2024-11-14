@@ -1,18 +1,29 @@
 "use client"
 
 import { classNames } from "@/app/(with-context)/voting/classNames"
+import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
+import { ModalWindow } from "@/components/ModalWindow"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
+import { keyBy } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
+import { MouseEvent, useState } from "react"
 
 export default function Page() {
+  const [isShowingClaimRewardsModal, setIsShowingClaimRewardsModal] =
+    useState(false)
+  const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const decoratedProposals = useDecoratedProposals({ trancheId: 1 }) ?? []
+  const proposalsById = keyBy(decoratedProposals, "proposal_id")
+  const allProposalIds = Object.keys(proposalsById).map(Number)
+  const [selectedProposalIds, setSelectedProposalIds] =
+    useState<number[]>(allProposalIds)
 
   const rows = decoratedProposals.map((proposal) => {
     const projectLink = `/voting/${proposal.proposal_id}`
@@ -80,7 +91,15 @@ export default function Page() {
 
       actions: (
         <>
-          {<StyledText variant="button.primary.small">Claim</StyledText>}
+          <StyledText
+            as="button"
+            variant="button.primary.small"
+            onClick={() =>
+              handleClickClaimRewards({ proposalIds: [proposal.proposal_id] })
+            }
+          >
+            Claim
+          </StyledText>
           <Link href={projectLink} className={classNames.projectLink} />
         </>
       ),
@@ -157,6 +176,20 @@ export default function Page() {
     },
   ]
 
+  function handleClickClaimRewards({
+    proposalIds,
+  }: { proposalIds?: number[] } = {}) {
+    setIsShowingClaimRewardsModal(true)
+    setSelectedProposalIds(proposalIds ?? allProposalIds)
+  }
+
+  function handleClickCloseClaimRewardsModal(
+    event?: MouseEvent<HTMLButtonElement>
+  ) {
+    event?.preventDefault()
+    setIsShowingClaimRewardsModal(false)
+  }
+
   return (
     <>
       <StatCards>
@@ -172,7 +205,13 @@ export default function Page() {
           <div className="flex items-center gap-6">
             <div className="text-palette-beige">You have unclaimed rewards</div>
 
-            <StyledText as="button" variant="button.primary">
+            <StyledText
+              as="button"
+              variant="button.primary"
+              onClick={handleClickClaimRewards.bind(null, {
+                proposalIds: allProposalIds,
+              })}
+            >
               Claim All Rewards
             </StyledText>
           </div>
@@ -190,6 +229,135 @@ export default function Page() {
           <StyledTable columns={columns} rows={rows} />
         </div>
       </ContentContainer>
+
+      <ModalWindow
+        isOpen={true || isShowingClaimRewardsModal}
+        onClose={handleClickCloseClaimRewardsModal}
+      >
+        <form>
+          <Card>
+            <Card.Header
+              className="flex flex-col gap-3"
+              title="Claim Your Hydro Rewards"
+            >
+              <StyledText variant="footnote">
+                You can claim your rewards in the native token offered as
+                tribute or convert them to ATOM before sending them to your
+                wallet.
+              </StyledText>
+            </Card.Header>
+
+            <Card.Body className="flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <StyledText
+                  as="label"
+                  variant="label"
+                  className="flex items-center gap-2"
+                >
+                  <StyledText
+                    variant="input.radio"
+                    as="input"
+                    type="radio"
+                    name="claimType"
+                    value="native"
+                  />
+                  Claim rewards in native token
+                </StyledText>
+
+                <StyledText
+                  as="label"
+                  variant="label"
+                  className="flex items-center gap-2"
+                >
+                  <StyledText
+                    variant="input.radio"
+                    as="input"
+                    type="radio"
+                    name="claimType"
+                    value="convert"
+                  />
+                  Convert rewards to ATOM
+                </StyledText>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <StyledText as="label" variant="label">
+                  Rewards to be Claimed:
+                </StyledText>
+
+                <StyledTable
+                  initialSortedColumnKey="amount"
+                  columns={[
+                    {
+                      key: "token",
+                      label: "Token",
+                      isSortable: true,
+                      propsForCells: {
+                        className: "!py-1",
+                      },
+                      customValueGetter: (row) =>
+                        row._proposal.points
+                          ? row._proposal.points[1]
+                          : row._proposal.pricedAndNamedTributes
+                              .map((tribute, index) => (
+                                <div key={index}>
+                                  {tribute.symbol || tribute.denom}
+                                </div>
+                              ))
+                              .join(", "),
+                    },
+                    {
+                      key: "amount",
+                      label: "Amount",
+                      textAlign: "right",
+                      isSortable: true,
+                      initialSortDirection: "DESC",
+                      propsForCells: {
+                        className: "!py-1",
+                      },
+                      customValueGetter: (row) =>
+                        row._proposal.estimatedRewardForUser ?? 0,
+                    },
+                  ]}
+                  rows={selectedProposalIds.map((proposalId) => {
+                    const proposal = proposalsById[proposalId]
+                    return {
+                      _proposal: proposal,
+
+                      token: proposal.points
+                        ? proposal.points[1]
+                        : proposal.pricedAndNamedTributes.map(
+                            (tribute, index) => (
+                              <div key={index}>
+                                {tribute.symbol || tribute.denom}
+                              </div>
+                            )
+                          ),
+                      amount: amountToUSDString(
+                        proposal?.estimatedRewardForUser ?? 0
+                      ),
+                    }
+                  })}
+                />
+              </div>
+            </Card.Body>
+
+            <Card.Footer>
+              <StyledText as="button" variant="button.primary">
+                Claim Rewards
+              </StyledText>
+
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                onClick={handleClickCloseClaimRewardsModal}
+              >
+                Cancel
+              </StyledText>
+            </Card.Footer>
+          </Card>
+        </form>
+      </ModalWindow>
     </>
   )
 }
