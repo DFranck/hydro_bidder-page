@@ -1,48 +1,42 @@
 "use client"
 
-import { ComponentProps, ElementType } from "react"
+import { Transition } from "@headlessui/react"
+import { ComponentProps, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
-type CollapsibleBoxProps<T extends ElementType = "div"> = ComponentProps<T> & {
-  as?: T
+type CollapsibleBoxProps = ComponentProps<"div"> & {
+  children: ReactNode
   isCollapsed?: boolean
   onCollapseEnd?: () => void
 }
 
-export function CollapsibleBox<T extends ElementType = "div">({
-  as,
-  children,
+export function CollapsibleBox({
   className,
+  children,
   isCollapsed,
   onCollapseEnd,
   ...otherProps
-}: CollapsibleBoxProps<T>) {
-  const Component = String(as || "div") as ElementType
-
-  function handleCollapseEnd() {
-    if (isCollapsed) {
-      onCollapseEnd?.()
-    }
-  }
-
+}: CollapsibleBoxProps) {
   return (
-    <Component
-      className={twMerge(
-        `
-          grid
-          grid-rows-[0fr]
-          transition-all
-        `,
-        !isCollapsed &&
+    <Transition appear={true} show={!isCollapsed} afterLeave={onCollapseEnd}>
+      <div
+        className={twMerge(
           `
+            grid
+            w-full
             grid-rows-[1fr]
+            transition-all
+            duration-500
+            ease-in-out
+            data-[closed]:grid-rows-[0fr]
+            data-[closed]:opacity-0
           `,
-        className
-      )}
-      onTransitionEnd={handleCollapseEnd}
-      {...otherProps}
-    >
-      <div className="overflow-hidden">{children}</div>
-    </Component>
+          className
+        )}
+        {...otherProps}
+      >
+        <div className="overflow-hidden">{children}</div>
+      </div>
+    </Transition>
   )
 }

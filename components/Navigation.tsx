@@ -209,6 +209,13 @@ export default function Navigation() {
           Metrics
         </Link>
 
+        <Link
+          href="/airdrops"
+          className={twMerge(navigationMenuTriggerStyle("/airdrops"))}
+        >
+          Airdrops
+        </Link>
+
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>
     </nav>

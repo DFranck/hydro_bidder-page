@@ -5,7 +5,6 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
-  useCallback,
   useContext,
   useState,
 } from "react"
@@ -33,24 +32,6 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
   const isClient = useIsClient()
   const [toasts, setInnerToasts] = useState<Toast[]>([])
 
-  const ToastPrinter = useCallback(
-    () => (
-      <Toasts>
-        {toasts.map((toast) => (
-          <Toasts.Toast
-            id={toast._id}
-            key={toast._id}
-            isDismissible={toast.isDismissible}
-            variant={toast.variant}
-          >
-            {toast.message}
-          </Toasts.Toast>
-        ))}
-      </Toasts>
-    ),
-    [toasts]
-  )
-
   function setToasts(newToasts: Toast[] | ((prevToasts: Toast[]) => Toast[])) {
     let newToastsWithIds: Toast[]
 
@@ -72,7 +53,21 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
   return isClient ? (
     <ToastContext.Provider value={{ toasts, setToasts }}>
       {children}
-      {createPortal(<ToastPrinter />, document.body)}
+      {createPortal(
+        <Toasts>
+          {toasts.map((toast) => (
+            <Toasts.Toast
+              id={toast._id}
+              key={toast._id}
+              isDismissible={toast.isDismissible}
+              variant={toast.variant}
+            >
+              {toast.message}
+            </Toasts.Toast>
+          ))}
+        </Toasts>,
+        document.body
+      )}
     </ToastContext.Provider>
   ) : null
 }
