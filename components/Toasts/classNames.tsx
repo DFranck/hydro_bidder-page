@@ -4,19 +4,23 @@ import { twJoin } from "tailwind-merge"
 export const classNames = {
   variants: {
     error: {
-      container: "bg-palette-red",
+      container: "bg-palette-red/90",
       icon: <Icon name="regular:circle-exclamation" />,
     },
     success: {
-      container: "bg-palette-green text-palette-text",
+      container: "bg-palette-green/90 text-palette-text",
       icon: <Icon name="regular:circle-check" />,
     },
     info: {
-      container: "bg-palette-blue",
+      container: "bg-palette-blue/90",
+      icon: <Icon name="regular:circle-info" />,
+    },
+    neutral: {
+      container: "bg-white/90 text-palette-text",
       icon: <Icon name="regular:circle-info" />,
     },
     working: {
-      container: "bg-palette-beige text-palette-text",
+      container: "bg-palette-beige/90 text-palette-text",
       icon: (
         <div className="inline-flex animate-spin">
           <Icon name="regular:loader" />
@@ -47,9 +51,8 @@ export const classNames = {
     grid-rows-2
     items-center
     rounded-md
-    border-2
-    border-white/20
     text-white
+    backdrop-blur-md
   `),
   gradientOverlay: twJoin(`
     pointer-events-none

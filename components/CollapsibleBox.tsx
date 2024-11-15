@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge"
 type CollapsibleBoxProps<T extends ElementType = "div"> = ComponentProps<T> & {
   as?: T
   isCollapsed?: boolean
+  onCollapseEnd?: () => void
 }
 
 export function CollapsibleBox<T extends ElementType = "div">({
@@ -13,9 +14,16 @@ export function CollapsibleBox<T extends ElementType = "div">({
   children,
   className,
   isCollapsed,
+  onCollapseEnd,
   ...otherProps
 }: CollapsibleBoxProps<T>) {
   const Component = String(as || "div") as ElementType
+
+  function handleCollapseEnd() {
+    if (isCollapsed) {
+      onCollapseEnd?.()
+    }
+  }
 
   return (
     <Component
@@ -31,6 +39,7 @@ export function CollapsibleBox<T extends ElementType = "div">({
           `,
         className
       )}
+      onTransitionEnd={handleCollapseEnd}
       {...otherProps}
     >
       <div className="overflow-hidden">{children}</div>

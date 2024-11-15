@@ -57,7 +57,7 @@ const buttonStyles = {
     `
       border-palette-green
       text-palette-green
-      backdrop-blur-sm
+      backdrop-blur-md
     `
   ),
   neutralBase: twJoin(

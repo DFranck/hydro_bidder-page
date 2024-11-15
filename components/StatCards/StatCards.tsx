@@ -17,7 +17,7 @@ export function StatCards({
           bg-gradient-to-t
           from-palette-blue/80
           to-palette-blue/20
-          backdrop-blur-sm
+          backdrop-blur-md
         `,
         className
       )}
