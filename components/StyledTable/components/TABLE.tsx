@@ -27,7 +27,7 @@ export function TABLE({
             box-border
             w-full
             border-separate
-            border-spacing-y-3
+            border-spacing-y-1
             max-sm:block
           `,
           className
