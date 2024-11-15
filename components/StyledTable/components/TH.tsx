@@ -46,6 +46,7 @@ export function TH({
       <span
         className={twMerge(
           `
+            relative
             inline-flex
             flex-row
             items-center
@@ -69,7 +70,16 @@ export function TH({
               `,
               isSorted ? "!opacity-100" : "opacity-0",
               sortDirection === "ASC" ? "rotate-0" : "rotate-180",
-              textAlign === "right" && "-order-1"
+              textAlign === "right" && "-order-1",
+              !isSorted &&
+                textAlign === "center" &&
+                `
+                  absolute
+                  left-full
+                  top-1/2
+                  -translate-y-1/2
+                  translate-x-1
+                `
             )}
           >
             <Icon name="solid:chevron-up" />
