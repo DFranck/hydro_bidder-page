@@ -1,6 +1,6 @@
 "use client"
 
-import { ToastContextProvider } from "@/components/Toasts/Toasts"
+import { ToastContextProvider } from "@/components/Toasts"
 import { fetchDashboardData, Validator } from "@/hooks/hooks"
 import { createContext, useContext } from "react"
 

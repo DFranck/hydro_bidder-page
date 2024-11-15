@@ -16,7 +16,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { MouseEvent, useState } from "react"
 
-export default function Page() {
+export default function RewardsPage() {
   const [isShowingClaimRewardsModal, setIsShowingClaimRewardsModal] =
     useState(false)
   const [claimType, setClaimType] = useState<"native" | "convert">("native")

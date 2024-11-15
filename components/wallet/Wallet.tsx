@@ -1,11 +1,11 @@
 "use client"
 
 import { StyledTextVariant } from "@/components/StyledText"
-import { useToasts } from "@/components/Toasts/Toasts"
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
 import { toast } from "@interchain-ui/react"
 import { MouseEventHandler, useEffect } from "react"
+import { useToasts } from "../Toasts/useToasts"
 import {
   WButtonConnect,
   WButtonConnected,
