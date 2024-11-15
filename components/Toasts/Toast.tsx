@@ -28,17 +28,14 @@ export function Toast({
     setIsDismissed(true)
   }
 
-  function handleCollapseEnd() {
-    if (isDismissed) {
-      setToasts((prevToasts) => prevToasts.filter((toast) => toast._id !== id))
-    }
+  function dismiss() {
+    setToasts((prevToasts) => prevToasts.filter((toast) => toast._id !== id))
   }
 
   return (
     <CollapsibleBox
-      className="js-toast-container"
       isCollapsed={isDismissed}
-      onCollapseEnd={handleCollapseEnd}
+      onCollapseEnd={dismiss}
       {...otherProps}
     >
       <div

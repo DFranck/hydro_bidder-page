@@ -18,6 +18,7 @@
     "@cosmos-kit/keplr-extension": "^2.14.0",
     "@cosmos-kit/leap-extension": "^2.14.1",
     "@cosmos-kit/react": "^2.20.1",
+    "@headlessui/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.0",
     "@interchain-ui/react": "^1.25.6",
     "@next/third-parties": "^14.2.16",
