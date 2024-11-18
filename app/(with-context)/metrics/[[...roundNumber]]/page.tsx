@@ -38,25 +38,27 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
   }
 
   const normalizedProposals = !requestedRoundNumber
-    ? numiaData.map((proposal) => ({
-        logo: null,
-        title: proposal.title,
-        projectName: proposal.project,
-        polValue: `${proposal.initial_allocation_amount.toLocaleString(
-          undefined,
-          {
-            maximumFractionDigits: 4,
-          }
-        )} ATOM`,
-        duration: proposal.duration_days / 30,
-        polRewards:
-          proposal.current_allocation_amount -
-          proposal.initial_allocation_amount,
-        apr: proposal.apr,
-        tribute: 0,
-        status: proposal.status,
-        points: null,
-      }))
+    ? numiaData
+        .filter((proposal) => proposal.status.toLowerCase() !== "voting period")
+        .map((proposal) => ({
+          logo: null,
+          title: proposal.title,
+          projectName: proposal.project,
+          polValue: `${proposal.initial_allocation_amount.toLocaleString(
+            undefined,
+            {
+              maximumFractionDigits: 4,
+            }
+          )} ATOM`,
+          duration: proposal.duration_days / 30,
+          polRewards:
+            proposal.current_allocation_amount -
+            proposal.initial_allocation_amount,
+          apr: proposal.apr,
+          tribute: 0,
+          status: proposal.status,
+          points: null,
+        }))
     : decoratedProposals.map((proposal) => ({
         logo: proposal.projectLogoUrl ? (
           <div className="relative size-12">
