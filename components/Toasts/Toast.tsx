@@ -17,12 +17,14 @@ export function Toast({
   children,
   className,
   icon,
-  isDismissible = true,
+  isDismissible,
   variant = "info",
   ...otherProps
 }: ToastProps) {
   const { setToasts } = useToasts()
   const [isDismissed, setIsDismissed] = useState(false)
+  const isActuallyDismissible =
+    isDismissible ?? classNames.variants[variant].isDismissible ?? true
 
   function handleDismiss() {
     setIsDismissed(true)
@@ -52,7 +54,7 @@ export function Toast({
 
         <div className={classNames.messageContainer}>{children}</div>
 
-        {isDismissible && (
+        {isActuallyDismissible && (
           <div className={classNames.dismissButtonContainer}>
             <button
               className={classNames.dismissButton}
