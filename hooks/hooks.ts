@@ -3,7 +3,10 @@ import {
   HydroBaseQueryClient,
 } from "@/app/ts_types/HydroBase.client"
 import { Proposal, VoteWithPower } from "@/app/ts_types/HydroBase.types"
-import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
+import {
+  TributeBaseClient,
+  TributeBaseQueryClient,
+} from "@/app/ts_types/TributeBase.client"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { GlobalState, RoundState } from "@/app/types"
 import {
@@ -387,6 +390,34 @@ export const fetchProposals = async (
     { revalidate: CACHE_REVALIDATE_SECONDS }
   )()
   return response.proposals
+}
+
+export const claimRewards = async (
+  getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>,
+  address: string,
+  roundId: number,
+  trancheId: number,
+  tributeId: number
+) => {
+  if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
+    throw new Error("Tribute contract address not set")
+  }
+
+  const client = await getSigningCosmWasmClient()
+  const tributeClient = new TributeBaseClient(
+    client,
+    address,
+    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
+  )
+
+  const query = {
+    roundId,
+    trancheId,
+    tributeId,
+    voterAddress: address,
+  }
+
+  return tributeClient.claimTribute(query)
 }
 
 export const fetchProposalTributes = async (

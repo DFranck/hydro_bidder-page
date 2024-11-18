@@ -26,6 +26,7 @@ export const classNames = {
           <Icon name="regular:loader" />
         </div>
       ),
+      isDismissible: false,
     },
   },
   toastsContainer: twJoin(`

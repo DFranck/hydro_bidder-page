@@ -9,8 +9,12 @@ import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { useToasts } from "@/components/Toasts"
+import { Tooltip } from "@/components/Tooltip"
+import { claimRewards } from "@/hooks/hooks"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
+import { useChain } from "@cosmos-kit/react"
 import { keyBy } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
@@ -25,6 +29,8 @@ export default function RewardsPage() {
   const allProposalIds = Object.keys(proposalsById).map(Number)
   const [selectedProposalIds, setSelectedProposalIds] =
     useState<number[]>(allProposalIds)
+  const { setToasts } = useToasts()
+  const { address, getSigningCosmWasmClient } = useChain("neutron")
 
   const rows = decoratedProposals.map((proposal) => {
     const projectLink = `/voting/${proposal.proposal_id}`
@@ -196,6 +202,31 @@ export default function RewardsPage() {
     setIsShowingClaimRewardsModal(false)
   }
 
+  async function handleClickClaimNow(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault()
+    setToasts([
+      {
+        message: "Claiming rewards...",
+        variant: "working",
+      },
+    ])
+
+    await Promise.all(
+      selectedProposalIds.map(async (proposalId) => {
+        const proposal = proposalsById[proposalId]
+        await claimRewards(
+          getSigningCosmWasmClient,
+          address!,
+          proposal.round_id,
+          proposal.tranche_id,
+          proposalId
+        )
+      })
+    )
+
+    setToasts([])
+  }
+
   return (
     <>
       <StatCards>
@@ -262,20 +293,23 @@ export default function RewardsPage() {
                   Claim rewards in native token
                 </StyledText>
 
-                <StyledText
-                  as="label"
-                  variant="label"
-                  className="flex items-center gap-2"
-                >
+                <Tooltip tipContents="Coming soon!">
                   <StyledText
-                    variant="input.radio"
-                    as="input"
-                    type="radio"
-                    name="claimType"
-                    value="convert"
-                  />
-                  Convert rewards to ATOM
-                </StyledText>
+                    as="label"
+                    variant="label"
+                    className="pointer-events-none flex items-center gap-2 opacity-60"
+                  >
+                    <StyledText
+                      variant="input.radio"
+                      disabled
+                      as="input"
+                      type="radio"
+                      name="claimType"
+                      value="convert"
+                    />
+                    Convert rewards to ATOM
+                  </StyledText>
+                </Tooltip>
               </div>
 
               <div className="flex flex-col gap-2">
@@ -341,7 +375,11 @@ export default function RewardsPage() {
             </Card.Body>
 
             <Card.Footer>
-              <StyledText as="button" variant="button.primary">
+              <StyledText
+                as="button"
+                variant="button.primary"
+                onClick={handleClickClaimNow}
+              >
                 Claim Rewards
               </StyledText>
 
