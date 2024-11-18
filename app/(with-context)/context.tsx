@@ -1,12 +1,13 @@
 "use client"
 
 import { ToastContextProvider } from "@/components/Toasts"
-import { fetchDashboardData, Validator } from "@/hooks/hooks"
+import { fetchDashboardData, ProposalFromNumia, Validator } from "@/hooks/hooks"
 import { createContext, useContext } from "react"
 
 export type AppContextObject = Awaited<
   ReturnType<typeof fetchDashboardData>
 > & {
+  numiaData: ProposalFromNumia[]
   validatorMap: Map<string, Validator>
 }
 

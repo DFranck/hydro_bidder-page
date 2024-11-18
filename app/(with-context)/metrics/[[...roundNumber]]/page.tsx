@@ -1,7 +1,6 @@
 "use client"
 
 import { useAppContext } from "@/app/(with-context)/context"
-import { useMetricsContext } from "@/app/(with-context)/metrics/context"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -20,6 +19,7 @@ import { twMerge } from "tailwind-merge"
 export default function Page({ params }: { params: { roundNumber?: string } }) {
   const {
     globalState: { currentRound: currentRoundUnderHood },
+    numiaData,
   } = useAppContext()
   const decoratedProposals = useDecoratedProposals({ trancheId: 1 }) ?? []
   const requestedRoundNumber =
@@ -29,7 +29,6 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
   const requestedRoundNumberUnderHood = requestedRoundNumber
     ? requestedRoundNumber - 1
     : null
-  const { preHydroProposals } = useMetricsContext()
 
   if (
     requestedRoundNumberUnderHood &&
@@ -39,18 +38,23 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
   }
 
   const normalizedProposals = !requestedRoundNumber
-    ? preHydroProposals.map((proposal) => ({
+    ? numiaData.map((proposal) => ({
         logo: null,
         title: proposal.title,
         projectName: proposal.project,
-        polValue: `${proposal.initial_allocation.toLocaleString(undefined, {
-          maximumFractionDigits: 4,
-        })} ATOM`,
+        polValue: `${proposal.initial_allocation_amount.toLocaleString(
+          undefined,
+          {
+            maximumFractionDigits: 4,
+          }
+        )} ATOM`,
         duration: proposal.duration_days / 30,
-        polRewards: proposal.current_allocation - proposal.initial_allocation,
+        polRewards:
+          proposal.current_allocation_amount -
+          proposal.initial_allocation_amount,
         apr: proposal.apr,
         tribute: 0,
-        status: proposal.concluded === "true" ? "Deployed" : "Concluded",
+        status: proposal.status,
         points: null,
       }))
     : decoratedProposals.map((proposal) => ({
