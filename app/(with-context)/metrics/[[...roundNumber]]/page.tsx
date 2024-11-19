@@ -14,6 +14,7 @@ import { range } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function Page({ params }: { params: { roundNumber?: string } }) {
@@ -41,6 +42,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     ? numiaData
         .filter((proposal) => proposal.status.toLowerCase() !== "voting period")
         .map((proposal) => ({
+          proposalId: proposal.id,
           logo: null,
           title: proposal.title,
           projectName: proposal.project,
@@ -60,6 +62,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
           points: null,
         }))
     : decoratedProposals.map((proposal) => ({
+        proposalId: proposal.proposal_id,
         logo: proposal.projectLogoUrl ? (
           <div className="relative size-12">
             <Image
@@ -86,40 +89,84 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
         points: proposal.points,
       }))
 
-  const rows = normalizedProposals.map((proposal) => ({
-    _proposal: proposal,
-    logo: proposal.logo,
-    bidTitleAndProjectName: (
-      <div className="flex flex-col">
-        <StyledText variant="h4">{proposal.title}</StyledText>
-        <StyledText variant="footnote">{proposal.projectName}</StyledText>
-      </div>
-    ),
-    polValue: proposal.polValue,
-    duration: `~${pluralize({
-      count: parseFloat((proposal.duration ?? 0).toFixed(1)),
-      singular: "month",
-      prefixCount: true,
-    })}`,
-    polRewards: `${proposal.polRewards.toLocaleString(undefined, {
-      maximumFractionDigits: 4,
-    })} ATOM`,
-    apr: <>{proposal.apr}%</>,
-    tribute: proposal.points ? (
-      <>
-        <Icon name="solid:gem" /> {proposal.tribute.toLocaleString("en-US")}{" "}
-        {proposal.points?.[1]}
-      </>
-    ) : (
-      <>
-        {proposal.tribute.toLocaleString(undefined, {
-          maximumFractionDigits: 4,
-        })}{" "}
-        ATOM
-      </>
-    ),
-    status: proposal.status,
-  }))
+  const rows = normalizedProposals
+    .map((proposal) => ({
+      _proposal: proposal,
+      logo: proposal.logo,
+      bidTitleAndProjectName: (
+        <div className="flex flex-col">
+          <StyledText variant="h4">{proposal.title}</StyledText>
+          <StyledText variant="footnote">{proposal.projectName}</StyledText>
+        </div>
+      ),
+      polValue: proposal.polValue,
+      duration: `~${pluralize({
+        count: parseFloat((proposal.duration ?? 0).toFixed(1)),
+        singular: "month",
+        prefixCount: true,
+      })}`,
+      polRewards: `${proposal.polRewards.toLocaleString(undefined, {
+        maximumFractionDigits: 4,
+      })} ATOM`,
+      apr: <>{proposal.apr}%</>,
+      tribute: proposal.points ? (
+        <>
+          <Icon name="solid:gem" /> {proposal.tribute.toLocaleString("en-US")}{" "}
+          {proposal.points?.[1]}
+        </>
+      ) : (
+        <>
+          {proposal.tribute.toLocaleString(undefined, {
+            maximumFractionDigits: 4,
+          })}{" "}
+          ATOM
+        </>
+      ),
+      status: proposal.status,
+    }))
+    .map((row) => ({
+      ...row,
+      logo: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.logo}
+        </ClickableRowSurface>
+      ),
+      bidTitleAndProjectName: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.bidTitleAndProjectName}
+        </ClickableRowSurface>
+      ),
+      polValue: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.polValue}
+        </ClickableRowSurface>
+      ),
+      duration: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.duration}
+        </ClickableRowSurface>
+      ),
+      polRewards: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.polRewards}
+        </ClickableRowSurface>
+      ),
+      apr: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.apr}
+        </ClickableRowSurface>
+      ),
+      tribute: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.tribute}
+        </ClickableRowSurface>
+      ),
+      status: (
+        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
+          {row.status}
+        </ClickableRowSurface>
+      ),
+    }))
 
   type Row = (typeof rows)[number]
 
@@ -250,5 +297,20 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
         </BlurryBackdropBox>
       </ContentContainer>
     </>
+  )
+}
+
+function ClickableRowSurface({
+  children,
+  href,
+}: {
+  children: ReactNode
+  href: string
+}) {
+  return (
+    <div className="relative">
+      {children}
+      <Link href={href} className="absolute inset-0" />
+    </div>
   )
 }

@@ -1,7 +1,6 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { get } from "lodash"
 import { ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -18,8 +17,6 @@ export function StatCard({
   subTitle?: ReactNode
   className?: string
 }) {
-  console.log({ title: get(title, "props.children[0]"), isLoading })
-
   return (
     <div
       className={twMerge(

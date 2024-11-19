@@ -8,18 +8,19 @@ export function YourTotalRewardsValue() {
     <StatCard
       title={
         <div className="flex items-center gap-1">
-          Your Total Rewards Value
+          Your Rewards
           <Tooltip
             tipContents={
               <>
-                This is the total value of rewards you have accumulated in the
-                current round.
+                This is the expected aggregate USD-equivalent value of all the
+                rewards you have accumulated across the Hydro rounds you have
+                participated in.
               </>
             }
           />
         </div>
       }
-      subTitle="All Time"
+      subTitle="All-Time"
       value="$–"
     />
   )

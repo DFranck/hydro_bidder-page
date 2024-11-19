@@ -76,15 +76,15 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
       ["whitelist"],
       { revalidate: cacheRevalidationInterval }
     )(),
-    // unstable_cache(
-    //   async () => {
-    //     return fetch(
-    //       "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
-    //     ).then((response) => response.json())
-    //   },
-    //   ["bidDescriptions"],
-    //   { revalidate: CACHE_REVALIDATE_SECONDS }
-    // )(),
+    unstable_cache(
+      async () => {
+        return fetch(
+          "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
+        ).then((response) => response.json())
+      },
+      ["bidDescriptions"],
+      { revalidate: cacheRevalidationInterval }
+    )(),
   ])
 
   return {
