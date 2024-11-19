@@ -1,6 +1,5 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
@@ -8,12 +7,10 @@ import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { EPOCH_LENGTH } from "@/config"
-import {
-  Delegation,
-  useMyValidators,
-  useUserVotingData,
-  Validator,
-} from "@/hooks/hooks"
+import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
+import { Delegation, Validator } from "@/contract-apis/fetchMyValidators"
+import { useMyValidators } from "@/contract-apis/useMyValidators"
+import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -457,11 +454,6 @@ const LockForm = ({
   hubChain: ChainContext
   validatorMap: Map<string, Validator>
 }) => {
-  const {
-    globalState: {
-      constants: { max_locked_tokens_per_address = 1 },
-    },
-  } = useAppContext()
   const [validator, setValidator] = useState("")
   const [amount, setAmount] = useState("")
   const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
@@ -474,7 +466,7 @@ const LockForm = ({
   const { address } = useChain("neutron")
   const { data: userVotingData } = useUserVotingData(address ?? "")
   const lockedAtom = userVotingData?.lockups.lockedAtom ?? 0
-  const maxLockedTokens = max_locked_tokens_per_address ?? 1
+  const maxLockedTokens = maxLockedTokensPerAddress ?? 1
   const usersMaxLockedTokens = Math.max(0, maxLockedTokens - lockedAtom)
   const maxATOMAmount = Math.min(delegationBalance, usersMaxLockedTokens) / 1e6
   const selectedAmount = Math.min(parseFloat(amount || "0"), maxATOMAmount)

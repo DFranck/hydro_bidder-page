@@ -13,7 +13,9 @@ import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { networkLimitReachedTooltip } from "@/components/ToolTips"
-import { fetchMyAllLockups, useUserVotingData } from "@/hooks/hooks"
+import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
+import { fetchMyAllLockups } from "@/contract-apis/fetchMyAllLockups"
+import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
@@ -23,7 +25,7 @@ import { twMerge } from "tailwind-merge"
 export default function LockupsPage() {
   const {
     globalState: {
-      constants: { max_locked_tokens, max_locked_tokens_per_address },
+      constants: { max_locked_tokens },
       totalLockedTokens: atomLockedOverall,
     },
   } = useAppContext()
@@ -33,7 +35,7 @@ export default function LockupsPage() {
   const [refetch, setRefetch] = useState(true)
   const lockedAtomInWallet = userVotingData?.lockups.lockedAtom ?? 0
   const maxLockedAtomOverall = max_locked_tokens ?? 0
-  const maxLockedAtomPerWallet = max_locked_tokens_per_address ?? 0
+  const maxLockedAtomPerWallet = maxLockedTokensPerAddress ?? 0
   const percentageLockedInWallet = Math.round(
     (lockedAtomInWallet / maxLockedAtomPerWallet) * 100
   )

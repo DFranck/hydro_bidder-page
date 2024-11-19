@@ -2,7 +2,7 @@
 
 import { StatCard } from "@/components/StatCards/StatCard"
 import { Tooltip } from "@/components/Tooltip"
-import { useUserVotingData } from "@/hooks/hooks"
+import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 

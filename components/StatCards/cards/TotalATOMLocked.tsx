@@ -28,7 +28,7 @@ export function TotalATOMLocked() {
             to-palette-red/0
           `
       )}
-      isLoading={!totalLockedTokens}
+      isLoading={typeof totalLockedTokens !== "number"}
       value={((totalLockedATOM ?? 0) / 1e6).toLocaleString(undefined, {
         maximumFractionDigits: 0,
       })}

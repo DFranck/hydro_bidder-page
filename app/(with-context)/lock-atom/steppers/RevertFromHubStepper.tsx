@@ -3,7 +3,7 @@
 import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { Validator } from "@/hooks/hooks"
+import { Validator } from "@/contract-apis/fetchMyValidators"
 import { formatAmount } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
