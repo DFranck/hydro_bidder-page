@@ -2,6 +2,7 @@ import { CollapsibleBox } from "@/components/CollapsibleBox"
 import { Icon } from "@/components/Icon"
 import { IconString } from "@/components/Icon/types"
 import { useToasts } from "@/components/Toasts/useToasts"
+import { get } from "lodash"
 import { ComponentProps, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
@@ -24,7 +25,7 @@ export function Toast({
   const { setToasts } = useToasts()
   const [isDismissed, setIsDismissed] = useState(false)
   const isActuallyDismissible =
-    isDismissible ?? classNames.variants[variant].isDismissible ?? true
+    isDismissible ?? get(classNames.variants[variant], "isDismissible", true)
 
   function handleDismiss() {
     setIsDismissed(true)
