@@ -170,7 +170,12 @@ export default function RewardsPage() {
     // },
     {
       key: "tributeRewards",
-      label: "Tribute Rewards ($)",
+      label: (
+        <>
+          Tribute Rewards ($)
+          <Tooltip tipContents="This is the estimated USD-equivalent value of the rewards from each tribute that you voted for in past rounds." />
+        </>
+      ),
       textAlign: "right",
       propsForCells: {
         className: "whitespace-nowrap",

@@ -77,7 +77,7 @@ export const useDecoratedProposals = ({ trancheId }: { trancheId: number }) => {
       )
     : undefined
 
-  const decoratedProposals = proposals?.map((proposal, index) => {
+  const decoratedProposals = proposals?.map((proposal) => {
     const tributes = currentProposalTributes.get(proposal.proposal_id)!
 
     const pricedAndNamedTributes = getPricedAndNamedTributes(

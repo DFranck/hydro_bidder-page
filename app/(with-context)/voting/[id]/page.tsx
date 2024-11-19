@@ -34,7 +34,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
     (p) => p.proposal_id === currentProposal?.proposal_id
   )
 
-  if (!renderedProposal || !currentProposal) {
+  if (!renderedProposal) {
     return <>The requested proposal could not be found.</>
   }
 
@@ -104,13 +104,13 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                     variant="superHeading"
                     as="h2"
                     id="bid-description"
-                    className={`
+                    className="
                       [body:has(a[href='#bid-description']:focus)_&]:rounded-sm
                       [body:has(a[href='#bid-description']:focus)_&]:outline
                       [body:has(a[href='#bid-description']:focus)_&]:outline-2
                       [body:has(a[href='#bid-description']:focus)_&]:outline-offset-4
                       [body:has(a[href='#bid-description']:focus)_&]:outline-palette-green
-                    `}
+                    "
                   >
                     Bid Description
                   </StyledText>
@@ -177,13 +177,13 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                     <Image
                       className="object-contain"
                       src={renderedProposal.projectLogoUrl}
-                      alt={renderedProposal.projectName}
+                      alt={renderedProposal.title}
                       fill={true}
                     />
                   </div>
                 )}
                 <StyledText className="text-xl font-bold not-italic">
-                  {renderedProposal.projectName.trim()}
+                  {renderedProposal.title.trim()}
                 </StyledText>
               </div>
             </div>
@@ -309,23 +309,25 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                       <span>{section}</span>
                     </StyledText>
                   ))}
-                <StyledText
-                  as={Link}
-                  href={renderedProposal.projectUrl}
-                  target="_blank"
-                  variant="link"
-                  className={`
-                    flex
-                    items-center
-                    gap-2
-                    border-t
-                    border-white/20
-                    pt-2
-                  `}
-                >
-                  <Icon name="solid:arrow-up-right" />
-                  Project Website
-                </StyledText>
+                {renderedProposal.projectUrl && (
+                  <StyledText
+                    as={Link}
+                    href={renderedProposal.projectUrl}
+                    target="_blank"
+                    variant="link"
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                      border-t
+                      border-white/20
+                      pt-2
+                    "
+                  >
+                    <Icon name="solid:arrow-up-right" />
+                    Project Website
+                  </StyledText>
+                )}
               </div>
             </div>
           </div>

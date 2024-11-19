@@ -13,12 +13,12 @@ export function YourAPRCurrentRound() {
     <StatCard
       title={
         <div className="flex items-center gap-1">
-          Your APR this Round
+          Your Round APR
           <Tooltip
             tipContents={
               <>
-                This is your personal APR for the current round based on your
-                voting power and the bids for which you&apos;ve voted.
+                This is your estimated personal APR for the current round based
+                on your voting power and the bids for which you&apos;ve voted.
               </>
             }
           />
