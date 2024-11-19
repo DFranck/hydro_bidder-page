@@ -2,7 +2,8 @@
 
 import { useAppContext } from "@/app/(with-context)/context"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { fetchAssetListWithPrices, useMyVotes } from "@/hooks/hooks"
+import { fetchAssetListWithPrices } from "@/contract-apis/fetchAssetListWithPrices"
+import { useMyVotes } from "@/contract-apis/useMyVotes"
 import { estimatedRewardForPower, sumTributeAmounts } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 

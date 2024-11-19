@@ -5,7 +5,6 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { executeExtendLockup } from "@/hooks/hooks"
 import {
   calculateLockupVotingPower,
   formatAmount,
@@ -25,6 +24,7 @@ import {
 } from "react"
 import { twMerge } from "tailwind-merge"
 import { useToasts } from "./Toasts/useToasts"
+import { executeExtendLockup } from "@/contract-apis/executeExtendLockup"
 
 interface FormValues {
   lockupPeriod: LockupPeriod

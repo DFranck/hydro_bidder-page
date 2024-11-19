@@ -34,8 +34,8 @@ export interface Constants {
   icq_update_period: number;
   is_in_pilot_mode: boolean;
   lock_epoch_length: number;
+  max_bid_duration: number;
   max_locked_tokens: number;
-  max_locked_tokens_per_address: number
   max_validator_shares_participating: number;
   paused: boolean;
   round_length: number;
@@ -57,13 +57,15 @@ export type ExecuteMsg = {
   unlock_tokens: {};
 } | {
   create_proposal: {
+    bid_duration: number;
     description: string;
+    minimum_atom_liquidity_request: Uint128;
     title: string;
     tranche_id: number;
   };
 } | {
   vote: {
-    proposal_id: number;
+    proposals_votes: ProposalToLockups[];
     tranche_id: number;
   };
 } | {
@@ -75,8 +77,9 @@ export type ExecuteMsg = {
     address: string;
   };
 } | {
-  update_max_locked_tokens: {
-    max_locked_tokens: number;
+  update_config: {
+    max_bid_duration?: number | null;
+    max_locked_tokens?: number | null;
   };
 } | {
   pause: {};
@@ -106,13 +109,38 @@ export type ExecuteMsg = {
   withdraw_i_c_q_funds: {
     amount: Uint128;
   };
+} | {
+  add_liquidity_deployment: {
+    deployed_funds: Coin[];
+    destinations: string[];
+    funds_before_deployment: Coin[];
+    proposal_id: number;
+    remaining_rounds: number;
+    round_id: number;
+    total_rounds: number;
+    tranche_id: number;
+  };
+} | {
+  remove_liquidity_deployment: {
+    proposal_id: number;
+    round_id: number;
+    tranche_id: number;
+  };
 };
+export interface ProposalToLockups {
+  lock_ids: number[];
+  proposal_id: number;
+}
 export interface TrancheInfo {
   metadata: string;
   name: string;
 }
 export interface ExpiredUserLockupsResponse {
   lockups: LockEntry[];
+}
+export type Addr = string;
+export interface ICQManagersResponse {
+  managers: Addr[];
 }
 export interface InstantiateMsg {
   first_round_start: Timestamp;
@@ -123,17 +151,33 @@ export interface InstantiateMsg {
   initial_whitelist: string[];
   is_in_pilot_mode: boolean;
   lock_epoch_length: number;
+  max_bid_duration: number;
   max_locked_tokens: Uint128;
   max_validator_shares_participating: number;
   round_length: number;
   tranches: TrancheInfo[];
   whitelist_admins: string[];
 }
+export interface LiquidityDeploymentResponse {
+  liquidity_deployment: LiquidityDeployment;
+}
+export interface LiquidityDeployment {
+  deployed_funds: Coin[];
+  destinations: string[];
+  funds_before_deployment: Coin[];
+  proposal_id: number;
+  remaining_rounds: number;
+  round_id: number;
+  total_rounds: number;
+  tranche_id: number;
+}
 export interface ProposalResponse {
   proposal: Proposal;
 }
 export interface Proposal {
+  bid_duration: number;
   description: string;
+  minimum_atom_liquidity_request: Uint128;
   percentage: Uint128;
   power: Uint128;
   proposal_id: number;
@@ -162,7 +206,7 @@ export type QueryMsg = {
     address: string;
   };
 } | {
-  user_vote: {
+  user_votes: {
     address: string;
     round_id: number;
     tranche_id: number;
@@ -211,7 +255,23 @@ export type QueryMsg = {
     round_id: number;
     validator: string;
   };
+} | {
+  liquidity_deployment: {
+    proposal_id: number;
+    round_id: number;
+    tranche_id: number;
+  };
+} | {
+  round_tranche_liquidity_deployments: {
+    limit: number;
+    round_id: number;
+    start_from: number;
+    tranche_id: number;
+  };
 };
+export interface RegisteredValidatorQueriesResponse {
+  query_ids: [string, number][];
+}
 export interface RoundEndResponse {
   round_end: Timestamp;
 }
@@ -220,6 +280,9 @@ export interface RoundProposalsResponse {
 }
 export interface RoundTotalVotingPowerResponse {
   total_voting_power: Uint128;
+}
+export interface RoundTrancheLiquidityDeploymentsResponse {
+  liquidity_deployments: LiquidityDeployment[];
 }
 export interface TopNProposalsResponse {
   proposals: Proposal[];
@@ -236,8 +299,8 @@ export interface Tranche {
   name: string;
 }
 export type Decimal = string;
-export interface UserVoteResponse {
-  vote: VoteWithPower;
+export interface UserVotesResponse {
+  votes: VoteWithPower[];
 }
 export interface VoteWithPower {
   power: Decimal;
@@ -246,7 +309,9 @@ export interface VoteWithPower {
 export interface UserVotingPowerResponse {
   voting_power: number;
 }
-export type Addr = string;
+export interface ValidatorPowerRatioResponse {
+  ratio: Decimal;
+}
 export interface WhitelistAdminsResponse {
   admins: Addr[];
 }

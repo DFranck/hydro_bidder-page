@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppContext } from "@/app/(with-context)/context"
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { MaxReachedPopup } from "@/components/MaxReachedPopup"
@@ -16,7 +17,6 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
-import { useUserVotingData } from "@/hooks/hooks"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import { useChain } from "@cosmos-kit/react"
@@ -25,7 +25,7 @@ import Link from "next/link"
 import { Fragment, ReactNode, useCallback, useMemo } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
-import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 
 export default function ActiveProposalsPage() {
   const { globalState } = useAppContext()

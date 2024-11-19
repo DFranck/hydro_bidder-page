@@ -1,24 +1,19 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { StatCard } from "@/components/StatCards/StatCard"
 import { Tooltip } from "@/components/Tooltip"
-import { useUserVotingData } from "@/hooks/hooks"
+import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
+import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 
 export function YourTotalATOMLocked() {
-  const {
-    globalState: {
-      constants: { max_locked_tokens_per_address },
-    },
-  } = useAppContext()
   const { address } = useChain("neutron")
   const { data: userVotingData, isPending: userVotingDataIsPending } =
-    useUserVotingData(address ?? "")
+    useUserVotingData(address)
   const lockedAtom = userVotingData?.lockups.lockedAtom
-  const percentLocked = max_locked_tokens_per_address
-    ? ((lockedAtom ?? 0) / max_locked_tokens_per_address) * 100
+  const percentLocked = maxLockedTokensPerAddress
+    ? ((lockedAtom ?? 0) / maxLockedTokensPerAddress) * 100
     : 0
 
   return (
@@ -47,8 +42,7 @@ export function YourTotalATOMLocked() {
       subTitle={
         <>
           <strong>{percentLocked.toFixed(2)}%</strong> of{" "}
-          <strong>{formatAmount(max_locked_tokens_per_address ?? 0)}</strong>{" "}
-          max.
+          <strong>{formatAmount(maxLockedTokensPerAddress ?? 0)}</strong> max.
         </>
       }
     />

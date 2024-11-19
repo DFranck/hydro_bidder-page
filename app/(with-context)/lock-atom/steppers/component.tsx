@@ -7,7 +7,7 @@ import { LockStepper } from "./LockStepper"
 import { RevertFromHubStepper } from "./RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "./RevertFromNeutronStepper"
 
-import { Validator } from "@/hooks/hooks"
+import { Validator } from "@/contract-apis/fetchMyValidators"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 
