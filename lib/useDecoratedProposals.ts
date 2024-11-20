@@ -77,45 +77,54 @@ export const useDecoratedProposals = ({ trancheId }: { trancheId: number }) => {
       )
     : undefined
 
-  const decoratedProposals = proposals?.map((proposal) => {
-    const tributes = currentProposalTributes.get(proposal.proposal_id)!
+  const decoratedProposals = (
+    proposals?.map((proposal, index) => {
+      const remoteInformation =
+        globalState.bidDescriptions[proposal.proposal_id]
 
-    const pricedAndNamedTributes = getPricedAndNamedTributes(
-      tributes,
-      assetListWithPrices
-    )
+      if (!remoteInformation) {
+        return null
+      }
 
-    const hasVotedOnProp =
-      myVotes?.get(trancheId)?.prop_id === proposal.proposal_id
+      const tributes = currentProposalTributes.get(proposal.proposal_id)!
 
-    const totalTributeValue = proposalTotalTribute(pricedAndNamedTributes)
+      const pricedAndNamedTributes = getPricedAndNamedTributes(
+        tributes,
+        assetListWithPrices
+      )
 
-    const estimatedRewardForUser = trancheId
-      ? estimatedRewardForPower(
-          totalTributeValue,
-          Number(myVotes?.get(trancheId)?.power ?? 0),
-          Number(proposal.power ?? 0)
-        )
-      : undefined
+      const hasVotedOnProp =
+        myVotes?.get(trancheId)?.prop_id === proposal.proposal_id
 
-    const percentDifferenceRewardForUser = chosenProposalReward
-      ? Math.round(
-          (((estimatedRewardForUser ?? 0) - chosenProposalReward) /
-            chosenProposalReward) *
-            100
-        )
-      : undefined
+      const totalTributeValue = proposalTotalTribute(pricedAndNamedTributes)
 
-    return {
-      ...proposal,
-      ...(globalState.bidDescriptions[proposal.proposal_id] ?? {}),
-      pricedAndNamedTributes,
-      hasVotedOnProp,
-      estimatedRewardForUser,
-      percentDifferenceRewardForUser,
-      totalTributeValue,
-    }
-  })
+      const estimatedRewardForUser = trancheId
+        ? estimatedRewardForPower(
+            totalTributeValue,
+            Number(myVotes?.get(trancheId)?.power ?? 0),
+            Number(proposal.power ?? 0)
+          )
+        : undefined
+
+      const percentDifferenceRewardForUser = chosenProposalReward
+        ? Math.round(
+            (((estimatedRewardForUser ?? 0) - chosenProposalReward) /
+              chosenProposalReward) *
+              100
+          )
+        : undefined
+
+      return {
+        ...proposal,
+        ...globalState.bidDescriptions[proposal.proposal_id],
+        pricedAndNamedTributes,
+        hasVotedOnProp,
+        estimatedRewardForUser,
+        percentDifferenceRewardForUser,
+        totalTributeValue,
+      }
+    }) ?? []
+  ).filter((proposal) => proposal !== null)
 
   return decoratedProposals
 }
