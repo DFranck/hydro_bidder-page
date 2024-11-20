@@ -98,6 +98,25 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
             </div>
 
             <div className="flex flex-col gap-6 pl-16">
+              {renderedProposal.aboutProject && (
+                <div className="flex flex-col gap-3">
+                  <StyledText
+                    variant="superHeading"
+                    as="h2"
+                    id="about-project"
+                    className="
+                      [body:has(a[href='#about-project']:focus)_&]:rounded-sm
+                      [body:has(a[href='#about-project']:focus)_&]:outline
+                      [body:has(a[href='#about-project']:focus)_&]:outline-2
+                      [body:has(a[href='#about-project']:focus)_&]:outline-offset-4
+                      [body:has(a[href='#about-project']:focus)_&]:outline-palette-green
+                    "
+                  >
+                    About Project
+                  </StyledText>
+                  <MarkdownContainer content={renderedProposal.aboutProject} />
+                </div>
+              )}
               {renderedProposal.description && (
                 <div className="flex flex-col gap-3">
                   <StyledText
@@ -292,6 +311,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
+                  renderedProposal.aboutProject && "About Project",
                   renderedProposal.description && "Bid Description",
                   renderedProposal.committeeComments && "Committee Review",
                   renderedProposal.appendix && "Appendix",
