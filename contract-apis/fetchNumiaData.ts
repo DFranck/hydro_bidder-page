@@ -24,9 +24,37 @@ export interface ProposalFromNumia {
   apr: number
 }
 
-export async function fetchNumiaData(): Promise<ProposalFromNumia[]> {
+export interface DenomFromNumia {
+  amount: number
+  type: string
+}
+
+export type SanitizedProposalFromNumia = Omit<
+  ProposalFromNumia,
+  "offchain_tribute" | "onchain_tribute_assets"
+> & {
+  offchain_tribute: {
+    amount: number
+    type: string
+  }[]
+  onchain_tribute_assets: {
+    amount: number
+    asset: string
+  }[]
+}
+
+export async function fetchNumiaData(): Promise<SanitizedProposalFromNumia[]> {
   const response = await fetch(
     "https://www.datalenses.zone/numia/cosmos/lensesV2/hydro/deployments_overview"
   )
-  return response.json()
+  const data = await response.json()
+  return data.map((proposal: ProposalFromNumia) => ({
+    ...proposal,
+    offchain_tribute: JSON.parse(proposal.offchain_tribute).filter(
+      (tribute: DenomFromNumia) => tribute.amount > 0
+    ),
+    onchain_tribute_assets: JSON.parse(proposal.onchain_tribute_assets).filter(
+      (tribute: DenomFromNumia) => tribute.amount > 0
+    ),
+  }))
 }
