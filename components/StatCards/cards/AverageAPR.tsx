@@ -33,7 +33,7 @@ export function AverageAPR() {
     <StatCard
       title={
         <div className="flex items-center gap-1">
-          Average Hydro APR
+          PoL Revenue
           <Tooltip
             classNamesForTooltip="flex flex-col gap-2"
             tipContents={
@@ -57,13 +57,8 @@ export function AverageAPR() {
           />
         </div>
       }
-      subTitle={`Pilot Round ${currentRound + 1}`}
-      value={(
-        (totalTributeValue / (totalLockedTokens / 1e6) / atomPrice) *
-        12
-      ).toLocaleString("en-US", {
-        style: "percent",
-      })}
+      subTitle={`All-Time`}
+      value="$–"
     />
   )
 }

@@ -56,7 +56,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
           polRewards:
             proposal.current_allocation_amount -
             proposal.initial_allocation_amount,
-          apr: proposal.apr,
+          polApr: proposal.apr,
           tribute: 0,
           status: proposal.status,
           points: null,
@@ -78,7 +78,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
         polValue: "–", // TODO: compute this
         duration: 1,
         polRewards: 0,
-        apr: 0,
+        polApr: 0,
         tribute: proposal.points
           ? proposal.points?.[0]
           : proposal.pricedAndNamedTributes.reduce(
@@ -108,7 +108,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       polRewards: `${proposal.polRewards.toLocaleString(undefined, {
         maximumFractionDigits: 4,
       })} ATOM`,
-      apr: <>{proposal.apr}%</>,
+      polApr: <>{proposal.polApr}%</>,
       tribute: proposal.points ? (
         <>
           <Icon name="solid:gem" /> {proposal.tribute.toLocaleString("en-US")}{" "}
@@ -151,9 +151,9 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
           {row.polRewards}
         </ClickableRowSurface>
       ),
-      apr: (
+      polApr: (
         <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.apr}
+          {row.polApr}
         </ClickableRowSurface>
       ),
       tribute: (
@@ -217,15 +217,15 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       customValueGetter: (row) => row._proposal.polRewards,
     },
     {
-      key: "apr",
-      label: "APR",
+      key: "polApr",
+      label: "PoL APR",
       textAlign: "right",
       propsForCells: {
         className: "text-palette-beige font-bold",
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._proposal.apr,
+      customValueGetter: (row) => row._proposal.polApr,
     },
     {
       key: "tribute",
