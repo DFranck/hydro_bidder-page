@@ -30,6 +30,7 @@ export type RequestAmount = [number, string]
 
 export type BidDescription = {
   title: string
+  aboutProject?: string
   description: string
   projectLogoUrl?: string
   projectName: string
