@@ -3,13 +3,13 @@
 import { ToastContextProvider } from "@/components/Toasts"
 import { fetchDashboardData } from "@/contract-apis/fetchDashboardData"
 import { Validator } from "@/contract-apis/fetchMyValidators"
-import { ProposalFromNumia } from "@/contract-apis/fetchNumiaData"
+import { SanitizedProposalFromNumia } from "@/contract-apis/fetchNumiaData"
 import { createContext, useContext } from "react"
 
 export type AppContextObject = Awaited<
   ReturnType<typeof fetchDashboardData>
 > & {
-  numiaData: ProposalFromNumia[]
+  numiaData: SanitizedProposalFromNumia[]
   validatorMap: Map<string, Validator>
 }
 

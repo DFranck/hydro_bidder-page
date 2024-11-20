@@ -156,7 +156,7 @@ export const classNames = {
   "button.circular.primary": generateButtonClassNames("circular-primary"),
   "button.circular.secondary": generateButtonClassNames("circular-secondary"),
   footnote: twJoin(`
-    text-xs
+    text-sm
     leading-relaxed
     text-white/60
   `),

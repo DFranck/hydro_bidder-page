@@ -3,14 +3,12 @@
 import { useAppContext } from "@/app/(with-context)/context"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
-import { Icon } from "@/components/Icon"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
-import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
-import { range } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -22,7 +20,6 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     globalState: { currentRound: currentRoundUnderHood },
     numiaData,
   } = useAppContext()
-  const decoratedProposals = useDecoratedProposals({ trancheId: 1 }) ?? []
   const requestedRoundNumber =
     typeof params.roundNumber === "undefined"
       ? null
@@ -30,6 +27,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
   const requestedRoundNumberUnderHood = requestedRoundNumber
     ? requestedRoundNumber - 1
     : null
+  const isPreHydro = requestedRoundNumber === null
 
   if (
     requestedRoundNumberUnderHood &&
@@ -38,135 +36,122 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     notFound()
   }
 
-  const normalizedProposals = !requestedRoundNumber
-    ? numiaData
-        .filter((proposal) => proposal.status.toLowerCase() !== "voting period")
-        .map((proposal) => ({
-          proposalId: proposal.id,
-          logo: null,
-          title: proposal.title,
-          projectName: proposal.project,
-          polValue: `${proposal.initial_allocation_amount.toLocaleString(
-            undefined,
-            {
-              maximumFractionDigits: 4,
-            }
-          )} ATOM`,
-          duration: proposal.duration_days / 30,
-          polRewards:
-            proposal.current_allocation_amount -
-            proposal.initial_allocation_amount,
-          polApr: proposal.apr,
-          tribute: 0,
-          status: proposal.status,
-          points: null,
-        }))
-    : decoratedProposals.map((proposal) => ({
-        proposalId: proposal.proposal_id,
-        logo: proposal.projectLogoUrl ? (
+  const preHydroProposals = numiaData.filter(
+    (proposal) => proposal.round.toLowerCase() === "pre-hydro"
+  )
+
+  const proposalsByRound = numiaData
+    .filter((proposal) => proposal.round.toLowerCase() !== "pre-hydro")
+    .reduce(
+      (acc, proposal) => {
+        acc[proposal.round] = [...(acc[proposal.round] ?? []), proposal]
+        return acc
+      },
+      {} as Record<string, typeof numiaData>
+    )
+
+  const proposalsToRender = isPreHydro
+    ? preHydroProposals
+    : proposalsByRound[requestedRoundNumberUnderHood ?? 0]
+
+  console.log({ proposalsToRender })
+
+  const rows = proposalsToRender.map((proposal) => ({
+    _proposal: proposal,
+    logo: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+        {proposal.project_logo_url ? (
           <div className="relative size-12">
             <Image
               className="object-contain"
-              src={proposal.projectLogoUrl}
-              alt={proposal.projectName}
+              src={proposal.project_logo_url}
+              alt={proposal.project}
               fill={true}
             />
           </div>
-        ) : null,
-        title: proposal.title,
-        projectName: proposal.projectName,
-        polValue: "–", // TODO: compute this
-        duration: 1,
-        polRewards: 0,
-        polApr: 0,
-        tribute: proposal.points
-          ? proposal.points?.[0]
-          : proposal.pricedAndNamedTributes.reduce(
-              (acc, t) => acc + t.amount,
-              0
-            ) / 1e6,
-        status: "Round Ongoing",
-        points: proposal.points,
-      }))
-
-  const rows = normalizedProposals
-    .map((proposal) => ({
-      _proposal: proposal,
-      logo: proposal.logo,
-      bidTitleAndProjectName: (
+        ) : null}
+      </ClickableRowSurface>
+    ),
+    bidTitleAndProjectName: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
         <div className="flex flex-col">
           <StyledText variant="h4">{proposal.title}</StyledText>
-          <StyledText variant="footnote">{proposal.projectName}</StyledText>
+          <StyledText variant="footnote">{proposal.project}</StyledText>
         </div>
-      ),
-      polValue: proposal.polValue,
-      duration: `~${pluralize({
-        count: parseFloat((proposal.duration ?? 0).toFixed(1)),
-        singular: "month",
-        prefixCount: true,
-      })}`,
-      polRewards: `${proposal.polRewards.toLocaleString(undefined, {
-        maximumFractionDigits: 4,
-      })} ATOM`,
-      polApr: <>{proposal.polApr}%</>,
-      tribute: proposal.points ? (
-        <>
-          <Icon name="solid:gem" /> {proposal.tribute.toLocaleString("en-US")}{" "}
-          {proposal.points?.[1]}
-        </>
-      ) : (
-        <>
-          {proposal.tribute.toLocaleString(undefined, {
-            maximumFractionDigits: 4,
-          })}{" "}
-          ATOM
-        </>
-      ),
-      status: proposal.status,
-    }))
-    .map((row) => ({
-      ...row,
-      logo: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.logo}
-        </ClickableRowSurface>
-      ),
-      bidTitleAndProjectName: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.bidTitleAndProjectName}
-        </ClickableRowSurface>
-      ),
-      polValue: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.polValue}
-        </ClickableRowSurface>
-      ),
-      duration: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.duration}
-        </ClickableRowSurface>
-      ),
-      polRewards: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.polRewards}
-        </ClickableRowSurface>
-      ),
-      polApr: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.polApr}
-        </ClickableRowSurface>
-      ),
-      tribute: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.tribute}
-        </ClickableRowSurface>
-      ),
-      status: (
-        <ClickableRowSurface href={`/voting/${row._proposal.proposalId}`}>
-          {row.status}
-        </ClickableRowSurface>
-      ),
-    }))
+      </ClickableRowSurface>
+    ),
+    polValue: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+        {`${proposal.initial_allocation_amount.toLocaleString(undefined, {
+          maximumFractionDigits: 4,
+        })} ATOM`}
+      </ClickableRowSurface>
+    ),
+    duration: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+        {(() => {
+          const monthCount = parseFloat(
+            (proposal.duration_days / 30 ?? 0).toFixed(1)
+          )
+          return `${monthCount > 0 ? "~" : ""}${pluralize({
+            count: monthCount,
+            singular: "month",
+            prefixCount: true,
+          })}`
+        })()}
+      </ClickableRowSurface>
+    ),
+    polRewards: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+        {(
+          proposal.current_allocation_amount -
+          proposal.initial_allocation_amount
+        ).toLocaleString(undefined, {
+          maximumFractionDigits: 4,
+        })}{" "}
+        ATOM
+      </ClickableRowSurface>
+    ),
+    polApr: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+        {proposal.apr}%
+      </ClickableRowSurface>
+    ),
+    tribute: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+        {proposal.offchain_tribute.map((tribute) => (
+          <div key={tribute.type}>
+            {tribute.amount.toLocaleString(undefined, {
+              maximumFractionDigits: 4,
+            })}{" "}
+            {tribute.type}
+          </div>
+        ))}
+        {proposal.onchain_tribute_assets.map((tribute) => (
+          <div key={tribute.asset}>
+            {tribute.amount.toLocaleString(undefined, {
+              maximumFractionDigits: 4,
+            })}{" "}
+            {tribute.asset.slice(0, 12)}
+          </div>
+        ))}
+        {proposal.offchain_tribute.length +
+          proposal.onchain_tribute_assets.length ===
+        0 ? (
+          "–"
+        ) : proposal.onchain_tribute_usdc ? (
+          <StyledText variant="footnote">
+            ~{amountToUSDString(proposal.onchain_tribute_usdc)} USD
+          </StyledText>
+        ) : null}
+      </ClickableRowSurface>
+    ),
+    status: (
+      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+        {proposal.status}
+      </ClickableRowSurface>
+    ),
+  }))
 
   type Row = (typeof rows)[number]
 
@@ -193,7 +178,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => Number(row._proposal.polValue),
+      customValueGetter: (row) => row._proposal.initial_allocation_amount,
     },
     {
       key: "duration",
@@ -203,7 +188,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       },
       isSortable: true,
       initialSortDirection: "ASC",
-      customValueGetter: (row) => row._proposal.duration,
+      customValueGetter: (row) => row._proposal.duration_days,
     },
     {
       key: "polRewards",
@@ -214,7 +199,9 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._proposal.polRewards,
+      customValueGetter: (row) =>
+        row._proposal.current_allocation_amount -
+        row._proposal.initial_allocation_amount,
     },
     {
       key: "polApr",
@@ -225,7 +212,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._proposal.polApr,
+      customValueGetter: (row) => row._proposal.apr,
     },
     {
       key: "tribute",
@@ -233,7 +220,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       textAlign: "right",
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._proposal.tribute,
+      customValueGetter: (row) => row._proposal.onchain_tribute_usdc,
     },
     {
       key: "status",
@@ -260,7 +247,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
         <div className="flex items-center justify-between">
           <StyledText variant="h2">PoL Metrics by Round</StyledText>
           <div>
-            {[null, ...range(0, currentRoundUnderHood + 1)].map(
+            {[null, ...Object.keys(proposalsByRound).map(Number)].map(
               (roundNumber) => {
                 const isActive = roundNumber === requestedRoundNumberUnderHood
 

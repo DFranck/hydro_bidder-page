@@ -13,6 +13,10 @@ const nextConfig = withNextra({
         protocol: "https",
         hostname: "*.netlify.app",
       },
+      {
+        protocol: "https",
+        hostname: "github.com",
+      },
     ],
   },
 })
