@@ -92,16 +92,29 @@ export default function AirdropsPage() {
     <ContentContainer className="gap-6 py-12">
       <StyledText variant="h2">Upcoming Airdrops for Hydro Users</StyledText>
 
-      <div className="flex flex-col items-center gap-6 sm:flex-row">
+      <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
         <div className="prose prose-invert">
-          As a Hydro participant, you may qualify for airdrops from various
-          ecosystem projects. Stay informed about potential token distributions
-          below.
+          Hydro participants are some of the most active & engaged users. They
+          also have the ability to vote on the deployments of liquidity through
+          the ecosystem. Many projects see value in airdropping a portion of
+          their token supply specifically to Hydro lockers. The projects below
+          have publicly shared their intention to do so. The list is updated by
+          the Hydro product team on a regular basis.
         </div>
 
         <Toasts.Toast icon="solid:radio" isDismissible={false} variant="info">
-          Stay tuned for updates! Confirmed airdrops will be distributed
-          automatically based on your participation in Hydro.
+          Are you a project planning an airdrop? We&apos;re here to help.{" "}
+          <StyledText
+            className="inline-flex items-center gap-1"
+            as={Link}
+            variant="link"
+            href="https://calendly.com/actional/hydro"
+            target="_blank"
+          >
+            <span>Get in touch with us here</span>
+            <Icon name="arrow-up-right-from-square" />
+          </StyledText>
+          .
         </Toasts.Toast>
       </div>
 
