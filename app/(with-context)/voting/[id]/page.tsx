@@ -182,7 +182,10 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
             <div className="*:!w-full">
-              <VoteButton proposal={renderedProposal} size="large" />
+              <VoteButton
+                proposalId={String(renderedProposal.proposal_id)}
+                size="large"
+              />
             </div>
 
             <div className="flex flex-col gap-2">

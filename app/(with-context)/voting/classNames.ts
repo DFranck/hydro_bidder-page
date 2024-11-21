@@ -46,11 +46,12 @@ export const classNames = {
     leading-none
     text-palette-text
   `),
-  projectLogo: twJoin(`
+  bidLogo: twJoin(`
     relative
     size-12
+    shrink-0
   `),
-  projectTitle: twJoin(`
+  bidTitle: twJoin(`
     line-clamp-2
     text-lg
     font-semibold
@@ -63,7 +64,7 @@ export const classNames = {
     w-full
   `),
   noBids: twJoin(`
-    !mb-6
+    my-3
     rounded-md
     border
     border-dashed

@@ -3,13 +3,13 @@ import { StyledText } from "@/components/StyledText"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import Link from "next/link"
 
-export const VOTE_SHARE_THRESHOLD = 5
+export const VOTE_SHARE_THRESHOLD = 0.05
 
 export const voteThresholdTooltip = (
   <>
     Bids below the minimum threshold of{" "}
-    <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
-    liquidity, and will not pay out rewards to users.{" "}
+    <strong>{VOTE_SHARE_THRESHOLD * 100}% total voting power</strong> will not
+    receive liquidity, and will not pay out rewards to users.{" "}
     <StyledText
       as="a"
       href="/docs#tribute-refunds"
@@ -20,6 +20,22 @@ export const voteThresholdTooltip = (
       Learn more
       <Icon name="solid:arrow-up-right" />
     </StyledText>
+  </>
+)
+
+export const pointSystemTooltip = (learnMoreURL?: string) => (
+  <>
+    This project is using a point system. Voters get points instead of live
+    tokens.{" "}
+    {learnMoreURL && (
+      <a
+        href={learnMoreURL}
+        className="inline-flex items-center gap-1 text-palette-green underline"
+        target="_blank"
+      >
+        Learn More <Icon name="solid:arrow-up-right" />
+      </a>
+    )}
   </>
 )
 
@@ -40,7 +56,9 @@ export const estimatedRewardsTooltip = ({
   <>
     This is the expected USD-equivalent value of rewards. It represents{" "}
     {percentageOfTribute ? (
-      <strong className="text-palette-beige">{percentageOfTribute}%</strong>
+      <strong className="text-palette-beige">
+        {Math.round(percentageOfTribute * 100)}%
+      </strong>
     ) : (
       `a percentage`
     )}{" "}

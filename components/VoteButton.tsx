@@ -1,7 +1,6 @@
 "use client"
 
 import { useAppContext } from "@/app/(with-context)/context"
-import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Confetti } from "@/components/Confetti"
@@ -21,15 +20,15 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export function VoteButton({
-  proposal,
+  proposalId,
   size,
 }: {
-  proposal: Proposal
+  proposalId: string
   size?: "large" | "small"
 }) {
   const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
   const [isCelebrating, setIsCelebrating] = useState(false)
-  const { globalState, currentProposalTranches } = useAppContext()
+  const { globalState, currentProposalTranches, numiaData } = useAppContext()
   const {
     constants: { max_locked_tokens },
     totalLockedTokens,
@@ -46,8 +45,9 @@ export function VoteButton({
     globalState.currentRound,
     Array.from(currentProposalTranches.keys())
   )
+  const proposal = numiaData.find((proposal) => proposal.id === proposalId)!
   const hasVotedThisProposal =
-    myVotes?.get(proposal.tranche_id)?.prop_id === proposal.proposal_id
+    myVotes?.get(Number(proposal.tranche))?.prop_id === Number(proposalId)
   const hasVotedAtAll = myVotes && myVotes.size > 0
   const isLoading = toasts.some((toast) => toast.variant === "working")
   const router = useRouter()
@@ -69,8 +69,8 @@ export function VoteButton({
       await executeVote(
         getSigningCosmWasmClient,
         address!,
-        proposal.proposal_id,
-        proposal.tranche_id
+        Number(proposalId),
+        Number(proposal.tranche)
       )
 
       setToasts([
