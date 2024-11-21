@@ -15,7 +15,11 @@ const nextConfig = withNextra({
       },
       {
         protocol: "https",
-        hostname: "github.com",
+        hostname: "*.github.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.githubusercontent.com",
       },
     ],
   },

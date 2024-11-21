@@ -1,4 +1,11 @@
-export interface ProposalFromNumia {
+"use server"
+
+import {
+  CamelCaseKeys,
+  keysFromSnakeToCamelCase,
+} from "@/lib/keysFromSnakeToCamelCase"
+
+export interface BidFromNumia {
   round: string
   tranche: string
   project: string
@@ -24,37 +31,54 @@ export interface ProposalFromNumia {
   apr: number
 }
 
-export interface DenomFromNumia {
-  amount: number
-  type: string
+export type SanitizedBidFromNumia = CamelCaseKeys<
+  Omit<
+    BidFromNumia,
+    "offchain_tribute" | "onchain_tribute_assets" | "tranche" | "id"
+  > & {
+    id: number
+    tranche: number
+    offchain_tribute: {
+      amount: number
+      type: string
+    }[]
+    onchain_tribute_assets: {
+      amount: number
+      asset: string
+    }[]
+  }
+>
+
+function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
+  return keysFromSnakeToCamelCase({
+    ...bid,
+    id: Number(bid.id),
+    tranche: Number(bid.tranche),
+    offchain_tribute: JSON.parse(bid.offchain_tribute),
+    onchain_tribute_assets: JSON.parse(bid.onchain_tribute_assets),
+  })
 }
 
-export type SanitizedProposalFromNumia = Omit<
-  ProposalFromNumia,
-  "offchain_tribute" | "onchain_tribute_assets"
-> & {
-  offchain_tribute: {
-    amount: number
-    type: string
-  }[]
-  onchain_tribute_assets: {
-    amount: number
-    asset: string
-  }[]
-}
-
-export async function fetchNumiaData(): Promise<SanitizedProposalFromNumia[]> {
+export async function fetchNumiaData(): Promise<{
+  postHydroBids: SanitizedBidFromNumia[]
+  preHydroBids: SanitizedBidFromNumia[]
+}> {
   const response = await fetch(
     "https://www.datalenses.zone/numia/cosmos/lensesV2/hydro/deployments_overview"
   )
-  const data = await response.json()
-  return data.map((proposal: ProposalFromNumia) => ({
-    ...proposal,
-    offchain_tribute: JSON.parse(proposal.offchain_tribute).filter(
-      (tribute: DenomFromNumia) => tribute.amount > 0
-    ),
-    onchain_tribute_assets: JSON.parse(proposal.onchain_tribute_assets).filter(
-      (tribute: DenomFromNumia) => tribute.amount > 0
-    ),
-  }))
+
+  const bids = (await response.json()) as BidFromNumia[]
+
+  const sanitizedBids = bids.map(sanitizeBid)
+  const postHydroBids = sanitizedBids.filter(
+    (bid) => bid.round.toLowerCase() !== "pre-hydro"
+  )
+  const preHydroBids = sanitizedBids.filter(
+    (bid) => bid.round.toLowerCase() === "pre-hydro"
+  )
+
+  return {
+    preHydroBids,
+    postHydroBids,
+  }
 }

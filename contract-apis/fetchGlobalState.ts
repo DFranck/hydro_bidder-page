@@ -1,3 +1,5 @@
+"use server"
+
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { GlobalState } from "@/app/types"
 import { unstable_cache } from "next/cache"
@@ -22,7 +24,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
     tranches,
     whitelistAdmins,
     whitelist,
-    // bidDescriptions,
+    bidDescriptions,
   ] = await Promise.all([
     unstable_cache(
       async () => {
@@ -89,11 +91,12 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
 
   return {
     constants,
-    currentRound,
+    // currentRound,
+    currentRound: 0,
     totalLockedTokens,
     tranches,
     whitelistAdmins,
     whitelist,
-    bidDescriptions: [],
+    bidDescriptions,
   }
 }

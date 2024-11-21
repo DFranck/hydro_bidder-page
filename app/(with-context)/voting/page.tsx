@@ -2,6 +2,7 @@
 
 import { useAppContext } from "@/app/(with-context)/context"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { ClickableRowSurface } from "@/components/ClickableRowSurface"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { MaxReachedPopup } from "@/components/MaxReachedPopup"
@@ -15,156 +16,115 @@ import {
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
-import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
+import {
+  AugmentedBid,
+  useContractContext,
+} from "@/contract-apis/useContractContext"
 import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
-import Link from "next/link"
-import { Fragment, ReactNode, useCallback, useMemo } from "react"
+import { Fragment, ReactNode, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
 
+type Row = {
+  _bid: AugmentedBid
+  logoAndTitle: ReactNode
+  yourEstimatedReward: ReactNode
+  currentVoteShare: ReactNode
+  actions: ReactNode
+}
+
 export default function ActiveProposalsPage() {
   const { globalState } = useAppContext()
+  const { bidsByRoundId, roundMetadata } = useContractContext()
+
   const {
     totalLockedTokens,
     constants: { max_locked_tokens },
   } = globalState
+
   const { isWalletConnected, address } = useChain("neutron")
+
   const { data: myUserVotingData, isPending: myUserVotingDataIsPending } =
     useUserVotingData(address ?? "")
-  const decoratedProposals =
-    useDecoratedProposals({
-      trancheId: 1,
-    }) || []
-  const hasVoted = decoratedProposals?.some(
-    (proposal) => proposal.hasVotedOnProp
-  )
-  const votingPower = myUserVotingData?.votingPower ?? 0
+
   const showWelcomeModal =
     Math.round((totalLockedTokens / (max_locked_tokens ?? 1)) * 100) < 100 &&
     !myUserVotingDataIsPending &&
-    votingPower <= 0
+    !!roundMetadata.usersVotingPower
 
-  type Row = {
-    _proposal: (typeof decoratedProposals)[number]
-    name: ReactNode
-    yourEstimatedReward: ReactNode
-    currentVoteShare: ReactNode
-    actions: ReactNode
-  }
+  console.log(bidsByRoundId, globalState.currentRound, roundMetadata)
 
-  const [rowsForTokenBasedTributes, rowsWithPointBasedTributes] = useMemo<
-    [Row[], Row[]]
-  >(() => {
-    const withTokens: Row[] = []
-    const withPoints: Row[] = []
+  const rows =
+    bidsByRoundId[globalState.currentRound]?.map((bid) => {
+      const isPointsBased = bid.offchainTribute.length > 0
 
-    decoratedProposals.forEach((proposal) => {
-      const projectLogo = proposal.projectLogoUrl ? (
-        <div className={classNames.projectLogo}>
-          <Image
-            className="object-contain"
-            src={proposal.projectLogoUrl}
-            alt={proposal.projectName}
-            fill={true}
-          />
-        </div>
-      ) : null
-
-      const projectTitle = proposal.title.replace(
-        /[ ]([^ ]+?)$/gm,
-        `${String.fromCharCode(160)}$1`
-      )
-
-      const projectLink = `/voting/${proposal.proposal_id}`
-
-      const pointSystemTooltip = (
-        <>
-          This project is using a point system. Voters get points instead of
-          live tokens.{" "}
-          {proposal.pointProgramUrl && (
-            <a
-              href={proposal.pointProgramUrl}
-              className="inline-flex items-center gap-1 text-palette-green underline"
-              target="_blank"
-            >
-              Learn More <Icon name="solid:arrow-up-right" />
-            </a>
-          )}
-        </>
-      )
-
-      const voteShareTooltip =
-        Number(proposal.percentage) < VOTE_SHARE_THRESHOLD ? (
-          <Tooltip
-            tipContents={voteThresholdTooltip}
-            classNamesForTooltip="-ml-24"
+      return {
+        _bid: bid,
+        logoAndTitle: (
+          <ClickableRowSurface
+            href={`/voting/${bid.id}`}
+            className="flex items-center gap-6"
           >
-            <Icon name="solid:circle" className="text-xs text-palette-beige" />
-          </Tooltip>
-        ) : null
-      const row = {
-        _proposal: proposal,
-
-        name: (
-          <>
-            <div className="flex items-center gap-6">
-              {projectLogo}
-              <p className={classNames.projectTitle}>{projectTitle}</p>
-            </div>
-            <Link href={projectLink} className={classNames.projectLink} />
-          </>
+            {bid.projectLogoUrl ? (
+              <div className={classNames.bidLogo}>
+                <Image
+                  className="object-contain"
+                  src={bid.projectLogoUrl}
+                  alt={bid.project}
+                  fill={true}
+                />
+              </div>
+            ) : null}
+            <p className={classNames.bidTitle}>{bid.title}</p>
+          </ClickableRowSurface>
         ),
-
         yourEstimatedReward: (
-          <>
-            {proposal.points ? (
-              <Tooltip tipContents={pointSystemTooltip}>
-                {votingPower ? (
-                  <>
-                    <div className="whitespace-nowrap">
-                      <Icon name="solid:gem" />{" "}
-                      {(
-                        Number(proposal.points?.[0] ?? 0) *
-                        (votingPower /
-                          (Number(proposal.power ?? 0) + votingPower))
-                      ).toLocaleString("en-US")}
-                    </div>
-                    <StyledText
-                      variant="footnote"
-                      as="div"
-                      className="whitespace-nowrap"
-                    >
-                      of {proposal.points?.[0].toLocaleString("en-US")}{" "}
-                      {proposal.points?.[1]}
+          <ClickableRowSurface href={`/voting/${bid.id}`}>
+            {isPointsBased ? (
+              <>
+                ~
+                {roundMetadata.userHasVoted ? (
+                  <div className="flex flex-col">
+                    {amountToUSDString(
+                      Math.round(bid.estimatedRewardForUser ?? 0),
+                      0
+                    )}
+
+                    <StyledText variant="footnote">
+                      of{" "}
+                      {amountToUSDString(
+                        Math.round(bid.onchainTributeUsdc ?? 0),
+                        0
+                      )}
                     </StyledText>
-                  </>
+                  </div>
                 ) : (
-                  <>
-                    <Icon name="solid:gem" />{" "}
-                    {proposal.points?.[0].toLocaleString("en-US")}{" "}
-                    {proposal.points?.[1]}
-                  </>
+                  bid.offchainTribute.map((tribute) => (
+                    <div>
+                      {tribute.amount.toLocaleString("en")}&nbsp;
+                      {tribute.type.slice(0, 12)}
+                    </div>
+                  ))
                 )}
-              </Tooltip>
+              </>
             ) : (
               <Tooltip
                 tipContents={estimatedRewardsTooltip({
-                  totalTribute: proposal.totalTributeValue,
-                  percentageOfTribute: Number(proposal.percentage),
+                  totalTribute: bid.onchainTributeUsdc,
+                  percentageOfTribute: bid.votingPowerPercentage,
                 })}
               >
                 {!isWalletConnected ? (
-                  amountToUSDString(proposal.totalTributeValue)
+                  amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)
                 ) : (
                   <>
                     <div className="flex items-center justify-end gap-2">
-                      {hasVoted &&
-                        proposal.percentDifferenceRewardForUser !== 0 && (
+                      {roundMetadata.userHasVoted &&
+                        bid.estimatedRewardDeltaAsPercentage !== 0 && (
                           <span
                             className={twMerge(
                               `
@@ -173,78 +133,69 @@ export default function ActiveProposalsPage() {
                                 gap-1
                                 text-xs
                               `,
-                              proposal.percentDifferenceRewardForUser &&
-                                proposal.percentDifferenceRewardForUser > 0
+                              bid.estimatedRewardDeltaAsPercentage &&
+                                bid.estimatedRewardDeltaAsPercentage > 0
                                 ? "text-palette-green"
                                 : "text-palette-red"
                             )}
                           >
                             <Icon
                               name={
-                                proposal?.percentDifferenceRewardForUser &&
-                                proposal.percentDifferenceRewardForUser > 0
+                                bid.estimatedRewardDeltaAsPercentage &&
+                                bid.estimatedRewardDeltaAsPercentage > 0
                                   ? "solid:arrow-up"
                                   : "solid:arrow-down"
                               }
                             />
-                            {proposal.percentDifferenceRewardForUser}%
+                            {bid.estimatedRewardDeltaAsPercentage}%
                           </span>
                         )}
-                      {amountToUSDString(proposal.estimatedRewardForUser ?? 0)}
+                      {amountToUSDString(bid.estimatedRewardForUser ?? 0)}
                     </div>
-                    {isWalletConnected && (
-                      <StyledText
-                        variant="footnote"
-                        as="div"
-                        className="whitespace-nowrap"
-                      >
-                        of {amountToUSDString(proposal.totalTributeValue)}
-                      </StyledText>
-                    )}
+                    <StyledText
+                      variant="footnote"
+                      as="div"
+                      className="whitespace-nowrap"
+                    >
+                      of {amountToUSDString(bid.onchainTributeUsdc)}
+                    </StyledText>
                   </>
                 )}
               </Tooltip>
             )}
-            <Link href={projectLink} className={classNames.projectLink} />
-          </>
+          </ClickableRowSurface>
         ),
-
         currentVoteShare: (
-          <>
-            <div className="flex flex-row-reverse items-center gap-1">
-              {proposal.percentage}%{voteShareTooltip}
-            </div>
-            <Link href={projectLink} className={classNames.projectLink} />
-          </>
+          <ClickableRowSurface
+            href={`/voting/${bid.id}`}
+            className="flex flex-row-reverse items-center gap-1"
+          >
+            <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
+            {bid.votingPowerPercentage < VOTE_SHARE_THRESHOLD && (
+              <Tooltip
+                tipContents={voteThresholdTooltip}
+                classNamesForTooltip="-ml-24"
+              >
+                <Icon
+                  name="solid:circle"
+                  className="text-xs text-palette-beige"
+                />
+              </Tooltip>
+            )}
+          </ClickableRowSurface>
         ),
-
         actions: (
-          <>
-            <VoteButton proposal={proposal} size="small" />
-            <Link href={projectLink} className={classNames.projectLink} />
-          </>
+          <ClickableRowSurface href={`/voting/${bid.id}`}>
+            Actions
+          </ClickableRowSurface>
         ),
       }
-
-      if (proposal.points) {
-        withPoints.push(row as any)
-      } else {
-        withTokens.push(row as any)
-      }
-    })
-
-    return [withTokens, withPoints]
-  }, [decoratedProposals, isWalletConnected, hasVoted, votingPower])
+    }) ?? []
 
   const buildColumns = useCallback(
-    (
-      projectBidLabel: string
-    ): ColumnObject<
-      (typeof rowsForTokenBasedTributes)[number],
-      keyof (typeof rowsForTokenBasedTributes)[number]
-    >[] => [
+    (projectBidLabel: string): ColumnObject<Row, keyof Row>[] => [
       {
-        key: "name",
+        key: "logoAndTitle",
         label: (
           <div className="flex items-center gap-1">
             {projectBidLabel}
@@ -263,7 +214,7 @@ export default function ActiveProposalsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => row._proposal.title,
+        customValueGetter: (row) => row._bid.title,
       },
       {
         key: "yourEstimatedReward",
@@ -280,11 +231,11 @@ export default function ActiveProposalsPage() {
           className: classNames.classNamesForCells,
         },
         customValueGetter: (row) =>
-          !!row._proposal.points
+          (row._bid.offchainTribute.length > 0
             ? -1
-            : hasVoted
-              ? (row._proposal.estimatedRewardForUser ?? 0)
-              : (row._proposal.totalTributeValue ?? 0),
+            : roundMetadata.userHasVoted
+              ? row._bid.estimatedRewardForUser
+              : row._bid.onchainTributeUsdc) ?? -1,
       },
       {
         key: "currentVoteShare",
@@ -309,7 +260,7 @@ export default function ActiveProposalsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => Number(row._proposal.percentage),
+        customValueGetter: (row) => row._bid.votingPowerPercentage,
       },
       {
         key: "actions",
@@ -321,15 +272,10 @@ export default function ActiveProposalsPage() {
         },
       },
     ],
-    [isWalletConnected, classNames.classNamesForCells, hasVoted]
+    [isWalletConnected, classNames.classNamesForCells, roundMetadata]
   )
 
-  const renderRow = useCallback<
-    RowRenderFunction<
-      (typeof rowsForTokenBasedTributes)[number],
-      keyof (typeof rowsForTokenBasedTributes)[number]
-    >
-  >(
+  const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
     ({
       children,
       row,
@@ -348,11 +294,12 @@ export default function ActiveProposalsPage() {
         sortedColumnKey === "currentVoteShare" &&
         previousRow &&
         nextRow &&
-        Number(previousRow._proposal.percentage) >= VOTE_SHARE_THRESHOLD &&
-        Number(row._proposal.percentage) < VOTE_SHARE_THRESHOLD
+        Number(previousRow._bid.votingPowerPercentage) >=
+          VOTE_SHARE_THRESHOLD &&
+        Number(row._bid.votingPowerPercentage) < VOTE_SHARE_THRESHOLD
 
       return (
-        <Fragment key={row._proposal.proposal_id}>
+        <Fragment key={row._bid.id}>
           {!!shouldShowVoteThresholdLine && (
             <TR className="js-vote-threshold-line">
               <TD colSpan={99} className="!p-0">
@@ -380,7 +327,7 @@ export default function ActiveProposalsPage() {
                     <span>
                       These bids are below the{" "}
                       <strong>
-                        {VOTE_SHARE_THRESHOLD}% vote share threshold
+                        {VOTE_SHARE_THRESHOLD * 100}% vote share threshold
                       </strong>
                     </span>
                     <Tooltip tipContents={voteThresholdTooltip} />
@@ -399,9 +346,9 @@ export default function ActiveProposalsPage() {
           )}
           <TR
             className={
-              row._proposal.hasVotedOnProp ? classNames.hasVotedRow : undefined
+              row._bid.hasVotedOnBid ? classNames.hasVotedRow : undefined
             }
-            key={row._proposal.proposal_id}
+            key={row._bid.id}
             {...rowProps}
           >
             {children}
@@ -425,27 +372,27 @@ export default function ActiveProposalsPage() {
 
       <ContentContainer className="gap-12 py-12">
         <BlurryBackdropBox>
-          {decoratedProposals?.length ? (
-            <>
-              <StyledTable
-                initialSortedColumnKey="yourEstimatedReward"
-                columns={buildColumns("Token-Based Tributes")}
-                rows={rowsForTokenBasedTributes}
-                renderRow={renderRow}
-              />
-            </>
-          ) : (
+          {rows.length === 0 && (
             <div className={classNames.noBids}>
               <p>There are no bids available at this moment.</p>
             </div>
           )}
+
+          <StyledTable
+            initialSortedColumnKey="yourEstimatedReward"
+            columns={buildColumns("Token-Based Tributes")}
+            rows={rows.filter(
+              (row) => row._bid.onchainTributeAssets.length > 0
+            )}
+            renderRow={renderRow}
+          />
         </BlurryBackdropBox>
 
         <BlurryBackdropBox>
           <StyledTable
             initialSortedColumnKey="yourEstimatedReward"
             columns={buildColumns("Points-Based Tributes")}
-            rows={rowsWithPointBasedTributes}
+            rows={rows.filter((row) => row._bid.offchainTribute.length > 0)}
             renderRow={renderRow}
           />
         </BlurryBackdropBox>

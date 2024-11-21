@@ -12,6 +12,7 @@ export const fetchMyVotes = async (
   }
 
   const client = await getCosmWasmClient()
+
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
@@ -31,7 +32,6 @@ export const fetchMyVotes = async (
     }
   })
 
-  // return all promises resolved or rejected
   const votes = await Promise.allSettled(votePromises)
 
   const votesByTranche = trancheIds.reduce((acc, trancheId, index) => {
@@ -41,6 +41,7 @@ export const fetchMyVotes = async (
         "vote" in votes[index].value ? votes[index].value.vote : null
       )
     }
+
     return acc
   }, new Map<number, VoteWithPower | null>())
 
