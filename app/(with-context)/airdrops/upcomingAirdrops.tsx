@@ -8,6 +8,10 @@ export interface UpcomingAirdrop {
   claim: CellContentDescriptor
 }
 
+export type CellContentDescriptor =
+  | ButtonCellContentDescriptor
+  | TextCellContentDescriptor
+
 type ButtonCellContentDescriptor = {
   type: "button"
   href: string
@@ -19,10 +23,6 @@ type TextCellContentDescriptor = {
   type: "text"
   label: string
 }
-
-export type CellContentDescriptor =
-  | ButtonCellContentDescriptor
-  | TextCellContentDescriptor
 
 export const upcomingAirdrops: UpcomingAirdrop[] = [
   {
