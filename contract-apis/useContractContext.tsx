@@ -32,7 +32,7 @@ interface ContractContextType {
 export interface AugmentedBid extends SanitizedBidFromNumia {
   estimatedRewardForUser: number | null
   estimatedRewardDeltaAsPercentage: number | null
-  hasVotedOnBid: boolean
+  hasVotedForBid: boolean
   votingPowerPercentage: number
 }
 
@@ -40,7 +40,7 @@ interface RoundMetadata {
   currentRound: number
   totalLockedTokens: number
   maxLockedTokens: number
-  userHasVoted: boolean
+  usersVotedBidIds: number[]
   usersVotingPower: number | null
   usersEstimatedReward: number | null
   usersLockups: LockEntryWithPower[]
@@ -51,6 +51,7 @@ const ContractContext = createContext<ContractContextType | undefined>(
 )
 
 export function ContractContextProvider({ children }: { children: ReactNode }) {
+  const { address } = useChain("neutron")
   const { setToasts } = useToasts()
   const [bidsByRoundId, setBidsByRoundId] = useState<
     Record<number, AugmentedBid[]>
@@ -60,12 +61,11 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
     currentRound: 0,
     totalLockedTokens: 0,
     maxLockedTokens: 0,
-    userHasVoted: false,
+    usersVotedBidIds: [],
     usersVotingPower: null,
     usersEstimatedReward: null,
     usersLockups: [],
   })
-  const { address } = useChain("neutron")
 
   useEffect(() => {
     ;(async () => {
@@ -144,7 +144,7 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
             ...bid,
             estimatedRewardForUser,
             estimatedRewardDeltaAsPercentage,
-            hasVotedOnBid: !!usersVoteForBid,
+            hasVotedForBid: !!usersVoteForBid,
             offchainTribute: offchainTributes,
             onchainTributeAssets: onchainTributes,
             votingPowerPercentage: bid.votingPower / totalVotingPower,
@@ -156,7 +156,9 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         currentRound: dataFromContract.currentRound,
         totalLockedTokens: dataFromContract.totalLockedTokens,
         maxLockedTokens: dataFromContract.constants.max_locked_tokens ?? 0,
-        userHasVoted: userVotes.size > 0,
+        usersVotedBidIds: Array.from(userVotes.values())
+          .map((vote) => vote?.prop_id)
+          .filter((id): id is number => id !== undefined),
         usersVotingPower,
         usersEstimatedReward: usersChosenBidReward ?? null,
         usersLockups,

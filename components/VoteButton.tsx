@@ -1,6 +1,5 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Confetti } from "@/components/Confetti"
@@ -12,48 +11,35 @@ import { Tooltip } from "@/components/Tooltip"
 import { networkLimitReachedTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote } from "@/contract-apis/executeVote"
-import { useMyVotes } from "@/contract-apis/useMyVotes"
-import { useUserVotingData } from "@/contract-apis/useUserVotingData"
+import { useContractContext } from "@/contract-apis/useContractContext"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export function VoteButton({
-  proposalId,
+  bidId,
   size,
 }: {
-  proposalId: string
+  bidId: string | number
   size?: "large" | "small"
 }) {
   const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
   const [isCelebrating, setIsCelebrating] = useState(false)
-  const { globalState, currentProposalTranches, numiaData } = useAppContext()
-  const {
-    constants: { max_locked_tokens },
-    totalLockedTokens,
-  } = globalState
-  const percentageLocked = Math.round(
-    ((totalLockedTokens ?? 0) / (max_locked_tokens ?? 0)) * 100
-  )
+  const { toasts, setToasts } = useToasts()
+  const router = useRouter()
   const { isWalletConnected, address, getSigningCosmWasmClient } =
     useChain("neutron")
-  const { data: userVotingData } = useUserVotingData(address || "")
-  const { toasts, setToasts } = useToasts()
-  const { data: myVotes } = useMyVotes(
-    address || "",
-    globalState.currentRound,
-    Array.from(currentProposalTranches.keys())
-  )
-  const proposal = numiaData.find((proposal) => proposal.id === proposalId)!
-  const hasVotedThisProposal =
-    myVotes?.get(Number(proposal.tranche))?.prop_id === Number(proposalId)
-  const hasVotedAtAll = myVotes && myVotes.size > 0
+  const { bidsByRoundId, roundMetadata } = useContractContext()
+  const bid = Object.values(bidsByRoundId)
+    .flat()
+    .find((bid) => bid.id === Number(bidId))
+  const hasVotedForAny = roundMetadata.usersVotedBidIds.length > 0
+  const hasVotedForBid = roundMetadata.usersVotedBidIds.includes(Number(bidId))
   const isLoading = toasts.some((toast) => toast.variant === "working")
-  const router = useRouter()
 
   async function handleClickVote() {
-    if (!proposal) {
+    if (!bid) {
       return
     }
 
@@ -69,8 +55,8 @@ export function VoteButton({
       await executeVote(
         getSigningCosmWasmClient,
         address!,
-        Number(proposalId),
-        Number(proposal.tranche)
+        Number(bidId),
+        Number(bid.tranche)
       )
 
       setToasts([
@@ -126,10 +112,12 @@ export function VoteButton({
         Loading...
       </StyledText>
     )
-  } else if (userVotingData?.votingPower === 0) {
+  } else if (roundMetadata.usersVotingPower === 0) {
     Button = (
       <ConditionalWrapper
-        condition={percentageLocked === 100}
+        condition={
+          roundMetadata.totalLockedTokens >= roundMetadata.maxLockedTokens
+        }
         wrapper={(children) => (
           <Tooltip tipContents={networkLimitReachedTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>
@@ -147,7 +135,7 @@ export function VoteButton({
         </StyledText>
       </ConditionalWrapper>
     )
-  } else if (hasVotedThisProposal) {
+  } else if (hasVotedForBid) {
     Button = (
       <StyledText
         variant={`button.neutral${size ? `.${size}` : ""}` as StyledTextVariant}
@@ -159,7 +147,7 @@ export function VoteButton({
       </StyledText>
     )
   } else {
-    const hasVotedElsewhere = hasVotedAtAll && !hasVotedThisProposal
+    const hasVotedElsewhere = hasVotedForAny && !hasVotedForBid
     Button = (
       <StyledText
         as="button"
