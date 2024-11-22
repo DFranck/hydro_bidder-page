@@ -126,10 +126,10 @@ export const Header = () => {
               `
           )}
         >
-          Round 1 caps have been reached. Continue optimizing your vote to
-          maximize your rewards!{" "}
+          Round 1 caps have been reached.{" "}
           <span className="inline-flex items-center gap-1 font-bold underline">
-            Learn More <Icon name="solid:arrow-up-right" />
+            Join the telegram group for updates!{" "}
+            <Icon name="solid:arrow-up-right" />
           </span>
           <Link
             className="absolute inset-0 z-10"
