@@ -15,8 +15,14 @@ import { upcomingAirdrops } from "./upcomingAirdrops"
 
 export default function AirdropsPage() {
   const rows = upcomingAirdrops.map((airdropDescriptor) => {
-    const { projectName, projectDetails, isConfirmed, steps, action } =
-      airdropDescriptor
+    const {
+      projectName,
+      projectDetails,
+      isConfirmed,
+      steps,
+      action,
+      nextSteps,
+    } = airdropDescriptor
 
     return {
       _airdropDescriptor: airdropDescriptor,
@@ -47,6 +53,7 @@ export default function AirdropsPage() {
         ) : (
           <StyledText>{steps[0]}</StyledText>
         ),
+      nextSteps: <CellContentRenderer descriptor={nextSteps} />,
       action: <CellContentRenderer descriptor={action} />,
     }
   })
@@ -87,6 +94,13 @@ export default function AirdropsPage() {
       isSortable: true,
       propsForCells: {
         className: "relative whitespace-nowrap",
+      },
+    },
+    {
+      key: "nextSteps",
+      label: "Next Steps",
+      propsForCells: {
+        className: "relative",
       },
     },
     {
