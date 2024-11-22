@@ -11,6 +11,8 @@ import { useDeferredValue, useEffect, useRef } from "react"
 import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
+export const telegramLink = "https://t.me/+xUzNOTZjUNw5Mzhk"
+
 export const Header = () => {
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const { address } = useChain("neutron")
@@ -133,7 +135,7 @@ export const Header = () => {
           </span>
           <Link
             className="absolute inset-0 z-10"
-            href="/docs#pilot-rounds"
+            href={telegramLink}
             target="_blank"
           >
             <span className="sr-only">Learn More</span>

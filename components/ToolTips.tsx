@@ -1,3 +1,4 @@
+import { telegramLink } from "@/components/Header"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { AugmentedBid, RoundMetadata } from "@/contract-apis/useContractContext"
@@ -97,12 +98,7 @@ export const estimatedRewardsTooltip = ({
 export const networkLimitReachedTooltip = (
   <>
     The cap has been reached for this round. Join the{" "}
-    <StyledText
-      variant="link"
-      as={Link}
-      href="https://t.me/+xUzNOTZjUNw5Mzhk"
-      target="_blank"
-    >
+    <StyledText variant="link" as={Link} href={telegramLink} target="_blank">
       Hydro Telegram Group
       <Icon name="solid:arrow-up-right" />
     </StyledText>{" "}
