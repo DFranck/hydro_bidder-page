@@ -3,9 +3,7 @@ export interface UpcomingAirdrop {
   projectDetails: string
   isConfirmed: boolean
   steps: string[]
-  check: CellContentDescriptor
-  registration: CellContentDescriptor
-  claim: CellContentDescriptor
+  action: CellContentDescriptor
 }
 
 export type CellContentDescriptor =
@@ -30,19 +28,10 @@ export const upcomingAirdrops: UpcomingAirdrop[] = [
     projectDetails: `Text with **markdown** so [this](https://www.google.com) is a link.`,
     isConfirmed: true, // or false
     steps: ["Locked ATOM in Round 1"],
-    check: {
+    action: {
       type: "button",
       label: "Eligibility Button",
       disabled: true,
-      href: "https://www.google.com",
-    },
-    registration: {
-      type: "text",
-      label: "Just some text about it",
-    },
-    claim: {
-      type: "button",
-      label: "Claim Button",
       href: "https://www.google.com",
     },
   },

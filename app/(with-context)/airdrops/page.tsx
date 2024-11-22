@@ -15,15 +15,8 @@ import { upcomingAirdrops } from "./upcomingAirdrops"
 
 export default function AirdropsPage() {
   const rows = upcomingAirdrops.map((airdropDescriptor) => {
-    const {
-      projectName,
-      projectDetails,
-      isConfirmed,
-      steps,
-      check,
-      registration,
-      claim,
-    } = airdropDescriptor
+    const { projectName, projectDetails, isConfirmed, steps, action } =
+      airdropDescriptor
 
     return {
       _airdropDescriptor: airdropDescriptor,
@@ -54,9 +47,7 @@ export default function AirdropsPage() {
         ) : (
           <StyledText>{steps[0]}</StyledText>
         ),
-      eligibilityCheck: <CellContentRenderer descriptor={check} />,
-      registration: <CellContentRenderer descriptor={registration} />,
-      claimMethod: <CellContentRenderer descriptor={claim} />,
+      action: <CellContentRenderer descriptor={action} />,
     }
   })
 
@@ -99,22 +90,9 @@ export default function AirdropsPage() {
       },
     },
     {
-      key: "eligibilityCheck",
-      label: "Eligibility Check",
-      propsForCells: {
-        className: "relative",
-      },
-    },
-    {
-      key: "registration",
-      label: "Registration",
-      propsForCells: {
-        className: "relative",
-      },
-    },
-    {
-      key: "claimMethod",
-      label: "Claim Method",
+      key: "action",
+      label: "Action",
+      textAlign: "right",
       propsForCells: {
         className: "relative",
       },
