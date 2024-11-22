@@ -9,33 +9,8 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import Link from "next/link"
-import { CellContentDescriptor, upcomingAirdrops } from "./upcomingAirdrops"
-
-function CellContentRenderer({
-  descriptor,
-}: {
-  descriptor: CellContentDescriptor
-}) {
-  switch (descriptor.type) {
-    case "button":
-      return (
-        <StyledText
-          as={Link}
-          variant="button.primary.small"
-          href={descriptor.href}
-          target="_blank"
-          className={
-            descriptor.disabled ? "pointer-events-none opacity-50" : ""
-          }
-        >
-          {descriptor.label}
-          <Icon name="arrow-up-right-from-square" />
-        </StyledText>
-      )
-    case "text":
-      return <StyledText>{descriptor.label}</StyledText>
-  }
-}
+import { CellContentRenderer } from "./CellContentRenderer"
+import { upcomingAirdrops } from "./upcomingAirdrops"
 
 export default function AirdropsPage() {
   const rows = upcomingAirdrops.map((airdropDescriptor) => {
@@ -150,14 +125,19 @@ export default function AirdropsPage() {
       </StatCards>
 
       <ContentContainer className="gap-6 py-12">
-        <StyledText variant="h2">Upcoming Airdrops for Hydro Users</StyledText>
-        <div className="prose prose-invert">
-          Hydro participants are some of the most active & engaged users. They
-          also have the ability to vote on the deployments of liquidity through
-          the ecosystem. Many projects see value in airdropping a portion of
-          their token supply specifically to Hydro lockers. The projects below
-          have publicly shared their intention to do so. The list is updated by
-          the Hydro product team on a regular basis.
+        <div className="flex justify-between gap-6">
+          <StyledText as="h2" variant="h2">
+            Upcoming Airdrops for Hydro Users
+          </StyledText>
+
+          <div className="prose prose-invert">
+            Hydro participants are some of the most active & engaged users. They
+            also have the ability to vote on the deployments of liquidity
+            through the ecosystem. Many projects see value in airdropping a
+            portion of their token supply specifically to Hydro lockers. The
+            projects below have publicly shared their intention to do so. The
+            list is updated by the Hydro product team on a regular basis.
+          </div>
         </div>
 
         <BlurryBackdropBox>

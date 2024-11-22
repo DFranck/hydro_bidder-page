@@ -100,6 +100,7 @@ const classNamesForAllHeadings = twJoin(`
   font-display
   text-balance
   font-bold
+  !leading-[1.3]
 `)
 
 const generateButtonClassNames = (
