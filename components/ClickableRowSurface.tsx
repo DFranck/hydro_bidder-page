@@ -1,18 +1,16 @@
 import Link from "next/link"
-import { ReactNode } from "react"
-import { twMerge } from "tailwind-merge"
+import { ComponentProps, ReactNode } from "react"
 
 export function ClickableRowSurface({
   children,
   href,
-  className,
-}: {
+  ...props
+}: ComponentProps<"div"> & {
   children: ReactNode
   href: string
-  className?: string
 }) {
   return (
-    <div className={twMerge("relative", className)}>
+    <div {...props}>
       {children}
       <Link href={href} className="absolute inset-0" />
     </div>
