@@ -67,9 +67,10 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       ),
       polValue: (
         <ClickableRowSurface href={rowURL}>
-          {`${bid.initialAllocationAmount.toLocaleString(undefined, {
+          {bid.initialAllocationAmount.toLocaleString(undefined, {
             maximumFractionDigits: 4,
-          })} ATOM`}
+          })}
+          &nbsp;ATOM
         </ClickableRowSurface>
       ),
       duration: (
@@ -105,19 +106,13 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
             <>
               {bid.offchainTribute.map((tribute) => (
                 <div key={tribute.type}>
-                  {tribute.amount.toLocaleString(undefined, {
-                    maximumFractionDigits: 4,
-                  })}{" "}
-                  {tribute.type}
+                  {tribute.amount.toLocaleString()} {tribute.type}
                 </div>
               ))}
 
               {bid.onchainTributeAssets.map((tribute) => (
                 <div key={tribute.asset}>
-                  {tribute.amount.toLocaleString(undefined, {
-                    maximumFractionDigits: 4,
-                  })}{" "}
-                  {tribute.asset.slice(0, 12)}
+                  {tribute.amount.toLocaleString()} {tribute.asset.slice(0, 12)}
                 </div>
               ))}
 
