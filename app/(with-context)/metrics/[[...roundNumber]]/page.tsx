@@ -41,43 +41,41 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       ? preHydroBids
       : bidsByRoundId[requestedRoundNumberUnderHood ?? 0]) ?? []
 
-  const rows = proposalsToRender.map((proposal) => ({
-    _proposal: proposal,
+  const rows = proposalsToRender.map((bid) => ({
+    _proposal: bid,
     logoAndTitle: (
       <ClickableRowSurface
-        href={`/bids/${proposal.id}`}
+        href={`/bids/${bid.id}`}
         className="flex items-center gap-6"
       >
         <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-          {proposal.projectLogoUrl ? (
+          {bid.projectLogoUrl ? (
             <Image
               className="object-contain"
-              src={proposal.projectLogoUrl}
-              alt={proposal.project}
+              src={bid.projectLogoUrl}
+              alt={bid.project}
               fill={true}
             />
           ) : null}
         </div>
 
         <div className="flex flex-col">
-          <StyledText variant="h4">{proposal.title}</StyledText>
-          <StyledText variant="footnote">{proposal.project}</StyledText>
+          <StyledText variant="h4">{bid.title}</StyledText>
+          <StyledText variant="footnote">{bid.project}</StyledText>
         </div>
       </ClickableRowSurface>
     ),
     polValue: (
-      <ClickableRowSurface href={`/bids/${proposal.id}`}>
-        {`${proposal.initialAllocationAmount.toLocaleString(undefined, {
+      <ClickableRowSurface href={`/bids/${bid.id}`}>
+        {`${bid.initialAllocationAmount.toLocaleString(undefined, {
           maximumFractionDigits: 4,
         })} ATOM`}
       </ClickableRowSurface>
     ),
     duration: (
-      <ClickableRowSurface href={`/bids/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${bid.id}`}>
         {(() => {
-          const monthCount = parseFloat(
-            (proposal.durationDays / 30 ?? 0).toFixed(1)
-          )
+          const monthCount = parseFloat((bid.durationDays / 30).toFixed(1))
           return `${monthCount > 0 ? "~" : ""}${pluralize({
             count: monthCount,
             singular: "month",
@@ -87,9 +85,9 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       </ClickableRowSurface>
     ),
     polRewards: (
-      <ClickableRowSurface href={`/bids/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${bid.id}`}>
         {(
-          proposal.currentAllocationAmount - proposal.initialAllocationAmount
+          bid.currentAllocationAmount - bid.initialAllocationAmount
         ).toLocaleString(undefined, {
           maximumFractionDigits: 4,
         })}{" "}
@@ -97,13 +95,13 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       </ClickableRowSurface>
     ),
     polApr: (
-      <ClickableRowSurface href={`/bids/${proposal.id}`}>
-        {proposal.apr}%
+      <ClickableRowSurface href={`/bids/${bid.id}`}>
+        {bid.apr}%
       </ClickableRowSurface>
     ),
     tribute: (
-      <ClickableRowSurface href={`/bids/${proposal.id}`}>
-        {proposal.offchainTribute.map((tribute) => (
+      <ClickableRowSurface href={`/bids/${bid.id}`}>
+        {bid.offchainTribute.map((tribute) => (
           <div key={tribute.type}>
             {tribute.amount.toLocaleString(undefined, {
               maximumFractionDigits: 4,
@@ -111,7 +109,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
             {tribute.type}
           </div>
         ))}
-        {proposal.onchainTributeAssets.map((tribute) => (
+        {bid.onchainTributeAssets.map((tribute) => (
           <div key={tribute.asset}>
             {tribute.amount.toLocaleString(undefined, {
               maximumFractionDigits: 4,
@@ -119,20 +117,18 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
             {tribute.asset.slice(0, 12)}
           </div>
         ))}
-        {proposal.offchainTribute.length +
-          proposal.onchainTributeAssets.length ===
-        0 ? (
+        {bid.offchainTribute.length + bid.onchainTributeAssets.length === 0 ? (
           "–"
-        ) : proposal.onchainTributeUsdc ? (
+        ) : bid.onchainTributeUsdc ? (
           <StyledText variant="footnote">
-            ~{amountToUSDString(proposal.onchainTributeUsdc)} USD
+            ~{amountToUSDString(bid.onchainTributeUsdc)} USD
           </StyledText>
         ) : null}
       </ClickableRowSurface>
     ),
     status: (
-      <ClickableRowSurface href={`/bids/${proposal.id}`}>
-        {proposal.status}
+      <ClickableRowSurface href={`/bids/${bid.id}`}>
+        {bid.status}
       </ClickableRowSurface>
     ),
   }))
