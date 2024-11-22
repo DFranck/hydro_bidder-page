@@ -36,7 +36,7 @@ export interface AugmentedBid extends SanitizedBidFromNumia {
   votingPowerPercentage: number
 }
 
-interface RoundMetadata {
+export interface RoundMetadata {
   currentRound: number
   totalLockedTokens: number
   maxLockedTokens: number
@@ -127,17 +127,16 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
           const usersVoteForBid = userVotes.get(bid.id)
 
           const estimatedRewardForUser =
-            bid.votingPower === 0
-              ? bid.onchainTributeUsdc
+            bid.votingPower === 0 || !usersVotingPower
+              ? 0
               : bid.onchainTributeUsdc *
                 (bid.votingPower / (bid.votingPower + usersVotingPower))
 
           const estimatedRewardDeltaAsPercentage =
             (usersChosenBidReward &&
               estimatedRewardForUser &&
-              ((usersChosenBidReward - estimatedRewardForUser) /
-                usersChosenBidReward) *
-                100) ||
+              (usersChosenBidReward - estimatedRewardForUser) /
+                usersChosenBidReward) ||
             null
 
           return {
@@ -167,6 +166,8 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
       setPreHydroBids(preHydroBids)
 
       setBidsByRoundId(augmentedBidsByRoundId)
+
+      console.log({ augmentedBidsByRoundId })
 
       setToasts([])
     })()

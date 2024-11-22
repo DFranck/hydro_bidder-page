@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
+import { AugmentedBid, RoundMetadata } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import Link from "next/link"
 
@@ -49,38 +50,49 @@ export const usdDisclaimerTooltip = (
 )
 
 export const estimatedRewardsTooltip = ({
-  isTokenBasedTribute,
-  totalTribute,
-  percentageOfTribute,
+  bid,
+  roundMetadata,
 }: {
-  isTokenBasedTribute?: boolean
-  totalTribute?: number
-  percentageOfTribute?: number
-} = {}) => (
-  <>
-    This is the expected{" "}
-    {isTokenBasedTribute
-      ? "USD-equivalent value of rewards"
-      : "amount of points you will receive based on your voting power"}
-    . It represents{" "}
-    {percentageOfTribute ? (
-      <strong className="text-palette-beige">{percentageOfTribute}%</strong>
-    ) : (
-      `a percentage`
-    )}{" "}
-    of the{" "}
-    {totalTribute ? (
-      <strong className="text-palette-beige">
-        {amountToUSDString(totalTribute)}
-      </strong>
-    ) : (
-      `total`
-    )}{" "}
-    tribute provided by the project. Over time, the value may increase if the
-    project adds tributes or decrease if more voters choose{" "}
-    <span className="whitespace-nowrap">the project.</span>
-  </>
-)
+  bid?: AugmentedBid
+  roundMetadata: RoundMetadata
+}) => {
+  const percentageOfTribute =
+    bid && roundMetadata.usersVotingPower
+      ? bid.votingPower / (bid.votingPower + roundMetadata.usersVotingPower)
+      : null
+  const isTokenBasedTribute = bid ? bid.offchainTribute.length === 0 : null
+
+  return (
+    <>
+      This is the expected{" "}
+      {isTokenBasedTribute
+        ? "USD-equivalent value of rewards"
+        : "amount of points you will receive based on your voting power"}
+      .{" "}
+      {percentageOfTribute ? (
+        <>
+          It represents{" "}
+          <strong className="text-palette-beige">
+            {Math.round(percentageOfTribute * 100)}%
+          </strong>{" "}
+          of the{" "}
+        </>
+      ) : (
+        <>Until you have voting power, it is the</>
+      )}{" "}
+      {bid && isTokenBasedTribute ? (
+        <strong className="text-palette-beige">
+          {amountToUSDString(bid.onchainTributeUsdc)}
+        </strong>
+      ) : (
+        `total`
+      )}{" "}
+      tribute provided by the project. Over time, the value may increase if the
+      project adds tributes or decrease if more voters choose{" "}
+      <span className="whitespace-nowrap">the project.</span>
+    </>
+  )
+}
 
 export const networkLimitReachedTooltip = (
   <>

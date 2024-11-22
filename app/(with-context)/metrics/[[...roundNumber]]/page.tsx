@@ -41,97 +41,102 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       ? preHydroBids
       : bidsByRoundId[requestedRoundNumberUnderHood ?? 0]) ?? []
 
-  const rows = proposalsToRender.map((bid) => ({
-    _proposal: bid,
-    logoAndTitle: (
-      <ClickableRowSurface
-        href={`/bids/${bid.id}`}
-        className="flex items-center gap-6"
-      >
-        <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-          {bid.projectLogoUrl ? (
-            <Image
-              className="object-contain"
-              src={bid.projectLogoUrl}
-              alt={bid.project}
-              fill={true}
-            />
-          ) : null}
-        </div>
+  const rows = proposalsToRender.map((bid) => {
+    const rowURL = isPreHydro ? bid.projectUrl : `/bids/${bid.id}`
 
-        <div className="flex flex-col">
-          <StyledText variant="h4">{bid.title}</StyledText>
-          <StyledText variant="footnote">{bid.project}</StyledText>
-        </div>
-      </ClickableRowSurface>
-    ),
-    polValue: (
-      <ClickableRowSurface href={`/bids/${bid.id}`}>
-        {`${bid.initialAllocationAmount.toLocaleString(undefined, {
-          maximumFractionDigits: 4,
-        })} ATOM`}
-      </ClickableRowSurface>
-    ),
-    duration: (
-      <ClickableRowSurface href={`/bids/${bid.id}`}>
-        {(() => {
-          const monthCount = parseFloat((bid.durationDays / 30).toFixed(1))
-          return `${monthCount > 0 ? "~" : ""}${pluralize({
-            count: monthCount,
-            singular: "month",
-            prefixCount: true,
-          })}`
-        })()}
-      </ClickableRowSurface>
-    ),
-    polRewards: (
-      <ClickableRowSurface href={`/bids/${bid.id}`}>
-        {(
-          bid.currentAllocationAmount - bid.initialAllocationAmount
-        ).toLocaleString(undefined, {
-          maximumFractionDigits: 4,
-        })}{" "}
-        ATOM
-      </ClickableRowSurface>
-    ),
-    polApr: (
-      <ClickableRowSurface href={`/bids/${bid.id}`}>
-        {bid.apr}%
-      </ClickableRowSurface>
-    ),
-    tribute: (
-      <ClickableRowSurface href={`/bids/${bid.id}`}>
-        {bid.offchainTribute.map((tribute) => (
-          <div key={tribute.type}>
-            {tribute.amount.toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}{" "}
-            {tribute.type}
+    return {
+      _proposal: bid,
+      logoAndTitle: (
+        <ClickableRowSurface href={rowURL} className="flex items-center gap-6">
+          <div className="relative size-12 shrink-0 rounded-full border text-[0]">
+            {bid.projectLogoUrl ? (
+              <Image
+                className="object-contain"
+                src={bid.projectLogoUrl}
+                alt={bid.project}
+                fill={true}
+              />
+            ) : null}
           </div>
-        ))}
-        {bid.onchainTributeAssets.map((tribute) => (
-          <div key={tribute.asset}>
-            {tribute.amount.toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}{" "}
-            {tribute.asset.slice(0, 12)}
+
+          <div className="flex flex-col">
+            <StyledText variant="h4">{bid.title}</StyledText>
+            <StyledText variant="footnote">{bid.project}</StyledText>
           </div>
-        ))}
-        {bid.offchainTribute.length + bid.onchainTributeAssets.length === 0 ? (
-          "–"
-        ) : bid.onchainTributeUsdc ? (
-          <StyledText variant="footnote">
-            ~{amountToUSDString(bid.onchainTributeUsdc)} USD
-          </StyledText>
-        ) : null}
-      </ClickableRowSurface>
-    ),
-    status: (
-      <ClickableRowSurface href={`/bids/${bid.id}`}>
-        {bid.status}
-      </ClickableRowSurface>
-    ),
-  }))
+        </ClickableRowSurface>
+      ),
+      polValue: (
+        <ClickableRowSurface href={rowURL}>
+          {`${bid.initialAllocationAmount.toLocaleString(undefined, {
+            maximumFractionDigits: 4,
+          })} ATOM`}
+        </ClickableRowSurface>
+      ),
+      duration: (
+        <ClickableRowSurface href={rowURL}>
+          {(() => {
+            const monthCount = parseFloat((bid.durationDays / 30).toFixed(1))
+            return `${monthCount > 0 ? "~" : ""}${pluralize({
+              count: monthCount,
+              singular: "month",
+              prefixCount: true,
+            })}`
+          })()}
+        </ClickableRowSurface>
+      ),
+      polRewards: (
+        <ClickableRowSurface href={rowURL}>
+          {(
+            bid.currentAllocationAmount - bid.initialAllocationAmount
+          ).toLocaleString(undefined, {
+            maximumFractionDigits: 4,
+          })}{" "}
+          ATOM
+        </ClickableRowSurface>
+      ),
+      polApr: (
+        <ClickableRowSurface href={rowURL}>{bid.apr}%</ClickableRowSurface>
+      ),
+      tribute: (
+        <ClickableRowSurface href={rowURL}>
+          {isPreHydro ? (
+            "–"
+          ) : (
+            <>
+              {bid.offchainTribute.map((tribute) => (
+                <div key={tribute.type}>
+                  {tribute.amount.toLocaleString(undefined, {
+                    maximumFractionDigits: 4,
+                  })}{" "}
+                  {tribute.type}
+                </div>
+              ))}
+
+              {bid.onchainTributeAssets.map((tribute) => (
+                <div key={tribute.asset}>
+                  {tribute.amount.toLocaleString(undefined, {
+                    maximumFractionDigits: 4,
+                  })}{" "}
+                  {tribute.asset.slice(0, 12)}
+                </div>
+              ))}
+
+              {bid.onchainTributeUsdc ? (
+                <StyledText variant="footnote">
+                  ~{amountToUSDString(bid.onchainTributeUsdc)}
+                </StyledText>
+              ) : (
+                "–"
+              )}
+            </>
+          )}
+        </ClickableRowSurface>
+      ),
+      status: (
+        <ClickableRowSurface href={rowURL}>{bid.status}</ClickableRowSurface>
+      ),
+    }
+  })
 
   type Row = (typeof rows)[number]
 

@@ -40,6 +40,85 @@ type Row = {
 const tokenBasedTributesLabel = "Token-Based Tributes"
 const pointBasedTributesLabel = "Points-Based Tributes"
 
+const RewardDelta = ({
+  deltaPercentage,
+}: {
+  deltaPercentage: number | null
+}) => {
+  if (deltaPercentage === null || deltaPercentage === 0) return null
+
+  const isPositive = deltaPercentage > 0
+  return (
+    <span
+      className={twMerge(
+        "flex items-center gap-1 text-xs",
+        isPositive ? "text-palette-green" : "text-palette-red"
+      )}
+    >
+      <Icon name={isPositive ? "solid:arrow-up" : "solid:arrow-down"} />
+      {Math.round(deltaPercentage * 100)}%
+    </span>
+  )
+}
+
+const TokenBasedReward = ({
+  bid,
+  isWalletConnected,
+}: {
+  bid: AugmentedBid
+  isWalletConnected: boolean
+}) => {
+  if (!isWalletConnected) {
+    return amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)
+  }
+
+  if (!bid.estimatedRewardForUser) {
+    return amountToUSDString(bid.onchainTributeUsdc)
+  }
+
+  return (
+    <>
+      <div className="flex items-center justify-end gap-2">
+        <RewardDelta deltaPercentage={bid.estimatedRewardDeltaAsPercentage} />
+        {amountToUSDString(bid.estimatedRewardForUser)}
+      </div>
+      <StyledText variant="footnote" as="div" className="whitespace-nowrap">
+        of {amountToUSDString(bid.onchainTributeUsdc)}
+      </StyledText>
+    </>
+  )
+}
+
+const PointBasedReward = ({
+  bid,
+  hasVotedBids,
+}: {
+  bid: AugmentedBid
+  hasVotedBids: boolean
+}) => {
+  if (hasVotedBids) {
+    return (
+      <div className="flex flex-col">
+        {amountToUSDString(Math.round(bid.estimatedRewardForUser ?? 0), 0)}{" "}
+        <StyledText variant="footnote">
+          of {amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)}
+        </StyledText>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {bid.offchainTribute.map((tribute) => (
+        <div key={tribute.type}>
+          {tribute.amount.toLocaleString()}&nbsp;
+          {tribute.type.slice(0, 12)}
+        </div>
+      ))}
+    </>
+  )
+}
+
 export default function ActiveProposalsPage() {
   const { bidsByRoundId, roundMetadata } = useContractContext()
 
@@ -51,7 +130,7 @@ export default function ActiveProposalsPage() {
 
   const rows =
     bidsByRoundId[roundMetadata.currentRound]?.map((bid) => {
-      const isPointsBased = bid.offchainTribute.length > 0
+      const isPointBasedBid = bid.offchainTribute.length > 0
 
       return {
         _bid: bid,
@@ -75,88 +154,28 @@ export default function ActiveProposalsPage() {
         ),
         yourEstimatedReward: (
           <ClickableRowSurface href={`/bids/${bid.id}`}>
-            {isPointsBased ? (
+            {isPointBasedBid ? (
               <Tooltip
                 tipContents={pointSystemTooltip({
                   learnMoreURL: bid.offchainTributeInfo,
                 })}
               >
-                ~
-                {roundMetadata.usersVotedBidIds ? (
-                  <div className="flex flex-col">
-                    {amountToUSDString(
-                      Math.round(bid.estimatedRewardForUser ?? 0),
-                      0
-                    )}
-
-                    <StyledText variant="footnote">
-                      of{" "}
-                      {amountToUSDString(
-                        Math.round(bid.onchainTributeUsdc ?? 0),
-                        0
-                      )}
-                    </StyledText>
-                  </div>
-                ) : (
-                  bid.offchainTribute.map((tribute) => (
-                    <div key={tribute.type}>
-                      {tribute.amount.toLocaleString()}&nbsp;
-                      {tribute.type.slice(0, 12)}
-                    </div>
-                  ))
-                )}
+                <PointBasedReward
+                  bid={bid}
+                  hasVotedBids={roundMetadata.usersVotedBidIds.length > 0}
+                />
               </Tooltip>
             ) : (
               <Tooltip
                 tipContents={estimatedRewardsTooltip({
-                  isTokenBasedTribute: true,
-                  totalTribute: bid.onchainTributeUsdc,
-                  percentageOfTribute: bid.votingPowerPercentage,
+                  bid,
+                  roundMetadata,
                 })}
               >
-                {!isWalletConnected ? (
-                  amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)
-                ) : (
-                  <>
-                    <div className="flex items-center justify-end gap-2">
-                      {roundMetadata.usersVotedBidIds &&
-                        bid.estimatedRewardDeltaAsPercentage !== 0 && (
-                          <span
-                            className={twMerge(
-                              `
-                                flex
-                                items-center
-                                gap-1
-                                text-xs
-                              `,
-                              bid.estimatedRewardDeltaAsPercentage &&
-                                bid.estimatedRewardDeltaAsPercentage > 0
-                                ? "text-palette-green"
-                                : "text-palette-red"
-                            )}
-                          >
-                            <Icon
-                              name={
-                                bid.estimatedRewardDeltaAsPercentage &&
-                                bid.estimatedRewardDeltaAsPercentage > 0
-                                  ? "solid:arrow-up"
-                                  : "solid:arrow-down"
-                              }
-                            />
-                            {bid.estimatedRewardDeltaAsPercentage}%
-                          </span>
-                        )}
-                      {amountToUSDString(bid.estimatedRewardForUser ?? 0)}
-                    </div>
-                    <StyledText
-                      variant="footnote"
-                      as="div"
-                      className="whitespace-nowrap"
-                    >
-                      of {amountToUSDString(bid.onchainTributeUsdc)}
-                    </StyledText>
-                  </>
-                )}
+                <TokenBasedReward
+                  bid={bid}
+                  isWalletConnected={isWalletConnected}
+                />
               </Tooltip>
             )}
           </ClickableRowSurface>
@@ -224,11 +243,13 @@ export default function ActiveProposalsPage() {
         key: "yourEstimatedReward",
         label: (
           <div className="flex items-center gap-1">
-            {isWalletConnected ? "Your" : "Total"} Est. Reward
+            {isWalletConnected && roundMetadata.usersVotingPower
+              ? "Your"
+              : "Total"}{" "}
+            Est. Reward
             <Tooltip
               tipContents={estimatedRewardsTooltip({
-                isTokenBasedTribute:
-                  projectBidLabel === tokenBasedTributesLabel,
+                roundMetadata,
               })}
             />
           </div>
@@ -389,7 +410,7 @@ export default function ActiveProposalsPage() {
 
           <StyledTable
             initialSortedColumnKey="yourEstimatedReward"
-            columns={buildColumns("Token-Based Tributes")}
+            columns={buildColumns(tokenBasedTributesLabel)}
             rows={rows.filter(
               (row) => row._bid.onchainTributeAssets.length > 0
             )}
@@ -400,7 +421,7 @@ export default function ActiveProposalsPage() {
         <BlurryBackdropBox>
           <StyledTable
             initialSortedColumnKey="yourEstimatedReward"
-            columns={buildColumns("Points-Based Tributes")}
+            columns={buildColumns(pointBasedTributesLabel)}
             rows={rows.filter((row) => row._bid.offchainTribute.length > 0)}
             renderRow={renderRow}
           />
