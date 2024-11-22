@@ -3,6 +3,7 @@ export interface UpcomingAirdrop {
   projectDetails: string
   isConfirmed: boolean
   steps: string[]
+  nextSteps: CellContentDescriptor
   action: CellContentDescriptor
 }
 
@@ -28,6 +29,10 @@ export const upcomingAirdrops: UpcomingAirdrop[] = [
     projectDetails: `Text with **markdown** so [this](https://www.google.com) is a link.`,
     isConfirmed: true, // or false
     steps: ["Locked ATOM in Round 1"],
+    nextSteps: {
+      type: "text",
+      label: "Next steps go here...",
+    },
     action: {
       type: "button",
       label: "Eligibility Button",
