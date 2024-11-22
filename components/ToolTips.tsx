@@ -23,7 +23,9 @@ export const voteThresholdTooltip = (
   </>
 )
 
-export const pointSystemTooltip = (learnMoreURL?: string) => (
+export const pointSystemTooltip = ({
+  learnMoreURL,
+}: { learnMoreURL?: string } = {}) => (
   <>
     This project is using a point system. Voters get points instead of live
     tokens.{" "}
@@ -47,18 +49,22 @@ export const usdDisclaimerTooltip = (
 )
 
 export const estimatedRewardsTooltip = ({
+  isTokenBasedTribute,
   totalTribute,
   percentageOfTribute,
 }: {
+  isTokenBasedTribute?: boolean
   totalTribute?: number
   percentageOfTribute?: number
 } = {}) => (
   <>
-    This is the expected USD-equivalent value of rewards. It represents{" "}
+    This is the expected{" "}
+    {isTokenBasedTribute
+      ? "USD-equivalent value of rewards"
+      : "amount of points you will receive based on your voting power"}
+    . It represents{" "}
     {percentageOfTribute ? (
-      <strong className="text-palette-beige">
-        {Math.round(percentageOfTribute * 100)}%
-      </strong>
+      <strong className="text-palette-beige">{percentageOfTribute}%</strong>
     ) : (
       `a percentage`
     )}{" "}

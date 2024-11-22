@@ -12,9 +12,11 @@ import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   estimatedRewardsTooltip,
+  pointSystemTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
+import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
 import {
   AugmentedBid,
@@ -34,6 +36,9 @@ type Row = {
   currentVoteShare: ReactNode
   actions: ReactNode
 }
+
+const tokenBasedTributesLabel = "Token-Based Tributes"
+const pointBasedTributesLabel = "Points-Based Tributes"
 
 export default function ActiveProposalsPage() {
   const { bidsByRoundId, roundMetadata } = useContractContext()
@@ -71,7 +76,11 @@ export default function ActiveProposalsPage() {
         yourEstimatedReward: (
           <ClickableRowSurface href={`/bids/${bid.id}`}>
             {isPointsBased ? (
-              <>
+              <Tooltip
+                tipContents={pointSystemTooltip({
+                  learnMoreURL: bid.offchainTributeInfo,
+                })}
+              >
                 ~
                 {roundMetadata.usersVotedBidIds ? (
                   <div className="flex flex-col">
@@ -96,10 +105,11 @@ export default function ActiveProposalsPage() {
                     </div>
                   ))
                 )}
-              </>
+              </Tooltip>
             ) : (
               <Tooltip
                 tipContents={estimatedRewardsTooltip({
+                  isTokenBasedTribute: true,
                   totalTribute: bid.onchainTributeUsdc,
                   percentageOfTribute: bid.votingPowerPercentage,
                 })}
@@ -172,7 +182,7 @@ export default function ActiveProposalsPage() {
         ),
         actions: (
           <ClickableRowSurface href={`/bids/${bid.id}`}>
-            Actions
+            <VoteButton bidId={bid.id} size="small" />
           </ClickableRowSurface>
         ),
       }
@@ -188,9 +198,17 @@ export default function ActiveProposalsPage() {
             <Tooltip
               tipContents={
                 <>
-                  Bids are submitted by projects. You can only vote once (per
-                  bucket per tranche) but you can switch your vote as many times
-                  as you want
+                  Bids are submitted by projects.{" "}
+                  {projectBidLabel === tokenBasedTributesLabel ? (
+                    <>These bids use live tokens as their tribute.</>
+                  ) : (
+                    <>
+                      These bids use points as their tribute because they do not
+                      yet have a live token.
+                    </>
+                  )}{" "}
+                  You can only vote once (per bucket per tranche) but you can
+                  switch your vote as many times as you want.
                 </>
               }
             />
@@ -207,7 +225,12 @@ export default function ActiveProposalsPage() {
         label: (
           <div className="flex items-center gap-1">
             {isWalletConnected ? "Your" : "Total"} Est. Reward
-            <Tooltip tipContents={estimatedRewardsTooltip()} />
+            <Tooltip
+              tipContents={estimatedRewardsTooltip({
+                isTokenBasedTribute:
+                  projectBidLabel === tokenBasedTributesLabel,
+              })}
+            />
           </div>
         ),
         isSortable: true,
