@@ -17,6 +17,7 @@ export function BlurryBackdropBox({
           rounded-md
           bg-palette-text/60
           px-3
+          py-2
           backdrop-blur-md
         `,
         className
