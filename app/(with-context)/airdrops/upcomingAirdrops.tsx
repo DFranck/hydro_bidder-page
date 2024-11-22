@@ -3,22 +3,26 @@ export interface UpcomingAirdrop {
   projectDetails: string
   isConfirmed: boolean
   steps: string[]
-  check: CellContent
-  registration: CellContent
-  claim: CellContent
+  check: CellContentDescriptor
+  registration: CellContentDescriptor
+  claim: CellContentDescriptor
 }
 
-type CellContent = { label: string } & (
-  | {
-      type: "button"
-      href: string
-      disabled?: boolean
-    }
-  | {
-      type: "text"
-      label: string
-    }
-)
+type ButtonCellContentDescriptor = {
+  type: "button"
+  href: string
+  disabled?: boolean
+  label: string
+}
+
+type TextCellContentDescriptor = {
+  type: "text"
+  label: string
+}
+
+export type CellContentDescriptor =
+  | ButtonCellContentDescriptor
+  | TextCellContentDescriptor
 
 export const upcomingAirdrops: UpcomingAirdrop[] = [
   {
@@ -28,7 +32,7 @@ export const upcomingAirdrops: UpcomingAirdrop[] = [
     steps: ["Locked ATOM in Round 1"],
     check: {
       type: "button",
-      label: "Eligibility button, disabled",
+      label: "Eligibility Button",
       disabled: true,
       href: "https://www.google.com",
     },
@@ -38,7 +42,7 @@ export const upcomingAirdrops: UpcomingAirdrop[] = [
     },
     claim: {
       type: "button",
-      label: "Claim button, not disabled",
+      label: "Claim Button",
       href: "https://www.google.com",
     },
   },
