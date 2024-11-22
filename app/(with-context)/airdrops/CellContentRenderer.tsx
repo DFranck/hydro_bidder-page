@@ -1,4 +1,5 @@
 import { Icon } from "@/components/Icon"
+import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { StyledText } from "@/components/StyledText"
 import Link from "next/link"
 import { CellContentDescriptor } from "./upcomingAirdrops"
@@ -25,6 +26,6 @@ export function CellContentRenderer({
         </StyledText>
       )
     case "text":
-      return <StyledText>{descriptor.label}</StyledText>
+      return <MarkdownContainer content={descriptor.label} />
   }
 }

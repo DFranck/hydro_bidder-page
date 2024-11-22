@@ -3,6 +3,7 @@
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
+import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
@@ -26,8 +27,12 @@ export default function AirdropsPage() {
 
     return {
       _airdropDescriptor: airdropDescriptor,
-      projectName,
-      projectDetails,
+      projectName: (
+        <StyledText as="h3" variant="h4">
+          {projectName}
+        </StyledText>
+      ),
+      projectDetails: <MarkdownContainer content={projectDetails} />,
       confirmationStatus: isConfirmed ? (
         <span className="flex items-center gap-2 text-lg font-bold text-palette-green">
           <Icon name="circle-check" />
