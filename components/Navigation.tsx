@@ -160,8 +160,8 @@ export default function Navigation() {
           Docs <Icon name="solid:arrow-up-right" />
         </Link>
 
-        <Link href="/voting" className={navigationMenuTriggerStyle("/voting")}>
-          Voting
+        <Link href="/bids" className={navigationMenuTriggerStyle("/bids")}>
+          Bids
         </Link>
 
         <ConditionalWrapper

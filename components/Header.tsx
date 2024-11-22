@@ -25,12 +25,12 @@ export const Header = () => {
 
     if (!previousAddress && !!address && !hasRedirected) {
       window.sessionStorage.setItem("redirected", "true")
-      router.push("/voting")
+      router.push("/bids")
     }
 
     if (!address && !!previousAddress && hasRedirected) {
       window.sessionStorage.setItem("redirected", "false")
-      router.push("/voting")
+      router.push("/bids")
     }
   }, [address, pathname, router, previousAddress])
 

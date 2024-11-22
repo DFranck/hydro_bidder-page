@@ -404,7 +404,7 @@ export const LockStepper = ({
             {
               label: "Start Voting",
               onClick: () => {
-                router.push("/voting")
+                router.push("/bids")
                 onExit()
               },
             },

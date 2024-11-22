@@ -45,7 +45,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     _proposal: proposal,
     logoAndTitle: (
       <ClickableRowSurface
-        href={`/voting/${proposal.id}`}
+        href={`/bids/${proposal.id}`}
         className="flex items-center gap-6"
       >
         <div className="relative size-12 shrink-0 rounded-full border text-[0]">
@@ -66,14 +66,14 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       </ClickableRowSurface>
     ),
     polValue: (
-      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${proposal.id}`}>
         {`${proposal.initialAllocationAmount.toLocaleString(undefined, {
           maximumFractionDigits: 4,
         })} ATOM`}
       </ClickableRowSurface>
     ),
     duration: (
-      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${proposal.id}`}>
         {(() => {
           const monthCount = parseFloat(
             (proposal.durationDays / 30 ?? 0).toFixed(1)
@@ -87,7 +87,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       </ClickableRowSurface>
     ),
     polRewards: (
-      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${proposal.id}`}>
         {(
           proposal.currentAllocationAmount - proposal.initialAllocationAmount
         ).toLocaleString(undefined, {
@@ -97,12 +97,12 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       </ClickableRowSurface>
     ),
     polApr: (
-      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${proposal.id}`}>
         {proposal.apr}%
       </ClickableRowSurface>
     ),
     tribute: (
-      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${proposal.id}`}>
         {proposal.offchainTribute.map((tribute) => (
           <div key={tribute.type}>
             {tribute.amount.toLocaleString(undefined, {
@@ -131,7 +131,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       </ClickableRowSurface>
     ),
     status: (
-      <ClickableRowSurface href={`/voting/${proposal.id}`}>
+      <ClickableRowSurface href={`/bids/${proposal.id}`}>
         {proposal.status}
       </ClickableRowSurface>
     ),
