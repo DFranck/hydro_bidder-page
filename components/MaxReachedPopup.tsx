@@ -1,5 +1,6 @@
 import { useAppContext } from "@/app/(with-context)/context"
 import { Card } from "@/components/Card"
+import { telegramLink } from "@/components/Header"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
@@ -55,7 +56,7 @@ export function MaxReachedPopup() {
                 <StyledText
                   variant="link"
                   as={Link}
-                  href="https://t.me/+xUzNOTZjUNw5Mzhk"
+                  href={telegramLink}
                   target="_blank"
                 >
                   Telegram Group
@@ -68,7 +69,7 @@ export function MaxReachedPopup() {
                 <StyledText
                   variant="link"
                   as={Link}
-                  href="https://t.me/+xUzNOTZjUNw5Mzhk"
+                  href={telegramLink}
                   target="_blank"
                 >
                   Telegram Group
