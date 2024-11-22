@@ -18,6 +18,7 @@ export interface BidFromNumia {
   onchain_tribute_assets: string
   onchain_tribute_usdc: number
   offchain_tribute: string
+  offchain_tribute_info: string
   voters: number
   voting_power: number
   requested_allocation_denom: string

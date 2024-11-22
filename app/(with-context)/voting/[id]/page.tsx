@@ -1,6 +1,5 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -12,36 +11,27 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { useContractContext } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
-import { formatAmount } from "@/lib/utils"
 import { kebabCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 
 export default function DetailsPage({ params }: { params: { id: string } }) {
-  const { currentProposalTranches } = useAppContext()
+  const { bidsByRoundId } = useContractContext()
 
-  const currentProposal = Array.from(currentProposalTranches.values())
+  const bid = Object.values(bidsByRoundId)
     .flat()
-    .find((proposal) => proposal.proposal_id === Number(params.id))
+    .find((bid) => bid.id === Number(params.id))
 
-  const decoratedProposals = useDecoratedProposals({
-    trancheId: currentProposal?.tranche_id ?? 1,
-  })
-
-  const renderedProposal = decoratedProposals?.find(
-    (p) => p.proposal_id === currentProposal?.proposal_id
-  )
-
-  if (!renderedProposal) {
+  if (!bid) {
     return <>The requested proposal could not be found.</>
   }
 
   return (
     <ContentContainer className="py-6">
       <BlurryBackdropBox className="p-12">
-        {renderedProposal.hasVotedOnProp && (
+        {bid.hasVotedForBid && (
           <div
             className="
               pointer-events-none
@@ -93,12 +83,12 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                 <Icon name="solid:scroll" />
               </div>
               <StyledText as="h2" variant="h2">
-                {renderedProposal.title}
+                {bid.title}
               </StyledText>
             </div>
 
             <div className="flex flex-col gap-6 pl-16">
-              {renderedProposal.aboutProject && (
+              {/* {bid.aboutProject && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -114,10 +104,10 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                   >
                     About Project
                   </StyledText>
-                  <MarkdownContainer content={renderedProposal.aboutProject} />
+                  <MarkdownContainer content={bid.aboutProject} />
                 </div>
-              )}
-              {renderedProposal.description && (
+              )} */}
+              {bid.description && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -133,10 +123,10 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                   >
                     Bid Description
                   </StyledText>
-                  <MarkdownContainer content={renderedProposal.description} />
+                  <MarkdownContainer content={bid.description} />
                 </div>
               )}
-              {renderedProposal.committeeComments && (
+              {bid.comments && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -152,28 +142,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                   >
                     Committee Review
                   </StyledText>
-                  <MarkdownContainer
-                    content={renderedProposal.committeeComments}
-                  />
-                </div>
-              )}
-              {renderedProposal.appendix && (
-                <div className="flex flex-col gap-3">
-                  <StyledText
-                    variant="superHeading"
-                    as="h2"
-                    id="appendix"
-                    className="
-                      [body:has(a[href='#appendix']:focus)_&]:rounded-sm
-                      [body:has(a[href='#appendix']:focus)_&]:outline
-                      [body:has(a[href='#appendix']:focus)_&]:outline-2
-                      [body:has(a[href='#appendix']:focus)_&]:outline-offset-4
-                      [body:has(a[href='#appendix']:focus)_&]:outline-palette-green
-                    "
-                  >
-                    Appendix
-                  </StyledText>
-                  <MarkdownContainer content={renderedProposal.appendix} />
+                  <MarkdownContainer content={bid.comments} />
                 </div>
               )}
             </div>
@@ -182,10 +151,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
             <div className="*:!w-full">
-              <VoteButton
-                proposalId={String(renderedProposal.proposal_id)}
-                size="large"
-              />
+              <VoteButton bidId={bid.id} size="large" />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -194,73 +160,59 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
               </StyledText>
 
               <div className="flex flex-row items-center gap-3">
-                {renderedProposal.projectLogoUrl && (
+                {bid.projectLogoUrl && (
                   <div className="relative size-12">
                     <Image
                       className="object-contain"
-                      src={renderedProposal.projectLogoUrl}
-                      alt={renderedProposal.title}
+                      src={bid.projectLogoUrl}
+                      alt={bid.title}
                       fill={true}
                     />
                   </div>
                 )}
                 <StyledText className="text-xl font-bold not-italic">
-                  {renderedProposal.title.trim()}
+                  {bid.project}
                 </StyledText>
               </div>
             </div>
-
-            {renderedProposal.projectType && (
-              <div>
-                <StyledText as="h3" variant="label">
-                  Project Type
-                </StyledText>
-                <p className="text-xl font-bold not-italic">
-                  {renderedProposal.projectType}
-                </p>
-              </div>
-            )}
 
             <div>
               <StyledText as="h3" variant="label">
                 Tribute to Voters
               </StyledText>
               <div className="max-w-64 overflow-x-auto">
-                {renderedProposal.pricedAndNamedTributes.length > 0 ? (
+                {bid.onchainTributeAssets.length > 0 ? (
                   <>
-                    {renderedProposal.pricedAndNamedTributes.map(
-                      (tribute, index) => (
-                        <p
-                          key={index}
-                          className="break-words text-xl font-bold not-italic"
-                        >
-                          {formatAmount(tribute.amount)}{" "}
-                          {tribute.symbol || tribute.denom}
-                        </p>
-                      )
-                    )}
-                    <p>
-                      ≈ {amountToUSDString(renderedProposal.totalTributeValue)}
-                    </p>
-                  </>
-                ) : renderedProposal.points ? (
-                  <>
-                    <p className="font-mono text-xl font-bold not-italic text-palette-cyan">
-                      {renderedProposal.points[0].toLocaleString("en-US")}{" "}
-                      {renderedProposal.points[1]}
-                    </p>
-                    {renderedProposal.pointProgramUrl && (
-                      <p>
-                        <StyledText
-                          variant="link"
-                          as="a"
-                          href={renderedProposal.pointProgramUrl}
-                          target="_blank"
-                        >
-                          Learn More <Icon name="solid:arrow-up-right" />
-                        </StyledText>
+                    {bid.onchainTributeAssets.map((tribute, index) => (
+                      <p
+                        key={index}
+                        className="break-words text-xl font-bold not-italic"
+                      >
+                        {tribute.amount.toLocaleString()}&nbsp;{tribute.asset}
                       </p>
-                    )}
+                    ))}
+                    <p>≈ {amountToUSDString(bid.onchainTributeUsdc)}</p>
+                  </>
+                ) : bid.offchainTribute.length > 0 ? (
+                  <>
+                    {bid.offchainTribute.map((tribute, index) => (
+                      <p
+                        key={index}
+                        className="font-mono text-xl font-bold not-italic text-palette-cyan"
+                      >
+                        {tribute.amount.toLocaleString()}&nbsp;{tribute.type}
+                      </p>
+                    ))}
+                    <p>
+                      <StyledText
+                        variant="link"
+                        as="a"
+                        href={bid.offchainTributeInfo}
+                        target="_blank"
+                      >
+                        Learn More <Icon name="solid:arrow-up-right" />
+                      </StyledText>
+                    </p>
                   </>
                 ) : (
                   "None"
@@ -283,8 +235,8 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                   not-italic
                 "
               >
-                <span>{renderedProposal.percentage}%</span>
-                {Number(renderedProposal.percentage) < VOTE_SHARE_THRESHOLD && (
+                <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
+                {bid.votingPowerPercentage < VOTE_SHARE_THRESHOLD && (
                   <Tooltip tipContents={voteThresholdTooltip}>
                     <span
                       className="
@@ -314,10 +266,9 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
-                  renderedProposal.aboutProject && "About Project",
-                  renderedProposal.description && "Bid Description",
-                  renderedProposal.committeeComments && "Committee Review",
-                  renderedProposal.appendix && "Appendix",
+                  // bid.aboutProject && "About Project",
+                  bid.description && "Bid Description",
+                  bid.comments && "Committee Comments",
                 ]
                   .filter(Boolean)
                   .map((section, index) => (
@@ -332,10 +283,10 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                       <span>{section}</span>
                     </StyledText>
                   ))}
-                {renderedProposal.projectUrl && (
+                {bid.projectUrl && (
                   <StyledText
                     as={Link}
-                    href={renderedProposal.projectUrl}
+                    href={bid.projectUrl}
                     target="_blank"
                     variant="link"
                     className="

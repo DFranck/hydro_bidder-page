@@ -1,6 +1,5 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ClickableRowSurface } from "@/components/ClickableRowSurface"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -21,7 +20,6 @@ import {
   AugmentedBid,
   useContractContext,
 } from "@/contract-apis/useContractContext"
-import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
@@ -38,28 +36,16 @@ type Row = {
 }
 
 export default function ActiveProposalsPage() {
-  const { globalState } = useAppContext()
   const { bidsByRoundId, roundMetadata } = useContractContext()
 
-  const {
-    totalLockedTokens,
-    constants: { max_locked_tokens },
-  } = globalState
-
-  const { isWalletConnected, address } = useChain("neutron")
-
-  const { data: myUserVotingData, isPending: myUserVotingDataIsPending } =
-    useUserVotingData(address ?? "")
+  const { isWalletConnected } = useChain("neutron")
 
   const showWelcomeModal =
-    Math.round((totalLockedTokens / (max_locked_tokens ?? 1)) * 100) < 100 &&
-    !myUserVotingDataIsPending &&
-    !!roundMetadata.usersVotingPower
-
-  console.log(bidsByRoundId, globalState.currentRound, roundMetadata)
+    roundMetadata.totalLockedTokens < roundMetadata.maxLockedTokens &&
+    !roundMetadata.usersVotingPower
 
   const rows =
-    bidsByRoundId[globalState.currentRound]?.map((bid) => {
+    bidsByRoundId[roundMetadata.currentRound]?.map((bid) => {
       const isPointsBased = bid.offchainTribute.length > 0
 
       return {
@@ -87,7 +73,7 @@ export default function ActiveProposalsPage() {
             {isPointsBased ? (
               <>
                 ~
-                {roundMetadata.userHasVoted ? (
+                {roundMetadata.usersVotedBidIds ? (
                   <div className="flex flex-col">
                     {amountToUSDString(
                       Math.round(bid.estimatedRewardForUser ?? 0),
@@ -105,7 +91,7 @@ export default function ActiveProposalsPage() {
                 ) : (
                   bid.offchainTribute.map((tribute) => (
                     <div>
-                      {tribute.amount.toLocaleString("en")}&nbsp;
+                      {tribute.amount.toLocaleString()}&nbsp;
                       {tribute.type.slice(0, 12)}
                     </div>
                   ))
@@ -123,7 +109,7 @@ export default function ActiveProposalsPage() {
                 ) : (
                   <>
                     <div className="flex items-center justify-end gap-2">
-                      {roundMetadata.userHasVoted &&
+                      {roundMetadata.usersVotedBidIds &&
                         bid.estimatedRewardDeltaAsPercentage !== 0 && (
                           <span
                             className={twMerge(
@@ -233,7 +219,7 @@ export default function ActiveProposalsPage() {
         customValueGetter: (row) =>
           (row._bid.offchainTribute.length > 0
             ? -1
-            : roundMetadata.userHasVoted
+            : roundMetadata.usersVotedBidIds
               ? row._bid.estimatedRewardForUser
               : row._bid.onchainTributeUsdc) ?? -1,
       },
@@ -346,7 +332,7 @@ export default function ActiveProposalsPage() {
           )}
           <TR
             className={
-              row._bid.hasVotedOnBid ? classNames.hasVotedRow : undefined
+              row._bid.hasVotedForBid ? classNames.hasVotedRow : undefined
             }
             key={row._bid.id}
             {...rowProps}
