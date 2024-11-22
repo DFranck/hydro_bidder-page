@@ -26,12 +26,14 @@ export default function AirdropsPage() {
 
     return {
       _airdropDescriptor: airdropDescriptor,
-      projectName: (
-        <StyledText as="h3" variant="h4">
-          {projectName}
-        </StyledText>
+      projectNameAndDescription: (
+        <div className="flex flex-col gap-1">
+          <StyledText as="h3" variant="h4">
+            {projectName}
+          </StyledText>
+          <MarkdownContainer content={projectDetails} />
+        </div>
       ),
-      projectDetails: <MarkdownContainer content={projectDetails} />,
       confirmationStatus: isConfirmed ? (
         <span className="flex items-center gap-2 text-lg font-bold text-palette-green">
           <Icon name="circle-check" />
@@ -62,21 +64,13 @@ export default function AirdropsPage() {
 
   const columns: ColumnObject<Row, keyof Row>[] = [
     {
-      key: "projectName",
+      key: "projectNameAndDescription",
       label: "Project Name",
       isSortable: true,
       propsForCells: {
         className: "relative",
       },
       customValueGetter: (row) => row._airdropDescriptor.projectName,
-    },
-    {
-      key: "projectDetails",
-      label: "Description",
-      propsForCells: {
-        className: "relative",
-      },
-      customValueGetter: (row) => row._airdropDescriptor.projectDetails,
     },
     {
       key: "confirmationStatus",
