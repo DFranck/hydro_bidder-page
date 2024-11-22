@@ -1,6 +1,6 @@
 "use client"
 
-import { classNames } from "@/app/(with-context)/voting/classNames"
+import { classNames } from "@/app/(with-context)/bids/classNames"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -33,7 +33,7 @@ export default function RewardsPage() {
   const { address, getSigningCosmWasmClient } = useChain("neutron")
 
   const rows = decoratedProposals.map((proposal) => {
-    const projectLink = `/voting/${proposal.proposal_id}`
+    const projectLink = `/bids/${proposal.proposal_id}`
 
     return {
       _proposal: proposal,

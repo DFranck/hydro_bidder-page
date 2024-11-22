@@ -52,7 +52,7 @@ export default function ActiveProposalsPage() {
         _bid: bid,
         logoAndTitle: (
           <ClickableRowSurface
-            href={`/voting/${bid.id}`}
+            href={`/bids/${bid.id}`}
             className="flex items-center gap-6"
           >
             {bid.projectLogoUrl ? (
@@ -69,7 +69,7 @@ export default function ActiveProposalsPage() {
           </ClickableRowSurface>
         ),
         yourEstimatedReward: (
-          <ClickableRowSurface href={`/voting/${bid.id}`}>
+          <ClickableRowSurface href={`/bids/${bid.id}`}>
             {isPointsBased ? (
               <>
                 ~
@@ -90,7 +90,7 @@ export default function ActiveProposalsPage() {
                   </div>
                 ) : (
                   bid.offchainTribute.map((tribute) => (
-                    <div>
+                    <div key={tribute.type}>
                       {tribute.amount.toLocaleString()}&nbsp;
                       {tribute.type.slice(0, 12)}
                     </div>
@@ -153,7 +153,7 @@ export default function ActiveProposalsPage() {
         ),
         currentVoteShare: (
           <ClickableRowSurface
-            href={`/voting/${bid.id}`}
+            href={`/bids/${bid.id}`}
             className="flex flex-row-reverse items-center gap-1"
           >
             <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
@@ -171,7 +171,7 @@ export default function ActiveProposalsPage() {
           </ClickableRowSurface>
         ),
         actions: (
-          <ClickableRowSurface href={`/voting/${bid.id}`}>
+          <ClickableRowSurface href={`/bids/${bid.id}`}>
             Actions
           </ClickableRowSurface>
         ),

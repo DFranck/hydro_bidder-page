@@ -60,9 +60,9 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
           {/* Main Content */}
           <div className="flex flex-col gap-12">
             <StyledText
-              as={Link}
-              href="/voting"
+              as="button"
               variant="button.secondary.small"
+              onClick={() => window.history.back()}
             >
               <Icon name="solid:chevron-left" />
               Back

@@ -261,7 +261,7 @@ export const ContinueFromHubStepper = ({
             {
               label: "Done",
               onClick: () => {
-                router.push("/voting")
+                router.push("/bids")
                 onExit()
               },
             },

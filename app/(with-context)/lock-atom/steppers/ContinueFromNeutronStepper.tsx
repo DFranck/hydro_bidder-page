@@ -206,7 +206,7 @@ export const ContinueFromNeutronStepper = ({
             {
               label: "Start Voting",
               onClick: () => {
-                router.push("/voting")
+                router.push("/bids")
                 onExit()
               },
             },
