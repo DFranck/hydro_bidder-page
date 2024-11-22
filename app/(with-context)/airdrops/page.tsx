@@ -9,16 +9,51 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import Link from "next/link"
-import { twMerge } from "tailwind-merge"
-import { upcomingAirdrops } from "./upcomingAirdrops"
+import { CellContentDescriptor, upcomingAirdrops } from "./upcomingAirdrops"
+
+function CellContentRenderer({
+  descriptor,
+}: {
+  descriptor: CellContentDescriptor
+}) {
+  switch (descriptor.type) {
+    case "button":
+      return (
+        <StyledText
+          as={Link}
+          variant="button.primary.small"
+          href={descriptor.href}
+          target="_blank"
+          className={
+            descriptor.disabled ? "pointer-events-none opacity-50" : ""
+          }
+        >
+          {descriptor.label}
+          <Icon name="arrow-up-right-from-square" />
+        </StyledText>
+      )
+    case "text":
+      return <StyledText>{descriptor.label}</StyledText>
+  }
+}
 
 export default function AirdropsPage() {
-  const rows = upcomingAirdrops.map((row) => {
+  const rows = upcomingAirdrops.map((airdropDescriptor) => {
+    const {
+      projectName,
+      projectDetails,
+      isConfirmed,
+      steps,
+      check,
+      registration,
+      claim,
+    } = airdropDescriptor
+
     return {
-      _row: row,
-      name: row.name,
-      description: row.description,
-      status: row.isConfirmed ? (
+      _airdropDescriptor: airdropDescriptor,
+      projectName,
+      projectDetails,
+      confirmationStatus: isConfirmed ? (
         <span className="flex items-center gap-2 text-lg font-bold text-palette-green">
           <Icon name="circle-check" />
           Confirmed
@@ -29,23 +64,19 @@ export default function AirdropsPage() {
           Unconfirmed
         </span>
       ),
-      actions: (
-        <>
-          <StyledText
-            as={Link}
-            variant="button.primary.small"
-            href={row.url}
-            target="_blank"
-            className={twMerge(
-              row.isConfirmed
-                ? "cursor-not-allowed opacity-50"
-                : "cursor-pointer"
-            )}
-          >
-            Claim <Icon name="arrow-up-right-from-square" />
-          </StyledText>
-        </>
-      ),
+      eligibilitySummary:
+        steps.length >= 2 ? (
+          <ul>
+            {steps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ul>
+        ) : (
+          <StyledText>{steps[0]}</StyledText>
+        ),
+      eligibilityCheck: <CellContentRenderer descriptor={check} />,
+      registration: <CellContentRenderer descriptor={registration} />,
+      claimMethod: <CellContentRenderer descriptor={claim} />,
     }
   })
 
@@ -53,38 +84,59 @@ export default function AirdropsPage() {
 
   const columns: ColumnObject<Row, keyof Row>[] = [
     {
-      key: "name",
-      label: "Name",
+      key: "projectName",
+      label: "Project Name",
       isSortable: true,
       propsForCells: {
         className: "relative",
       },
-      customValueGetter: (row) => row._row.name,
+      customValueGetter: (row) => row._airdropDescriptor.projectName,
     },
     {
-      key: "description",
+      key: "projectDetails",
       label: "Description",
       propsForCells: {
-        className: "w-min",
+        className: "relative",
       },
-      customValueGetter: (row) => row._row.description,
+      customValueGetter: (row) => row._airdropDescriptor.projectDetails,
     },
     {
-      key: "status",
+      key: "confirmationStatus",
       label: "Status",
       isSortable: true,
       initialSortDirection: "DESC",
       propsForCells: {
         className: "relative",
       },
-      customValueGetter: (row) => row._row.isConfirmed.toString(),
+      customValueGetter: (row) => String(row._airdropDescriptor.isConfirmed),
     },
     {
-      key: "actions",
-      label: "Actions",
-      textAlign: "right",
+      key: "eligibilitySummary",
+      label: "Eligibility Summary",
+      isSortable: true,
       propsForCells: {
         className: "relative whitespace-nowrap",
+      },
+    },
+    {
+      key: "eligibilityCheck",
+      label: "Eligibility Check",
+      propsForCells: {
+        className: "relative",
+      },
+    },
+    {
+      key: "registration",
+      label: "Registration",
+      propsForCells: {
+        className: "relative",
+      },
+    },
+    {
+      key: "claimMethod",
+      label: "Claim Method",
+      propsForCells: {
+        className: "relative",
       },
     },
   ]
@@ -127,7 +179,7 @@ export default function AirdropsPage() {
           <StyledTable
             columns={columns}
             rows={rows}
-            initialSortedColumnKey="status"
+            initialSortedColumnKey="confirmationStatus"
           />
         </BlurryBackdropBox>
       </ContentContainer>
