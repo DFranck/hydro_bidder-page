@@ -9,54 +9,101 @@ import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
+import { Tooltip } from "@/components/Tooltip"
 import Link from "next/link"
 import { CellContentRenderer } from "./CellContentRenderer"
 import { upcomingAirdrops } from "./upcomingAirdrops"
 
+export interface UpcomingAirdrop {
+  projectName: string
+  projectDetails: string
+  confirmationStatus: string
+  eligibilitySummary: string
+  nextSteps: string
+  actionType: string
+  actionLabel: string
+  actionURL: string
+  actionContentsDisabled: string
+}
+
+export type CellContentDescriptor =
+  | ButtonCellContentDescriptor
+  | TextCellContentDescriptor
+
+type ButtonCellContentDescriptor = {
+  type: "button"
+  href: string
+  disabled?: boolean
+  label: string
+}
+
+type TextCellContentDescriptor = {
+  type: "text"
+  label: string
+}
+
+const loadedUpcomingAirdrops = upcomingAirdrops
+  .split("\n")
+  .slice(1) // drop header row
+  .map((line) => line.split("\t"))
+
 export default function AirdropsPage() {
-  const rows = upcomingAirdrops.map((airdropDescriptor) => {
-    const {
+  const rows = loadedUpcomingAirdrops.map((airdropRowData) => {
+    const [
       projectName,
       projectDetails,
-      isConfirmed,
-      steps,
-      action,
+      confirmationStatus,
+      eligibilitySummary,
       nextSteps,
-    } = airdropDescriptor
+      actionType,
+      actionLabel,
+      actionURL,
+      actionContentsDisabled,
+    ] = airdropRowData
 
     return {
-      _airdropDescriptor: airdropDescriptor,
+      _airdropDescriptor: airdropRowData,
+      confirmationStatus: (
+        <Tooltip
+          tipContents={confirmationStatus}
+          classNamesForTooltip="text-center w-min"
+        >
+          {confirmationStatus === "Confirmed" ? (
+            <span className="inline-flex items-center gap-2 text-2xl font-bold text-palette-green">
+              <Icon name="circle-check" />
+              <span className="sr-only">Confirmed</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 text-2xl font-bold text-palette-beige">
+              <Icon name="circle-question" />
+              <span className="sr-only">Unconfirmed</span>
+            </span>
+          )}
+        </Tooltip>
+      ),
       projectNameAndDescription: (
         <div className="flex flex-col gap-1">
           <StyledText as="h3" variant="h4">
             {projectName}
           </StyledText>
-          <MarkdownContainer content={projectDetails} />
+          <MarkdownContainer
+            content={projectDetails}
+            className="prose-sm opacity-70"
+          />
         </div>
       ),
-      confirmationStatus: isConfirmed ? (
-        <span className="flex items-center gap-2 text-lg font-bold text-palette-green">
-          <Icon name="circle-check" />
-          Confirmed
-        </span>
-      ) : (
-        <span className="flex items-center gap-2 text-lg font-bold text-palette-beige">
-          <Icon name="circle-question" />
-          Unconfirmed
-        </span>
+      eligibilitySummary: <MarkdownContainer content={eligibilitySummary} />,
+      nextSteps: <MarkdownContainer content={nextSteps} />,
+      action: (
+        <CellContentRenderer
+          descriptor={{
+            type: actionType === "Button" ? "button" : "text",
+            href: actionURL,
+            label: actionLabel,
+            disabled: actionContentsDisabled === "TRUE",
+          }}
+        />
       ),
-      eligibilitySummary:
-        steps.length >= 2 ? (
-          <ul>
-            {steps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ul>
-        ) : (
-          <StyledText>{steps[0]}</StyledText>
-        ),
-      nextSteps: <CellContentRenderer descriptor={nextSteps} />,
-      action: <CellContentRenderer descriptor={action} />,
     }
   })
 
@@ -64,23 +111,24 @@ export default function AirdropsPage() {
 
   const columns: ColumnObject<Row, keyof Row>[] = [
     {
+      key: "confirmationStatus",
+      label: "Status",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      textAlign: "center",
+      propsForCells: {
+        className: "relative",
+      },
+      customValueGetter: (row) => row._airdropDescriptor[2],
+    },
+    {
       key: "projectNameAndDescription",
       label: "Project Name",
       isSortable: true,
       propsForCells: {
         className: "relative",
       },
-      customValueGetter: (row) => row._airdropDescriptor.projectName,
-    },
-    {
-      key: "confirmationStatus",
-      label: "Status",
-      isSortable: true,
-      initialSortDirection: "DESC",
-      propsForCells: {
-        className: "relative",
-      },
-      customValueGetter: (row) => String(row._airdropDescriptor.isConfirmed),
+      customValueGetter: (row) => row._airdropDescriptor[0],
     },
     {
       key: "eligibilitySummary",
