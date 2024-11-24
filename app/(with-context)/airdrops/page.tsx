@@ -43,6 +43,7 @@ type TextCellContentDescriptor = {
 }
 
 const loadedUpcomingAirdrops = upcomingAirdrops
+  .trim()
   .split("\n")
   .map((line) => line.split("\t"))
 
