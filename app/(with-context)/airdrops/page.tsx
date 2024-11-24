@@ -44,7 +44,6 @@ type TextCellContentDescriptor = {
 
 const loadedUpcomingAirdrops = upcomingAirdrops
   .split("\n")
-  .slice(1) // drop header row
   .map((line) => line.split("\t"))
 
 export default function AirdropsPage() {
