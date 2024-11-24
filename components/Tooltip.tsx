@@ -10,10 +10,14 @@ export function Tooltip({
   children,
   classNamesForTooltip,
   tipContents,
+  mouseEnterDelay = 350,
+  mouseLeaveDelay = 350,
 }: {
   children?: ReactNode
   classNamesForTooltip?: string
   tipContents: ReactNode
+  mouseEnterDelay?: number
+  mouseLeaveDelay?: number
 }) {
   const isClient = useIsClient()
   const [coords, setCoords] = useState({ x: 0, y: 0 })
@@ -36,13 +40,16 @@ export function Tooltip({
   function handleMouseEnter(event: MouseEvent<HTMLDivElement>) {
     if (timer.current) clearTimeout(timer.current)
     updateCoords(event.currentTarget)
-    setIsOpen(true)
+    timer.current = setTimeout(() => {
+      setIsOpen(true)
+    }, mouseEnterDelay)
   }
 
   function handleMouseLeave() {
+    if (timer.current) clearTimeout(timer.current)
     timer.current = setTimeout(() => {
       setIsOpen(false)
-    }, 200)
+    }, mouseLeaveDelay)
   }
 
   function handleFocus(event: FocusEvent<HTMLDivElement>) {

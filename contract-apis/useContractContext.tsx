@@ -27,6 +27,7 @@ interface ContractContextType {
   bidsByRoundId: Record<number, AugmentedBid[]>
   preHydroBids: SanitizedBidFromNumia[]
   roundMetadata: RoundMetadata
+  isLoading: boolean
 }
 
 export interface AugmentedBid extends SanitizedBidFromNumia {
@@ -67,8 +68,12 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
     usersLockups: [],
   })
 
+  const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     ;(async () => {
+      setIsLoading(true)
+
       setToasts([
         {
           message: "Loading...",
@@ -170,6 +175,8 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
       console.log({ augmentedBidsByRoundId })
 
       setToasts([])
+
+      setIsLoading(false)
     })()
   }, [])
 
@@ -177,6 +184,7 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
     <ContractContext.Provider
       value={{
         bidsByRoundId,
+        isLoading,
         preHydroBids,
         roundMetadata,
       }}

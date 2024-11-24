@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { StyledText } from "@/components/StyledText"
 import Link from "next/link"
-import { CellContentDescriptor } from "./upcomingAirdrops"
+import { CellContentDescriptor } from "./page"
 
 export function CellContentRenderer({
   descriptor,

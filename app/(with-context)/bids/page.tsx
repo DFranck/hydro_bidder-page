@@ -119,8 +119,8 @@ const PointBasedReward = ({
   )
 }
 
-export default function ActiveProposalsPage() {
-  const { bidsByRoundId, roundMetadata } = useContractContext()
+export default function BidsPage() {
+  const { bidsByRoundId, roundMetadata, isLoading } = useContractContext()
 
   const { isWalletConnected } = useChain("neutron")
 
@@ -392,6 +392,7 @@ export default function ActiveProposalsPage() {
   return (
     <>
       <MaxReachedPopup />
+
       <WelcomePopup showModal={false} />
 
       <StatCards>
