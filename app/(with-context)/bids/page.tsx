@@ -37,6 +37,7 @@ import { classNames } from "./classNames"
 type Row = {
   _bid: AugmentedBid
   logoAndTitle: ReactNode
+  deploymentDuration: ReactNode
   yourEstimatedReward: ReactNode
   currentVoteShare: ReactNode
   actions: ReactNode
@@ -149,12 +150,13 @@ export default function BidsPage() {
   const rows =
     bidsToRender?.map((bid) => {
       const isPointBasedBid = bid.offchainTribute.length > 0
+      const bidURL = `/bids/${bid.id}`
 
       return {
         _bid: bid,
         logoAndTitle: (
           <ClickableRowSurface
-            href={`/bids/${bid.id}`}
+            href={bidURL}
             className="flex items-center gap-6"
           >
             {bid.projectLogoUrl ? (
@@ -170,8 +172,13 @@ export default function BidsPage() {
             <p className={classNames.bidTitle}>{bid.title}</p>
           </ClickableRowSurface>
         ),
+        deploymentDuration: (
+          <ClickableRowSurface href={bidURL}>
+            {bid.durationDays} days
+          </ClickableRowSurface>
+        ),
         yourEstimatedReward: (
-          <ClickableRowSurface href={`/bids/${bid.id}`}>
+          <ClickableRowSurface href={bidURL}>
             {isPointBasedBid ? (
               <Tooltip
                 tipContents={pointSystemTooltip({
@@ -205,7 +212,7 @@ export default function BidsPage() {
         ),
         currentVoteShare: (
           <ClickableRowSurface
-            href={`/bids/${bid.id}`}
+            href={bidURL}
             className="flex flex-row-reverse items-center gap-1"
           >
             <ConditionalWrapper
@@ -230,7 +237,7 @@ export default function BidsPage() {
           </ClickableRowSurface>
         ),
         actions: (
-          <ClickableRowSurface href={`/bids/${bid.id}`}>
+          <ClickableRowSurface href={bidURL}>
             <VoteButton bidId={bid.id} size="small" />
           </ClickableRowSurface>
         ),
@@ -260,6 +267,14 @@ export default function BidsPage() {
         customValueGetter: (row) => row._bid.title,
       },
       {
+        key: "deploymentDuration",
+        label: "Duration",
+        isSortable: true,
+        textAlign: "right",
+        initialSortDirection: "DESC",
+        customValueGetter: (row) => row._bid.durationDays,
+      },
+      {
         key: "yourEstimatedReward",
         label: (
           <Tooltip
@@ -287,7 +302,7 @@ export default function BidsPage() {
         customValueGetter: (row) =>
           (row._bid.offchainTribute.length > 0
             ? -1
-            : currentRoundMetadata.usersVotedBidIds
+            : currentRoundMetadata.usersVotedBidIds.length > 0
               ? row._bid.estimatedRewardForUser
               : row._bid.onchainTributeUsdc) ?? -1,
       },
