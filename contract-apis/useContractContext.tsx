@@ -13,10 +13,11 @@ import {
   fetchNumiaData,
   SanitizedBidFromNumia,
 } from "@/contract-apis/fetchNumiaData"
+import { fetchProposals } from "@/contract-apis/fetchProposals"
 import { fetchRoundState } from "@/contract-apis/fetchRoundState"
 import { fetchUserVotingData } from "@/contract-apis/fetchUserVotingData"
 import { useChain } from "@cosmos-kit/react"
-import { groupBy, mapValues, sumBy } from "lodash"
+import { groupBy, keyBy, mapValues, sumBy } from "lodash"
 import {
   createContext,
   ReactNode,
@@ -34,6 +35,7 @@ interface ContractContextType {
 }
 
 export interface AugmentedBid extends SanitizedBidFromNumia {
+  deploymentDuration: number
   estimatedRewardForUser: number | null
   estimatedRewardDeltaAsPercentage: number | null
   hasVotedForBid: boolean
@@ -99,7 +101,7 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         assetListWithPrices,
         dataFromContract,
         usersLockups,
-        bidsData,
+        dataFromNumia,
         userVotingData,
       ] = await Promise.all([
         fetchAssetListWithPrices(),
@@ -108,6 +110,16 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         fetchNumiaData(),
         fetchUserVotingData(address),
       ])
+
+      const currentRoundBidsFromContract = await fetchProposals(
+        dataFromContract.currentRound,
+        dataFromContract.tranches[0].id
+      )
+
+      const bidsFromContractById = keyBy(
+        currentRoundBidsFromContract,
+        "proposal_id"
+      )
 
       const { roundEnd, totalVotingPower } = await fetchRoundState(
         dataFromContract.currentRound
@@ -118,7 +130,7 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
           "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
         )?.priceUsd ?? 0
 
-      const { postHydroBids, preHydroBids } = bidsData
+      const { postHydroBids, preHydroBids } = dataFromNumia
 
       const usersVotingPower = userVotingData.votingPower
 
@@ -150,6 +162,9 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         const totalVotingPower = sumBy(bidsInRound, "votingPower")
 
         return bidsInRound.map((bid) => {
+          const deploymentDuration =
+            bidsFromContractById[bid.id]?.deployment_duration ?? -1
+
           const offchainTributes = bid.offchainTribute.filter(
             (tribute) => tribute.amount > 0
           )
@@ -175,8 +190,9 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
 
           return {
             ...bid,
-            estimatedRewardForUser,
+            deploymentDuration,
             estimatedRewardDeltaAsPercentage,
+            estimatedRewardForUser,
             hasVotedForBid: !!usersVoteForBid,
             offchainTribute: offchainTributes,
             onchainTributeAssets: onchainTributes,
@@ -202,7 +218,8 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         preHydroBids,
         currentRoundMetadata: {
           averageAPR,
-          roundId: dataFromContract.currentRound,
+          // roundId: dataFromContract.currentRound,
+          roundId: 0,
           roundEnd: new Date(parseInt(roundEnd) / 1e6),
           usersVotedBidIds: Array.from(userVotes.values())
             .map((vote) => vote?.prop_id)

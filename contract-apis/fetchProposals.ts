@@ -34,6 +34,7 @@ export const fetchProposals = async (
         roundId,
         trancheId,
       })
+
       const enrichedProposals = roundProposals.proposals
         .map((proposal) => {
           const matchingTopProposal = topNProposals.proposals.find(

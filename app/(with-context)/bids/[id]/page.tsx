@@ -89,7 +89,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
             </div>
 
             <div className="flex flex-col gap-6 pl-16">
-              {/* {bid.aboutProject && (
+              {bid.projectAbout && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -105,9 +105,9 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                   >
                     About Project
                   </StyledText>
-                  <MarkdownContainer content={bid.aboutProject} />
+                  <MarkdownContainer content={bid.projectAbout} />
                 </div>
-              )} */}
+              )}
               {bid.description && (
                 <div className="flex flex-col gap-3">
                   <StyledText
@@ -271,7 +271,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
-                  // bid.aboutProject && "About Project",
+                  bid.projectAbout && "About Project",
                   bid.description && "Bid Description",
                   bid.comments && "Committee Comments",
                 ]

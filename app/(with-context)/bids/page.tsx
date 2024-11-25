@@ -4,6 +4,7 @@ import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ClickableRowSurface } from "@/components/ClickableRowSurface"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
+import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { MaxReachedPopup } from "@/components/MaxReachedPopup"
@@ -27,8 +28,10 @@ import {
   useContractContext,
 } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { pluralize } from "@/lib/pluralize"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import { useChain } from "@cosmos-kit/react"
+import { startCase } from "lodash"
 import Image from "next/image"
 import { Fragment, ReactNode, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
@@ -144,8 +147,7 @@ export default function BidsPage() {
     globalMetadata.totalLockedTokens < globalMetadata.maxLockedTokens &&
     !currentRoundMetadata.usersVotingPower
 
-  // const bidsToRender = bidsByRoundId[currentRoundMetadata.roundId]
-  const bidsToRender = bidsByRoundId[0]
+  const bidsToRender = bidsByRoundId[currentRoundMetadata.roundId]
 
   const rows =
     bidsToRender?.map((bid) => {
@@ -169,12 +171,29 @@ export default function BidsPage() {
                 />
               </div>
             ) : null}
-            <p className={classNames.bidTitle}>{bid.title}</p>
+
+            <div>
+              <p className={classNames.bidTitle}>{bid.title}</p>
+
+              <StyledText variant="footnote">
+                {isPointBasedBid
+                  ? bid.offchainTribute
+                      .map((t) => startCase(t.type.toLowerCase()))
+                      .join(", ")
+                  : bid.onchainTributeAssets
+                      .map((t) => t.asset.slice(0, 12))
+                      .join(", ")}
+              </StyledText>
+            </div>
           </ClickableRowSurface>
         ),
         deploymentDuration: (
           <ClickableRowSurface href={bidURL}>
-            {bid.durationDays} days
+            {bid.deploymentDuration > 0 ? bid.deploymentDuration : "?"}{" "}
+            {pluralize({
+              count: bid.deploymentDuration,
+              singular: "month",
+            })}
           </ClickableRowSurface>
         ),
         yourEstimatedReward: (
@@ -202,10 +221,13 @@ export default function BidsPage() {
                   roundMetadata: currentRoundMetadata,
                 })}
               >
-                <TokenBasedReward
-                  bid={bid}
-                  isWalletConnected={isWalletConnected}
-                />
+                <div className="flex items-center gap-1">
+                  <TokenBasedReward
+                    bid={bid}
+                    isWalletConnected={isWalletConnected}
+                  />
+                  <Icon name="circle-info" />
+                </div>
               </Tooltip>
             )}
           </ClickableRowSurface>
@@ -238,7 +260,12 @@ export default function BidsPage() {
         ),
         actions: (
           <ClickableRowSurface href={bidURL}>
-            <VoteButton bidId={bid.id} size="small" />
+            <div className="flex items-center gap-3">
+              <VoteButton bidId={bid.id} size="small" />
+              <StyledText variant="link" className={classNames.bidDetailsLink}>
+                <span>Bid Details</span> <Icon name="chevron-right" />
+              </StyledText>
+            </div>
           </ClickableRowSurface>
         ),
       }
@@ -268,11 +295,11 @@ export default function BidsPage() {
       },
       {
         key: "deploymentDuration",
-        label: "Duration",
+        label: "PoL Duration",
         isSortable: true,
         textAlign: "right",
         initialSortDirection: "DESC",
-        customValueGetter: (row) => row._bid.durationDays,
+        customValueGetter: (row) => row._bid.deploymentDuration,
       },
       {
         key: "yourEstimatedReward",
@@ -450,9 +477,7 @@ export default function BidsPage() {
 
         {!isLoading && tokenBasedBids.length === 0 && (
           <BlurryBackdropBox>
-            <div className={classNames.noBids}>
-              <p>There are no bids available at this moment.</p>
-            </div>
+            <EmptyBox>There are no bids available at this moment.</EmptyBox>
           </BlurryBackdropBox>
         )}
 

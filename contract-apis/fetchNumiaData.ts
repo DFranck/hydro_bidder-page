@@ -11,6 +11,7 @@ export interface BidFromNumia {
   project: string
   project_url: string
   project_logo_url: string
+  project_about: string
   id: string
   title: string
   description: string
