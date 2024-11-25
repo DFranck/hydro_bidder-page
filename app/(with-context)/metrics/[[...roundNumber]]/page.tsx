@@ -16,9 +16,13 @@ import { notFound } from "next/navigation"
 import { twMerge } from "tailwind-merge"
 
 export default function Page({ params }: { params: { roundNumber?: string } }) {
-  const { bidsByRoundId, preHydroBids, roundMetadata } = useContractContext()
+  const {
+    bidsByRoundId,
+    preHydroBids,
+    currentRoundMetadata: roundMetadata,
+  } = useContractContext()
 
-  const { currentRound: currentRoundUnderHood } = roundMetadata
+  const { roundId: currentRoundUnderHood } = roundMetadata
 
   const requestedRoundNumber =
     typeof params.roundNumber === "undefined"

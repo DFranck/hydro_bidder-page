@@ -91,8 +91,7 @@ export const fetchGlobalState = async (): Promise<GlobalState> => {
 
   return {
     constants,
-    // currentRound,
-    currentRound: 0,
+    currentRound,
     totalLockedTokens,
     tranches,
     whitelistAdmins,

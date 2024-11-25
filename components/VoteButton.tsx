@@ -30,12 +30,15 @@ export function VoteButton({
   const router = useRouter()
   const { isWalletConnected, address, getSigningCosmWasmClient } =
     useChain("neutron")
-  const { bidsByRoundId, roundMetadata } = useContractContext()
+  const { bidsByRoundId, currentRoundMetadata, globalMetadata } =
+    useContractContext()
   const bid = Object.values(bidsByRoundId)
     .flat()
     .find((bid) => bid.id === Number(bidId))
-  const hasVotedForAny = roundMetadata.usersVotedBidIds.length > 0
-  const hasVotedForBid = roundMetadata.usersVotedBidIds.includes(Number(bidId))
+  const hasVotedForAny = currentRoundMetadata.usersVotedBidIds.length > 0
+  const hasVotedForBid = currentRoundMetadata.usersVotedBidIds.includes(
+    Number(bidId)
+  )
   const isLoading = toasts.some((toast) => toast.variant === "working")
 
   async function handleClickVote() {
@@ -112,11 +115,11 @@ export function VoteButton({
         Loading...
       </StyledText>
     )
-  } else if (roundMetadata.usersVotingPower === 0) {
+  } else if (currentRoundMetadata.usersVotingPower === 0) {
     Button = (
       <ConditionalWrapper
         condition={
-          roundMetadata.totalLockedTokens >= roundMetadata.maxLockedTokens
+          globalMetadata.totalLockedTokens >= globalMetadata.maxLockedTokens
         }
         wrapper={(children) => (
           <Tooltip tipContents={networkLimitReachedTooltip}>

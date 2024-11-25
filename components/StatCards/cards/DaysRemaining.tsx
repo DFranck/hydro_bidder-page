@@ -1,46 +1,47 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
-import { Timestamp } from "@/app/ts_types/HydroBase.types"
 import { Icon } from "@/components/Icon"
 import { StatCard } from "@/components/StatCards/StatCard"
 import { Tooltip } from "@/components/Tooltip"
-import { sum } from "lodash"
+import { useContractContext } from "@/contract-apis/useContractContext"
+import { sumBy } from "lodash"
 
-const getRoundEndText = (roundEnd: Timestamp) => {
+const getRoundEndTextFromEndDate = (endDate: Date) => {
   const now = new Date()
-  const end = new Date(parseInt(roundEnd) / 1e6)
-  const diff = end.getTime() - now.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const diff = endDate.getTime() - now.getTime()
 
-  if (days > 0) {
-    return `${days} d`
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" })
+
+  const seconds = diff / 1000
+  const minutes = seconds / 60
+  const hours = minutes / 60
+  const days = hours / 24
+  const months = days / 30
+
+  if (Math.abs(months) >= 1) {
+    return rtf.format(Math.floor(months), "month")
+  } else if (Math.abs(days) >= 1) {
+    return rtf.format(Math.floor(days), "day")
+  } else if (Math.abs(hours) >= 1) {
+    return rtf.format(Math.floor(hours), "hour")
   } else {
-    return `${hours} h`
+    return rtf.format(Math.floor(minutes), "minute")
   }
 }
 
 export function DaysRemaining() {
-  const {
-    globalState: { currentRound },
-    currentProposalTranches,
-    currentRoundEnd,
-  } = useAppContext()
-
+  const { bidsByRoundId, currentRoundMetadata, isLoading } =
+    useContractContext()
+  const { roundEnd, roundId } = currentRoundMetadata
   const percentageOfNonVoters =
-    100 -
-    sum(
-      currentProposalTranches
-        .get(1) // TODO: make this dynamic
-        ?.map((proposal) => Number(proposal.percentage)) ?? []
-    )
+    100 - sumBy(bidsByRoundId[roundId], "votingPowerPercentage")
 
   return (
     <StatCard
+      isLoading={isLoading}
       title={
         <div className="flex items-center gap-1">
-          Time Left in Pilot Round {currentRound + 1}
+          Time Left in Pilot Round {roundId + 1}
           <Tooltip
             tipContents={
               <>
@@ -64,7 +65,7 @@ export function DaysRemaining() {
           <strong>{percentageOfNonVoters}%</strong> have not yet voted
         </>
       }
-      value={currentRoundEnd ? getRoundEndText(currentRoundEnd) : "0:00"}
+      value={roundEnd ? getRoundEndTextFromEndDate(roundEnd) : "0:00"}
     />
   )
 }

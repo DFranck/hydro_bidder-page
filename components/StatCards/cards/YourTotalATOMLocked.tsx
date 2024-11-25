@@ -3,25 +3,24 @@
 import { StatCard } from "@/components/StatCards/StatCard"
 import { Tooltip } from "@/components/Tooltip"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
-import { useUserVotingData } from "@/contract-apis/useUserVotingData"
+import { useContractContext } from "@/contract-apis/useContractContext"
 import { formatAmount } from "@/lib/utils"
-import { useChain } from "@cosmos-kit/react"
+import { sumBy } from "lodash"
 
 export function YourTotalATOMLocked() {
-  const { address } = useChain("neutron")
-  const { data: userVotingData, isPending: userVotingDataIsPending } =
-    useUserVotingData(address)
-  const lockedAtom = userVotingData?.lockups.lockedAtom
+  const { globalMetadata, isLoading } = useContractContext()
+  const lockedAtom =
+    sumBy(globalMetadata.usersLockups, "lock_entry.funds.amount") ?? 0
   const percentLocked = maxLockedTokensPerAddress
-    ? ((lockedAtom ?? 0) / maxLockedTokensPerAddress) * 100
+    ? (lockedAtom / maxLockedTokensPerAddress) * 100
     : 0
 
   return (
     <StatCard
-      isLoading={userVotingDataIsPending}
+      isLoading={isLoading}
       value={
         <>
-          {((lockedAtom ?? 0) / 1e6).toLocaleString("en-US", {
+          {(lockedAtom / 1e6).toLocaleString("en-US", {
             maximumFractionDigits: 4,
           })}
         </>

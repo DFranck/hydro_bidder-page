@@ -1,13 +1,12 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { Tooltip } from "@/components/Tooltip"
+import { useContractContext } from "@/contract-apis/useContractContext"
 import { StatCard } from "../StatCard"
 
 export function YourAPRCurrentRound() {
-  const {
-    globalState: { currentRound },
-  } = useAppContext()
+  const { currentRoundMetadata: roundMetadata } = useContractContext()
+  const { roundId: currentRoundId } = roundMetadata
 
   return (
     <StatCard
@@ -24,7 +23,7 @@ export function YourAPRCurrentRound() {
           />
         </div>
       }
-      subTitle={`Pilot Round ${currentRound + 1}`}
+      subTitle={`Pilot Round ${currentRoundId + 1}`}
       value="–%"
     />
   )

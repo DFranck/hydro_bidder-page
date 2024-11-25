@@ -28,6 +28,7 @@ import Image from "next/image"
 import { Fragment, ReactNode, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
 
 type Row = {
   _bid: AugmentedBid
@@ -120,16 +121,17 @@ const PointBasedReward = ({
 }
 
 export default function BidsPage() {
-  const { bidsByRoundId, roundMetadata, isLoading } = useContractContext()
+  const { bidsByRoundId, currentRoundMetadata, globalMetadata, isLoading } =
+    useContractContext()
 
   const { isWalletConnected } = useChain("neutron")
 
   const showWelcomeModal =
-    roundMetadata.totalLockedTokens < roundMetadata.maxLockedTokens &&
-    !roundMetadata.usersVotingPower
+    globalMetadata.totalLockedTokens < globalMetadata.maxLockedTokens &&
+    !currentRoundMetadata.usersVotingPower
 
   const rows =
-    bidsByRoundId[roundMetadata.currentRound]?.map((bid) => {
+    bidsByRoundId[currentRoundMetadata.roundId]?.map((bid) => {
       const isPointBasedBid = bid.offchainTribute.length > 0
 
       return {
@@ -162,14 +164,16 @@ export default function BidsPage() {
               >
                 <PointBasedReward
                   bid={bid}
-                  hasVotedBids={roundMetadata.usersVotedBidIds.length > 0}
+                  hasVotedBids={
+                    currentRoundMetadata.usersVotedBidIds.length > 0
+                  }
                 />
               </Tooltip>
             ) : (
               <Tooltip
                 tipContents={estimatedRewardsTooltip({
                   bid,
-                  roundMetadata,
+                  roundMetadata: currentRoundMetadata,
                 })}
               >
                 <TokenBasedReward
@@ -243,13 +247,13 @@ export default function BidsPage() {
         key: "yourEstimatedReward",
         label: (
           <div className="flex items-center gap-1">
-            {isWalletConnected && roundMetadata.usersVotingPower
+            {isWalletConnected && currentRoundMetadata.usersVotingPower
               ? "Your"
               : "Total"}{" "}
             Est. Reward
             <Tooltip
               tipContents={estimatedRewardsTooltip({
-                roundMetadata,
+                roundMetadata: currentRoundMetadata,
               })}
             />
           </div>
@@ -263,7 +267,7 @@ export default function BidsPage() {
         customValueGetter: (row) =>
           (row._bid.offchainTribute.length > 0
             ? -1
-            : roundMetadata.usersVotedBidIds
+            : currentRoundMetadata.usersVotedBidIds
               ? row._bid.estimatedRewardForUser
               : row._bid.onchainTributeUsdc) ?? -1,
       },
@@ -302,7 +306,7 @@ export default function BidsPage() {
         },
       },
     ],
-    [isWalletConnected, classNames.classNamesForCells, roundMetadata]
+    [isWalletConnected, classNames.classNamesForCells, currentRoundMetadata]
   )
 
   const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
@@ -389,6 +393,13 @@ export default function BidsPage() {
     [classNames.hasVotedRow, voteThresholdTooltip]
   )
 
+  const tokenBasedBids = rows.filter(
+    (row) => row._bid.onchainTributeAssets.length > 0
+  )
+  const pointBasedBids = rows.filter(
+    (row) => row._bid.offchainTribute.length > 0
+  )
+
   return (
     <>
       <MaxReachedPopup />
@@ -402,31 +413,37 @@ export default function BidsPage() {
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <BlurryBackdropBox>
-          {rows.length === 0 && (
+        <LoadingSpinner isLoading={isLoading} />
+
+        {!isLoading && tokenBasedBids.length === 0 && (
+          <BlurryBackdropBox>
             <div className={classNames.noBids}>
               <p>There are no bids available at this moment.</p>
             </div>
-          )}
+          </BlurryBackdropBox>
+        )}
 
-          <StyledTable
-            initialSortedColumnKey="yourEstimatedReward"
-            columns={buildColumns(tokenBasedTributesLabel)}
-            rows={rows.filter(
-              (row) => row._bid.onchainTributeAssets.length > 0
-            )}
-            renderRow={renderRow}
-          />
-        </BlurryBackdropBox>
+        {!isLoading && tokenBasedBids.length > 0 && (
+          <BlurryBackdropBox>
+            <StyledTable
+              initialSortedColumnKey="yourEstimatedReward"
+              columns={buildColumns(tokenBasedTributesLabel)}
+              rows={tokenBasedBids}
+              renderRow={renderRow}
+            />
+          </BlurryBackdropBox>
+        )}
 
-        <BlurryBackdropBox>
-          <StyledTable
-            initialSortedColumnKey="yourEstimatedReward"
-            columns={buildColumns(pointBasedTributesLabel)}
-            rows={rows.filter((row) => row._bid.offchainTribute.length > 0)}
-            renderRow={renderRow}
-          />
-        </BlurryBackdropBox>
+        {!isLoading && pointBasedBids.length > 0 && (
+          <BlurryBackdropBox>
+            <StyledTable
+              initialSortedColumnKey="yourEstimatedReward"
+              columns={buildColumns(pointBasedTributesLabel)}
+              rows={pointBasedBids}
+              renderRow={renderRow}
+            />
+          </BlurryBackdropBox>
+        )}
       </ContentContainer>
     </>
   )

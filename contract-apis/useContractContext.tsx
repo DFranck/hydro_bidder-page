@@ -5,6 +5,7 @@ import {
   VoteWithPower,
 } from "@/app/ts_types/HydroBase.types"
 import { useToasts } from "@/components/Toasts"
+import { fetchAssetListWithPrices } from "@/contract-apis/fetchAssetListWithPrices"
 import { fetchGlobalState } from "@/contract-apis/fetchGlobalState"
 import { fetchMyAllLockups } from "@/contract-apis/fetchMyAllLockups"
 import { fetchMyVotes } from "@/contract-apis/fetchMyVotes"
@@ -12,6 +13,7 @@ import {
   fetchNumiaData,
   SanitizedBidFromNumia,
 } from "@/contract-apis/fetchNumiaData"
+import { fetchRoundState } from "@/contract-apis/fetchRoundState"
 import { fetchUserVotingData } from "@/contract-apis/fetchUserVotingData"
 import { useChain } from "@cosmos-kit/react"
 import { groupBy, mapValues, sumBy } from "lodash"
@@ -26,7 +28,8 @@ import {
 interface ContractContextType {
   bidsByRoundId: Record<number, AugmentedBid[]>
   preHydroBids: SanitizedBidFromNumia[]
-  roundMetadata: RoundMetadata
+  currentRoundMetadata: RoundMetadata
+  globalMetadata: GlobalMetadata
   isLoading: boolean
 }
 
@@ -38,56 +41,82 @@ export interface AugmentedBid extends SanitizedBidFromNumia {
 }
 
 export interface RoundMetadata {
-  currentRound: number
-  totalLockedTokens: number
-  maxLockedTokens: number
+  averageAPR: number
+  roundId: number
+  roundEnd: Date
   usersVotedBidIds: number[]
   usersVotingPower: number | null
   usersEstimatedReward: number | null
+}
+
+export interface GlobalMetadata {
+  maxLockedTokens: number
+  totalLockedTokens: number
   usersLockups: LockEntryWithPower[]
 }
 
-const ContractContext = createContext<ContractContextType | undefined>(
-  undefined
+const initialContractContext: ContractContextType = {
+  bidsByRoundId: {},
+  isLoading: false,
+  preHydroBids: [],
+  currentRoundMetadata: {
+    averageAPR: 0,
+    roundEnd: new Date(),
+    roundId: 0,
+    usersVotedBidIds: [],
+    usersVotingPower: null,
+    usersEstimatedReward: null,
+  },
+  globalMetadata: {
+    totalLockedTokens: 0,
+    maxLockedTokens: 0,
+    usersLockups: [],
+  },
+}
+
+const ContractContext = createContext<ContractContextType>(
+  initialContractContext
 )
 
 export function ContractContextProvider({ children }: { children: ReactNode }) {
   const { address } = useChain("neutron")
   const { setToasts } = useToasts()
-  const [bidsByRoundId, setBidsByRoundId] = useState<
-    Record<number, AugmentedBid[]>
-  >({})
-  const [preHydroBids, setPreHydroBids] = useState<SanitizedBidFromNumia[]>([])
-  const [roundMetadata, setComputedRoundMetadata] = useState<RoundMetadata>({
-    currentRound: 0,
-    totalLockedTokens: 0,
-    maxLockedTokens: 0,
-    usersVotedBidIds: [],
-    usersVotingPower: null,
-    usersEstimatedReward: null,
-    usersLockups: [],
-  })
-
   const [isLoading, setIsLoading] = useState(false)
+  const [contextValue, setContextValue] = useState<ContractContextType>(
+    initialContractContext
+  )
 
   useEffect(() => {
+    setIsLoading(true)
+    setToasts([
+      {
+        message: "Loading...",
+        variant: "working",
+      },
+    ])
     ;(async () => {
-      setIsLoading(true)
-
-      setToasts([
-        {
-          message: "Loading...",
-          variant: "working",
-        },
+      const [
+        assetListWithPrices,
+        dataFromContract,
+        usersLockups,
+        bidsData,
+        userVotingData,
+      ] = await Promise.all([
+        fetchAssetListWithPrices(),
+        fetchGlobalState(),
+        address ? fetchMyAllLockups(address) : Promise.resolve([]),
+        fetchNumiaData(),
+        fetchUserVotingData(address),
       ])
 
-      const [dataFromContract, usersLockups, bidsData, userVotingData] =
-        await Promise.all([
-          fetchGlobalState(),
-          address ? fetchMyAllLockups(address) : Promise.resolve([]),
-          fetchNumiaData(),
-          fetchUserVotingData(address),
-        ])
+      const { roundEnd, totalVotingPower } = await fetchRoundState(
+        dataFromContract.currentRound
+      )
+
+      const atomPrice =
+        assetListWithPrices.get(
+          "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+        )?.priceUsd ?? 0
 
       const { postHydroBids, preHydroBids } = bidsData
 
@@ -156,39 +185,45 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         })
       })
 
-      setComputedRoundMetadata({
-        currentRound: dataFromContract.currentRound,
-        totalLockedTokens: dataFromContract.totalLockedTokens,
-        maxLockedTokens: dataFromContract.constants.max_locked_tokens ?? 0,
-        usersVotedBidIds: Array.from(userVotes.values())
-          .map((vote) => vote?.prop_id)
-          .filter((id): id is number => id !== undefined),
-        usersVotingPower,
-        usersEstimatedReward: usersChosenBidReward ?? null,
-        usersLockups,
-      })
+      const totalTributeValue = sumBy(
+        bidsByRoundId[dataFromContract.currentRound],
+        (bid) => bid.onchainTributeUsdc
+      )
 
-      setPreHydroBids(preHydroBids)
+      const averageAPR =
+        (totalTributeValue /
+          (dataFromContract.totalLockedTokens / 1e6) /
+          atomPrice) *
+        12
 
-      setBidsByRoundId(augmentedBidsByRoundId)
-
-      console.log({ augmentedBidsByRoundId })
-
-      setToasts([])
-
-      setIsLoading(false)
-    })()
-  }, [])
-
-  return (
-    <ContractContext.Provider
-      value={{
-        bidsByRoundId,
+      setContextValue({
+        bidsByRoundId: augmentedBidsByRoundId,
         isLoading,
         preHydroBids,
-        roundMetadata,
-      }}
-    >
+        currentRoundMetadata: {
+          averageAPR,
+          roundId: dataFromContract.currentRound,
+          roundEnd: new Date(parseInt(roundEnd) / 1e6),
+          usersVotedBidIds: Array.from(userVotes.values())
+            .map((vote) => vote?.prop_id)
+            .filter((id): id is number => id !== undefined),
+          usersVotingPower,
+          usersEstimatedReward: usersChosenBidReward ?? null,
+        },
+        globalMetadata: {
+          totalLockedTokens: dataFromContract.totalLockedTokens,
+          maxLockedTokens: dataFromContract.constants.max_locked_tokens ?? 0,
+          usersLockups,
+        },
+      })
+
+      setToasts([])
+      setIsLoading(false)
+    })()
+  }, [address])
+
+  return (
+    <ContractContext.Provider value={contextValue}>
       {children}
     </ContractContext.Provider>
   )
@@ -196,8 +231,10 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
 
 export function useContractContext() {
   const context = useContext(ContractContext)
+
   if (context === undefined) {
     throw new Error("useContractContext must be used within a ContractProvider")
   }
+
   return context
 }

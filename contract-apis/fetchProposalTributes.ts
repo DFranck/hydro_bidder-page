@@ -1,3 +1,5 @@
+"use server"
+
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { getCosmWasmClient } from "./getCosmWasmClient"

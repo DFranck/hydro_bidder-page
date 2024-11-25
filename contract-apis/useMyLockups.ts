@@ -1,4 +1,4 @@
-"use client"
+"use server"
 
 import { useQuery } from "@tanstack/react-query"
 import { defaultStaleTime } from "./_globals"
