@@ -9,7 +9,13 @@ import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import { metricsStatusColumnTooltip } from "@/components/ToolTips"
+import {
+  metricsPolAprColumnTooltip,
+  metricsPolRewardsColumnTooltip,
+  metricsPolValueColumnTooltip,
+  metricsStatusColumnTooltip,
+  metricsTributeColumnTooltip,
+} from "@/components/ToolTips"
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
@@ -152,7 +158,14 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     },
     {
       key: "polValue",
-      label: "PoL Value",
+      label: (
+        <Tooltip tipContents={metricsPolValueColumnTooltip}>
+          <div className="flex items-center gap-1">
+            PoL Value
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       textAlign: "right",
       propsForCells: {
         className: "text-balance",
@@ -173,7 +186,14 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     },
     {
       key: "polRewards",
-      label: "PoL Rewards",
+      label: (
+        <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
+          <div className="flex items-center gap-1">
+            PoL Rewards
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       textAlign: "right",
       propsForCells: {
         className: "whitespace-nowrap",
@@ -185,7 +205,17 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     },
     {
       key: "polApr",
-      label: "PoL APR",
+      label: (
+        <Tooltip
+          tipContents={metricsPolAprColumnTooltip}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            PoL APR
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       textAlign: "right",
       propsForCells: {
         className: "text-palette-beige font-bold",
@@ -196,7 +226,17 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     },
     {
       key: "tribute",
-      label: "Tribute",
+      label: (
+        <Tooltip
+          tipContents={metricsTributeColumnTooltip}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Tribute
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       textAlign: "right",
       isSortable: true,
       initialSortDirection: "DESC",
@@ -230,7 +270,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       <StatCards>
         <StatCards.PoLAvailable />
         <StatCards.PoLDeployed />
-        <StatCards.AverageAPR />
+        <StatCards.PoLRevenue />
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
