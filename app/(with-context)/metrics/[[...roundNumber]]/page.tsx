@@ -19,6 +19,7 @@ import {
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -118,14 +119,22 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
           ) : (
             <>
               {bid.offchainTribute.map((tribute) => (
-                <div key={tribute.type}>
-                  {tribute.amount.toLocaleString()} {tribute.type}
+                <div
+                  key={tribute.type}
+                  className="flex items-center justify-end gap-1"
+                >
+                  <Icon name="solid:gem" />
+                  <span>
+                    {simplifyBigNumbers(tribute.amount, 2)}&nbsp;
+                    {tribute.type}
+                  </span>
                 </div>
               ))}
 
               {bid.onchainTributeAssets.map((tribute) => (
                 <div key={tribute.asset}>
-                  {tribute.amount.toLocaleString()} {tribute.asset.slice(0, 12)}
+                  {simplifyBigNumbers(Math.round(tribute.amount), 2)}&nbsp;
+                  {tribute.asset.slice(0, 12)}
                 </div>
               ))}
 

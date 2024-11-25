@@ -27,6 +27,7 @@ import {
   useContractContext,
 } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import { Fragment, ReactNode, useCallback } from "react"
@@ -120,9 +121,12 @@ const PointBasedReward = ({
   return (
     <>
       {bid.offchainTribute.map((tribute) => (
-        <div key={tribute.type}>
-          {tribute.amount.toLocaleString()}&nbsp;
-          {tribute.type.slice(0, 12)}
+        <div key={tribute.type} className="flex items-center gap-1">
+          <Icon name="solid:gem" />
+          <span>
+            {simplifyBigNumbers(tribute.amount, 2)}&nbsp;
+            {tribute.type}
+          </span>
         </div>
       ))}
     </>
@@ -139,8 +143,11 @@ export default function BidsPage() {
     globalMetadata.totalLockedTokens < globalMetadata.maxLockedTokens &&
     !currentRoundMetadata.usersVotingPower
 
+  // const bidsToRender = bidsByRoundId[currentRoundMetadata.roundId]
+  const bidsToRender = bidsByRoundId[0]
+
   const rows =
-    bidsByRoundId[currentRoundMetadata.roundId]?.map((bid) => {
+    bidsToRender?.map((bid) => {
       const isPointBasedBid = bid.offchainTribute.length > 0
 
       return {
@@ -171,12 +178,15 @@ export default function BidsPage() {
                   learnMoreURL: bid.offchainTributeInfo,
                 })}
               >
-                <PointBasedReward
-                  bid={bid}
-                  hasVotedBids={
-                    currentRoundMetadata.usersVotedBidIds.length > 0
-                  }
-                />
+                <div className="flex items-center gap-1">
+                  <PointBasedReward
+                    bid={bid}
+                    hasVotedBids={
+                      currentRoundMetadata.usersVotedBidIds.length > 0
+                    }
+                  />
+                  <Icon name="circle-info" />
+                </div>
               </Tooltip>
             ) : (
               <Tooltip
