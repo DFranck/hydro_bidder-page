@@ -52,11 +52,11 @@ export default function RootLayout({
         <div
           className="
             fixed
+            bottom-0
             left-0
+            right-0
             top-0
             -z-10
-            h-screen
-            w-screen
             bg-black
             bg-[url('/images/AdobeStock_633966567.jpg')]
             bg-cover

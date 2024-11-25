@@ -12,7 +12,7 @@ import { useDeferredValue, useEffect, useRef } from "react"
 import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
-export const Header = () => {
+export function Header() {
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const { address } = useChain("neutron")
   const previousAddress = useDeferredValue(address)
@@ -55,6 +55,7 @@ export const Header = () => {
           z-40
           border-b
           border-palette-beige
+          bg-black
         "
         ref={elementRef}
       >
@@ -87,13 +88,13 @@ export const Header = () => {
               `,
               isScrolled
                 ? `
-                    h-8
-                    w-40
-                  `
+                  h-8
+                  w-40
+                `
                 : `
-                    h-12
-                    w-56
-                  `
+                  h-12
+                  w-56
+                `
             )}
           >
             <Link href="/">
