@@ -1,9 +1,9 @@
 "use client"
 
 import { useAppContext } from "@/app/(with-context)/context"
-import { StatCard } from "@/components/StatCards/StatCard"
 import { formatAmount } from "@/lib/utils"
 import { twMerge } from "tailwind-merge"
+import { StatCard } from "../StatCard"
 
 export function TotalATOMLocked() {
   const {

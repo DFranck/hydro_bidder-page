@@ -1,10 +1,10 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { StatCard } from "@/components/StatCards/StatCard"
 import { Tooltip } from "@/components/Tooltip"
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { sumBy } from "lodash"
+import { StatCard } from "../StatCard"
 
 const getRoundEndTextFromEndDate = (endDate: Date) => {
   const now = new Date()

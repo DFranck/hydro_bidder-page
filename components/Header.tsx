@@ -2,6 +2,7 @@
 
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
+import { telegramLink } from "@/config"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
@@ -10,8 +11,6 @@ import { usePathname, useRouter } from "next/navigation"
 import { useDeferredValue, useEffect, useRef } from "react"
 import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
-
-export const telegramLink = "https://t.me/+xUzNOTZjUNw5Mzhk"
 
 export const Header = () => {
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()

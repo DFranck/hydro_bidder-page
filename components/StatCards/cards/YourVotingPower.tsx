@@ -1,10 +1,12 @@
 "use client"
 
-import { StatCard } from "@/components/StatCards/StatCard"
+import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
+import { StatCard } from "../StatCard"
+import { yourVotingPowerTooltip } from "@/components/ToolTips"
 
 export function YourVotingPower() {
   const { address } = useChain("neutron")
@@ -21,17 +23,12 @@ export function YourVotingPower() {
         "0.00"
       }
       title={
-        <div className="flex items-center gap-1">
-          Voting Power{" "}
-          <Tooltip
-            tipContents={
-              <>
-                Your Hydro voting power. The more power you have, the larger
-                share of tributes you will receive
-              </>
-            }
-          />
-        </div>
+        <Tooltip tipContents={yourVotingPowerTooltip}>
+          <div className="flex items-center gap-1">
+            <span>Voting Power</span>
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
       }
       subTitle={
         votingPower === 0 ? null : firstExpireTs && firstExpireTs > 0 ? (

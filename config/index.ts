@@ -2,6 +2,8 @@ export const CHAIN_NAME = "localchain"
 export const CHAIN_NAME_STORAGE_KEY = "selected-chain"
 import { AssetList, Chain } from "@chain-registry/types"
 
+export const telegramLink = "https://t.me/+xUzNOTZjUNw5Mzhk"
+
 export const endpoints = {
   // cosmoshubtestnet: {
   //     rpc: ["https://rpc.sentry-01.theta-testnet.polypore.xyz"],

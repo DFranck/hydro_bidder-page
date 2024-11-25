@@ -1,7 +1,13 @@
 "use client"
 
-import { Icon } from "@/components/Icon"
-import { FocusEvent, MouseEvent, ReactNode, useRef, useState } from "react"
+import {
+  ComponentProps,
+  FocusEvent,
+  MouseEvent,
+  ReactNode,
+  useRef,
+  useState,
+} from "react"
 import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
 import { useIsClient } from "usehooks-ts"
@@ -12,8 +18,7 @@ export function Tooltip({
   tipContents,
   mouseEnterDelay = 350,
   mouseLeaveDelay = 350,
-}: {
-  children?: ReactNode
+}: ComponentProps<"div"> & {
   classNamesForTooltip?: string
   tipContents: ReactNode
   mouseEnterDelay?: number
@@ -79,7 +84,8 @@ export function Tooltip({
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
-      {children ?? <Icon name="regular:circle-info" />}
+      {children}
+
       {createPortal(
         <div
           className={twMerge(

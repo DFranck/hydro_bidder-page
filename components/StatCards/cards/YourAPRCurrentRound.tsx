@@ -1,6 +1,8 @@
 "use client"
 
+import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
+import { yourRoundAPRTooltip } from "@/components/ToolTips"
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { StatCard } from "../StatCard"
 
@@ -11,17 +13,12 @@ export function YourAPRCurrentRound() {
   return (
     <StatCard
       title={
-        <div className="flex items-center gap-1">
-          Your Round APR
-          <Tooltip
-            tipContents={
-              <>
-                This is your estimated personal APR for the current round based
-                on your voting power and the bids for which you&apos;ve voted.
-              </>
-            }
-          />
-        </div>
+        <Tooltip tipContents={yourRoundAPRTooltip}>
+          <div className="flex items-center gap-1">
+            <span>Your Round APR</span>
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
       value="–%"

@@ -1,8 +1,8 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { StatCard } from "@/components/StatCards/StatCard"
 import { Tooltip } from "@/components/Tooltip"
+import { StatCard } from "../StatCard"
 
 export function HistoricalAPR() {
   return (

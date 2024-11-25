@@ -2,8 +2,10 @@
 
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ClickableRowSurface } from "@/components/ClickableRowSurface"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { MaxReachedPopup } from "@/components/MaxReachedPopup"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
@@ -11,6 +13,8 @@ import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
+  bidTypeTooltip,
+  currentVoteShareTooltip,
   estimatedRewardsTooltip,
   pointSystemTooltip,
   VOTE_SHARE_THRESHOLD,
@@ -28,7 +32,6 @@ import Image from "next/image"
 import { Fragment, ReactNode, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
-import { LoadingSpinner } from "@/components/LoadingSpinner"
 
 type Row = {
   _bid: AugmentedBid
@@ -79,7 +82,8 @@ const TokenBasedReward = ({
 
   return (
     <>
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center justify-end gap-1">
+        <Icon name="circle-info" />
         <RewardDelta deltaPercentage={bid.estimatedRewardDeltaAsPercentage} />
         {amountToUSDString(bid.estimatedRewardForUser)}
       </div>
@@ -100,7 +104,12 @@ const PointBasedReward = ({
   if (hasVotedBids) {
     return (
       <div className="flex flex-col">
-        {amountToUSDString(Math.round(bid.estimatedRewardForUser ?? 0), 0)}{" "}
+        <div className="flex items-center gap-1">
+          <Icon name="circle-info" />
+          <span>
+            {amountToUSDString(Math.round(bid.estimatedRewardForUser ?? 0), 0)}
+          </span>
+        </div>
         <StyledText variant="footnote">
           of {amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)}
         </StyledText>
@@ -189,18 +198,25 @@ export default function BidsPage() {
             href={`/bids/${bid.id}`}
             className="flex flex-row-reverse items-center gap-1"
           >
-            <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
-            {bid.votingPowerPercentage < VOTE_SHARE_THRESHOLD && (
-              <Tooltip
-                tipContents={voteThresholdTooltip}
-                classNamesForTooltip="-ml-24"
-              >
-                <Icon
-                  name="solid:circle"
-                  className="text-xs text-palette-beige"
-                />
-              </Tooltip>
-            )}
+            <ConditionalWrapper
+              condition={bid.votingPowerPercentage < VOTE_SHARE_THRESHOLD}
+              wrapper={(children) => (
+                <Tooltip
+                  tipContents={voteThresholdTooltip}
+                  classNamesForTooltip="-ml-24"
+                >
+                  <div className="flex items-center gap-1">
+                    {children}
+                    <Icon
+                      name="circle-info"
+                      className="text-xs text-palette-beige"
+                    />
+                  </div>
+                </Tooltip>
+              )}
+            >
+              <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
+            </ConditionalWrapper>
           </ClickableRowSurface>
         ),
         actions: (
@@ -216,26 +232,16 @@ export default function BidsPage() {
       {
         key: "logoAndTitle",
         label: (
-          <div className="flex items-center gap-1">
-            {projectBidLabel}
-            <Tooltip
-              tipContents={
-                <>
-                  Bids are submitted by projects.{" "}
-                  {projectBidLabel === tokenBasedTributesLabel ? (
-                    <>These bids use live tokens as their tribute.</>
-                  ) : (
-                    <>
-                      These bids use points as their tribute because they do not
-                      yet have a live token.
-                    </>
-                  )}{" "}
-                  You can only vote once (per bucket per tranche) but you can
-                  switch your vote as many times as you want.
-                </>
-              }
-            />
-          </div>
+          <Tooltip
+            tipContents={bidTypeTooltip({
+              isTokenBasedBid: projectBidLabel === tokenBasedTributesLabel,
+            })}
+          >
+            <div className="flex items-center gap-1">
+              {projectBidLabel}
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
         ),
         isSortable: true,
         propsForCells: {
@@ -246,17 +252,21 @@ export default function BidsPage() {
       {
         key: "yourEstimatedReward",
         label: (
-          <div className="flex items-center gap-1">
-            {isWalletConnected && currentRoundMetadata.usersVotingPower
-              ? "Your"
-              : "Total"}{" "}
-            Est. Reward
-            <Tooltip
-              tipContents={estimatedRewardsTooltip({
-                roundMetadata: currentRoundMetadata,
-              })}
-            />
-          </div>
+          <Tooltip
+            tipContents={estimatedRewardsTooltip({
+              roundMetadata: currentRoundMetadata,
+            })}
+          >
+            <div className="flex items-center gap-1">
+              <span>
+                {isWalletConnected && currentRoundMetadata.usersVotingPower
+                  ? "Your"
+                  : "Total"}{" "}
+                Est. Reward
+              </span>
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
         ),
         isSortable: true,
         textAlign: "right",
@@ -274,19 +284,15 @@ export default function BidsPage() {
       {
         key: "currentVoteShare",
         label: (
-          <div className="flex items-center gap-1">
-            Vote %
-            <Tooltip
-              classNamesForTooltip="-ml-24"
-              tipContents={
-                <>
-                  This is the percentage of votes that this project has received
-                  so far. It may increase or decrease if other users decide to
-                  switch their votes before the round ends
-                </>
-              }
-            />
-          </div>
+          <Tooltip
+            classNamesForTooltip="-ml-24"
+            tipContents={currentVoteShareTooltip}
+          >
+            <div className="flex items-center gap-1">
+              <span>Vote %</span>
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
         ),
         isSortable: true,
         initialSortDirection: "DESC",
@@ -356,16 +362,18 @@ export default function BidsPage() {
                     "
                   />
 
-                  <div className="flex items-center gap-1">
-                    <Icon name="solid:circle" />
-                    <span>
-                      These bids are below the{" "}
-                      <strong>
-                        {VOTE_SHARE_THRESHOLD * 100}% vote share threshold
-                      </strong>
-                    </span>
-                    <Tooltip tipContents={voteThresholdTooltip} />
-                  </div>
+                  <Tooltip tipContents={voteThresholdTooltip}>
+                    <div className="flex items-center gap-1">
+                      <Icon name="solid:circle" />
+                      <span>
+                        These bids are below the{" "}
+                        <strong>
+                          {VOTE_SHARE_THRESHOLD * 100}% vote share threshold
+                        </strong>
+                      </span>
+                      <Icon name="circle-info" />
+                    </div>
+                  </Tooltip>
 
                   <div
                     className="

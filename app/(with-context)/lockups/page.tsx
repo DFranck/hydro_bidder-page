@@ -12,7 +12,11 @@ import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { networkLimitReachedTooltip } from "@/components/ToolTips"
+import {
+  networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
+  lockupLimitReachedByUserTooltip,
+  lockupLimitTooltip,
+} from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { fetchMyAllLockups } from "@/contract-apis/fetchMyAllLockups"
 import { useUserVotingData } from "@/contract-apis/useUserVotingData"
@@ -129,55 +133,41 @@ export default function LockupsPage() {
               <div className="flex items-center gap-4">
                 <div
                   className={twMerge(
-                    "h-4 w-64 overflow-hidden rounded-full",
+                    `h-4 w-64 overflow-hidden rounded-full`,
                     percentageLockedInWallet >= 98
-                      ? "bg-red-500/20"
-                      : "bg-palette-beige/20"
+                      ? `bg-red-500/20`
+                      : `bg-palette-beige/20`
                   )}
                 >
                   <div
                     className={twMerge(
-                      "h-full",
+                      `h-full`,
                       percentageLockedInWallet >= 98
-                        ? "bg-red-500"
-                        : "bg-palette-beige"
+                        ? `bg-red-500`
+                        : `bg-palette-beige`
                     )}
                     style={{
                       width: `${percentageLockedInWallet}%`,
                     }}
                   />
                 </div>
-                <div className="flex items-center gap-1">
-                  <span
-                    className={twMerge(
-                      `
-                        text-sm
-                      `,
-                      percentageLockedInWallet >= 98
-                        ? "text-red-500"
-                        : "text-palette-beige"
-                    )}
-                  >
-                    {(lockedAtomInWallet / 1e6).toFixed(4)} /{" "}
-                    {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
-                  </span>
 
-                  <Tooltip
-                    tipContents={
-                      <>
-                        For the pilot round, there is a maximum limit of ATOM
-                        you can lockup.{" "}
-                        <a
-                          href="/docs#pilot-rounds"
-                          className="inline-flex items-center gap-1 text-palette-green underline"
-                        >
-                          Learn More
-                          <Icon name="solid:arrow-up-right" />
-                        </a>
-                      </>
-                    }
-                  />
-                </div>
+                <Tooltip tipContents={lockupLimitTooltip}>
+                  <div className="flex items-center gap-1">
+                    <span
+                      className={twMerge(
+                        `text-sm`,
+                        percentageLockedInWallet >= 98
+                          ? `text-red-500`
+                          : `text-palette-beige`
+                      )}
+                    >
+                      {(lockedAtomInWallet / 1e6).toFixed(4)} /{" "}
+                      {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
+                    </span>
+                    <Icon name="circle-info" />
+                  </div>
+                </Tooltip>
               </div>
 
               <ConditionalWrapper
@@ -190,8 +180,8 @@ export default function LockupsPage() {
                     classNamesForTooltip="-ml-12"
                     tipContents={
                       percentageLockedInWallet === 100
-                        ? "You&rsquo;ve reached the maximum locked tokens"
-                        : networkLimitReachedTooltip
+                        ? lockupLimitReachedByUserTooltip
+                        : lockupLimitReachedByNetworkTooltip
                     }
                   >
                     <div
