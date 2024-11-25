@@ -36,9 +36,8 @@ export interface BidFromNumia {
 export type SanitizedBidFromNumia = CamelCaseKeys<
   Omit<
     BidFromNumia,
-    "offchain_tribute" | "onchain_tribute_assets" | "tranche" | "id"
+    "offchain_tribute" | "onchain_tribute_assets" | "tranche"
   > & {
-    id: number
     tranche: number
     offchain_tribute: {
       amount: number
@@ -54,7 +53,6 @@ export type SanitizedBidFromNumia = CamelCaseKeys<
 function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
   return keysFromSnakeToCamelCase({
     ...bid,
-    id: Number(bid.id),
     tranche: Number(bid.tranche),
     offchain_tribute: JSON.parse(bid.offchain_tribute),
     onchain_tribute_assets: JSON.parse(bid.onchain_tribute_assets),

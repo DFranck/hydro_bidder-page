@@ -56,7 +56,9 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       : bidsByRoundId[requestedRoundNumberUnderHood ?? 0]) ?? []
 
   const rows = bidsToRender.map((bid) => {
-    const rowURL = isPreHydro ? bid.projectUrl : `/bids/${bid.id}`
+    const rowURL = isPreHydro
+      ? `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
+      : `/bids/${bid.id}`
 
     return {
       _bid: bid,

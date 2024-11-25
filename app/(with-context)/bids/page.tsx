@@ -299,6 +299,9 @@ export default function BidsPage() {
         isSortable: true,
         textAlign: "right",
         initialSortDirection: "DESC",
+        propsForCells: {
+          className: classNames.classNamesForCells,
+        },
         customValueGetter: (row) => row._bid.deploymentDuration,
       },
       {
