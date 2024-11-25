@@ -13,7 +13,8 @@ import {
 import { VoteButton } from "@/components/VoteButton"
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { kebabCase } from "lodash"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
+import { kebabCase, startCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -198,9 +199,13 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
                     {bid.offchainTribute.map((tribute, index) => (
                       <p
                         key={index}
-                        className="font-mono text-xl font-bold not-italic text-palette-cyan"
+                        className="font-mono flex items-center gap-1 text-xl font-bold not-italic text-palette-cyan"
                       >
-                        {tribute.amount.toLocaleString()}&nbsp;{tribute.type}
+                        <Icon name="solid:gem" />
+                        <span>
+                          {simplifyBigNumbers(tribute.amount, 2)}&nbsp;
+                          {startCase(tribute.type.toLowerCase())}
+                        </span>
                       </p>
                     ))}
                     <p>
