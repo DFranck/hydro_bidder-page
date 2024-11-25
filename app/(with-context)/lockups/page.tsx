@@ -102,7 +102,7 @@ export default function LockupsPage() {
       <StatCards>
         <StatCards.TotalATOMLocked />
         <StatCards.YourTotalATOMLocked />
-        <StatCards.HistoricalAPR />
+        <StatCards.YourVotingPower />
       </StatCards>
 
       <ContentContainer className="gap-6 py-12">

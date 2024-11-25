@@ -273,6 +273,23 @@ export const rewardsTributeRewardsColumnTooltip = (
   </>
 )
 
+export const timeLeftTooltip = (
+  <>
+    Number of days until the round ends. Users must vote before the end of the
+    round to receive tributes.{" "}
+    <StyledText
+      as="a"
+      href="/docs/users/voting-for-projects"
+      variant="link"
+      target="_blank"
+      className="whitespace-nowrap"
+    >
+      <span>Learn More</span>
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
+  </>
+)
+
 export const usdDisclaimerTooltip = (
   <>
     USD equivalent values are estimates and may not reflect the actual current
