@@ -6,6 +6,7 @@ import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
+import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
@@ -103,129 +104,111 @@ export default function LockupsPage() {
         <StatCards.YourTotalATOMLocked />
         <StatCards.HistoricalAPR />
       </StatCards>
-      <ContentContainer className="gap-12 py-12">
-        <BlurryBackdropBox>
+
+      <ContentContainer className="gap-6 py-12">
+        <div
+          className="
+            flex
+            flex-col
+            justify-between
+            gap-3
+            lg:flex-row
+          "
+        >
+          <StyledText as="h2" variant="h2">
+            Your Lockups
+          </StyledText>
+
           <div
             className="
               flex
               flex-col
-              justify-between
-              gap-3
-              p-5
-              lg:flex-row
+              items-end
+              justify-end
+              gap-6
+              md:flex-row
+              md:items-center
             "
           >
-            <StyledText as="h2" variant="h3">
-              Your Lockups
-            </StyledText>
-
-            <div
-              className="
-                flex
-                flex-col
-                items-end
-                justify-end
-                gap-6
-                md:flex-row
-                md:items-center
-              "
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className={twMerge(
-                    `h-4 w-64 overflow-hidden rounded-full`,
-                    percentageLockedInWallet >= 98
-                      ? `bg-red-500/20`
-                      : `bg-palette-beige/20`
-                  )}
-                >
-                  <div
-                    className={twMerge(
-                      `h-full`,
-                      percentageLockedInWallet >= 98
-                        ? `bg-red-500`
-                        : `bg-palette-beige`
-                    )}
-                    style={{
-                      width: `${percentageLockedInWallet}%`,
-                    }}
-                  />
-                </div>
-
-                <Tooltip tipContents={lockupLimitTooltip}>
-                  <div className="flex items-center gap-1">
-                    <span
-                      className={twMerge(
-                        `text-sm`,
-                        percentageLockedInWallet >= 98
-                          ? `text-red-500`
-                          : `text-palette-beige`
-                      )}
-                    >
-                      {(lockedAtomInWallet / 1e6).toFixed(4)} /{" "}
-                      {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
-                    </span>
-                    <Icon name="circle-info" />
-                  </div>
-                </Tooltip>
-              </div>
-
-              <ConditionalWrapper
-                condition={
-                  percentageLockedInWallet === 100 ||
-                  percentageLockedOverall === 100
-                }
-                wrapper={(children) => (
-                  <Tooltip
-                    classNamesForTooltip="-ml-12"
-                    tipContents={
-                      percentageLockedInWallet === 100
-                        ? lockupLimitReachedByUserTooltip
-                        : lockupLimitReachedByNetworkTooltip
-                    }
-                  >
-                    <div
-                      className="
-                        pointer-events-none
-                        cursor-not-allowed
-                        opacity-50
-                      "
-                    >
-                      {children}
-                    </div>
-                  </Tooltip>
+            <div className="flex items-center gap-4">
+              <div
+                className={twMerge(
+                  `h-4 w-64 overflow-hidden rounded-full`,
+                  percentageLockedInWallet >= 98
+                    ? `bg-red-500/20`
+                    : `bg-palette-beige/20`
                 )}
               >
-                <StyledText
-                  as={Link}
-                  variant="button.primary"
-                  href="/lock-atom"
-                >
-                  New Lockup
-                </StyledText>
-              </ConditionalWrapper>
-            </div>
-          </div>
+                <div
+                  className={twMerge(
+                    `h-full`,
+                    percentageLockedInWallet >= 98
+                      ? `bg-red-500`
+                      : `bg-palette-beige`
+                  )}
+                  style={{
+                    width: `${percentageLockedInWallet}%`,
+                  }}
+                />
+              </div>
 
-          {myLockups.length === 0 && (
-            <div
-              className="
-                !mb-6
-                rounded-md
-                border
-                border-dashed
-                border-palette-beige/20
-                py-12
-                text-center
-                text-xs
-                text-white/60
-              "
-            >
-              <p>
-                You don&rsquo;t have any lockups. Use the &ldquo;New
-                Lockup&rdquo; button on the page to add one.
-              </p>
+              <Tooltip tipContents={lockupLimitTooltip}>
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  <span
+                    className={twMerge(
+                      `text-sm`,
+                      percentageLockedInWallet >= 98
+                        ? `text-red-500`
+                        : `text-palette-beige`
+                    )}
+                  >
+                    {(lockedAtomInWallet / 1e6).toFixed(4)} /{" "}
+                    {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
+                  </span>
+                  <Icon name="circle-info" />
+                </div>
+              </Tooltip>
             </div>
+
+            <ConditionalWrapper
+              condition={
+                percentageLockedInWallet === 100 ||
+                percentageLockedOverall === 100
+              }
+              wrapper={(children) => (
+                <Tooltip
+                  classNamesForTooltip="-ml-12"
+                  tipContents={
+                    percentageLockedInWallet === 100
+                      ? lockupLimitReachedByUserTooltip
+                      : lockupLimitReachedByNetworkTooltip
+                  }
+                >
+                  <div
+                    className="
+                      pointer-events-none
+                      cursor-not-allowed
+                      opacity-50
+                    "
+                  >
+                    {children}
+                  </div>
+                </Tooltip>
+              )}
+            >
+              <StyledText as={Link} variant="button.primary" href="/lock-atom">
+                New Lockup
+              </StyledText>
+            </ConditionalWrapper>
+          </div>
+        </div>
+
+        <BlurryBackdropBox>
+          {myLockups.length === 0 && (
+            <EmptyBox>
+              You don&rsquo;t have any lockups. Use the &ldquo;New Lockup&rdquo;
+              button on the page to add one.
+            </EmptyBox>
           )}
 
           {myLockups.length > 0 && (

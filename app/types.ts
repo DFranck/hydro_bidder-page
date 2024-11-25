@@ -22,7 +22,7 @@ export type GlobalState = {
   tranches: Tranche[]
   whitelistAdmins: Addr[]
   whitelist: Addr[]
-  bidDescriptions: Record<number, BidDescription> // bid ID
+  // bidDescriptions: Record<number, BidDescription> // bid ID
 }
 
 // amount, description

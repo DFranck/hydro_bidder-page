@@ -53,6 +53,7 @@ export const classNames = {
   `),
   bidTitle: twJoin(`
     line-clamp-2
+    text-balance
     text-lg
     font-semibold
   `),
@@ -63,20 +64,19 @@ export const classNames = {
     h-full
     w-full
   `),
-  noBids: twJoin(`
-    my-3
-    rounded-md
-    border
-    border-dashed
-    border-palette-beige/20
-    py-12
-    text-center
-    text-white/60
-  `),
   hasVotedRow: twJoin(`
     has-voted
     max-sm:bg-palette-green
     max-sm:text-palette-text
     max-sm:hover:bg-palette-green/80
+  `),
+  bidDetailsLink: twJoin(`
+    pointer-events-none
+    flex
+    items-center
+    gap-0.5
+    whitespace-nowrap
+    text-xs
+    group-hover/table-row:text-white
   `),
 }
