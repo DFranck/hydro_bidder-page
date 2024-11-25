@@ -22,7 +22,6 @@
     "@hookform/resolvers": "^3.9.1",
     "@interchain-ui/react": "^1.26.1",
     "@napi-rs/simple-git-linux-x64-gnu": "^0.1.19",
-    "@napi-rs/snappy-linux-x64-gnu": "^7.2.2",
     "@next/third-parties": "^14.2.18",
     "@subframe/core": "^1.133.0",
     "@tailwindcss/container-queries": "^0.1.1",
