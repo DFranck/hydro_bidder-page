@@ -1,10 +1,10 @@
 "use client"
 
-import { classNames } from "@/app/(with-context)/bids/classNames"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
+import { InvisibleLink } from "@/components/InvisibleLink"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
@@ -14,106 +14,101 @@ import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { rewardsTributeRewardsColumnTooltip } from "@/components/ToolTips"
 import { claimRewards } from "@/contract-apis/claimRewards"
+import { useContractContext } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
 import { useChain } from "@cosmos-kit/react"
-import { keyBy } from "lodash"
+import { startCase } from "lodash"
 import Image from "next/image"
-import Link from "next/link"
 import { MouseEvent, useState } from "react"
 
 export default function RewardsPage() {
+  const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [isShowingClaimRewardsModal, setIsShowingClaimRewardsModal] =
     useState(false)
-  const [claimType, setClaimType] = useState<"native" | "convert">("native")
-  const decoratedProposals = useDecoratedProposals({ trancheId: 1 }) ?? []
-  const proposalsById = keyBy(decoratedProposals, "proposal_id")
-  const allProposalIds = Object.keys(proposalsById).map(Number)
-  const [selectedProposalIds, setSelectedProposalIds] =
-    useState<number[]>(allProposalIds)
+  const { isLoading, currentRoundMetadata, bidsByRoundId } =
+    useContractContext()
+
+  const allBidIds =
+    bidsByRoundId[currentRoundMetadata.roundId]?.map((bid) => bid.id) ?? []
+  const [selectedBidIds, setSelectedBidIds] = useState<string[]>(allBidIds)
   const { setToasts } = useToasts()
   const { address, getSigningCosmWasmClient } = useChain("neutron")
 
-  const rows = decoratedProposals.map((proposal) => {
-    const projectLink = `/bids/${proposal.proposal_id}`
+  const rows = Object.values(bidsByRoundId)
+    .flat()
+    .map((bid) => {
+      const bidUrl = `/bids/${bid.id}`
 
-    return {
-      _proposal: proposal,
+      return {
+        _bid: bid,
 
-      roundNumber: (
-        <>
-          1
-          <Link href={projectLink} className={classNames.projectLink} />
-        </>
-      ),
+        roundNumber: <InvisibleLink href={bidUrl}>1</InvisibleLink>,
 
-      logo: (
-        <>
-          {proposal.projectLogoUrl ? (
-            <div className="relative size-12">
-              <Image
-                className="object-contain"
-                src={proposal.projectLogoUrl}
-                alt={proposal.projectName}
-                fill={true}
-              />
+        logo: (
+          <InvisibleLink href={bidUrl}>
+            {bid.projectLogoUrl ? (
+              <div className="relative size-12">
+                <Image
+                  className="object-contain"
+                  src={bid.projectLogoUrl}
+                  alt={bid.project}
+                  fill={true}
+                />
+              </div>
+            ) : null}
+          </InvisibleLink>
+        ),
+
+        bidTitleAndProjectName: (
+          <InvisibleLink href={bidUrl}>
+            <div className="flex flex-col">
+              <StyledText variant="h4">{bid.title}</StyledText>
+              <StyledText variant="footnote">{bid.project}</StyledText>
             </div>
-          ) : null}
-          <Link href={projectLink} className={classNames.projectLink} />
-        </>
-      ),
+          </InvisibleLink>
+        ),
 
-      bidTitleAndProjectName: (
-        <>
-          <div className="flex flex-col">
-            <StyledText variant="h4">{proposal.title}</StyledText>
-            <StyledText variant="footnote">{proposal.projectName}</StyledText>
-          </div>
-          <Link href={projectLink} className={classNames.projectLink} />
-        </>
-      ),
-
-      token: (
-        <>
-          {proposal.points
-            ? proposal.points[1]
-            : proposal.pricedAndNamedTributes.map((tribute, index) => (
-                <div key={index}>{tribute.symbol || tribute.denom}</div>
+        token: (
+          <InvisibleLink href={bidUrl}>
+            <div className="flex flex-col items-center justify-center gap-1">
+              {bid.offchainTribute.map((tribute, index) => (
+                <div key={index} className="flex items-center gap-1">
+                  <Icon name="solid:gem" />
+                  {startCase(tribute.type.toLowerCase())}
+                </div>
               ))}
-          <Link href={projectLink} className={classNames.projectLink} />
-        </>
-      ),
+              {bid.onchainTributeAssets.map((tribute, index) => (
+                <div key={index}>{tribute.asset.slice(0, 12)}</div>
+              ))}
+            </div>
+          </InvisibleLink>
+        ),
 
-      polRewards: (
-        <>
-          {amountToUSDString(proposal.estimatedRewardForUser ?? 0)}
-          <Link href={projectLink} className={classNames.projectLink} />
-        </>
-      ),
+        polRewards: (
+          <InvisibleLink href={bidUrl}>
+            {amountToUSDString(bid.estimatedRewardForUser ?? 0)}
+          </InvisibleLink>
+        ),
 
-      tributeRewards: (
-        <>
-          {amountToUSDString(proposal.totalTributeValue)}
-          <Link href={projectLink} className={classNames.projectLink} />
-        </>
-      ),
+        tributeRewards: (
+          <InvisibleLink href={bidUrl}>
+            {amountToUSDString(bid.onchainTributeUsdc)}
+          </InvisibleLink>
+        ),
 
-      actions: (
-        <>
-          <StyledText
-            as="button"
-            variant="button.primary.small"
-            onClick={() =>
-              handleClickClaimRewards({ proposalIds: [proposal.proposal_id] })
-            }
-          >
-            Claim
-          </StyledText>
-          <Link href={projectLink} className={classNames.projectLink} />
-        </>
-      ),
-    }
-  })
+        actions: (
+          <InvisibleLink href={bidUrl}>
+            <StyledText
+              as="button"
+              variant="button.primary.small"
+              onClick={() => handleClickClaimRewards({ bidIds: [bid.id] })}
+            >
+              Claim
+            </StyledText>
+          </InvisibleLink>
+        ),
+      }
+    })
 
   type Row = (typeof rows)[number]
 
@@ -142,7 +137,7 @@ export default function RewardsPage() {
       propsForCells: {
         className: "relative",
       },
-      customValueGetter: (row) => row._proposal.title,
+      customValueGetter: (row) => row._bid.title,
     },
     {
       key: "token",
@@ -153,7 +148,12 @@ export default function RewardsPage() {
         className: "relative whitespace-nowrap",
       },
       customValueGetter: (row) =>
-        row._proposal.points ? row._proposal.points[1] : "",
+        [
+          ...row._bid.onchainTributeAssets.map((asset) => asset.asset),
+          ...row._bid.offchainTribute.map((tribute) => tribute.type),
+        ]
+          .sort()
+          .join(", "),
     },
     // TODO: Uncomment this
     // {
@@ -188,7 +188,7 @@ export default function RewardsPage() {
         className: "whitespace-nowrap",
       },
       isSortable: true,
-      customValueGetter: (row) => row._proposal.totalTributeValue ?? 0,
+      customValueGetter: (row) => row._bid.onchainTributeUsdc ?? 0,
     },
     {
       key: "actions",
@@ -200,11 +200,9 @@ export default function RewardsPage() {
     },
   ]
 
-  function handleClickClaimRewards({
-    proposalIds,
-  }: { proposalIds?: number[] } = {}) {
+  function handleClickClaimRewards({ bidIds }: { bidIds?: string[] } = {}) {
     setIsShowingClaimRewardsModal(true)
-    setSelectedProposalIds(proposalIds ?? allProposalIds)
+    setSelectedBidIds(bidIds ?? allBidIds)
   }
 
   function handleClickCloseClaimRewardsModal(
@@ -224,14 +222,19 @@ export default function RewardsPage() {
     ])
 
     await Promise.all(
-      selectedProposalIds.map(async (proposalId) => {
-        const proposal = proposalsById[proposalId]
+      selectedBidIds.map(async (bidId) => {
+        const bid = bidsByRoundId[currentRoundMetadata.roundId].find(
+          (bid) => bid.id === bidId
+        )
+
+        if (!bid) return
+
         await claimRewards(
           getSigningCosmWasmClient,
           address!,
-          proposal.round_id,
-          proposal.tranche_id,
-          proposalId
+          Number(bid.round),
+          bid.tranche,
+          Number(bid.id)
         )
       })
     )
@@ -258,7 +261,7 @@ export default function RewardsPage() {
               as="button"
               variant="button.primary"
               onClick={handleClickClaimRewards.bind(null, {
-                proposalIds: allProposalIds,
+                bidIds: allBidIds,
               })}
             >
               Claim All Rewards
@@ -342,16 +345,6 @@ export default function RewardsPage() {
                       propsForCells: {
                         className: "!py-1",
                       },
-                      customValueGetter: (row) =>
-                        row._proposal.points
-                          ? row._proposal.points[1]
-                          : row._proposal.pricedAndNamedTributes
-                              .map((tribute, index) => (
-                                <div key={index}>
-                                  {tribute.symbol || tribute.denom}
-                                </div>
-                              ))
-                              .join(", "),
                     },
                     {
                       key: "amount",
@@ -363,25 +356,25 @@ export default function RewardsPage() {
                         className: "!py-1",
                       },
                       customValueGetter: (row) =>
-                        row._proposal.estimatedRewardForUser ?? 0,
+                        row._bid?.estimatedRewardForUser ?? 0,
                     },
                   ]}
-                  rows={selectedProposalIds.map((proposalId) => {
-                    const proposal = proposalsById[proposalId]
-                    return {
-                      _proposal: proposal,
+                  rows={selectedBidIds.map((bidId) => {
+                    const bid = bidsByRoundId[
+                      currentRoundMetadata.roundId
+                    ].find((bid) => bid.id === bidId)!
 
-                      token: proposal.points
-                        ? proposal.points[1]
-                        : proposal.pricedAndNamedTributes.map(
-                            (tribute, index) => (
-                              <div key={index}>
-                                {tribute.symbol || tribute.denom}
-                              </div>
-                            )
-                          ),
+                    return {
+                      _bid: bid,
+
+                      token: [
+                        ...bid.onchainTributeAssets.map((asset) => asset.asset),
+                        bid.offchainTribute.map((tribute) => tribute.type),
+                      ]
+                        .sort()
+                        .join(", "),
                       amount: amountToUSDString(
-                        proposal?.estimatedRewardForUser ?? 0
+                        bid.estimatedRewardForUser ?? 0
                       ),
                     }
                   })}

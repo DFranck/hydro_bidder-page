@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ComponentProps, ReactNode } from "react"
 
-export function ClickableRowSurface({
+export function InvisibleLink({
   children,
   href,
   ...props

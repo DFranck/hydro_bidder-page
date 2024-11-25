@@ -57,13 +57,6 @@ export const classNames = {
     text-lg
     font-semibold
   `),
-  projectLink: twJoin(`
-    absolute
-    inset-0
-    z-0
-    h-full
-    w-full
-  `),
   hasVotedRow: twJoin(`
     has-voted
     max-sm:bg-palette-green

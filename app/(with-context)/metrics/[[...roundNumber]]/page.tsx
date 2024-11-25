@@ -1,9 +1,9 @@
 "use client"
 
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
-import { ClickableRowSurface } from "@/components/ClickableRowSurface"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
+import { InvisibleLink } from "@/components/InvisibleLink"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
@@ -63,7 +63,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     return {
       _bid: bid,
       logoAndTitle: (
-        <ClickableRowSurface href={rowURL} className="flex items-center gap-6">
+        <InvisibleLink href={rowURL} className="flex items-center gap-6">
           <div className="relative size-12 shrink-0 rounded-full border text-[0]">
             {bid.projectLogoUrl ? (
               <Image
@@ -79,18 +79,18 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
             <StyledText variant="h4">{bid.title}</StyledText>
             <StyledText variant="footnote">{bid.project}</StyledText>
           </div>
-        </ClickableRowSurface>
+        </InvisibleLink>
       ),
       polValue: (
-        <ClickableRowSurface href={rowURL}>
+        <InvisibleLink href={rowURL}>
           {bid.initialAllocationAmount.toLocaleString(undefined, {
             maximumFractionDigits: 4,
           })}
           &nbsp;ATOM
-        </ClickableRowSurface>
+        </InvisibleLink>
       ),
       duration: (
-        <ClickableRowSurface href={rowURL}>
+        <InvisibleLink href={rowURL}>
           {(() => {
             const monthCount = parseFloat((bid.durationDays / 30).toFixed(1))
             return `${monthCount > 0 ? "~" : ""}${pluralize({
@@ -99,23 +99,21 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
               prefixCount: true,
             })}`
           })()}
-        </ClickableRowSurface>
+        </InvisibleLink>
       ),
       polRewards: (
-        <ClickableRowSurface href={rowURL}>
+        <InvisibleLink href={rowURL}>
           {(
             bid.currentAllocationAmount - bid.initialAllocationAmount
           ).toLocaleString(undefined, {
             maximumFractionDigits: 4,
           })}{" "}
           ATOM
-        </ClickableRowSurface>
+        </InvisibleLink>
       ),
-      polApr: (
-        <ClickableRowSurface href={rowURL}>{bid.apr}%</ClickableRowSurface>
-      ),
+      polApr: <InvisibleLink href={rowURL}>{bid.apr}%</InvisibleLink>,
       tribute: (
-        <ClickableRowSurface href={rowURL}>
+        <InvisibleLink href={rowURL}>
           {isPreHydro ? (
             "–"
           ) : (
@@ -149,11 +147,9 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
               )}
             </>
           )}
-        </ClickableRowSurface>
+        </InvisibleLink>
       ),
-      status: (
-        <ClickableRowSurface href={rowURL}>{bid.status}</ClickableRowSurface>
-      ),
+      status: <InvisibleLink href={rowURL}>{bid.status}</InvisibleLink>,
     }
   })
 

@@ -6,6 +6,7 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
+import { longerLockupsComingSoonTooltip } from "@/components/ToolTips"
 import { EPOCH_LENGTH } from "@/config"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { Delegation, Validator } from "@/contract-apis/fetchMyValidators"
@@ -23,7 +24,6 @@ import { LockStepper } from "./steppers/LockStepper"
 import { RevertFromHubStepper } from "./steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "./steppers/RevertFromNeutronStepper"
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
-import { longerLockupsComingSoonTooltip } from "@/components/ToolTips"
 
 const commonClassNames = {
   fixedOverlay:
@@ -616,6 +616,7 @@ const LockForm = ({
                         pattern="^\d+(\.\d{1,6})?$"
                         variant="input.text"
                         value={amount}
+                        defaultValue={maxATOMAmount.toString()}
                         onBlur={handleBlur}
                         onChange={handleChange}
                       />
