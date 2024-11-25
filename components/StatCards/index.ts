@@ -7,6 +7,7 @@ import { HistoricalAPR } from "./cards/HistoricalAPR"
 import { NumberOfUniqueWallets } from "./cards/NumberOfUniqueWallets"
 import { PoLAvailable } from "./cards/PoLAvailable"
 import { PoLDeployed } from "./cards/PoLDeployed"
+import { PoLRevenue } from "./cards/PoLRevenue"
 import { TotalATOMLocked } from "./cards/TotalATOMLocked"
 import { TotalTributes } from "./cards/TotalTributes"
 import { YourAPRCurrentRound } from "./cards/YourAPRCurrentRound"
@@ -24,6 +25,7 @@ const StatCards = Object.assign(BaseStatCards, {
   NumberOfUniqueWallets,
   PoLAvailable,
   PoLDeployed,
+  PoLRevenue,
   TotalATOMLocked,
   TotalTributes,
   YourAPRCurrentRound,
