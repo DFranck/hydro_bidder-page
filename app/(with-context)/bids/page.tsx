@@ -472,7 +472,7 @@ export default function BidsPage() {
       <StatCards>
         <StatCards.TotalTributes />
         <StatCards.AverageAPR />
-        <StatCards.DaysRemaining />
+        <StatCards.TimeLeft />
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">

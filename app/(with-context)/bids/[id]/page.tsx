@@ -23,7 +23,7 @@ export default function DetailsPage({ params }: { params: { id: string } }) {
 
   const bid = Object.values(bidsByRoundId)
     .flat()
-    .find((bid) => bid.id === Number(params.id))
+    .find((bid) => bid.id === params.id)
 
   if (!bid) {
     return <>The requested proposal could not be found.</>

@@ -89,14 +89,16 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
   )
 
   useEffect(() => {
-    setIsLoading(true)
-    setToasts([
-      {
-        message: "Loading...",
-        variant: "working",
-      },
-    ])
     ;(async () => {
+      setIsLoading(true)
+
+      setToasts([
+        {
+          message: "Loading...",
+          variant: "working",
+        },
+      ])
+
       const [
         assetListWithPrices,
         dataFromContract,
