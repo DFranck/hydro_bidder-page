@@ -218,8 +218,10 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         preHydroBids,
         currentRoundMetadata: {
           averageAPR,
-          // roundId: dataFromContract.currentRound,
-          roundId: 0,
+          roundId:
+            process.env.NODE_ENV === "development"
+              ? 0
+              : dataFromContract.currentRound,
           roundEnd: new Date(parseInt(roundEnd) / 1e6),
           usersVotedBidIds: Array.from(userVotes.values())
             .map((vote) => vote?.prop_id)
