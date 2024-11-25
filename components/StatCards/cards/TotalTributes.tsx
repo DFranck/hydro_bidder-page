@@ -1,6 +1,7 @@
 "use client"
 
 import { useContractContext } from "@/contract-apis/useContractContext"
+import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
 
 export function TotalTributes() {
@@ -16,15 +17,18 @@ export function TotalTributes() {
 
   return (
     <StatCard
-      title="Total Tributes"
+      title={`Live ${pluralize({
+        count: numTributes,
+        singular: "Bid",
+      })}`}
       subTitle={
         <div className="flex items-center justify-center gap-2">
           <span>
-            <strong>{numPointBasedTributes}</strong> point-based
+            <strong>{numTributes - numPointBasedTributes}</strong> token-based
           </span>
           <span className="opacity-50">|</span>
           <span>
-            <strong>{numTributes - numPointBasedTributes}</strong> token-based
+            <strong>{numPointBasedTributes}</strong> point-based
           </span>
         </div>
       }

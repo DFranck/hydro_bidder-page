@@ -149,7 +149,7 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
       )?.prop_id
 
       const usersChosenBid = postHydroBids.find(
-        (bid) => bid.id === usersChosenBidId
+        (bid) => bid.id === String(usersChosenBidId)
       )
 
       const usersChosenBidReward =
@@ -173,7 +173,7 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
             (tribute) => tribute.amount > 0
           )
 
-          const usersVoteForBid = userVotes.get(bid.id)
+          const usersVoteForBid = userVotes.get(Number(bid.id))
 
           const estimatedRewardForUser =
             bid.votingPower === 0 || !usersVotingPower
