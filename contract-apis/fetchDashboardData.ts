@@ -1,3 +1,5 @@
+"use server"
+
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { fetchAssetListWithPrices } from "./fetchAssetListWithPrices"
 import { fetchGlobalState } from "./fetchGlobalState"

@@ -1,17 +1,18 @@
 "use client"
 
-import { useDecoratedProposals } from "@/lib/useDecoratedProposals"
+import { useContractContext } from "@/contract-apis/useContractContext"
 import { StatCard } from "../StatCard"
 
 export function TotalTributes() {
-  const decoratedProposals = useDecoratedProposals({
-    trancheId: 1,
-  })
-
-  const numTributes = decoratedProposals?.length || 0
+  const { bidsByRoundId, currentRoundMetadata: roundMetadata } =
+    useContractContext()
+  const { roundId: currentRoundId } = roundMetadata
 
   const numPointBasedTributes =
-    decoratedProposals?.filter((proposal) => !!proposal.points).length || 0
+    bidsByRoundId[currentRoundId]?.filter((bid) => !!bid.offchainTribute.length)
+      .length || 0
+
+  const numTributes = bidsByRoundId[currentRoundId]?.length || 0
 
   return (
     <StatCard

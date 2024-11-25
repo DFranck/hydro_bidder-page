@@ -1,3 +1,5 @@
+"use server"
+
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { defaultLimit, defaultStartFrom } from "./_globals"
 import { getCosmWasmClient } from "./getCosmWasmClient"

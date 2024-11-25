@@ -1,3 +1,5 @@
+"use server"
+
 import { Validator } from "./fetchMyValidators"
 
 export const fetchAllValidators = async (
