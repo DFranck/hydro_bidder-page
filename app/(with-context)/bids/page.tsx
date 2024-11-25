@@ -1,11 +1,11 @@
 "use client"
 
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
-import { ClickableRowSurface } from "@/components/ClickableRowSurface"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
+import { InvisibleLink } from "@/components/InvisibleLink"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { MaxReachedPopup } from "@/components/MaxReachedPopup"
 import { StatCards } from "@/components/StatCards"
@@ -157,10 +157,7 @@ export default function BidsPage() {
       return {
         _bid: bid,
         logoAndTitle: (
-          <ClickableRowSurface
-            href={bidURL}
-            className="flex items-center gap-6"
-          >
+          <InvisibleLink href={bidURL} className="flex items-center gap-6">
             {bid.projectLogoUrl ? (
               <div className={classNames.bidLogo}>
                 <Image
@@ -185,19 +182,19 @@ export default function BidsPage() {
                       .join(", ")}
               </StyledText>
             </div>
-          </ClickableRowSurface>
+          </InvisibleLink>
         ),
         deploymentDuration: (
-          <ClickableRowSurface href={bidURL}>
+          <InvisibleLink href={bidURL}>
             {bid.deploymentDuration > 0 ? bid.deploymentDuration : "?"}{" "}
             {pluralize({
               count: bid.deploymentDuration,
               singular: "month",
             })}
-          </ClickableRowSurface>
+          </InvisibleLink>
         ),
         yourEstimatedReward: (
-          <ClickableRowSurface href={bidURL}>
+          <InvisibleLink href={bidURL}>
             {isPointBasedBid ? (
               <Tooltip
                 tipContents={pointSystemTooltip({
@@ -230,10 +227,10 @@ export default function BidsPage() {
                 </div>
               </Tooltip>
             )}
-          </ClickableRowSurface>
+          </InvisibleLink>
         ),
         currentVoteShare: (
-          <ClickableRowSurface
+          <InvisibleLink
             href={bidURL}
             className="flex flex-row-reverse items-center gap-1"
           >
@@ -256,17 +253,17 @@ export default function BidsPage() {
             >
               <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
             </ConditionalWrapper>
-          </ClickableRowSurface>
+          </InvisibleLink>
         ),
         actions: (
-          <ClickableRowSurface href={bidURL}>
+          <InvisibleLink href={bidURL}>
             <div className="flex items-center gap-3">
               <VoteButton bidId={bid.id} size="small" />
               <StyledText variant="link" className={classNames.bidDetailsLink}>
                 <span>Bid Details</span> <Icon name="chevron-right" />
               </StyledText>
             </div>
-          </ClickableRowSurface>
+          </InvisibleLink>
         ),
       }
     }) ?? []
