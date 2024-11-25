@@ -23,6 +23,7 @@ import { LockStepper } from "./steppers/LockStepper"
 import { RevertFromHubStepper } from "./steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "./steppers/RevertFromNeutronStepper"
 import { checkForHubLSMShares, checkForNeutronLSMShares } from "./transactions"
+import { longerLockupsComingSoonTooltip } from "@/components/ToolTips"
 
 const commonClassNames = {
   fixedOverlay:
@@ -663,8 +664,13 @@ const LockForm = ({
                             <ConditionalWrapper
                               condition={months > 1}
                               wrapper={(children) => (
-                                <Tooltip tipContents="Longer durations will be available after the pilot rounds">
-                                  {children}
+                                <Tooltip
+                                  tipContents={longerLockupsComingSoonTooltip}
+                                >
+                                  <div className="flex items-center gap-1">
+                                    <span>{children}</span>
+                                    <Icon name="circle-info" />
+                                  </div>
                                 </Tooltip>
                               )}
                             >

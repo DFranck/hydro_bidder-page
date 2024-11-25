@@ -3,6 +3,7 @@
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
+import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -167,7 +168,7 @@ export default function Navigation() {
         <ConditionalWrapper
           condition={!isConnected}
           wrapper={(children) => (
-            <Tooltip tipContents="Connect your wallet to access this feature">
+            <Tooltip tipContents={needsWalletConnectionTooltip}>
               {children}
             </Tooltip>
           )}
@@ -186,7 +187,7 @@ export default function Navigation() {
         <ConditionalWrapper
           condition={!isConnected}
           wrapper={(children) => (
-            <Tooltip tipContents="Connect your wallet to access this feature">
+            <Tooltip tipContents={needsWalletConnectionTooltip}>
               {children}
             </Tooltip>
           )}

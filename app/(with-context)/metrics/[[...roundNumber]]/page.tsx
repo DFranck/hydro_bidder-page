@@ -3,10 +3,13 @@
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ClickableRowSurface } from "@/components/ClickableRowSurface"
 import { ContentContainer } from "@/components/ContentContainer"
+import { Icon } from "@/components/Icon"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { Tooltip } from "@/components/Tooltip"
+import { metricsStatusColumnTooltip } from "@/components/ToolTips"
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
@@ -40,16 +43,16 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
     notFound()
   }
 
-  const proposalsToRender =
+  const bidsToRender =
     (isPreHydro
       ? preHydroBids
       : bidsByRoundId[requestedRoundNumberUnderHood ?? 0]) ?? []
 
-  const rows = proposalsToRender.map((bid) => {
+  const rows = bidsToRender.map((bid) => {
     const rowURL = isPreHydro ? bid.projectUrl : `/bids/${bid.id}`
 
     return {
-      _proposal: bid,
+      _bid: bid,
       logoAndTitle: (
         <ClickableRowSurface href={rowURL} className="flex items-center gap-6">
           <div className="relative size-12 shrink-0 rounded-full border text-[0]">
@@ -145,7 +148,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       label: "Bid Title / Project Name",
       isSortable: true,
       initialSortDirection: "ASC",
-      customValueGetter: (row) => row._proposal.title,
+      customValueGetter: (row) => row._bid.title,
     },
     {
       key: "polValue",
@@ -156,7 +159,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._proposal.initialAllocationAmount,
+      customValueGetter: (row) => row._bid.initialAllocationAmount,
     },
     {
       key: "duration",
@@ -166,7 +169,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       },
       isSortable: true,
       initialSortDirection: "ASC",
-      customValueGetter: (row) => row._proposal.durationDays,
+      customValueGetter: (row) => row._bid.durationDays,
     },
     {
       key: "polRewards",
@@ -178,8 +181,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       isSortable: true,
       initialSortDirection: "DESC",
       customValueGetter: (row) =>
-        row._proposal.currentAllocationAmount -
-        row._proposal.initialAllocationAmount,
+        row._bid.currentAllocationAmount - row._bid.initialAllocationAmount,
     },
     {
       key: "polApr",
@@ -190,7 +192,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._proposal.apr,
+      customValueGetter: (row) => row._bid.apr,
     },
     {
       key: "tribute",
@@ -198,18 +200,28 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       textAlign: "right",
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._proposal.onchainTributeUsdc,
+      customValueGetter: (row) => row._bid.onchainTributeUsdc,
     },
     {
       key: "status",
-      label: "Status",
+      label: (
+        <Tooltip
+          tipContents={metricsStatusColumnTooltip}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Status
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       textAlign: "right",
       propsForCells: {
         className: "text-balance",
       },
       isSortable: true,
       initialSortDirection: "ASC",
-      customValueGetter: (row) => row._proposal.status,
+      customValueGetter: (row) => row._bid.status,
     },
   ]
 
@@ -224,11 +236,11 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
       <ContentContainer className="gap-12 py-12">
         <div className="flex items-center justify-between">
           <StyledText variant="h2">PoL Metrics by Round</StyledText>
+
           <div>
             {[null, ...Object.keys(bidsByRoundId).map(Number)].map(
               (roundNumber) => {
                 const isActive = roundNumber === requestedRoundNumberUnderHood
-
                 return (
                   <StyledText
                     as={Link}
@@ -253,6 +265,7 @@ export default function Page({ params }: { params: { roundNumber?: string } }) {
             )}
           </div>
         </div>
+
         <BlurryBackdropBox>
           <StyledTable
             columns={columns}

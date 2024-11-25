@@ -1,11 +1,13 @@
 "use client"
 
-import { StatCard } from "@/components/StatCards/StatCard"
+import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
+import { yourTotalATOMLockedTooltip } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { formatAmount } from "@/lib/utils"
 import { sumBy } from "lodash"
+import { StatCard } from "../StatCard"
 
 export function YourTotalATOMLocked() {
   const { globalMetadata, isLoading } = useContractContext()
@@ -26,17 +28,12 @@ export function YourTotalATOMLocked() {
         </>
       }
       title={
-        <div className="flex items-center gap-1">
-          Your Locked ATOM{" "}
-          <Tooltip
-            tipContents={
-              <>
-                Your staked ATOM locked in Hydro. The more ATOMs you lock, the
-                higher your voting power will be
-              </>
-            }
-          />
-        </div>
+        <Tooltip tipContents={yourTotalATOMLockedTooltip}>
+          <div className="flex items-center gap-1">
+            Your Locked ATOM
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
       }
       subTitle={
         <>

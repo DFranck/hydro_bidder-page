@@ -1,6 +1,6 @@
 import { ContentContainer } from "@/components/ContentContainer"
-import { telegramLink } from "@/components/Header"
 import { Icon } from "@/components/Icon"
+import { telegramLink } from "@/config"
 import Image from "next/image"
 import Link from "next/link"
 
