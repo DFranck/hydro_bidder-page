@@ -34,7 +34,7 @@ export function VoteButton({
     useContractContext()
   const bid = Object.values(bidsByRoundId)
     .flat()
-    .find((bid) => bid.id === Number(bidId))
+    .find((bid) => bid.id === bidId)
   const hasVotedForAny = currentRoundMetadata.usersVotedBidIds.length > 0
   const hasVotedForBid = currentRoundMetadata.usersVotedBidIds.includes(
     Number(bidId)
