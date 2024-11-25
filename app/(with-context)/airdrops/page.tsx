@@ -1,9 +1,11 @@
 "use client"
 
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
+import { ModalWindow } from "@/components/ModalWindow"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
@@ -11,6 +13,8 @@ import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import Link from "next/link"
+import { ChangeEvent, useEffect, useState } from "react"
+import { useLocalStorage } from "usehooks-ts"
 import { CellContentRenderer } from "./CellContentRenderer"
 import { upcomingAirdrops } from "./upcomingAirdrops"
 
@@ -48,6 +52,22 @@ const loadedUpcomingAirdrops = upcomingAirdrops
   .map((line) => line.split("\t"))
 
 export default function AirdropsPage() {
+  const [dontShowAirdropModal, setDontShowAirdropModal] = useLocalStorage(
+    "dont-show-airdrops-modal",
+    false
+  )
+
+  const [isAirdropDetailsModalOpen, setIsAirdropDetailsModalOpen] =
+    useState(false)
+
+  useEffect(() => {
+    if (dontShowAirdropModal) {
+      return
+    }
+
+    setIsAirdropDetailsModalOpen(true)
+  }, [dontShowAirdropModal])
+
   const rows = loadedUpcomingAirdrops.map((airdropRowData) => {
     const [
       projectName,
@@ -164,20 +184,9 @@ export default function AirdropsPage() {
       </StatCards>
 
       <ContentContainer className="gap-6 py-12">
-        <div className="flex justify-between gap-6">
-          <StyledText as="h2" variant="h2">
-            Upcoming Airdrops for Hydro Users
-          </StyledText>
-
-          <div className="prose prose-invert">
-            Hydro participants are some of the most active & engaged users. They
-            also have the ability to vote on the deployments of liquidity
-            through the ecosystem. Many projects see value in airdropping a
-            portion of their token supply specifically to Hydro lockers. The
-            projects below have publicly shared their intention to do so. The
-            list is updated by the Hydro product team on a regular basis.
-          </div>
-        </div>
+        <StyledText as="h2" variant="h2">
+          Upcoming Airdrops for Hydro Users
+        </StyledText>
 
         <BlurryBackdropBox>
           <StyledTable
@@ -207,6 +216,53 @@ export default function AirdropsPage() {
           .
         </Toasts.Toast>
       </ContentContainer>
+
+      <ModalWindow
+        isOpen={isAirdropDetailsModalOpen}
+        onClose={() => setIsAirdropDetailsModalOpen(false)}
+      >
+        <Card>
+          <Card.Header>About Airdrops for Hydro Users</Card.Header>
+          <Card.Body>
+            <div>
+              Hydro participants are some of the ecosystem&apos;s most active
+              and engaged users, and they have the ability to vote on liquidity
+              deployments throughout it. As a result, many projects see value in
+              airdropping a portion of their token supply specifically to Hydro
+              lockers.
+            </div>
+            <div>
+              These are projects that have publicly shared their intention to
+              airdrop to Hydro users, and is updated regularly by the Hydro
+              team.
+            </div>
+          </Card.Body>
+          <Card.Footer className="justify-between">
+            <StyledText
+              variant="button.primary"
+              as="button"
+              onClick={() => setIsAirdropDetailsModalOpen(false)}
+            >
+              Close
+            </StyledText>
+
+            <label className="flex items-center gap-2">
+              <StyledText
+                as="input"
+                type="checkbox"
+                variant="input.checkbox"
+                checked={dontShowAirdropModal}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setDontShowAirdropModal(event.target.checked)
+                }
+              />
+              <StyledText variant="label">
+                Don&rsquo;t show this again
+              </StyledText>
+            </label>
+          </Card.Footer>
+        </Card>
+      </ModalWindow>
     </>
   )
 }
