@@ -565,6 +565,7 @@ export const localAssets: AssetList = {
   chain_name: "localchain",
   assets: [
     {
+      type_asset: "cw20",
       description:
         "The native staking and governance token of the Theta testnet version of the Cosmos Hub.",
       denom_units: [
@@ -629,7 +630,7 @@ export const pionChain: Chain = {
     },
     cosmwasm_version: "0.52",
     cosmwasm_enabled: true,
-    ibc_go_version: "8.2.1",
+    // ibc_go_version: "8.2.1",
     genesis: {
       genesis_url:
         "https://github.com/cosmos/testnets/raw/master/replicated-security/pion-1/pion-1-genesis.json",
@@ -647,7 +648,7 @@ export const pionChain: Chain = {
         },
         cosmwasm_version: "0.31",
         cosmwasm_enabled: true,
-        ibc_go_version: "4.3.0",
+        // ibc_go_version: "4.3.0",
         // "sdk": {
         //   "type": "cosmos",
         //   "version": "0.45"
@@ -673,7 +674,7 @@ export const pionChain: Chain = {
         },
         cosmwasm_version: "0.31",
         cosmwasm_enabled: true,
-        ibc_go_version: "4.3.1",
+        // ibc_go_version: "4.3.1",
         // "sdk": {
         //   "type": "cosmos",
         //   "version": "0.45"
@@ -699,7 +700,7 @@ export const pionChain: Chain = {
         },
         cosmwasm_version: "0.45",
         cosmwasm_enabled: true,
-        ibc_go_version: "7.3.1",
+        // ibc_go_version: "7.3.1",
         // "sdk": {
         //   "type": "cosmos",
         //   "version": "0.47"
@@ -725,7 +726,7 @@ export const pionChain: Chain = {
         },
         cosmwasm_version: "0.45",
         cosmwasm_enabled: true,
-        ibc_go_version: "7.3.2",
+        // ibc_go_version: "7.3.2",
         // "sdk": {
         //   "type": "cosmos",
         //   "version": "0.47"
@@ -751,7 +752,7 @@ export const pionChain: Chain = {
         },
         cosmwasm_version: "0.51",
         cosmwasm_enabled: true,
-        ibc_go_version: "8.2.1",
+        // ibc_go_version: "8.2.1",
         // "sdk": {
         //   "type": "cosmos",
         //   "version": "0.50"
@@ -777,7 +778,7 @@ export const pionChain: Chain = {
         },
         cosmwasm_version: "0.51",
         cosmwasm_enabled: true,
-        ibc_go_version: "8.2.1",
+        // ibc_go_version: "8.2.1",
         // "sdk": {
         //   "type": "cosmos",
         //   "version": "0.50"

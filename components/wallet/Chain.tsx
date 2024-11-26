@@ -1,6 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
-import { Chains } from "@chain-registry/types"
-import { matchSorter } from "match-sorter"
+import { Chain } from "@chain-registry/types"
 import {
   Avatar,
   Box,
@@ -11,9 +9,11 @@ import {
   ThemeProvider,
   useTheme,
 } from "@interchain-ui/react"
+import { matchSorter } from "match-sorter"
+import { useEffect, useMemo, useState } from "react"
 
 export type ChainSelectProps = {
-  chains: Chains
+  chains: Chain[]
   chainName?: string
   onChange?: (chainName?: string) => void
 }
@@ -31,7 +31,7 @@ export function ChainSelect({
     () =>
       chains.reduce(
         (cache, chain) => ((cache[chain.chain_name] = chain), cache),
-        {} as Record<string, Chains[number]>
+        {} as Record<string, Chain>
       ),
     [chains]
   )
@@ -60,7 +60,7 @@ export function ChainSelect({
 
       if (chain) {
         setValue(chain.chain_name)
-        setInput(chain.pretty_name)
+        setInput(chain.pretty_name ?? "")
       }
     }
   }, [chains, chainName])
@@ -123,7 +123,10 @@ export function ChainSelect({
         >
           {options.map((option) => (
             <Combobox.Item key={option.value} textValue={option.label}>
-              <ChainOption logo={option.logo ?? ""} label={option.label} />
+              <ChainOption
+                logo={option.logo ?? ""}
+                label={option.label ?? ""}
+              />
             </Combobox.Item>
           ))}
         </Combobox>

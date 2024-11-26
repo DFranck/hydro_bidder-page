@@ -16,22 +16,20 @@ export function ClientHandler({
   const [queryClient] = useState(() => new QueryClient())
 
   return (
-    <>
-      <WalletHandler>
-        <QueryClientProvider client={queryClient}>
-          <div
-            className="
-              grid
-              min-h-screen
-              grid-rows-[auto_1fr_auto]
-            "
-          >
-            <Header />
-            <div>{children}</div>
-            <Footer />
-          </div>
-        </QueryClientProvider>
-      </WalletHandler>
-    </>
+    <WalletHandler>
+      <QueryClientProvider client={queryClient}>
+        <div
+          className="
+            grid
+            min-h-screen
+            grid-rows-[auto_1fr_auto]
+          "
+        >
+          <Header />
+          <div>{children}</div>
+          <Footer />
+        </div>
+      </QueryClientProvider>
+    </WalletHandler>
   )
 }
