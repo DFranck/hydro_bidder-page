@@ -1,6 +1,5 @@
 "use client"
 
-import { AirdropDetailsModal } from "@/app/(with-context)/airdrops/AirdropDetailsModal"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -9,8 +8,11 @@ import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
+import Link from "next/link"
 import { useEffect, useState } from "react"
+import { twJoin } from "tailwind-merge"
 import { useLocalStorage } from "usehooks-ts"
 import { CellContentRenderer } from "./CellContentRenderer"
 import { upcomingAirdrops } from "./upcomingAirdrops"
@@ -85,17 +87,23 @@ export default function AirdropsPage() {
           tipContents={confirmationStatus}
           classNamesForTooltip="text-center w-min"
         >
-          {confirmationStatus === "Confirmed" ? (
-            <span className="inline-flex items-center gap-2 text-2xl font-bold text-palette-green">
-              <Icon name="circle-check" />
-              <span className="sr-only">Confirmed</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-2 text-2xl font-bold text-palette-beige">
-              <Icon name="circle-question" />
-              <span className="sr-only">Unconfirmed</span>
-            </span>
-          )}
+          <div
+            className={twJoin(
+              `
+                rounded-full
+                px-2
+                py-0.5
+                text-xs
+                font-bold
+                text-palette-text
+              `,
+              confirmationStatus === "Confirmed"
+                ? "bg-palette-green"
+                : "bg-palette-beige"
+            )}
+          >
+            {confirmationStatus}
+          </div>
         </Tooltip>
       ),
       projectNameAndDescription: (
@@ -174,8 +182,6 @@ export default function AirdropsPage() {
 
   return (
     <>
-      <AirdropDetailsModal />
-
       <StatCards>
         <StatCards.NumberOfUniqueWallets />
         <StatCards.AverageATOMLockedPerWallet />
@@ -183,9 +189,19 @@ export default function AirdropsPage() {
       </StatCards>
 
       <ContentContainer className="gap-6 py-12">
-        <StyledText as="h2" variant="h2">
-          Upcoming Airdrops for Hydro Users
-        </StyledText>
+        <BlurryBackdropBox className="py-6">
+          <div className="mx-auto max-w-[100ch] text-balance">
+            <h2 className="sr-only">Airdrops for Hydro Users</h2>
+            <p className="gap-6 md:columns-2">
+              Hydro participants are some of the most active and engaged users.
+              They also have the ability to vote on the deployments of liquidity
+              through the ecosystem. Many projects see value in airdropping a
+              portion of their token supply specifically to Hydro lockers. The
+              projects below have publicly shared their intention to do so. The
+              list is updated by the Hydro product team on a regular basis.
+            </p>
+          </div>
+        </BlurryBackdropBox>
 
         <BlurryBackdropBox>
           <StyledTable
@@ -194,6 +210,26 @@ export default function AirdropsPage() {
             initialSortedColumnKey="confirmationStatus"
           />
         </BlurryBackdropBox>
+
+        <Toasts.Toast
+          className="mx-auto w-fit"
+          icon="solid:parachute-box"
+          isDismissible={false}
+          variant="info"
+        >
+          Are you a project planning an airdrop? We&apos;re here to help.{" "}
+          <StyledText
+            className="inline-flex items-center gap-1"
+            as={Link}
+            variant="link"
+            href="https://calendly.com/actional/hydro"
+            target="_blank"
+          >
+            <span>Get in touch with us here</span>
+            <Icon name="arrow-up-right-from-square" />
+          </StyledText>
+          .
+        </Toasts.Toast>
       </ContentContainer>
     </>
   )
