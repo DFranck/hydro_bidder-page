@@ -1,5 +1,7 @@
 "use client"
 
+import { Icon } from "@/components/Icon"
+import { Tooltip } from "@/components/Tooltip"
 import { useContractContext } from "@/contract-apis/useContractContext"
 import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
@@ -17,21 +19,33 @@ export function TotalTributes() {
 
   return (
     <StatCard
-      title={`Live ${pluralize({
-        count: numTributes,
-        singular: "Bid",
-      })}`}
-      subTitle={
-        <div className="flex items-center justify-center gap-2">
-          <span>
-            <strong>{numTributes - numPointBasedTributes}</strong> token-based
-          </span>
-          <span className="opacity-50">|</span>
-          <span>
-            <strong>{numPointBasedTributes}</strong> point-based
-          </span>
-        </div>
+      title={
+        <Tooltip
+          tipContents={
+            <div className="flex flex-col items-center justify-center">
+              <div>
+                <strong>{numTributes - numPointBasedTributes}</strong>{" "}
+                token-based
+              </div>
+              <div>
+                <strong>{numPointBasedTributes}</strong> point-based
+              </div>
+            </div>
+          }
+        >
+          <div className="flex items-center gap-1">
+            <span>
+              Live{" "}
+              {pluralize({
+                count: numTributes,
+                singular: "Bid",
+              })}
+            </span>
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
       }
+      subTitle={`Pilot Round ${currentRoundId + 1}`}
       value={numTributes}
     />
   )

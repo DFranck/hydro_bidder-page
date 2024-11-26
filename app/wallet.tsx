@@ -68,7 +68,7 @@ export function WalletHandler({
       assetLists={[...assets, hubAssets, neutronAssets]}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
       walletConnectOptions={{
-        signClient: { projectId: "" },
+        signClient: { projectId: "24cc0bf3e131070ae871552c32ea0cec" },
       }}
       signerOptions={{
         signingStargate: (chain: any) => {

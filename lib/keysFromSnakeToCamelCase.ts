@@ -12,7 +12,7 @@ export type CamelCaseKeys<T> = {
       : T[K]
 }
 
-export function keysFromSnakeToCamelCase<T extends Record<string, unknown>>(
+export function keysFromSnakeToCamelCase<T extends {}>(
   obj: T
 ): CamelCaseKeys<T> {
   return Object.fromEntries(
