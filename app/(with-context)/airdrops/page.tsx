@@ -159,23 +159,25 @@ export default function AirdropsPage() {
       key: "eligibilitySummary",
       label: "Eligibility Summary",
       isSortable: true,
+      textAlign: "center",
       propsForCells: {
-        className: "relative whitespace-nowrap",
+        className: "relative text-balance",
       },
     },
     {
       key: "nextSteps",
       label: "Next Steps",
+      textAlign: "center",
       propsForCells: {
-        className: "relative",
+        className: "relative text-balance",
       },
     },
     {
       key: "action",
       label: "Action",
-      textAlign: "right",
+      textAlign: "center",
       propsForCells: {
-        className: "relative",
+        className: "relative text-balance",
       },
     },
   ]
@@ -192,7 +194,7 @@ export default function AirdropsPage() {
         <BlurryBackdropBox className="py-6">
           <div className="mx-auto max-w-[100ch] text-balance">
             <h2 className="sr-only">Airdrops for Hydro Users</h2>
-            <p className="gap-6 md:columns-2">
+            <p className="prose prose-invert w-auto max-w-none gap-6 md:columns-2">
               Hydro participants are some of the most active and engaged users.
               They also have the ability to vote on the deployments of liquidity
               through the ecosystem. Many projects see value in airdropping a
