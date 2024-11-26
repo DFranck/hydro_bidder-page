@@ -1,23 +1,20 @@
 "use client"
-import "@interchain-ui/react/styles"
-
-import { Chain } from "@chain-registry/types"
-import { Registry } from "@cosmjs/proto-signing"
-import { AminoTypes } from "@cosmjs/stargate"
-import { ChainName } from "@cosmos-kit/core"
-import { wallets as keplr } from "@cosmos-kit/keplr-extension"
-import { ChainProvider } from "@cosmos-kit/react"
-import * as stride from "stridejs"
-
-import { GasPrice } from "@cosmjs/stargate"
-
-import { wallets as cosmostation } from "@cosmos-kit/cosmostation-extension"
-import { wallets as leap } from "@cosmos-kit/leap-extension"
-import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
-import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
 
 import { endpoints, hubChain, neutronChain } from "@/config"
+import { Chain } from "@chain-registry/types"
+import { Registry } from "@cosmjs/proto-signing"
+import { AminoTypes, GasPrice } from "@cosmjs/stargate"
+import { ChainName } from "@cosmos-kit/core"
+import { wallets as cosmostation } from "@cosmos-kit/cosmostation"
+import { wallets as keplr } from "@cosmos-kit/keplr"
+import { wallets as leap } from "@cosmos-kit/leap"
+import { ChainProvider } from "@cosmos-kit/react"
+import "@interchain-ui/react/styles"
+import { assets, chains } from "chain-registry"
+import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
+import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
 import { cosmwasmAminoConverters } from "interchain"
+import * as stride from "stridejs"
 
 function gasPrices(chain: Chain | ChainName) {
   const chainName = typeof chain === "string" ? chain : chain.chain_name
@@ -64,11 +61,15 @@ export function WalletHandler({
         // testnetChain,
         // localnetChain,
         // pionChain,
+        ...chains,
         hubChain,
         neutronChain,
       ]}
-      assetLists={[hubAssets, neutronAssets]}
+      assetLists={[...assets, hubAssets, neutronAssets]}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
+      walletConnectOptions={{
+        signClient: { projectId: "" },
+      }}
       signerOptions={{
         signingStargate: (chain: any) => {
           const chainName = typeof chain === "string" ? chain : chain.chain_name
