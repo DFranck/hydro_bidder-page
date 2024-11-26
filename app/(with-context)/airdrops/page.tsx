@@ -190,7 +190,7 @@ export default function AirdropsPage() {
         <StatCards.AverageRoundsPerUser />
       </StatCards>
 
-      <ContentContainer className="gap-6 py-12">
+      <ContentContainer className="gap-12 py-12">
         <BlurryBackdropBox className="py-6">
           <div className="mx-auto max-w-[100ch] text-balance">
             <h2 className="sr-only">Airdrops for Hydro Users</h2>
@@ -205,16 +205,8 @@ export default function AirdropsPage() {
           </div>
         </BlurryBackdropBox>
 
-        <BlurryBackdropBox>
-          <StyledTable
-            columns={columns}
-            rows={rows}
-            initialSortedColumnKey="confirmationStatus"
-          />
-        </BlurryBackdropBox>
-
         <Toasts.Toast
-          className="mx-auto w-fit"
+          className="mx-auto my-0 w-fit"
           icon="solid:parachute-box"
           isDismissible={false}
           variant="info"
@@ -232,6 +224,14 @@ export default function AirdropsPage() {
           </StyledText>
           .
         </Toasts.Toast>
+
+        <BlurryBackdropBox>
+          <StyledTable
+            columns={columns}
+            rows={rows}
+            initialSortedColumnKey="confirmationStatus"
+          />
+        </BlurryBackdropBox>
       </ContentContainer>
     </>
   )
