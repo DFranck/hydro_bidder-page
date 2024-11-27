@@ -11,9 +11,7 @@ import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import Link from "next/link"
-import { useEffect, useState } from "react"
 import { twJoin } from "tailwind-merge"
-import { useLocalStorage } from "usehooks-ts"
 import { CellContentRenderer } from "./CellContentRenderer"
 import { upcomingAirdrops } from "./upcomingAirdrops"
 
@@ -51,22 +49,6 @@ const loadedUpcomingAirdrops = upcomingAirdrops
   .map((line) => line.split("\t"))
 
 export default function AirdropsPage() {
-  const [dontShowAirdropModal, setDontShowAirdropModal] = useLocalStorage(
-    "dont-show-airdrops-modal",
-    false
-  )
-
-  const [isAirdropDetailsModalOpen, setIsAirdropDetailsModalOpen] =
-    useState(false)
-
-  useEffect(() => {
-    if (dontShowAirdropModal) {
-      return
-    }
-
-    setIsAirdropDetailsModalOpen(true)
-  }, [dontShowAirdropModal])
-
   const rows = loadedUpcomingAirdrops.map((airdropRowData) => {
     const [
       projectName,
