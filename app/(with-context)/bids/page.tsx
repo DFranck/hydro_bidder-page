@@ -23,19 +23,18 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import {
   AugmentedBid,
   useContractContext,
 } from "@/contract-apis/useContractContext"
-import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
-import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { useChain } from "@cosmos-kit/react"
 import { startCase } from "lodash"
 import Image from "next/image"
 import { Fragment, ReactNode, useCallback } from "react"
-import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
+import { PointBasedReward } from "./PointBasedReward"
+import { TokenBasedReward } from "./TokenBasedReward"
 
 type Row = {
   _bid: AugmentedBid
@@ -49,105 +48,19 @@ type Row = {
 const tokenBasedTributesLabel = "Token-Based Tributes"
 const pointBasedTributesLabel = "Points-Based Tributes"
 
-const RewardDelta = ({
-  deltaPercentage,
-}: {
-  deltaPercentage: number | null
-}) => {
-  if (deltaPercentage === null || deltaPercentage === 0) return null
-
-  const isPositive = deltaPercentage > 0
-  return (
-    <span
-      className={twMerge(
-        "flex items-center gap-1 text-xs",
-        isPositive ? "text-palette-green" : "text-palette-red"
-      )}
-    >
-      <Icon name={isPositive ? "solid:arrow-up" : "solid:arrow-down"} />
-      {Math.round(deltaPercentage * 100)}%
-    </span>
-  )
-}
-
-const TokenBasedReward = ({
-  bid,
-  isWalletConnected,
-}: {
-  bid: AugmentedBid
-  isWalletConnected: boolean
-}) => {
-  if (!isWalletConnected) {
-    return amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)
-  }
-
-  if (!bid.estimatedRewardForUser) {
-    return amountToUSDString(bid.onchainTributeUsdc)
-  }
-
-  return (
-    <>
-      <div className="flex items-center justify-end gap-1">
-        <Icon name="circle-info" />
-        <RewardDelta deltaPercentage={bid.estimatedRewardDeltaAsPercentage} />
-        {amountToUSDString(bid.estimatedRewardForUser)}
-      </div>
-      <StyledText variant="footnote" as="div" className="whitespace-nowrap">
-        of {amountToUSDString(bid.onchainTributeUsdc)}
-      </StyledText>
-    </>
-  )
-}
-
-const PointBasedReward = ({
-  bid,
-  hasVotedBids,
-}: {
-  bid: AugmentedBid
-  hasVotedBids: boolean
-}) => {
-  if (hasVotedBids) {
-    return (
-      <div className="flex flex-col">
-        <div className="flex items-center gap-1">
-          <Icon name="circle-info" />
-          <span>
-            {amountToUSDString(Math.round(bid.estimatedRewardForUser ?? 0), 0)}
-          </span>
-        </div>
-        <StyledText variant="footnote">
-          of {amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)}
-        </StyledText>
-      </div>
-    )
-  }
-
-  return (
-    <>
-      {bid.offchainTribute.map((tribute) => (
-        <div key={tribute.type} className="flex items-center gap-1">
-          <Icon name="solid:gem" />
-          <span>
-            {simplifyBigNumbers(tribute.amount, 2)}&nbsp;
-            {tribute.type}
-          </span>
-        </div>
-      ))}
-    </>
-  )
-}
-
 export default function BidsPage() {
-  const { bidsByRoundId, currentRoundMetadata, globalMetadata, isLoading } =
+  const { currentRoundMetadata, globalMetadata, isLoading } =
     useContractContext()
 
-  const { isWalletConnected } = useChain("neutron")
+  const newBackendData = useBackendData()
+
+  const { bidsByRoundId, isWalletConnected } = newBackendData
 
   const showWelcomeModal =
     globalMetadata.totalLockedTokens < globalMetadata.maxLockedTokens &&
     !currentRoundMetadata.usersVotingPower
 
-  const bidsToRender = bidsByRoundId[currentRoundMetadata.roundId]
+  const bidsToRender = bidsByRoundId.get(currentRoundMetadata.roundId) ?? []
 
   const rows =
     bidsToRender?.map((bid) => {
