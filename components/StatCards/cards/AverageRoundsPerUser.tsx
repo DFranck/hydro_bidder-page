@@ -1,10 +1,15 @@
 "use client"
 
 import { Tooltip } from "@/components/Tooltip"
-import { StatCard } from "../StatCard"
 import { averageRoundsPerUserTooltip } from "@/components/ToolTips"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { StatCard } from "../StatCard"
 
 export function AverageRoundsPerUser() {
+  const { globalMetadata } = useBackendData()
+  const { metrics } = globalMetadata
+  const { allTimeUsersAvgActiveRounds } = metrics
+
   return (
     <StatCard
       title={
@@ -14,7 +19,7 @@ export function AverageRoundsPerUser() {
         </div>
       }
       subTitle="All Time"
-      value="–"
+      value={Math.round(allTimeUsersAvgActiveRounds)}
     />
   )
 }

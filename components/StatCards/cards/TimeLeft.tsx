@@ -32,10 +32,10 @@ const getRoundEndTextFromEndDate = (endDate: Date) => {
     unit = "hour"
   } else if (Math.abs(minutes) >= 1) {
     duration = minutes
-    unit = "minute"
+    unit = "min"
   } else {
     duration = seconds
-    unit = "second"
+    unit = "sec"
   }
 
   return pluralize({
