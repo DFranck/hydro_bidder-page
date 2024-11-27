@@ -25,9 +25,9 @@ export interface BidWithTributes extends CamelCaseKeys<BidFromContract> {
   tributes: Tribute[]
 }
 
-export interface GlobalBackendData {
+export interface BackendData {
   bidsByRoundId: Map<number, BidWithTributes[]>
-  bidDescriptionsById: Record<string, BidDescription>
+  bidDescriptionsByBidId: Record<string, BidDescription>
   preHydroBids: SanitizedBidFromNumia[]
   currentRoundMetadata: {
     roundEnd: Date
@@ -41,7 +41,7 @@ export interface GlobalBackendData {
   }
 }
 
-export async function fetchGlobalBackendData(): Promise<GlobalBackendData> {
+export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -60,7 +60,7 @@ export async function fetchGlobalBackendData(): Promise<GlobalBackendData> {
     { total_locked_tokens: totalLockedTokens },
     assetListWithPrices,
     { preHydroBids },
-    bidDescriptionsById,
+    bidDescriptionsByBidId,
   ] = await Promise.all([
     hydroQueryClient.constants(),
     hydroQueryClient.currentRound(),
@@ -73,6 +73,7 @@ export async function fetchGlobalBackendData(): Promise<GlobalBackendData> {
 
   const bidsByRoundId = new Map<number, BidWithTributes[]>()
 
+  // With currentRoundId, we can fetch all bids for all rounds
   await Promise.all(
     Array.from({ length: currentRoundId + 1 }, (_, roundId) =>
       Promise.all(
@@ -84,13 +85,14 @@ export async function fetchGlobalBackendData(): Promise<GlobalBackendData> {
             trancheId: tranche.id,
           })
 
-          const tributesResults = await Promise.all(
-            bids.map((bid) =>
-              fetchProposalTributes(roundId, tranche.id, bid.proposal_id)
+          // Fetch tributes for all bids
+          const tributes = (
+            await Promise.all(
+              bids.map((bid) =>
+                fetchProposalTributes(roundId, tranche.id, bid.proposal_id)
+              )
             )
-          )
-
-          const tributes = tributesResults.flat()
+          ).flat()
 
           const camelCasedBids = bids.map((bid) => ({
             ...keysFromSnakeToCamelCase(bid),
@@ -113,7 +115,7 @@ export async function fetchGlobalBackendData(): Promise<GlobalBackendData> {
     )?.priceUsd ?? 0
 
   return {
-    bidDescriptionsById,
+    bidDescriptionsByBidId,
     bidsByRoundId,
     preHydroBids,
     currentRoundMetadata: {
