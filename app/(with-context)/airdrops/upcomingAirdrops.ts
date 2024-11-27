@@ -1,4 +1,4 @@
 export const upcomingAirdrops = `Elys	Elys Network makes crypto simple with universal access to tokens from all ecosystems. Whether you’re a novice or an experienced user, you can easily navigate the DeFi space through a complete set of features, all in one place.	Confirmed	Locked ATOM in Round 1	Check eligibility	Text	Waiting for link		FALSE
 Side Protocol	Side Protocol is a fully Bitcoin-compatible Layer 1 blockchain	Confirmed	 Locked > 15 ATOM in Round 1	Register for the airdrop	Button	Register Now	https://genesis.side.one/	FALSE
 Dungeon Chain	Dungeon Chain (DGN) revolutionizes gaming with fast, low-cost blockchain tech secured by Cosmos Hub validators; first game, Kosmic Quest, launches Q1 2025.	Confirmed	Locked ATOM in Round 1	No action required	Text	Dropped to your wallet		FALSE
-Drop	Drop, a liquid staking protocol backed by Lido, turns idle assets into economic flows to empower sovereign blockchains.	Confirmed	TBD	TBD	Text	TBD		FALSE`
+Drop	Drop, a liquid staking protocol backed by Lido, turns idle assets into economic flows to empower sovereign blockchains.	Confirmed	Details Pending	Details Pending	Text	Waiting for link		FALSE`
