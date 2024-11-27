@@ -15,7 +15,7 @@ export function BlurryBackdropBox({
           -mx-3
           overflow-hidden
           rounded-md
-          bg-palette-text/60
+          bg-palette-text/80
           px-3
           py-2
           backdrop-blur-md
