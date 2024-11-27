@@ -12,8 +12,7 @@ Initia	Initia is a network for interwoven rollups. Binding a highly interwoven s
 Backbone	A multi-chain NFTfi Hub for the Cosmos, with DeFi products managed by NFT communities.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Prysm	ICS Hub providing foundational infrastructure, enhanced connectivity, security, and scalability.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Arkeo	Decentralized and indexed blockchain data for any chain.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
-AdamantFi	"Privacy-preserving liquidity protocol powered by Secret Network
- and $ADMT"	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
+AdamantFi	Privacy-preserving liquidity protocol powered by Secret Network and ADMT.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Nomic	A Proof-of-Stake network running alongside Bitcoin to securely bring native BTC to other networks.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Flip	Flip offers a dedicated DeFi playground tailored specifically for Degens, promising to revolutionize the trading experience.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Toki	TOKI is a cross-chain bridge that employs multi-prover security, leveraging TEEs and ZKP for IBC.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
