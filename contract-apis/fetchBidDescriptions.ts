@@ -1,4 +1,5 @@
-"use cache"
+"use server"
+
 export interface BidDescription {
   title: string
   aboutProject?: string

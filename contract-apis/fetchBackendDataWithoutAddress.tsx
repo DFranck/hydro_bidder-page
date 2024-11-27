@@ -1,9 +1,12 @@
-"use cache"
+"use server"
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import { Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
+import { Coin, Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { fetchAssetListWithPrices } from "@/contract-apis/fetchAssetListWithPrices"
+import {
+  AssetListEntry,
+  fetchAssetListWithPrices,
+} from "@/contract-apis/fetchAssetListWithPrices"
 import {
   BidDescription,
   fetchBidDescriptionsById,
@@ -25,12 +28,13 @@ import {
 
 export interface BidFromContract extends Proposal {}
 
-export interface BidWithTributes extends CamelCaseKeys<BidFromContract> {
-  tributes: Tribute[]
+export interface AugmentedBidFromContract
+  extends CamelCaseKeys<BidFromContract> {
+  tributes: TributeWithUSDValue[]
 }
 
 export interface BackendData {
-  bidsByRoundId: Map<number, BidWithTributes[]>
+  bidsByRoundId: Map<number, AugmentedBidFromContract[]>
   bidDescriptionsByBidId: Record<string, BidDescription>
   preHydroBids: SanitizedBidFromNumia[]
   currentRoundMetadata: {
@@ -39,10 +43,17 @@ export interface BackendData {
     tranches: Tranche[]
   }
   globalMetadata: {
+    assetListWithPrices: Map<string, AssetListEntry>
     atomPrice: number
     totalLockedTokens: number
     maxLockedTokens: number
     metrics: SanitizedMetricsFromNumia[]
+  }
+}
+
+export interface TributeWithUSDValue extends CamelCaseKeys<Tribute> {
+  funds: CamelCaseKeys<Coin> & {
+    valueInUSD: number
   }
 }
 
@@ -78,7 +89,12 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
     fetchNumiaMetricsData(),
   ])
 
-  const bidsByRoundId = new Map<number, BidWithTributes[]>()
+  const atomPrice =
+    assetListWithPrices.get(
+      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+    )?.priceUsd ?? 0
+
+  const bidsByRoundId = new Map<number, AugmentedBidFromContract[]>()
 
   // With currentRoundId, we can fetch all bids for all rounds
   await Promise.all(
@@ -99,27 +115,45 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
                 fetchProposalTributes(roundId, tranche.id, bid.proposal_id)
               )
             )
-          ).flat()
+          )
+            .flat()
+            .map(keysFromSnakeToCamelCase)
+            .map((tribute) => {
+              const assetPrice =
+                assetListWithPrices.get(tribute.funds.denom)?.priceUsd ?? 0
 
-          const camelCasedBids = bids.map((bid) => ({
-            ...keysFromSnakeToCamelCase(bid),
-            tributes,
-          }))
+              return {
+                ...tribute,
+                funds: {
+                  ...tribute.funds,
+                  valueInUSD: Number(tribute.funds.amount) * assetPrice,
+                },
+              }
+            })
+
+          const sanitizedBidsWithTributes = bids
+            .map(keysFromSnakeToCamelCase)
+            .map((bid) => ({
+              ...bid,
+              description:
+                bidDescriptionsByBidId[bid.proposalId]?.description ??
+                bid.description,
+              title: bidDescriptionsByBidId[bid.proposalId]?.title ?? bid.title,
+              tributes: tributes.filter(
+                (tribute) =>
+                  Number(tribute.proposalId) === Number(bid.proposalId)
+              ),
+            }))
 
           if (!bidsByRoundId.has(roundId)) {
             bidsByRoundId.set(roundId, [])
           }
 
-          bidsByRoundId.get(roundId)?.push(...camelCasedBids)
+          bidsByRoundId.get(roundId)?.push(...sanitizedBidsWithTributes)
         })
       )
     )
   )
-
-  const atomPrice =
-    assetListWithPrices.get(
-      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-    )?.priceUsd ?? 0
 
   return {
     bidDescriptionsByBidId,
@@ -131,6 +165,7 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
       tranches,
     },
     globalMetadata: {
+      assetListWithPrices,
       atomPrice,
       maxLockedTokens: constants.max_locked_tokens,
       totalLockedTokens,

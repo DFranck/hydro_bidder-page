@@ -1,16 +1,44 @@
+"use server"
+
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
+import {
+  LockEntryWithPower,
+  VoteWithPower,
+} from "@/app/ts_types/HydroBase.types"
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
-import { BackendData } from "@/contract-apis/fetchBackendDataWithoutAddress"
+import {
+  AugmentedBidFromContract,
+  BackendData,
+} from "@/contract-apis/fetchBackendDataWithoutAddress"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { sumBy } from "lodash"
 
+export interface BackendDataWithAddress
+  extends Omit<BackendData, "bidsByRoundId"> {
+  address: string
+  isLoading: boolean
+  isWalletConnected: boolean
+  currentRoundMetadata: BackendData["currentRoundMetadata"] & {
+    votes: VoteWithPower[][]
+    votingPower: number
+  }
+  lockups: {
+    count: number
+    lockups: LockEntryWithPower[]
+    totalAtomLocked: number
+  }
+  bidsByRoundId: Map<number, FullyAugmentedBid[]>
+}
+
+export interface FullyAugmentedBid extends AugmentedBidFromContract {}
+
 export async function fetchBackendDataWithAddress({
   address,
-  globalBackendData,
+  backendData,
 }: {
   address: string
-  globalBackendData: BackendData
-}) {
+  backendData: BackendData
+}): Promise<BackendDataWithAddress> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -31,9 +59,17 @@ export async function fetchBackendDataWithAddress({
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
-  const { bidsByRoundId, currentRoundMetadata } = globalBackendData
+  const {
+    bidDescriptionsByBidId,
+    bidsByRoundId,
+    currentRoundMetadata,
+    globalMetadata,
+  } = backendData
 
   const { roundId, tranches } = currentRoundMetadata
+
+  const { assetListWithPrices, atomPrice, maxLockedTokens, totalLockedTokens } =
+    globalMetadata
 
   const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
     hydroQueryClient.userVotingPower({ address }),
@@ -55,9 +91,22 @@ export async function fetchBackendDataWithAddress({
     })
   )
 
+  const augmentedBidsByRoundId = Object.fromEntries(
+    Object.entries(bidsByRoundId).map(([roundId, bids]) => [
+      roundId,
+      bids.map((bid: AugmentedBidFromContract) => ({
+        ...bid,
+        description: bidDescriptionsByBidId[bid.proposalId],
+      })),
+    ])
+  ) as Map<number, AugmentedBidFromContract[]>
+
   return {
-    ...globalBackendData,
-    bidsByRoundId,
+    ...backendData,
+    address,
+    bidsByRoundId: augmentedBidsByRoundId,
+    isLoading: false,
+    isWalletConnected: true,
     currentRoundMetadata: {
       ...currentRoundMetadata,
       votes,

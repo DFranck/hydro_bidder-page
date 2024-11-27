@@ -3,7 +3,7 @@
 import { getPriceFeedUrl } from "@/config"
 import { cacheRevalidationInterval } from "./_globals"
 
-type AssetListEntry = {
+export interface AssetListEntry {
   token: string
   symbol: string
   decimals: number
