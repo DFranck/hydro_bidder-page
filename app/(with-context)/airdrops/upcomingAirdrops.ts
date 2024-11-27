@@ -2,7 +2,6 @@ export const upcomingAirdrops = `Elys	Elys Network makes crypto simple with univ
 Side Protocol	Side Protocol is a fully Bitcoin-compatible Layer 1 blockchain	Confirmed	 Locked > 15 ATOM in Round 1	Register for the airdrop	Button	Register Now	https://genesis.side.one/	FALSE
 Dungeon Chain	Dungeon Chain (DGN) revolutionizes gaming with fast, low-cost blockchain tech secured by Cosmos Hub validators; first game, Kosmic Quest, launches Q1 2025.	Confirmed	Locked ATOM in Round 1	No action required	Text	Dropped to your wallet		FALSE
 Drop	Drop, a liquid staking protocol backed by Lido, turns idle assets into economic flows to empower sovereign blockchains.	Confirmed	Details Pending	Details Pending	Text	Details Pending		FALSE
-								
 Namada	Asset-agnostic privacy Layer 1 blockchain enabling shielded transfers with zero-knowledge proofs.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Soarchain	A DePIN project that incorporates AI and modularity, focusing on the mobility ecosystem.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Electron	The first DeFi Protocol designed to integrate RWAs on Neutron.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
@@ -12,7 +11,7 @@ Initia	Initia is a network for interwoven rollups. Binding a highly interwoven s
 Backbone	A multi-chain NFTfi Hub for the Cosmos, with DeFi products managed by NFT communities.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Prysm	ICS Hub providing foundational infrastructure, enhanced connectivity, security, and scalability.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Arkeo	Decentralized and indexed blockchain data for any chain.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
-AdamantFi	Privacy-preserving liquidity protocol powered by Secret Network and ADMT.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
+AdamantFi	Privacy-preserving liquidity protocol powered by Secret Network and ADMT	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Nomic	A Proof-of-Stake network running alongside Bitcoin to securely bring native BTC to other networks.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Flip	Flip offers a dedicated DeFi playground tailored specifically for Degens, promising to revolutionize the trading experience.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
 Toki	TOKI is a cross-chain bridge that employs multi-prover security, leveraging TEEs and ZKP for IBC.	Rumored	Details Pending	Details Pending	Text	Details Pending		FALSE
