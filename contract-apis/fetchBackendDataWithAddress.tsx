@@ -1,15 +1,15 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
-import { GlobalBackendData } from "@/contract-apis/fetchGlobalBackendData"
+import { BackendData } from "@/contract-apis/fetchBackendDataWithoutAddress"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { sumBy } from "lodash"
 
-export async function fetchAndMergeUserBackendData({
+export async function fetchBackendDataWithAddress({
   address,
   globalBackendData,
 }: {
   address: string
-  globalBackendData: GlobalBackendData
+  globalBackendData: BackendData
 }) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
