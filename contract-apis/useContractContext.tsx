@@ -10,9 +10,9 @@ import { fetchGlobalState } from "@/contract-apis/fetchGlobalState"
 import { fetchMyAllLockups } from "@/contract-apis/fetchMyAllLockups"
 import { fetchMyVotes } from "@/contract-apis/fetchMyVotes"
 import {
-  fetchNumiaData,
+  fetchNumiaBidData,
   SanitizedBidFromNumia,
-} from "@/contract-apis/fetchNumiaData"
+} from "@/contract-apis/fetchNumiaBidData"
 import { fetchProposals } from "@/contract-apis/fetchProposals"
 import { fetchRoundState } from "@/contract-apis/fetchRoundState"
 import { fetchUserVotingData } from "@/contract-apis/fetchUserVotingData"
@@ -109,7 +109,7 @@ export function ContractContextProvider({ children }: { children: ReactNode }) {
         fetchAssetListWithPrices(),
         fetchGlobalState(),
         address ? fetchMyAllLockups(address) : Promise.resolve([]),
-        fetchNumiaData(),
+        fetchNumiaBidData(),
         fetchUserVotingData(address),
       ])
 

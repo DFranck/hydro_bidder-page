@@ -9,9 +9,13 @@ import {
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
 import {
-  fetchNumiaData,
+  fetchNumiaBidData,
   SanitizedBidFromNumia,
-} from "@/contract-apis/fetchNumiaData"
+} from "@/contract-apis/fetchNumiaBidData"
+import {
+  fetchNumiaMetricsData,
+  SanitizedMetricsFromNumia,
+} from "@/contract-apis/fetchNumiaMetricsData"
 import { fetchProposalTributes } from "@/contract-apis/fetchProposalTributes"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import {
@@ -38,6 +42,7 @@ export interface BackendData {
     atomPrice: number
     totalLockedTokens: number
     maxLockedTokens: number
+    metrics: SanitizedMetricsFromNumia[]
   }
 }
 
@@ -61,14 +66,16 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
     assetListWithPrices,
     { preHydroBids },
     bidDescriptionsByBidId,
+    metrics,
   ] = await Promise.all([
     hydroQueryClient.constants(),
     hydroQueryClient.currentRound(),
     hydroQueryClient.tranches(),
     hydroQueryClient.totalLockedTokens(),
     fetchAssetListWithPrices(),
-    fetchNumiaData(),
+    fetchNumiaBidData(),
     fetchBidDescriptionsById(),
+    fetchNumiaMetricsData(),
   ])
 
   const bidsByRoundId = new Map<number, BidWithTributes[]>()
@@ -127,6 +134,7 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
       atomPrice,
       maxLockedTokens: constants.max_locked_tokens,
       totalLockedTokens,
+      metrics,
     },
   }
 }

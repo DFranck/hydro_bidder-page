@@ -59,7 +59,7 @@ function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
   })
 }
 
-export async function fetchNumiaData(): Promise<{
+export async function fetchNumiaBidData(): Promise<{
   postHydroBids: SanitizedBidFromNumia[]
   preHydroBids: SanitizedBidFromNumia[]
 }> {
