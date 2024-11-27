@@ -1,11 +1,10 @@
 "use client"
 
 import { StyledTextVariant } from "@/components/StyledText"
+import { useToasts } from "@/components/Toasts"
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
-import { toast } from "@interchain-ui/react"
 import { MouseEventHandler, useEffect } from "react"
-import { useToasts } from "../Toasts/useToasts"
 import {
   WButtonConnect,
   WButtonConnected,
@@ -60,7 +59,7 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
     } else {
       notifyConnectedCB?.(status === WalletStatus.Connected)
     }
-  }, [message, status, toast, notifyConnectedCB])
+  }, [message, status, notifyConnectedCB])
 
   const ConnectButton = {
     [WalletStatus.Connected]: (
