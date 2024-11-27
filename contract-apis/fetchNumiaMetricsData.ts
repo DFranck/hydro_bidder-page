@@ -25,14 +25,12 @@ export interface MetricsFromNumia {
 export interface SanitizedMetricsFromNumia
   extends CamelCaseKeys<MetricsFromNumia> {}
 
-export async function fetchNumiaMetricsData(): Promise<
-  SanitizedMetricsFromNumia[]
-> {
+export async function fetchNumiaMetricsData(): Promise<SanitizedMetricsFromNumia> {
   const response = await fetch(
     "https://www.datalenses.zone/numia/cosmos/lensesV2/hydro/metrics"
   )
 
   const metrics = (await response.json()) as MetricsFromNumia[]
 
-  return metrics.map(keysFromSnakeToCamelCase)
+  return metrics.map(keysFromSnakeToCamelCase)[0]
 }

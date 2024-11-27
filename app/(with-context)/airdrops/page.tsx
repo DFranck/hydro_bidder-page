@@ -121,7 +121,7 @@ export default function AirdropsPage() {
       key: "confirmationStatus",
       label: "Status",
       isSortable: true,
-      initialSortDirection: "DESC",
+      initialSortDirection: "ASC",
       textAlign: "center",
       propsForCells: {
         className: "relative",

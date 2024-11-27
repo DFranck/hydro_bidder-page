@@ -3,10 +3,7 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Coin, Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import {
-  AssetListEntry,
-  fetchAssetListWithPrices,
-} from "@/contract-apis/fetchAssetListWithPrices"
+import { fetchAssetListWithPrices } from "@/contract-apis/fetchAssetListWithPrices"
 import {
   BidDescription,
   fetchBidDescriptionsById,
@@ -29,8 +26,9 @@ import {
 export interface BidFromContract extends Proposal {}
 
 export interface AugmentedBidFromContract
-  extends CamelCaseKeys<BidFromContract> {
-  tributes: TributeWithUSDValue[]
+  extends Omit<CamelCaseKeys<BidFromContract>, "proposalId"> {
+  id: string
+  tributes: AugmentedTribute[]
 }
 
 export interface BackendData {
@@ -43,18 +41,18 @@ export interface BackendData {
     tranches: Tranche[]
   }
   globalMetadata: {
-    assetListWithPrices: Map<string, AssetListEntry>
     atomPrice: number
     totalLockedTokens: number
     maxLockedTokens: number
-    metrics: SanitizedMetricsFromNumia[]
+    metrics: SanitizedMetricsFromNumia
   }
 }
 
-export interface TributeWithUSDValue extends CamelCaseKeys<Tribute> {
-  funds: CamelCaseKeys<Coin> & {
-    valueInUSD: number
-  }
+export interface AugmentedTribute
+  extends Omit<CamelCaseKeys<Tribute>, "funds">,
+    CamelCaseKeys<Coin> {
+  valueInUSD: number
+  isTokenBased: boolean
 }
 
 export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
@@ -135,14 +133,25 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
             .map(keysFromSnakeToCamelCase)
             .map((bid) => ({
               ...bid,
+              id: String(bid.proposalId),
               description:
                 bidDescriptionsByBidId[bid.proposalId]?.description ??
                 bid.description,
               title: bidDescriptionsByBidId[bid.proposalId]?.title ?? bid.title,
-              tributes: tributes.filter(
-                (tribute) =>
-                  Number(tribute.proposalId) === Number(bid.proposalId)
-              ),
+              tributes: tributes
+                .filter(
+                  (tribute) =>
+                    Number(tribute.proposalId) === Number(bid.proposalId)
+                )
+                .map((tribute) => {
+                  const isTokenBased =
+                    !bidDescriptionsByBidId[bid.proposalId]?.points?.[0]
+
+                  return {
+                    ...tribute,
+                    isTokenBased,
+                  }
+                }),
             }))
 
           if (!bidsByRoundId.has(roundId)) {
@@ -165,7 +174,6 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
       tranches,
     },
     globalMetadata: {
-      assetListWithPrices,
       atomPrice,
       maxLockedTokens: constants.max_locked_tokens,
       totalLockedTokens,

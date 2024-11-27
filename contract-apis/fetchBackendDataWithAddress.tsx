@@ -16,18 +16,23 @@ import { sumBy } from "lodash"
 export interface BackendDataWithAddress
   extends Omit<BackendData, "bidsByRoundId"> {
   address: string
+  bidsByRoundId: Map<number, FullyAugmentedBid[]>
   isLoading: boolean
   isWalletConnected: boolean
   currentRoundMetadata: BackendData["currentRoundMetadata"] & {
     votes: VoteWithPower[][]
     votingPower: number
   }
+  globalMetadata: BackendData["globalMetadata"] & {
+    atomPrice: number
+    totalLockedTokens: number
+    maxLockedTokens: number
+  }
   lockups: {
     count: number
     lockups: LockEntryWithPower[]
     totalAtomLocked: number
   }
-  bidsByRoundId: Map<number, FullyAugmentedBid[]>
 }
 
 export interface FullyAugmentedBid extends AugmentedBidFromContract {}
@@ -68,8 +73,7 @@ export async function fetchBackendDataWithAddress({
 
   const { roundId, tranches } = currentRoundMetadata
 
-  const { assetListWithPrices, atomPrice, maxLockedTokens, totalLockedTokens } =
-    globalMetadata
+  const { atomPrice, maxLockedTokens, totalLockedTokens } = globalMetadata
 
   const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
     hydroQueryClient.userVotingPower({ address }),

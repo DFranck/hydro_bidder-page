@@ -1,22 +1,17 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/utils"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 
 export function TotalATOMLocked() {
-  const {
-    globalState: {
-      constants: { max_locked_tokens },
-      totalLockedTokens,
-    },
-  } = useAppContext()
-  const [totalLockedATOM, maxLockedATOM] = [
-    totalLockedTokens ?? 0,
-    max_locked_tokens ?? 0,
-  ]
-  const percentageLocked = Math.round((totalLockedATOM / maxLockedATOM) * 100)
+  const { globalMetadata } = useBackendData()
+  const { totalLockedTokens, maxLockedTokens, metrics } = globalMetadata
+  const { currentRoundTotalAtomLocked } = metrics
+  const percentageLocked = Math.round(
+    (currentRoundTotalAtomLocked / maxLockedTokens) * 100
+  )
 
   return (
     <StatCard
@@ -29,14 +24,14 @@ export function TotalATOMLocked() {
           `
       )}
       isLoading={typeof totalLockedTokens !== "number"}
-      value={((totalLockedATOM ?? 0) / 1e6).toLocaleString(undefined, {
+      value={((totalLockedTokens ?? 0) / 1e6).toLocaleString(undefined, {
         maximumFractionDigits: 0,
       })}
       title={<div className="flex items-center gap-1">Total ATOM in Hydro</div>}
       subTitle={
         <>
           <strong>{percentageLocked}%</strong> of{" "}
-          <strong>{formatAmount(maxLockedATOM)}</strong> max.
+          <strong>{formatAmount(maxLockedTokens)}</strong> max.
         </>
       }
     />

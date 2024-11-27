@@ -41,11 +41,25 @@ const initialBackendDataContext: BackendDataWithAddress = {
     totalAtomLocked: 0,
   },
   globalMetadata: {
-    assetListWithPrices: new Map(),
     atomPrice: 0,
     totalLockedTokens: 0,
     maxLockedTokens: 0,
-    metrics: [],
+    metrics: {
+      currentRoundPolAvailable: 0,
+      currentRoundPolDeployed: 0,
+      currentRoundUniqueWallets: 0,
+      currentRoundTotalAtomLocked: 0,
+      currentRoundUsersAvgTokenLocked: 0,
+      currentRoundUsersApr: [],
+      allTimeUniqueWallets: 0,
+      allTimeTotalAtomLocked: 0,
+      allTimeTotalActiveRounds: 0,
+      allTimeUsersAvgActiveRounds: 0,
+      allTimeUsersAvgTokenLocked: 0,
+      allTimeUsersRewards: 0,
+      allTimeUsersApr: [],
+      allTimeApr: [],
+    },
   },
 }
 
