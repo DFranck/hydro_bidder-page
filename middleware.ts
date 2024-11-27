@@ -2,14 +2,26 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 export function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/UserVotingData")) {
+  // redirecting /voting -> /bids
+  if (request.nextUrl.pathname.startsWith("/voting")) {
     return NextResponse.redirect(
       new URL(request.nextUrl.pathname.replace("/voting", "/bids"), request.url)
     )
   }
 
+  if (process.env.NODE_ENV === "development") {
+    return NextResponse.next()
+  }
+
   // TODO: remove this hardcoded redirect
-  if (request.nextUrl.pathname === "/lock-atom") {
+  // redirecting /airdrops -> /
+  if (request.nextUrl.pathname.startsWith("/airdrops")) {
+    return NextResponse.redirect(new URL("/", request.url))
+  }
+
+  // TODO: remove this hardcoded redirect
+  // redirecting /lock-atom -> /bids
+  if (request.nextUrl.pathname.startsWith("/lock-atom")) {
     return NextResponse.redirect(new URL("/bids", request.url))
   }
   return NextResponse.next()

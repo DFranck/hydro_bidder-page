@@ -5,7 +5,6 @@ import {
   LockEntryWithPower,
   VoteWithPower,
 } from "@/app/ts_types/HydroBase.types"
-import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import {
   AugmentedBidFromContract,
   BackendData,
@@ -48,17 +47,7 @@ export async function fetchBackendDataWithAddress({
     throw new Error("Hydro contract address not set")
   }
 
-  if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
-    throw new Error("Tribute contract address not set")
-  }
-
   const cosmWasmClient = await getCosmWasmClient()
-
-  const tributeQueryClient = new TributeBaseQueryClient(
-    cosmWasmClient,
-    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
-  )
-
   const hydroQueryClient = new HydroBaseQueryClient(
     cosmWasmClient,
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
@@ -86,11 +75,19 @@ export async function fetchBackendDataWithAddress({
 
   const votes = await Promise.all(
     tranches.map(async (tranche) => {
-      const { votes } = await hydroQueryClient.userVotes({
-        address,
-        roundId,
-        trancheId: tranche.id,
-      })
+      let votes: VoteWithPower[] = []
+
+      try {
+        const { votes: votesForTranche } = await hydroQueryClient.userVotes({
+          address,
+          roundId,
+          trancheId: tranche.id,
+        })
+        votes = votesForTranche
+      } catch (err) {
+        // TODO: no votes for this tranche; shouldn't throw exception though??
+      }
+
       return votes
     })
   )
@@ -100,7 +97,7 @@ export async function fetchBackendDataWithAddress({
       roundId,
       bids.map((bid: AugmentedBidFromContract) => ({
         ...bid,
-        description: bidDescriptionsByBidId[bid.proposalId],
+        description: bidDescriptionsByBidId[bid.id],
       })),
     ])
   ) as Map<number, AugmentedBidFromContract[]>
