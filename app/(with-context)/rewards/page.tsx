@@ -3,6 +3,7 @@
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
+import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { ModalWindow } from "@/components/ModalWindow"
@@ -23,87 +24,91 @@ import { MouseEvent, useState } from "react"
 
 export default function RewardsPage() {
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
+  const { setToasts } = useToasts()
+  const { getSigningCosmWasmClient } = useChain("neutron")
   const [isShowingClaimRewardsModal, setIsShowingClaimRewardsModal] =
     useState(false)
-
-  const { bidDescriptionsByBidId, bidsByRoundId, currentRoundId } =
-    useBackendData()
-
+  const {
+    address,
+    bidDescriptionsByBidId,
+    bidsByRoundId,
+    currentRoundId,
+    votes,
+  } = useBackendData()
   const allBidIds = bidsByRoundId[currentRoundId]?.map((bid) => bid.id) ?? []
   const [selectedBidIds, setSelectedBidIds] = useState<string[]>(allBidIds)
-  const { setToasts } = useToasts()
-  const { address, getSigningCosmWasmClient } = useChain("neutron")
-
-  const rows = Object.values(bidsByRoundId)
+  const bidsUserVotedOn = Object.values(bidsByRoundId)
     .flat()
-    .map((bid) => {
-      const bidUrl = `/bids/${bid.id}`
-      const bidDescription = bidDescriptionsByBidId[bid.id]
-      const { projectLogoUrl, projectName, title } = bidDescription
+    .filter((bid) => votes.find((vote) => vote.bidId === Number(bid.id)))
 
-      return {
-        _bid: bid,
+  const rows = bidsUserVotedOn.map((bid) => {
+    const bidUrl = `/bids/${bid.id}`
+    const bidDescription = bidDescriptionsByBidId[bid.id]
+    const { projectLogoUrl, projectName, title } = bidDescription
 
-        roundNumber: <InvisibleLink href={bidUrl}>1</InvisibleLink>,
+    return {
+      _bid: bid,
 
-        logo: (
-          <InvisibleLink href={bidUrl}>
-            {projectLogoUrl ? (
-              <div className="relative size-12">
-                <Image
-                  className="object-contain"
-                  src={projectLogoUrl}
-                  alt={projectName}
-                  fill={true}
-                />
-              </div>
-            ) : null}
-          </InvisibleLink>
-        ),
+      roundNumber: <InvisibleLink href={bidUrl}>1</InvisibleLink>,
 
-        bidTitleAndProjectName: (
-          <InvisibleLink href={bidUrl}>
-            <div className="flex flex-col">
-              <StyledText variant="h4">{title}</StyledText>
-              <StyledText variant="footnote">{projectName}</StyledText>
+      logo: (
+        <InvisibleLink href={bidUrl}>
+          {projectLogoUrl ? (
+            <div className="relative size-12">
+              <Image
+                className="object-contain"
+                src={projectLogoUrl}
+                alt={projectName}
+                fill={true}
+              />
             </div>
-          </InvisibleLink>
-        ),
+          ) : null}
+        </InvisibleLink>
+      ),
 
-        token: (
-          <InvisibleLink href={bidUrl}>
-            {bid.tributes
-              .map((t) => (t.isTokenBased ? t.denom.toUpperCase() : t.denom))
-              .sort()
-              .join(", ")}
-          </InvisibleLink>
-        ),
+      bidTitleAndProjectName: (
+        <InvisibleLink href={bidUrl}>
+          <div className="flex flex-col">
+            <StyledText variant="h4">{title}</StyledText>
+            <StyledText variant="footnote">{projectName}</StyledText>
+          </div>
+        </InvisibleLink>
+      ),
 
-        polRewards: (
-          <InvisibleLink href={bidUrl}>
-            {amountToUSDString(bid.usersEstimatedRewards)}
-          </InvisibleLink>
-        ),
+      token: (
+        <InvisibleLink href={bidUrl}>
+          {bid.tributes
+            .map((t) => (t.isTokenBased ? t.denom.toUpperCase() : t.denom))
+            .sort()
+            .join(", ")}
+        </InvisibleLink>
+      ),
 
-        tributeRewards: (
-          <InvisibleLink href={bidUrl}>
-            {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
-          </InvisibleLink>
-        ),
+      polRewards: (
+        <InvisibleLink href={bidUrl}>
+          {amountToUSDString(bid.usersEstimatedRewards)}
+        </InvisibleLink>
+      ),
 
-        actions: (
-          <InvisibleLink href={bidUrl}>
-            <StyledText
-              as="button"
-              variant="button.primary.small"
-              onClick={() => handleClickClaimRewards({ bidIds: [bid.id] })}
-            >
-              Claim
-            </StyledText>
-          </InvisibleLink>
-        ),
-      }
-    })
+      tributeRewards: (
+        <InvisibleLink href={bidUrl}>
+          {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
+        </InvisibleLink>
+      ),
+
+      actions: (
+        <InvisibleLink href={bidUrl}>
+          <StyledText
+            as="button"
+            variant="button.primary.small"
+            onClick={() => handleClickClaimRewards({ bidIds: [bid.id] })}
+          >
+            Claim
+          </StyledText>
+        </InvisibleLink>
+      ),
+    }
+  })
 
   type Row = (typeof rows)[number]
 
@@ -148,24 +153,6 @@ export default function RewardsPage() {
           .sort()
           .join(", "),
     },
-    // TODO: Uncomment this
-    // {
-    //   key: "polRewards",
-    //   label: (
-    //     <Tooltip tipContents={rewardsPolRewardsColumnTooltip}>
-    //       <div className="flex items-center gap-1">
-    //         <span>PoL Rewards</span>
-    //         <Icon name="circle-info" />
-    //       </div>
-    //     </Tooltip>
-    //   ),
-    //   textAlign: "right",
-    //   isSortable: true,
-    //   propsForCells: {
-    //     className: "whitespace-nowrap",
-    //   },
-    //   customValueGetter: (row) => row._proposal.estimatedRewardForUser ?? 0,
-    // },
     {
       key: "tributeRewards",
       label: (
@@ -248,8 +235,6 @@ export default function RewardsPage() {
           <h2 className="sr-only">Your Rewards</h2>
 
           <div className="flex items-center gap-6">
-            <div className="text-palette-beige">You have unclaimed rewards</div>
-
             <StyledText
               as="button"
               variant="button.primary"
@@ -263,7 +248,11 @@ export default function RewardsPage() {
         </div>
 
         <BlurryBackdropBox>
-          <StyledTable columns={columns} rows={rows} />
+          {rows.length > 0 ? (
+            <StyledTable columns={columns} rows={rows} />
+          ) : (
+            <EmptyBox>No rewards to claim</EmptyBox>
+          )}
         </BlurryBackdropBox>
       </ContentContainer>
 
