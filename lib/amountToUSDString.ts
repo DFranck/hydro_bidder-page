@@ -4,13 +4,17 @@ export function amountToUSDString(
   amount: number,
   numberOfDecimals: number = 2
 ) {
+  const amountToPrint = Number(amount ?? 0)
   return [
-    Number(amount ?? 0).toLocaleString("en-US", {
+    amountToPrint > 0 ? "≈" : null,
+    amountToPrint.toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: numberOfDecimals,
       maximumFractionDigits: numberOfDecimals,
     }),
     "USD",
-  ].join(nonBreakingSpaceCharacter)
+  ]
+    .filter(Boolean)
+    .join(nonBreakingSpaceCharacter)
 }
