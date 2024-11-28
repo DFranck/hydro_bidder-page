@@ -174,18 +174,16 @@ export default function AirdropsPage() {
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <BlurryBackdropBox className="py-6">
-          <div className="mx-auto max-w-[100ch] text-balance">
-            <h2 className="sr-only">Airdrops for Hydro Users</h2>
-            <p className="prose prose-invert w-auto max-w-none gap-6 md:columns-2">
-              Hydro participants are some of the most active and engaged users.
-              They also have the ability to vote on the deployments of liquidity
-              through the ecosystem. Many projects see value in airdropping a
-              portion of their token supply specifically to Hydro lockers. The
-              projects below have publicly shared their intention to do so. The
-              list is updated by the Hydro product team on a regular basis.
-            </p>
-          </div>
+        <BlurryBackdropBox className="flex items-center justify-center text-balance py-6 text-center">
+          <h2 className="sr-only">Airdrops for Hydro Users</h2>
+          <p className="prose prose-invert mx-auto gap-6">
+            Hydro participants are some of the most active and engaged users.
+            They also have the ability to vote on the deployments of liquidity
+            through the ecosystem. Many projects see value in airdropping a
+            portion of their token supply specifically to Hydro lockers. The
+            projects below have publicly shared their intention to do so. The
+            list is updated by the Hydro product team on a regular basis.
+          </p>
         </BlurryBackdropBox>
 
         <Toasts.Toast
