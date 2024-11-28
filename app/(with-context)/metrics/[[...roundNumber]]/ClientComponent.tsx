@@ -288,8 +288,8 @@ export function ClientComponent({
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <div className="flex items-center justify-between">
-          <StyledText variant="h2">PoL Metrics by Round</StyledText>
+        <div className="flex items-center justify-end">
+          <h2 className="sr-only">PoL Metrics by Round</h2>
 
           <div>
             {[null, ...Object.keys(bidsByRoundId).map(Number)].map(

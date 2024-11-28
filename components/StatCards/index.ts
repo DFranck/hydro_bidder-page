@@ -21,7 +21,7 @@ const StatCards = Object.assign(BaseStatCards, {
   AverageAtomLockedPerWallet,
   AverageRoundsPerUser,
   TimeLeft,
-  HistoricalAPR: HistoricalApr,
+  HistoricalApr,
   NumberOfUniqueWallets,
   PoLAvailable,
   PoLDeployed,
