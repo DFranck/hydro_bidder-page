@@ -1,15 +1,15 @@
 import { StatCards as BaseStatCards } from "./StatCards"
-import { AverageAPR } from "./cards/AverageAPR"
-import { AverageATOMLockedPerWallet } from "./cards/AverageATOMLockedPerWallet"
+import { AverageAtomLockedPerWallet } from "./cards/AverageAtomLockedPerWallet"
+import { AverageRoundApr } from "./cards/AverageRoundApr"
 import { AverageRoundsPerUser } from "./cards/AverageRoundsPerUser"
 import { HistoricalAPR } from "./cards/HistoricalAPR"
+import { NumberOfBids } from "./cards/NumberOfBids"
 import { NumberOfUniqueWallets } from "./cards/NumberOfUniqueWallets"
 import { PoLAvailable } from "./cards/PoLAvailable"
 import { PoLDeployed } from "./cards/PoLDeployed"
 import { PoLRevenue } from "./cards/PoLRevenue"
 import { TimeLeft } from "./cards/TimeLeft"
 import { TotalATOMLocked } from "./cards/TotalATOMLocked"
-import { TotalTributes } from "./cards/TotalTributes"
 import { YourAPRCurrentRound } from "./cards/YourAPRCurrentRound"
 import { YourAPRHistorical } from "./cards/YourAPRHistorical"
 import { YourTotalATOMLocked } from "./cards/YourTotalATOMLocked"
@@ -17,8 +17,8 @@ import { YourTotalRewardsValue } from "./cards/YourTotalRewardsValue"
 import { YourVotingPower } from "./cards/YourVotingPower"
 
 const StatCards = Object.assign(BaseStatCards, {
-  AverageAPR,
-  AverageATOMLockedPerWallet,
+  AverageAPR: AverageRoundApr,
+  AverageATOMLockedPerWallet: AverageAtomLockedPerWallet,
   AverageRoundsPerUser,
   TimeLeft,
   HistoricalAPR,
@@ -27,7 +27,7 @@ const StatCards = Object.assign(BaseStatCards, {
   PoLDeployed,
   PoLRevenue,
   TotalATOMLocked,
-  TotalTributes,
+  NumberOfBids,
   YourAPRCurrentRound,
   YourAPRHistorical,
   YourTotalATOMLocked,

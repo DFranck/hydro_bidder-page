@@ -1,35 +1,40 @@
 "use client"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { AugmentedBid } from "@/contract-apis/useContractContext"
+import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { sumBy } from "lodash"
 import { RewardDelta } from "./RewardDelta"
 
 export const TokenBasedReward = ({
   bid,
   isWalletConnected,
 }: {
-  bid: AugmentedBid
+  bid: FullyAugmentedBid
   isWalletConnected: boolean
 }) => {
-  if (!isWalletConnected) {
-    return amountToUSDString(Math.round(bid.onchainTributeUsdc ?? 0), 0)
-  }
+  const tokenBasedTributes = bid.tributes.filter((t) => t.isTokenBased)
 
-  if (!bid.estimatedRewardForUser) {
-    return amountToUSDString(bid.onchainTributeUsdc)
+  const totalEstimatedRewards = amountToUSDString(
+    sumBy(tokenBasedTributes, "valueInUsd")
+  )
+
+  if (!isWalletConnected || !bid.usersEstimatedRewards) {
+    return totalEstimatedRewards
   }
 
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex items-center justify-end gap-1">
         <Icon name="circle-info" />
-        <RewardDelta deltaPercentage={bid.estimatedRewardDeltaAsPercentage} />
-        {amountToUSDString(bid.estimatedRewardForUser)}
+        <RewardDelta
+          deltaPercentage={bid.usersEstimatedRewardsDeltaPercentage}
+        />
+        {amountToUSDString(bid.usersEstimatedRewards)}
       </div>
       <StyledText variant="footnote" as="div" className="whitespace-nowrap">
-        of {amountToUSDString(bid.onchainTributeUsdc)}
+        of {totalEstimatedRewards}
       </StyledText>
-    </>
+    </div>
   )
 }

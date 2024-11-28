@@ -24,7 +24,7 @@ export interface BackendDataContextType extends BackendDataWithAddress {
 const initialBackendDataContext: BackendDataWithAddress = {
   address: "",
   bidDescriptionsByBidId: {},
-  bidsByRoundId: new Map(),
+  bidsByRoundId: {},
   isLoading: false,
   isWalletConnected: false,
   preHydroBids: [],
@@ -81,6 +81,13 @@ export function BackendDataContextProvider({
     useState<BackendDataWithAddress>(
       merge({}, initialBackendDataContext, backendData)
     )
+  const contextValue = {
+    ...backendDataWithAddress,
+    isLoading,
+    isWalletConnected,
+  }
+
+  console.log(contextValue.globalMetadata.atomPrice)
 
   useEffect(() => {
     ;(async () => {
@@ -109,9 +116,7 @@ export function BackendDataContextProvider({
   }, [address, backendData])
 
   return (
-    <BackendDataContext.Provider
-      value={{ ...backendDataWithAddress, isLoading, isWalletConnected }}
-    >
+    <BackendDataContext.Provider value={contextValue}>
       {children}
     </BackendDataContext.Provider>
   )
