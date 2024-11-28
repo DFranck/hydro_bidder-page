@@ -23,7 +23,7 @@ export function YourAprCurrentRound() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={`${Math.round(parseFloat(currentRoundUsersApr[0].apr ?? "0") * 100)}%`}
+      value={`${Math.round(parseFloat(currentRoundUsersApr[0]?.apr || "0") * 100)}%`}
     />
   )
 }

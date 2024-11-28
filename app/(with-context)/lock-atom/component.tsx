@@ -8,10 +8,9 @@ import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { longerLockupsComingSoonTooltip } from "@/components/ToolTips"
 import { EPOCH_LENGTH } from "@/config"
-import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { Delegation, Validator } from "@/contract-apis/fetchMyValidators"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { useMyValidators } from "@/contract-apis/useMyValidators"
-import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -458,19 +457,35 @@ const LockForm = ({
   const [validator, setValidator] = useState("")
   const [amount, setAmount] = useState("")
   const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
+  const {
+    maxLockedAtomUser,
+    totalLockedAtomUser,
+    maxLockedAtomGlobal,
+    totalLockedAtomGlobal,
+  } = useBackendData()
   const { data: validators } = useMyValidators(hubChain, hubChain.address || "")
   const selectedDuration = parseInt(duration || "0")
   const delegationBalance = Number(
     validators?.find((v) => v.validator.operator_address === validator)
-      ?.delegation_balance.amount
+      ?.delegation_balance.amount ?? 0
   )
-  const { address } = useChain("neutron")
-  const { data: userVotingData } = useUserVotingData(address ?? "")
-  const lockedAtom = userVotingData?.lockups.lockedAtom ?? 0
-  const maxLockedTokens = maxLockedTokensPerAddress ?? 1
-  const usersMaxLockedTokens = Math.max(0, maxLockedTokens - lockedAtom)
-  const maxATOMAmount = Math.min(delegationBalance, usersMaxLockedTokens) / 1e6
-  const selectedAmount = Math.min(parseFloat(amount || "0"), maxATOMAmount)
+  const globalLimitRemainder = Math.max(
+    0,
+    maxLockedAtomGlobal - totalLockedAtomGlobal
+  )
+  const usersLimitRemainder = Math.max(
+    0,
+    maxLockedAtomUser - totalLockedAtomUser
+  )
+  const maxAtomToBeLocked = Math.min(
+    delegationBalance / 1e6, // no more than they have
+    usersLimitRemainder, // no more than their limit
+    globalLimitRemainder // no more than the global limit
+  )
+  const selectedAmountClamped = Math.min(
+    parseFloat(amount || "0"),
+    maxAtomToBeLocked
+  )
 
   useEffect(() => {
     if (validator && validators) {
@@ -482,13 +497,13 @@ const LockForm = ({
           selectedValidator.validator.validator_bond_shares,
           selectedValidator.validator.liquid_shares
         )
-        if (lsmCapacity < selectedAmount && selectedAmount > 0) {
+        if (lsmCapacity < selectedAmountClamped && selectedAmountClamped > 0) {
           // Instead of resetting, you could set an error state or show a warning
           console.warn("Selected amount exceeds LSM capacity")
         }
       }
     }
-  }, [selectedAmount, validator, validators])
+  }, [selectedAmountClamped, validator, validators])
 
   function clearSelectedValidator() {
     setValidator("")
@@ -500,7 +515,7 @@ const LockForm = ({
 
   function handleBlur(e: ChangeEvent<HTMLInputElement>) {
     setAmount(
-      Math.min(parseFloat(e.target.value) || 0, maxATOMAmount).toString()
+      Math.min(parseFloat(e.target.value) || 0, maxAtomToBeLocked).toString()
     )
   }
 
@@ -578,7 +593,7 @@ const LockForm = ({
                         validator={v}
                         selectedValue={validator}
                         onChange={setValidator}
-                        selectedAmount={selectedAmount}
+                        selectedAmount={selectedAmountClamped}
                       />
                     ))}
                   </div>
@@ -616,7 +631,7 @@ const LockForm = ({
                         pattern="^\d+(\.\d{1,6})?$"
                         variant="input.text"
                         value={amount}
-                        defaultValue={maxATOMAmount.toString()}
+                        defaultValue={maxAtomToBeLocked.toString()}
                         onBlur={handleBlur}
                         onChange={handleChange}
                       />
@@ -632,7 +647,7 @@ const LockForm = ({
                         <Icon name="triangle-exclamation" /> Invalid amount
                       </StyledText>
                       <StyledText as="p" variant="footnote">
-                        Max: {maxATOMAmount} ATOM
+                        Max: {maxAtomToBeLocked} ATOM
                       </StyledText>
                     </div>
                   </div>
@@ -690,7 +705,7 @@ const LockForm = ({
                       {(() => {
                         const lockupPower = scaleLockupPower(
                           selectedDuration,
-                          BigInt(selectedAmount * 1e6 || 0)
+                          BigInt(selectedAmountClamped * 1e6 || 0)
                         )
 
                         return formatAmount(lockupPower, 6)
@@ -700,7 +715,9 @@ const LockForm = ({
                   <div className="col-span-2 flex flex-row-reverse">
                     <StyledText
                       as="button"
-                      disabled={!validator || !selectedAmount || !duration}
+                      disabled={
+                        !validator || !selectedAmountClamped || !duration
+                      }
                       variant="button.primary"
                       type="submit"
                     >
