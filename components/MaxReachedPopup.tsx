@@ -1,17 +1,15 @@
-import { useAppContext } from "@/app/(with-context)/context"
 import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { telegramLink } from "@/config"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { ChangeEvent, useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
 export function MaxReachedPopup() {
-  const {
-    globalState: { currentRound },
-  } = useAppContext()
+  const { currentRoundId: roundId } = useBackendData()
 
   const [dontShowAgain, setDontShowAgain] = useLocalStorage(
     "dont-show-max-reached-popup-again",
@@ -34,9 +32,7 @@ export function MaxReachedPopup() {
   return (
     <ModalWindow isOpen={isOpen} onClose={handleClose}>
       <Card>
-        <Card.Header>
-          Pilot Round {currentRound + 1} Lock Cap Reached
-        </Card.Header>
+        <Card.Header>Pilot Round {roundId + 1} Lock Cap Reached</Card.Header>
         <Card.Body>
           <div className="prose prose-invert">
             <p>
@@ -75,8 +71,8 @@ export function MaxReachedPopup() {
                   Telegram Group
                   <Icon name="solid:arrow-up-right" />
                 </StyledText>{" "}
-                to be the first to know when Pilot Round {currentRound + 2}{" "}
-                kicks off!
+                to be the first to know when Pilot Round {roundId + 2} kicks
+                off!
               </li>
             </ul>
           </div>

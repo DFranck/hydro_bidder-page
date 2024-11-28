@@ -3,11 +3,17 @@
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polAvailableTooltip } from "@/components/ToolTips"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/utils"
 import { StatCard } from "../StatCard"
 
 export function PoLAvailable() {
+  const { isLoading, metricsGlobal } = useBackendData()
+  const { currentRoundPolAvailable } = metricsGlobal
+
   return (
     <StatCard
+      isLoading={isLoading}
       title={
         <Tooltip tipContents={polAvailableTooltip}>
           <div className="flex items-center gap-1">
@@ -17,7 +23,7 @@ export function PoLAvailable() {
         </Tooltip>
       }
       subTitle="All Time"
-      value="$–"
+      value={formatAmount(currentRoundPolAvailable)}
     />
   )
 }

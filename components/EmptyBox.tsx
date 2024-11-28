@@ -10,8 +10,9 @@ export function EmptyBox({
     <div
       className={twMerge(
         `
-          my-3
+          m-3
           rounded-md
+          border-2
           border-dashed
           border-palette-beige/20
           py-12

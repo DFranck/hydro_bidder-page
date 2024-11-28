@@ -7,11 +7,8 @@ import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
 
 export function NumberOfBids() {
-  const { bidsByRoundId, currentRoundMetadata, isLoading } = useBackendData()
-  const { roundId } = currentRoundMetadata
-
-  const bids = bidsByRoundId[roundId] ?? []
-
+  const { bidsByRoundId, isLoading, currentRoundId } = useBackendData()
+  const bids = bidsByRoundId[currentRoundId] ?? []
   const numPointBasedBids = bids.filter(
     (bid) => false === bid.tributes.every((t) => t.isTokenBased)
   ).length
@@ -44,7 +41,7 @@ export function NumberOfBids() {
           </div>
         </Tooltip>
       }
-      subTitle={`Pilot Round ${roundId + 1}`}
+      subTitle={`Pilot Round ${currentRoundId + 1}`}
       value={bids.length}
     />
   )

@@ -4,6 +4,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
+import { startCase } from "lodash"
 
 export interface BidFromNumia {
   round: string
@@ -36,26 +37,52 @@ export interface BidFromNumia {
 export type SanitizedBidFromNumia = CamelCaseKeys<
   Omit<
     BidFromNumia,
-    "offchain_tribute" | "onchain_tribute_assets" | "tranche"
+    "offchain_tribute" | "onchain_tribute_assets" | "tranche" | "project"
   > & {
+    projectName: string
     tranche: number
-    offchain_tribute: {
-      amount: number
-      type: string
-    }[]
-    onchain_tribute_assets: {
-      amount: number
-      asset: string
-    }[]
+    offchain_tribute: OffchainTributeFromNumia[]
+    onchain_tribute_assets: OnchainTributeFromNumia[]
   }
 >
+type OffchainTributeFromNumia = {
+  amount: number
+  type: string
+}
+
+type OnchainTributeFromNumia = {
+  amount: number
+  asset: string
+}
+
+const typeToTokenMap = {
+  "ibc/837E876E": "SWTH",
+}
 
 function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
   return keysFromSnakeToCamelCase({
     ...bid,
+    projectName: bid.project,
     tranche: Number(bid.tranche),
-    offchain_tribute: JSON.parse(bid.offchain_tribute),
-    onchain_tribute_assets: JSON.parse(bid.onchain_tribute_assets),
+    offchain_tribute: (
+      JSON.parse(bid.offchain_tribute) as OffchainTributeFromNumia[]
+    )
+      .filter((t) => !!t.amount)
+      .map((t) => ({ ...t, type: startCase(t.type) })),
+    onchain_tribute_assets: (
+      JSON.parse(bid.onchain_tribute_assets) as OnchainTributeFromNumia[]
+    )
+      .filter((t) => !!t.amount)
+      .map((t) => {
+        const asset = Object.entries(typeToTokenMap).find(([key, value]) =>
+          t.asset.startsWith(key)
+        )?.[1]
+
+        return {
+          ...t,
+          asset: asset ?? t.asset.toUpperCase(),
+        }
+      }),
   })
 }
 

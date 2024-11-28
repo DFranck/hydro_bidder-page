@@ -1,6 +1,5 @@
 "use client"
 
-import { useAppContext } from "@/app/(with-context)/context"
 import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
@@ -20,32 +19,32 @@ import {
 } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { fetchMyAllLockups } from "@/contract-apis/fetchMyAllLockups"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { useUserVotingData } from "@/contract-apis/useUserVotingData"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
-import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
   const {
-    globalState: {
-      constants: { max_locked_tokens },
-      totalLockedTokens: atomLockedOverall,
-    },
-  } = useAppContext()
-  const { address, isWalletConnected } = useChain("neutron")
+    address,
+    isWalletConnected,
+    maxLockedAtomGlobal: maxLockedTokensGlobal,
+    totalLockedAtomGlobal: totalLockedTokensGlobal,
+  } = useBackendData()
+
   const { data: userVotingData } = useUserVotingData(address!)
   const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
   const [refetch, setRefetch] = useState(true)
   const lockedAtomInWallet = userVotingData?.lockups.lockedAtom ?? 0
-  const maxLockedAtomOverall = max_locked_tokens ?? 0
+  const maxLockedAtomOverall = maxLockedTokensGlobal
   const maxLockedAtomPerWallet = maxLockedTokensPerAddress ?? 0
   const percentageLockedInWallet = Math.round(
     (lockedAtomInWallet / maxLockedAtomPerWallet) * 100
   )
   const percentageLockedOverall = Math.round(
-    (atomLockedOverall / maxLockedAtomOverall) * 100
+    (totalLockedTokensGlobal / maxLockedAtomOverall) * 100
   )
   const { setToasts } = useToasts()
 
@@ -100,8 +99,8 @@ export default function LockupsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.TotalATOMLocked />
-        <StatCards.YourTotalATOMLocked />
+        <StatCards.TotalAtomLocked />
+        <StatCards.YourTotalAtomLocked />
         <StatCards.YourVotingPower />
       </StatCards>
 
@@ -110,14 +109,12 @@ export default function LockupsPage() {
           className="
             flex
             flex-col
-            justify-between
+            justify-end
             gap-3
             lg:flex-row
           "
         >
-          <StyledText as="h2" variant="h2">
-            Your Lockups
-          </StyledText>
+          <h2 className="sr-only">Your Lockups</h2>
 
           <div
             className="
@@ -162,8 +159,8 @@ export default function LockupsPage() {
                         : `text-palette-beige`
                     )}
                   >
-                    {(lockedAtomInWallet / 1e6).toFixed(4)} /{" "}
-                    {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
+                    {(lockedAtomInWallet / 1e6).toFixed(4).replace(".0000", "")}{" "}
+                    / {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
                   </span>
                   <Icon name="circle-info" />
                 </div>
@@ -205,9 +202,24 @@ export default function LockupsPage() {
 
         <BlurryBackdropBox>
           {myLockups.length === 0 && (
-            <EmptyBox>
-              You don&rsquo;t have any lockups. Use the &ldquo;New Lockup&rdquo;
-              button on the page to add one.
+            <EmptyBox className="flex flex-col gap-1">
+              <div>
+                You don&rsquo;t have any lockups yet. To create one, click the
+                &ldquo;New Lockup&rdquo; button&nbsp;
+                <Icon name="arrow-up-right" />
+              </div>
+              <div>
+                <StyledText
+                  as={Link}
+                  variant="link"
+                  href="/docs/users/locking-lsm-shares"
+                  target="_blank"
+                  className="flex items-center gap-1 text-xs"
+                >
+                  <span>Learn more about Lockups</span>{" "}
+                  <Icon name="arrow-up-right-from-square" />
+                </StyledText>
+              </div>
             </EmptyBox>
           )}
 

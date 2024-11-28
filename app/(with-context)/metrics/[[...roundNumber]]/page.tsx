@@ -6,7 +6,6 @@ export default async function Page({
   params: Promise<{ roundNumber?: string }>
 }) {
   const roundNumberParam = (await params).roundNumber
-
   const requestedRoundNumber =
     typeof roundNumberParam === "undefined" ? null : Number(roundNumberParam)
   const requestedRoundNumberUnderHood = requestedRoundNumber

@@ -35,18 +35,15 @@ export interface AugmentedBidFromContract
 export interface BackendData {
   bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   bidDescriptionsByBidId: Record<string, BidDescription>
-  preHydroBids: SanitizedBidFromNumia[]
-  currentRoundMetadata: {
-    roundEnd: Date
-    roundId: number
-    tranches: Tranche[]
-  }
-  globalMetadata: {
-    atomPrice: number
-    totalLockedTokens: number
-    maxLockedTokens: number
-    metrics: SanitizedMetricsFromNumia
-  }
+  currentRoundEnd: Date
+  currentRoundId: number
+  currentRoundTranches: Tranche[]
+  atomPrice: number
+  totalLockedAtomGlobal: number
+  maxLockedAtomGlobal: number
+  metricsForPreHydroBids: SanitizedBidFromNumia[]
+  metricsForPostHydroBids: SanitizedBidFromNumia[]
+  metricsGlobal: SanitizedMetricsFromNumia
 }
 
 export interface AugmentedTribute
@@ -73,9 +70,9 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
     { constants },
     { round_end: currentRoundEnd, round_id: currentRoundId },
     { tranches },
-    { total_locked_tokens: totalLockedTokens },
+    { total_locked_tokens: totalLockedAtomGlobal },
     assetListWithPrices,
-    { preHydroBids },
+    { preHydroBids, postHydroBids },
     bidDescriptionsByBidId,
     metrics,
   ] = await Promise.all([
@@ -169,19 +166,16 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
   )
 
   return {
+    atomPrice,
     bidDescriptionsByBidId,
     bidsByRoundId,
-    preHydroBids,
-    currentRoundMetadata: {
-      roundEnd: new Date(currentRoundEnd),
-      roundId: currentRoundId,
-      tranches,
-    },
-    globalMetadata: {
-      atomPrice,
-      maxLockedTokens: constants.max_locked_tokens,
-      totalLockedTokens,
-      metrics,
-    },
+    currentRoundEnd: new Date(currentRoundEnd),
+    currentRoundId: currentRoundId,
+    currentRoundTranches: tranches,
+    maxLockedAtomGlobal: constants.max_locked_tokens,
+    metricsGlobal: metrics,
+    metricsForPreHydroBids: preHydroBids,
+    metricsForPostHydroBids: postHydroBids,
+    totalLockedAtomGlobal,
   }
 }

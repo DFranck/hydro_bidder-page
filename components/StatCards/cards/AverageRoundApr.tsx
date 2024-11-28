@@ -8,25 +8,20 @@ import { sumBy } from "lodash"
 import { StatCard } from "../StatCard"
 
 export function AverageRoundApr() {
-  const { bidsByRoundId, currentRoundMetadata, globalMetadata, isLoading } =
-    useBackendData()
-  const { roundId } = currentRoundMetadata
-  const { atomPrice, metrics, totalLockedTokens } = globalMetadata
-  const { currentRoundTotalAtomLocked } = metrics
-  const bids = bidsByRoundId[roundId] ?? []
+  const {
+    atomPrice,
+    bidsByRoundId,
+    currentRoundId,
+    isLoading,
+    totalLockedAtomGlobal,
+  } = useBackendData()
+  const bids = bidsByRoundId[currentRoundId] ?? []
   const totalTributeValue = sumBy(
     bids.map((bid) => bid.tributes).flat(),
     "valueInUsd"
   )
-  const averageAPR = (totalTributeValue / totalLockedTokens / atomPrice) * 12
-
-  console.log({
-    totalTributeValue,
-    currentRoundTotalAtomLocked,
-    totalLockedTokens,
-    atomPrice,
-    averageAPR,
-  })
+  const averageAPR =
+    (totalTributeValue / totalLockedAtomGlobal / atomPrice) * 12
 
   return (
     <StatCard
@@ -39,7 +34,7 @@ export function AverageRoundApr() {
           </div>
         </Tooltip>
       }
-      subTitle={`Pilot Round ${roundId + 1}`}
+      subTitle={`Pilot Round ${currentRoundId + 1}`}
       value={averageAPR.toLocaleString("en-US", {
         style: "percent",
       })}
