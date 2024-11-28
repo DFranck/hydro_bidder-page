@@ -11,28 +11,53 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { useContractContext } from "@/contract-apis/useContractContext"
-import { amountToUSDString } from "@/lib/amountToUSDString"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { kebabCase, startCase } from "lodash"
+import { kebabCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 
-export function ClientComponent({ bidId }: { bidId: string }) {
-  const { bidsByRoundId } = useContractContext()
+export function BidDetails({ bidId }: { bidId: string }) {
+  const {
+    bidDescriptionsByBidId,
+    bidsByRoundId,
+    isLoading,
+    currentRoundMetadata,
+  } = useBackendData()
 
-  const bid = Object.values(bidsByRoundId)
-    .flat()
-    .find((bid) => bid.id === bidId)
+  const { votes } = currentRoundMetadata
+
+  const bid = bidsByRoundId[currentRoundMetadata.roundId].find(
+    (bid) => bid.id === bidId
+  )
 
   if (!bid) {
     return <>The requested proposal could not be found.</>
   }
 
+  const bidDescription = bidDescriptionsByBidId[bidId]
+
+  if (!bidDescription) {
+    return <>The requested proposal could not be found.</>
+  }
+
+  const {
+    committeeComments,
+    description,
+    projectAbout,
+    projectLogoUrl,
+    projectName,
+    projectUrl,
+    requestAmount,
+    title,
+  } = bidDescription
+
+  const hasVotedForBid = votes.some((vote) => vote.bidId === Number(bidId))
+
   return (
     <ContentContainer className="py-6">
       <BlurryBackdropBox className="p-12">
-        {bid.hasVotedForBid && (
+        {hasVotedForBid && (
           <div
             className="
               pointer-events-none
@@ -84,12 +109,12 @@ export function ClientComponent({ bidId }: { bidId: string }) {
                 <Icon name="solid:scroll" />
               </div>
               <StyledText as="h2" variant="h2">
-                {bid.title}
+                {title}
               </StyledText>
             </div>
 
             <div className="flex flex-col gap-6 pl-16">
-              {bid.projectAbout && (
+              {projectAbout && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -105,10 +130,10 @@ export function ClientComponent({ bidId }: { bidId: string }) {
                   >
                     About Project
                   </StyledText>
-                  <MarkdownContainer content={bid.projectAbout} />
+                  <MarkdownContainer content={projectAbout} />
                 </div>
               )}
-              {bid.description && (
+              {description && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -124,10 +149,10 @@ export function ClientComponent({ bidId }: { bidId: string }) {
                   >
                     Bid Description
                   </StyledText>
-                  <MarkdownContainer content={bid.description} />
+                  <MarkdownContainer content={description} />
                 </div>
               )}
-              {bid.comments && (
+              {committeeComments && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -143,7 +168,7 @@ export function ClientComponent({ bidId }: { bidId: string }) {
                   >
                     Committee Review
                   </StyledText>
-                  <MarkdownContainer content={bid.comments} />
+                  <MarkdownContainer content={committeeComments} />
                 </div>
               )}
             </div>
@@ -152,7 +177,7 @@ export function ClientComponent({ bidId }: { bidId: string }) {
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
             <div className="*:!w-full">
-              <VoteButton bidId={bid.id} size="large" />
+              <VoteButton bidId={bidId} size="large" />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -161,18 +186,18 @@ export function ClientComponent({ bidId }: { bidId: string }) {
               </StyledText>
 
               <div className="flex flex-row items-center gap-3">
-                {bid.projectLogoUrl && (
+                {projectLogoUrl && (
                   <div className="relative size-12">
                     <Image
                       className="object-contain"
-                      src={bid.projectLogoUrl}
-                      alt={bid.title}
+                      src={projectLogoUrl}
+                      alt={projectName}
                       fill={true}
                     />
                   </div>
                 )}
                 <StyledText className="text-xl font-bold not-italic">
-                  {bid.project}
+                  {projectName}
                 </StyledText>
               </div>
             </div>
@@ -182,46 +207,24 @@ export function ClientComponent({ bidId }: { bidId: string }) {
                 Tribute to Voters
               </StyledText>
               <div className="max-w-64 overflow-x-auto">
-                {bid.onchainTributeAssets.length > 0 ? (
-                  <>
-                    {bid.onchainTributeAssets.map((tribute, index) => (
-                      <p
-                        key={index}
-                        className="break-words text-xl font-bold not-italic"
-                      >
-                        {tribute.amount.toLocaleString()}&nbsp;{tribute.asset}
-                      </p>
-                    ))}
-                    <p>≈ {amountToUSDString(bid.onchainTributeUsdc)}</p>
-                  </>
-                ) : bid.offchainTribute.length > 0 ? (
-                  <>
-                    {bid.offchainTribute.map((tribute, index) => (
-                      <p
-                        key={index}
-                        className="font-mono flex items-center gap-1 text-xl font-bold not-italic text-palette-cyan"
-                      >
-                        <Icon name="solid:gem" />
-                        <span>
-                          {simplifyBigNumbers(tribute.amount, 2)}&nbsp;
-                          {startCase(tribute.type.toLowerCase())}
-                        </span>
-                      </p>
-                    ))}
-                    <p>
-                      <StyledText
-                        variant="link"
-                        as="a"
-                        href={bid.offchainTributeInfo}
-                        target="_blank"
-                      >
-                        Learn More <Icon name="solid:arrow-up-right" />
-                      </StyledText>
-                    </p>
-                  </>
-                ) : (
-                  "None"
-                )}
+                {bid.tributes.map((tribute, index) => (
+                  <p
+                    key={index}
+                    className="break-words text-xl font-bold not-italic"
+                  >
+                    {tribute.isTokenBased ? (
+                      <span>
+                        {simplifyBigNumbers(tribute.amount)}&nbsp;
+                        {tribute.denom}
+                      </span>
+                    ) : (
+                      <span>
+                        {simplifyBigNumbers(tribute.amount)}&nbsp;
+                        {tribute.denom}
+                      </span>
+                    )}
+                  </p>
+                ))}
               </div>
             </div>
 
@@ -240,8 +243,8 @@ export function ClientComponent({ bidId }: { bidId: string }) {
                   not-italic
                 "
               >
-                <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
-                {bid.votingPowerPercentage < VOTE_SHARE_THRESHOLD && (
+                <span>{Math.round(Math.round(bid.percentage * 100))}%</span>
+                {bid.percentage < VOTE_SHARE_THRESHOLD && (
                   <Tooltip tipContents={voteThresholdTooltip}>
                     <span
                       className="
@@ -271,9 +274,9 @@ export function ClientComponent({ bidId }: { bidId: string }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
-                  bid.projectAbout && "About Project",
-                  bid.description && "Bid Description",
-                  bid.comments && "Committee Comments",
+                  bidDescription.projectAbout && "About Project",
+                  bidDescription.description && "Bid Description",
+                  bidDescription.committeeComments && "Committee Comments",
                 ]
                   .filter(Boolean)
                   .map((section, index) => (
@@ -288,10 +291,10 @@ export function ClientComponent({ bidId }: { bidId: string }) {
                       <span>{section}</span>
                     </StyledText>
                   ))}
-                {bid.projectUrl && (
+                {bidDescription.projectUrl && (
                   <StyledText
                     as={Link}
-                    href={bid.projectUrl}
+                    href={bidDescription.projectUrl}
                     target="_blank"
                     variant="link"
                     className="

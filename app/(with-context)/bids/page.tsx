@@ -23,13 +23,11 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
+import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import {
-  AugmentedBid,
-  useContractContext,
-} from "@/contract-apis/useContractContext"
+import { useContractContext } from "@/contract-apis/useContractContext"
 import { pluralize } from "@/lib/pluralize"
-import { startCase } from "lodash"
+import { sumBy } from "lodash"
 import Image from "next/image"
 import { Fragment, ReactNode, useCallback } from "react"
 import { classNames } from "./classNames"
@@ -37,7 +35,7 @@ import { PointBasedReward } from "./PointBasedReward"
 import { TokenBasedReward } from "./TokenBasedReward"
 
 type Row = {
-  _bid: AugmentedBid
+  _bid: FullyAugmentedBid
   logoAndTitle: ReactNode
   deploymentDuration: ReactNode
   yourEstimatedReward: ReactNode
@@ -49,34 +47,46 @@ const tokenBasedTributesLabel = "Token-Based Tributes"
 const pointBasedTributesLabel = "Points-Based Tributes"
 
 export default function BidsPage() {
-  const { currentRoundMetadata, globalMetadata, isLoading } =
-    useContractContext()
+  const { globalMetadata } = useContractContext()
 
   const newBackendData = useBackendData()
 
-  const { bidsByRoundId, isWalletConnected } = newBackendData
+  const {
+    bidDescriptionsByBidId,
+    bidsByRoundId,
+    isLoading,
+    isWalletConnected,
+    currentRoundMetadata,
+  } = newBackendData
+
+  console.log({ newBackendData })
+
+  const { roundId } = currentRoundMetadata
 
   const showWelcomeModal =
     globalMetadata.totalLockedTokens < globalMetadata.maxLockedTokens &&
-    !currentRoundMetadata.usersVotingPower
+    !currentRoundMetadata.votingPower
 
-  const bidsToRender = bidsByRoundId.get(currentRoundMetadata.roundId) ?? []
+  const bidsToRender = bidsByRoundId[roundId] ?? []
 
   const rows =
     bidsToRender?.map((bid) => {
-      const isPointBasedBid = bid.offchainTribute.length > 0
+      const isPointBasedBid =
+        false === bid.tributes.every((t) => t.isTokenBased)
       const bidURL = `/bids/${bid.id}`
+      const bidDescription = bidDescriptionsByBidId[bid.id]
+      const { projectLogoUrl, projectName, pointProgramUrl } = bidDescription
 
       return {
         _bid: bid,
         logoAndTitle: (
           <InvisibleLink href={bidURL} className="flex items-center gap-6">
-            {bid.projectLogoUrl ? (
+            {projectLogoUrl ? (
               <div className={classNames.bidLogo}>
                 <Image
                   className="object-contain"
-                  src={bid.projectLogoUrl}
-                  alt={bid.project}
+                  src={projectLogoUrl}
+                  alt={projectName}
                   fill={true}
                 />
               </div>
@@ -86,13 +96,7 @@ export default function BidsPage() {
               <p className={classNames.bidTitle}>{bid.title}</p>
 
               <StyledText variant="footnote">
-                {isPointBasedBid
-                  ? bid.offchainTribute
-                      .map((t) => startCase(t.type.toLowerCase()))
-                      .join(", ")
-                  : bid.onchainTributeAssets
-                      .map((t) => t.asset.slice(0, 12))
-                      .join(", ")}
+                {bid.tributes.map((tribute) => tribute.denom).join(", ")}
               </StyledText>
             </div>
           </InvisibleLink>
@@ -111,15 +115,13 @@ export default function BidsPage() {
             {isPointBasedBid ? (
               <Tooltip
                 tipContents={pointSystemTooltip({
-                  learnMoreURL: bid.offchainTributeInfo,
+                  learnMoreURL: pointProgramUrl,
                 })}
               >
                 <div className="flex items-center gap-1">
                   <PointBasedReward
                     bid={bid}
-                    hasVotedBids={
-                      currentRoundMetadata.usersVotedBidIds.length > 0
-                    }
+                    hasVotedBids={currentRoundMetadata.votes.length > 0}
                   />
                   <Icon name="circle-info" />
                 </div>
@@ -128,7 +130,7 @@ export default function BidsPage() {
               <Tooltip
                 tipContents={estimatedRewardsTooltip({
                   bid,
-                  roundMetadata: currentRoundMetadata,
+                  currentRoundMetadata,
                 })}
               >
                 <div className="flex items-center gap-1">
@@ -148,7 +150,7 @@ export default function BidsPage() {
             className="flex flex-row-reverse items-center gap-1"
           >
             <ConditionalWrapper
-              condition={bid.votingPowerPercentage < VOTE_SHARE_THRESHOLD}
+              condition={Number(bid.percentage) < VOTE_SHARE_THRESHOLD}
               wrapper={(children) => (
                 <Tooltip
                   tipContents={voteThresholdTooltip}
@@ -164,7 +166,7 @@ export default function BidsPage() {
                 </Tooltip>
               )}
             >
-              <span>{Math.round(bid.votingPowerPercentage * 100)}%</span>
+              <span>{Math.round(Number(bid.percentage) * 100)}%</span>
             </ConditionalWrapper>
           </InvisibleLink>
         ),
@@ -219,12 +221,12 @@ export default function BidsPage() {
         label: (
           <Tooltip
             tipContents={estimatedRewardsTooltip({
-              roundMetadata: currentRoundMetadata,
+              currentRoundMetadata,
             })}
           >
             <div className="flex items-center gap-1">
               <span>
-                {isWalletConnected && currentRoundMetadata.usersVotingPower
+                {isWalletConnected && currentRoundMetadata.votingPower
                   ? "Your"
                   : "Total"}{" "}
                 Est. Reward
@@ -239,12 +241,7 @@ export default function BidsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) =>
-          (row._bid.offchainTribute.length > 0
-            ? -1
-            : currentRoundMetadata.usersVotedBidIds.length > 0
-              ? row._bid.estimatedRewardForUser
-              : row._bid.onchainTributeUsdc) ?? -1,
+        customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
       },
       {
         key: "currentVoteShare",
@@ -265,7 +262,7 @@ export default function BidsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => row._bid.votingPowerPercentage,
+        customValueGetter: (row) => Number(row._bid.percentage),
       },
       {
         key: "actions",
@@ -299,9 +296,12 @@ export default function BidsPage() {
         sortedColumnKey === "currentVoteShare" &&
         previousRow &&
         nextRow &&
-        Number(previousRow._bid.votingPowerPercentage) >=
-          VOTE_SHARE_THRESHOLD &&
-        Number(row._bid.votingPowerPercentage) < VOTE_SHARE_THRESHOLD
+        Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
+        Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
+
+      const userVotedForBid = currentRoundMetadata.votes.some(
+        (vote) => vote.bidId === Number(row._bid.id)
+      )
 
       return (
         <Fragment key={row._bid.id}>
@@ -352,9 +352,7 @@ export default function BidsPage() {
             </TR>
           )}
           <TR
-            className={
-              row._bid.hasVotedForBid ? classNames.hasVotedRow : undefined
-            }
+            className={userVotedForBid ? classNames.hasVotedRow : undefined}
             key={row._bid.id}
             {...rowProps}
           >
@@ -366,11 +364,11 @@ export default function BidsPage() {
     [classNames.hasVotedRow, voteThresholdTooltip]
   )
 
-  const tokenBasedBids = rows.filter(
-    (row) => row._bid.onchainTributeAssets.length > 0
+  const tokenBasedBids = rows.filter((row) =>
+    row._bid.tributes.every((t) => t.isTokenBased)
   )
   const pointBasedBids = rows.filter(
-    (row) => row._bid.offchainTribute.length > 0
+    (row) => false === row._bid.tributes.every((t) => t.isTokenBased)
   )
 
   return (
@@ -380,7 +378,7 @@ export default function BidsPage() {
       <WelcomePopup showModal={false} />
 
       <StatCards>
-        <StatCards.TotalTributes />
+        <StatCards.NumberOfBids />
         <StatCards.AverageAPR />
         <StatCards.TimeLeft />
       </StatCards>

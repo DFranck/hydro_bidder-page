@@ -26,13 +26,14 @@ import {
 export interface BidFromContract extends Proposal {}
 
 export interface AugmentedBidFromContract
-  extends Omit<CamelCaseKeys<BidFromContract>, "proposalId"> {
+  extends Omit<CamelCaseKeys<BidFromContract>, "percentage" | "proposalId"> {
   id: string
+  percentage: number
   tributes: AugmentedTribute[]
 }
 
 export interface BackendData {
-  bidsByRoundId: Map<number, AugmentedBidFromContract[]>
+  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   bidDescriptionsByBidId: Record<string, BidDescription>
   preHydroBids: SanitizedBidFromNumia[]
   currentRoundMetadata: {
@@ -50,8 +51,9 @@ export interface BackendData {
 
 export interface AugmentedTribute
   extends Omit<CamelCaseKeys<Tribute>, "funds">,
-    CamelCaseKeys<Coin> {
-  valueInUSD: number
+    Omit<CamelCaseKeys<Coin>, "amount"> {
+  amount: number
+  valueInUsd: number
   isTokenBased: boolean
 }
 
@@ -92,7 +94,7 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
       "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
     )?.priceUsd ?? 0
 
-  const bidsByRoundId = new Map<number, AugmentedBidFromContract[]>()
+  const bidsByRoundId: Record<number, AugmentedBidFromContract[]> = {}
 
   // With currentRoundId, we can fetch all bids for all rounds
   await Promise.all(
@@ -116,49 +118,51 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
           )
             .flat()
             .map(keysFromSnakeToCamelCase)
-            .map((tribute) => {
-              const assetPrice =
-                assetListWithPrices.get(tribute.funds.denom)?.priceUsd ?? 0
+            .map(({ funds, ...tribute }) => {
+              const assetListing = assetListWithPrices.get(funds.denom)
+              const assetPrice = assetListing?.priceUsd ?? 0
+              const decimals = assetListing?.decimals ?? 6
 
               return {
                 ...tribute,
-                funds: {
-                  ...tribute.funds,
-                  valueInUSD: Number(tribute.funds.amount) * assetPrice,
-                },
+                ...funds,
+                valueInUsd:
+                  (parseFloat(funds.amount) / 10 ** decimals) * assetPrice,
               }
             })
 
+          // Add tributes to every bid
           const sanitizedBidsWithTributes = bids
             .map(keysFromSnakeToCamelCase)
-            .map((bid) => ({
+            .map(({ proposalId, ...bid }) => ({
               ...bid,
-              id: String(bid.proposalId),
+              id: String(proposalId),
               description:
-                bidDescriptionsByBidId[bid.proposalId]?.description ??
+                bidDescriptionsByBidId[proposalId]?.description ??
                 bid.description,
-              title: bidDescriptionsByBidId[bid.proposalId]?.title ?? bid.title,
+              percentage: Number(bid.percentage),
+              title: bidDescriptionsByBidId[proposalId]?.title ?? bid.title,
               tributes: tributes
                 .filter(
-                  (tribute) =>
-                    Number(tribute.proposalId) === Number(bid.proposalId)
+                  (tribute) => Number(tribute.proposalId) === Number(proposalId)
                 )
                 .map((tribute) => {
                   const isTokenBased =
-                    !bidDescriptionsByBidId[bid.proposalId]?.points?.[0]
+                    !bidDescriptionsByBidId[proposalId]?.points?.[0]
 
                   return {
                     ...tribute,
+                    amount: Number(tribute.amount),
                     isTokenBased,
                   }
                 }),
             }))
 
-          if (!bidsByRoundId.has(roundId)) {
-            bidsByRoundId.set(roundId, [])
+          if (!(roundId in bidsByRoundId)) {
+            bidsByRoundId[roundId] = []
           }
 
-          bidsByRoundId.get(roundId)?.push(...sanitizedBidsWithTributes)
+          bidsByRoundId[roundId].push(...sanitizedBidsWithTributes)
         })
       )
     )

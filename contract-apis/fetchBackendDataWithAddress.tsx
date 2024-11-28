@@ -10,16 +10,20 @@ import {
   BackendData,
 } from "@/contract-apis/fetchBackendDataWithoutAddress"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import {
+  CamelCaseKeys,
+  keysFromSnakeToCamelCase,
+} from "@/lib/keysFromSnakeToCamelCase"
 import { sumBy } from "lodash"
 
 export interface BackendDataWithAddress
   extends Omit<BackendData, "bidsByRoundId"> {
   address: string
-  bidsByRoundId: Map<number, FullyAugmentedBid[]>
+  bidsByRoundId: Record<number, FullyAugmentedBid[]>
   isLoading: boolean
   isWalletConnected: boolean
   currentRoundMetadata: BackendData["currentRoundMetadata"] & {
-    votes: VoteWithPower[][]
+    votes: SanitizedVote[]
     votingPower: number
   }
   globalMetadata: BackendData["globalMetadata"] & {
@@ -34,7 +38,15 @@ export interface BackendDataWithAddress
   }
 }
 
-export interface FullyAugmentedBid extends AugmentedBidFromContract {}
+export interface SanitizedVote
+  extends Omit<CamelCaseKeys<VoteWithPower>, "propId"> {
+  bidId: number
+}
+
+export interface FullyAugmentedBid extends AugmentedBidFromContract {
+  usersEstimatedRewards: number
+  usersEstimatedRewardsDeltaPercentage: number
+}
 
 export async function fetchBackendDataWithAddress({
   address,
@@ -53,16 +65,10 @@ export async function fetchBackendDataWithAddress({
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
-  const {
-    bidDescriptionsByBidId,
-    bidsByRoundId,
-    currentRoundMetadata,
-    globalMetadata,
-  } = backendData
+  const { bidDescriptionsByBidId, bidsByRoundId, currentRoundMetadata } =
+    backendData
 
   const { roundId, tranches } = currentRoundMetadata
-
-  const { atomPrice, maxLockedTokens, totalLockedTokens } = globalMetadata
 
   const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
     hydroQueryClient.userVotingPower({ address }),
@@ -73,34 +79,50 @@ export async function fetchBackendDataWithAddress({
     }),
   ])
 
-  const votes = await Promise.all(
-    tranches.map(async (tranche) => {
-      let votes: VoteWithPower[] = []
+  const sanitizedVotes = (
+    await Promise.all(
+      tranches.map(async (tranche) => {
+        let fetchedVotes: VoteWithPower[] = []
 
-      try {
-        const { votes: votesForTranche } = await hydroQueryClient.userVotes({
-          address,
-          roundId,
-          trancheId: tranche.id,
-        })
-        votes = votesForTranche
-      } catch (err) {
-        // TODO: no votes for this tranche; shouldn't throw exception though??
-      }
+        try {
+          const { votes: votesForTranche } = await hydroQueryClient.userVotes({
+            address,
+            roundId,
+            trancheId: tranche.id,
+          })
+          fetchedVotes = votesForTranche
+        } catch (err) {
+          // TODO: no votes for this tranche; shouldn't throw exception though??
+        }
 
-      return votes
-    })
+        return fetchedVotes
+      })
+    )
   )
+    .flat()
+    .map(keysFromSnakeToCamelCase)
+    .map(({ propId, ...vote }) => ({
+      ...vote,
+      bidId: propId,
+    }))
 
   const augmentedBidsByRoundId = Object.fromEntries(
-    Object.entries(bidsByRoundId).map(([roundId, bids]) => [
-      roundId,
-      bids.map((bid: AugmentedBidFromContract) => ({
-        ...bid,
-        description: bidDescriptionsByBidId[bid.id],
-      })),
-    ])
-  ) as Map<number, AugmentedBidFromContract[]>
+    Object.entries(bidsByRoundId).map(([roundId, bids]) => {
+      return [
+        roundId,
+        bids.map((bid: AugmentedBidFromContract) => {
+          const usersEstimatedRewards = sumBy(bid.tributes, "valueInUsd")
+          return {
+            ...bid,
+            description:
+              bidDescriptionsByBidId[bid.id].description ?? bid.description,
+            usersEstimatedRewards,
+            usersEstimatedRewardsDeltaPercentage: 0,
+          }
+        }),
+      ]
+    })
+  )
 
   return {
     ...backendData,
@@ -110,7 +132,7 @@ export async function fetchBackendDataWithAddress({
     isWalletConnected: true,
     currentRoundMetadata: {
       ...currentRoundMetadata,
-      votes,
+      votes: sanitizedVotes,
       votingPower,
     },
     lockups: {

@@ -2,33 +2,32 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { useContractContext } from "@/contract-apis/useContractContext"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
 
-export function TotalTributes() {
-  const { bidsByRoundId, currentRoundMetadata: roundMetadata } =
-    useContractContext()
-  const { roundId: currentRoundId } = roundMetadata
+export function NumberOfBids() {
+  const { bidsByRoundId, currentRoundMetadata, isLoading } = useBackendData()
+  const { roundId } = currentRoundMetadata
 
-  const numPointBasedTributes =
-    bidsByRoundId[currentRoundId]?.filter((bid) => !!bid.offchainTribute.length)
-      .length || 0
+  const bids = bidsByRoundId[roundId] ?? []
 
-  const numTributes = bidsByRoundId[currentRoundId]?.length || 0
+  const numPointBasedBids = bids.filter(
+    (bid) => false === bid.tributes.every((t) => t.isTokenBased)
+  ).length
 
   return (
     <StatCard
+      isLoading={isLoading}
       title={
         <Tooltip
           tipContents={
             <div className="flex flex-col items-center justify-center">
               <div>
-                <strong>{numTributes - numPointBasedTributes}</strong>{" "}
-                token-based
+                <strong>{bids.length - numPointBasedBids}</strong> token-based
               </div>
               <div>
-                <strong>{numPointBasedTributes}</strong> point-based
+                <strong>{numPointBasedBids}</strong> point-based
               </div>
             </div>
           }
@@ -37,7 +36,7 @@ export function TotalTributes() {
             <span>
               Live{" "}
               {pluralize({
-                count: numTributes,
+                count: bids.length,
                 singular: "Bid",
               })}
             </span>
@@ -45,8 +44,8 @@ export function TotalTributes() {
           </div>
         </Tooltip>
       }
-      subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={numTributes}
+      subTitle={`Pilot Round ${roundId + 1}`}
+      value={bids.length}
     />
   )
 }

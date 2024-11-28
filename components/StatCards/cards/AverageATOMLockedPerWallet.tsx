@@ -6,7 +6,7 @@ import { averageATOMLockedPerWalletTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function AverageATOMLockedPerWallet() {
+export function AverageAtomLockedPerWallet() {
   const { globalMetadata } = useBackendData()
   const { metrics } = globalMetadata
   const { allTimeUsersAvgTokenLocked } = metrics

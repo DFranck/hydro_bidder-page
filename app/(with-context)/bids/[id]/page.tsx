@@ -1,11 +1,11 @@
-import { ClientComponent } from "./ClientComponent"
+import { BidDetails } from "./BidDetails"
 
-export default async function DetailsPage({
+export default async function BidDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const idParam = (await params).id
 
-  return <ClientComponent bidId={idParam} />
+  return <BidDetails bidId={idParam} />
 }

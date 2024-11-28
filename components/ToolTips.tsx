@@ -3,8 +3,10 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { telegramLink } from "@/config"
-import { AugmentedBid, RoundMetadata } from "@/contract-apis/useContractContext"
+import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
+import { BackendData } from "@/contract-apis/fetchBackendDataWithoutAddress"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { sumBy } from "lodash"
 import Link from "next/link"
 
 export const VOTE_SHARE_THRESHOLD = 0.05
@@ -74,16 +76,13 @@ export const currentVoteShareTooltip = (
 
 export const estimatedRewardsTooltip = ({
   bid,
-  roundMetadata,
+  currentRoundMetadata,
 }: {
-  bid?: AugmentedBid
-  roundMetadata: RoundMetadata
+  bid?: FullyAugmentedBid
+  currentRoundMetadata: BackendData["currentRoundMetadata"]
 }) => {
-  const percentageOfTribute =
-    bid && roundMetadata.usersVotingPower
-      ? bid.votingPower / (bid.votingPower + roundMetadata.usersVotingPower)
-      : null
-  const isTokenBasedTribute = bid ? bid.offchainTribute.length === 0 : null
+  const percentageOfTribute = bid?.usersEstimatedRewards
+  const isTokenBasedTribute = bid?.tributes.every((t) => t.isTokenBased)
 
   return (
     <>
@@ -105,7 +104,7 @@ export const estimatedRewardsTooltip = ({
       )}{" "}
       {bid && isTokenBasedTribute ? (
         <strong className="text-palette-beige">
-          {amountToUSDString(bid.onchainTributeUsdc)}
+          {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
         </strong>
       ) : (
         `total`

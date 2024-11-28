@@ -2,9 +2,9 @@
 
 export interface BidDescription {
   title: string
-  aboutProject?: string
   description: string
   projectLogoUrl?: string
+  projectAbout?: string
   projectName: string
   projectUrl: string
   committeeComments?: string
