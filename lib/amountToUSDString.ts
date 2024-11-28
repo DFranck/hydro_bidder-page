@@ -5,7 +5,7 @@ export function amountToUSDString(
   numberOfDecimals: number = 2
 ) {
   return [
-    amount.toLocaleString("en-US", {
+    Number(amount ?? 0).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: numberOfDecimals,

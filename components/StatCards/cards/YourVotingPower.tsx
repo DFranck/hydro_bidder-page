@@ -3,18 +3,16 @@
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { yourVotingPowerTooltip } from "@/components/ToolTips"
-import { useContractContext } from "@/contract-apis/useContractContext"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function YourVotingPower() {
-  const { isLoading, currentRoundMetadata } = useContractContext()
-
-  const { usersVotingPower } = currentRoundMetadata
+  const { isLoading, votingPower } = useBackendData()
 
   return (
     <StatCard
       isLoading={isLoading}
-      value={usersVotingPower}
+      value={votingPower}
       title={
         <Tooltip tipContents={yourVotingPowerTooltip}>
           <div className="flex items-center gap-1">

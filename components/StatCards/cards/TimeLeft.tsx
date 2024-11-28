@@ -3,9 +3,8 @@
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { timeLeftTooltip } from "@/components/ToolTips"
-import { useContractContext } from "@/contract-apis/useContractContext"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
-import { sumBy } from "lodash"
 import { StatCard } from "../StatCard"
 
 const getRoundEndTextFromEndDate = (endDate: Date) => {
@@ -46,11 +45,7 @@ const getRoundEndTextFromEndDate = (endDate: Date) => {
 }
 
 export function TimeLeft() {
-  const { bidsByRoundId, currentRoundMetadata, isLoading } =
-    useContractContext()
-  const { roundEnd, roundId } = currentRoundMetadata
-  const percentageOfNonVoters =
-    100 - sumBy(bidsByRoundId[roundId], "votingPowerPercentage")
+  const { currentRoundEnd, currentRoundId, isLoading } = useBackendData()
 
   return (
     <StatCard
@@ -63,8 +58,10 @@ export function TimeLeft() {
           </div>
         </Tooltip>
       }
-      subTitle={<>Pilot Round {roundId + 1}</>}
-      value={roundEnd ? getRoundEndTextFromEndDate(roundEnd) : "0:00"}
+      subTitle={<>Pilot Round {currentRoundId + 1}</>}
+      value={
+        currentRoundEnd ? getRoundEndTextFromEndDate(currentRoundEnd) : "0:00"
+      }
     />
   )
 }

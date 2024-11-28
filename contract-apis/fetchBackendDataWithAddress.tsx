@@ -22,20 +22,11 @@ export interface BackendDataWithAddress
   bidsByRoundId: Record<number, FullyAugmentedBid[]>
   isLoading: boolean
   isWalletConnected: boolean
-  currentRoundMetadata: BackendData["currentRoundMetadata"] & {
-    votes: SanitizedVote[]
-    votingPower: number
-  }
-  globalMetadata: BackendData["globalMetadata"] & {
-    atomPrice: number
-    totalLockedTokens: number
-    maxLockedTokens: number
-  }
-  lockups: {
-    count: number
-    lockups: LockEntryWithPower[]
-    totalAtomLocked: number
-  }
+  maxLockedAtomUser: number
+  totalLockedAtomUser: number
+  usersLockups: LockEntryWithPower[]
+  votes: SanitizedVote[]
+  votingPower: number
 }
 
 export interface SanitizedVote
@@ -65,10 +56,12 @@ export async function fetchBackendDataWithAddress({
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
-  const { bidDescriptionsByBidId, bidsByRoundId, currentRoundMetadata } =
-    backendData
-
-  const { roundId, tranches } = currentRoundMetadata
+  const {
+    bidDescriptionsByBidId,
+    bidsByRoundId,
+    currentRoundId,
+    currentRoundTranches,
+  } = backendData
 
   const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
     hydroQueryClient.userVotingPower({ address }),
@@ -81,13 +74,13 @@ export async function fetchBackendDataWithAddress({
 
   const sanitizedVotes = (
     await Promise.all(
-      tranches.map(async (tranche) => {
+      currentRoundTranches.map(async (tranche) => {
         let fetchedVotes: VoteWithPower[] = []
 
         try {
           const { votes: votesForTranche } = await hydroQueryClient.userVotes({
             address,
-            roundId,
+            roundId: currentRoundId,
             trancheId: tranche.id,
           })
           fetchedVotes = votesForTranche
@@ -130,15 +123,11 @@ export async function fetchBackendDataWithAddress({
     bidsByRoundId: augmentedBidsByRoundId,
     isLoading: false,
     isWalletConnected: true,
-    currentRoundMetadata: {
-      ...currentRoundMetadata,
-      votes: sanitizedVotes,
-      votingPower,
-    },
-    lockups: {
-      count: lockups.length,
-      lockups,
-      totalAtomLocked: sumBy(lockups, "lock_entry.funds.amount"),
-    },
+    // TODO: get this from contract
+    maxLockedAtomUser: 200,
+    totalLockedAtomUser: sumBy(lockups, "lock_entry.funds.amount"),
+    usersLockups: lockups,
+    votes: sanitizedVotes,
+    votingPower,
   }
 }

@@ -23,43 +23,37 @@ export interface BackendDataContextType extends BackendDataWithAddress {
 
 const initialBackendDataContext: BackendDataWithAddress = {
   address: "",
+  atomPrice: 0,
   bidDescriptionsByBidId: {},
   bidsByRoundId: {},
+  currentRoundEnd: new Date(),
+  currentRoundId: 0,
+  currentRoundTranches: [],
   isLoading: false,
   isWalletConnected: false,
-  preHydroBids: [],
-  currentRoundMetadata: {
-    roundEnd: new Date(),
-    roundId: 0,
-    tranches: [],
-    votes: [],
-    votingPower: 0,
-  },
-  lockups: {
-    count: 0,
-    lockups: [],
-    totalAtomLocked: 0,
-  },
-  globalMetadata: {
-    atomPrice: 0,
-    totalLockedTokens: 0,
-    maxLockedTokens: 0,
-    metrics: {
-      currentRoundPolAvailable: 0,
-      currentRoundPolDeployed: 0,
-      currentRoundUniqueWallets: 0,
-      currentRoundTotalAtomLocked: 0,
-      currentRoundUsersAvgTokenLocked: 0,
-      currentRoundUsersApr: [],
-      allTimeUniqueWallets: 0,
-      allTimeTotalAtomLocked: 0,
-      allTimeTotalActiveRounds: 0,
-      allTimeUsersAvgActiveRounds: 0,
-      allTimeUsersAvgTokenLocked: 0,
-      allTimeUsersRewards: 0,
-      allTimeUsersApr: [],
-      allTimeApr: [],
-    },
+  maxLockedAtomGlobal: 0,
+  maxLockedAtomUser: 0,
+  metricsForPreHydroBids: [],
+  totalLockedAtomGlobal: 0,
+  totalLockedAtomUser: 0,
+  usersLockups: [],
+  votes: [],
+  votingPower: 0,
+  metricsGlobal: {
+    allTimeApr: [],
+    allTimeTotalActiveRounds: 0,
+    allTimeTotalAtomLocked: 0,
+    allTimeUniqueWallets: 0,
+    allTimeUsersApr: [],
+    allTimeUsersAvgActiveRounds: 0,
+    allTimeUsersAvgTokenLocked: 0,
+    allTimeUsersRewards: 0,
+    currentRoundPolAvailable: 0,
+    currentRoundPolDeployed: 0,
+    currentRoundTotalAtomLocked: 0,
+    currentRoundUniqueWallets: 0,
+    currentRoundUsersApr: [],
+    currentRoundUsersAvgTokenLocked: 0,
   },
 }
 
@@ -86,8 +80,6 @@ export function BackendDataContextProvider({
     isLoading,
     isWalletConnected,
   }
-
-  console.log(contextValue.globalMetadata.atomPrice)
 
   useEffect(() => {
     ;(async () => {

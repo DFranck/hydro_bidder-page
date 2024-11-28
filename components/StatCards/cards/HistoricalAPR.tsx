@@ -2,9 +2,13 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function HistoricalAPR() {
+export function HistoricalApr() {
+  const { isLoading, metricsGlobal } = useBackendData()
+  const { allTimeApr } = metricsGlobal
+
   return (
     <StatCard
       title={
@@ -17,19 +21,15 @@ export function HistoricalAPR() {
                 <p>Historical APRs based on</p>
 
                 <ul>
-                  {[1, 3, 12].map((months) => (
+                  {allTimeApr.map(({ period, apr }) => (
                     <li
-                      key={months}
+                      key={period}
                       className="flex items-center justify-between"
                     >
                       <span>
-                        Last{" "}
-                        <strong>
-                          {months} month
-                          {months > 1 ? "s" : ""}:
-                        </strong>
+                        Last <strong>{period}:</strong>
                       </span>{" "}
-                      <span>-%</span>
+                      <span>{Math.round(parseFloat(apr) * 100)}%</span>
                     </li>
                   ))}
                 </ul>

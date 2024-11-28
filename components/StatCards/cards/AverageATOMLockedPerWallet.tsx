@@ -2,19 +2,19 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { averageATOMLockedPerWalletTooltip } from "@/components/ToolTips"
+import { averageAtomLockedPerWalletTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function AverageAtomLockedPerWallet() {
-  const { globalMetadata } = useBackendData()
-  const { metrics } = globalMetadata
-  const { allTimeUsersAvgTokenLocked } = metrics
+  const { isLoading, metricsGlobal } = useBackendData()
+  const { allTimeUsersAvgTokenLocked } = metricsGlobal
 
   return (
     <StatCard
+      isLoading={isLoading}
       title={
-        <Tooltip tipContents={averageATOMLockedPerWalletTooltip}>
+        <Tooltip tipContents={averageAtomLockedPerWalletTooltip}>
           <div className="flex items-center gap-1">
             <span>Average ATOM Locked Per Wallet</span>
             <Icon name="circle-info" />

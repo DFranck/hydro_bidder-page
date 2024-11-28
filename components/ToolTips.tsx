@@ -31,7 +31,7 @@ export const averageAPRTooltip = (
   </div>
 )
 
-export const averageATOMLockedPerWalletTooltip = (
+export const averageAtomLockedPerWalletTooltip = (
   <>
     The average amount of ATOM that has been locked by each participating wallet
     across all Hydro rounds. This helps illustrate the typical commitment level
@@ -75,11 +75,11 @@ export const currentVoteShareTooltip = (
 )
 
 export const estimatedRewardsTooltip = ({
+  backendData,
   bid,
-  currentRoundMetadata,
 }: {
+  backendData: BackendData
   bid?: FullyAugmentedBid
-  currentRoundMetadata: BackendData["currentRoundMetadata"]
 }) => {
   const percentageOfTribute = bid?.usersEstimatedRewards
   const isTokenBasedTribute = bid?.tributes.every((t) => t.isTokenBased)
@@ -314,21 +314,21 @@ export const voteThresholdTooltip = (
   </>
 )
 
-export const yourAggregateAPRTooltip = (
+export const yourAggregateAprTooltip = (
   <>
     This is your historical APR based on past rounds. It reflects your average
     performance over time.
   </>
 )
 
-export const yourRoundAPRTooltip = (
+export const yourRoundAprTooltip = (
   <>
     This is your estimated personal APR for the current round based on your
     voting power and the bids for which you&apos;ve voted.
   </>
 )
 
-export const yourTotalATOMLockedTooltip = (
+export const yourTotalAtomLockedTooltip = (
   <>
     Your staked ATOM locked in Hydro. The more ATOMs you lock, the higher your
     voting power will be

@@ -25,7 +25,6 @@ import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
 import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { useContractContext } from "@/contract-apis/useContractContext"
 import { pluralize } from "@/lib/pluralize"
 import { sumBy } from "lodash"
 import Image from "next/image"
@@ -47,27 +46,26 @@ const tokenBasedTributesLabel = "Token-Based Tributes"
 const pointBasedTributesLabel = "Points-Based Tributes"
 
 export default function BidsPage() {
-  const { globalMetadata } = useContractContext()
-
-  const newBackendData = useBackendData()
+  const backendData = useBackendData()
 
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
     isLoading,
     isWalletConnected,
-    currentRoundMetadata,
-  } = newBackendData
-
-  console.log({ newBackendData })
-
-  const { roundId } = currentRoundMetadata
+    currentRoundEnd,
+    currentRoundId,
+    currentRoundTranches,
+    totalLockedAtomGlobal: totalLockedTokensGlobal,
+    maxLockedAtomGlobal: maxLockedTokensGlobal,
+    votingPower,
+    votes,
+  } = backendData
 
   const showWelcomeModal =
-    globalMetadata.totalLockedTokens < globalMetadata.maxLockedTokens &&
-    !currentRoundMetadata.votingPower
+    totalLockedTokensGlobal < maxLockedTokensGlobal && !votingPower
 
-  const bidsToRender = bidsByRoundId[roundId] ?? []
+  const bidsToRender = bidsByRoundId[currentRoundId] ?? []
 
   const rows =
     bidsToRender?.map((bid) => {
@@ -118,28 +116,19 @@ export default function BidsPage() {
                   learnMoreURL: pointProgramUrl,
                 })}
               >
-                <div className="flex items-center gap-1">
-                  <PointBasedReward
-                    bid={bid}
-                    hasVotedBids={currentRoundMetadata.votes.length > 0}
-                  />
-                  <Icon name="circle-info" />
-                </div>
+                <PointBasedReward bid={bid} hasVotedBids={votes.length > 0} />
               </Tooltip>
             ) : (
               <Tooltip
                 tipContents={estimatedRewardsTooltip({
                   bid,
-                  currentRoundMetadata,
+                  backendData,
                 })}
               >
-                <div className="flex items-center gap-1">
-                  <TokenBasedReward
-                    bid={bid}
-                    isWalletConnected={isWalletConnected}
-                  />
-                  <Icon name="circle-info" />
-                </div>
+                <TokenBasedReward
+                  bid={bid}
+                  isWalletConnected={isWalletConnected}
+                />
               </Tooltip>
             )}
           </InvisibleLink>
@@ -221,15 +210,13 @@ export default function BidsPage() {
         label: (
           <Tooltip
             tipContents={estimatedRewardsTooltip({
-              currentRoundMetadata,
+              backendData,
             })}
           >
             <div className="flex items-center gap-1">
               <span>
-                {isWalletConnected && currentRoundMetadata.votingPower
-                  ? "Your"
-                  : "Total"}{" "}
-                Est. Reward
+                {isWalletConnected && votingPower ? "Your" : "Total"} Est.
+                Reward
               </span>
               <Icon name="circle-info" />
             </div>
@@ -274,7 +261,13 @@ export default function BidsPage() {
         },
       },
     ],
-    [isWalletConnected, classNames.classNamesForCells, currentRoundMetadata]
+    [
+      backendData,
+      classNames.classNamesForCells,
+      isWalletConnected,
+      tokenBasedTributesLabel,
+      votingPower,
+    ]
   )
 
   const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
@@ -299,7 +292,7 @@ export default function BidsPage() {
         Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
         Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
 
-      const userVotedForBid = currentRoundMetadata.votes.some(
+      const userVotedForBid = votes.some(
         (vote) => vote.bidId === Number(row._bid.id)
       )
 
@@ -379,7 +372,7 @@ export default function BidsPage() {
 
       <StatCards>
         <StatCards.NumberOfBids />
-        <StatCards.AverageAPR />
+        <StatCards.AverageRoundApr />
         <StatCards.TimeLeft />
       </StatCards>
 

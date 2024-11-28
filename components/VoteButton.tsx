@@ -11,7 +11,7 @@ import { Tooltip } from "@/components/Tooltip"
 import { networkLimitReachedTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeVote } from "@/contract-apis/executeVote"
-import { useContractContext } from "@/contract-apis/useContractContext"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -28,17 +28,24 @@ export function VoteButton({
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { toasts, setToasts } = useToasts()
   const router = useRouter()
-  const { isWalletConnected, address, getSigningCosmWasmClient } =
-    useChain("neutron")
-  const { bidsByRoundId, currentRoundMetadata, globalMetadata } =
-    useContractContext()
+  const {
+    address,
+    bidsByRoundId,
+    currentRoundId,
+    isWalletConnected,
+    maxLockedAtomGlobal: maxLockedTokensGlobal,
+    metricsGlobal,
+    totalLockedAtomGlobal: totalLockedTokensGlobal,
+    votes,
+    votingPower,
+  } = useBackendData()
+
+  const { getSigningCosmWasmClient } = useChain("neutron")
   const bid = Object.values(bidsByRoundId)
     .flat()
     .find((bid) => bid.id === bidId)
-  const hasVotedForAny = currentRoundMetadata.usersVotedBidIds.length > 0
-  const hasVotedForBid = currentRoundMetadata.usersVotedBidIds.includes(
-    Number(bidId)
-  )
+  const hasVotedForAny = votes.length > 0
+  const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
   const isLoading = toasts.some((toast) => toast.variant === "working")
 
   async function handleClickVote() {
@@ -59,7 +66,7 @@ export function VoteButton({
         getSigningCosmWasmClient,
         address!,
         Number(bidId),
-        Number(bid.tranche)
+        Number(bid.trancheId)
       )
 
       setToasts([
@@ -115,12 +122,10 @@ export function VoteButton({
         Loading...
       </StyledText>
     )
-  } else if (currentRoundMetadata.usersVotingPower === 0) {
+  } else if (votingPower === 0) {
     Button = (
       <ConditionalWrapper
-        condition={
-          globalMetadata.totalLockedTokens >= globalMetadata.maxLockedTokens
-        }
+        condition={totalLockedTokensGlobal >= maxLockedTokensGlobal}
         wrapper={(children) => (
           <Tooltip tipContents={networkLimitReachedTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>

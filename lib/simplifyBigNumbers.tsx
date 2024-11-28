@@ -11,7 +11,9 @@ export function simplifyBigNumbers(num: number, decimals: number = 1): string {
     formatted = `${(num / 1000000).toFixed(decimals)}M`
   } else if (num >= 1000) {
     formatted = `${(num / 1000).toFixed(decimals)}K`
+  } else {
+    formatted = num.toFixed(decimals)
   }
 
-  return formatted.replace(".00", "")
+  return formatted.replace(/\.0+$/, "")
 }

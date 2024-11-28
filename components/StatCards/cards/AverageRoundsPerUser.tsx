@@ -6,9 +6,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function AverageRoundsPerUser() {
-  const { globalMetadata } = useBackendData()
-  const { metrics } = globalMetadata
-  const { allTimeUsersAvgActiveRounds } = metrics
+  const { isLoading, metricsGlobal } = useBackendData()
+  const { allTimeUsersAvgActiveRounds } = metricsGlobal
 
   return (
     <StatCard

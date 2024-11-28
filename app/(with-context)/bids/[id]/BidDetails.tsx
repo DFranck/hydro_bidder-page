@@ -1,5 +1,6 @@
 "use client"
 
+import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -12,7 +13,6 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import { kebabCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
@@ -22,14 +22,11 @@ export function BidDetails({ bidId }: { bidId: string }) {
     bidDescriptionsByBidId,
     bidsByRoundId,
     isLoading,
-    currentRoundMetadata,
+    votes,
+    currentRoundId,
   } = useBackendData()
 
-  const { votes } = currentRoundMetadata
-
-  const bid = bidsByRoundId[currentRoundMetadata.roundId].find(
-    (bid) => bid.id === bidId
-  )
+  const bid = bidsByRoundId[currentRoundId].find((bid) => bid.id === bidId)
 
   if (!bid) {
     return <>The requested proposal could not be found.</>
@@ -207,24 +204,7 @@ export function BidDetails({ bidId }: { bidId: string }) {
                 Tribute to Voters
               </StyledText>
               <div className="max-w-64 overflow-x-auto">
-                {bid.tributes.map((tribute, index) => (
-                  <p
-                    key={index}
-                    className="break-words text-xl font-bold not-italic"
-                  >
-                    {tribute.isTokenBased ? (
-                      <span>
-                        {simplifyBigNumbers(tribute.amount)}&nbsp;
-                        {tribute.denom}
-                      </span>
-                    ) : (
-                      <span>
-                        {simplifyBigNumbers(tribute.amount)}&nbsp;
-                        {tribute.denom}
-                      </span>
-                    )}
-                  </p>
-                ))}
+                <BidTributes bid={bid} />
               </div>
             </div>
 

@@ -16,10 +16,11 @@ import {
   metricsStatusColumnTooltip,
   metricsTributeColumnTooltip,
 } from "@/components/ToolTips"
-import { useContractContext } from "@/contract-apis/useContractContext"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
+import { sumBy } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -32,60 +33,70 @@ export function ClientComponent({
   requestedRoundNumberUnderHood: number | null
   isPreHydro: boolean
 }) {
-  const { bidsByRoundId, preHydroBids, currentRoundMetadata } =
-    useContractContext()
-  const { roundId: currentRoundUnderHood } = currentRoundMetadata
+  const {
+    bidsByRoundId,
+    metricsForPreHydroBids,
+    metricsForPostHydroBids,
+    bidDescriptionsByBidId,
+    currentRoundId,
+  } = useBackendData()
 
   if (
     requestedRoundNumberUnderHood &&
-    requestedRoundNumberUnderHood > currentRoundUnderHood
+    requestedRoundNumberUnderHood > currentRoundId
   ) {
     notFound()
   }
 
-  const bidsToRender =
-    (isPreHydro
-      ? preHydroBids
-      : bidsByRoundId[requestedRoundNumberUnderHood ?? 0]) ?? []
+  const bidsToRender = isPreHydro
+    ? metricsForPreHydroBids
+    : metricsForPostHydroBids
 
   const rows = bidsToRender.map((bid) => {
     const rowURL = isPreHydro
       ? `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
       : `/bids/${bid.id}`
 
+    const { projectLogoUrl, projectName, title, durationDays, status } = bid
+
     return {
       _bid: bid,
       logoAndTitle: (
         <InvisibleLink href={rowURL} className="flex items-center gap-6">
           <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-            {bid.projectLogoUrl ? (
+            {projectLogoUrl ? (
               <Image
                 className="object-contain"
-                src={bid.projectLogoUrl}
-                alt={bid.project}
+                src={projectLogoUrl}
+                alt={projectName}
                 fill={true}
               />
             ) : null}
           </div>
 
           <div className="flex flex-col">
-            <StyledText variant="h4">{bid.title}</StyledText>
-            <StyledText variant="footnote">{bid.project}</StyledText>
+            <StyledText variant="h4">{title}</StyledText>
+            <StyledText variant="footnote">{projectName}</StyledText>
           </div>
         </InvisibleLink>
       ),
       polValue: (
         <InvisibleLink href={rowURL}>
-          {bid.initialAllocationAmount.toLocaleString(undefined, {
-            maximumFractionDigits: 4,
-          })}
-          &nbsp;ATOM
+          {"initialAllocationAmount" in bid && (
+            <>
+              {bid.initialAllocationAmount.toLocaleString(undefined, {
+                maximumFractionDigits: 4,
+              })}
+              &nbsp;ATOM
+            </>
+          )}
         </InvisibleLink>
       ),
       duration: (
         <InvisibleLink href={rowURL}>
           {(() => {
-            const monthCount = parseFloat((bid.durationDays / 30).toFixed(1))
+            const monthCount = parseFloat((durationDays / 30).toFixed(1))
+
             return `${monthCount > 0 ? "~" : ""}${pluralize({
               count: monthCount,
               singular: "month",
@@ -96,53 +107,48 @@ export function ClientComponent({
       ),
       polRewards: (
         <InvisibleLink href={rowURL}>
-          {(
-            bid.currentAllocationAmount - bid.initialAllocationAmount
-          ).toLocaleString(undefined, {
-            maximumFractionDigits: 4,
-          })}{" "}
-          ATOM
+          {"currentAllocationAmount" in bid &&
+            "initialAllocationAmount" in bid && (
+              <>
+                {(
+                  bid.currentAllocationAmount - bid.initialAllocationAmount
+                ).toLocaleString(undefined, {
+                  maximumFractionDigits: 4,
+                })}{" "}
+                ATOM
+              </>
+            )}
         </InvisibleLink>
       ),
-      polApr: <InvisibleLink href={rowURL}>{bid.apr}%</InvisibleLink>,
+      polApr: (
+        <InvisibleLink href={rowURL}>
+          {"apr" in bid && `${bid.apr}%`}
+        </InvisibleLink>
+      ),
       tribute: (
         <InvisibleLink href={rowURL}>
-          {isPreHydro ? (
-            "–"
-          ) : (
-            <>
-              {bid.offchainTribute.map((tribute) => (
-                <div
-                  key={tribute.type}
-                  className="flex items-center justify-end gap-1"
-                >
-                  <Icon name="solid:gem" />
-                  <span>
-                    {simplifyBigNumbers(tribute.amount, 2)}&nbsp;
-                    {tribute.type}
-                  </span>
-                </div>
-              ))}
-
-              {bid.onchainTributeAssets.map((tribute) => (
-                <div key={tribute.asset}>
-                  {simplifyBigNumbers(Math.round(tribute.amount), 2)}&nbsp;
-                  {tribute.asset.slice(0, 12)}
-                </div>
-              ))}
-
-              {bid.onchainTributeUsdc ? (
-                <StyledText variant="footnote">
-                  ~{amountToUSDString(bid.onchainTributeUsdc)}
-                </StyledText>
-              ) : (
-                "–"
-              )}
-            </>
+          {bid.onchainTributeAssets.map((t) => (
+            <div key={t.asset}>
+              {simplifyBigNumbers(t.amount)}&nbsp;
+              <span title={t.asset}>{t.asset.slice(0, 12)}</span>
+            </div>
+          ))}
+          {bid.offchainTribute.map((t) => (
+            <div key={t.type} className="flex items-center gap-1">
+              <Icon name="solid:gem" />
+              <span>
+                {simplifyBigNumbers(t.amount)}&nbsp;{t.type}
+              </span>
+            </div>
+          ))}
+          {bid.onchainTributeUsdc > 0 && (
+            <div className="text-sm opacity-60">
+              ≈ {amountToUSDString(bid.onchainTributeUsdc)}
+            </div>
           )}
         </InvisibleLink>
       ),
-      status: <InvisibleLink href={rowURL}>{bid.status}</InvisibleLink>,
+      status: <InvisibleLink href={rowURL}>{status}</InvisibleLink>,
     }
   })
 
@@ -172,7 +178,10 @@ export function ClientComponent({
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bid.initialAllocationAmount,
+      customValueGetter: (row) =>
+        "initialAllocationAmount" in row._bid
+          ? row._bid.initialAllocationAmount
+          : 0,
     },
     {
       key: "duration",
@@ -201,7 +210,10 @@ export function ClientComponent({
       isSortable: true,
       initialSortDirection: "DESC",
       customValueGetter: (row) =>
-        row._bid.currentAllocationAmount - row._bid.initialAllocationAmount,
+        "currentAllocationAmount" in row._bid &&
+        "initialAllocationAmount" in row._bid
+          ? row._bid.currentAllocationAmount - row._bid.initialAllocationAmount
+          : 0,
     },
     {
       key: "polApr",
@@ -222,7 +234,7 @@ export function ClientComponent({
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bid.apr,
+      customValueGetter: (row) => ("apr" in row._bid ? row._bid.apr : 0),
     },
     {
       key: "tribute",
@@ -240,7 +252,9 @@ export function ClientComponent({
       textAlign: "right",
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bid.onchainTributeUsdc,
+      customValueGetter: (row) =>
+        amountToUSDString(row._bid.onchainTributeUsdc) ||
+        sumBy(row._bid.offchainTribute, "amount"),
     },
     {
       key: "status",
@@ -261,7 +275,7 @@ export function ClientComponent({
       },
       isSortable: true,
       initialSortDirection: "ASC",
-      customValueGetter: (row) => row._bid.status,
+      customValueGetter: (row) => ("status" in row._bid ? row._bid.status : ""),
     },
   ]
 

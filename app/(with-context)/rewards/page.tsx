@@ -14,10 +14,10 @@ import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { rewardsTributeRewardsColumnTooltip } from "@/components/ToolTips"
 import { claimRewards } from "@/contract-apis/claimRewards"
-import { useContractContext } from "@/contract-apis/useContractContext"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useChain } from "@cosmos-kit/react"
-import { startCase } from "lodash"
+import { sumBy } from "lodash"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 
@@ -25,11 +25,11 @@ export default function RewardsPage() {
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [isShowingClaimRewardsModal, setIsShowingClaimRewardsModal] =
     useState(false)
-  const { isLoading, currentRoundMetadata, bidsByRoundId } =
-    useContractContext()
 
-  const allBidIds =
-    bidsByRoundId[currentRoundMetadata.roundId]?.map((bid) => bid.id) ?? []
+  const { bidDescriptionsByBidId, bidsByRoundId, currentRoundId } =
+    useBackendData()
+
+  const allBidIds = bidsByRoundId[currentRoundId]?.map((bid) => bid.id) ?? []
   const [selectedBidIds, setSelectedBidIds] = useState<string[]>(allBidIds)
   const { setToasts } = useToasts()
   const { address, getSigningCosmWasmClient } = useChain("neutron")
@@ -38,6 +38,8 @@ export default function RewardsPage() {
     .flat()
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
+      const bidDescription = bidDescriptionsByBidId[bid.id]
+      const { projectLogoUrl, projectName, title } = bidDescription
 
       return {
         _bid: bid,
@@ -46,12 +48,12 @@ export default function RewardsPage() {
 
         logo: (
           <InvisibleLink href={bidUrl}>
-            {bid.projectLogoUrl ? (
+            {projectLogoUrl ? (
               <div className="relative size-12">
                 <Image
                   className="object-contain"
-                  src={bid.projectLogoUrl}
-                  alt={bid.project}
+                  src={projectLogoUrl}
+                  alt={projectName}
                   fill={true}
                 />
               </div>
@@ -62,37 +64,30 @@ export default function RewardsPage() {
         bidTitleAndProjectName: (
           <InvisibleLink href={bidUrl}>
             <div className="flex flex-col">
-              <StyledText variant="h4">{bid.title}</StyledText>
-              <StyledText variant="footnote">{bid.project}</StyledText>
+              <StyledText variant="h4">{title}</StyledText>
+              <StyledText variant="footnote">{projectName}</StyledText>
             </div>
           </InvisibleLink>
         ),
 
         token: (
           <InvisibleLink href={bidUrl}>
-            <div className="flex flex-col items-center justify-center gap-1">
-              {bid.offchainTribute.map((tribute, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  <Icon name="solid:gem" />
-                  {startCase(tribute.type.toLowerCase())}
-                </div>
-              ))}
-              {bid.onchainTributeAssets.map((tribute, index) => (
-                <div key={index}>{tribute.asset.slice(0, 12)}</div>
-              ))}
-            </div>
+            {bid.tributes
+              .map((t) => (t.isTokenBased ? t.denom.toUpperCase() : t.denom))
+              .sort()
+              .join(", ")}
           </InvisibleLink>
         ),
 
         polRewards: (
           <InvisibleLink href={bidUrl}>
-            {amountToUSDString(bid.estimatedRewardForUser ?? 0)}
+            {amountToUSDString(bid.usersEstimatedRewards)}
           </InvisibleLink>
         ),
 
         tributeRewards: (
           <InvisibleLink href={bidUrl}>
-            {amountToUSDString(bid.onchainTributeUsdc)}
+            {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
           </InvisibleLink>
         ),
 
@@ -148,10 +143,8 @@ export default function RewardsPage() {
         className: "relative whitespace-nowrap",
       },
       customValueGetter: (row) =>
-        [
-          ...row._bid.onchainTributeAssets.map((asset) => asset.asset),
-          ...row._bid.offchainTribute.map((tribute) => tribute.type),
-        ]
+        row._bid.tributes
+          .map((t) => t.denom)
           .sort()
           .join(", "),
     },
@@ -161,7 +154,7 @@ export default function RewardsPage() {
     //   label: (
     //     <Tooltip tipContents={rewardsPolRewardsColumnTooltip}>
     //       <div className="flex items-center gap-1">
-    //         <span>PoL Rewards ($)</span>
+    //         <span>PoL Rewards</span>
     //         <Icon name="circle-info" />
     //       </div>
     //     </Tooltip>
@@ -178,7 +171,7 @@ export default function RewardsPage() {
       label: (
         <Tooltip tipContents={rewardsTributeRewardsColumnTooltip}>
           <div className="flex items-center gap-1">
-            <span>Tribute Rewards ($)</span>
+            <span>Tribute Rewards</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
@@ -188,7 +181,7 @@ export default function RewardsPage() {
         className: "whitespace-nowrap",
       },
       isSortable: true,
-      customValueGetter: (row) => row._bid.onchainTributeUsdc ?? 0,
+      customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
     },
     {
       key: "actions",
@@ -223,7 +216,7 @@ export default function RewardsPage() {
 
     await Promise.all(
       selectedBidIds.map(async (bidId) => {
-        const bid = bidsByRoundId[currentRoundMetadata.roundId].find(
+        const bid = bidsByRoundId[currentRoundId].find(
           (bid) => bid.id === bidId
         )
 
@@ -232,8 +225,8 @@ export default function RewardsPage() {
         await claimRewards(
           getSigningCosmWasmClient,
           address!,
-          Number(bid.round),
-          bid.tranche,
+          Number(bid.roundId),
+          bid.trancheId,
           Number(bid.id)
         )
       })
@@ -245,14 +238,14 @@ export default function RewardsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.YourAPRCurrentRound />
-        <StatCards.YourAPRHistorical />
+        <StatCards.YourAprCurrentRound />
+        <StatCards.YourAprHistorical />
         <StatCards.YourTotalRewardsValue />
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <div className="flex items-center justify-between">
-          <StyledText variant="h2">Your Rewards</StyledText>
+        <div className="flex items-center justify-end">
+          <h2 className="sr-only">Your Rewards</h2>
 
           <div className="flex items-center gap-6">
             <div className="text-palette-beige">You have unclaimed rewards</div>
@@ -356,26 +349,22 @@ export default function RewardsPage() {
                         className: "!py-1",
                       },
                       customValueGetter: (row) =>
-                        row._bid?.estimatedRewardForUser ?? 0,
+                        row._bid?.usersEstimatedRewards ?? 0,
                     },
                   ]}
                   rows={selectedBidIds.map((bidId) => {
-                    const bid = bidsByRoundId[
-                      currentRoundMetadata.roundId
-                    ].find((bid) => bid.id === bidId)!
+                    const bid = bidsByRoundId[currentRoundId].find(
+                      (bid) => bid.id === bidId
+                    )!
 
                     return {
                       _bid: bid,
 
-                      token: [
-                        ...bid.onchainTributeAssets.map((asset) => asset.asset),
-                        bid.offchainTribute.map((tribute) => tribute.type),
-                      ]
+                      token: bid.tributes
+                        .map((t) => t.denom)
                         .sort()
                         .join(", "),
-                      amount: amountToUSDString(
-                        bid.estimatedRewardForUser ?? 0
-                      ),
+                      amount: amountToUSDString(bid.usersEstimatedRewards),
                     }
                   })}
                 />

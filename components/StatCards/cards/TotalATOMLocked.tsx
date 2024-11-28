@@ -5,12 +5,16 @@ import { formatAmount } from "@/lib/utils"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 
-export function TotalATOMLocked() {
-  const { globalMetadata } = useBackendData()
-  const { totalLockedTokens, maxLockedTokens, metrics } = globalMetadata
-  const { currentRoundTotalAtomLocked } = metrics
+export function TotalAtomLocked() {
+  const {
+    isLoading,
+    totalLockedAtomGlobal,
+    maxLockedAtomGlobal,
+    metricsGlobal,
+  } = useBackendData()
+  const { currentRoundTotalAtomLocked } = metricsGlobal
   const percentageLocked = Math.round(
-    (currentRoundTotalAtomLocked / maxLockedTokens) * 100
+    (currentRoundTotalAtomLocked / maxLockedAtomGlobal) * 100
   )
 
   return (
@@ -23,15 +27,15 @@ export function TotalATOMLocked() {
             to-palette-red/0
           `
       )}
-      isLoading={typeof totalLockedTokens !== "number"}
-      value={((totalLockedTokens ?? 0) / 1e6).toLocaleString(undefined, {
+      isLoading={isLoading}
+      value={((totalLockedAtomGlobal ?? 0) / 1e6).toLocaleString(undefined, {
         maximumFractionDigits: 0,
       })}
       title={<div className="flex items-center gap-1">Total ATOM in Hydro</div>}
       subTitle={
         <>
           <strong>{percentageLocked}%</strong> of{" "}
-          <strong>{formatAmount(maxLockedTokens)}</strong> max.
+          <strong>{formatAmount(maxLockedAtomGlobal)}</strong> max.
         </>
       }
     />

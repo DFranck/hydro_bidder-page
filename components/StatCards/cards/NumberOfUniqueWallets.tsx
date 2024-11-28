@@ -7,9 +7,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function NumberOfUniqueWallets() {
-  const { globalMetadata } = useBackendData()
-  const { metrics } = globalMetadata
-  const { currentRoundUniqueWallets, allTimeUniqueWallets } = metrics
+  const { metricsGlobal } = useBackendData()
+  const { currentRoundUniqueWallets, allTimeUniqueWallets } = metricsGlobal
 
   return (
     <StatCard

@@ -2,18 +2,20 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { yourRoundAPRTooltip } from "@/components/ToolTips"
-import { useContractContext } from "@/contract-apis/useContractContext"
+import { yourRoundAprTooltip } from "@/components/ToolTips"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function YourAPRCurrentRound() {
-  const { currentRoundMetadata: roundMetadata } = useContractContext()
-  const { roundId: currentRoundId } = roundMetadata
+export function YourAprCurrentRound() {
+  const { isLoading, metricsGlobal } = useBackendData()
+  const { currentRoundId } = useBackendData()
+  const { currentRoundUsersApr } = metricsGlobal
 
   return (
     <StatCard
+      isLoading={isLoading}
       title={
-        <Tooltip tipContents={yourRoundAPRTooltip}>
+        <Tooltip tipContents={yourRoundAprTooltip}>
           <div className="flex items-center gap-1">
             <span>Your Round APR</span>
             <Icon name="circle-info" />
@@ -21,7 +23,7 @@ export function YourAPRCurrentRound() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value="–%"
+      value={`${Math.round(parseFloat(currentRoundUsersApr[0].apr ?? "0") * 100)}%`}
     />
   )
 }
