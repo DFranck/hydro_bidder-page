@@ -33,6 +33,7 @@ const initialBackendDataContext: BackendDataWithAddress = {
   isWalletConnected: false,
   maxLockedAtomGlobal: 0,
   maxLockedAtomUser: 0,
+  metricsForPostHydroBids: [],
   metricsForPreHydroBids: [],
   totalLockedAtomGlobal: 0,
   totalLockedAtomUser: 0,
