@@ -143,7 +143,7 @@ export function ClientComponent({
           ))}
           {bid.onchainTributeUsdc > 0 && (
             <div className="text-sm opacity-60">
-              ≈ {amountToUSDString(bid.onchainTributeUsdc)}
+              {amountToUSDString(bid.onchainTributeUsdc)}
             </div>
           )}
         </InvisibleLink>

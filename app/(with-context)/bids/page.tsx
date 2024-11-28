@@ -1,5 +1,7 @@
 "use client"
 
+import { BidDenoms } from "@/components/BidDenoms"
+import { BidRewards } from "@/components/BidRewards"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -17,7 +19,6 @@ import {
   bidTypeTooltip,
   currentVoteShareTooltip,
   estimatedRewardsTooltip,
-  pointSystemTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -30,8 +31,6 @@ import { sumBy } from "lodash"
 import Image from "next/image"
 import { Fragment, ReactNode, useCallback } from "react"
 import { classNames } from "./classNames"
-import { PointBasedReward } from "./PointBasedReward"
-import { TokenBasedReward } from "./TokenBasedReward"
 
 type Row = {
   _bid: FullyAugmentedBid
@@ -94,7 +93,7 @@ export default function BidsPage() {
               <p className={classNames.bidTitle}>{bid.title}</p>
 
               <StyledText variant="footnote">
-                {bid.tributes.map((tribute) => tribute.denom).join(", ")}
+                <BidDenoms bid={bid} />
               </StyledText>
             </div>
           </InvisibleLink>
@@ -110,27 +109,7 @@ export default function BidsPage() {
         ),
         yourEstimatedReward: (
           <InvisibleLink href={bidURL}>
-            {isPointBasedBid ? (
-              <Tooltip
-                tipContents={pointSystemTooltip({
-                  learnMoreURL: pointProgramUrl,
-                })}
-              >
-                <PointBasedReward bid={bid} hasVotedBids={votes.length > 0} />
-              </Tooltip>
-            ) : (
-              <Tooltip
-                tipContents={estimatedRewardsTooltip({
-                  bid,
-                  backendData,
-                })}
-              >
-                <TokenBasedReward
-                  bid={bid}
-                  isWalletConnected={isWalletConnected}
-                />
-              </Tooltip>
-            )}
+            <BidRewards bid={bid} />
           </InvisibleLink>
         ),
         currentVoteShare: (
