@@ -68,7 +68,7 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
 
   const [
     { constants },
-    { round_end: currentRoundEnd, round_id: currentRoundId },
+    { round_id: currentRoundId },
     { tranches },
     { total_locked_tokens: totalLockedAtomGlobal },
     assetListWithPrices,
@@ -92,6 +92,10 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
     )?.priceUsd ?? 0
 
   const bidsByRoundId: Record<number, AugmentedBidFromContract[]> = {}
+
+  const { round_end: currentRoundEnd } = await hydroQueryClient.roundEnd({
+    roundId: currentRoundId,
+  })
 
   // With currentRoundId, we can fetch all bids for all rounds
   await Promise.all(
@@ -169,7 +173,7 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
     atomPrice,
     bidDescriptionsByBidId,
     bidsByRoundId,
-    currentRoundEnd: new Date(currentRoundEnd),
+    currentRoundEnd: new Date(Number(currentRoundEnd) / 1e6),
     currentRoundId: currentRoundId,
     currentRoundTranches: tranches,
     maxLockedAtomGlobal: constants.max_locked_tokens,
