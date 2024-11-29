@@ -66,7 +66,9 @@ export function TimeLeft() {
       }
       subTitle={<>Pilot Round {currentRoundId + 1}</>}
       value={
-        currentRoundEnd ? getRoundEndTextFromEndDate(currentRoundEnd) : "0:00"
+        currentRoundEnd
+          ? getRoundEndTextFromEndDate(new Date(currentRoundEnd))
+          : "0:00"
       }
     />
   )

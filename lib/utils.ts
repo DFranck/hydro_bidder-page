@@ -1,7 +1,6 @@
+import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { NEUTRON_ASSETS } from "@/config"
 // 1 month in nanoseconds
 export const lockEpochLength = 2628000000000000
 

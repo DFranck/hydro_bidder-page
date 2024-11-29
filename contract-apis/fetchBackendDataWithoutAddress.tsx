@@ -35,7 +35,7 @@ export interface AugmentedBidFromContract
 export interface BackendData {
   bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   bidDescriptionsByBidId: Record<string, BidDescription>
-  currentRoundEnd: Date
+  currentRoundEnd: number
   currentRoundId: number
   currentRoundTranches: Tranche[]
   atomPrice: number
@@ -173,7 +173,7 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
     atomPrice,
     bidDescriptionsByBidId,
     bidsByRoundId,
-    currentRoundEnd: new Date(Number(currentRoundEnd) / 1e6),
+    currentRoundEnd: Number(currentRoundEnd) / 1e6,
     currentRoundId: currentRoundId,
     currentRoundTranches: tranches,
     maxLockedAtomGlobal: constants.max_locked_tokens,
