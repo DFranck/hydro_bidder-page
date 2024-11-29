@@ -1,4 +1,4 @@
-import { BidDetails } from "./BidDetails"
+import { BidDetails } from "@/components/BidDetails"
 
 export default async function BidDetailsPage({
   params,
@@ -6,6 +6,5 @@ export default async function BidDetailsPage({
   params: Promise<{ id: string }>
 }) {
   const idParam = (await params).id
-
   return <BidDetails bidId={idParam} />
 }

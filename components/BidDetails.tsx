@@ -212,7 +212,7 @@ export function BidDetails({ bidId }: { bidId: string }) {
               <StyledText as="h3" variant="label">
                 Current Vote Percentage
               </StyledText>
-              <p
+              <div
                 className="
                   flex
                   flex-row
@@ -245,7 +245,7 @@ export function BidDetails({ bidId }: { bidId: string }) {
                     </span>
                   </Tooltip>
                 )}
-              </p>
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
