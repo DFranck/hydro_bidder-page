@@ -49,7 +49,7 @@ function gasPrices(chain: Chain | ChainName) {
   }
 }
 
-export function WalletHandler({
+export function WalletProvider({
   children,
 }: Readonly<{
   children: React.ReactNode

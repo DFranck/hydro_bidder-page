@@ -1,31 +1,37 @@
-import { ScrollIndicator } from "@/components/ScrollIndicator"
+"use server"
+
 import { inter } from "@/lib/font"
 import type { Metadata } from "next"
 import Script from "next/script"
-import { ClientHandler } from "./clientLayout"
 import "./globals.css"
 
-export const metadata: Metadata = {
-  title: "Hydro - The Interchain Liquidity Allocator",
-  description:
-    "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote, and earn today!",
-  metadataBase: new URL("https://hydro.cosmos.network"),
-  openGraph: {
-    url: "https://hydro.cosmos.network",
-    siteName: "Hydro",
-    locale: "en_US",
-    type: "website",
-    images: [
-      {
-        url: "https://hydro.cosmos.network/images/opengraph-image.jpg",
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  if (!process.env.SITE_URL) {
+    throw new Error("SITE_URL is not defined")
+  }
+
+  return {
+    title: "Hydro - The Interchain Liquidity Allocator",
+    description:
+      "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote, and earn today!",
+    metadataBase: new URL(process.env.SITE_URL),
+    openGraph: {
+      url: process.env.SITE_URL,
+      siteName: "Hydro",
+      locale: "en_US",
+      type: "website",
+      images: [
+        {
+          url: "https://hydro.cosmos.network/images/opengraph-image.jpg",
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+  }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
@@ -47,25 +53,8 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body
-        className={`${inter.className} relative overflow-x-hidden text-white`}
-      >
-        <div
-          className="
-            fixed
-            bottom-0
-            left-0
-            right-0
-            top-0
-            -z-10
-            bg-black
-            bg-[url('/images/AdobeStock_633966567.jpg')]
-            bg-cover
-            bg-no-repeat
-          "
-        />
-        <ClientHandler>{children}</ClientHandler>
-        <ScrollIndicator />
+      <body className={`${inter.className} relative overflow-x-hidden`}>
+        {children}
       </body>
     </html>
   )
