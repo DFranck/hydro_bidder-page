@@ -267,8 +267,8 @@ export const rewardsPolRewardsColumnTooltip = (
 
 export const rewardsTributeRewardsColumnTooltip = (
   <>
-    This is the estimated USD-equivalent value of the rewards from each tribute
-    that you voted for in past rounds.
+    This is the value of the rewards from each tribute you voted for in past
+    rounds.
   </>
 )
 
@@ -324,7 +324,7 @@ export const yourAggregateAprTooltip = (
 export const yourRoundAprTooltip = (
   <>
     This is your estimated personal APR for the current round based on your
-    voting power and the bids for which you&apos;ve voted.
+    voting power and the bids for which you&rsquo;ve voted.
   </>
 )
 
@@ -335,10 +335,11 @@ export const yourTotalAtomLockedTooltip = (
   </>
 )
 
-export const yourTotalRewardsValueTooltip = (
+export const yourTotalRewardsAllTimeTooltip = (
   <>
-    This is the expected aggregate USD-equivalent value of all the rewards you
-    have accumulated across the Hydro rounds you have participated in.
+    Based on today&rsquo;s prices, this is the expected aggregate USD-equivalent
+    value of all the rewards you have accumulated across the Hydro rounds you
+    have participated in.
   </>
 )
 

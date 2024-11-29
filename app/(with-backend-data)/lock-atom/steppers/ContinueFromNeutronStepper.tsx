@@ -1,14 +1,22 @@
 "use client"
 
-import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
+import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
+import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchMyValidators"
-import { formatAmount } from "@/lib/utils"
+import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
-import { broadcastTx, signRedeemTokensForShares } from "../transactions"
+import { signLockTokens } from "../transactions"
+
+type ContinueFromNeutronStep =
+  | "Init"
+  | "WaitingForLockSigning"
+  | "WaitingForLockBroadcast"
+  | "Success"
+  | "Error"
 
 function getValidatorMoniker(
   validator: string,
@@ -17,17 +25,11 @@ function getValidatorMoniker(
   return validatorMap.get(validator)?.description.moniker || validator
 }
 
-type RevertFromHubStep =
-  | "Init"
-  | "WaitingForRedeemSigning"
-  | "WaitingForRedeemBroadcast"
-  | "Success"
-  | "Error"
-
-export const RevertFromHubStepper = ({
+export const ContinueFromNeutronStepper = ({
   amount,
   validator,
   denom,
+  baseDenom,
   hubChain,
   neutronChain,
   startState,
@@ -38,22 +40,28 @@ export const RevertFromHubStepper = ({
   amount: string
   validator: string
   denom: string
+  baseDenom: string
   hubChain: ChainContext
   neutronChain: ChainContext
-  startState?: RevertFromHubStep
+  startState?: ContinueFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
   deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
-  const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
-  const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
-  const [showErrorLog, setShowErrorLog] = useState(false)
   const router = useRouter()
+  const [step, setStep] = useState<ContinueFromNeutronStep>(
+    startState || "Init"
+  )
+  const [errorLog, setErrorLog] = useState<string>(
+    "ContinueFromNeutronStepper: "
+  )
+  const [showErrorLog, setShowErrorLog] = useState(false)
+  const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
 
-  const execute = async () => {
+  const executeContinueFromNeutron = async () => {
     try {
       setErrorLog(
-        `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`
+        `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
       )
       const hubSigner = await hubChain.getSigningStargateClient()
       const neutronSigner = await neutronChain.getSigningStargateClient()
@@ -67,27 +75,23 @@ export const RevertFromHubStepper = ({
         throw new Error("Signing clients or addresses not available")
       }
 
-      // Wait for the user to sign the redeem transaction
-      setStep("WaitingForRedeemSigning")
-      const signedRedeemTx = await signRedeemTokensForShares(
-        hubChain,
-        hubSigner,
-        amount,
-        denom
+      // Wait for the user to sign the lock tokens transaction
+      setStep("WaitingForLockSigning")
+      const signedLockTx = await signLockTokens(
+        neutronChain,
+        neutronSigner,
+        lockDuration,
+        denom,
+        amount
       )
 
-      // Broadcast the redeem transaction
-      setStep("WaitingForRedeemBroadcast")
-      const redeemBroadcastResult = await broadcastTx(
-        hubSigner,
-        neutronSigner,
-        signedRedeemTx
-      )
+      // Broadcast the lock tokens transaction
+      // setStep('WaitingForLockBroadcast');
 
       setStep("Success")
       deleteIncompleteNotice(denom, amount)
     } catch (error: any) {
-      console.error("Error during revert process:", error)
+      console.error("Error in executeContinueFromNeutron:", error)
       setStep("Error")
       setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
     }
@@ -106,30 +110,53 @@ export const RevertFromHubStepper = ({
     switch (step) {
       case "Init":
         return {
-          title: `Revert ${formatAmount(amount)} ATOM`,
+          title: `Continue Locking ${formatAmount(amount)} ATOM`,
           contents: (
             <>
               <p>
-                You&apos;re about to revert{" "}
-                <strong className="text-white">
-                  {formatAmount(amount)} ATOM
-                </strong>{" "}
-                back to its original state, staked with{" "}
-                <strong className="text-white">
-                  {getValidatorMoniker(validator, validatorMap)}
+                Nice! You&rsquo;re about to lock{" "}
+                <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
+                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>{" "}
+                in Hydro to get{" "}
+                <strong>
+                  {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
+                  voting power.
                 </strong>
-                .
               </p>
-              <p>
-                This should take about a minute and will require 1 wallet
-                approval.
-              </p>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  executeContinueFromNeutron()
+                }}
+              >
+                <div className="mb-4">
+                  <label className="mb-2 block">Select Lock Duration:</label>
+                  <div className="flex space-x-2">
+                    {[1].map((months) => (
+                      <StyledText
+                        as="button"
+                        key={months}
+                        type="button"
+                        variant={
+                          lockDuration === months * EPOCH_LENGTH
+                            ? "button.primary"
+                            : "button.secondary"
+                        }
+                        onClick={() => setLockDuration(months * EPOCH_LENGTH)}
+                      >
+                        {months} {months === 1 ? "month" : "months"}
+                      </StyledText>
+                    ))}
+                  </div>
+                </div>
+                <p>This will require one wallet approval.</p>
+              </form>
             </>
           ),
           buttons: [
             {
-              label: "Revert",
-              onClick: execute,
+              label: "Lock",
+              onClick: executeContinueFromNeutron,
             },
             {
               label: "Cancel",
@@ -140,38 +167,25 @@ export const RevertFromHubStepper = ({
             },
           ],
         }
-      case "WaitingForRedeemSigning":
+      case "WaitingForLockSigning":
         return {
           isWorking: true,
-          title: "Approve Redemption",
+          title: "Approve Locking",
           contents: (
-            <>
-              <p>Approve the transaction in your wallet to continue</p>
-              <p>
-                This will restore your previous staked position with the amount
-                of{" "}
-                <strong className="text-white">
-                  {formatAmount(amount)} ATOM
-                </strong>{" "}
-                staked to{" "}
-                <strong className="text-white">
-                  {getValidatorMoniker(validator, validatorMap)}
-                </strong>
-                .
-              </p>
-            </>
+            <p>
+              Approve in your wallet again to lock your ATOM into the Hydro
+              contract to receive voting power.
+            </p>
           ),
         }
-      case "WaitingForRedeemBroadcast":
+      case "WaitingForLockBroadcast":
         return {
           isWorking: true,
-          title: "Redeeming ATOM",
+          title: "Locking in Progress",
           contents: (
             <>
-              <p>Redeeming ATOM...</p>
-              <p>
-                Hang tight, we&apos;re restoring your previous staked position.
-              </p>
+              <p>Locking your ATOM...</p>
+              <p>Just a few seconds, unless the network is congested</p>
             </>
           ),
         }
@@ -179,21 +193,20 @@ export const RevertFromHubStepper = ({
         return {
           title: "Success!",
           contents: (
-            <>
-              <p>
-                Your{" "}
-                <strong className="text-white">
-                  {formatAmount(amount)} ATOM
-                </strong>{" "}
-                has been restored to your previous staked position.
-              </p>
-            </>
+            <p>
+              You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
+              and received{" "}
+              <strong>
+                {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
+                voting power.
+              </strong>
+            </p>
           ),
           buttons: [
             {
-              label: "Done",
+              label: "Start Voting",
               onClick: () => {
-                router.push("/lock-atom")
+                router.push("/bids")
                 onExit()
               },
             },
@@ -206,7 +219,7 @@ export const RevertFromHubStepper = ({
             <>
               <p>
                 This transaction could not be completed. Your staked ATOM has
-                not been reverted.
+                not been locked in Hydro.
               </p>
               <p>Refresh the page to try again or recover your staked ATOM.</p>
               <div className="mt-4">

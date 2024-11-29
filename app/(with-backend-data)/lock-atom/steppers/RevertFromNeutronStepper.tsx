@@ -1,20 +1,26 @@
 "use client"
 
-import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
+import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchMyValidators"
-import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { formatAmount } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
-import { signLockTokens } from "../transactions"
+import {
+  broadcastAndRelayIBCNeutronToHub,
+  broadcastTx,
+  signIBCTransferNeutronToHub,
+  signRedeemTokensForShares,
+} from "../transactions"
 
-type ContinueFromNeutronStep =
+type RevertFromNeutronStep =
   | "Init"
-  | "WaitingForLockSigning"
-  | "WaitingForLockBroadcast"
+  | "WaitingForIBCSigning"
+  | "WaitingForIBCBroadcast"
+  | "WaitingForRedeemSigning"
+  | "WaitingForRedeemBroadcast"
   | "Success"
   | "Error"
 
@@ -25,7 +31,7 @@ function getValidatorMoniker(
   return validatorMap.get(validator)?.description.moniker || validator
 }
 
-export const ContinueFromNeutronStepper = ({
+export const RevertFromNeutronStepper = ({
   amount,
   validator,
   denom,
@@ -43,25 +49,20 @@ export const ContinueFromNeutronStepper = ({
   baseDenom: string
   hubChain: ChainContext
   neutronChain: ChainContext
-  startState?: ContinueFromNeutronStep
+  startState?: RevertFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
   deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
   const router = useRouter()
-  const [step, setStep] = useState<ContinueFromNeutronStep>(
-    startState || "Init"
-  )
-  const [errorLog, setErrorLog] = useState<string>(
-    "ContinueFromNeutronStepper: "
-  )
+  const [step, setStep] = useState<RevertFromNeutronStep>(startState || "Init")
+  const [errorLog, setErrorLog] = useState<string>("RevertFromNeutronStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
-  const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
 
-  const executeContinueFromNeutron = async () => {
+  const execute = async () => {
     try {
       setErrorLog(
-        `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
+        `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`
       )
       const hubSigner = await hubChain.getSigningStargateClient()
       const neutronSigner = await neutronChain.getSigningStargateClient()
@@ -75,23 +76,49 @@ export const ContinueFromNeutronStepper = ({
         throw new Error("Signing clients or addresses not available")
       }
 
-      // Wait for the user to sign the lock tokens transaction
-      setStep("WaitingForLockSigning")
-      const signedLockTx = await signLockTokens(
+      // Wait for the user to sign the IBC transfer transaction
+      setStep("WaitingForIBCSigning")
+      const signedIBCTx = await signIBCTransferNeutronToHub(
+        hubChain,
         neutronChain,
         neutronSigner,
-        lockDuration,
-        denom,
-        amount
+        amount,
+        denom
       )
 
-      // Broadcast the lock tokens transaction
-      // setStep('WaitingForLockBroadcast');
+      // Broadcast the IBC transfer transaction
+      setStep("WaitingForIBCBroadcast")
+      const lsmShares = await broadcastAndRelayIBCNeutronToHub(
+        hubSigner,
+        hubChain,
+        neutronSigner,
+        neutronChain,
+        denom,
+        baseDenom,
+        signedIBCTx
+      )
+
+      // Redeem tokens for shares
+      setStep("WaitingForRedeemSigning")
+      const signedRedeemTx = await signRedeemTokensForShares(
+        hubChain,
+        hubSigner,
+        lsmShares.amount,
+        lsmShares.denom
+      )
+
+      // Broadcast the redeem transaction
+      setStep("WaitingForRedeemBroadcast")
+      const redeemBroadcastResult = await broadcastTx(
+        hubSigner,
+        neutronSigner,
+        signedRedeemTx
+      )
 
       setStep("Success")
       deleteIncompleteNotice(denom, amount)
     } catch (error: any) {
-      console.error("Error in executeContinueFromNeutron:", error)
+      console.error("Error during revert process:", error)
       setStep("Error")
       setErrorLog((prevLog) => `${prevLog}\nError: ${error.message}`)
     }
@@ -110,53 +137,25 @@ export const ContinueFromNeutronStepper = ({
     switch (step) {
       case "Init":
         return {
-          title: `Continue Locking ${formatAmount(amount)} ATOM`,
+          title: `Revert ${formatAmount(amount)} ATOM`,
           contents: (
             <>
               <p>
-                Nice! You&apos;re about to lock{" "}
-                <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
-                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>{" "}
-                in Hydro to get{" "}
-                <strong>
-                  {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
-                  voting power.
-                </strong>
+                You&rsquo;re about to revert{" "}
+                <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
+                back to its original state, staked with{" "}
+                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>.
               </p>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  executeContinueFromNeutron()
-                }}
-              >
-                <div className="mb-4">
-                  <label className="mb-2 block">Select Lock Duration:</label>
-                  <div className="flex space-x-2">
-                    {[1].map((months) => (
-                      <StyledText
-                        as="button"
-                        key={months}
-                        type="button"
-                        variant={
-                          lockDuration === months * EPOCH_LENGTH
-                            ? "button.primary"
-                            : "button.secondary"
-                        }
-                        onClick={() => setLockDuration(months * EPOCH_LENGTH)}
-                      >
-                        {months} {months === 1 ? "month" : "months"}
-                      </StyledText>
-                    ))}
-                  </div>
-                </div>
-                <p>This will require one wallet approval.</p>
-              </form>
+              <p>
+                This should take about a minute and will require 2 wallet
+                approvals.
+              </p>
             </>
           ),
           buttons: [
             {
-              label: "Lock",
-              onClick: executeContinueFromNeutron,
+              label: "Revert",
+              onClick: execute,
             },
             {
               label: "Cancel",
@@ -167,25 +166,59 @@ export const ContinueFromNeutronStepper = ({
             },
           ],
         }
-      case "WaitingForLockSigning":
+      case "WaitingForIBCSigning":
         return {
           isWorking: true,
-          title: "Approve Locking",
-          contents: (
-            <p>
-              Approve in your wallet again to lock your ATOM into the Hydro
-              contract to receive voting power.
-            </p>
-          ),
-        }
-      case "WaitingForLockBroadcast":
-        return {
-          isWorking: true,
-          title: "Locking in Progress",
+          title: "Approve IBC Transfer",
           contents: (
             <>
-              <p>Locking your ATOM...</p>
-              <p>Just a few seconds, unless the network is congested</p>
+              <p>Approve the transaction in your wallet to continue</p>
+              <p>
+                This will start the transfer of your ATOM tokens to your Cosmos
+                Hub wallet.
+              </p>
+            </>
+          ),
+        }
+      case "WaitingForIBCBroadcast":
+        return {
+          isWorking: true,
+          title: "Transferring to Cosmos Hub",
+          contents: (
+            <>
+              <p>Transferring tokenized ATOM to Cosmos Hub...</p>
+              <p>
+                This could take 30 seconds or longer if the network is
+                congested.
+              </p>
+            </>
+          ),
+        }
+      case "WaitingForRedeemSigning":
+        return {
+          isWorking: true,
+          title: "Approve Redemption",
+          contents: (
+            <>
+              <p>Approve the transaction in your wallet to continue</p>
+              <p>
+                This will restore your previous staked position with the amount
+                of <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
+                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>.
+              </p>
+            </>
+          ),
+        }
+      case "WaitingForRedeemBroadcast":
+        return {
+          isWorking: true,
+          title: "Redeeming ATOM",
+          contents: (
+            <>
+              <p>Redeeming ATOM...</p>
+              <p>
+                Hang tight, we&rsquo;re restoring your previous staked position.
+              </p>
             </>
           ),
         }
@@ -194,19 +227,15 @@ export const ContinueFromNeutronStepper = ({
           title: "Success!",
           contents: (
             <p>
-              You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
-              and received{" "}
-              <strong>
-                {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
-                voting power.
-              </strong>
+              Your <strong>{formatAmount(amount)} ATOM</strong> has been
+              restored to your previous staked position.
             </p>
           ),
           buttons: [
             {
-              label: "Start Voting",
+              label: "Done",
               onClick: () => {
-                router.push("/bids")
+                router.push("/lock-atom")
                 onExit()
               },
             },
@@ -219,7 +248,7 @@ export const ContinueFromNeutronStepper = ({
             <>
               <p>
                 This transaction could not be completed. Your staked ATOM has
-                not been locked in Hydro.
+                not been reverted.
               </p>
               <p>Refresh the page to try again or recover your staked ATOM.</p>
               <div className="mt-4">

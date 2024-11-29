@@ -13,7 +13,7 @@ import { TotalAtomLocked } from "./cards/TotalAtomLocked"
 import { YourAprCurrentRound } from "./cards/YourAprCurrentRound"
 import { YourAprHistorical } from "./cards/YourAprHistorical"
 import { YourTotalAtomLocked } from "./cards/YourTotalAtomLocked"
-import { YourTotalRewardsValue } from "./cards/YourTotalRewardsValue"
+import { YourTotalRewardsAllTime } from "./cards/YourTotalRewardsAllTime"
 import { YourVotingPower } from "./cards/YourVotingPower"
 
 const StatCards = Object.assign(BaseStatCards, {
@@ -31,7 +31,7 @@ const StatCards = Object.assign(BaseStatCards, {
   YourAprCurrentRound,
   YourAprHistorical,
   YourTotalAtomLocked: YourTotalAtomLocked,
-  YourTotalRewardsValue,
+  YourTotalRewardsAllTime,
   YourVotingPower,
 })
 
