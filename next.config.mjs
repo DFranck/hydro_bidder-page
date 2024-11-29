@@ -1,12 +1,4 @@
-import Nextra from "nextra"
-
-const withNextra = Nextra({
-  theme: "nextra-theme-docs",
-  themeConfig: "./theme.config.jsx",
-  latex: true,
-})
-
-const nextConfig = withNextra({
+const nextConfig = {
   experimental: {
     dynamicIO: true,
   },
@@ -26,6 +18,6 @@ const nextConfig = withNextra({
       },
     ],
   },
-})
+}
 
 export default nextConfig
