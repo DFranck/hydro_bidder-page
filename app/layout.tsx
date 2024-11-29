@@ -5,7 +5,7 @@ import type { Metadata } from "next"
 import Script from "next/script"
 import "./globals.css"
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Hydro - The Interchain Liquidity Allocator",
     description:
