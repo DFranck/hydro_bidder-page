@@ -1,5 +1,3 @@
-"use server"
-
 import { getPriceFeedUrl } from "@/config"
 import { cacheRevalidationInterval } from "./_globals"
 

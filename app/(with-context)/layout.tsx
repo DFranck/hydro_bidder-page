@@ -1,5 +1,3 @@
-"use server"
-
 import { AppWrapper } from "@/components/AppWrapper"
 import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataWithoutAddress"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"

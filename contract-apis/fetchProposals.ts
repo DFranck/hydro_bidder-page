@@ -1,5 +1,3 @@
-"use server"
-
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { unstable_cache } from "next/cache"

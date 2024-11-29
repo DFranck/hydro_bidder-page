@@ -1,5 +1,3 @@
-"use server"
-
 import { endpoints } from "@/config"
 import { fetchAllValidators } from "@/contract-apis/fetchAllValidators"
 import { LsmInteraction } from "./components/LsmInteraction"

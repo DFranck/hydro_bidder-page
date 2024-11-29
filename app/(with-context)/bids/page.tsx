@@ -53,14 +53,14 @@ export default function BidsPage() {
     isLoading,
     isWalletConnected,
     currentRoundId,
-    totalLockedAtomGlobal: totalLockedTokensGlobal,
-    maxLockedAtomGlobal: maxLockedTokensGlobal,
+    totalLockedAtomGlobal,
+    maxLockedAtomGlobal,
     votingPower,
     votes,
   } = backendData
 
   const showWelcomeModal =
-    totalLockedTokensGlobal < maxLockedTokensGlobal && !votingPower
+    totalLockedAtomGlobal < maxLockedAtomGlobal && !votingPower
 
   const bidsToRender = bidsByRoundId[currentRoundId] ?? []
 

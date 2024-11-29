@@ -1,5 +1,3 @@
-"use server"
-
 import { ChainContext } from "@cosmos-kit/core"
 
 export type Validator = {
