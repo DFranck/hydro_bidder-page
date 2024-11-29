@@ -8,7 +8,7 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "Hydro - The Interchain Liquidity Allocator",
   description:
-    "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote & earn today!",
+    "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote, and earn today!",
   metadataBase: new URL("https://hydro.cosmos.network"),
   openGraph: {
     url: "https://hydro.cosmos.network",

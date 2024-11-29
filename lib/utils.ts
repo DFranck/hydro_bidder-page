@@ -1,3 +1,5 @@
+"use client"
+
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
