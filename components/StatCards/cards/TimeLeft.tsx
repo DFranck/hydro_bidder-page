@@ -7,7 +7,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
 
-const getRoundEndTextFromEndDate = (endDate: Date) => {
+function getRoundEndTextFromEndDate(endDate: Date) {
   const now = new Date()
   const diff = endDate.getTime() - now.getTime()
 
