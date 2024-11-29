@@ -2,9 +2,9 @@
 
 import { Validator } from "./fetchMyValidators"
 
-export const fetchAllValidators = async (
+export async function fetchAllValidators(
   restEndpoint: string
-): Promise<Validator[]> => {
+): Promise<Validator[]> {
   const response = await fetch(
     `${restEndpoint}cosmos/staking/v1beta1/validators?pagination.limit=500`
   )

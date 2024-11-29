@@ -6,7 +6,7 @@ import { unstable_cache } from "next/cache"
 import { cacheRevalidationInterval } from "./_globals"
 import { getCosmWasmClient } from "./getCosmWasmClient"
 
-export const fetchRoundState = async (roundId: number): Promise<RoundState> => {
+export async function fetchRoundState(roundId: number): Promise<RoundState> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
