@@ -5,7 +5,7 @@ import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendData
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import { ReactNode } from "react"
 
-export default async function VotingLayout({
+export default async function LayoutWithContext({
   children,
 }: {
   children: ReactNode

@@ -52,9 +52,7 @@ export default function BidsPage() {
     bidsByRoundId,
     isLoading,
     isWalletConnected,
-    currentRoundEnd,
     currentRoundId,
-    currentRoundTranches,
     totalLockedAtomGlobal: totalLockedTokensGlobal,
     maxLockedAtomGlobal: maxLockedTokensGlobal,
     votingPower,
@@ -68,11 +66,9 @@ export default function BidsPage() {
 
   const rows =
     bidsToRender?.map((bid) => {
-      const isPointBasedBid =
-        false === bid.tributes.every((t) => t.isTokenBased)
       const bidURL = `/bids/${bid.id}`
       const bidDescription = bidDescriptionsByBidId[bid.id]
-      const { projectLogoUrl, projectName, pointProgramUrl } = bidDescription
+      const { projectLogoUrl, projectName } = bidDescription
 
       return {
         _bid: bid,

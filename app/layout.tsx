@@ -6,17 +6,13 @@ import Script from "next/script"
 import "./globals.css"
 
 export async function generateMetadata(): Promise<Metadata> {
-  if (!process.env.SITE_URL) {
-    throw new Error("SITE_URL is not defined")
-  }
-
   return {
     title: "Hydro - The Interchain Liquidity Allocator",
     description:
       "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote, and earn today!",
-    metadataBase: new URL(process.env.SITE_URL),
+    metadataBase: new URL("https://hydro.cosmos.network"),
     openGraph: {
-      url: process.env.SITE_URL,
+      url: "https://hydro.cosmos.network",
       siteName: "Hydro",
       locale: "en_US",
       type: "website",

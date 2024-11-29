@@ -6,7 +6,7 @@ import { ToastContextProvider } from "@/components/Toasts"
 import { WalletProvider } from "@/components/WalletProvider"
 import { ReactNode } from "react"
 
-export function AppWrapper({ children }: { children: ReactNode }) {
+export async function AppWrapper({ children }: { children: ReactNode }) {
   return (
     <WalletProvider>
       <QueryClientProvider>
