@@ -10,6 +10,19 @@ export const metadata: Metadata = {
   description:
     "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote & earn today!",
   metadataBase: new URL("https://hydro.cosmos.network"),
+  openGraph: {
+    url: "https://hydro.cosmos.network",
+    siteName: "Hydro",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "https://hydro.cosmos.network/images/opengraph-image.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
