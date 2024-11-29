@@ -5,7 +5,7 @@ import type { Metadata } from "next"
 import Script from "next/script"
 import "./globals.css"
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return {
     title: "Hydro - The Interchain Liquidity Allocator",
     description:
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
