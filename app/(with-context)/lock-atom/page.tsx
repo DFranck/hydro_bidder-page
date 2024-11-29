@@ -1,6 +1,8 @@
+"use server"
+
 import { endpoints } from "@/config"
 import { fetchAllValidators } from "@/contract-apis/fetchAllValidators"
-import LSMInteraction from "./component"
+import { LsmInteraction } from "./components/LsmInteraction"
 
 export default async function LockPage() {
   const validators = await fetchAllValidators(endpoints.cosmoshub.rest[0])
@@ -10,7 +12,7 @@ export default async function LockPage() {
 
   return (
     <div className="mx-auto max-w-[800px] py-12">
-      <LSMInteraction validatorMap={validatorMap} />
+      <LsmInteraction validatorMap={validatorMap} />
     </div>
   )
 }

@@ -1,0 +1,307 @@
+import { Card } from "@/components/Card"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Icon } from "@/components/Icon"
+import { StyledText } from "@/components/StyledText"
+import { Toasts } from "@/components/Toasts"
+import { Tooltip } from "@/components/Tooltip"
+import { longerLockupsComingSoonTooltip } from "@/components/ToolTips"
+import { EPOCH_LENGTH } from "@/config"
+import { Validator } from "@/contract-apis/fetchMyValidators"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { useMyValidators } from "@/contract-apis/useMyValidators"
+import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { ChainContext } from "@cosmos-kit/core"
+import { ChangeEvent, useEffect, useState } from "react"
+import { classNames } from "../classNames"
+import { ValidatorListItem } from "../components/ValidatorListItem"
+import { calculateLsmCapacity } from "../functions/calculateLsmCapacity"
+import { getValidatorMoniker } from "../functions/getValidatorMoniker"
+
+export function LockForm({
+  onSubmit,
+  hubChain,
+  validatorMap,
+}: {
+  onSubmit: (validator: string, amount: string, duration: number) => void
+  hubChain: ChainContext
+  validatorMap: Map<string, Validator>
+}) {
+  const [validator, setValidator] = useState("")
+  const [amount, setAmount] = useState("")
+  const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
+  const {
+    maxLockedAtomUser,
+    totalLockedAtomUser,
+    maxLockedAtomGlobal,
+    totalLockedAtomGlobal,
+  } = useBackendData()
+  const { data: validators } = useMyValidators(hubChain, hubChain.address || "")
+  const selectedDuration = parseInt(duration || "0")
+  const delegationBalance = Number(
+    validators?.find((v) => v.validator.operator_address === validator)
+      ?.delegation_balance.amount ?? 0
+  )
+  const globalLimitRemainder = Math.max(
+    0,
+    maxLockedAtomGlobal - totalLockedAtomGlobal
+  )
+  const usersLimitRemainder = Math.max(
+    0,
+    maxLockedAtomUser - totalLockedAtomUser
+  )
+  const maxAtomToBeLocked = Math.min(
+    delegationBalance / 1e6, // no more than they have
+    usersLimitRemainder, // no more than their limit
+    globalLimitRemainder // no more than the global limit
+  )
+  const selectedAmountClamped = Math.min(
+    parseFloat(amount || "0"),
+    maxAtomToBeLocked
+  )
+
+  useEffect(() => {
+    if (validator && validators) {
+      const selectedValidator = validators.find(
+        (v) => v.validator.operator_address === validator
+      )
+      if (selectedValidator) {
+        const lsmCapacity = calculateLsmCapacity(
+          selectedValidator.validator.validator_bond_shares,
+          selectedValidator.validator.liquid_shares
+        )
+        if (lsmCapacity < selectedAmountClamped && selectedAmountClamped > 0) {
+          // Instead of resetting, you could set an error state or show a warning
+          console.warn("Selected amount exceeds LSM capacity")
+        }
+      }
+    }
+  }, [selectedAmountClamped, validator, validators])
+
+  function clearSelectedValidator() {
+    setValidator("")
+  }
+
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    setAmount(e.target.value)
+  }
+
+  function handleBlur(e: ChangeEvent<HTMLInputElement>) {
+    setAmount(
+      Math.min(parseFloat(e.target.value) || 0, maxAtomToBeLocked).toString()
+    )
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const uatomAmount = Math.floor(parseFloat(amount) * 1e6).toString()
+    onSubmit(validator, uatomAmount, parseInt(duration))
+  }
+
+  return (
+    <Card>
+      {validators?.length === 0 ? (
+        <Card.Body className={classNames.cardContent}>
+          <p>
+            You need some staked ATOM to participate in Hydro. You can go to
+            Keplr staking interface and stake some ATOM to any active validator
+          </p>
+          <p>
+            Stake now:{" "}
+            <StyledText
+              variant="link"
+              as="a"
+              href="https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake"
+              target="_blank"
+            >
+              https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake{" "}
+              <Icon name="solid:arrow-up-right" />
+            </StyledText>
+          </p>
+        </Card.Body>
+      ) : (
+        <>
+          <Card.Header title="Get Voting Power" />
+          <Card.Body className={classNames.cardContent}>
+            <Toasts.Toast variant="info" isDismissible={false}>
+              Once locked, your staked ATOMs are inaccessible for the duration
+              of the lock. They will continue to accrue staking rewards but you
+              will not be able to vote in Cosmos Hub governance.
+            </Toasts.Toast>
+            <form onSubmit={handleSubmit}>
+              {!validator && validators && (
+                <div className={classNames.formContainer}>
+                  <div className="space-y-3">
+                    <StyledText variant="label">
+                      How to get voting power:
+                    </StyledText>
+
+                    <ol className="list-inside list-decimal">
+                      <li>
+                        Your ATOM staked to a validator can be locked in Hydro
+                      </li>
+                      <li>You get voting power</li>
+                      <li>You continue to earn staking rewards</li>
+                    </ol>
+
+                    {validators.length > 1 && (
+                      <p>
+                        Since you have multiple validators, you will need to
+                        select one with staked ATOM to use for your voting
+                        power.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className={classNames.cardContent}>
+                    <p>
+                      <StyledText as="label" variant="label">
+                        Select a Validator:
+                      </StyledText>
+                    </p>
+
+                    {validators.map((v) => (
+                      <ValidatorListItem
+                        key={v.validator.operator_address}
+                        validator={v}
+                        selectedValue={validator}
+                        onChange={setValidator}
+                        selectedAmount={selectedAmountClamped}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {validator && (
+                <div className="grid grid-cols-[min-content,auto] items-center gap-6">
+                  <div className="col-span-2 grid grid-cols-subgrid items-center">
+                    <StyledText as="label" variant="label">
+                      Your Validator:
+                    </StyledText>
+                    <div className="flex items-center gap-2">
+                      <span>
+                        {getValidatorMoniker(validator, validatorMap)}
+                      </span>
+
+                      <StyledText
+                        as="button"
+                        variant="link"
+                        onClick={clearSelectedValidator}
+                      >
+                        Change
+                      </StyledText>
+                    </div>
+                  </div>
+                  <div className="col-span-2 grid grid-cols-subgrid items-center">
+                    <StyledText as="label" variant="label">
+                      Amount:
+                    </StyledText>
+                    <div className="flex items-center gap-3">
+                      <StyledText
+                        as="input"
+                        className="peer"
+                        type="text"
+                        pattern="^\d+(\.\d{1,6})?$"
+                        variant="input.text"
+                        value={amount}
+                        defaultValue={maxAtomToBeLocked.toString()}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                      />
+                      <StyledText
+                        as="p"
+                        className="
+                          hidden
+                          text-palette-red
+                          peer-invalid:block
+                        "
+                        variant="footnote"
+                      >
+                        <Icon name="triangle-exclamation" /> Invalid amount
+                      </StyledText>
+                      <StyledText as="p" variant="footnote">
+                        Max: {maxAtomToBeLocked} ATOM
+                      </StyledText>
+                    </div>
+                  </div>
+                  <div className="col-span-2 grid grid-cols-subgrid">
+                    <StyledText as="label" variant="label">
+                      Lockup:
+                    </StyledText>
+                    <div className="flex flex-col gap-2">
+                      {[1, 3, 6, 12].map((months) => (
+                        <StyledText
+                          as="label"
+                          variant="label"
+                          key={months}
+                          className="flex items-center gap-2"
+                        >
+                          <StyledText
+                            variant="input.radio"
+                            as="input"
+                            type="radio"
+                            disabled={months > 1}
+                            value={(months * EPOCH_LENGTH).toString()}
+                            checked={
+                              duration === (months * EPOCH_LENGTH).toString()
+                            }
+                            onChange={() =>
+                              setDuration((months * EPOCH_LENGTH).toString())
+                            }
+                          />
+                          <span>
+                            <ConditionalWrapper
+                              condition={months > 1}
+                              wrapper={(children) => (
+                                <Tooltip
+                                  tipContents={longerLockupsComingSoonTooltip}
+                                >
+                                  <div className="flex items-center gap-1">
+                                    <span>{children}</span>
+                                    <Icon name="circle-info" />
+                                  </div>
+                                </Tooltip>
+                              )}
+                            >
+                              {months} {months === 1 ? "month" : "months"}
+                            </ConditionalWrapper>
+                          </span>
+                        </StyledText>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="col-span-2 grid grid-cols-subgrid items-center">
+                    <StyledText as="label" variant="label">
+                      Voting Power:
+                    </StyledText>
+                    <strong>
+                      {(() => {
+                        const lockupPower = scaleLockupPower(
+                          selectedDuration,
+                          BigInt(selectedAmountClamped * 1e6 || 0)
+                        )
+
+                        return formatAmount(lockupPower, 6)
+                      })()}
+                    </strong>
+                  </div>
+                  <div className="col-span-2 flex flex-row-reverse">
+                    <StyledText
+                      as="button"
+                      disabled={
+                        !validator || !selectedAmountClamped || !duration
+                      }
+                      variant="button.primary"
+                      type="submit"
+                    >
+                      Lock ATOM...
+                    </StyledText>
+                  </div>
+                </div>
+              )}
+            </form>
+          </Card.Body>
+        </>
+      )}
+    </Card>
+  )
+}
