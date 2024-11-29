@@ -26,7 +26,7 @@ const initialBackendDataContext: BackendDataWithAddress = {
   atomPrice: 0,
   bidDescriptionsByBidId: {},
   bidsByRoundId: {},
-  currentRoundEnd: new Date(),
+  currentRoundEnd: 0,
   currentRoundId: 0,
   currentRoundTranches: [],
   isLoading: false,
