@@ -44,8 +44,6 @@ export async function fetchBackendDataWithAddress({
   address: string
   backendData: BackendData
 }): Promise<BackendDataWithAddress> {
-  "use cache"
-
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }

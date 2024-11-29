@@ -271,10 +271,10 @@ export function BidDetails({ bidId }: { bidId: string }) {
                       <span>{section}</span>
                     </StyledText>
                   ))}
-                {bidDescription.projectUrl && (
+                {projectUrl && (
                   <StyledText
                     as={Link}
-                    href={bidDescription.projectUrl}
+                    href={projectUrl}
                     target="_blank"
                     variant="link"
                     className="

@@ -1,5 +1,3 @@
-"use server"
-
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { fetchMyAllLockups } from "./fetchMyAllLockups"

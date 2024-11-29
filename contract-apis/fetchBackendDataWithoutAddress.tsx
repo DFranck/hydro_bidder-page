@@ -20,6 +20,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
+import { connection } from "next/server"
 
 export interface BidFromContract extends Proposal {}
 
@@ -52,7 +53,7 @@ export interface AugmentedTribute
   isTokenBased: boolean
 }
 
-export const initialBackendData: BackendData = {
+const initialBackendData: BackendData = {
   atomPrice: 0,
   bidDescriptionsByBidId: {},
   bidsByRoundId: {},
@@ -82,7 +83,7 @@ export const initialBackendData: BackendData = {
 }
 
 export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
-  "use cache"
+  await connection()
 
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")

@@ -1,5 +1,3 @@
-"use server"
-
 // convenience func that allows doing contract queries on both server and client
 
 import { NEUTRON_DEFAULT_RPC } from "@/config"

@@ -1,5 +1,3 @@
-"use server"
-
 export interface BidDescription {
   title: string
   description: string

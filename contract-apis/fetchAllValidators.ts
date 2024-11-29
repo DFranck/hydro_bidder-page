@@ -1,5 +1,3 @@
-"use server"
-
 import { Validator } from "./fetchMyValidators"
 
 export async function fetchAllValidators(

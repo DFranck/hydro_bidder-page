@@ -1,5 +1,3 @@
-"use server"
-
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "./getCosmWasmClient"

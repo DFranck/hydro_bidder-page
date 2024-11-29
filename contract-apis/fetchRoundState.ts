@@ -1,5 +1,3 @@
-"use server"
-
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { RoundState } from "@/app/types"
 import { unstable_cache } from "next/cache"

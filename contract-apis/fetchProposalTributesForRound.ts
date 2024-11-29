@@ -1,5 +1,3 @@
-"use server"
-
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { fetchProposalTributes } from "./fetchProposalTributes"
