@@ -7,9 +7,6 @@ const withNextra = Nextra({
 })
 
 const nextConfig = withNextra({
-  experimental: {
-    dynamicIO: true,
-  },
   images: {
     remotePatterns: [
       {
