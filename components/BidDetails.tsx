@@ -256,7 +256,7 @@ export function BidDetails({ bidId }: { bidId: string }) {
                 {[
                   bidDescription.projectAbout && "About Project",
                   bidDescription.description && "Bid Description",
-                  bidDescription.committeeComments && "Committee Comments",
+                  bidDescription.committeeComments && "Committee Review",
                 ]
                   .filter(Boolean)
                   .map((section, index) => (
