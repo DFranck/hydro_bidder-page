@@ -1,3 +1,4 @@
+import { AppWrapper } from "@/components/AppWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Icon } from "@/components/Icon"
@@ -191,239 +192,241 @@ export default function Home() {
   }
 
   return (
-    <main
-      className="
-        flex
-        min-h-screen
-        w-full
-        flex-col
-        overflow-hidden
-      "
-    >
-      <div
+    <AppWrapper>
+      <main
         className="
-          bg-gradient-to-t
-          from-palette-text
-          via-transparent
-          to-transparent
+          flex
+          min-h-screen
+          w-full
+          flex-col
+          overflow-hidden
         "
       >
-        <ContentContainer
+        <div
           className="
-            relative
-            z-10
-            min-h-[70vh]
-            justify-center
-            gap-6
+            bg-gradient-to-t
+            from-palette-text
+            via-transparent
+            to-transparent
           "
         >
-          <div
+          <ContentContainer
             className="
-              max-w-[64ch]
-              space-y-6
+              relative
+              z-10
+              min-h-[70vh]
+              justify-center
+              gap-6
             "
           >
-            <StyledText as="h1" variant="h1">
-              Get More From{" "}
-              <span className="sm:whitespace-nowrap">Your ATOM</span>
-            </StyledText>
-            <p
+            <div
               className="
-                text-balance
-                text-xl
-                font-normal
+                max-w-[64ch]
+                space-y-6
               "
             >
-              An opportunity for Cosmos Hub stakers to earn yield on top of
-              their staking rewards. Lock your staked ATOM, vote, and allocate
-              liquidity across{" "}
-              <span className="whitespace-nowrap">the Interchain.</span>
-            </p>
-          </div>
+              <StyledText as="h1" variant="h1">
+                Get More From{" "}
+                <span className="sm:whitespace-nowrap">Your ATOM</span>
+              </StyledText>
+              <p
+                className="
+                  text-balance
+                  text-xl
+                  font-normal
+                "
+              >
+                An opportunity for Cosmos Hub stakers to earn yield on top of
+                their staking rewards. Lock your staked ATOM, vote, and allocate
+                liquidity across{" "}
+                <span className="whitespace-nowrap">the Interchain.</span>
+              </p>
+            </div>
 
-          <StyledText
-            as={Link}
-            href="/lock-atom"
-            variant="button.primary.large"
-          >
-            Get started
-          </StyledText>
-        </ContentContainer>
-      </div>
+            <StyledText
+              as={Link}
+              href="/lock-atom"
+              variant="button.primary.large"
+            >
+              Get started
+            </StyledText>
+          </ContentContainer>
+        </div>
 
-      <div className="bg-palette-text">
-        <HorizontalDivider />
+        <div className="bg-palette-text">
+          <HorizontalDivider />
 
-        <ContentContainer
-          className="
-            z-10
-            items-center
-            gap-12
-            py-20
-            text-center
-            lg:py-40
-          "
-        >
-          <StyledText as="h2" variant="h2">
-            How Hydro Works
-          </StyledText>
-          {renderTiles({
-            tiles: howHydroWorksTiles,
-            size: "small",
-          })}
-          <StyledText as="a" variant="button.primary.large" href="/lock-atom">
-            Get Started
-          </StyledText>
-        </ContentContainer>
-
-        <HorizontalDivider />
-
-        <ContentContainer>
-          <div
+          <ContentContainer
             className="
-              grid
+              z-10
               items-center
-              gap-6
+              gap-12
               py-20
-              text-left
-              lg:grid-cols-2
+              text-center
               lg:py-40
             "
           >
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <StyledText as="div" variant="superHeading">
-                  For Voters
-                </StyledText>
-                <StyledText as="h2" variant="h2">
-                  Earn Yield On Top of the{" "}
-                  <span className="sm:whitespace-nowrap">Staking APR</span>
-                </StyledText>
-              </div>
-              <div
-                className="
-                  text-balance
-                  text-lg
-                "
-              >
-                Hydro gives ATOM stakers the opportunity to allocate the
-                Hub&rsquo;s liquidity by voting on bids submitted by projects,
-                and receive tributes for{" "}
-                <span className="whitespace-nowrap">their support.</span>
-              </div>
-              {renderBenefits()}
-              <div className="flex gap-6">
-                <StyledText
-                  as="a"
-                  variant="button.primary.large"
-                  href="/lock-atom"
+            <StyledText as="h2" variant="h2">
+              How Hydro Works
+            </StyledText>
+            {renderTiles({
+              tiles: howHydroWorksTiles,
+              size: "small",
+            })}
+            <StyledText as="a" variant="button.primary.large" href="/lock-atom">
+              Get Started
+            </StyledText>
+          </ContentContainer>
+
+          <HorizontalDivider />
+
+          <ContentContainer>
+            <div
+              className="
+                grid
+                items-center
+                gap-6
+                py-20
+                text-left
+                lg:grid-cols-2
+                lg:py-40
+              "
+            >
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <StyledText as="div" variant="superHeading">
+                    For Voters
+                  </StyledText>
+                  <StyledText as="h2" variant="h2">
+                    Earn Yield On Top of the{" "}
+                    <span className="sm:whitespace-nowrap">Staking APR</span>
+                  </StyledText>
+                </div>
+                <div
+                  className="
+                    text-balance
+                    text-lg
+                  "
                 >
-                  Get Started
-                </StyledText>
-                <StyledText
-                  as="a"
-                  variant="button.secondary.large"
-                  href="/docs/users/calculating-staking-apr"
-                  target="_blank"
-                >
-                  Learn More
-                  <Icon name="solid:arrow-up-right" />
-                </StyledText>
+                  Hydro gives ATOM stakers the opportunity to allocate the
+                  Hub&rsquo;s liquidity by voting on bids submitted by projects,
+                  and receive tributes for{" "}
+                  <span className="whitespace-nowrap">their support.</span>
+                </div>
+                {renderBenefits()}
+                <div className="flex gap-6">
+                  <StyledText
+                    as="a"
+                    variant="button.primary.large"
+                    href="/lock-atom"
+                  >
+                    Get Started
+                  </StyledText>
+                  <StyledText
+                    as="a"
+                    variant="button.secondary.large"
+                    href="/docs/users/calculating-staking-apr"
+                    target="_blank"
+                  >
+                    Learn More
+                    <Icon name="solid:arrow-up-right" />
+                  </StyledText>
+                </div>
               </div>
+              <Image
+                className="mix-blend-screen"
+                src="/images/side-image-dots.jpg"
+                alt="Hydro"
+                width={800}
+                height={800}
+              />
             </div>
-            <Image
-              className="mix-blend-screen"
-              src="/images/side-image-dots.jpg"
-              alt="Hydro"
-              width={800}
-              height={800}
-            />
-          </div>
-        </ContentContainer>
+          </ContentContainer>
 
-        <HorizontalDivider />
-      </div>
+          <HorizontalDivider />
+        </div>
 
-      <div
-        className="
-          bg-gradient-to-b
-          from-palette-text
-          to-[#0B1C45]
-        "
-      >
-        <ContentContainer
+        <div
           className="
-            items-center
-            space-y-6
-            py-20
-            lg:py-40
+            bg-gradient-to-b
+            from-palette-text
+            to-[#0B1C45]
           "
         >
-          <div className="space-y-2 text-center">
-            <StyledText as="div" variant="superHeading">
-              for projects
-            </StyledText>
-            <StyledText as="h2" variant="h2">
-              Get Liquidity from the Hub
-            </StyledText>
-          </div>
-          <p
+          <ContentContainer
             className="
-              max-w-[64ch]
-              text-balance
-              text-center
-              text-xl
-              font-normal
-              leading-[30px]
-              text-white
+              items-center
+              space-y-6
+              py-20
+              lg:py-40
             "
           >
-            Hydro allocates liquidity through sequential rounds in which
-            projects attract user votes through the distribution of tributes.{" "}
-            <StyledText
-              as="a"
-              className="flex items-center gap-1"
-              variant="link"
-              href="/docs"
-              target="_blank"
+            <div className="space-y-2 text-center">
+              <StyledText as="div" variant="superHeading">
+                for projects
+              </StyledText>
+              <StyledText as="h2" variant="h2">
+                Get Liquidity from the Hub
+              </StyledText>
+            </div>
+            <p
+              className="
+                max-w-[64ch]
+                text-balance
+                text-center
+                text-xl
+                font-normal
+                leading-[30px]
+                text-white
+              "
             >
-              Learn more
-              <Icon name="solid:arrow-up-right" />
-            </StyledText>
-          </p>
+              Hydro allocates liquidity through sequential rounds in which
+              projects attract user votes through the distribution of tributes.{" "}
+              <StyledText
+                as="a"
+                className="flex items-center gap-1"
+                variant="link"
+                href="/docs"
+                target="_blank"
+              >
+                Learn more
+                <Icon name="solid:arrow-up-right" />
+              </StyledText>
+            </p>
 
-          <div>
-            {renderTiles({
-              tiles: howItWorksForProjectsTiles,
-              size: "large",
-            })}
-          </div>
+            <div>
+              {renderTiles({
+                tiles: howItWorksForProjectsTiles,
+                size: "large",
+              })}
+            </div>
 
-          <div
-            className="
-              flex
-              gap-6
-            "
-          >
-            <StyledText
-              as="a"
-              variant="button.primary.large"
-              href="https://calendly.com/milos-informal/30-minute-meeting-hydro"
-              target="_blank"
+            <div
+              className="
+                flex
+                gap-6
+              "
             >
-              Get in Touch <Icon name="solid:arrow-up-right" />
-            </StyledText>
-            <StyledText
-              as="a"
-              variant="button.secondary.large"
-              href="/docs/projects/whitelisting"
-              target="_blank"
-            >
-              Learn More <Icon name="solid:arrow-up-right" />
-            </StyledText>
-          </div>
-        </ContentContainer>
-      </div>
-    </main>
+              <StyledText
+                as="a"
+                variant="button.primary.large"
+                href="https://calendly.com/milos-informal/30-minute-meeting-hydro"
+                target="_blank"
+              >
+                Get in Touch <Icon name="solid:arrow-up-right" />
+              </StyledText>
+              <StyledText
+                as="a"
+                variant="button.secondary.large"
+                href="/docs/projects/whitelisting"
+                target="_blank"
+              >
+                Learn More <Icon name="solid:arrow-up-right" />
+              </StyledText>
+            </div>
+          </ContentContainer>
+        </div>
+      </main>
+    </AppWrapper>
   )
 }

@@ -1,15 +1,21 @@
+"use server"
+
+import { AppWrapper } from "@/components/AppWrapper"
 import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataWithoutAddress"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
+import { ReactNode } from "react"
 
 export default async function VotingLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   const backendData = await fetchBackendDataWithoutAddress()
   return (
-    <BackendDataContextProvider backendData={backendData}>
-      {children}
-    </BackendDataContextProvider>
+    <AppWrapper>
+      <BackendDataContextProvider backendData={backendData}>
+        {children}
+      </BackendDataContextProvider>
+    </AppWrapper>
   )
 }

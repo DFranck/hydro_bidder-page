@@ -1,31 +1,16 @@
-import "@/app/globals.css"
 import Image from "next/image"
 import { useConfig } from "nextra-theme-docs"
 import { useEffect } from "react"
 
 const themeConfig = {
-  logo: (
-    <Image
-      src="/images/logo.svg"
-      alt="Hydro Logo"
-      className="h-[40px]"
-      width={180}
-      height={50}
-    />
-  ),
-  logoLink: "/docs",
-  editLink: {
-    component: null,
-  },
-  feedback: {
-    content: null,
-  },
+  darkMode: true,
   nextThemes: {
     defaultTheme: "dark",
   },
-  footer: {
-    component: null,
-  },
+  notFound: { component: null },
+  editLink: { component: null },
+  feedback: { content: null },
+  footer: { component: null },
   head() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { frontMatter } = useConfig()
@@ -52,7 +37,20 @@ const themeConfig = {
       </>
     )
   },
-  // ... other theme options
+  logo: (
+    <Image
+      src="/images/logo.svg"
+      alt="Hydro Logo"
+      className="h-[40px]"
+      width={180}
+      height={50}
+    />
+  ),
+  logoLink: "/docs",
+  nextThemes: {
+    attribute: "class",
+    enableSystem: true,
+  },
 }
 
 export default themeConfig

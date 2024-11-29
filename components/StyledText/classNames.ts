@@ -174,6 +174,7 @@ export const classNames = {
     classNamesForAllHeadings,
     `
       text-6xl
+      !leading-[1.1]
     `
   ),
   h2: twMerge(

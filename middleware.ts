@@ -2,27 +2,41 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
   // redirecting /voting -> /bids
-  if (request.nextUrl.pathname.startsWith("/voting")) {
-    return NextResponse.redirect(
-      new URL(request.nextUrl.pathname.replace("/voting", "/bids"), request.url)
+  if (pathname.startsWith("/voting")) {
+    const response = NextResponse.redirect(
+      new URL(pathname.replace("/voting", "/bids"), request.url)
     )
+    response.headers.set("x-pathname", pathname)
+    return response
   }
 
+  // Redirects below only work in production environments
   if (process.env.CONTEXT !== "production") {
-    return NextResponse.next()
+    const response = NextResponse.next()
+    response.headers.set("x-pathname", pathname)
+    return response
   }
 
   // TODO: remove this hardcoded redirect
   // redirecting /airdrops -> /
-  if (request.nextUrl.pathname.startsWith("/airdrops")) {
-    return NextResponse.redirect(new URL("/", request.url))
+  if (pathname.startsWith("/airdrops")) {
+    const response = NextResponse.redirect(new URL("/", request.url))
+    response.headers.set("x-pathname", pathname)
+    return response
   }
 
   // TODO: remove this hardcoded redirect
   // redirecting /lock-atom -> /bids
-  if (request.nextUrl.pathname.startsWith("/lock-atom")) {
-    return NextResponse.redirect(new URL("/bids", request.url))
+  if (pathname.startsWith("/lock-atom")) {
+    const response = NextResponse.redirect(new URL("/bids", request.url))
+    response.headers.set("x-pathname", pathname)
+    return response
   }
-  return NextResponse.next()
+
+  const response = NextResponse.next()
+  response.headers.set("x-pathname", pathname)
+  return response
 }

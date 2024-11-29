@@ -68,6 +68,9 @@ const config = {
         html: {
           scrollPaddingTop: theme("spacing.12"),
         },
+        body: {
+          color: theme("colors.white"),
+        },
         "*": {
           scrollbarColor: `${theme("colors.palette.green")} black`,
           scrollBehavior: "smooth",
