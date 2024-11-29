@@ -1,5 +1,3 @@
-"use cache"
-
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import {
   LockEntryWithPower,
@@ -15,7 +13,6 @@ import {
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
 import { sumBy } from "lodash"
-import { connection } from "next/server"
 
 export interface BackendDataWithAddress
   extends Omit<BackendData, "bidsByRoundId"> {
@@ -47,7 +44,7 @@ export async function fetchBackendDataWithAddress({
   address: string
   backendData: BackendData
 }): Promise<BackendDataWithAddress> {
-  await connection()
+  "use cache"
 
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
