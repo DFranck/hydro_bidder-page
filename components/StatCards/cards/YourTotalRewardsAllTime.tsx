@@ -2,12 +2,12 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { yourTotalRewardsValueTooltip } from "@/components/ToolTips"
+import { yourTotalRewardsAllTimeTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/utils"
 import { StatCard } from "../StatCard"
 
-export function YourTotalRewardsValue() {
+export function YourTotalRewardsAllTime() {
   const { isLoading, metricsGlobal } = useBackendData()
   const { allTimeUsersRewards } = metricsGlobal
 
@@ -15,7 +15,7 @@ export function YourTotalRewardsValue() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={yourTotalRewardsValueTooltip}>
+        <Tooltip tipContents={yourTotalRewardsAllTimeTooltip}>
           <div className="flex items-center gap-1">
             <span>Your Rewards</span>
             <Icon name="circle-info" />

@@ -1,6 +1,6 @@
 "use client"
 
-import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
+import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"
@@ -136,7 +136,7 @@ export const ContinueFromHubStepper = ({
           contents: (
             <>
               <p>
-                Nice! You&apos;re about to lock{" "}
+                Nice! You&rsquo;re about to lock{" "}
                 <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
                 <strong>{getValidatorMoniker(validator, validatorMap)}</strong>{" "}
                 in Hydro to get{" "}

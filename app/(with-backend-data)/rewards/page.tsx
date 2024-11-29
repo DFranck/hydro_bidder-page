@@ -86,13 +86,16 @@ export default function RewardsPage() {
 
       polRewards: (
         <InvisibleLink href={bidUrl}>
-          {amountToUSDString(bid.usersEstimatedRewards)}
+          {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
         </InvisibleLink>
       ),
 
       tributeRewards: (
         <InvisibleLink href={bidUrl}>
-          {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
+          <Tooltip tipContents={rewardsTributeRewardsColumnTooltip}>
+            <span>{amountToUSDString(bid.usersEstimatedRewards)}</span>
+            <Icon name="circle-info" />
+          </Tooltip>
         </InvisibleLink>
       ),
 
@@ -227,7 +230,7 @@ export default function RewardsPage() {
       <StatCards>
         <StatCards.YourAprCurrentRound />
         <StatCards.YourAprHistorical />
-        <StatCards.YourTotalRewardsValue />
+        <StatCards.YourTotalRewardsAllTime />
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">

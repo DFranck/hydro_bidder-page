@@ -10,9 +10,16 @@ import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { sumBy } from "lodash"
+import { ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
-export function BidRewards({ bid }: { bid: FullyAugmentedBid }) {
+export function BidRewards({
+  bid,
+  tooltipContent,
+}: {
+  bid: FullyAugmentedBid
+  tooltipContent?: ReactNode
+}) {
   const backendData = useBackendData()
   const { bidDescriptionsByBidId, isWalletConnected, votes } = backendData
   const totalEstimatedRewardsUsd = amountToUSDString(
@@ -28,14 +35,15 @@ export function BidRewards({ bid }: { bid: FullyAugmentedBid }) {
   return (
     <Tooltip
       tipContents={
-        isTokenBasedBid
+        tooltipContent ??
+        (isTokenBasedBid
           ? estimatedRewardsTooltip({
               bid,
               backendData,
             })
           : pointSystemTooltip({
               learnMoreURL: bidDescription.pointProgramUrl,
-            })
+            }))
       }
     >
       {!isWalletConnected || votes.length === 0 ? (

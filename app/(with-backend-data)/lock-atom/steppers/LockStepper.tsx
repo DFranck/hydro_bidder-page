@@ -1,6 +1,6 @@
 "use client"
 
-import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
+import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"

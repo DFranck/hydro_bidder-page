@@ -192,7 +192,7 @@ export default function AirdropsPage() {
           isDismissible={false}
           variant="info"
         >
-          Are you a project planning an airdrop? We&apos;re here to help.{" "}
+          Are you a project planning an airdrop? We&rsquo;re here to help.{" "}
           <StyledText
             className="inline-flex items-center gap-1"
             as={Link}

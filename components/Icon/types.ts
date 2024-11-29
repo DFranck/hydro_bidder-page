@@ -95,7 +95,7 @@ export type RegularIconName =
   | "ankh"
   | "apartment"
   | "aperture"
-  | "apostrophe"
+  | "rsquotrophe"
   | "apple-core"
   | "apple-whole"
   | "archway"

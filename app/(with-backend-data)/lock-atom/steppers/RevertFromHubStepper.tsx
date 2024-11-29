@@ -1,6 +1,6 @@
 "use client"
 
-import { Step } from "@/app/(with-context)/lock-atom/steppers/Step"
+import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchMyValidators"
@@ -8,21 +8,7 @@ import { formatAmount } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
-import {
-  broadcastAndRelayIBCNeutronToHub,
-  broadcastTx,
-  signIBCTransferNeutronToHub,
-  signRedeemTokensForShares,
-} from "../transactions"
-
-type RevertFromNeutronStep =
-  | "Init"
-  | "WaitingForIBCSigning"
-  | "WaitingForIBCBroadcast"
-  | "WaitingForRedeemSigning"
-  | "WaitingForRedeemBroadcast"
-  | "Success"
-  | "Error"
+import { broadcastTx, signRedeemTokensForShares } from "../transactions"
 
 function getValidatorMoniker(
   validator: string,
@@ -31,11 +17,17 @@ function getValidatorMoniker(
   return validatorMap.get(validator)?.description.moniker || validator
 }
 
-export const RevertFromNeutronStepper = ({
+type RevertFromHubStep =
+  | "Init"
+  | "WaitingForRedeemSigning"
+  | "WaitingForRedeemBroadcast"
+  | "Success"
+  | "Error"
+
+export const RevertFromHubStepper = ({
   amount,
   validator,
   denom,
-  baseDenom,
   hubChain,
   neutronChain,
   startState,
@@ -46,18 +38,17 @@ export const RevertFromNeutronStepper = ({
   amount: string
   validator: string
   denom: string
-  baseDenom: string
   hubChain: ChainContext
   neutronChain: ChainContext
-  startState?: RevertFromNeutronStep
+  startState?: RevertFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
   deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
-  const router = useRouter()
-  const [step, setStep] = useState<RevertFromNeutronStep>(startState || "Init")
-  const [errorLog, setErrorLog] = useState<string>("RevertFromNeutronStepper: ")
+  const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
+  const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
+  const router = useRouter()
 
   const execute = async () => {
     try {
@@ -76,35 +67,13 @@ export const RevertFromNeutronStepper = ({
         throw new Error("Signing clients or addresses not available")
       }
 
-      // Wait for the user to sign the IBC transfer transaction
-      setStep("WaitingForIBCSigning")
-      const signedIBCTx = await signIBCTransferNeutronToHub(
-        hubChain,
-        neutronChain,
-        neutronSigner,
-        amount,
-        denom
-      )
-
-      // Broadcast the IBC transfer transaction
-      setStep("WaitingForIBCBroadcast")
-      const lsmShares = await broadcastAndRelayIBCNeutronToHub(
-        hubSigner,
-        hubChain,
-        neutronSigner,
-        neutronChain,
-        denom,
-        baseDenom,
-        signedIBCTx
-      )
-
-      // Redeem tokens for shares
+      // Wait for the user to sign the redeem transaction
       setStep("WaitingForRedeemSigning")
       const signedRedeemTx = await signRedeemTokensForShares(
         hubChain,
         hubSigner,
-        lsmShares.amount,
-        lsmShares.denom
+        amount,
+        denom
       )
 
       // Broadcast the redeem transaction
@@ -141,14 +110,19 @@ export const RevertFromNeutronStepper = ({
           contents: (
             <>
               <p>
-                You&apos;re about to revert{" "}
-                <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
+                You&rsquo;re about to revert{" "}
+                <strong className="text-white">
+                  {formatAmount(amount)} ATOM
+                </strong>{" "}
                 back to its original state, staked with{" "}
-                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>.
+                <strong className="text-white">
+                  {getValidatorMoniker(validator, validatorMap)}
+                </strong>
+                .
               </p>
               <p>
-                This should take about a minute and will require 2 wallet
-                approvals.
+                This should take about a minute and will require 1 wallet
+                approval.
               </p>
             </>
           ),
@@ -166,34 +140,6 @@ export const RevertFromNeutronStepper = ({
             },
           ],
         }
-      case "WaitingForIBCSigning":
-        return {
-          isWorking: true,
-          title: "Approve IBC Transfer",
-          contents: (
-            <>
-              <p>Approve the transaction in your wallet to continue</p>
-              <p>
-                This will start the transfer of your ATOM tokens to your Cosmos
-                Hub wallet.
-              </p>
-            </>
-          ),
-        }
-      case "WaitingForIBCBroadcast":
-        return {
-          isWorking: true,
-          title: "Transferring to Cosmos Hub",
-          contents: (
-            <>
-              <p>Transferring tokenized ATOM to Cosmos Hub...</p>
-              <p>
-                This could take 30 seconds or longer if the network is
-                congested.
-              </p>
-            </>
-          ),
-        }
       case "WaitingForRedeemSigning":
         return {
           isWorking: true,
@@ -203,8 +149,15 @@ export const RevertFromNeutronStepper = ({
               <p>Approve the transaction in your wallet to continue</p>
               <p>
                 This will restore your previous staked position with the amount
-                of <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
-                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>.
+                of{" "}
+                <strong className="text-white">
+                  {formatAmount(amount)} ATOM
+                </strong>{" "}
+                staked to{" "}
+                <strong className="text-white">
+                  {getValidatorMoniker(validator, validatorMap)}
+                </strong>
+                .
               </p>
             </>
           ),
@@ -217,7 +170,7 @@ export const RevertFromNeutronStepper = ({
             <>
               <p>Redeeming ATOM...</p>
               <p>
-                Hang tight, we&apos;re restoring your previous staked position.
+                Hang tight, we&rsquo;re restoring your previous staked position.
               </p>
             </>
           ),
@@ -226,10 +179,15 @@ export const RevertFromNeutronStepper = ({
         return {
           title: "Success!",
           contents: (
-            <p>
-              Your <strong>{formatAmount(amount)} ATOM</strong> has been
-              restored to your previous staked position.
-            </p>
+            <>
+              <p>
+                Your{" "}
+                <strong className="text-white">
+                  {formatAmount(amount)} ATOM
+                </strong>{" "}
+                has been restored to your previous staked position.
+              </p>
+            </>
           ),
           buttons: [
             {
