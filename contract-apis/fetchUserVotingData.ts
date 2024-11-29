@@ -13,9 +13,9 @@ export type UserVotingData = {
   }
 }
 
-export const fetchUserVotingData = async (
+export async function fetchUserVotingData(
   address?: string
-): Promise<UserVotingData> => {
+): Promise<UserVotingData> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }

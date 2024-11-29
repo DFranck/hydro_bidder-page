@@ -4,11 +4,11 @@ import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "./getCosmWasmClient"
 
-export const fetchMyVotes = async (
+export async function fetchMyVotes(
   address: string,
   roundId: number,
   trancheIds: number[]
-) => {
+) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }

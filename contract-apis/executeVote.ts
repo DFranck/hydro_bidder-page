@@ -4,12 +4,12 @@ import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { fetchMyAllLockups } from "./fetchMyAllLockups"
 
-export const executeVote = async (
+export async function executeVote(
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>,
   address: string,
   proposalId: number,
   trancheId: number
-) => {
+) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }

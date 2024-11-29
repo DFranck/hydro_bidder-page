@@ -11,9 +11,9 @@ export interface AssetListEntry {
   priceUsd?: number
 }
 
-export const fetchAssetListWithPrices = async (): Promise<
+export async function fetchAssetListWithPrices(): Promise<
   Map<string, AssetListEntry>
-> => {
+> {
   // Fetch the asset list
   const response = await fetch(
     "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json",

@@ -8,7 +8,7 @@ import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 let clientInstance: CosmWasmClient | null = null
 
 // without the need to wait for the client side to finish executing useChain()
-export const getCosmWasmClient = async (): Promise<CosmWasmClient> => {
+export async function getCosmWasmClient(): Promise<CosmWasmClient> {
   if (!clientInstance) {
     clientInstance = await CosmWasmClient.connect(NEUTRON_DEFAULT_RPC)
   }
