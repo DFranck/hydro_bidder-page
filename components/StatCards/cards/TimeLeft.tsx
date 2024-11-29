@@ -47,6 +47,12 @@ const getRoundEndTextFromEndDate = (endDate: Date) => {
 export function TimeLeft() {
   const { currentRoundEnd, currentRoundId, isLoading } = useBackendData()
 
+  console.log({
+    currentRoundEnd,
+    currentRoundId,
+    isLoading,
+  })
+
   return (
     <StatCard
       isLoading={isLoading}
