@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
     )
   }
 
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.CONTEXT !== "production") {
     return NextResponse.next()
   }
 

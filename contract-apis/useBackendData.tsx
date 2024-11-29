@@ -85,9 +85,7 @@ export function BackendDataContextProvider({
   useEffect(() => {
     ;(async () => {
       if (!address) return
-
       setIsLoading(true)
-
       setToasts([
         {
           message: "Loading...",
@@ -101,9 +99,7 @@ export function BackendDataContextProvider({
       })
 
       setBackendDataWithAddress(backendDataWithAddress)
-
       setToasts([])
-
       setIsLoading(false)
     })()
   }, [address, backendData])
@@ -119,7 +115,9 @@ export function useBackendData() {
   const context = useContext(BackendDataContext)
 
   if (context === undefined) {
-    throw new Error("useContractContext must be used within a ContractProvider")
+    throw new Error(
+      "useBackendData must be used within a BackendDataContext Provider"
+    )
   }
 
   return context

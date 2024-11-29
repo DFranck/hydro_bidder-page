@@ -33,10 +33,10 @@ export type ValidatorDelegation = {
   }
 }
 
-export const fetchMyValidators = async (
+export async function fetchMyValidators(
   chain: ChainContext,
   delegatorAddress: string
-): Promise<ValidatorDelegation[]> => {
+): Promise<ValidatorDelegation[]> {
   const restEndpoint = await chain.getRestEndpoint()
 
   const [validatorsResponse, delegationsResponse] = await Promise.all([
