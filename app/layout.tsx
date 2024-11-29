@@ -43,14 +43,14 @@ export default function RootLayout({
               async
               src="https://www.googletagmanager.com/gtag/js?id=G-NZ1F6WL2PM"
             />
-            <Script id="google-analytics" strategy="afterInteractive">
+            {/* <Script id="google-analytics" strategy="afterInteractive">
               {`
                   window.dataLayer = window.dataLayer || []
                   function gtag(){dataLayer.push(arguments)}
                   gtag('js', new Date())
                   gtag('config', 'G-NZ1F6WL2PM')
               `}
-            </Script>
+            </Script> */}
             <Script
               type="text/javascript"
               src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
