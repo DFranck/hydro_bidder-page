@@ -8,8 +8,8 @@ export const lockEpochLength = 2628000000000000
 
 export enum LockupPeriod {
   ONE_EPOCH = "1m",
-  // TWO_EPOCHS = "2m",
-  // THREE_EPOCHS = "3m",
+  TWO_EPOCHS = "2m",
+  THREE_EPOCHS = "3m",
   // SIX_EPOCHS = "6m",
   // TWELVE_EPOCHS = "12m",
 }

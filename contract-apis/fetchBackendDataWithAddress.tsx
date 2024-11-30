@@ -15,7 +15,7 @@ import {
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
 import { sumBy } from "lodash"
-import { connection } from "next/server"
+import { unstable_cache } from "next/cache"
 
 export interface BackendDataWithAddress
   extends Omit<BackendData, "bidsByRoundId"> {
@@ -40,15 +40,13 @@ export interface FullyAugmentedBid extends AugmentedBidFromContract {
   usersEstimatedRewardsDeltaPercentage: number
 }
 
-export async function fetchBackendDataWithAddress({
+async function uncachedFetchBackendDataWithAddress({
   address,
   backendData,
 }: {
   address: string
   backendData: BackendData
 }): Promise<BackendDataWithAddress> {
-  await connection()
-
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -134,3 +132,11 @@ export async function fetchBackendDataWithAddress({
     votingPower,
   }
 }
+
+export const fetchBackendDataWithAddress = unstable_cache(
+  uncachedFetchBackendDataWithAddress,
+  ["fetchBackendDataWithAddress"],
+  {
+    revalidate: 60 * 5, // 5 minutes
+  }
+)

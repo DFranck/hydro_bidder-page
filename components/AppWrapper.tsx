@@ -1,3 +1,4 @@
+import LoadingState from "@/app/loading"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
 import { QueryClientProvider } from "@/components/QueryClientProvider"
@@ -11,6 +12,7 @@ export async function AppWrapper({ children }: { children: ReactNode }) {
     <WalletProvider>
       <QueryClientProvider>
         <ToastContextProvider>
+          <LoadingState />
           <div
             className="
               fixed
