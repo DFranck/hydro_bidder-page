@@ -1,6 +1,7 @@
 import { inter } from "@/lib/font"
 import Script from "next/script"
 import "./globals.css"
+import "./injectServiceWorker.js"
 
 export async function generateMetadata() {
   return {

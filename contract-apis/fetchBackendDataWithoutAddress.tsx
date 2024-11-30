@@ -22,7 +22,8 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { connection } from "next/server"
+import { LockupPeriod } from "@/lib/utils"
+import { unstable_cache } from "next/dist/server/web/spec-extension/unstable-cache"
 
 export interface BidFromContract extends Proposal {}
 
@@ -45,6 +46,7 @@ export interface BackendData {
   metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
+  lockupPeriods: LockupPeriod[]
 }
 
 export interface AugmentedTribute
@@ -62,6 +64,7 @@ const initialBackendData: BackendData = {
   currentRoundEnd: 0,
   currentRoundId: 0,
   currentRoundTranches: [],
+  lockupPeriods: [],
   maxLockedAtomGlobal: 0,
   metricsGlobal: {
     currentRoundPolAvailable: 0,
@@ -84,9 +87,7 @@ const initialBackendData: BackendData = {
   totalLockedAtomGlobal: 0,
 }
 
-export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
-  await connection()
-
+async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -99,7 +100,9 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
   )
 
   const [
-    { constants },
+    {
+      constants: { max_locked_tokens: maxLockedAtomGlobal },
+    },
     { round_id: currentRoundId },
     { tranches },
     { total_locked_tokens: totalLockedAtomGlobal },
@@ -125,9 +128,11 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
 
   const bidsByRoundId: Record<number, AugmentedBidFromContract[]> = {}
 
-  const { round_end: currentRoundEnd } = await hydroQueryClient.roundEnd({
+  const { round_end } = await hydroQueryClient.roundEnd({
     roundId: currentRoundId,
   })
+
+  const currentRoundEnd = Number(round_end) / 1e6
 
   // With currentRoundId, we can fetch all bids for all rounds
   await Promise.all(
@@ -205,13 +210,26 @@ export async function fetchBackendDataWithoutAddress(): Promise<BackendData> {
     atomPrice,
     bidDescriptionsByBidId,
     bidsByRoundId,
-    currentRoundEnd: Number(currentRoundEnd) / 1e6,
-    currentRoundId: currentRoundId,
+    currentRoundEnd,
+    currentRoundId,
     currentRoundTranches: tranches,
-    maxLockedAtomGlobal: constants.max_locked_tokens,
+    lockupPeriods: [
+      LockupPeriod.ONE_EPOCH,
+      LockupPeriod.TWO_EPOCHS,
+      LockupPeriod.THREE_EPOCHS,
+    ],
+    maxLockedAtomGlobal,
     metricsGlobal: metrics,
     metricsForPreHydroBids: preHydroBids,
     metricsForPostHydroBids: postHydroBids,
     totalLockedAtomGlobal,
   }
 }
+
+export const fetchBackendDataWithoutAddress = unstable_cache(
+  uncachedFetchBackendDataWithoutAddress,
+  ["fetchBackendDataWithoutAddress"],
+  {
+    revalidate: 60 * 5, // 5 minutes
+  }
+)
