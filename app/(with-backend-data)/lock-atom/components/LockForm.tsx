@@ -6,9 +6,9 @@ import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { longerLockupsComingSoonTooltip } from "@/components/ToolTips"
 import { EPOCH_LENGTH } from "@/config"
-import { Validator } from "@/contract-apis/fetchMyValidators"
+import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { useMyValidators } from "@/contract-apis/useMyValidators"
+import { useWalletValidators } from "@/contract-apis/useWalletValidators"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { isNumber } from "lodash"
@@ -35,7 +35,10 @@ export function LockForm({
   } = useBackendData()
   const [validator, setValidator] = useState("")
   const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
-  const { data: validators } = useMyValidators(hubChain, hubChain.address || "")
+  const { data: validators } = useWalletValidators(
+    hubChain,
+    hubChain.address || ""
+  )
   const selectedDuration = parseInt(duration || "0")
   const delegationBalance = Number(
     validators?.find((v) => v.validator.operator_address === validator)

@@ -2,12 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { defaultStaleTime } from "./_globals"
-import { fetchMyAllLockups } from "./fetchMyAllLockups"
+import { fetchWalletLockups } from "./fetchWalletLockups"
 
-export function useMyLockups(address: string) {
+export function useWalletLockups(address: string) {
   return useQuery({
     queryKey: ["myLockups", address],
-    queryFn: () => fetchMyAllLockups(address),
+    queryFn: () => fetchWalletLockups(address),
     staleTime: defaultStaleTime,
   })
 }

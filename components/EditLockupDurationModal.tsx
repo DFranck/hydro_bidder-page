@@ -5,7 +5,7 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { executeExtendLockup } from "@/contract-apis/executeExtendLockup"
+import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
 import {
   calculateLockupVotingPower,
   formatAmount,
@@ -141,7 +141,7 @@ export function EditLockupDurationModal({
         },
       ])
 
-      await executeExtendLockup(
+      await executeWalletExtendLockup(
         getSigningCosmWasmClient,
         address || "",
         lockup.lock_entry.lock_id,

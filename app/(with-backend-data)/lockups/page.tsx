@@ -18,9 +18,9 @@ import {
   lockupLimitTooltip,
 } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
-import { fetchMyAllLockups } from "@/contract-apis/fetchMyAllLockups"
+import { fetchWalletLockups } from "@/contract-apis/fetchWalletLockups"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { useUserVotingData } from "@/contract-apis/useUserVotingData"
+import { useWalletVotingData } from "@/contract-apis/useWalletVotingData"
 import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -34,7 +34,7 @@ export default function LockupsPage() {
     totalLockedAtomGlobal: totalLockedTokensGlobal,
   } = useBackendData()
 
-  const { data: userVotingData } = useUserVotingData(address!)
+  const { data: userVotingData } = useWalletVotingData(address!)
   const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
   const [refetch, setRefetch] = useState(true)
   const lockedAtomInWallet = userVotingData?.lockups.lockedAtom ?? 0
@@ -57,7 +57,7 @@ export default function LockupsPage() {
         },
       ])
       try {
-        const myLockups = await fetchMyAllLockups(address!)
+        const myLockups = await fetchWalletLockups(address!)
         setMyLockups(myLockups)
       } catch (error) {
         console.log(error)

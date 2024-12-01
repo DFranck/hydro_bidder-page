@@ -2,7 +2,7 @@ import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "./getCosmWasmClient"
 
-export async function fetchMyVotes(
+export async function fetchWalletVotes(
   address: string,
   roundId: number,
   trancheIds: number[]

@@ -1,6 +1,6 @@
 import { Card } from "@/components/Card"
 import { StyledText } from "@/components/StyledText"
-import { Validator } from "@/contract-apis/fetchMyValidators"
+import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { formatAmount } from "@/lib/utils"
 import { getValidatorMoniker } from "../functions/getValidatorMoniker"
 import { Stepper } from "../types"

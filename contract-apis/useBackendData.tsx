@@ -2,26 +2,28 @@
 
 import { useToasts } from "@/components/Toasts"
 import {
-  BackendDataWithAddress,
-  fetchBackendDataWithAddress,
-} from "@/contract-apis/fetchBackendDataWithAddress"
-import { BackendData } from "@/contract-apis/fetchBackendDataWithoutAddress"
+  BackendDataWithWallet,
+  fetchBackendDataWithWallet,
+} from "@/contract-apis/fetchBackendDataWithWallet"
+import { BackendData } from "@/contract-apis/fetchBackendDataWithoutWallet"
 import { useChain } from "@cosmos-kit/react"
 import { merge } from "lodash"
+import { usePathname, useRouter } from "next/navigation"
 import {
   createContext,
   ReactNode,
   useContext,
+  useDeferredValue,
   useEffect,
   useState,
 } from "react"
 
-export interface BackendDataContextType extends BackendDataWithAddress {
+export interface BackendDataContextType extends BackendDataWithWallet {
   isLoading: boolean
   isWalletConnected: boolean
 }
 
-const initialBackendDataContext: BackendDataWithAddress = {
+const initialBackendDataContext: BackendDataWithWallet = {
   address: "",
   atomPrice: 0,
   bidDescriptionsByBidId: {},
@@ -59,7 +61,7 @@ const initialBackendDataContext: BackendDataWithAddress = {
   },
 }
 
-const BackendDataContext = createContext<BackendDataWithAddress>(
+const BackendDataContext = createContext<BackendDataWithWallet>(
   initialBackendDataContext
 )
 
@@ -70,15 +72,18 @@ export function BackendDataContextProvider({
   backendData: BackendData
   children: ReactNode
 }) {
-  const { address, isWalletConnected } = useChain("neutron")
+  const { address, isWalletConnected, isWalletConnecting } = useChain("neutron")
+  const wasWalletConnected = useDeferredValue(isWalletConnected)
+  const pathname = usePathname()
+  const router = useRouter()
   const { setToasts } = useToasts()
   const [isLoading, setIsLoading] = useState(false)
-  const [backendDataWithAddress, setBackendDataWithAddress] =
-    useState<BackendDataWithAddress>(
+  const [backendDataWithWallet, setBackendDataWithWallet] =
+    useState<BackendDataWithWallet>(
       merge({}, initialBackendDataContext, backendData)
     )
   const contextValue = {
-    ...backendDataWithAddress,
+    ...backendDataWithWallet,
     isLoading,
     isWalletConnected,
   }
@@ -94,16 +99,48 @@ export function BackendDataContextProvider({
         },
       ])
 
-      const backendDataWithAddress = await fetchBackendDataWithAddress({
+      const backendDataWithWallet = await fetchBackendDataWithWallet({
         address,
         backendData,
       })
 
-      setBackendDataWithAddress(backendDataWithAddress)
+      setBackendDataWithWallet(backendDataWithWallet)
       setToasts([])
       setIsLoading(false)
     })()
   }, [address, backendData])
+
+  useEffect(() => {
+    if (isWalletConnecting) return
+
+    const protectedRoutes = ["/rewards", "/lockups", "/lock-atom"]
+    const didJustConnect = !wasWalletConnected && isWalletConnected
+    const didJustDisconnect = wasWalletConnected && !isWalletConnected
+    const hasBeenRedirected =
+      window.sessionStorage.getItem("redirected") === "true"
+    const isProtectedRoute =
+      pathname &&
+      protectedRoutes.some((protectedRoute) =>
+        pathname.startsWith(protectedRoute)
+      )
+
+    // Redirect to bids if user has just connected their wallet and is on homepage
+    if (didJustConnect && !hasBeenRedirected && pathname === "/") {
+      window.sessionStorage.setItem("redirected", "true")
+      router.push("/bids")
+    }
+
+    // Redirect to bids if user disconnects while on protected routes
+    if ((didJustDisconnect || !isWalletConnected) && isProtectedRoute) {
+      router.push("/bids")
+    }
+  }, [
+    isWalletConnected,
+    isWalletConnecting,
+    pathname,
+    router,
+    wasWalletConnected,
+  ])
 
   return (
     <BackendDataContext.Provider value={contextValue}>

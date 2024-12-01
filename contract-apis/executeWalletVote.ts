@@ -1,26 +1,34 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
-import { DEFAULT_EPOCH_LENGTH } from "@/config"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { fetchWalletLockups } from "./fetchWalletLockups"
 
-export const executeExtendLockup = async (
+export async function executeWalletVote(
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>,
   address: string,
-  lockId: number,
-  lockDuration: number
-) => {
+  proposalId: number,
+  trancheId: number
+) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
 
   const client = await getSigningCosmWasmClient()
-
+  const lockups = await fetchWalletLockups(address)
   const hydroClient = new HydroBaseClient(
     client,
     address,
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
-  const response = await hydroClient.refreshLockDuration(
-    { lockDuration: DEFAULT_EPOCH_LENGTH * lockDuration, lockIds: [lockId] },
+  const response = await hydroClient.vote(
+    {
+      proposalsVotes: [
+        {
+          lock_ids: lockups.map((lockup) => lockup.lock_entry.lock_id),
+          proposal_id: proposalId,
+        },
+      ],
+      trancheId,
+    },
     "auto"
   )
   return response
