@@ -1,6 +1,6 @@
 import { Tooltip } from "@/components/Tooltip"
 import { bidTypeTooltip } from "@/components/ToolTips"
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
+import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 
 export function BidTributes({ bid }: { bid: FullyAugmentedBid }) {

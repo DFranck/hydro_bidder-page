@@ -4,40 +4,16 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { telegramLink } from "@/config"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
-import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { useDeferredValue, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
 export function Header() {
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
-  const { address } = useChain("neutron")
-  const previousAddress = useDeferredValue(address)
-  const pathname = usePathname()
-  const router = useRouter()
   const elementRef = useRef<HTMLDivElement>(null)
   const ghostElementRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const didJustConnect = !previousAddress && !!address
-    const didJustDisconnect = !!previousAddress && !address
-    const hasRedirected = window.sessionStorage.getItem("redirected") === "true"
-
-    // Redirect to bids if user has just connected their wallet and is on homepage
-    if (didJustConnect && !hasRedirected && pathname === "/") {
-      window.sessionStorage.setItem("redirected", "true")
-      router.push("/bids")
-    }
-
-    // Redirect to bids if user disconnects while on protected routes
-    const protectedRoutes = ["/rewards", "/lockups", "/lock-atom"]
-    if (didJustDisconnect && pathname && protectedRoutes.includes(pathname)) {
-      router.push("/bids")
-    }
-  }, [address, pathname, router, previousAddress])
 
   useEffect(() => {
     if (elementRef.current && ghostElementRef.current) {

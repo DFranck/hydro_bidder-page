@@ -10,7 +10,7 @@ import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { networkLimitReachedTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
-import { executeVote } from "@/contract-apis/executeVote"
+import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
@@ -62,7 +62,7 @@ export function VoteButton({
         },
       ])
 
-      await executeVote(
+      await executeWalletVote(
         getSigningCosmWasmClient,
         address!,
         Number(bidId),

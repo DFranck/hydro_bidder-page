@@ -1,4 +1,4 @@
-import { Validator } from "@/contract-apis/fetchMyValidators"
+import { Validator } from "@/contract-apis/fetchWalletValidators"
 
 export function getValidatorMoniker(
   validator: string,

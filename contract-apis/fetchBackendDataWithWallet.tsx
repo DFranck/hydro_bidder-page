@@ -8,7 +8,7 @@ import {
 import {
   AugmentedBidFromContract,
   BackendData,
-} from "@/contract-apis/fetchBackendDataWithoutAddress"
+} from "@/contract-apis/fetchBackendDataWithoutWallet"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import {
   CamelCaseKeys,
@@ -17,7 +17,7 @@ import {
 import { sumBy } from "lodash"
 import { unstable_cache } from "next/cache"
 
-export interface BackendDataWithAddress
+export interface BackendDataWithWallet
   extends Omit<BackendData, "bidsByRoundId"> {
   address: string
   bidsByRoundId: Record<number, FullyAugmentedBid[]>
@@ -40,13 +40,13 @@ export interface FullyAugmentedBid extends AugmentedBidFromContract {
   usersEstimatedRewardsDeltaPercentage: number
 }
 
-async function uncachedFetchBackendDataWithAddress({
+async function uncachedFetchBackendDataWithWallet({
   address,
   backendData,
 }: {
   address: string
   backendData: BackendData
-}): Promise<BackendDataWithAddress> {
+}): Promise<BackendDataWithWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -133,9 +133,9 @@ async function uncachedFetchBackendDataWithAddress({
   }
 }
 
-export const fetchBackendDataWithAddress = unstable_cache(
-  uncachedFetchBackendDataWithAddress,
-  ["fetchBackendDataWithAddress"],
+export const fetchBackendDataWithWallet = unstable_cache(
+  uncachedFetchBackendDataWithWallet,
+  ["fetchBackendDataWithWallet"],
   {
     revalidate: 60 * 5, // 5 minutes
   }

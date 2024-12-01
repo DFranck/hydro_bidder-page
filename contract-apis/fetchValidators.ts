@@ -1,6 +1,6 @@
-import { Validator } from "./fetchMyValidators"
+import { Validator } from "./fetchWalletValidators"
 
-export async function fetchAllValidators(
+export async function fetchValidators(
   restEndpoint: string
 ): Promise<Validator[]> {
   const response = await fetch(

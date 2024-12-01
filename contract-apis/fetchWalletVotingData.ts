@@ -2,7 +2,7 @@ import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { defaultLimit, defaultStartFrom } from "./_globals"
 import { getCosmWasmClient } from "./getCosmWasmClient"
 
-export type UserVotingData = {
+export type WalletVotingData = {
   votingPower: number
   lockups: {
     count: number
@@ -11,9 +11,9 @@ export type UserVotingData = {
   }
 }
 
-export async function fetchUserVotingData(
+export async function fetchWalletVotingData(
   address?: string
-): Promise<UserVotingData> {
+): Promise<WalletVotingData> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }

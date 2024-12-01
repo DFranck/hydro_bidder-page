@@ -1,4 +1,4 @@
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
+import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { startCase } from "lodash"
 
 export function BidDenoms({ bid }: { bid: FullyAugmentedBid }) {

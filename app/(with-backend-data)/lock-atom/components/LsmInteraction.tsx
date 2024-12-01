@@ -1,7 +1,7 @@
 "use client"
 
 import { StyledText } from "@/components/StyledText"
-import { Validator } from "@/contract-apis/fetchMyValidators"
+import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { useChain } from "@cosmos-kit/react"
 import { useEffect, useState } from "react"

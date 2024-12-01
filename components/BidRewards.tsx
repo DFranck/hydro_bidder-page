@@ -6,7 +6,7 @@ import {
   estimatedRewardsTooltip,
   pointSystemTooltip,
 } from "@/components/ToolTips"
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
+import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { sumBy } from "lodash"

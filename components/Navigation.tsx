@@ -5,7 +5,6 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
-import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -16,9 +15,18 @@ export default function Navigation() {
   const [isConnected, setIsConnected] = useState<boolean>(false)
 
   const navigationMenuTriggerStyle = (link: string) => {
-    return cn(
-      "text-white hover:text-[#FFE1B8] focus:text-[#FFE1B8] focus:bg-transparent text-sm font-medium leading-tight tracking-tight",
-      pathname?.startsWith(link) ? "text-[#FFE1B8] font-bold" : ""
+    return twMerge(
+      `
+        text-sm
+        font-medium
+        leading-tight
+        tracking-tight
+        text-white
+        hover:text-palette-beige
+        focus:bg-transparent
+        focus:text-palette-beige
+      `,
+      pathname?.startsWith(link) ? "font-bold text-palette-beige" : ""
     )
   }
 
@@ -155,7 +163,8 @@ export default function Navigation() {
           target="_blank"
           className={twMerge(
             navigationMenuTriggerStyle("/docs"),
-            `flex items-center gap-1`
+            `flex items-center gap-1`,
+            `md:border-r-2 md:border-palette-beige/50 md:pr-5`
           )}
         >
           Docs <Icon name="solid:arrow-up-right" />

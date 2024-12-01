@@ -14,13 +14,14 @@ import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { rewardsTributeRewardsColumnTooltip } from "@/components/ToolTips"
-import { claimRewards } from "@/contract-apis/claimRewards"
+import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { useChain } from "@cosmos-kit/react"
 import { sumBy } from "lodash"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
+import { twMerge } from "tailwind-merge"
 
 export default function RewardsPage() {
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
@@ -212,7 +213,7 @@ export default function RewardsPage() {
 
         if (!bid) return
 
-        await claimRewards(
+        await executeWalletClaimRewards(
           getSigningCosmWasmClient,
           address!,
           Number(bid.roundId),
@@ -234,7 +235,12 @@ export default function RewardsPage() {
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <div className="flex items-center justify-end">
+        <div
+          className={twMerge(
+            "flex items-center justify-end",
+            rows.length > 0 ? "" : "hidden"
+          )}
+        >
           <h2 className="sr-only">Your Rewards</h2>
 
           <div className="flex items-center gap-6">
@@ -254,7 +260,7 @@ export default function RewardsPage() {
           {rows.length > 0 ? (
             <StyledTable columns={columns} rows={rows} />
           ) : (
-            <EmptyBox>No rewards to claim</EmptyBox>
+            <EmptyBox>Stake to lock. Lock to vote. Vote to earn.</EmptyBox>
           )}
         </BlurryBackdropBox>
       </ContentContainer>

@@ -24,7 +24,7 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithAddress"
+import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
 import { sumBy } from "lodash"

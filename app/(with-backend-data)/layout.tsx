@@ -1,5 +1,5 @@
 import { AppWrapper } from "@/components/AppWrapper"
-import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataWithoutAddress"
+import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataWithoutWallet"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import { ReactNode } from "react"
 
