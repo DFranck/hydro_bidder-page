@@ -11,6 +11,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { useMyValidators } from "@/contract-apis/useMyValidators"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
+import { isNumber } from "lodash"
 import { ChangeEvent, useEffect, useState } from "react"
 import { classNames } from "../classNames"
 import { ValidatorListItem } from "../components/ValidatorListItem"
@@ -26,15 +27,14 @@ export function LockForm({
   hubChain: ChainContext
   validatorMap: Map<string, Validator>
 }) {
-  const [validator, setValidator] = useState("")
-  const [amount, setAmount] = useState("")
-  const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
   const {
     maxLockedAtomUser,
     totalLockedAtomUser,
     maxLockedAtomGlobal,
     totalLockedAtomGlobal,
   } = useBackendData()
+  const [validator, setValidator] = useState("")
+  const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
   const { data: validators } = useMyValidators(hubChain, hubChain.address || "")
   const selectedDuration = parseInt(duration || "0")
   const delegationBalance = Number(
@@ -54,13 +54,18 @@ export function LockForm({
     usersLimitRemainder, // no more than their limit
     globalLimitRemainder // no more than the global limit
   )
-  const selectedAmountClamped = Math.min(
-    parseFloat(amount || "0"),
-    maxAtomToBeLocked
-  )
+  const [amount, setAmount] = useState<string>("")
 
   useEffect(() => {
-    if (validator && validators) {
+    if (maxAtomToBeLocked > 0) {
+      setAmount(maxAtomToBeLocked.toString())
+    }
+  }, [maxAtomToBeLocked])
+
+  useEffect(() => {
+    const numericAmount = parseFloat(amount)
+
+    if (isNumber(numericAmount) && validator && validators) {
       const selectedValidator = validators.find(
         (v) => v.validator.operator_address === validator
       )
@@ -69,31 +74,44 @@ export function LockForm({
           selectedValidator.validator.validator_bond_shares,
           selectedValidator.validator.liquid_shares
         )
-        if (lsmCapacity < selectedAmountClamped && selectedAmountClamped > 0) {
+        if (lsmCapacity < parseFloat(amount) && parseFloat(amount) > 0) {
           // Instead of resetting, you could set an error state or show a warning
           console.warn("Selected amount exceeds LSM capacity")
         }
       }
     }
-  }, [selectedAmountClamped, validator, validators])
+  }, [amount, validator, validators])
 
   function clearSelectedValidator() {
     setValidator("")
   }
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    setAmount(e.target.value)
+    const value = e.target.value
+    // Allow empty string, numbers, and decimals
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      const numValue = parseFloat(value) || 0
+      if (numValue <= maxAtomToBeLocked) {
+        setAmount(value)
+      } else {
+        setAmount(maxAtomToBeLocked.toString())
+      }
+    }
   }
 
   function handleBlur(e: ChangeEvent<HTMLInputElement>) {
-    setAmount(
-      Math.min(parseFloat(e.target.value) || 0, maxAtomToBeLocked).toString()
-    )
+    const value = parseFloat(e.target.value) || 0
+    const minAmount = 1 / 1e6
+    if (value < minAmount && value !== 0) {
+      setAmount(minAmount.toString())
+    } else {
+      setAmount(Math.min(value, maxAtomToBeLocked).toString())
+    }
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const uatomAmount = Math.floor(parseFloat(amount) * 1e6).toString()
+    const uatomAmount = BigInt(Math.round(parseFloat(amount) * 1e6)).toString()
     onSubmit(validator, uatomAmount, parseInt(duration))
   }
 
@@ -127,6 +145,7 @@ export function LockForm({
               of the lock. They will continue to accrue staking rewards but you
               will not be able to vote in Cosmos Hub governance.
             </Toasts.Toast>
+
             <form onSubmit={handleSubmit}>
               {!validator && validators && (
                 <div className={classNames.formContainer}>
@@ -165,7 +184,7 @@ export function LockForm({
                         validator={v}
                         selectedValue={validator}
                         onChange={setValidator}
-                        selectedAmount={selectedAmountClamped}
+                        selectedAmount={parseFloat(amount)}
                       />
                     ))}
                   </div>
@@ -181,7 +200,6 @@ export function LockForm({
                       <span>
                         {getValidatorMoniker(validator, validatorMap)}
                       </span>
-
                       <StyledText
                         as="button"
                         variant="link"
@@ -191,6 +209,7 @@ export function LockForm({
                       </StyledText>
                     </div>
                   </div>
+
                   <div className="col-span-2 grid grid-cols-subgrid items-center">
                     <StyledText as="label" variant="label">
                       Amount:
@@ -203,7 +222,6 @@ export function LockForm({
                         pattern="^\d+(\.\d{1,6})?$"
                         variant="input.text"
                         value={amount}
-                        defaultValue={maxAtomToBeLocked.toString()}
                         onBlur={handleBlur}
                         onChange={handleChange}
                       />
@@ -218,11 +236,24 @@ export function LockForm({
                       >
                         <Icon name="triangle-exclamation" /> Invalid amount
                       </StyledText>
-                      <StyledText as="p" variant="footnote">
-                        Max: {maxAtomToBeLocked} ATOM
+                      <StyledText as="span" variant="footnote">
+                        Max: <strong>{maxAtomToBeLocked}</strong> ATOM
                       </StyledText>
+                      {parseFloat(amount) < maxAtomToBeLocked && (
+                        <StyledText
+                          as="button"
+                          type="button"
+                          variant="link"
+                          onClick={() =>
+                            setAmount(maxAtomToBeLocked.toString())
+                          }
+                        >
+                          Set to Max
+                        </StyledText>
+                      )}
                     </div>
                   </div>
+
                   <div className="col-span-2 grid grid-cols-subgrid">
                     <StyledText as="label" variant="label">
                       Lockup:
@@ -269,31 +300,33 @@ export function LockForm({
                       ))}
                     </div>
                   </div>
+
                   <div className="col-span-2 grid grid-cols-subgrid items-center">
                     <StyledText as="label" variant="label">
                       Voting Power:
                     </StyledText>
                     <strong>
                       {(() => {
+                        const amountInUatom = BigInt(
+                          Math.round(parseFloat(amount) * 1e6 || 0)
+                        )
                         const lockupPower = scaleLockupPower(
                           selectedDuration,
-                          BigInt(selectedAmountClamped * 1e6 || 0)
+                          amountInUatom
                         )
-
                         return formatAmount(lockupPower, 6)
                       })()}
                     </strong>
                   </div>
+
                   <div className="col-span-2 flex flex-row-reverse">
                     <StyledText
                       as="button"
-                      disabled={
-                        !validator || !selectedAmountClamped || !duration
-                      }
+                      disabled={!validator || !amount || !duration}
                       variant="button.primary"
                       type="submit"
                     >
-                      Lock ATOM...
+                      Lock ATOM
                     </StyledText>
                   </div>
                 </div>
