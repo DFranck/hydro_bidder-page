@@ -22,15 +22,19 @@ export function Header() {
   const ghostElementRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const didJustConnect = !previousAddress && !!address
+    const didJustDisconnect = !!previousAddress && !address
     const hasRedirected = window.sessionStorage.getItem("redirected") === "true"
 
-    if (!previousAddress && !!address && !hasRedirected) {
+    // Redirect to bids if user has just connected their wallet and is on homepage
+    if (didJustConnect && !hasRedirected && pathname === "/") {
       window.sessionStorage.setItem("redirected", "true")
       router.push("/bids")
     }
 
-    if (!address && !!previousAddress && hasRedirected) {
-      window.sessionStorage.setItem("redirected", "false")
+    // Redirect to bids if user disconnects while on protected routes
+    const protectedRoutes = ["/rewards", "/lockups", "/lock-atom"]
+    if (didJustDisconnect && pathname && protectedRoutes.includes(pathname)) {
       router.push("/bids")
     }
   }, [address, pathname, router, previousAddress])
