@@ -5,14 +5,10 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
+import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
-import {
-  calculateLockupVotingPower,
-  formatAmount,
-  getLockupTimeNanoseconds,
-  LockupPeriod,
-  LockupPeriodMultipler,
-} from "@/lib/utils"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { calculateLockupVotingPower, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { isEqual } from "lodash"
 import {
@@ -27,7 +23,7 @@ import { twMerge } from "tailwind-merge"
 import { useToasts } from "./Toasts/useToasts"
 
 interface FormValues {
-  lockupPeriod: LockupPeriod
+  lockupPeriod: number
   shares: string
   power: string
 }
@@ -65,25 +61,24 @@ export function EditLockupDurationModal({
   lockup,
   onSuccess,
 }: EditLockupDurationProps) {
+  const { address, lockupEpochLength } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isLockupModalOpen, setIsLockupModalOpen] = useState(false)
   const { setToasts } = useToasts()
   const formElementRef = useRef<HTMLFormElement>(null)
-  const { address, getSigningCosmWasmClient } = useChain("neutron")
-
+  const { getSigningCosmWasmClient } = useChain("neutron")
   const initialFormValues = useMemo(
     () => ({
-      lockupPeriod: LockupPeriod.ONE_EPOCH,
+      lockupPeriod: AllowedLockupPeriodInEpochs.ONE_EPOCH,
       shares: formatAmount(lockup.lock_entry.funds.amount),
       power: calculateLockupVotingPower(
         parseInt(lockup.lock_entry.funds.amount),
-        LockupPeriod.ONE_EPOCH
+        AllowedLockupPeriodInEpochs.ONE_EPOCH
       ).toString(),
     }),
     [lockup.lock_entry.funds.amount]
   )
-
   const [formValues, setFormValues] = useState<FormValues>(initialFormValues)
   const currentLockupEnd = Number(lockup.lock_entry.lock_end)
   const currentLockupEndDate = new Date(currentLockupEnd / 1000000)
@@ -113,7 +108,7 @@ export function EditLockupDurationModal({
     }
     setHasChanged(true)
 
-    const lockupPeriod = values["lockupPeriod"] as LockupPeriod
+    const lockupPeriod = Number(values["lockupPeriod"])
 
     setFormValues((currentFormValues) => ({
       ...currentFormValues,
@@ -141,12 +136,12 @@ export function EditLockupDurationModal({
         },
       ])
 
-      await executeWalletExtendLockup(
+      await executeWalletExtendLockup({
         getSigningCosmWasmClient,
-        address || "",
-        lockup.lock_entry.lock_id,
-        LockupPeriodMultipler[formValues.lockupPeriod]
-      )
+        address: address || "",
+        lockId: lockup.lock_entry.lock_id,
+        lockDuration: formValues.lockupPeriod * lockupEpochLength,
+      })
 
       setToasts([
         {
@@ -239,33 +234,38 @@ export function EditLockupDurationModal({
               <div className="flex flex-col gap-2">
                 <div className="font-bold">New End Date:</div>
 
-                {Object.entries(LockupPeriod).map(([name, value]) => {
-                  const newLockupEnd =
-                    Date.now() * 1000000 + getLockupTimeNanoseconds(value)
+                {Object.entries(AllowedLockupPeriodInEpochs).map(
+                  ([name, value]) => {
+                    const newLockupEnd =
+                      Date.now() * 1000000 + lockupEpochLength * Number(value)
 
-                  // Don't show an option to refresh a lockup to a time before its current end time
-                  if (currentLockupEnd >= newLockupEnd) return null
+                    // Don't show an option to refresh a lockup to a time before its current end time
+                    if (currentLockupEnd >= newLockupEnd) return null
 
-                  const newLockupEndDate = new Date(newLockupEnd / 1000000)
+                    const newLockupEndDate = new Date(newLockupEnd / 1000000)
 
-                  const daysDifference = getDaysAway(newLockupEnd)
+                    const daysDifference = getDaysAway(newLockupEnd)
 
-                  return (
-                    <label className="group flex items-center gap-2" key={name}>
-                      <StyledText
-                        as="input"
-                        variant="input.radio"
-                        type="radio"
-                        name="lockupPeriod"
-                        value={value}
-                      />
-                      <span className={classNamesForRadioLabels}>
-                        {dateFormatter.format(newLockupEndDate)} (
-                        {relativeTimeFormatter.format(daysDifference, "day")})
-                      </span>
-                    </label>
-                  )
-                })}
+                    return (
+                      <label
+                        className="group flex items-center gap-2"
+                        key={name}
+                      >
+                        <StyledText
+                          as="input"
+                          variant="input.radio"
+                          type="radio"
+                          name="lockupPeriod"
+                          value={Number(value)}
+                        />
+                        <span className={classNamesForRadioLabels}>
+                          {dateFormatter.format(newLockupEndDate)} (
+                          {relativeTimeFormatter.format(daysDifference, "day")})
+                        </span>
+                      </label>
+                    )
+                  }
+                )}
               </div>
 
               <div className="flex items-center justify-around gap-3">

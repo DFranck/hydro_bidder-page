@@ -22,7 +22,6 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { LockupPeriod } from "@/lib/utils"
 import { unstable_cache } from "next/dist/server/web/spec-extension/unstable-cache"
 
 export interface BidFromContract extends Proposal {}
@@ -35,18 +34,18 @@ export interface AugmentedBidFromContract
 }
 
 export interface BackendData {
-  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
+  atomPrice: number
   bidDescriptionsByBidId: Record<string, BidDescription>
+  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   currentRoundEnd: number
   currentRoundId: number
   currentRoundTranches: Tranche[]
-  atomPrice: number
-  totalLockedAtomGlobal: number
+  lockupEpochLength: number
   maxLockedAtomGlobal: number
-  metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsForPostHydroBids: SanitizedBidFromNumia[]
+  metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
-  lockupPeriods: LockupPeriod[]
+  totalLockedAtomGlobal: number
 }
 
 export interface AugmentedTribute
@@ -55,36 +54,6 @@ export interface AugmentedTribute
   amount: number
   valueInUsd: number
   isTokenBased: boolean
-}
-
-const initialBackendData: BackendData = {
-  atomPrice: 0,
-  bidDescriptionsByBidId: {},
-  bidsByRoundId: {},
-  currentRoundEnd: 0,
-  currentRoundId: 0,
-  currentRoundTranches: [],
-  lockupPeriods: [],
-  maxLockedAtomGlobal: 0,
-  metricsGlobal: {
-    currentRoundPolAvailable: 0,
-    currentRoundPolDeployed: 0,
-    currentRoundUniqueWallets: 0,
-    currentRoundTotalAtomLocked: 0,
-    currentRoundUsersAvgTokenLocked: 0,
-    allTimeApr: [],
-    allTimeTotalActiveRounds: 0,
-    allTimeTotalAtomLocked: 0,
-    allTimeUsersAvgTokenLocked: 0,
-    allTimeUniqueWallets: 0,
-    allTimeUsersApr: [],
-    allTimeUsersAvgActiveRounds: 0,
-    allTimeUsersRewards: 0,
-    currentRoundUsersApr: [],
-  },
-  metricsForPreHydroBids: [],
-  metricsForPostHydroBids: [],
-  totalLockedAtomGlobal: 0,
 }
 
 async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
@@ -101,7 +70,10 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
 
   const [
     {
-      constants: { max_locked_tokens: maxLockedAtomGlobal },
+      constants: {
+        lock_epoch_length: lockupEpochLength,
+        max_locked_tokens: maxLockedAtomGlobal,
+      },
     },
     { round_id: currentRoundId },
     { tranches },
@@ -213,11 +185,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     currentRoundEnd,
     currentRoundId,
     currentRoundTranches: tranches,
-    lockupPeriods: [
-      LockupPeriod.ONE_EPOCH,
-      LockupPeriod.TWO_EPOCHS,
-      LockupPeriod.THREE_EPOCHS,
-    ],
+    lockupEpochLength: lockupEpochLength,
     maxLockedAtomGlobal,
     metricsGlobal: metrics,
     metricsForPreHydroBids: preHydroBids,
