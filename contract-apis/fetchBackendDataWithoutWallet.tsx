@@ -28,7 +28,7 @@ export interface BidFromContract extends Proposal {}
 
 export interface AugmentedBidFromContract
   extends Omit<CamelCaseKeys<BidFromContract>, "percentage" | "proposalId"> {
-  id: string
+  id: number
   percentage: number
   tributes: AugmentedTribute[]
 }
@@ -146,7 +146,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
             .map(keysFromSnakeToCamelCase)
             .map(({ proposalId, ...bid }) => ({
               ...bid,
-              id: String(proposalId),
+              id: proposalId,
               description:
                 bidDescriptionsByBidId[proposalId]?.description ??
                 bid.description,

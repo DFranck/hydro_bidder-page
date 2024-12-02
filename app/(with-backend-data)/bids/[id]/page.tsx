@@ -6,5 +6,5 @@ export default async function BidDetailsPage({
   params: Promise<{ id: string }>
 }) {
   const idParam = (await params).id
-  return <BidDetails bidId={idParam} />
+  return <BidDetails bidId={Number(idParam)} />
 }
