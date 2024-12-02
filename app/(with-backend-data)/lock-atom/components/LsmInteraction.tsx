@@ -95,13 +95,6 @@ export function LsmInteraction({
     checkLSMShares()
   }, [hubSigner, neutronSigner])
 
-  console.log({
-    hubSigner,
-    neutronSigner,
-    incompleteNotices,
-    stepper,
-  })
-
   return (
     (hubSigner && neutronSigner && (
       <div>
