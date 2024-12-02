@@ -17,7 +17,7 @@ import { kebabCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 
-export function BidDetails({ bidId }: { bidId: string }) {
+export function BidDetails({ bidId }: { bidId: number }) {
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
@@ -27,6 +27,8 @@ export function BidDetails({ bidId }: { bidId: string }) {
   } = useBackendData()
 
   const bid = bidsByRoundId[currentRoundId].find((bid) => bid.id === bidId)
+
+  console.log({ bidsByRoundId, bidId })
 
   if (!bid) {
     return <>The requested proposal could not be found.</>

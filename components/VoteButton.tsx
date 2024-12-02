@@ -21,7 +21,7 @@ export function VoteButton({
   bidId,
   size,
 }: {
-  bidId: string | number
+  bidId: number
   size?: "large" | "small"
 }) {
   const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
@@ -33,9 +33,10 @@ export function VoteButton({
     bidsByRoundId,
     currentRoundId,
     isWalletConnected,
-    maxLockedAtomGlobal: maxLockedTokensGlobal,
+    lockups,
+    maxLockedAtomGlobal,
     metricsGlobal,
-    totalLockedAtomGlobal: totalLockedTokensGlobal,
+    totalLockedAtomGlobal,
     votes,
     votingPower,
   } = useBackendData()
@@ -47,6 +48,14 @@ export function VoteButton({
   const hasVotedForAny = votes.length > 0
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
   const isLoading = toasts.some((toast) => toast.variant === "working")
+
+  console.log({
+    bid,
+    hasVotedForAny,
+    hasVotedForBid,
+    votes,
+    bidId,
+  })
 
   async function handleClickVote() {
     if (!bid) {
@@ -125,7 +134,7 @@ export function VoteButton({
   } else if (votingPower === 0) {
     Button = (
       <ConditionalWrapper
-        condition={totalLockedTokensGlobal >= maxLockedTokensGlobal}
+        condition={totalLockedAtomGlobal >= maxLockedAtomGlobal}
         wrapper={(children) => (
           <Tooltip tipContents={networkLimitReachedTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>

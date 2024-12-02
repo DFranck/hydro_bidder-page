@@ -25,7 +25,7 @@ export interface BackendDataWithWallet
   isWalletConnected: boolean
   maxLockedAtomUser: number
   totalLockedAtomUser: number
-  usersLockups: LockEntryWithPower[]
+  lockups: LockEntryWithPower[]
   votes: SanitizedVote[]
   votingPower: number
 }
@@ -127,7 +127,7 @@ async function uncachedFetchBackendDataWithWallet({
     // TODO: get this from contract
     maxLockedAtomUser: 200,
     totalLockedAtomUser: sumBy(lockups, "lock_entry.funds.amount"),
-    usersLockups: lockups,
+    lockups,
     votes: sanitizedVotes,
     votingPower,
   }
