@@ -72,7 +72,13 @@ export function BackendDataContextProvider({
   backendData: BackendData
   children: ReactNode
 }) {
-  const { address, isWalletConnected, isWalletConnecting } = useChain("neutron")
+  const {
+    address,
+    isWalletConnected,
+    isWalletConnecting,
+    isWalletDisconnected,
+    ...otherStuff
+  } = useChain("neutron")
   const wasWalletConnected = useDeferredValue(isWalletConnected)
   const pathname = usePathname()
   const router = useRouter()
@@ -92,6 +98,8 @@ export function BackendDataContextProvider({
     address,
     isWalletConnected,
     isWalletConnecting,
+    isWalletDisconnected,
+    ...otherStuff,
   })
 
   useEffect(() => {
