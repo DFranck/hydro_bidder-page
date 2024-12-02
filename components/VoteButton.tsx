@@ -47,11 +47,6 @@ export function VoteButton({
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
   const isLoading = toasts.some((toast) => toast.variant === "working")
 
-  console.log({
-    bid,
-    lockupsOutliveBidDeployment,
-  })
-
   async function handleClickVote() {
     if (!bid) {
       return

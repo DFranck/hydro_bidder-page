@@ -132,6 +132,12 @@ export function BackendDataContextProvider({
 
     // Redirect to bids if user disconnects while on protected routes
     if ((didJustDisconnect || !isWalletConnected) && isProtectedRoute) {
+      console.log({
+        pathname,
+        didJustDisconnect,
+        isProtectedRoute,
+        isWalletConnected,
+      })
       router.push("/bids")
     }
   }, [
