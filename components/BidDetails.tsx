@@ -28,8 +28,6 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const bid = bidsByRoundId[currentRoundId].find((bid) => bid.id === bidId)
 
-  console.log({ bidsByRoundId, bidId })
-
   if (!bid) {
     return <>The requested proposal could not be found.</>
   }
