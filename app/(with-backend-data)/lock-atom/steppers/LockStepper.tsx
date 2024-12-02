@@ -3,8 +3,10 @@
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
+import { pluralize } from "@/lib/pluralize"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -68,6 +70,7 @@ export const LockStepper = ({
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
+  const { lockupEpochLength } = useBackendData()
   const [step, setStep] = useState<LockStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -187,6 +190,8 @@ export const LockStepper = ({
   } {
     switch (step) {
       case "Init":
+        const { value, unit } = getTimeUnitFromNanos(lockDuration)
+
         return {
           contents: (
             <>
@@ -198,15 +203,20 @@ export const LockStepper = ({
                 {[
                   [formatAmount(amount), "ATOM Amount"],
                   [
-                    <>
-                      {lockDuration / EPOCH_LENGTH}{" "}
-                      {lockDuration > EPOCH_LENGTH ? "months" : "month"}
-                    </>,
+                    pluralize({
+                      count: value,
+                      prefixCount: true,
+                      singular: unit,
+                    }),
                     "Lock Duration",
                   ],
                   [
                     formatAmount(
-                      scaleLockupPower(lockDuration, BigInt(amount))
+                      scaleLockupPower({
+                        lockupEpochLength,
+                        lockupTime: lockDuration,
+                        rawPower: BigInt(amount),
+                      })
                     ),
                     "Voting Power",
                   ],
@@ -394,7 +404,13 @@ export const LockStepper = ({
               You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
               and received{" "}
               <strong>
-                {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
+                {formatAmount(
+                  scaleLockupPower({
+                    lockupEpochLength,
+                    lockupTime: lockDuration,
+                    rawPower: BigInt(amount),
+                  })
+                )}{" "}
                 voting power.
               </strong>
               <p>You can now start voting with your Hydro tokens.</p>

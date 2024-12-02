@@ -2,9 +2,10 @@
 
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
+import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
-import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
@@ -48,6 +49,7 @@ export const ContinueFromNeutronStepper = ({
   validatorMap: Map<string, Validator>
   deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
+  const { lockupEpochLength } = useBackendData()
   const router = useRouter()
   const [step, setStep] = useState<ContinueFromNeutronStep>(
     startState || "Init"
@@ -56,7 +58,7 @@ export const ContinueFromNeutronStepper = ({
     "ContinueFromNeutronStepper: "
   )
   const [showErrorLog, setShowErrorLog] = useState(false)
-  const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
+  const [lockDuration, setLockDuration] = useState(lockupEpochLength)
 
   const executeContinueFromNeutron = async () => {
     try {
@@ -119,7 +121,13 @@ export const ContinueFromNeutronStepper = ({
                 <strong>{getValidatorMoniker(validator, validatorMap)}</strong>{" "}
                 in Hydro to get{" "}
                 <strong>
-                  {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
+                  {formatAmount(
+                    scaleLockupPower({
+                      lockupEpochLength,
+                      lockupTime: lockDuration,
+                      rawPower: BigInt(amount),
+                    })
+                  )}{" "}
                   voting power.
                 </strong>
               </p>
@@ -131,23 +139,10 @@ export const ContinueFromNeutronStepper = ({
               >
                 <div className="mb-4">
                   <label className="mb-2 block">Select Lock Duration:</label>
-                  <div className="flex space-x-2">
-                    {[1].map((months) => (
-                      <StyledText
-                        as="button"
-                        key={months}
-                        type="button"
-                        variant={
-                          lockDuration === months * EPOCH_LENGTH
-                            ? "button.primary"
-                            : "button.secondary"
-                        }
-                        onClick={() => setLockDuration(months * EPOCH_LENGTH)}
-                      >
-                        {months} {months === 1 ? "month" : "months"}
-                      </StyledText>
-                    ))}
-                  </div>
+                  <InputForLockupPeriod
+                    selectedDuration={lockDuration}
+                    onChange={(value) => setLockDuration(value)}
+                  />
                 </div>
                 <p>This will require one wallet approval.</p>
               </form>
@@ -197,7 +192,13 @@ export const ContinueFromNeutronStepper = ({
               You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
               and received{" "}
               <strong>
-                {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
+                {formatAmount(
+                  scaleLockupPower({
+                    lockupEpochLength,
+                    lockupTime: lockDuration,
+                    rawPower: BigInt(amount),
+                  })
+                )}{" "}
                 voting power.
               </strong>
             </p>

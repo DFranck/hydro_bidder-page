@@ -1,11 +1,8 @@
 import { Card } from "@/components/Card"
-import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
+import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
-import { Tooltip } from "@/components/Tooltip"
-import { longerLockupsComingSoonTooltip } from "@/components/ToolTips"
-import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useWalletValidators } from "@/contract-apis/useWalletValidators"
@@ -28,18 +25,18 @@ export function LockForm({
   validatorMap: Map<string, Validator>
 }) {
   const {
-    maxLockedAtomUser,
-    totalLockedAtomUser,
+    lockupEpochLength,
     maxLockedAtomGlobal,
+    maxLockedAtomUser,
     totalLockedAtomGlobal,
+    totalLockedAtomUser,
   } = useBackendData()
   const [validator, setValidator] = useState("")
-  const [duration, setDuration] = useState(EPOCH_LENGTH.toString())
+  const [selectedDuration, setSelectedDuration] = useState(lockupEpochLength)
   const { data: validators } = useWalletValidators(
     hubChain,
     hubChain.address || ""
   )
-  const selectedDuration = parseInt(duration || "0")
   const delegationBalance = Number(
     validators?.find((v) => v.validator.operator_address === validator)
       ?.delegation_balance.amount ?? 0
@@ -115,7 +112,7 @@ export function LockForm({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const uatomAmount = BigInt(Math.round(parseFloat(amount) * 1e6)).toString()
-    onSubmit(validator, uatomAmount, parseInt(duration))
+    onSubmit(validator, uatomAmount, selectedDuration)
   }
 
   return (
@@ -193,6 +190,7 @@ export function LockForm({
                   </div>
                 </div>
               )}
+
               {validator && (
                 <div className="grid grid-cols-[min-content,auto] items-center gap-6">
                   <div className="col-span-2 grid grid-cols-subgrid items-center">
@@ -257,51 +255,15 @@ export function LockForm({
                     </div>
                   </div>
 
-                  <div className="col-span-2 grid grid-cols-subgrid">
+                  <div className="col-span-2 grid grid-cols-subgrid items-center">
                     <StyledText as="label" variant="label">
                       Lockup:
                     </StyledText>
-                    <div className="flex flex-col gap-2">
-                      {[1, 3, 6, 12].map((months) => (
-                        <StyledText
-                          as="label"
-                          variant="label"
-                          key={months}
-                          className="flex items-center gap-2"
-                        >
-                          <StyledText
-                            variant="input.radio"
-                            as="input"
-                            type="radio"
-                            disabled={months > 1}
-                            value={(months * EPOCH_LENGTH).toString()}
-                            checked={
-                              duration === (months * EPOCH_LENGTH).toString()
-                            }
-                            onChange={() =>
-                              setDuration((months * EPOCH_LENGTH).toString())
-                            }
-                          />
-                          <span>
-                            <ConditionalWrapper
-                              condition={months > 1}
-                              wrapper={(children) => (
-                                <Tooltip
-                                  tipContents={longerLockupsComingSoonTooltip}
-                                >
-                                  <div className="flex items-center gap-1">
-                                    <span>{children}</span>
-                                    <Icon name="circle-info" />
-                                  </div>
-                                </Tooltip>
-                              )}
-                            >
-                              {months} {months === 1 ? "month" : "months"}
-                            </ConditionalWrapper>
-                          </span>
-                        </StyledText>
-                      ))}
-                    </div>
+
+                    <InputForLockupPeriod
+                      selectedDuration={selectedDuration}
+                      onChange={(value) => setSelectedDuration(value)}
+                    />
                   </div>
 
                   <div className="col-span-2 grid grid-cols-subgrid items-center">
@@ -313,10 +275,11 @@ export function LockForm({
                         const amountInUatom = BigInt(
                           Math.round(parseFloat(amount) * 1e6 || 0)
                         )
-                        const lockupPower = scaleLockupPower(
-                          selectedDuration,
-                          amountInUatom
-                        )
+                        const lockupPower = scaleLockupPower({
+                          lockupEpochLength: lockupEpochLength,
+                          lockupTime: selectedDuration,
+                          rawPower: amountInUatom,
+                        })
                         return formatAmount(lockupPower, 6)
                       })()}
                     </strong>
@@ -325,7 +288,7 @@ export function LockForm({
                   <div className="col-span-2 flex flex-row-reverse">
                     <StyledText
                       as="button"
-                      disabled={!validator || !amount || !duration}
+                      disabled={!validator || !amount || !selectedDuration}
                       variant="button.primary"
                       type="submit"
                     >

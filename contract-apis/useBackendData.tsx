@@ -33,7 +33,7 @@ const initialBackendDataContext: BackendDataWithWallet = {
   currentRoundTranches: [],
   isLoading: false,
   isWalletConnected: false,
-  lockupPeriods: [],
+  lockupEpochLength: 0,
   maxLockedAtomGlobal: 0,
   maxLockedAtomUser: 0,
   metricsForPostHydroBids: [],

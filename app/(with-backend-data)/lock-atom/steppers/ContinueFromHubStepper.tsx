@@ -5,6 +5,7 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount, scaleLockupPower } from "@/lib/utils"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
@@ -52,6 +53,7 @@ export const ContinueFromHubStepper = ({
   validatorMap: Map<string, Validator>
   deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
+  const { lockupEpochLength } = useBackendData()
   const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -141,7 +143,13 @@ export const ContinueFromHubStepper = ({
                 <strong>{getValidatorMoniker(validator, validatorMap)}</strong>{" "}
                 in Hydro to get{" "}
                 <strong>
-                  {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
+                  {formatAmount(
+                    scaleLockupPower({
+                      lockupEpochLength,
+                      lockupTime: lockDuration,
+                      rawPower: BigInt(amount),
+                    })
+                  )}{" "}
                   voting power.
                 </strong>
               </p>
@@ -251,7 +259,13 @@ export const ContinueFromHubStepper = ({
                 You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
                 and received{" "}
                 <strong>
-                  {formatAmount(scaleLockupPower(lockDuration, BigInt(amount)))}{" "}
+                  {formatAmount(
+                    scaleLockupPower({
+                      lockupEpochLength,
+                      lockupTime: lockDuration,
+                      rawPower: BigInt(amount),
+                    })
+                  )}{" "}
                   voting power.
                 </strong>
               </p>
