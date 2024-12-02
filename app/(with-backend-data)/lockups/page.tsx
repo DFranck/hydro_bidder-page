@@ -1,6 +1,5 @@
 "use client"
 
-import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -10,7 +9,6 @@ import { Icon } from "@/components/Icon"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
-import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
@@ -18,83 +16,27 @@ import {
   lockupLimitTooltip,
 } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
-import { fetchWalletLockups } from "@/contract-apis/fetchWalletLockups"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { useWalletVotingData } from "@/contract-apis/useWalletVotingData"
-import { calculateTimeRemaining, formatAmount } from "@/lib/utils"
+import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
+import { formatAmount } from "@/lib/utils"
 import Link from "next/link"
-import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
   const {
-    address,
-    isWalletConnected,
-    maxLockedAtomGlobal: maxLockedTokensGlobal,
-    totalLockedAtomGlobal: totalLockedTokensGlobal,
+    lockups,
+    maxLockedAtomGlobal,
+    totalLockedAtomGlobal,
+    totalLockedAtomUser,
   } = useBackendData()
-
-  const { data: userVotingData } = useWalletVotingData(address!)
-  const [myLockups, setMyLockups] = useState<LockEntryWithPower[]>([])
-  const [refetch, setRefetch] = useState(true)
-  const lockedAtomInWallet = userVotingData?.lockups.lockedAtom ?? 0
-  const maxLockedAtomOverall = maxLockedTokensGlobal
+  const maxLockedAtomOverall = maxLockedAtomGlobal
   const maxLockedAtomPerWallet = maxLockedTokensPerAddress ?? 0
   const percentageLockedInWallet = Math.round(
-    (lockedAtomInWallet / maxLockedAtomPerWallet) * 100
+    (totalLockedAtomUser / maxLockedAtomPerWallet) * 100
   )
   const percentageLockedOverall = Math.round(
-    (totalLockedTokensGlobal / maxLockedAtomOverall) * 100
+    (totalLockedAtomGlobal / maxLockedAtomOverall) * 100
   )
-  const { setToasts } = useToasts()
-
-  useEffect(() => {
-    const fetchLockups = async () => {
-      setToasts([
-        {
-          variant: "working",
-          message: "Loading lockups...",
-        },
-      ])
-      try {
-        const myLockups = await fetchWalletLockups(address!)
-        setMyLockups(myLockups)
-      } catch (error) {
-        console.log(error)
-        setToasts([
-          {
-            variant: "error",
-            message: `Error loading lockups: ${error}`,
-          },
-        ])
-      } finally {
-        setToasts([])
-      }
-    }
-
-    if (address && refetch) {
-      fetchLockups()
-      setRefetch(false)
-      return
-    }
-  }, [address, refetch])
-
-  function isExpired(lockEnd: string) {
-    const now = new Date().getTime()
-    const end = parseInt(lockEnd) / 1000000 // Convert nanoseconds to milliseconds
-    const diff = end - now
-    return diff < 0
-  }
-
-  function formatDate(date: string) {
-    const timestampMs = parseInt(date) / 1e6
-    const dateObj = new Date(timestampMs)
-    return dateObj.toISOString().split("T")[0]
-  }
-
-  if (!isWalletConnected || !address) {
-    return <p>Connect your wallet to view your lockups</p>
-  }
 
   return (
     <>
@@ -159,7 +101,9 @@ export default function LockupsPage() {
                         : `text-palette-beige`
                     )}
                   >
-                    {(lockedAtomInWallet / 1e6).toFixed(4).replace(".0000", "")}{" "}
+                    {(totalLockedAtomUser / 1e6)
+                      .toFixed(4)
+                      .replace(".0000", "")}{" "}
                     / {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
                   </span>
                   <Icon name="circle-info" />
@@ -201,7 +145,7 @@ export default function LockupsPage() {
         </div>
 
         <BlurryBackdropBox>
-          {myLockups.length === 0 && (
+          {lockups.length === 0 && (
             <EmptyBox className="flex flex-col gap-1">
               <div>
                 You don&rsquo;t have any lockups yet. To create one, click the
@@ -223,7 +167,7 @@ export default function LockupsPage() {
             </EmptyBox>
           )}
 
-          {myLockups.length > 0 && (
+          {lockups.length > 0 && (
             <StyledTable
               columns={[
                 {
@@ -249,7 +193,7 @@ export default function LockupsPage() {
                   isSortable: true,
                   textAlign: "right",
                   customValueGetter: (row) => {
-                    return row._lockup.lock_entry.lock_end
+                    return row._lockup.dateEnd.getTime()
                   },
                 },
                 {
@@ -259,41 +203,32 @@ export default function LockupsPage() {
                 },
               ]}
               initialSortedColumnKey="endDate"
-              rows={myLockups.map((lockup, index) => {
+              rows={lockups.map((lockup) => {
                 return {
                   _lockup: lockup,
-                  lockedATOM: (
-                    <>{formatAmount(lockup.lock_entry.funds.amount)} ATOM</>
-                  ),
+                  lockedATOM: <>{formatAmount(lockup.funds.amount)} ATOM</>,
                   multiplier: (
                     <>
                       {(
-                        Number(lockup.current_voting_power) /
-                        Number(lockup.lock_entry.funds.amount)
+                        Number(lockup.currentVotingPower) /
+                        Number(lockup.funds.amount)
                       ).toPrecision(3)}{" "}
                       &times;
                     </>
                   ),
-                  votingPower: formatAmount(lockup.current_voting_power),
+                  votingPower: formatAmount(lockup.currentVotingPower),
                   endDate: (
-                    <>
-                      {formatDate(lockup.lock_entry.lock_end)} (
-                      {isExpired(lockup.lock_entry.lock_end) ? (
+                    <div className="inline-flex items-center gap-1">
+                      {new Date() > lockup.dateEnd && (
                         <Icon name="solid:triangle-exclamation" />
-                      ) : (
-                        calculateTimeRemaining(lockup.lock_entry.lock_end)
                       )}
-                      )
-                    </>
+                      {lockup.dateEnd.toLocaleString("en", {
+                        dateStyle: "medium",
+                      })}{" "}
+                      ({getTimeUntilDate(lockup.dateEnd)})
+                    </div>
                   ),
-                  actions: (
-                    <EditLockupDurationModal
-                      onSuccess={() => {
-                        setRefetch(true)
-                      }}
-                      lockup={lockup}
-                    />
-                  ),
+                  actions: <EditLockupDurationModal lockup={lockup} />,
                 }
               })}
             />

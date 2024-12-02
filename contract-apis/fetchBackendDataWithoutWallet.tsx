@@ -37,7 +37,7 @@ export interface BackendData {
   atomPrice: number
   bidDescriptionsByBidId: Record<string, BidDescription>
   bidsByRoundId: Record<number, AugmentedBidFromContract[]>
-  currentRoundEnd: number
+  currentRoundEndDate: Date
   currentRoundId: number
   currentRoundTranches: Tranche[]
   lockupEpochLength: number
@@ -104,7 +104,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     roundId: currentRoundId,
   })
 
-  const currentRoundEnd = Number(round_end) / 1e6
+  const currentRoundEndDate = new Date(Number(round_end) / 1e6)
 
   // With currentRoundId, we can fetch all bids for all rounds
   await Promise.all(
@@ -182,7 +182,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     atomPrice,
     bidDescriptionsByBidId,
     bidsByRoundId,
-    currentRoundEnd,
+    currentRoundEndDate,
     currentRoundId,
     currentRoundTranches: tranches,
     lockupEpochLength: lockupEpochLength,

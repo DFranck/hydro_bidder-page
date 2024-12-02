@@ -2,6 +2,7 @@
 
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { AllowedLockupPeriodInEpochs } from "@/config"
+import { pluralize } from "@/lib/pluralize"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -9,20 +10,27 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function calculateTimeRemaining(lockEnd: string) {
+export function calculateTimeRemaining(date: Date) {
   const now = new Date().getTime()
-  const end = parseInt(lockEnd) / 1000000 // Convert nanoseconds to milliseconds
+  const end = date.getTime()
   const diff = Math.max(0, end - now) // Ensure non-negative difference
-
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const days = Math.floor(hours / 24)
 
   if (hours < 1) {
     return "< 1 hour"
   } else if (days < 1) {
-    return `${hours} hour${hours !== 1 ? "s" : ""}`
+    return pluralize({
+      count: hours,
+      prefixCount: true,
+      singular: "hour",
+    })
   } else {
-    return `${days} day${days !== 1 ? "s" : ""}`
+    return pluralize({
+      count: days,
+      prefixCount: true,
+      singular: "day",
+    })
   }
 }
 

@@ -1,13 +1,15 @@
 "use client"
 
-import { LockEntryWithPower } from "@/app/ts_types/HydroBase.types"
 import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
+import { useToasts } from "@/components/Toasts/useToasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
+import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { getDaysAway } from "@/lib/getDaysAway"
 import { calculateLockupVotingPower, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { isEqual } from "lodash"
@@ -20,7 +22,6 @@ import {
   useState,
 } from "react"
 import { twMerge } from "tailwind-merge"
-import { useToasts } from "./Toasts/useToasts"
 
 interface FormValues {
   lockupPeriod: number
@@ -29,8 +30,8 @@ interface FormValues {
 }
 
 type EditLockupDurationProps = {
-  lockup: LockEntryWithPower
-  onSuccess: () => void
+  lockup: SanitizedLockup
+  onSuccess?: () => void
 }
 
 const classNamesForRadioLabels = `
@@ -71,22 +72,19 @@ export function EditLockupDurationModal({
   const initialFormValues = useMemo(
     () => ({
       lockupPeriod: AllowedLockupPeriodInEpochs.ONE_EPOCH,
-      shares: formatAmount(lockup.lock_entry.funds.amount),
+      shares: formatAmount(lockup.funds.amount),
       power: calculateLockupVotingPower(
-        parseInt(lockup.lock_entry.funds.amount),
+        parseInt(lockup.funds.amount),
         AllowedLockupPeriodInEpochs.ONE_EPOCH
       ).toString(),
     }),
-    [lockup.lock_entry.funds.amount]
+    [lockup.funds.amount]
   )
   const [formValues, setFormValues] = useState<FormValues>(initialFormValues)
-  const currentLockupEnd = Number(lockup.lock_entry.lock_end)
-  const currentLockupEndDate = new Date(currentLockupEnd / 1000000)
+  const currentLockupEndDate = lockup.dateEnd
   const powerDifference =
-    Number(formValues.power) - Number(lockup.current_voting_power)
-  const isLockupFromToday = isToday(
-    new Date(Number(lockup?.lock_entry.lock_start ?? 0) / 1000000)
-  )
+    Number(formValues.power) - Number(lockup.currentVotingPower)
+  const isLockupFromToday = isToday(lockup.dateStart)
 
   useEffect(() => {
     if (isLockupModalOpen) return
@@ -115,7 +113,7 @@ export function EditLockupDurationModal({
       ...values,
       lockupPeriod,
       power: calculateLockupVotingPower(
-        parseInt(lockup.lock_entry.funds.amount),
+        parseInt(lockup.funds.amount),
         lockupPeriod
       ).toString(),
     }))
@@ -139,7 +137,7 @@ export function EditLockupDurationModal({
       await executeWalletExtendLockup({
         getSigningCosmWasmClient,
         address: address || "",
-        lockId: lockup.lock_entry.lock_id,
+        lockId: lockup.id,
         lockDuration: formValues.lockupPeriod * lockupEpochLength,
       })
 
@@ -150,7 +148,7 @@ export function EditLockupDurationModal({
         },
       ])
       setIsLockupModalOpen(false)
-      onSuccess()
+      onSuccess?.()
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
         setToasts([
@@ -172,15 +170,6 @@ export function EditLockupDurationModal({
     } finally {
       setIsLoading(false)
     }
-  }
-
-  function getDaysAway(lockupEnd: number) {
-    const newLockupEndDate = new Date(lockupEnd / 1000000)
-
-    return Math.floor(
-      (newLockupEndDate.getTime() - new Date().getTime()) /
-        (1000 * 60 * 60 * 24)
-    )
   }
 
   if (isLockupFromToday) {
@@ -236,15 +225,15 @@ export function EditLockupDurationModal({
 
                 {Object.entries(AllowedLockupPeriodInEpochs).map(
                   ([name, value]) => {
-                    const newLockupEnd =
-                      Date.now() * 1000000 + lockupEpochLength * Number(value)
+                    const newLockupEndDate = new Date(
+                      (Date.now() * 1e6 + lockupEpochLength * Number(value)) /
+                        1e6
+                    )
 
                     // Don't show an option to refresh a lockup to a time before its current end time
-                    if (currentLockupEnd >= newLockupEnd) return null
+                    if (currentLockupEndDate >= newLockupEndDate) return null
 
-                    const newLockupEndDate = new Date(newLockupEnd / 1000000)
-
-                    const daysDifference = getDaysAway(newLockupEnd)
+                    const daysDifference = getDaysAway(newLockupEndDate)
 
                     return (
                       <label
@@ -295,9 +284,7 @@ export function EditLockupDurationModal({
                     )}
                   >
                     {formatAmount(
-                      hasChanged
-                        ? formValues.power
-                        : lockup.current_voting_power
+                      hasChanged ? formValues.power : lockup.currentVotingPower
                     )}
                   </div>
                 </div>

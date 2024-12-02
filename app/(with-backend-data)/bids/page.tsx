@@ -26,6 +26,7 @@ import { VoteButton } from "@/components/VoteButton"
 import { WelcomePopup } from "@/components/WelcomePopup"
 import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { sumBy } from "lodash"
 import Image from "next/image"
@@ -50,13 +51,14 @@ export default function BidsPage() {
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
+    currentRoundId,
     isLoading,
     isWalletConnected,
-    currentRoundId,
-    totalLockedAtomGlobal,
+    lockupEpochLength,
     maxLockedAtomGlobal,
-    votingPower,
+    totalLockedAtomGlobal,
     votes,
+    votingPower,
   } = backendData
 
   const showWelcomeModal =
@@ -69,6 +71,9 @@ export default function BidsPage() {
       const bidURL = `/bids/${bid.id}`
       const bidDescription = bidDescriptionsByBidId[bid.id]
       const { projectLogoUrl, projectName } = bidDescription
+      const { value: bidDeploymentDuration, unit } = getTimeUnitFromNanos(
+        bid.deploymentDuration * lockupEpochLength
+      )
 
       return {
         _bid: bid,
@@ -96,10 +101,10 @@ export default function BidsPage() {
         ),
         deploymentDuration: (
           <InvisibleLink href={bidURL}>
-            {bid.deploymentDuration > 0 ? bid.deploymentDuration : "?"}{" "}
             {pluralize({
-              count: bid.deploymentDuration,
-              singular: "month",
+              count: bidDeploymentDuration,
+              prefixCount: true,
+              singular: unit,
             })}
           </InvisibleLink>
         ),

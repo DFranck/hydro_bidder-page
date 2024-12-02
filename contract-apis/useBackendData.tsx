@@ -28,7 +28,7 @@ const initialBackendDataContext: BackendDataWithWallet = {
   atomPrice: 0,
   bidDescriptionsByBidId: {},
   bidsByRoundId: {},
-  currentRoundEnd: 0,
+  currentRoundEndDate: new Date(),
   currentRoundId: 0,
   currentRoundTranches: [],
   isLoading: false,
