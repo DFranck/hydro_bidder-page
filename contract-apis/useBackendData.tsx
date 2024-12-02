@@ -88,6 +88,12 @@ export function BackendDataContextProvider({
     isWalletConnected,
   }
 
+  console.log({
+    address,
+    isWalletConnected,
+    isWalletConnecting,
+  })
+
   useEffect(() => {
     ;(async () => {
       if (!address) return
@@ -134,9 +140,11 @@ export function BackendDataContextProvider({
     if ((didJustDisconnect || !isWalletConnected) && isProtectedRoute) {
       console.log({
         pathname,
+        didJustConnect,
         didJustDisconnect,
         isProtectedRoute,
         isWalletConnected,
+        isWalletConnecting,
       })
       router.push("/bids")
     }
