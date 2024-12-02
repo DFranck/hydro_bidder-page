@@ -2,6 +2,7 @@
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import {
+  Coin,
   LockEntryWithPower,
   VoteWithPower,
 } from "@/app/ts_types/HydroBase.types"
@@ -14,7 +15,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { sumBy } from "lodash"
+import { sortBy, sumBy } from "lodash"
 import { unstable_cache } from "next/cache"
 
 export interface BackendDataWithWallet
@@ -25,9 +26,17 @@ export interface BackendDataWithWallet
   isWalletConnected: boolean
   maxLockedAtomUser: number
   totalLockedAtomUser: number
-  lockups: LockEntryWithPower[]
+  lockups: SanitizedLockup[]
   votes: SanitizedVote[]
   votingPower: number
+}
+
+export interface SanitizedLockup {
+  currentVotingPower: number
+  dateEnd: Date
+  dateStart: Date
+  funds: Coin
+  id: number
 }
 
 export interface SanitizedVote
@@ -36,8 +45,27 @@ export interface SanitizedVote
 }
 
 export interface FullyAugmentedBid extends AugmentedBidFromContract {
+  lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardsDeltaPercentage: number
+}
+
+function sanitizeLockup(lockup: LockEntryWithPower): SanitizedLockup {
+  return {
+    currentVotingPower: Number(lockup.current_voting_power),
+    dateEnd: new Date(Number(lockup.lock_entry.lock_end) / 1e6),
+    dateStart: new Date(Number(lockup.lock_entry.lock_start) / 1e6),
+    funds: lockup.lock_entry.funds,
+    id: lockup.lock_entry.lock_id,
+  }
+}
+
+function sanitizeVote(vote: VoteWithPower): SanitizedVote {
+  const { propId, ...rest } = keysFromSnakeToCamelCase(vote)
+  return {
+    ...rest,
+    bidId: propId,
+  }
 }
 
 async function uncachedFetchBackendDataWithWallet({
@@ -60,8 +88,10 @@ async function uncachedFetchBackendDataWithWallet({
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
+    currentRoundEndDate,
     currentRoundId,
     currentRoundTranches,
+    lockupEpochLength,
   } = backendData
 
   const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
@@ -73,43 +103,51 @@ async function uncachedFetchBackendDataWithWallet({
     }),
   ])
 
-  const sanitizedVotes = (
-    await Promise.all(
-      currentRoundTranches.map(async (tranche) => {
-        let fetchedVotes: VoteWithPower[] = []
+  const votes = await Promise.all(
+    currentRoundTranches.map(async (tranche) => {
+      let fetchedVotes: VoteWithPower[] = []
 
-        try {
-          const { votes: votesForTranche } = await hydroQueryClient.userVotes({
-            address,
-            roundId: currentRoundId,
-            trancheId: tranche.id,
-          })
-          fetchedVotes = votesForTranche
-        } catch (err) {
-          // TODO: no votes for this tranche; shouldn't throw exception though??
-        }
+      try {
+        const { votes: votesForTranche } = await hydroQueryClient.userVotes({
+          address,
+          roundId: currentRoundId,
+          trancheId: tranche.id,
+        })
+        fetchedVotes = votesForTranche
+      } catch (err) {
+        // TODO: no votes for this tranche; shouldn't throw exception though??
+      }
 
-        return fetchedVotes
-      })
-    )
+      return fetchedVotes
+    })
   )
-    .flat()
-    .map(keysFromSnakeToCamelCase)
-    .map(({ propId, ...vote }) => ({
-      ...vote,
-      bidId: propId,
-    }))
+
+  const sanitizedLockups = lockups.map(sanitizeLockup)
+
+  const sanitizedVotes = votes.flat().map(sanitizeVote)
+
+  const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
+    ?.dateEnd
 
   const augmentedBidsByRoundId = Object.fromEntries(
     Object.entries(bidsByRoundId).map(([roundId, bids]) => {
       return [
         roundId,
-        bids.map((bid: AugmentedBidFromContract) => {
+        bids.map((bid) => {
           const usersEstimatedRewards = sumBy(bid.tributes, "valueInUsd")
+          const bidDeploymentDuration =
+            Number(bid.deploymentDuration * lockupEpochLength) / 1e6
+          const lockupsOutliveBidDeployment =
+            furthestLockupEndDate && currentRoundEndDate
+              ? furthestLockupEndDate >
+                new Date(currentRoundEndDate.getTime() + bidDeploymentDuration)
+              : false
+
           return {
             ...bid,
             description:
               bidDescriptionsByBidId[bid.id].description ?? bid.description,
+            lockupsOutliveBidDeployment,
             usersEstimatedRewards,
             usersEstimatedRewardsDeltaPercentage: 0,
           }
@@ -127,7 +165,7 @@ async function uncachedFetchBackendDataWithWallet({
     // TODO: get this from contract
     maxLockedAtomUser: 200,
     totalLockedAtomUser: sumBy(lockups, "lock_entry.funds.amount"),
-    lockups,
+    lockups: sanitizedLockups,
     votes: sanitizedVotes,
     votingPower,
   }

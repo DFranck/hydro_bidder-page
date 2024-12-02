@@ -31,11 +31,8 @@ export function VoteButton({
   const {
     address,
     bidsByRoundId,
-    currentRoundId,
     isWalletConnected,
-    lockups,
     maxLockedAtomGlobal,
-    metricsGlobal,
     totalLockedAtomGlobal,
     votes,
     votingPower,
@@ -45,9 +42,15 @@ export function VoteButton({
   const bid = Object.values(bidsByRoundId)
     .flat()
     .find((bid) => bid.id === bidId)
+  const lockupsOutliveBidDeployment = bid?.lockupsOutliveBidDeployment
   const hasVotedForAny = votes.length > 0
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
   const isLoading = toasts.some((toast) => toast.variant === "working")
+
+  console.log({
+    bid,
+    lockupsOutliveBidDeployment,
+  })
 
   async function handleClickVote() {
     if (!bid) {
@@ -143,6 +146,17 @@ export function VoteButton({
           Lock ATOM to Vote
         </StyledText>
       </ConditionalWrapper>
+    )
+  } else if (!lockupsOutliveBidDeployment) {
+    Button = (
+      <StyledText
+        variant={`button.neutral${size ? `.${size}` : ""}` as StyledTextVariant}
+        as={Link}
+        href="/lockups"
+      >
+        <Icon name="solid:rotate-right" />
+        <span>Refresh Lockups to Vote</span>
+      </StyledText>
     )
   } else if (hasVotedForBid) {
     Button = (

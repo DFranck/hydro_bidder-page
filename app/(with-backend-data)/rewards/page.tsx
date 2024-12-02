@@ -37,10 +37,10 @@ export default function RewardsPage() {
     votes,
   } = useBackendData()
   const allBidIds = bidsByRoundId[currentRoundId]?.map((bid) => bid.id) ?? []
-  const [selectedBidIds, setSelectedBidIds] = useState<string[]>(allBidIds)
+  const [selectedBidIds, setSelectedBidIds] = useState<number[]>(allBidIds)
   const bidsUserVotedOn = Object.values(bidsByRoundId)
     .flat()
-    .filter((bid) => votes.find((vote) => vote.bidId === Number(bid.id)))
+    .filter((bid) => votes.find((vote) => vote.bidId === bid.id))
 
   const rows = bidsUserVotedOn.map((bid) => {
     const bidUrl = `/bids/${bid.id}`
@@ -184,7 +184,7 @@ export default function RewardsPage() {
     },
   ]
 
-  function handleClickClaimRewards({ bidIds }: { bidIds?: string[] } = {}) {
+  function handleClickClaimRewards({ bidIds }: { bidIds?: number[] } = {}) {
     setIsShowingClaimRewardsModal(true)
     setSelectedBidIds(bidIds ?? allBidIds)
   }
