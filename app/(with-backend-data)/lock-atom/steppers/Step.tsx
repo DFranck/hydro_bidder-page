@@ -1,14 +1,18 @@
+"use client"
+
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { ReactNode } from "react"
+import { revalidateTag } from "next/cache"
+import { ReactNode, useEffect } from "react"
 
 export function Step({
   title,
   contents,
   buttons,
   isWorking,
+  revalidateCache,
 }: {
   title?: ReactNode
   contents: ReactNode
@@ -18,7 +22,14 @@ export function Step({
     className?: string
   }[]
   isWorking?: boolean
+  revalidateCache?: boolean
 }) {
+  useEffect(() => {
+    if (revalidateCache) {
+      revalidateTag("fetchBackendDataWithWallet")
+    }
+  }, [revalidateCache])
+
   return (
     <Card
       className={`

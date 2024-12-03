@@ -25,6 +25,7 @@ import { formatAmount } from "@/lib/formatAmount"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
 import { pluralize } from "@/lib/pluralize"
 import { useChain } from "@cosmos-kit/react"
+import { revalidateTag } from "next/cache"
 import Link from "next/link"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
@@ -84,9 +85,12 @@ export default function LockupsPage() {
       setToasts([
         {
           message: `${pluralizedLockupText} unlocked successfully`,
+          revalidateTag: "fetchBackendDataWithWallet",
           variant: "success",
         },
       ])
+
+      revalidateTag("fetchBackendDataWithWallet")
     } catch (error) {
       setToasts([
         {
@@ -279,20 +283,27 @@ export default function LockupsPage() {
               ]}
               initialSortedColumnKey="endDate"
               rows={lockups.map((lockup) => {
+                const isExpired = new Date() > lockup.dateEnd
                 return {
                   _lockup: lockup,
                   lockedATOM: <>{lockup.funds.amount} ATOM</>,
                   multiplier: <>{lockup.multiplier.toPrecision(3)} &times;</>,
                   votingPower: formatAmount(lockup.currentVotingPower),
                   endDate: (
-                    <div className="inline-flex items-center gap-1">
-                      {new Date() > lockup.dateEnd && (
-                        <Icon name="solid:triangle-exclamation" />
-                      )}
-                      {lockup.dateEnd.toLocaleString("en", {
-                        dateStyle: "medium",
-                      })}{" "}
-                      ({getTimeUntilDate(lockup.dateEnd)})
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center gap-1 whitespace-nowrap">
+                        {isExpired && (
+                          <Icon name="solid:triangle-exclamation" />
+                        )}
+                        {lockup.dateEnd.toLocaleString("en", {
+                          dateStyle: "medium",
+                        })}{" "}
+                      </div>
+                      <StyledText variant="footnote">
+                        {isExpired
+                          ? "Expired"
+                          : getTimeUntilDate(lockup.dateEnd)}
+                      </StyledText>
                     </div>
                   ),
                   actions: <EditLockupDurationModal lockup={lockup} />,
@@ -308,16 +319,23 @@ export default function LockupsPage() {
         onClose={handleModalWindowClose}
       >
         <Card>
+          <Card.Header>Refresh Lockups you Want to Keep</Card.Header>
           <Card.Body>
-            <div>
-              Refresh any lockups you want to keep before proceeding. Unlock{" "}
+            <p>
+              Before proceeding to unlock, be sure to refresh any lockups that
+              you want to keep. If you do not refresh before proceeding you will
+              be unlocking all of your lockups and will lose all of your voting
+              power.
+            </p>
+            <p>
+              Unlock{" "}
               {pluralize({
                 count: expiredLockups.length,
                 prefixCount: true,
                 singular: "expired lockup",
               })}
               ?
-            </div>
+            </p>
           </Card.Body>
           <Card.Footer>
             <StyledText

@@ -81,7 +81,7 @@ export function EditLockupDurationModal({
       setToasts([
         {
           variant: "working",
-          message: "Refreshing lockup...",
+          message: "Saving lockup...",
         },
       ])
 
@@ -95,7 +95,7 @@ export function EditLockupDurationModal({
       setToasts([
         {
           variant: "success",
-          message: "Lockup refreshed successfully!",
+          message: "Lockup saved successfully!",
         },
       ])
       setIsLockupModalOpen(false)
@@ -115,7 +115,7 @@ export function EditLockupDurationModal({
       setToasts([
         {
           variant: "error",
-          message: `Error refreshing lockup: ${err}`,
+          message: `Error saving lockup: ${err}`,
         },
       ])
     } finally {
@@ -134,7 +134,7 @@ export function EditLockupDurationModal({
         variant="button.secondary"
         onClick={() => setIsLockupModalOpen(true)}
       >
-        Refresh Lockup
+        Edit Lockup
       </StyledText>
 
       <ModalWindow
@@ -143,7 +143,7 @@ export function EditLockupDurationModal({
         onClose={() => setIsLockupModalOpen(false)}
       >
         <Card>
-          <Card.Header title="Refresh Lockup" />
+          <Card.Header title="Edit Lockup" />
           <Card.Body>
             <form
               className="

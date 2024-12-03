@@ -122,6 +122,7 @@ export const ContinueFromHubStepper = ({
 
   function getStepContents(): {
     isWorking?: boolean
+    revalidateCache?: boolean
     title?: ReactNode
     contents: ReactNode
     buttons?: {
@@ -251,6 +252,7 @@ export const ContinueFromHubStepper = ({
         }
       case "Success":
         return {
+          revalidateCache: true,
           title: "Success!",
           contents: (
             <>

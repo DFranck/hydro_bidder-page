@@ -28,7 +28,6 @@ export function LockForm({
 }) {
   const {
     lockupEpochLength,
-    lockups,
     maxLockedAtomGlobal,
     maxLockedAtomUser,
     totalLockedAtomGlobal,
@@ -58,15 +57,6 @@ export function LockForm({
     globalLimitRemainder // no more than the global limit
   )
   const [amount, setAmount] = useState<string>("")
-
-  console.log({
-    db: delegationBalance / 1e6,
-    usersLimitRemainder,
-    globalLimitRemainder,
-    maxLockedAtomUser,
-    totalLockedAtomUser,
-    lockups,
-  })
 
   useEffect(() => {
     if (maxAtomToBeLocked > 0) {

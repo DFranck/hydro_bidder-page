@@ -357,7 +357,6 @@ export default function RewardsPage() {
 
                     return {
                       _bid: bid,
-
                       token: bid.tributes
                         .map((t) => t.denom)
                         .sort()
