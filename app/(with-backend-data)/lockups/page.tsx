@@ -210,7 +210,8 @@ export default function LockupsPage() {
                   multiplier: (
                     <>
                       {(
-                        Number(lockup.currentVotingPower) / lockup.funds.amount
+                        Number(lockup.currentVotingPower) /
+                        (lockup.funds.amount * 1e6)
                       ).toPrecision(3)}{" "}
                       &times;
                     </>
@@ -227,7 +228,11 @@ export default function LockupsPage() {
                       ({getTimeUntilDate(lockup.dateEnd)})
                     </div>
                   ),
-                  actions: <EditLockupDurationModal lockup={lockup} />,
+                  actions: (
+                    <div className="inline-flex items-center gap-1">
+                      <EditLockupDurationModal lockup={lockup} />
+                    </div>
+                  ),
                 }
               })}
             />
