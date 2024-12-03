@@ -1,5 +1,3 @@
-"use client"
-
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { pluralize } from "@/lib/pluralize"

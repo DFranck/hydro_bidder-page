@@ -14,6 +14,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
+import { estimatedRewardForPower } from "@/lib/utils"
 import { sortBy, sumBy } from "lodash"
 import { unstable_cache } from "next/cache"
 
@@ -48,6 +49,7 @@ export interface SanitizedVote
 }
 
 export interface FullyAugmentedBid extends AugmentedBidFromContract {
+  deploymentDurationInNanos: number
   lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardsDeltaPercentage: number
@@ -138,36 +140,61 @@ async function uncachedFetchBackendDataWithWallet({
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
 
+  const votedBidId = sanitizedVotes.find((vote) => vote.bidId)?.bidId ?? null
+
   const augmentedBidsByRoundId = Object.fromEntries(
     Object.entries(bidsByRoundId).map(([roundId, bids]) => {
-      return [
-        roundId,
-        bids.map((bid) => {
-          const usersEstimatedRewards = sumBy(bid.tributes, "valueInUsd")
-          const bidDeploymentDuration =
-            Number(bid.deploymentDuration * lockupEpochLength) / 1e6
-          const currentRoundEndDateForSure =
-            typeof currentRoundEndDate === "string"
-              ? new Date(currentRoundEndDate)
-              : currentRoundEndDate
-          const lockupsOutliveBidDeployment =
-            furthestLockupEndDate && currentRoundEndDate
-              ? furthestLockupEndDate >
-                new Date(
-                  currentRoundEndDateForSure.getTime() + bidDeploymentDuration
-                )
-              : false
+      const bidsWithEstimatedRewards = bids.map((bid) => {
+        const description =
+          bidDescriptionsByBidId[bid.id].description ?? bid.description
 
-          return {
-            ...bid,
-            description:
-              bidDescriptionsByBidId[bid.id].description ?? bid.description,
-            lockupsOutliveBidDeployment,
-            usersEstimatedRewards,
-            usersEstimatedRewardsDeltaPercentage: 0,
-          }
-        }),
-      ]
+        const usersEstimatedRewards =
+          estimatedRewardForPower(
+            sumBy(bid.tributes, "valueInUsd"),
+            votingPower,
+            Number(bid.power)
+          ) ?? 0
+
+        const deploymentDurationInNanos =
+          bid.deploymentDuration * lockupEpochLength
+
+        const currentRoundEndDateForSure =
+          typeof currentRoundEndDate === "string"
+            ? new Date(currentRoundEndDate)
+            : currentRoundEndDate
+
+        const lockupsOutliveBidDeployment =
+          furthestLockupEndDate && currentRoundEndDate
+            ? furthestLockupEndDate >
+              new Date(
+                currentRoundEndDateForSure.getTime() +
+                  deploymentDurationInNanos / 1e6
+              )
+            : false
+
+        return {
+          ...bid,
+          deploymentDurationInNanos,
+          description,
+          lockupsOutliveBidDeployment,
+          usersEstimatedRewards,
+          usersEstimatedRewardsDeltaPercentage: 0,
+        }
+      })
+
+      const votedBid =
+        bidsWithEstimatedRewards.find((bid) => bid.id === votedBidId) ?? null
+
+      const bidsWithRelativeRewards = bidsWithEstimatedRewards.map((bid) => {
+        return {
+          ...bid,
+          usersEstimatedRewardsDeltaPercentage: votedBid
+            ? (bid.usersEstimatedRewards / votedBid.usersEstimatedRewards) * 100
+            : 0,
+        }
+      })
+
+      return [roundId, bidsWithRelativeRewards]
     })
   )
 
