@@ -182,7 +182,7 @@ async function uncachedFetchBackendDataWithWallet({
     totalLockedAtomUser: sumBy(sanitizedLockups, "funds.amount"),
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
-    votingPower,
+    votingPower: votingPower / 1e6,
   }
 }
 

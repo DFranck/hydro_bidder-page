@@ -12,7 +12,7 @@ export function YourVotingPower() {
   return (
     <StatCard
       isLoading={isLoading}
-      value={votingPower}
+      value={votingPower.toFixed(4)}
       title={
         <Tooltip tipContents={yourVotingPowerTooltip}>
           <div className="flex items-center gap-1">
