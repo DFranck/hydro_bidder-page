@@ -2,7 +2,7 @@ import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
 import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
-export async function executeWalletRevertLockup({
+export async function executeWalletUnlockLockup({
   address,
   lockup,
   getSigningCosmWasmClient,
