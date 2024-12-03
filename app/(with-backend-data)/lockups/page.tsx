@@ -19,7 +19,7 @@ import {
   lockupLimitTooltip,
 } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
-import { executeWalletRevertLockup } from "@/contract-apis/executeWalletRevertLockup"
+import { executeWalletUnlockLockup } from "@/contract-apis/executeWalletUnlockLockup"
 import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -31,7 +31,7 @@ import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
-  const [isConfirmingRevertLockup, setIsConfirmingRevertLockup] =
+  const [isConfirmingUnlockLockup, setIsConfirmingUnlockLockup] =
     useState(false)
   const {
     address,
@@ -52,17 +52,17 @@ export default function LockupsPage() {
   const { setToasts } = useToasts()
   const [selectedLockups, setSelectedLockups] = useState<SanitizedLockup[]>([])
 
-  function handleClickRevertLockup(lockup: SanitizedLockup) {
+  function handleClickUnlockLockup(lockup: SanitizedLockup) {
     setSelectedLockups([lockup])
-    setIsConfirmingRevertLockup(true)
+    setIsConfirmingUnlockLockup(true)
   }
 
-  async function handleClickRevertSelectedLockups() {
+  async function handleClickUnlockSelectedLockups() {
     if (selectedLockups.length === 0) {
       return
     }
 
-    setIsConfirmingRevertLockup(false)
+    setIsConfirmingUnlockLockup(false)
 
     const pluralizedLockupText = pluralize({
       count: selectedLockups.length,
@@ -72,7 +72,7 @@ export default function LockupsPage() {
 
     setToasts([
       {
-        message: `Reverting ${pluralizedLockupText}...`,
+        message: `Unlocking ${pluralizedLockupText}...`,
         variant: "working",
       },
     ])
@@ -80,7 +80,7 @@ export default function LockupsPage() {
     try {
       await Promise.all(
         selectedLockups.map((lockup) =>
-          executeWalletRevertLockup({
+          executeWalletUnlockLockup({
             address,
             lockup,
             getSigningCosmWasmClient,
@@ -90,14 +90,14 @@ export default function LockupsPage() {
 
       setToasts([
         {
-          message: `${pluralizedLockupText} reverted successfully`,
+          message: `${pluralizedLockupText} unlocked successfully`,
           variant: "success",
         },
       ])
     } catch (error) {
       setToasts([
         {
-          message: `Error reverting ${pluralizedLockupText}: ${error}`,
+          message: `Error unlocking ${pluralizedLockupText}: ${error}`,
           variant: "error",
         },
       ])
@@ -106,19 +106,19 @@ export default function LockupsPage() {
 
   function handleModalWindowClose() {
     setSelectedLockups([])
-    setIsConfirmingRevertLockup(false)
+    setIsConfirmingUnlockLockup(false)
   }
 
   return (
     <>
       <ModalWindow
-        isOpen={isConfirmingRevertLockup}
+        isOpen={isConfirmingUnlockLockup}
         onClose={handleModalWindowClose}
       >
         <Card>
           <Card.Body>
             <div>
-              Are you sure you want to revert{" "}
+              Are you sure you want to unlock{" "}
               {pluralize({
                 count: selectedLockups.length,
                 singular: "this lockup",
@@ -131,14 +131,14 @@ export default function LockupsPage() {
             <StyledText
               as="button"
               variant="button.primary"
-              onClick={handleClickRevertSelectedLockups}
+              onClick={handleClickUnlockSelectedLockups}
             >
-              Revert
+              Unlock
             </StyledText>
             <StyledText
               as="button"
               variant="button.secondary"
-              onClick={() => setIsConfirmingRevertLockup(false)}
+              onClick={() => setIsConfirmingUnlockLockup(false)}
             >
               Cancel
             </StyledText>
@@ -333,10 +333,10 @@ export default function LockupsPage() {
                         as="button"
                         variant="link"
                         className="flex items-center gap-1"
-                        onClick={handleClickRevertLockup.bind(null, lockup)}
+                        onClick={handleClickUnlockLockup.bind(null, lockup)}
                       >
-                        <Icon name="solid:rotate-right" />
-                        Revert
+                        <Icon name="solid:lock-open" />
+                        Unlock
                       </StyledText>
                     </div>
                   ),
