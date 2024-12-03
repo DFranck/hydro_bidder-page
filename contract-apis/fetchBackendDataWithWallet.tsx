@@ -31,6 +31,7 @@ export interface BackendDataWithWallet
 }
 
 export interface SanitizedLockup {
+  id: number
   currentVotingPower: number
   dateEnd: Date
   dateStart: Date
@@ -38,7 +39,7 @@ export interface SanitizedLockup {
     amount: number
     denom: string
   }
-  id: number
+  multiplier: number
 }
 
 export interface SanitizedVote
@@ -53,8 +54,8 @@ export interface FullyAugmentedBid extends AugmentedBidFromContract {
 }
 
 function sanitizeLockup(lockup: LockEntryWithPower): SanitizedLockup {
-  console.log("Before", { lockup })
   return {
+    id: lockup.lock_entry.lock_id,
     currentVotingPower: Number(lockup.current_voting_power),
     dateEnd: new Date(Number(lockup.lock_entry.lock_end) / 1e6),
     dateStart: new Date(Number(lockup.lock_entry.lock_start) / 1e6),
@@ -62,7 +63,9 @@ function sanitizeLockup(lockup: LockEntryWithPower): SanitizedLockup {
       amount: Number(lockup.lock_entry.funds.amount) / 1e6,
       denom: lockup.lock_entry.funds.denom,
     },
-    id: lockup.lock_entry.lock_id,
+    multiplier:
+      Number(lockup.current_voting_power) /
+      Number(lockup.lock_entry.funds.amount),
   }
 }
 

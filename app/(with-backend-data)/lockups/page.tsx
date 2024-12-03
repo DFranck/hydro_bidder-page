@@ -207,15 +207,7 @@ export default function LockupsPage() {
                 return {
                   _lockup: lockup,
                   lockedATOM: <>{lockup.funds.amount} ATOM</>,
-                  multiplier: (
-                    <>
-                      {(
-                        Number(lockup.currentVotingPower) /
-                        (lockup.funds.amount * 1e6)
-                      ).toPrecision(3)}{" "}
-                      &times;
-                    </>
-                  ),
+                  multiplier: <>{lockup.multiplier.toPrecision(3)} &times;</>,
                   votingPower: formatAmount(lockup.currentVotingPower),
                   endDate: (
                     <div className="inline-flex items-center gap-1">
