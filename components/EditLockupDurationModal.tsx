@@ -12,15 +12,7 @@ import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { calculateLockupVotingPower, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
-import { isEqual } from "lodash"
-import {
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { isToday } from "../lib/isToday"
 
@@ -52,65 +44,37 @@ export function EditLockupDurationModal({
   const [isLoading, setIsLoading] = useState(false)
   const [isLockupModalOpen, setIsLockupModalOpen] = useState(false)
   const { setToasts } = useToasts()
-  const formElementRef = useRef<HTMLFormElement>(null)
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const initialFormValues = useMemo(
-    () => ({
-      lockupPeriod: AllowedLockupPeriodInEpochs.ONE_EPOCH,
-      shares: formatAmount(lockup.funds.amount),
-      power: calculateLockupVotingPower(
-        lockup.funds.amount,
-        AllowedLockupPeriodInEpochs.ONE_EPOCH
-      ).toString(),
-    }),
-    [lockup.funds.amount]
+  const [selectedDuration, setSelectedDuration] = useState(
+    AllowedLockupPeriodInEpochs.ONE_EPOCH
   )
-  const [formValues, setFormValues] = useState<FormValues>(initialFormValues)
+  const originalPower = lockup.currentVotingPower
+  const newPower = calculateLockupVotingPower(
+    lockup.funds.amount * 1e6,
+    selectedDuration / lockupEpochLength
+  )
   const currentLockupEndDate = lockup.dateEnd
-  const powerDifference =
-    Number(formValues.power) - Number(lockup.currentVotingPower)
+  const powerDifference = newPower - originalPower
   const isLockupFromToday = isToday(lockup.dateStart)
 
   useEffect(() => {
     if (isLockupModalOpen) return
-
-    formElementRef.current?.reset()
-    setFormValues(initialFormValues)
     setHasChanged(false)
     setIsLoading(false)
     setToasts([])
-  }, [initialFormValues, isLockupModalOpen])
+  }, [isLockupModalOpen])
 
-  async function handleChange(event: ChangeEvent<HTMLFormElement>) {
-    const formElement = event.currentTarget as HTMLFormElement
-    const formData = new FormData(formElement)
-    const values = Object.fromEntries(formData.entries())
-
-    if (isEqual(formValues, values)) {
-      return
-    }
-
+  async function handleChange(newDuration: number) {
+    setSelectedDuration(newDuration)
     setHasChanged(true)
-
-    const lockupPeriod = Number(values["lockupPeriod"])
-
-    setFormValues((currentFormValues) => ({
-      ...currentFormValues,
-      ...values,
-      lockupPeriod,
-      power: calculateLockupVotingPower(
-        lockup.funds.amount,
-        lockupPeriod
-      ).toString(),
-    }))
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    setIsLoading(true)
+    if (!selectedDuration || !lockup) return
 
-    if (!formValues.lockupPeriod || !lockup) return
+    setIsLoading(true)
 
     try {
       setToasts([
@@ -122,9 +86,9 @@ export function EditLockupDurationModal({
 
       await executeWalletExtendLockup({
         getSigningCosmWasmClient,
-        address: address || "",
+        address,
         lockId: lockup.id,
-        lockDuration: formValues.lockupPeriod * lockupEpochLength,
+        lockDurationInNanos: selectedDuration,
       })
 
       setToasts([
@@ -186,8 +150,6 @@ export function EditLockupDurationModal({
                 flex-col
                 gap-6
               "
-              ref={formElementRef}
-              onChange={handleChange}
               onSubmit={handleSubmit}
             >
               <div className="flex flex-col gap-2">
@@ -211,13 +173,8 @@ export function EditLockupDurationModal({
 
                 <InputForLockupPeriod
                   currentLockupEndDate={currentLockupEndDate}
-                  selectedDuration={formValues.lockupPeriod}
-                  onChange={(value) =>
-                    setFormValues((currentFormValues) => ({
-                      ...currentFormValues,
-                      lockupPeriod: value,
-                    }))
-                  }
+                  selectedDuration={selectedDuration}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -231,7 +188,7 @@ export function EditLockupDurationModal({
                       text-palette-beige
                     "
                   >
-                    {formValues.shares}
+                    {formatAmount(lockup.funds.amount)}
                   </div>
                 </div>
 
@@ -247,9 +204,7 @@ export function EditLockupDurationModal({
                       powerDifference > 0 && "text-palette-green"
                     )}
                   >
-                    {formatAmount(
-                      hasChanged ? formValues.power : lockup.currentVotingPower
-                    )}
+                    {formatAmount(hasChanged ? newPower : originalPower)}
                   </div>
                 </div>
               </div>
