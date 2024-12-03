@@ -19,8 +19,7 @@ import {
   lockupLimitTooltip,
 } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
-import { executeWalletUnlockLockup } from "@/contract-apis/executeWalletUnlockLockup"
-import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
+import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
@@ -31,7 +30,7 @@ import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
-  const [isConfirmingUnlockLockup, setIsConfirmingUnlockLockup] =
+  const [isConfirmingUnlockExpired, setIsConfirmingUnlockExpired] =
     useState(false)
   const {
     address,
@@ -50,24 +49,23 @@ export default function LockupsPage() {
   )
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
-  const [selectedLockups, setSelectedLockups] = useState<SanitizedLockup[]>([])
+  const expiredLockups = lockups.filter((lockup) => new Date() > lockup.dateEnd)
 
-  function handleClickUnlockLockup(lockup: SanitizedLockup) {
-    setSelectedLockups([lockup])
-    setIsConfirmingUnlockLockup(true)
+  function handleClickUnlockExpired() {
+    setIsConfirmingUnlockExpired(true)
   }
 
-  async function handleClickUnlockSelectedLockups() {
-    if (selectedLockups.length === 0) {
+  async function executeUnlockExpired() {
+    if (expiredLockups.length === 0) {
       return
     }
 
-    setIsConfirmingUnlockLockup(false)
+    setIsConfirmingUnlockExpired(false)
 
     const pluralizedLockupText = pluralize({
-      count: selectedLockups.length,
+      count: expiredLockups.length,
       prefixCount: true,
-      singular: "lockup",
+      singular: "expired lockup",
     })
 
     setToasts([
@@ -78,15 +76,10 @@ export default function LockupsPage() {
     ])
 
     try {
-      await Promise.all(
-        selectedLockups.map((lockup) =>
-          executeWalletUnlockLockup({
-            address,
-            lockup,
-            getSigningCosmWasmClient,
-          })
-        )
-      )
+      await executeWalletUnlockExpired({
+        address,
+        getSigningCosmWasmClient,
+      })
 
       setToasts([
         {
@@ -105,47 +98,11 @@ export default function LockupsPage() {
   }
 
   function handleModalWindowClose() {
-    setSelectedLockups([])
-    setIsConfirmingUnlockLockup(false)
+    setIsConfirmingUnlockExpired(false)
   }
 
   return (
     <>
-      <ModalWindow
-        isOpen={isConfirmingUnlockLockup}
-        onClose={handleModalWindowClose}
-      >
-        <Card>
-          <Card.Body>
-            <div>
-              Are you sure you want to unlock{" "}
-              {pluralize({
-                count: selectedLockups.length,
-                singular: "this lockup",
-                plural: "these lockups",
-              })}
-              ?
-            </div>
-          </Card.Body>
-          <Card.Footer>
-            <StyledText
-              as="button"
-              variant="button.primary"
-              onClick={handleClickUnlockSelectedLockups}
-            >
-              Unlock
-            </StyledText>
-            <StyledText
-              as="button"
-              variant="button.secondary"
-              onClick={() => setIsConfirmingUnlockLockup(false)}
-            >
-              Cancel
-            </StyledText>
-          </Card.Footer>
-        </Card>
-      </ModalWindow>
-
       <StatCards>
         <StatCards.TotalAtomLocked />
         <StatCards.YourTotalAtomLocked />
@@ -216,6 +173,18 @@ export default function LockupsPage() {
                 </div>
               </Tooltip>
             </div>
+
+            {expiredLockups.length > 0 && (
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                className="flex items-center gap-1"
+                onClick={handleClickUnlockExpired}
+              >
+                <Icon name="solid:lock-open" />
+                Unlock {expiredLockups.length} Expired
+              </StyledText>
+            )}
 
             <ConditionalWrapper
               condition={
@@ -326,26 +295,48 @@ export default function LockupsPage() {
                       ({getTimeUntilDate(lockup.dateEnd)})
                     </div>
                   ),
-                  actions: (
-                    <div className="inline-flex flex-row-reverse items-center gap-6">
-                      <EditLockupDurationModal lockup={lockup} />
-                      <StyledText
-                        as="button"
-                        variant="link"
-                        className="flex items-center gap-1"
-                        onClick={handleClickUnlockLockup.bind(null, lockup)}
-                      >
-                        <Icon name="solid:lock-open" />
-                        Unlock
-                      </StyledText>
-                    </div>
-                  ),
+                  actions: <EditLockupDurationModal lockup={lockup} />,
                 }
               })}
             />
           )}
         </BlurryBackdropBox>
       </ContentContainer>
+
+      <ModalWindow
+        isOpen={isConfirmingUnlockExpired}
+        onClose={handleModalWindowClose}
+      >
+        <Card>
+          <Card.Body>
+            <div>
+              Are you sure you want to unlock{" "}
+              {pluralize({
+                count: expiredLockups.length,
+                singular: "this expired lockup",
+                plural: "these expired lockups",
+              })}
+              ?
+            </div>
+          </Card.Body>
+          <Card.Footer>
+            <StyledText
+              as="button"
+              variant="button.primary"
+              onClick={executeUnlockExpired}
+            >
+              Unlock
+            </StyledText>
+            <StyledText
+              as="button"
+              variant="button.secondary"
+              onClick={() => setIsConfirmingUnlockExpired(false)}
+            >
+              Cancel
+            </StyledText>
+          </Card.Footer>
+        </Card>
+      </ModalWindow>
     </>
   )
 }

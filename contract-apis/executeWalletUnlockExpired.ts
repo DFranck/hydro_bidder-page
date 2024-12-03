@@ -1,14 +1,11 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
-import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
-export async function executeWalletUnlockLockup({
+export async function executeWalletUnlockExpired({
   address,
-  lockup,
   getSigningCosmWasmClient,
 }: {
   address: string
-  lockup: SanitizedLockup
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
 }) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
@@ -23,12 +20,7 @@ export async function executeWalletUnlockLockup({
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
-  const response = await hydroClient.unlockTokens(undefined, undefined, [
-    {
-      denom: lockup.funds.denom,
-      amount: (lockup.funds.amount * 1e6).toString(),
-    },
-  ])
+  const response = await hydroClient.unlockTokens()
 
   return response
 }
