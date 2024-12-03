@@ -40,6 +40,18 @@ export default async function RootLayout({
         {process.env.NODE_ENV === "production" && (
           <>
             <Script
+              async
+              src="https://www.googletagmanager.com/gtag/js?id=G-NZ1F6WL2PM"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                  window.dataLayer = window.dataLayer || []
+                  function gtag(){dataLayer.push(arguments)}
+                  gtag('js', new Date())
+                  gtag('config', 'G-NZ1F6WL2PM')
+              `}
+            </Script>
+            <Script
               type="text/javascript"
               src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
               async
