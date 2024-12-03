@@ -310,11 +310,11 @@ export default function LockupsPage() {
         <Card>
           <Card.Body>
             <div>
-              Are you sure you want to unlock{" "}
+              Refresh any lockups you want to keep before proceeding. Unlock{" "}
               {pluralize({
                 count: expiredLockups.length,
-                singular: "this expired lockup",
-                plural: "these expired lockups",
+                prefixCount: true,
+                singular: "expired lockup",
               })}
               ?
             </div>
