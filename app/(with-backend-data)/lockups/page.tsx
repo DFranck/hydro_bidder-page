@@ -104,17 +104,28 @@ export default function LockupsPage() {
     }
   }
 
-  function handleClickClose() {
+  function handleModalWindowClose() {
     setSelectedLockups([])
     setIsConfirmingRevertLockup(false)
   }
 
   return (
     <>
-      <ModalWindow isOpen={isConfirmingRevertLockup} onClose={handleClickClose}>
+      <ModalWindow
+        isOpen={isConfirmingRevertLockup}
+        onClose={handleModalWindowClose}
+      >
         <Card>
           <Card.Body>
-            <div>Are you sure you want to revert this lockup?</div>
+            <div>
+              Are you sure you want to revert{" "}
+              {pluralize({
+                count: selectedLockups.length,
+                singular: "this lockup",
+                plural: "these lockups",
+              })}
+              ?
+            </div>
           </Card.Body>
           <Card.Footer>
             <StyledText
@@ -127,7 +138,7 @@ export default function LockupsPage() {
             <StyledText
               as="button"
               variant="button.secondary"
-              onClick={handleClickClose}
+              onClick={() => setIsConfirmingRevertLockup(false)}
             >
               Cancel
             </StyledText>

@@ -39,6 +39,7 @@ export interface BackendData {
   bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   currentRoundEndDate: Date
   currentRoundId: number
+  currentRoundIsPilot: boolean
   currentRoundTranches: Tranche[]
   lockupEpochLength: number
   maxLockedAtomGlobal: number
@@ -71,6 +72,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
   const [
     {
       constants: {
+        is_in_pilot_mode: currentRoundIsPilot,
         lock_epoch_length: lockupEpochLength,
         max_locked_tokens: maxLockedAtomGlobal,
       },
@@ -184,6 +186,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     bidsByRoundId,
     currentRoundEndDate,
     currentRoundId,
+    currentRoundIsPilot,
     currentRoundTranches: tranches,
     lockupEpochLength: lockupEpochLength,
     maxLockedAtomGlobal,

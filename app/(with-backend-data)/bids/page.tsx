@@ -9,7 +9,8 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
-import { MaxReachedPopup } from "@/components/MaxReachedPopup"
+import { PopupOnMaxReached } from "@/components/PopupOnMaxReached"
+import { PopupOnWelcome } from "@/components/PopupOnWelcome"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
 import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
@@ -23,7 +24,6 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { WelcomePopup } from "@/components/WelcomePopup"
 import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
@@ -54,15 +54,9 @@ export default function BidsPage() {
     currentRoundId,
     isLoading,
     isWalletConnected,
-    lockupEpochLength,
-    maxLockedAtomGlobal,
-    totalLockedAtomGlobal,
     votes,
     votingPower,
   } = backendData
-
-  const showWelcomeModal =
-    totalLockedAtomGlobal < maxLockedAtomGlobal && !votingPower
 
   const bidsToRender = bidsByRoundId[currentRoundId] ?? []
 
@@ -345,9 +339,9 @@ export default function BidsPage() {
 
   return (
     <>
-      <MaxReachedPopup />
+      <PopupOnMaxReached />
 
-      <WelcomePopup showModal={false} />
+      <PopupOnWelcome />
 
       <StatCards>
         <StatCards.NumberOfBids />

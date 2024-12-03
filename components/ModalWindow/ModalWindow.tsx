@@ -10,6 +10,7 @@ type ModalWindowProps<T extends ElementType = "section"> = ComponentProps<T> & {
   isOpen: boolean
   propsForBackdrop?: ComponentProps<"div">
   onClose: () => void
+  onCloseComplete?: () => void
 }
 
 export function ModalWindow<T extends ElementType = "section">({
@@ -19,6 +20,7 @@ export function ModalWindow<T extends ElementType = "section">({
   isOpen,
   propsForBackdrop,
   onClose,
+  onCloseComplete,
   duration = 500,
   ...otherProps
 }: ModalWindowProps<T>) {

@@ -4,33 +4,32 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { ChangeEvent, useEffect, useState } from "react"
+import { useLocalStorage } from "usehooks-ts"
 
-interface WelcomePopupProps {
-  showModal?: boolean
-}
-
-export function WelcomePopup({ showModal = false }: WelcomePopupProps) {
+export function PopupOnWelcome() {
+  const { maxLockedAtomGlobal, totalLockedAtomGlobal, votingPower } =
+    useBackendData()
   const [isOpen, setIsOpen] = useState(false)
-  const [dontShowAgain, setDontShowAgain] = useState(false)
+  const [dontShowAgain, setDontShowAgain] = useLocalStorage(
+    "dont-show-welcome-popup-again",
+    false
+  )
+  const isAtMaxCapacity = totalLockedAtomGlobal >= maxLockedAtomGlobal
+  const shouldWelcome = !isAtMaxCapacity && !votingPower
 
   useEffect(() => {
-    if (showModal) {
-      const hasSeenWelcome = localStorage.getItem("hasSeenWelcomePopup")
-      if (!hasSeenWelcome) {
-        setIsOpen(true)
-      }
-    } else {
-      setIsOpen(false)
+    if (dontShowAgain || !shouldWelcome) {
+      return
     }
-  }, [showModal])
+
+    setIsOpen(true)
+  }, [dontShowAgain, shouldWelcome])
 
   function closeModal() {
     setIsOpen(false)
-    if (dontShowAgain) {
-      localStorage.setItem("hasSeenWelcomePopup", "true")
-    }
   }
 
   return (

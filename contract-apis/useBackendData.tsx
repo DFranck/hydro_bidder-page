@@ -30,6 +30,7 @@ const initialBackendDataContext: BackendDataWithWallet = {
   bidsByRoundId: {},
   currentRoundEndDate: new Date(),
   currentRoundId: 0,
+  currentRoundIsPilot: false,
   currentRoundTranches: [],
   isLoading: false,
   isWalletConnected: false,
