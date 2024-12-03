@@ -96,6 +96,7 @@ export const RevertFromHubStepper = ({
 
   function getStepContents(): {
     isWorking?: boolean
+    revalidateCache?: boolean
     title?: ReactNode
     contents: ReactNode
     buttons?: {
@@ -178,6 +179,7 @@ export const RevertFromHubStepper = ({
         }
       case "Success":
         return {
+          revalidateCache: true,
           title: "Success!",
           contents: (
             <>

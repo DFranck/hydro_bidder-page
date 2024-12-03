@@ -18,15 +18,13 @@ import Image from "next/image"
 import Link from "next/link"
 
 export function BidDetails({ bidId }: { bidId: number }) {
-  const {
-    bidDescriptionsByBidId,
-    bidsByRoundId,
-    isLoading,
-    votes,
-    currentRoundId,
-  } = useBackendData()
+  const backendData = useBackendData()
+  const { bidDescriptionsByBidId, bidsByRoundId, votes, currentRoundId } =
+    backendData
 
-  const bid = bidsByRoundId[currentRoundId].find((bid) => bid.id === bidId)
+  const bid = Object.values(bidsByRoundId)
+    .flat()
+    .find((bid) => bid.id === bidId)
 
   if (!bid) {
     return <>The requested proposal could not be found.</>
@@ -210,7 +208,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
             <div>
               <StyledText as="h3" variant="label">
-                Current Vote Percentage
+                Vote Percentage
               </StyledText>
               <div
                 className="

@@ -124,6 +124,7 @@ export const RevertFromNeutronStepper = ({
 
   function getStepContents(): {
     isWorking?: boolean
+    revalidateCache?: boolean
     title?: ReactNode
     contents: ReactNode
     buttons?: {
@@ -222,6 +223,7 @@ export const RevertFromNeutronStepper = ({
         }
       case "Success":
         return {
+          revalidateCache: true,
           title: "Success!",
           contents: (
             <p>

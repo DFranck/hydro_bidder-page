@@ -15,9 +15,10 @@ import { Toasts } from "./Toasts"
 
 export interface Toast {
   _id?: string
-  variant: keyof (typeof classNames)["variants"]
-  message: ReactNode
   isDismissible?: boolean
+  message: ReactNode
+  revalidateTag?: string
+  variant: keyof (typeof classNames)["variants"]
 }
 
 export const ToastContext = createContext<{
@@ -55,14 +56,9 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
       {children}
       {createPortal(
         <Toasts>
-          {toasts.map((toast) => (
-            <Toasts.Toast
-              id={toast._id}
-              key={toast._id}
-              isDismissible={toast.isDismissible}
-              variant={toast.variant}
-            >
-              {toast.message}
+          {toasts.map(({ _id, message, ...toast }) => (
+            <Toasts.Toast id={_id} key={_id} {...toast}>
+              {message}
             </Toasts.Toast>
           ))}
         </Toasts>,

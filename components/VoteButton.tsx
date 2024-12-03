@@ -25,6 +25,10 @@ export function VoteButton({
   size?: "large" | "small"
 }) {
   const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
+  const [
+    isTryingToVoteWithExpiredLockups,
+    setIsTryingToVoteWithExpiredLockups,
+  ] = useState(false)
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { toasts, setToasts } = useToasts()
   const router = useRouter()
@@ -72,6 +76,7 @@ export function VoteButton({
         {
           variant: "success",
           message: "Vote submitted. Reloading page...",
+          revalidateTag: "fetchBackendDataWithWallet",
         },
       ])
 
@@ -146,11 +151,11 @@ export function VoteButton({
     Button = (
       <StyledText
         variant={`button.neutral${size ? `.${size}` : ""}` as StyledTextVariant}
-        as={Link}
-        href="/lockups"
+        as="button"
+        onClick={() => setIsTryingToVoteWithExpiredLockups(true)}
       >
         <Icon name="solid:rotate-right" />
-        <span>Refresh Lockups to Vote</span>
+        <span>Edit Lockups to Vote</span>
       </StyledText>
     )
   } else if (hasVotedForBid) {
@@ -212,6 +217,48 @@ export function VoteButton({
               onClick={() => setOpenChangeVoteModal(false)}
             >
               Don&rsquo;t change my vote
+            </StyledText>
+          </Card.Footer>
+        </Card>
+      </ModalWindow>
+
+      <ModalWindow
+        isOpen={isTryingToVoteWithExpiredLockups}
+        onClose={() => setIsTryingToVoteWithExpiredLockups(false)}
+      >
+        <Card>
+          <Card.Header title="Edit Your Lockups to Vote" />
+          <Card.Body>
+            <div className="prose prose-invert">
+              <p>
+                This project requires a longer lockup because its PoL duration
+                spans multiple months. To vote for this project, the duration of
+                your lockup must match or exceed its PoL duration. Keep in mind,
+                if you vote for a longer deployment:
+              </p>
+
+              <ul>
+                <li>
+                  your voting power will be tied up for the duration of that
+                  deployment.
+                </li>
+                <li>
+                  you will need to create a new lockup to vote in the next
+                  round.
+                </li>
+              </ul>
+            </div>
+          </Card.Body>
+          <Card.Footer>
+            <StyledText as={Link} href="/lockups" variant="button.primary">
+              Edit Lockups
+            </StyledText>
+            <StyledText
+              as="button"
+              variant="button.secondary"
+              onClick={() => setIsTryingToVoteWithExpiredLockups(false)}
+            >
+              Close
             </StyledText>
           </Card.Footer>
         </Card>

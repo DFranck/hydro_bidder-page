@@ -1,8 +1,10 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
+import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import Link from "next/link"
 import { StatCard } from "../StatCard"
 
 export function HistoricalApr() {
@@ -35,14 +37,15 @@ export function HistoricalApr() {
                 </ul>
 
                 <p>
-                  <a
+                  <StyledText
+                    as={Link}
+                    variant="link"
                     href="/docs/users/calculating-staking-apr"
-                    className="inline-flex gap-1 text-palette-green underline"
                     target="_blank"
                   >
                     Learn More
                     <Icon name="solid:arrow-up-right" />
-                  </a>
+                  </StyledText>
                 </p>
               </>
             }
