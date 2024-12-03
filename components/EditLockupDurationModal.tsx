@@ -49,7 +49,11 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "medium",
 })
 
-function isToday(date: Date): boolean {
+function isToday(date: Date | string): boolean {
+  if (typeof date === "string") {
+    date = new Date(date)
+  }
+
   const today = new Date()
   return (
     date.getDate() === today.getDate() &&
