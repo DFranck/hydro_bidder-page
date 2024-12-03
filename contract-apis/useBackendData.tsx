@@ -77,7 +77,6 @@ export function BackendDataContextProvider({
     isWalletConnected,
     isWalletConnecting,
     isWalletDisconnected,
-    ...otherStuff
   } = useChain("neutron")
   const wasWalletConnected = useDeferredValue(isWalletConnected)
   const pathname = usePathname()
@@ -93,14 +92,6 @@ export function BackendDataContextProvider({
     isLoading,
     isWalletConnected,
   }
-
-  console.log({
-    address,
-    isWalletConnected,
-    isWalletConnecting,
-    isWalletDisconnected,
-    ...otherStuff,
-  })
 
   useEffect(() => {
     ;(async () => {
@@ -125,7 +116,7 @@ export function BackendDataContextProvider({
   }, [address, backendData])
 
   useEffect(() => {
-    if (isWalletConnecting) return
+    if (isWalletConnecting || isWalletDisconnected) return
 
     const protectedRoutes = ["/rewards", "/lockups", "/lock-atom"]
     const didJustConnect = !wasWalletConnected && isWalletConnected
@@ -146,19 +137,12 @@ export function BackendDataContextProvider({
 
     // Redirect to bids if user disconnects while on protected routes
     if ((didJustDisconnect || !isWalletConnected) && isProtectedRoute) {
-      console.log({
-        pathname,
-        didJustConnect,
-        didJustDisconnect,
-        isProtectedRoute,
-        isWalletConnected,
-        isWalletConnecting,
-      })
       router.push("/bids")
     }
   }, [
     isWalletConnected,
     isWalletConnecting,
+    isWalletDisconnected,
     pathname,
     router,
     wasWalletConnected,
