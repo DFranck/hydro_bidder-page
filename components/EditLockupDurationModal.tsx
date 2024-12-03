@@ -22,6 +22,7 @@ import {
   useState,
 } from "react"
 import { twMerge } from "tailwind-merge"
+import { isToday } from "../lib/isToday"
 
 interface FormValues {
   lockupPeriod: number
@@ -34,13 +35,6 @@ type EditLockupDurationProps = {
   onSuccess?: () => void
 }
 
-const classNamesForRadioLabels = `
-    transition-all
-    opacity-60
-    peer-checked:opacity-100
-    peer-checked:font-bold
-`
-
 const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
   style: "short",
 })
@@ -48,19 +42,6 @@ const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "medium",
 })
-
-function isToday(date: Date | string): boolean {
-  if (typeof date === "string") {
-    date = new Date(date)
-  }
-
-  const today = new Date()
-  return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
-  )
-}
 
 export function EditLockupDurationModal({
   lockup,
@@ -108,6 +89,7 @@ export function EditLockupDurationModal({
     if (isEqual(formValues, values)) {
       return
     }
+
     setHasChanged(true)
 
     const lockupPeriod = Number(values["lockupPeriod"])
@@ -228,6 +210,7 @@ export function EditLockupDurationModal({
                 <div className="font-bold">New End Date:</div>
 
                 <InputForLockupPeriod
+                  currentLockupEndDate={currentLockupEndDate}
                   selectedDuration={formValues.lockupPeriod}
                   onChange={(value) =>
                     setFormValues((currentFormValues) => ({
