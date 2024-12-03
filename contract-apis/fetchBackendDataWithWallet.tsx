@@ -2,7 +2,6 @@
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import {
-  Coin,
   LockEntryWithPower,
   VoteWithPower,
 } from "@/app/ts_types/HydroBase.types"
@@ -35,7 +34,10 @@ export interface SanitizedLockup {
   currentVotingPower: number
   dateEnd: Date
   dateStart: Date
-  funds: Coin
+  funds: {
+    amount: number
+    denom: string
+  }
   id: number
 }
 
@@ -51,11 +53,15 @@ export interface FullyAugmentedBid extends AugmentedBidFromContract {
 }
 
 function sanitizeLockup(lockup: LockEntryWithPower): SanitizedLockup {
+  console.log("Before", { lockup })
   return {
     currentVotingPower: Number(lockup.current_voting_power),
     dateEnd: new Date(Number(lockup.lock_entry.lock_end) / 1e6),
     dateStart: new Date(Number(lockup.lock_entry.lock_start) / 1e6),
-    funds: lockup.lock_entry.funds,
+    funds: {
+      amount: Number(lockup.lock_entry.funds.amount) / 1e6,
+      denom: lockup.lock_entry.funds.denom,
+    },
     id: lockup.lock_entry.lock_id,
   }
 }
@@ -170,7 +176,7 @@ async function uncachedFetchBackendDataWithWallet({
     isWalletConnected: true,
     // TODO: get this from contract
     maxLockedAtomUser: 200,
-    totalLockedAtomUser: sumBy(lockups, "lock_entry.funds.amount"),
+    totalLockedAtomUser: sumBy(sanitizedLockups, "funds.amount"),
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
     votingPower,

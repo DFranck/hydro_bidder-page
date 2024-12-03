@@ -109,7 +109,24 @@ export function BackendDataContextProvider({
         backendData,
       })
 
-      setBackendDataWithWallet(backendDataWithWallet)
+      setBackendDataWithWallet({
+        ...backendDataWithWallet,
+        currentRoundEndDate:
+          typeof backendDataWithWallet.currentRoundEndDate === "string"
+            ? new Date(backendDataWithWallet.currentRoundEndDate)
+            : backendDataWithWallet.currentRoundEndDate,
+        lockups: backendDataWithWallet.lockups.map((lockup) => ({
+          ...lockup,
+          dateEnd:
+            typeof lockup.dateEnd === "string"
+              ? new Date(lockup.dateEnd)
+              : lockup.dateEnd,
+          dateStart:
+            typeof lockup.dateStart === "string"
+              ? new Date(lockup.dateStart)
+              : lockup.dateStart,
+        })),
+      })
       setToasts([])
       setIsLoading(false)
     })()
