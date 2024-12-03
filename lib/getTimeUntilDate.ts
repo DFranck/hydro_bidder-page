@@ -1,12 +1,12 @@
 import { pluralize } from "@/lib/pluralize"
 
-export function getTimeUntilDate(endDate: Date | string) {
-  if (typeof endDate === "string") {
-    endDate = new Date(endDate)
+export function getTimeUntilDate(date: Date | string) {
+  if (typeof date === "string") {
+    date = new Date(date)
   }
 
   const now = new Date()
-  const diff = endDate.getTime() - now.getTime()
+  const diff = date.getTime() - now.getTime()
   const seconds = diff / 1000
   const minutes = seconds / 60
   const hours = minutes / 60

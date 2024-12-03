@@ -137,10 +137,16 @@ async function uncachedFetchBackendDataWithWallet({
           const usersEstimatedRewards = sumBy(bid.tributes, "valueInUsd")
           const bidDeploymentDuration =
             Number(bid.deploymentDuration * lockupEpochLength) / 1e6
+          const currentRoundEndDateForSure =
+            typeof currentRoundEndDate === "string"
+              ? new Date(currentRoundEndDate)
+              : currentRoundEndDate
           const lockupsOutliveBidDeployment =
             furthestLockupEndDate && currentRoundEndDate
               ? furthestLockupEndDate >
-                new Date(currentRoundEndDate.getTime() + bidDeploymentDuration)
+                new Date(
+                  currentRoundEndDateForSure.getTime() + bidDeploymentDuration
+                )
               : false
 
           return {
