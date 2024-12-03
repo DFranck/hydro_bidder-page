@@ -10,11 +10,11 @@ import {
   BackendData,
 } from "@/contract-apis/fetchBackendDataWithoutWallet"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { estimatedRewardForPower } from "@/lib/utils"
 import { sortBy, sumBy } from "lodash"
 import { unstable_cache } from "next/cache"
 

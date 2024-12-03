@@ -4,16 +4,14 @@ import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
-import { formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
-import {
-  broadcastAndRelayIBCNeutronToHub,
-  broadcastTx,
-  signIBCTransferNeutronToHub,
-  signRedeemTokensForShares,
-} from "../transactions"
+import { broadcastAndRelayIBCNeutronToHub } from "../transactions/broadcastAndRelayIBCNeutronToHub"
+import { broadcastTx } from "../transactions/broadcastTx"
+import { signIBCTransferNeutronToHub } from "../transactions/signIBCTransferNeutronToHub"
+import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
 
 type RevertFromNeutronStep =
   | "Init"
