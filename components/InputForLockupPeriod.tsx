@@ -1,4 +1,5 @@
 import { StyledText } from "@/components/StyledText"
+import { Toasts } from "@/components/Toasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
@@ -8,9 +9,11 @@ import { MouseEvent, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function InputForLockupPeriod({
+  currentLockupEndDate,
   selectedDuration,
   onChange,
 }: {
+  currentLockupEndDate?: Date
   selectedDuration: number
   onChange?: (value: number) => void
 }) {
@@ -34,6 +37,10 @@ export function InputForLockupPeriod({
         duration: epochCount * lockupEpochLength,
       }
     })
+    .filter((option) => {
+      const newEndDate = new Date((Date.now() * 1e6 + option.duration) / 1e6)
+      return !currentLockupEndDate ? true : currentLockupEndDate >= newEndDate
+    })
 
   function handleClick(duration: number, event: MouseEvent) {
     event.preventDefault()
@@ -43,9 +50,15 @@ export function InputForLockupPeriod({
 
   return (
     <>
+      {lockupPeriodOptions.length === 0 && (
+        <Toasts.Toast isDismissible={false} variant="error" className="w-full">
+          This lockup cannot be refreshed at this time
+        </Toasts.Toast>
+      )}
       <div className="flex w-min">
         {lockupPeriodOptions.map(({ label, duration }) => {
           const isSelected = innerSelectedDuration === duration
+
           return (
             <StyledText
               variant={isSelected ? "button.primary" : "button.secondary"}
