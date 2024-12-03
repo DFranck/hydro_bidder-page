@@ -10,7 +10,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function calculateTimeRemaining(date: Date) {
+export function calculateTimeRemaining(date: Date | string) {
+  if (typeof date === "string") {
+    date = new Date(date)
+  }
+
   const now = new Date().getTime()
   const end = date.getTime()
   const diff = Math.max(0, end - now) // Ensure non-negative difference

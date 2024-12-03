@@ -176,6 +176,11 @@ export function EditLockupDurationModal({
     return <div>Lockup created today</div>
   }
 
+  const currentLockupEndDateForSure =
+    typeof currentLockupEndDate === "string"
+      ? new Date(currentLockupEndDate)
+      : currentLockupEndDate
+
   return (
     <>
       <StyledText
@@ -208,10 +213,11 @@ export function EditLockupDurationModal({
                 <div className="font-bold">Current End Date:</div>
 
                 <div className="flex items-center gap-2 opacity-60">
-                  {dateFormatter.format(currentLockupEndDate)} (
+                  {dateFormatter.format(currentLockupEndDateForSure)} (
                   {relativeTimeFormatter.format(
                     Math.floor(
-                      (currentLockupEndDate.getTime() - new Date().getTime()) /
+                      (currentLockupEndDateForSure.getTime() -
+                        new Date().getTime()) /
                         (1000 * 60 * 60 * 24)
                     ),
                     "day"
