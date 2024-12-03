@@ -193,6 +193,9 @@ export default function LockupsPage() {
                   isSortable: true,
                   textAlign: "right",
                   customValueGetter: (row) => {
+                    if (typeof row._lockup.dateEnd === "string") {
+                      return new Date(row._lockup.dateEnd).getTime()
+                    }
                     return row._lockup.dateEnd?.getTime() ?? 0
                   },
                 },
