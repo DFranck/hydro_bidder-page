@@ -1,3 +1,5 @@
+"use client"
+
 import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
@@ -8,31 +10,39 @@ import Link from "next/link"
 import { ChangeEvent, useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
-export function MaxReachedPopup() {
-  const { currentRoundId: roundId } = useBackendData()
-
+export function PopupOnMaxReached() {
+  const {
+    currentRoundId,
+    currentRoundIsPilot,
+    totalLockedAtomGlobal,
+    maxLockedAtomGlobal,
+  } = useBackendData()
+  const [isOpen, setIsOpen] = useState(false)
   const [dontShowAgain, setDontShowAgain] = useLocalStorage(
     "dont-show-max-reached-popup-again",
     false
   )
-  const [isOpen, setIsOpen] = useState(false)
+  const isAtMaxCapacity = totalLockedAtomGlobal >= maxLockedAtomGlobal
 
   useEffect(() => {
-    if (dontShowAgain) {
+    if (dontShowAgain || !isAtMaxCapacity) {
       return
     }
 
     setIsOpen(true)
-  }, [dontShowAgain])
+  }, [dontShowAgain, isAtMaxCapacity])
 
-  function handleClose() {
+  function handleModalWindowClose() {
     setIsOpen(false)
   }
 
   return (
-    <ModalWindow isOpen={isOpen} onClose={handleClose}>
+    <ModalWindow isOpen={isOpen} onClose={handleModalWindowClose}>
       <Card>
-        <Card.Header>Pilot Round {roundId + 1} Lock Cap Reached</Card.Header>
+        <Card.Header>
+          {currentRoundIsPilot && "Pilot "}Round {currentRoundId + 1} Lock Cap
+          Reached
+        </Card.Header>
         <Card.Body>
           <div className="prose prose-invert">
             <p>
@@ -71,8 +81,8 @@ export function MaxReachedPopup() {
                   Telegram Group
                   <Icon name="solid:arrow-up-right" />
                 </StyledText>{" "}
-                to be the first to know when Pilot Round {roundId + 2} kicks
-                off!
+                to be the first to know when Pilot Round {currentRoundId + 2}{" "}
+                kicks off!
               </li>
             </ul>
           </div>
@@ -81,7 +91,7 @@ export function MaxReachedPopup() {
           <StyledText
             variant="button.primary"
             as="button"
-            onClick={handleClose}
+            onClick={handleModalWindowClose}
           >
             Close
           </StyledText>
