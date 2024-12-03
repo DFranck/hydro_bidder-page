@@ -1,6 +1,6 @@
 import { StyledText } from "@/components/StyledText"
 import { Delegation, Validator } from "@/contract-apis/fetchWalletValidators"
-import { formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
 import { classNames } from "../classNames"
 import { calculateLsmCapacity } from "../functions/calculateLsmCapacity"
 

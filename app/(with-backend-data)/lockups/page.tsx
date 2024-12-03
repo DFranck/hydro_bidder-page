@@ -1,14 +1,17 @@
 "use client"
 
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
+import { ModalWindow } from "@/components/ModalWindow"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
+import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
@@ -16,14 +19,22 @@ import {
   lockupLimitTooltip,
 } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
+import { executeWalletRevertLockup } from "@/contract-apis/executeWalletRevertLockup"
+import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
-import { formatAmount } from "@/lib/utils"
+import { pluralize } from "@/lib/pluralize"
+import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
+import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
+  const [isConfirmingRevertLockup, setIsConfirmingRevertLockup] =
+    useState(false)
   const {
+    address,
     lockups,
     maxLockedAtomGlobal,
     totalLockedAtomGlobal,
@@ -37,9 +48,93 @@ export default function LockupsPage() {
   const percentageLockedOverall = Math.round(
     (totalLockedAtomGlobal / maxLockedAtomOverall) * 100
   )
+  const { getSigningCosmWasmClient } = useChain("neutron")
+  const { setToasts } = useToasts()
+  const [selectedLockups, setSelectedLockups] = useState<SanitizedLockup[]>([])
+
+  function handleClickRevertLockup(lockup: SanitizedLockup) {
+    setSelectedLockups([lockup])
+    setIsConfirmingRevertLockup(true)
+  }
+
+  async function handleClickRevertSelectedLockups() {
+    if (selectedLockups.length === 0) {
+      return
+    }
+
+    setIsConfirmingRevertLockup(false)
+
+    const pluralizedLockupText = pluralize({
+      count: selectedLockups.length,
+      prefixCount: true,
+      singular: "lockup",
+    })
+
+    setToasts([
+      {
+        message: `Reverting ${pluralizedLockupText}...`,
+        variant: "working",
+      },
+    ])
+
+    try {
+      await Promise.all(
+        selectedLockups.map((lockup) =>
+          executeWalletRevertLockup({
+            address,
+            lockup,
+            getSigningCosmWasmClient,
+          })
+        )
+      )
+
+      setToasts([
+        {
+          message: `${pluralizedLockupText} reverted successfully`,
+          variant: "success",
+        },
+      ])
+    } catch (error) {
+      setToasts([
+        {
+          message: `Error reverting ${pluralizedLockupText}: ${error}`,
+          variant: "error",
+        },
+      ])
+    }
+  }
+
+  function handleClickClose() {
+    setSelectedLockups([])
+    setIsConfirmingRevertLockup(false)
+  }
 
   return (
     <>
+      <ModalWindow isOpen={isConfirmingRevertLockup} onClose={handleClickClose}>
+        <Card>
+          <Card.Body>
+            <div>Are you sure you want to revert this lockup?</div>
+          </Card.Body>
+          <Card.Footer>
+            <StyledText
+              as="button"
+              variant="button.primary"
+              onClick={handleClickRevertSelectedLockups}
+            >
+              Revert
+            </StyledText>
+            <StyledText
+              as="button"
+              variant="button.secondary"
+              onClick={handleClickClose}
+            >
+              Cancel
+            </StyledText>
+          </Card.Footer>
+        </Card>
+      </ModalWindow>
+
       <StatCards>
         <StatCards.TotalAtomLocked />
         <StatCards.YourTotalAtomLocked />
@@ -224,10 +319,10 @@ export default function LockupsPage() {
                     <div className="inline-flex flex-row-reverse items-center gap-6">
                       <EditLockupDurationModal lockup={lockup} />
                       <StyledText
-                        as={Link}
+                        as="button"
                         variant="link"
-                        href={`/lockup/${lockup.id}`}
                         className="flex items-center gap-1"
+                        onClick={handleClickRevertLockup.bind(null, lockup)}
                       >
                         <Icon name="solid:rotate-right" />
                         Revert

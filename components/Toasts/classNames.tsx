@@ -79,6 +79,7 @@ export const classNames = {
   `),
   messageContainer: twJoin(`
     row-span-2
+    overflow-x-auto
     p-3
   `),
   dismissButtonContainer: twJoin(`

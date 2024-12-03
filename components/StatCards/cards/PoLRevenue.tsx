@@ -4,8 +4,8 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polRevenueTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
-import { formatAmount } from "@/lib/utils"
 
 export function PoLRevenue() {
   const { isLoading, metricsGlobal } = useBackendData()

@@ -4,7 +4,7 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polDeployedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
 export function PoLDeployed() {

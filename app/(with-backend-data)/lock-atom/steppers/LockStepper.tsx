@@ -5,26 +5,25 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
-import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
-import {
-  broadcastAndRelayIBCGasToNeutron,
-  broadcastAndRelayIBCHubToNeutron,
-  broadcastTx,
-  checkForGasOnHub,
-  checkForGasOnNeutron,
-  extractLSMDenom,
-  minimumUATOMGas,
-  signATOMGasTransferToNeutron,
-  signIBCTransferHubToNeutron,
-  signLockTokens,
-  signTokenizeShares,
-} from "../transactions"
+import { minimumUATOMGas } from "../transactions/_consts"
+import { broadcastAndRelayIBCGasToNeutron } from "../transactions/broadcastAndRelayIBCGasToNeutron"
+import { broadcastAndRelayIBCHubToNeutron } from "../transactions/broadcastAndRelayIBCHubToNeutron"
+import { broadcastTx } from "../transactions/broadcastTx"
+import { checkForGasOnHub } from "../transactions/checkForGasOnHub"
+import { checkForGasOnNeutron } from "../transactions/checkForGasOnNeutron"
+import { extractLSMDenom } from "../transactions/extractLSMDenom"
+import { signATOMGasTransferToNeutron } from "../transactions/signATOMGasTransferToNeutron"
+import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
+import { signLockTokens } from "../transactions/signLockTokens"
+import { signTokenizeShares } from "../transactions/signTokenizeShares"
 
 function getValidatorMoniker(
   validator: string,

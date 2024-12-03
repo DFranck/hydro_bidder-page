@@ -6,15 +6,14 @@ import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
+import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
-import {
-  broadcastAndRelayIBCHubToNeutron,
-  signIBCTransferHubToNeutron,
-  signLockTokens,
-} from "../transactions"
+import { broadcastAndRelayIBCHubToNeutron } from "../transactions/broadcastAndRelayIBCHubToNeutron"
+import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
+import { signLockTokens } from "../transactions/signLockTokens"
 
 function getValidatorMoniker(
   validator: string,

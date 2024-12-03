@@ -1,7 +1,7 @@
 import { Card } from "@/components/Card"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
-import { formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
 import { getValidatorMoniker } from "../functions/getValidatorMoniker"
 import { Stepper } from "../types"
 

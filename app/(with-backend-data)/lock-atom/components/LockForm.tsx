@@ -6,9 +6,11 @@ import { Toasts } from "@/components/Toasts"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useWalletValidators } from "@/contract-apis/useWalletValidators"
-import { formatAmount, scaleLockupPower } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
+import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ChainContext } from "@cosmos-kit/core"
 import { isNumber } from "lodash"
+import Link from "next/link"
 import { ChangeEvent, useEffect, useState } from "react"
 import { classNames } from "../classNames"
 import { ValidatorListItem } from "../components/ValidatorListItem"
@@ -295,7 +297,7 @@ export function LockForm({
                     </strong>
                   </div>
 
-                  <div className="col-span-2 flex flex-row-reverse">
+                  <div className="col-span-2 flex flex-row-reverse items-center gap-6">
                     <StyledText
                       as="button"
                       disabled={!validator || !amount || !selectedDuration}
@@ -303,6 +305,10 @@ export function LockForm({
                       type="submit"
                     >
                       Lock ATOM
+                    </StyledText>
+
+                    <StyledText as={Link} href="/lockups" variant="link">
+                      Go Back
                     </StyledText>
                   </div>
                 </div>

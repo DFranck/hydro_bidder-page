@@ -5,7 +5,7 @@ import { Tooltip } from "@/components/Tooltip"
 import { yourTotalAtomLockedTooltip } from "@/components/ToolTips"
 import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
 export function YourTotalAtomLocked() {

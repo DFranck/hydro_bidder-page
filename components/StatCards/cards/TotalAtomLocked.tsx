@@ -1,7 +1,7 @@
 "use client"
 
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/utils"
+import { formatAmount } from "@/lib/formatAmount"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 
