@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
+import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts/useToasts"
@@ -9,7 +10,6 @@ import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
 import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { getDaysAway } from "@/lib/getDaysAway"
 import { calculateLockupVotingPower, formatAmount } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { isEqual } from "lodash"
@@ -78,7 +78,7 @@ export function EditLockupDurationModal({
       lockupPeriod: AllowedLockupPeriodInEpochs.ONE_EPOCH,
       shares: formatAmount(lockup.funds.amount),
       power: calculateLockupVotingPower(
-        parseInt(lockup.funds.amount),
+        lockup.funds.amount,
         AllowedLockupPeriodInEpochs.ONE_EPOCH
       ).toString(),
     }),
@@ -117,7 +117,7 @@ export function EditLockupDurationModal({
       ...values,
       lockupPeriod,
       power: calculateLockupVotingPower(
-        parseInt(lockup.funds.amount),
+        lockup.funds.amount,
         lockupPeriod
       ).toString(),
     }))
@@ -180,11 +180,6 @@ export function EditLockupDurationModal({
     return <div>Lockup created today</div>
   }
 
-  const currentLockupEndDateForSure =
-    typeof currentLockupEndDate === "string"
-      ? new Date(currentLockupEndDate)
-      : currentLockupEndDate
-
   return (
     <>
       <StyledText
@@ -217,11 +212,10 @@ export function EditLockupDurationModal({
                 <div className="font-bold">Current End Date:</div>
 
                 <div className="flex items-center gap-2 opacity-60">
-                  {dateFormatter.format(currentLockupEndDateForSure)} (
+                  {dateFormatter.format(currentLockupEndDate)} (
                   {relativeTimeFormatter.format(
                     Math.floor(
-                      (currentLockupEndDateForSure.getTime() -
-                        new Date().getTime()) /
+                      (currentLockupEndDate.getTime() - new Date().getTime()) /
                         (1000 * 60 * 60 * 24)
                     ),
                     "day"
@@ -233,38 +227,15 @@ export function EditLockupDurationModal({
               <div className="flex flex-col gap-2">
                 <div className="font-bold">New End Date:</div>
 
-                {Object.entries(AllowedLockupPeriodInEpochs).map(
-                  ([name, value]) => {
-                    const newLockupEndDate = new Date(
-                      (Date.now() * 1e6 + lockupEpochLength * Number(value)) /
-                        1e6
-                    )
-
-                    // Don't show an option to refresh a lockup to a time before its current end time
-                    if (currentLockupEndDate >= newLockupEndDate) return null
-
-                    const daysDifference = getDaysAway(newLockupEndDate)
-
-                    return (
-                      <label
-                        className="group flex items-center gap-2"
-                        key={name}
-                      >
-                        <StyledText
-                          as="input"
-                          variant="input.radio"
-                          type="radio"
-                          name="lockupPeriod"
-                          value={Number(value)}
-                        />
-                        <span className={classNamesForRadioLabels}>
-                          {dateFormatter.format(newLockupEndDate)} (
-                          {relativeTimeFormatter.format(daysDifference, "day")})
-                        </span>
-                      </label>
-                    )
+                <InputForLockupPeriod
+                  selectedDuration={formValues.lockupPeriod}
+                  onChange={(value) =>
+                    setFormValues((currentFormValues) => ({
+                      ...currentFormValues,
+                      lockupPeriod: value,
+                    }))
                   }
-                )}
+                />
               </div>
 
               <div className="flex items-center justify-around gap-3">

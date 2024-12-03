@@ -193,9 +193,6 @@ export default function LockupsPage() {
                   isSortable: true,
                   textAlign: "right",
                   customValueGetter: (row) => {
-                    if (typeof row._lockup.dateEnd === "string") {
-                      return new Date(row._lockup.dateEnd).getTime()
-                    }
                     return row._lockup.dateEnd?.getTime() ?? 0
                   },
                 },
@@ -209,12 +206,11 @@ export default function LockupsPage() {
               rows={lockups.map((lockup) => {
                 return {
                   _lockup: lockup,
-                  lockedATOM: <>{formatAmount(lockup.funds.amount)} ATOM</>,
+                  lockedATOM: <>{lockup.funds.amount} ATOM</>,
                   multiplier: (
                     <>
                       {(
-                        Number(lockup.currentVotingPower) /
-                        Number(lockup.funds.amount)
+                        Number(lockup.currentVotingPower) / lockup.funds.amount
                       ).toPrecision(3)}{" "}
                       &times;
                     </>
