@@ -221,8 +221,17 @@ export default function LockupsPage() {
                     </div>
                   ),
                   actions: (
-                    <div className="inline-flex items-center gap-1">
+                    <div className="inline-flex flex-row-reverse items-center gap-6">
                       <EditLockupDurationModal lockup={lockup} />
+                      <StyledText
+                        as={Link}
+                        variant="link"
+                        href={`/lockup/${lockup.id}`}
+                        className="flex items-center gap-1"
+                      >
+                        <Icon name="solid:rotate-right" />
+                        Revert
+                      </StyledText>
                     </div>
                   ),
                 }

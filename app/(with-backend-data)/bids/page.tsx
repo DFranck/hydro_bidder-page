@@ -71,9 +71,8 @@ export default function BidsPage() {
       const bidURL = `/bids/${bid.id}`
       const bidDescription = bidDescriptionsByBidId[bid.id]
       const { projectLogoUrl, projectName } = bidDescription
-      const { value: bidDeploymentDuration, unit } = getTimeUnitFromNanos(
-        bid.deploymentDuration * lockupEpochLength
-      )
+      const { value: bidDeploymentDurationToRender, unit } =
+        getTimeUnitFromNanos(bid.deploymentDurationInNanos)
 
       return {
         _bid: bid,
@@ -102,7 +101,7 @@ export default function BidsPage() {
         deploymentDuration: (
           <InvisibleLink href={bidURL}>
             {pluralize({
-              count: bidDeploymentDuration,
+              count: bidDeploymentDurationToRender,
               prefixCount: true,
               singular: unit,
             })}
