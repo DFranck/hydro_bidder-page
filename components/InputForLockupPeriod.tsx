@@ -37,9 +37,10 @@ export function InputForLockupPeriod({
         duration: epochCount * lockupEpochLength,
       }
     })
+    // Don't show an option to refresh a lockup to a time before its current end time
     .filter((option) => {
       const newEndDate = new Date((Date.now() * 1e6 + option.duration) / 1e6)
-      return !currentLockupEndDate ? true : currentLockupEndDate >= newEndDate
+      return !currentLockupEndDate ? true : currentLockupEndDate < newEndDate
     })
 
   function handleClick(duration: number, event: MouseEvent) {
