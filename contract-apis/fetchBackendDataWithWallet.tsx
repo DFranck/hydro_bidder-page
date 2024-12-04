@@ -49,7 +49,6 @@ export interface SanitizedVote
 }
 
 export interface FullyAugmentedBid extends AugmentedBidFromContract {
-  deploymentDurationInNanos: number
   lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardsDeltaPercentage: number
@@ -164,11 +163,8 @@ async function uncachedFetchBackendDataWithWallet({
             Number(bid.power)
           ) ?? 0
 
-        const deploymentDurationInNanos =
-          bid.deploymentDuration * lockupEpochLength
-
-        const deploymentDurationMinusOne =
-          (bid.deploymentDuration - 1) * lockupEpochLength
+        const deploymentDurationMinusAnEpochInMilliseconds =
+          ((bid.deploymentDurationInEpochs - 1) * lockupEpochLength) / 1e6
 
         const currentRoundEndDateForSure =
           typeof currentRoundEndDate === "string"
@@ -180,13 +176,12 @@ async function uncachedFetchBackendDataWithWallet({
             ? furthestLockupEndDate >
               new Date(
                 currentRoundEndDateForSure.getTime() +
-                  deploymentDurationMinusOne / 1e6
+                  deploymentDurationMinusAnEpochInMilliseconds
               )
             : false
 
         return {
           ...bid,
-          deploymentDurationInNanos,
           description,
           lockupsOutliveBidDeployment,
           usersEstimatedRewards,
