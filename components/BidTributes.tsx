@@ -2,26 +2,27 @@ import { Tooltip } from "@/components/Tooltip"
 import { bidTypeTooltip } from "@/components/ToolTips"
 import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
+import { groupBy, sumBy } from "lodash"
 
 export function BidTributes({ bid }: { bid: FullyAugmentedBid }) {
-  return bid.tributes.map((tribute, index) => (
-    <Tooltip
-      key={index}
-      tipContents={bidTypeTooltip({ isTokenBasedBid: tribute.isTokenBased })}
-    >
-      <p className="break-words text-xl font-bold not-italic">
-        {tribute.isTokenBased ? (
+  const groupedTributes = groupBy(bid.tributes, "denom")
+
+  return Object.entries(groupedTributes).map(([denom, tributes]) => {
+    const totalAmount = sumBy(tributes, "amount")
+    const isTokenBased = tributes[0].isTokenBased
+
+    return (
+      <Tooltip
+        key={denom}
+        tipContents={bidTypeTooltip({ isTokenBasedBid: isTokenBased })}
+      >
+        <p className="break-words text-xl font-bold not-italic">
           <span>
-            {simplifyBigNumbers(tribute.amount)}&nbsp;
-            {tribute.denom}
+            {simplifyBigNumbers(totalAmount)}&nbsp;
+            {denom}
           </span>
-        ) : (
-          <span>
-            {simplifyBigNumbers(tribute.amount)}&nbsp;
-            {tribute.denom}
-          </span>
-        )}
-      </p>
-    </Tooltip>
-  ))
+        </p>
+      </Tooltip>
+    )
+  })
 }
