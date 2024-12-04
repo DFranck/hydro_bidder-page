@@ -1,3 +1,6 @@
+export const BID_DESCRIPTIONS_URL =
+  "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
+
 export interface BidDescription {
   title: string
   description: string
@@ -17,9 +20,7 @@ export interface BidDescription {
 export type RequestAmount = [amount: number, description: string]
 
 export async function fetchBidDescriptionsById() {
-  const response = await fetch(
-    "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
-  )
+  const response = await fetch(BID_DESCRIPTIONS_URL)
 
   return (await response.json()) as Record<string, BidDescription>
 }

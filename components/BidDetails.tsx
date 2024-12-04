@@ -3,6 +3,7 @@
 import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
+import { ErrorBox } from "@/components/ErrorBox"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { StyledText } from "@/components/StyledText"
@@ -12,6 +13,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { BID_DESCRIPTIONS_URL } from "@/contract-apis/fetchBidDescriptions"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { kebabCase } from "lodash"
 import Image from "next/image"
@@ -19,21 +21,34 @@ import Link from "next/link"
 
 export function BidDetails({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, bidsByRoundId, votes, currentRoundId } =
-    backendData
+  const { bidDescriptionsByBidId, bidsByRoundId, votes } = backendData
 
   const bid = Object.values(bidsByRoundId)
     .flat()
     .find((bid) => bid.id === bidId)
 
   if (!bid) {
-    return <>The requested proposal could not be found.</>
+    return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
 
   const bidDescription = bidDescriptionsByBidId[bidId]
 
   if (!bidDescription) {
-    return <>The requested proposal could not be found.</>
+    return (
+      <ErrorBox>
+        The requested bid is not listed in the official{" "}
+        <StyledText
+          as={Link}
+          href={BID_DESCRIPTIONS_URL}
+          target="_blank"
+          variant="link"
+          className="flex items-center gap-1 whitespace-nowrap"
+        >
+          <code>bid-descriptions.json</code>
+          <Icon name="solid:arrow-up-right-from-square" />
+        </StyledText>
+      </ErrorBox>
+    )
   }
 
   const {

@@ -2,11 +2,7 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  estimatedRewardsTooltip,
-  pointSystemTooltip,
-} from "@/components/ToolTips"
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
+import { estimatedRewardsTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { sumBy } from "lodash"
@@ -14,14 +10,23 @@ import { ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function BidRewards({
-  bid,
+  bidId,
   tooltipContent,
 }: {
-  bid: FullyAugmentedBid
+  bidId: number
   tooltipContent?: ReactNode
 }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, isWalletConnected, votes } = backendData
+  const { bidDescriptionsByBidId, isWalletConnected, votes, votingPower } =
+    backendData
+  const bid = Object.values(backendData.bidsByRoundId)
+    .flat()
+    .find((bid) => bid.id === bidId)
+
+  if (!bid) {
+    throw new Error(`Bid with id ${bidId} not found`)
+  }
+
   const totalEstimatedRewardsUsd = amountToUSDString(
     sumBy(bid.tributes, "valueInUsd")
   )
@@ -30,26 +35,18 @@ export function BidRewards({
     bid.usersEstimatedRewardsDeltaPercentage !== 0
   const isPositive = hasDelta && bid.usersEstimatedRewardsDeltaPercentage > 0
   const isTokenBasedBid = bid.tributes.every((tribute) => tribute.isTokenBased)
-  const bidDescription = bidDescriptionsByBidId[bid.id] ?? {}
+  const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
+  const computedTooltipContent =
+    tooltipContent ??
+    estimatedRewardsTooltip({
+      bid,
+      bidDescription,
+      hasVotingPower: Boolean(votingPower),
+      isTokenBasedBid,
+    })
 
   return (
-    <Tooltip
-      tipContents={
-        tooltipContent ??
-        (isTokenBasedBid
-          ? estimatedRewardsTooltip({
-              bid,
-              backendData,
-              isWalletConnected,
-            })
-          : pointSystemTooltip({
-              bid,
-              backendData,
-              isWalletConnected,
-              learnMoreURL: bidDescription.pointProgramUrl,
-            }))
-      }
-    >
+    <Tooltip tipContents={computedTooltipContent}>
       {!isWalletConnected || votes.length === 0 ? (
         <div className="flex items-center gap-1">
           <span>{totalEstimatedRewardsUsd}</span>
