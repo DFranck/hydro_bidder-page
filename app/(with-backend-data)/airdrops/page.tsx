@@ -165,6 +165,14 @@ export default function AirdropsPage() {
     },
   ]
 
+  const confirmedRows = rows.filter(
+    (row) => row._airdropDescriptor[2] === "Confirmed"
+  )
+
+  const otherRows = rows.filter(
+    (row) => row._airdropDescriptor[2] !== "Confirmed"
+  )
+
   return (
     <>
       <StatCards>
@@ -206,13 +214,31 @@ export default function AirdropsPage() {
           .
         </Toasts.Toast>
 
-        <BlurryBackdropBox>
-          <StyledTable
-            columns={columns}
-            rows={rows}
-            initialSortedColumnKey="confirmationStatus"
-          />
-        </BlurryBackdropBox>
+        <div className="flex flex-col gap-6">
+          <StyledText as="h3" variant="h3">
+            Confirmed Airdrops
+          </StyledText>
+          <BlurryBackdropBox>
+            <StyledTable
+              columns={columns}
+              rows={confirmedRows}
+              initialSortedColumnKey="confirmationStatus"
+            />
+          </BlurryBackdropBox>
+        </div>
+
+        <div className="flex flex-col gap-6">
+          <StyledText as="h3" variant="h3">
+            Rumored Airdrops
+          </StyledText>
+          <BlurryBackdropBox>
+            <StyledTable
+              columns={columns}
+              rows={otherRows}
+              initialSortedColumnKey="confirmationStatus"
+            />
+          </BlurryBackdropBox>
+        </div>
       </ContentContainer>
     </>
   )
