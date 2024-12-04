@@ -28,10 +28,7 @@ export async function fetchAssetListWithPrices(): Promise<
 
   // Fetch prices using getPriceFeedUrl
   const pricesResponse = await fetch(
-    getPriceFeedUrl([...coingeckoIds, "switcheo"]),
-    {
-      next: { revalidate: cacheRevalidationInterval }, // Revalidate every 5 minutes
-    }
+    getPriceFeedUrl([...coingeckoIds, "switcheo"])
   )
   const prices: Record<string, { usd: number }> = await pricesResponse.json()
 
