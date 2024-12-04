@@ -158,6 +158,9 @@ async function uncachedFetchBackendDataWithWallet({
         const deploymentDurationInNanos =
           bid.deploymentDuration * lockupEpochLength
 
+        const deploymentDurationMinusOne =
+          (bid.deploymentDuration - 1) * lockupEpochLength
+
         const currentRoundEndDateForSure =
           typeof currentRoundEndDate === "string"
             ? new Date(currentRoundEndDate)
@@ -168,7 +171,7 @@ async function uncachedFetchBackendDataWithWallet({
             ? furthestLockupEndDate >
               new Date(
                 currentRoundEndDateForSure.getTime() +
-                  deploymentDurationInNanos / 1e6
+                  deploymentDurationMinusOne / 1e6
               )
             : false
 
