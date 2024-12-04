@@ -157,11 +157,9 @@ export default function AirdropsPage() {
       key: "action",
       label: "Action",
       textAlign: "center",
-      isSortable: true,
       propsForCells: {
         className: "relative text-balance",
       },
-      customValueGetter: (row) => row._airdropDescriptor[6],
     },
   ]
 
