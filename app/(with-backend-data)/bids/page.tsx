@@ -128,7 +128,7 @@ export default function BidsPage() {
                 </Tooltip>
               )}
             >
-              <span>{Math.round(Number(bid.percentage) * 100)}%</span>
+              <span>{Math.round(bid.percentage)}%</span>
             </ConditionalWrapper>
           </InvisibleLink>
         ),

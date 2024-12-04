@@ -4,7 +4,13 @@ import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import { groupBy, sumBy } from "lodash"
 
-export function BidTributes({ bid }: { bid: FullyAugmentedBid }) {
+export function BidTributes({
+  bid,
+  denomsOnly = false,
+}: {
+  bid: FullyAugmentedBid
+  denomsOnly?: boolean
+}) {
   const groupedTributes = groupBy(bid.tributes, "denom")
 
   return Object.entries(groupedTributes).map(([denom, tributes]) => {

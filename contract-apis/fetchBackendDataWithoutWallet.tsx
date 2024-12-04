@@ -118,10 +118,9 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     Array.from({ length: currentRoundId + 1 }, (_, roundId) =>
       Promise.all(
         tranches.map(async (tranche) => {
-          const { proposals: bids } = await hydroQueryClient.roundProposals({
-            limit: 50,
+          const { proposals: bids } = await hydroQueryClient.topNProposals({
+            numberOfProposals: 50,
             roundId,
-            startFrom: 0,
             trancheId: tranche.id,
           })
 
