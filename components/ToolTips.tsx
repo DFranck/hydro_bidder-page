@@ -77,9 +77,11 @@ export const currentVoteShareTooltip = (
 export const estimatedRewardsTooltip = ({
   backendData,
   bid,
+  isWalletConnected,
 }: {
   backendData: BackendData
   bid?: FullyAugmentedBid
+  isWalletConnected: boolean
 }) => {
   const percentageOfTribute = bid?.usersEstimatedRewards
   const isTokenBasedTribute = bid?.tributes.every((t) => t.isTokenBased)
@@ -217,8 +219,16 @@ export const numberOfUniqueWalletsTooltip = (
 )
 
 export const pointSystemTooltip = ({
+  bid,
+  backendData,
+  isWalletConnected,
   learnMoreURL,
-}: { learnMoreURL?: string } = {}) => (
+}: {
+  bid: FullyAugmentedBid
+  backendData: BackendData
+  isWalletConnected: boolean
+  learnMoreURL?: string
+}) => (
   <>
     This project is using a point system. Voters get points instead of live
     tokens.{" "}

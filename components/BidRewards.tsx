@@ -40,8 +40,12 @@ export function BidRewards({
           ? estimatedRewardsTooltip({
               bid,
               backendData,
+              isWalletConnected,
             })
           : pointSystemTooltip({
+              bid,
+              backendData,
+              isWalletConnected,
               learnMoreURL: bidDescription.pointProgramUrl,
             }))
       }

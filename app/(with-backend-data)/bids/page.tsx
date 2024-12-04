@@ -176,7 +176,7 @@ export default function BidsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => row._bid.deploymentDuration,
+        customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
       },
       {
         key: "yourEstimatedReward",
@@ -184,6 +184,7 @@ export default function BidsPage() {
           <Tooltip
             tipContents={estimatedRewardsTooltip({
               backendData,
+              isWalletConnected,
             })}
           >
             <div className="flex items-center gap-1">

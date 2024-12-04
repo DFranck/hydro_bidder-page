@@ -27,8 +27,13 @@ import { unstable_cache } from "next/dist/server/web/spec-extension/unstable-cac
 export interface BidFromContract extends Proposal {}
 
 export interface AugmentedBidFromContract
-  extends Omit<CamelCaseKeys<BidFromContract>, "percentage" | "proposalId"> {
+  extends Omit<
+    CamelCaseKeys<BidFromContract>,
+    "deploymentDuration" | "percentage" | "proposalId"
+  > {
   id: number
+  deploymentDurationInEpochs: number
+  deploymentDurationInNanos: number
   percentage: number
   tributes: AugmentedTribute[]
 }
@@ -146,9 +151,11 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
           // Add tributes to every bid
           const sanitizedBidsWithTributes = bids
             .map(keysFromSnakeToCamelCase)
-            .map(({ proposalId, ...bid }) => ({
+            .map(({ deploymentDuration, proposalId, ...bid }) => ({
               ...bid,
               id: proposalId,
+              deploymentDurationInEpochs: deploymentDuration,
+              deploymentDurationInNanos: deploymentDuration * lockupEpochLength,
               description:
                 bidDescriptionsByBidId[proposalId]?.description ??
                 bid.description,
