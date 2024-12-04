@@ -2,6 +2,7 @@ import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { isNumber } from "lodash"
@@ -68,6 +69,11 @@ export function InputForLockupPeriod({
               onClick={handleClick.bind(null, duration)}
               className={twMerge(
                 `
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  gap-0
                   rounded-none
                   border-r-0
                   backdrop-blur-none
@@ -78,7 +84,14 @@ export function InputForLockupPeriod({
                 `
               )}
             >
-              {label}
+              <span>{label}</span>
+              <StyledText className="text-xs opacity-60">
+                {getLockupPeriodMultiplier({
+                  lockupEpochLength,
+                  lockupTime: duration,
+                })}
+                &thinsp;&times;
+              </StyledText>
             </StyledText>
           )
         })}
