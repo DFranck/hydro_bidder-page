@@ -36,7 +36,6 @@ export default function RewardsPage() {
     votes,
   } = useBackendData()
 
-  console.log({ votes })
   const allBidIds =
     Object.values(bidsByRoundId)
       .flat()
@@ -44,10 +43,10 @@ export default function RewardsPage() {
   const [selectedBidIds, setSelectedBidIds] = useState<number[]>(allBidIds)
   const bidsUserVotedOn = Object.values(bidsByRoundId)
     .flat()
-    .filter((bid) =>
-      votes.find(
-        (vote) => bid.roundId < currentRoundId && vote.bidId === bid.id
-      )
+    .filter(
+      (bid) =>
+        bid.roundId < currentRoundId &&
+        votes.find((vote) => vote.bidId === bid.id)
     )
 
   const rows = bidsUserVotedOn.map((bid) => {
@@ -359,9 +358,9 @@ export default function RewardsPage() {
                     },
                   ]}
                   rows={selectedBidIds.map((bidId) => {
-                    const bid = bidsByRoundId[currentRoundId].find(
-                      (bid) => bid.id === bidId
-                    )!
+                    const bid = Object.values(bidsByRoundId)
+                      .flat()
+                      .find((bid) => bid.id === bidId)!
 
                     return {
                       _bid: bid,
