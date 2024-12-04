@@ -48,6 +48,8 @@ const pointBasedTributesLabel = "Points-Based Tributes"
 export default function BidsPage() {
   const backendData = useBackendData()
 
+  console.log({ backendData })
+
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
@@ -304,7 +306,7 @@ export default function BidsPage() {
                       <span>
                         These bids are below the{" "}
                         <strong>
-                          {VOTE_SHARE_THRESHOLD * 100}% vote share threshold
+                          {VOTE_SHARE_THRESHOLD}% vote share threshold
                         </strong>
                       </span>
                       <Icon name="circle-info" />

@@ -66,7 +66,7 @@ export function BidRewards({
                 <Icon
                   name={isPositive ? "solid:arrow-up" : "solid:arrow-down"}
                 />
-                {Math.round(bid.usersEstimatedRewardsDeltaPercentage * 100)}%
+                {Math.round(bid.usersEstimatedRewardsDeltaPercentage)}%
               </span>
             )}
             {amountToUSDString(bid.usersEstimatedRewards)}
