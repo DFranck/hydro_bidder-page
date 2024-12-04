@@ -10,7 +10,7 @@ import { formatAmount } from "@/lib/formatAmount"
 import { sumBy } from "lodash"
 import Link from "next/link"
 
-export const VOTE_SHARE_THRESHOLD = 0.05
+export const VOTE_SHARE_THRESHOLD = 5
 
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
@@ -339,8 +339,8 @@ export const usdDisclaimerTooltip = (
 export const voteThresholdTooltip = (
   <>
     Bids below the minimum threshold of{" "}
-    <strong>{VOTE_SHARE_THRESHOLD * 100}% total voting power</strong> will not
-    receive liquidity, and will not pay out rewards to users.{" "}
+    <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
+    liquidity, and will not pay out rewards to users.{" "}
     <StyledText
       as="a"
       href="/docs#tribute-refunds"

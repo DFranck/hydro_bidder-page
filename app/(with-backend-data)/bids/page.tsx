@@ -112,7 +112,7 @@ export default function BidsPage() {
             className="flex flex-row-reverse items-center gap-1"
           >
             <ConditionalWrapper
-              condition={Number(bid.percentage) < VOTE_SHARE_THRESHOLD}
+              condition={bid.percentage < VOTE_SHARE_THRESHOLD}
               wrapper={(children) => (
                 <Tooltip
                   tipContents={voteThresholdTooltip}
