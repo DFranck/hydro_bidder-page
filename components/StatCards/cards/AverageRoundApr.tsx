@@ -23,13 +23,6 @@ export function AverageRoundApr() {
   const averageAPR =
     (totalTributeValue / (totalLockedAtomGlobal / 1e6) / atomPrice) * 12
 
-  console.log({
-    totalTributeValue,
-    totalLockedAtomGlobal,
-    atomPrice,
-    averageAPR,
-  })
-
   return (
     <StatCard
       isLoading={isLoading}
