@@ -6,6 +6,7 @@ import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
+import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
@@ -13,6 +14,7 @@ import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
+import { twJoin } from "tailwind-merge"
 import { minimumUATOMGas } from "../transactions/_consts"
 import { broadcastAndRelayIBCGasToNeutron } from "../transactions/broadcastAndRelayIBCGasToNeutron"
 import { broadcastAndRelayIBCHubToNeutron } from "../transactions/broadcastAndRelayIBCHubToNeutron"
@@ -199,42 +201,51 @@ export const LockStepper = ({
                 Next, you&rsquo;ll be asked to do three wallet approvals. This
                 takes a minute or two, tops.
               </p>
-              <div className="flex items-center justify-around gap-10">
-                {[
-                  [formatAmount(amount), "ATOM Amount"],
-                  [
-                    pluralize({
+              <div className="grid grid-cols-3 items-center gap-10">
+                <div className="flex flex-col-reverse items-center justify-center gap-1">
+                  <div className="text-xs text-palette-beige">ATOM Amount</div>
+                  <div className="text-2xl font-bold">
+                    {formatAmount(amount)}
+                  </div>
+                </div>
+
+                <div className="flex flex-col-reverse items-center justify-center gap-1">
+                  <div className="text-xs text-palette-beige">
+                    Lock Duration
+                  </div>
+                  <div className="text-2xl font-bold">
+                    {pluralize({
                       count: value,
                       prefixCount: true,
                       singular: unit,
-                    }),
-                    "Lock Duration",
-                  ],
-                  [
-                    formatAmount(
+                    })}
+                  </div>
+                </div>
+
+                <div
+                  className={twJoin(
+                    "flex flex-col-reverse items-center justify-center gap-1",
+                    "rounded-md bg-palette-green/10 px-6 py-3"
+                  )}
+                >
+                  <div className="text-xs text-palette-beige">
+                    Voting Power (
+                    {getLockupPeriodMultiplier({
+                      lockupTime: lockDuration,
+                      lockupEpochLength,
+                    })}
+                    &thinsp;&times;)
+                  </div>
+                  <div className="text-2xl font-bold">
+                    {formatAmount(
                       scaleLockupPower({
                         lockupEpochLength,
                         lockupTime: lockDuration,
                         rawPower: BigInt(amount),
                       })
-                    ),
-                    "Voting Power",
-                  ],
-                ].map(([value, label], index) => (
-                  <div
-                    className="
-                      flex
-                      flex-col-reverse
-                      items-center
-                      justify-center
-                      gap-1
-                    "
-                    key={index}
-                  >
-                    <div className="text-xs text-palette-beige">{label}</div>
-                    <div className="text-2xl font-bold">{value}</div>
+                    )}
                   </div>
-                ))}
+                </div>
               </div>
             </>
           ),
