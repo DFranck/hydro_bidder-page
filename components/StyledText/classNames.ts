@@ -196,12 +196,8 @@ export const classNames = {
       text-lg
     `
   ),
-  label: twJoin(`
-    whitespace-nowrap
-    text-sm
-    text-white/80
-    has-[:checked]:font-bold
-    has-[:checked]:text-white
+  "icon.huge": twJoin(`
+    text-8xl
   `),
   "input.text": twJoin(`
     rounded
@@ -231,5 +227,12 @@ export const classNames = {
     checked:border-transparent
     checked:bg-palette-green
     checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
+  `),
+  label: twJoin(`
+    whitespace-nowrap
+    text-sm
+    text-white/80
+    has-[:checked]:font-bold
+    has-[:checked]:text-white
   `),
 }

@@ -19,7 +19,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   bidTypeTooltip,
   currentVoteShareTooltip,
-  estimatedRewardsTooltip,
+  estimatedRewardsColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -103,7 +103,7 @@ export default function BidsPage() {
         ),
         yourEstimatedReward: (
           <InvisibleLink href={bidURL}>
-            <BidRewards bid={bid} />
+            <BidRewards bidId={bid.id} />
           </InvisibleLink>
         ),
         currentVoteShare: (
@@ -146,95 +146,99 @@ export default function BidsPage() {
     }) ?? []
 
   const buildColumns = useCallback(
-    (projectBidLabel: string): ColumnObject<Row, keyof Row>[] => [
-      {
-        key: "logoAndTitle",
-        label: (
-          <Tooltip
-            tipContents={bidTypeTooltip({
-              isTokenBasedBid: projectBidLabel === tokenBasedTributesLabel,
-            })}
-          >
-            <div className="flex items-center gap-1">
-              {projectBidLabel}
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        isSortable: true,
-        propsForCells: {
-          className: classNames.classNamesForCells,
+    (projectBidLabel: string): ColumnObject<Row, keyof Row>[] => {
+      const isTokenBasedBid = projectBidLabel === tokenBasedTributesLabel
+
+      return [
+        {
+          key: "logoAndTitle",
+          label: (
+            <Tooltip
+              tipContents={bidTypeTooltip({
+                isTokenBasedBid,
+              })}
+            >
+              <div className="flex items-center gap-1">
+                {projectBidLabel}
+                <Icon name="circle-info" />
+              </div>
+            </Tooltip>
+          ),
+          isSortable: true,
+          propsForCells: {
+            className: classNames.classNamesForCells,
+          },
+          customValueGetter: (row) => row._bid.title,
         },
-        customValueGetter: (row) => row._bid.title,
-      },
-      {
-        key: "deploymentDuration",
-        label: "PoL Duration",
-        isSortable: true,
-        textAlign: "right",
-        initialSortDirection: "DESC",
-        propsForCells: {
-          className: classNames.classNamesForCells,
+        {
+          key: "deploymentDuration",
+          label: "PoL Duration",
+          isSortable: true,
+          textAlign: "right",
+          initialSortDirection: "DESC",
+          propsForCells: {
+            className: classNames.classNamesForCells,
+          },
+          customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
         },
-        customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
-      },
-      {
-        key: "yourEstimatedReward",
-        label: (
-          <Tooltip
-            tipContents={estimatedRewardsTooltip({
-              backendData,
-              isWalletConnected,
-            })}
-          >
-            <div className="flex items-center gap-1">
-              <span>
-                {isWalletConnected && votingPower ? "Your" : "Total"} Est.
-                Reward
-              </span>
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        isSortable: true,
-        textAlign: "right",
-        initialSortDirection: "DESC",
-        propsForCells: {
-          className: classNames.classNamesForCells,
+        {
+          key: "yourEstimatedReward",
+          label: (
+            <Tooltip
+              tipContents={estimatedRewardsColumnTooltip({
+                hasVotingPower: Boolean(isWalletConnected && votingPower),
+                isTokenBasedBid,
+              })}
+            >
+              <div className="flex items-center gap-1">
+                <span>
+                  {isWalletConnected && votingPower ? "Your" : "Total"} Est.
+                  Reward
+                </span>
+                <Icon name="circle-info" />
+              </div>
+            </Tooltip>
+          ),
+          isSortable: true,
+          textAlign: "right",
+          initialSortDirection: "DESC",
+          propsForCells: {
+            className: classNames.classNamesForCells,
+          },
+          customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
         },
-        customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
-      },
-      {
-        key: "currentVoteShare",
-        label: (
-          <Tooltip
-            classNamesForTooltip="-ml-24"
-            tipContents={currentVoteShareTooltip}
-          >
-            <div className="flex items-center gap-1">
-              <span>Vote %</span>
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        isSortable: true,
-        initialSortDirection: "DESC",
-        textAlign: "right",
-        propsForCells: {
-          className: classNames.classNamesForCells,
+        {
+          key: "currentVoteShare",
+          label: (
+            <Tooltip
+              classNamesForTooltip="-ml-24"
+              tipContents={currentVoteShareTooltip}
+            >
+              <div className="flex items-center gap-1">
+                <span>Vote %</span>
+                <Icon name="circle-info" />
+              </div>
+            </Tooltip>
+          ),
+          isSortable: true,
+          initialSortDirection: "DESC",
+          textAlign: "right",
+          propsForCells: {
+            className: classNames.classNamesForCells,
+          },
+          customValueGetter: (row) => Number(row._bid.percentage),
         },
-        customValueGetter: (row) => Number(row._bid.percentage),
-      },
-      {
-        key: "actions",
-        label: "Actions",
-        isSortable: false,
-        textAlign: "right",
-        propsForCells: {
-          className: classNames.classNamesForCells,
+        {
+          key: "actions",
+          label: "Actions",
+          isSortable: false,
+          textAlign: "right",
+          propsForCells: {
+            className: classNames.classNamesForCells,
+          },
         },
-      },
-    ],
+      ]
+    },
     [
       backendData,
       classNames.classNamesForCells,

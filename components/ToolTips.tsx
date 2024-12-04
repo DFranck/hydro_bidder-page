@@ -4,8 +4,9 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { telegramLink } from "@/config"
 import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
-import { BackendData } from "@/contract-apis/fetchBackendDataWithoutWallet"
+import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { formatAmount } from "@/lib/formatAmount"
 import { sumBy } from "lodash"
 import Link from "next/link"
 
@@ -74,52 +75,87 @@ export const currentVoteShareTooltip = (
   </>
 )
 
-export const estimatedRewardsTooltip = ({
-  backendData,
-  bid,
-  isWalletConnected,
+export const estimatedRewardsColumnTooltip = ({
+  hasVotingPower,
+  isTokenBasedBid,
 }: {
-  backendData: BackendData
-  bid?: FullyAugmentedBid
-  isWalletConnected: boolean
+  hasVotingPower: boolean
+  isTokenBasedBid: boolean
 }) => {
-  const percentageOfTribute = bid?.usersEstimatedRewards
-  const isTokenBasedTribute = bid?.tributes.every((t) => t.isTokenBased)
-
-  return (
+  const rewardDescription = isTokenBasedBid
+    ? "expected USD-equivalent value of rewards"
+    : "total points offered by this project as a tribute to users"
+  const messageWithVotingPower = (
     <>
-      This is the expected{" "}
-      {isTokenBasedTribute
-        ? "USD-equivalent value of rewards"
-        : "amount of points you will receive based on your voting power"}
-      .{" "}
-      {percentageOfTribute ? (
-        <>
-          It represents{" "}
-          <strong className="text-palette-beige">
-            {Math.round(percentageOfTribute * 100)}%
-          </strong>{" "}
-          of the{" "}
-        </>
-      ) : (
-        <>Until you have voting power, it is the</>
-      )}{" "}
-      {bid && isTokenBasedTribute ? (
-        <strong className="text-palette-beige">
-          {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
-        </strong>
-      ) : (
-        `total`
-      )}{" "}
-      tribute provided by the project. Over time, the value may increase if the
-      project adds tributes or decrease if more voters choose{" "}
-      <span className="whitespace-nowrap">the project.</span>
+      This is the {rewardDescription} you would receive from the bid&rsquo;s
+      tribute. Over time, the value may increase if the project adds tributes or
+      decrease if more voters choose the project.
     </>
   )
+  const messageWithoutVotingPower = (
+    <>
+      This is the {rewardDescription}. Over time, the value may increase if the
+      project increases tributes. The tribute is split amongst the users that
+      vote for this project, based on their individual voting power.
+    </>
+  )
+
+  return hasVotingPower ? messageWithVotingPower : messageWithoutVotingPower
+}
+
+export const estimatedRewardsTooltip = ({
+  bid,
+  bidDescription,
+  hasVotingPower,
+  isTokenBasedBid,
+}: {
+  bid: FullyAugmentedBid
+  bidDescription: BidDescription
+  hasVotingPower: boolean
+  isTokenBasedBid: boolean
+}) => {
+  const { projectName } = bidDescription
+  const totalTributeValue = sumBy(bid.tributes, "valueInUsd") ?? 0
+  const percentageOfTotalTributeValue =
+    totalTributeValue > 0
+      ? Math.round(((bid.usersEstimatedRewards ?? 0) / totalTributeValue) * 100)
+      : 0
+  const formattedTotalTribute = (
+    <strong className="text-palette-beige">
+      {isTokenBasedBid
+        ? // $1,234 USD
+          amountToUSDString(sumBy(bid.tributes, "valueInUsd"))
+        : // 1,234 POINTS
+          `${formatAmount(sumBy(bid.tributes, "amount"))} ${bid.tributes[0].denom}`}
+    </strong>
+  )
+  const rewardDescription = isTokenBasedBid
+    ? "estimated USD-equivalent value of rewards"
+    : "amount of points"
+  const messageWithVotingPower = (
+    <>
+      This is the {rewardDescription} you would receive from{" "}
+      <strong>{projectName}</strong>. It represents{" "}
+      <strong>{percentageOfTotalTributeValue}%</strong> of the total tribute{" "}
+      <strong className="text-palette-beige">{formattedTotalTribute}</strong>.
+      Over time, the value may increase if the project adds tributes or decrease
+      if more voters choose the project.
+    </>
+  )
+  const messageWithoutVotingPower = (
+    <>
+      This is the {rewardDescription} offered by <strong>{projectName}</strong>{" "}
+      as a tribute. By voting for it, you would receive a portion of this value,
+      relative to your voting power, and the voting power of the bid at the end
+      of the round.
+    </>
+  )
+
+  return hasVotingPower ? messageWithVotingPower : messageWithoutVotingPower
 }
 
 export const lockupLimitReachedByUserTooltip = (
-  <>You&rsquo;ve reached the maximum locked tokens</>
+  <>You&rsquo;ve reached the maximum locked tokens for this round.</>
 )
 
 export const lockupLimitTooltip = (
@@ -219,14 +255,8 @@ export const numberOfUniqueWalletsTooltip = (
 )
 
 export const pointSystemTooltip = ({
-  bid,
-  backendData,
-  isWalletConnected,
   learnMoreURL,
 }: {
-  bid: FullyAugmentedBid
-  backendData: BackendData
-  isWalletConnected: boolean
   learnMoreURL?: string
 }) => (
   <>
