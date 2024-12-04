@@ -2,7 +2,6 @@
 
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
-import { telegramLink } from "@/config"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Image from "next/image"
 import Link from "next/link"
@@ -108,14 +107,13 @@ export function Header() {
               `
           )}
         >
-          Round 1 caps have been reached.{" "}
+          Hydro is currently running pilot rounds.{" "}
           <span className="inline-flex items-center gap-1 font-bold underline">
-            Join the telegram group for updates!{" "}
-            <Icon name="solid:arrow-up-right" />
+            Learn More <Icon name="solid:arrow-up-right" />
           </span>
           <Link
             className="absolute inset-0 z-10"
-            href={telegramLink}
+            href="/docs#pilot-rounds"
             target="_blank"
           >
             <span className="sr-only">Learn More</span>

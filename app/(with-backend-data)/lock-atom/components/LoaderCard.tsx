@@ -10,18 +10,19 @@ export function LoaderCard({
 }) {
   return (
     <Card>
-      <Card.Header title="Connect a Keplr Wallet" />
+      <Card.Header title="Connect a compatible wallet" />
       <Card.Body>
         {!address && haveChains ? (
           <p>
-            In order to use Hydro, you will need to connect a Keplr wallet.{" "}
+            In order to use Hydro, you will need to connect a compatible wallet.{" "}
+            If you don't have a wallet,{" "}
             <a
               className="text-palette-green underline"
               href="https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Grab the extension{" "}
+              Grab the Keplr extension{" "}
               <span className="whitespace-nowrap">
                 here <Icon name="solid:arrow-up-right" />
               </span>
