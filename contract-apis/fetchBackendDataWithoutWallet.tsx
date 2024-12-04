@@ -143,6 +143,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
               return {
                 ...tribute,
                 ...funds,
+                denom: assetListing?.symbol ?? funds.denom,
                 valueInUsd:
                   (parseFloat(funds.amount) / 10 ** decimals) * assetPrice,
               }
