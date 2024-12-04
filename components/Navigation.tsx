@@ -10,6 +10,12 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
+const comingSoonTooltip = (
+  <>
+    <strong>Coming Soon</strong>
+  </>
+)
+
 export default function Navigation() {
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
@@ -193,38 +199,41 @@ export default function Navigation() {
           </Link>
         </ConditionalWrapper>
 
-        <ConditionalWrapper
-          condition={!isConnected}
-          wrapper={(children) => (
-            <Tooltip tipContents={needsWalletConnectionTooltip}>
-              {children}
-            </Tooltip>
-          )}
-        >
+        <Tooltip tipContents={comingSoonTooltip}>
           <Link
             href="/rewards"
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              !isConnected && "pointer-events-none opacity-60"
+              "pointer-events-none opacity-60"
             )}
           >
             Rewards
           </Link>
-        </ConditionalWrapper>
+        </Tooltip>
 
-        <Link
-          href="/metrics"
-          className={twMerge(navigationMenuTriggerStyle("/metrics"))}
-        >
-          Metrics
-        </Link>
+        <Tooltip tipContents={comingSoonTooltip}>
+          <Link
+            href="/metrics"
+            className={twMerge(
+              navigationMenuTriggerStyle("/metrics"),
+              "pointer-events-none opacity-60"
+            )}
+          >
+            Metrics
+          </Link>
+        </Tooltip>
 
-        <Link
-          href="/airdrops"
-          className={twMerge(navigationMenuTriggerStyle("/airdrops"))}
-        >
-          Airdrops
-        </Link>
+        <Tooltip tipContents={comingSoonTooltip}>
+          <Link
+            href="/airdrops"
+            className={twMerge(
+              navigationMenuTriggerStyle("/airdrops"),
+              "pointer-events-none opacity-60"
+            )}
+          >
+            Airdrops
+          </Link>
+        </Tooltip>
 
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>
