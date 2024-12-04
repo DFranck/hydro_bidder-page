@@ -15,7 +15,7 @@ export function LoaderCard({
         {!address && haveChains ? (
           <p>
             In order to use Hydro, you will need to connect a compatible wallet.{" "}
-            If you don't have a wallet,{" "}
+            If you don&rsquo;t have a wallet,{" "}
             <a
               className="text-palette-green underline"
               href="https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en"
