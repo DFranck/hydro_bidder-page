@@ -274,7 +274,7 @@ export const rewardsTributeRewardsColumnTooltip = (
 
 export const timeLeftTooltip = (
   <>
-    Number of days until the round ends. Users must vote before the end of the
+    Amount of time until the round ends. Users must vote before the end of the
     round to receive tributes.{" "}
     <StyledText
       as="a"
