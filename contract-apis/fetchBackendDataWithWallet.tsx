@@ -193,10 +193,14 @@ async function uncachedFetchBackendDataWithWallet({
         bidsWithEstimatedRewards.find((bid) => bid.id === votedBidId) ?? null
 
       const bidsWithRelativeRewards = bidsWithEstimatedRewards.map((bid) => {
+        const delta = votedBid
+          ? bid.usersEstimatedRewards - votedBid?.usersEstimatedRewards
+          : 0
+
         return {
           ...bid,
           usersEstimatedRewardsDeltaPercentage: votedBid
-            ? (bid.usersEstimatedRewards / votedBid.usersEstimatedRewards) * 100
+            ? (delta / votedBid.usersEstimatedRewards) * 100
             : 0,
         }
       })
