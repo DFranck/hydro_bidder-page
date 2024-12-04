@@ -15,7 +15,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { sortBy, sumBy } from "lodash"
+import { range, sortBy, sumBy } from "lodash"
 import { unstable_cache } from "next/cache"
 
 export interface BackendDataWithWallet
@@ -114,28 +114,37 @@ async function uncachedFetchBackendDataWithWallet({
     }),
   ])
 
+  // [0, 1, 2, ...currentRoundId]
+  const previousRoundIds = range(0, currentRoundId + 1)
+
   const votes = await Promise.all(
-    currentRoundTranches.map(async (tranche) => {
-      let fetchedVotes: VoteWithPower[] = []
+    previousRoundIds.map(async (roundId) =>
+      Promise.all(
+        currentRoundTranches.map(async (tranche) => {
+          let fetchedVotes: VoteWithPower[] = []
 
-      try {
-        const { votes: votesForTranche } = await hydroQueryClient.userVotes({
-          address,
-          roundId: currentRoundId,
-          trancheId: tranche.id,
+          try {
+            const { votes: votesForTranche } = await hydroQueryClient.userVotes(
+              {
+                address,
+                roundId,
+                trancheId: tranche.id,
+              }
+            )
+            fetchedVotes = votesForTranche
+          } catch (err) {
+            // TODO: no votes for this tranche; shouldn't throw exception though??
+          }
+
+          return fetchedVotes
         })
-        fetchedVotes = votesForTranche
-      } catch (err) {
-        // TODO: no votes for this tranche; shouldn't throw exception though??
-      }
-
-      return fetchedVotes
-    })
+      )
+    )
   )
 
   const sanitizedLockups = lockups.map(sanitizeLockup)
 
-  const sanitizedVotes = votes.flat().map(sanitizeVote)
+  const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
 
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
@@ -146,7 +155,7 @@ async function uncachedFetchBackendDataWithWallet({
     Object.entries(bidsByRoundId).map(([roundId, bids]) => {
       const bidsWithEstimatedRewards = bids.map((bid) => {
         const description =
-          bidDescriptionsByBidId[bid.id].description ?? bid.description
+          bidDescriptionsByBidId[bid.id]?.description ?? bid.description
 
         const usersEstimatedRewards =
           estimatedRewardForPower(

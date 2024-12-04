@@ -24,7 +24,6 @@ import { MouseEvent, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function RewardsPage() {
-  const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const { setToasts } = useToasts()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const [isShowingClaimRewardsModal, setIsShowingClaimRewardsModal] =
@@ -36,11 +35,20 @@ export default function RewardsPage() {
     currentRoundId,
     votes,
   } = useBackendData()
-  const allBidIds = bidsByRoundId[currentRoundId]?.map((bid) => bid.id) ?? []
+
+  console.log({ votes })
+  const allBidIds =
+    Object.values(bidsByRoundId)
+      .flat()
+      .map((bid) => bid.id) ?? []
   const [selectedBidIds, setSelectedBidIds] = useState<number[]>(allBidIds)
   const bidsUserVotedOn = Object.values(bidsByRoundId)
     .flat()
-    .filter((bid) => votes.find((vote) => vote.bidId === bid.id))
+    .filter((bid) =>
+      votes.find(
+        (vote) => bid.roundId < currentRoundId && vote.bidId === bid.id
+      )
+    )
 
   const rows = bidsUserVotedOn.map((bid) => {
     const bidUrl = `/bids/${bid.id}`
