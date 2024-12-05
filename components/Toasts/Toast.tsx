@@ -3,7 +3,6 @@ import { Icon } from "@/components/Icon"
 import { IconString } from "@/components/Icon/types"
 import { Toast as ToastType, useToasts } from "@/components/Toasts/useToasts"
 import { get } from "lodash"
-import { revalidateTag as revalidateTagFunction } from "next/cache"
 import { useRouter } from "next/navigation"
 import { ComponentProps, useState } from "react"
 import { twMerge } from "tailwind-merge"
@@ -22,7 +21,6 @@ export function Toast({
   className,
   icon,
   isDismissible,
-  revalidateTag,
   variant = "info",
   ...otherProps
 }: ToastProps) {
@@ -30,9 +28,7 @@ export function Toast({
   const { setToasts } = useToasts()
   const [isDismissed, setIsDismissed] = useState(false)
   const isActuallyDismissible =
-    isDismissible ??
-    revalidateTag ??
-    get(classNames.variants[variant], "isDismissible", true)
+    isDismissible ?? get(classNames.variants[variant], "isDismissible", true)
 
   function handleDismiss() {
     setIsDismissed(true)
@@ -40,11 +36,6 @@ export function Toast({
 
   function dismiss() {
     setToasts((prevToasts) => prevToasts.filter((toast) => toast._id !== id))
-
-    if (revalidateTag) {
-      revalidateTagFunction(revalidateTag)
-      router.refresh()
-    }
   }
 
   return (
@@ -73,7 +64,7 @@ export function Toast({
               className={classNames.dismissButton}
               onClick={handleDismiss}
             >
-              {revalidateTag ? "Reload" : "Dismiss"}
+              Dismiss
             </button>
           </div>
         )}

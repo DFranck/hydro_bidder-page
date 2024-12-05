@@ -10,6 +10,7 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Toasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
+import { HYDRO_TELEGRAM_URL } from "@/config"
 import Link from "next/link"
 import { twJoin } from "tailwind-merge"
 import { CellContentRenderer } from "./CellContentRenderer"
@@ -246,15 +247,15 @@ export default function AirdropsPage() {
               isDismissible={false}
               variant="info"
             >
-              Got a rumor about an airdrop? We&rsquo;re listening!{" "}
+              Got a rumor about an airdrop?{" "}
               <StyledText
                 className="inline-flex items-center gap-1"
                 as={Link}
                 variant="link"
-                href="https://calendly.com/actional/hydro"
+                href={HYDRO_TELEGRAM_URL}
                 target="_blank"
               >
-                <span>Get in Touch</span>
+                <span>Drop it in the Telegram</span>
                 <Icon name="arrow-up-right-from-square" />
               </StyledText>
               .

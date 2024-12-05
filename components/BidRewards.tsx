@@ -1,4 +1,5 @@
 "use client"
+
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
@@ -14,28 +15,26 @@ import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, isWalletConnected, votes, votingPower } =
-    backendData
+  const { bidDescriptionsByBidId, votes, votingPower } = backendData
   const bid = Object.values(backendData.bidsByRoundId)
     .flat()
     .find((bid) => bid.id === bidId)
 
-  if (!bid) {
-    throw new Error(`Bid with id ${bidId} not found`)
-  }
+  if (!bid) return null
+
   const isTokenBasedBid = bid.tributes.every((tribute) => tribute.isTokenBased)
   const totalEstimatedRewardsUsd = amountToUSDString(
     sumBy(bid.tributes, "valueInUsd")
   )
-  const hasDelta =
-    bid.usersEstimatedRewardsDeltaPercentage !== null &&
-    bid.usersEstimatedRewardsDeltaPercentage !== 0
-  const isPositive = hasDelta && bid.usersEstimatedRewardsDeltaPercentage > 0
+  const roundedPercentage = Math.round(bid.usersEstimatedRewardsDeltaPercentage)
+  const hasDelta = roundedPercentage > 0 || roundedPercentage < 0
+  const hasVotingPower = Boolean(votingPower)
+  const isPositive = roundedPercentage > 0
   const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
   const computedTooltipContent = estimatedRewardsTooltip({
     bid,
     bidDescription,
-    hasVotingPower: Boolean(votingPower),
+    hasVotingPower,
     isTokenBasedBid,
   })
 
@@ -83,7 +82,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
                 <Icon
                   name={isPositive ? "solid:arrow-up" : "solid:arrow-down"}
                 />
-                {Math.round(bid.usersEstimatedRewardsDeltaPercentage)}%
+                {roundedPercentage}%
               </span>
             )}
             {amountToUSDString(bid.usersEstimatedRewards)}

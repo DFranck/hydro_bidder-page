@@ -8,7 +8,7 @@ export enum AllowedLockupPeriodInEpochs {
   THREE_EPOCHS = 3,
 }
 
-export const telegramLink = "https://t.me/+xUzNOTZjUNw5Mzhk"
+export const HYDRO_TELEGRAM_URL = "https://t.me/+xUzNOTZjUNw5Mzhk"
 
 export const endpoints = {
   // cosmoshubtestnet: {

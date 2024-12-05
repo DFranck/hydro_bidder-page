@@ -269,5 +269,6 @@ export const fetchBackendDataWithoutAddress = unstable_cache(
   ["fetchBackendDataWithoutAddress"],
   {
     revalidate: 60 * 5, // 5 minutes
+    tags: ["fetchBackendDataWithoutAddress"],
   }
 )

@@ -1,6 +1,6 @@
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
-import { telegramLink } from "@/config"
+import { HYDRO_TELEGRAM_URL } from "@/config"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -70,7 +70,7 @@ export const Footer = () => {
           >
             <Icon name="brands:twitter" />
           </a>
-          <a href={telegramLink} target="_blank" title="Telegram">
+          <a href={HYDRO_TELEGRAM_URL} target="_blank" title="Telegram">
             <Icon name="solid:paper-plane" />
           </a>
         </div>

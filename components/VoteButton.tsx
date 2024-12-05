@@ -12,6 +12,7 @@ import { networkLimitReachedTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -74,34 +75,28 @@ export function VoteButton({
 
       setToasts([
         {
-          variant: "success",
+          variant: "working",
           message: "Vote submitted. Reloading page...",
-          revalidateTag: "fetchBackendDataWithWallet",
         },
       ])
 
+      await revalidateTag("fetchBackendDataWithWallet")
+      await revalidateTag("fetchBackendDataWithoutWallet")
+
+      setIsCelebrating(true)
+
       setTimeout(() => {
-        router.refresh()
-      }, 1500)
+        window.location.reload()
+      }, 3500)
     } catch (err: any) {
-      if (err && err?.message && err.message.includes("Request rejected")) {
-        setToasts([
-          {
-            variant: "error",
-            message: "Vote rejected",
-          },
-        ])
-        return
-      }
       setToasts([
         {
           variant: "error",
-          message: "Vote rejected",
+          message: `Vote rejected: ${err?.message ?? "Unknown error"}`,
         },
       ])
     } finally {
       setOpenChangeVoteModal(false)
-      setIsCelebrating(true)
     }
   }
 

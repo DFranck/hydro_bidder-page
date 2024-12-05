@@ -4,7 +4,8 @@ import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { revalidateTag } from "next/cache"
+import { useToasts } from "@/components/Toasts"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { ReactNode, useEffect } from "react"
 
 export function Step({
@@ -24,9 +25,28 @@ export function Step({
   isWorking?: boolean
   revalidateCache?: boolean
 }) {
+  const { setToasts } = useToasts()
+
   useEffect(() => {
     if (revalidateCache) {
-      revalidateTag("fetchBackendDataWithWallet")
+      async function revalidateTags() {
+        setToasts([
+          {
+            message: "Reloading...",
+            variant: "working",
+          },
+        ])
+
+        await revalidateTag("fetchBackendDataWithWallet")
+        await revalidateTag("fetchBackendDataWithoutWallet")
+
+        setTimeout(() => {
+          setToasts([])
+          window.location.reload()
+        }, 1500)
+      }
+
+      revalidateTags()
     }
   }, [revalidateCache])
 
