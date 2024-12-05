@@ -317,6 +317,24 @@ export const polDeployedTooltip = (
   </>
 )
 
+export const polDurationTooltip = (
+  <>
+    This represents the length of time the project will receive liquidity from
+    Hydro. You can only vote for bids with a PoL Duration that matches or is
+    shorter than your longest lockup period.{" "}
+    <StyledText
+      variant="link"
+      as={Link}
+      href="/docs/users/voting-for-projects"
+      target="_blank"
+      className="inline-flex items-center gap-1"
+    >
+      <span>Learn More</span>
+      <Icon name="solid:arrow-up-right-from-square" />
+    </StyledText>
+  </>
+)
+
 export const polRevenueTooltip = (
   <>
     This represents the total revenue generated from deployed Protocol-Owned
