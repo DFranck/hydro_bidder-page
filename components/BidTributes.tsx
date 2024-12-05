@@ -12,10 +12,9 @@ export function BidTributes({
   denomsOnly?: boolean
 }) {
   const groupedTributes = groupBy(bid.tributes, "denom")
-
   return Object.entries(groupedTributes).map(([denom, tributes]) => {
     const totalAmount = sumBy(tributes, "amount")
-    const isTokenBased = tributes[0].isTokenBased
+    const isTokenBased = tributes.every((tribute) => tribute.isTokenBased)
 
     return (
       <Tooltip
