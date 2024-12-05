@@ -270,11 +270,13 @@ export function ClientComponent({
 
   return (
     <>
-      <StatCards>
-        <StatCards.PoLAvailable />
-        <StatCards.PoLDeployed />
-        <StatCards.PoLRevenue />
-      </StatCards>
+      {process.env.CONTEXT !== "production" && (
+        <StatCards>
+          <StatCards.PoLAvailable />
+          <StatCards.PoLDeployed />
+          <StatCards.PoLRevenue />
+        </StatCards>
+      )}
 
       <ContentContainer className="gap-12 py-12">
         <div className="flex items-center justify-end">
