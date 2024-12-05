@@ -209,7 +209,7 @@ async function uncachedFetchBackendDataWithWallet({
     })
   )
 
-  return {
+  const backendDataWithWallet = {
     ...backendData,
     address,
     bidsByRoundId: augmentedBidsByRoundId,
@@ -222,6 +222,8 @@ async function uncachedFetchBackendDataWithWallet({
     votes: sanitizedVotes,
     votingPower: votingPower / 1e6,
   }
+
+  return backendDataWithWallet
 }
 
 export const fetchBackendDataWithWallet = unstable_cache(

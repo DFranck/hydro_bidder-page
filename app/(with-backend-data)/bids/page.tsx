@@ -48,8 +48,6 @@ const pointBasedTributesLabel = "Points-Based Tributes"
 export default function BidsPage() {
   const backendData = useBackendData()
 
-  console.log({ backendData })
-
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
