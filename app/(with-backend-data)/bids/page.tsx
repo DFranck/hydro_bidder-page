@@ -17,7 +17,7 @@ import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTypeTooltip,
+  bidTypeColumnTooltip,
   currentVoteShareTooltip,
   estimatedRewardsColumnTooltip,
   VOTE_SHARE_THRESHOLD,
@@ -156,7 +156,7 @@ export default function BidsPage() {
           key: "logoAndTitle",
           label: (
             <Tooltip
-              tipContents={bidTypeTooltip({
+              tipContents={bidTypeColumnTooltip({
                 isTokenBasedBid,
               })}
             >
@@ -194,8 +194,11 @@ export default function BidsPage() {
             >
               <div className="flex items-center gap-1">
                 <span>
-                  {isWalletConnected && votingPower ? "Your" : "Total"} Est.
-                  Reward
+                  {!isTokenBasedBid
+                    ? "Total Tribute"
+                    : isWalletConnected && votingPower
+                      ? "Your Est. Reward"
+                      : "Total Est. Reward"}{" "}
                 </span>
                 <Icon name="circle-info" />
               </div>

@@ -47,25 +47,42 @@ export const averageRoundsPerUserTooltip = (
   </>
 )
 
-export const bidTypeTooltip = ({
+export const baseBidTypeTooltip = ({
   isTokenBasedBid,
+  isPlural,
 }: {
   isTokenBasedBid: boolean
+  isPlural?: boolean
 }) => (
   <>
     Bids are submitted by projects.{" "}
     {isTokenBasedBid ? (
-      <>These bids use live tokens as their tribute.</>
+      <>
+        {isPlural ? "These bids use" : "This bid uses"} live tokens as their
+        tribute.
+      </>
     ) : (
       <>
-        These bids use points as their tribute because they do not yet have a
-        live token.
+        {isPlural ? "These bids use" : "This bid uses"} points as their tribute
+        because they do not yet have a live token.
       </>
     )}{" "}
     You can only vote once (per bucket per tranche) but you can switch your vote
     as many times as you want.
   </>
 )
+
+export const bidTypeColumnTooltip = ({
+  isTokenBasedBid,
+}: {
+  isTokenBasedBid: boolean
+}) => baseBidTypeTooltip({ isTokenBasedBid, isPlural: true })
+
+export const bidTypeTooltip = ({
+  isTokenBasedBid,
+}: {
+  isTokenBasedBid: boolean
+}) => baseBidTypeTooltip({ isTokenBasedBid, isPlural: false })
 
 export const currentVoteShareTooltip = (
   <>
@@ -82,22 +99,30 @@ export const estimatedRewardsColumnTooltip = ({
   hasVotingPower: boolean
   isTokenBasedBid: boolean
 }) => {
-  const rewardDescription = isTokenBasedBid
-    ? "expected USD-equivalent value of rewards"
-    : "total points offered by this project as a tribute to users"
-  const messageWithVotingPower = (
+  const universalPointSystemMessage = (
     <>
-      This is the {rewardDescription} you would receive from the bid&rsquo;s
-      tribute. Over time, the value may increase if the project adds tributes or
-      decrease if more voters choose the project.
+      This is the total points offered by this project as a tribute to users.
+      The tribute is split amongst the users that vote for this project, based
+      on their individual voting power.
     </>
   )
-  const messageWithoutVotingPower = (
+  const messageWithVotingPower = isTokenBasedBid ? (
     <>
-      This is the {rewardDescription}. Over time, the value may increase if the
-      project increases tributes. The tribute is split amongst the users that
-      vote for this project, based on their individual voting power.
+      This is the expected USD-equivalent value of rewards you would receive
+      from the bid&rsquo;s tribute. Over time, the value may increase if the
+      project adds tributes or decrease if more voters choose the project.
     </>
+  ) : (
+    universalPointSystemMessage
+  )
+  const messageWithoutVotingPower = isTokenBasedBid ? (
+    <>
+      This is the total estimated USD-equivalent value of the tribute offered by
+      the project. The tribute is split amongst the users that vote for the
+      project, based on their individual voting power.
+    </>
+  ) : (
+    universalPointSystemMessage
   )
 
   return hasVotingPower ? messageWithVotingPower : messageWithoutVotingPower
