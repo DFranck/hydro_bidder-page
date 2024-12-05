@@ -2,20 +2,17 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import { estimatedRewardsTooltip } from "@/components/ToolTips"
+import {
+  estimatedRewardsTooltip,
+  pointSystemTooltip,
+} from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { sumBy } from "lodash"
-import { ReactNode } from "react"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
+import { startCase, sumBy } from "lodash"
 import { twMerge } from "tailwind-merge"
 
-export function BidRewards({
-  bidId,
-  tooltipContent,
-}: {
-  bidId: number
-  tooltipContent?: ReactNode
-}) {
+export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
   const { bidDescriptionsByBidId, isWalletConnected, votes, votingPower } =
     backendData
@@ -26,7 +23,7 @@ export function BidRewards({
   if (!bid) {
     throw new Error(`Bid with id ${bidId} not found`)
   }
-
+  const isTokenBasedBid = bid.tributes.every((tribute) => tribute.isTokenBased)
   const totalEstimatedRewardsUsd = amountToUSDString(
     sumBy(bid.tributes, "valueInUsd")
   )
@@ -34,20 +31,40 @@ export function BidRewards({
     bid.usersEstimatedRewardsDeltaPercentage !== null &&
     bid.usersEstimatedRewardsDeltaPercentage !== 0
   const isPositive = hasDelta && bid.usersEstimatedRewardsDeltaPercentage > 0
-  const isTokenBasedBid = bid.tributes.every((tribute) => tribute.isTokenBased)
   const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
-  const computedTooltipContent =
-    tooltipContent ??
-    estimatedRewardsTooltip({
-      bid,
-      bidDescription,
-      hasVotingPower: Boolean(votingPower),
-      isTokenBasedBid,
-    })
+  const computedTooltipContent = estimatedRewardsTooltip({
+    bid,
+    bidDescription,
+    hasVotingPower: Boolean(votingPower),
+    isTokenBasedBid,
+  })
 
-  return (
+  return !isTokenBasedBid ? (
+    <Tooltip
+      tipContents={pointSystemTooltip({
+        learnMoreURL: bidDescription.pointProgramUrl,
+      })}
+    >
+      {bid.tributes.map((tribute) => (
+        <div key={tribute.denom} className="flex flex-col items-end">
+          <div className="flex items-center gap-1">
+            <Icon name="solid:gem" />
+            <span>{simplifyBigNumbers(tribute.amount)}</span>
+          </div>
+          <StyledText
+            variant="footnote"
+            as="div"
+            className="flex items-center gap-1"
+          >
+            <span>{startCase(tribute.denom)}</span>
+            <Icon name="circle-info" />
+          </StyledText>
+        </div>
+      ))}
+    </Tooltip>
+  ) : (
     <Tooltip tipContents={computedTooltipContent}>
-      {!isWalletConnected || votes.length === 0 ? (
+      {!votes || votes.length === 0 ? (
         <div className="flex items-center gap-1">
           <span>{totalEstimatedRewardsUsd}</span>
           <Icon name="circle-info" />

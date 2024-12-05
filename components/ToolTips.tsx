@@ -115,7 +115,9 @@ export const estimatedRewardsTooltip = ({
   isTokenBasedBid: boolean
 }) => {
   const { projectName } = bidDescription
-  const totalTributeValue = sumBy(bid.tributes, "valueInUsd") ?? 0
+  const totalTributeValue = isTokenBasedBid
+    ? (sumBy(bid.tributes, "valueInUsd") ?? 0)
+    : (sumBy(bid.tributes, "amount") ?? 0)
   const percentageOfTotalTributeValue =
     totalTributeValue > 0
       ? Math.round(((bid.usersEstimatedRewards ?? 0) / totalTributeValue) * 100)
@@ -124,9 +126,9 @@ export const estimatedRewardsTooltip = ({
     <strong className="text-palette-beige">
       {isTokenBasedBid
         ? // $1,234 USD
-          amountToUSDString(sumBy(bid.tributes, "valueInUsd"))
+          amountToUSDString(totalTributeValue)
         : // 1,234 POINTS
-          `${formatAmount(sumBy(bid.tributes, "amount"))} ${bid.tributes[0].denom}`}
+          `${formatAmount(totalTributeValue)} ${bid.tributes[0].denom}`}
     </strong>
   )
   const rewardDescription = isTokenBasedBid
