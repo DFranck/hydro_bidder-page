@@ -141,8 +141,9 @@ export default function LockupsPage() {
               className="block w-96 shrink-0"
             >
               <ProgressBar
-                percentage={75}
+                percentage={percentageLockedInWallet}
                 warningZone={(percentage) => percentage >= 75}
+                dangerZone={(percentage) => percentage >= 95}
               >
                 <div className="flex items-center gap-1">
                   <span>
