@@ -162,11 +162,12 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
               const assetListing = assetListWithPrices.get(funds.denom)
               const assetPrice = assetListing?.priceUsd ?? 0
               const decimals = assetListing?.decimals ?? 6
+              const amount = parseFloat(funds.amount) / 10 ** decimals
 
               return {
                 ...tribute,
                 ...funds,
-                amount: parseFloat(funds.amount) / 10 ** decimals,
+                amount,
                 bidId: proposalId,
                 denom: assetListing?.symbol ?? funds.denom,
                 isTokenBased: true as const,
@@ -174,6 +175,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
                   (parseFloat(funds.amount) / 10 ** decimals) * assetPrice,
               }
             })
+            .filter((tribute) => tribute.amount > 1)
 
           const sanitizedPointBasedTributes: SanitizedPointBasedTribute[] =
             unsanitizedBids

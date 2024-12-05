@@ -16,38 +16,41 @@ export function BidTributes({
   denomsOnly?: boolean
 }) {
   const { bidDescriptionsByBidId } = useBackendData()
-  const groupedTributes = groupBy(bid.tributes, "denom")
+  const tributesByDenom = groupBy(bid.tributes, "denom")
+  const renderedTributes = Object.entries(tributesByDenom).map(
+    ([denom, tributes]) => {
+      const totalAmount = sumBy(tributes, "amount")
+      const isTokenBasedBid = tributes.every((tribute) => tribute.isTokenBased)
+      const bidDescription = bidDescriptionsByBidId[bid.id]
 
-  return Object.entries(groupedTributes).map(([denom, tributes]) => {
-    const totalAmount = sumBy(tributes, "amount")
-    const isTokenBasedBid = tributes.every((tribute) => tribute.isTokenBased)
-    const bidDescription = bidDescriptionsByBidId[bid.id]
-
-    return (
-      <Tooltip key={denom} tipContents={bidTypeTooltip({ isTokenBasedBid })}>
-        <div className="flex flex-col items-start">
-          <div className="flex items-center gap-1 text-xl font-bold">
-            {!isTokenBasedBid && <Icon name="solid:gem" />}
-            <div>{simplifyBigNumbers(totalAmount)}</div>
-            <div>{isTokenBasedBid ? denom : startCase(denom)}</div>
+      return (
+        <Tooltip key={denom} tipContents={bidTypeTooltip({ isTokenBasedBid })}>
+          <div className="flex flex-col items-start">
+            <div className="flex items-center gap-1 text-xl font-bold">
+              {!isTokenBasedBid && <Icon name="solid:gem" />}
+              <div>{simplifyBigNumbers(totalAmount)}</div>
+              <div>{isTokenBasedBid ? denom : startCase(denom)}</div>
+            </div>
+            {!isTokenBasedBid &&
+              bidDescription &&
+              bidDescription.pointProgramUrl && (
+                <div className="text-sm">
+                  <StyledText
+                    as={Link}
+                    href={bidDescription.pointProgramUrl}
+                    variant="link"
+                    className="flex items-center gap-1"
+                  >
+                    <span>Learn More</span>
+                    <Icon name="arrow-up-right-from-square" />
+                  </StyledText>
+                </div>
+              )}
           </div>
-          {!isTokenBasedBid &&
-            bidDescription &&
-            bidDescription.pointProgramUrl && (
-              <div className="text-sm">
-                <StyledText
-                  as={Link}
-                  href={bidDescription.pointProgramUrl}
-                  variant="link"
-                  className="flex items-center gap-1"
-                >
-                  <span>Learn More</span>
-                  <Icon name="arrow-up-right-from-square" />
-                </StyledText>
-              </div>
-            )}
-        </div>
-      </Tooltip>
-    )
-  })
+        </Tooltip>
+      )
+    }
+  )
+
+  return renderedTributes.length > 0 ? renderedTributes : "–"
 }
