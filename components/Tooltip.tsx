@@ -14,6 +14,7 @@ import { useIsClient } from "usehooks-ts"
 
 export function Tooltip({
   children,
+  className,
   classNamesForTooltip,
   tipContents,
   mouseEnterDelay = 350,
@@ -71,13 +72,10 @@ export function Tooltip({
 
   return (
     <div
-      className="
-        group/tooltip
-        relative
-        z-10
-        inline-block
-        w-min
-      "
+      className={twMerge(
+        `group/tooltip relative z-10 inline-block w-min`,
+        className
+      )}
       tabIndex={0}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

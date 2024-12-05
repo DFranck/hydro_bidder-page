@@ -8,6 +8,7 @@ import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
+import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
@@ -28,7 +29,6 @@ import { useChain } from "@cosmos-kit/react"
 import { revalidateTag } from "next/cache"
 import Link from "next/link"
 import { useState } from "react"
-import { twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
   const [isConfirmingUnlockExpired, setIsConfirmingUnlockExpired] =
@@ -136,47 +136,27 @@ export default function LockupsPage() {
               md:items-center
             "
           >
-            <div className="flex items-center gap-4">
-              <div
-                className={twMerge(
-                  `h-4 w-64 overflow-hidden rounded-full`,
-                  percentageLockedInWallet >= 98
-                    ? `bg-red-500/20`
-                    : `bg-palette-beige/20`
-                )}
+            <Tooltip
+              tipContents={lockupLimitTooltip}
+              className="block w-96 shrink-0"
+            >
+              <ProgressBar
+                percentage={75}
+                warningZone={(percentage) => percentage >= 75}
               >
-                <div
-                  className={twMerge(
-                    `h-full`,
-                    percentageLockedInWallet >= 98
-                      ? `bg-red-500`
-                      : `bg-palette-beige`
-                  )}
-                  style={{
-                    width: `${percentageLockedInWallet}%`,
-                  }}
-                />
-              </div>
-
-              <Tooltip tipContents={lockupLimitTooltip}>
-                <div className="flex items-center gap-1 whitespace-nowrap">
-                  <span
-                    className={twMerge(
-                      `text-sm`,
-                      percentageLockedInWallet >= 98
-                        ? `text-red-500`
-                        : `text-palette-beige`
-                    )}
-                  >
+                <div className="flex items-center gap-1">
+                  <span>
                     {(totalLockedAtomUser / 1e6)
                       .toFixed(4)
                       .replace(".0000", "")}{" "}
-                    / {(maxLockedAtomPerWallet / 1e6).toFixed(2)} ATOM max.
+                    / {maxLockedAtomPerWallet / 1e6} ATOM max.
                   </span>
-                  <Icon name="circle-info" />
+                  <span>
+                    <Icon name="circle-info" />
+                  </span>
                 </div>
-              </Tooltip>
-            </div>
+              </ProgressBar>
+            </Tooltip>
 
             {expiredLockups.length > 0 && (
               <StyledText
