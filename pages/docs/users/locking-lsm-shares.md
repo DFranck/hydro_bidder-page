@@ -56,6 +56,18 @@ This means that a user's voting power decays over time in steps, and behaves lik
 -   Locking for longer periods (e.g., 12 months) grants more voting power than shorter periods.
 -   As lock-ups age, voting power decreases, requiring users to refresh or extend their lock-up to maintain influence.
 
+## Unlocking Your ATOM
+
+On the Lockups page, users can unlock any expired lockups. Unlocking will initiate the process of converting your Liquid Staking Module (LSM) shares back into ATOM on the Cosmos Hub, returning them to their original staked position.
+
+### How It Works:
+1. **Select Expired Lockup**: Navigate to the Lockups page and locate any lockups that have expired.
+2. **Initiate Unlocking**: Click on the "Unlock" button to begin the process.
+3. **Approve Transactions**: The system will guide you through the necessary transaction approvals to complete the conversion.
+4. **ATOM Restaked**: Once the process is complete, your LSM shares will be converted back into ATOM in your original staked position on the Cosmos Hub, preserving your staking status.
+
+This seamless process ensures that your assets are returned to their original state with minimal effort, maintaining flexibility and usability across Hydro and the Cosmos ecosystem.
+
 
 ### Example Scenarios
 

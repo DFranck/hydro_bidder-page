@@ -11,6 +11,22 @@
 * **Multiple Tranches**: Users can vote on multiple proposals if those proposals belong to different tranches (e.g., one vote for an ICS project and another for a non-ICS project).
 * **Tribute Distribution**: Once the voting round concludes, tributes (rewards) are distributed to voters based on the amount of voting power they used to support the winning proposals.
 
+## Voting Eligibility Based on PoL Duration
+
+When voting for projects, it’s important to consider the PoL Duration. Protocol-Owned Liquidity (PoL) represents the liquidity allocated by Hydro to support projects, and the PoL Duration determines how long the liquidity will remain with the project.
+
+### Key Points for Voting Eligibility:
+	•	Your locked ATOM duration must match or exceed the PoL Duration of the project you want to vote for.
+	•	For example, if a project has a PoL Duration of 3 months but your locked ATOM is only for 1 month, you won’t be able to vote for that project.
+	•	To vote for projects with longer PoL durations, extend your ATOM lockup to meet or exceed the duration required.
+
+### How to Extend Your Lockup:
+	1.	Navigate to your lockup dashboard on the Hydro platform.
+	2.	Choose the “Edit Lockup” option and select the desired duration.
+	3.	Confirm the transaction in your wallet to finalize the extension.
+
+By aligning your lockup duration with project PoL Durations, you can participate in the governance process and support the projects you believe in.
+
 ## Tributes
 Tributes are distributed at the end of each voting round based on the amount of voting power locked in support of each project by each user. Here’s how the process works:
 1. **Tribute Offering**: Projects offer tributes to incentivize users to lock their voting power into the project.
