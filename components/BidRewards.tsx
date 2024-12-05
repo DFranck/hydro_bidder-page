@@ -48,7 +48,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
       {bid.tributes.map((tribute) => (
         <div key={tribute.denom} className="flex flex-col items-end">
           <div className="flex items-center gap-1">
-            <Icon name="solid:gem" />
+            {!tribute.isTokenBased && <Icon name="solid:gem" />}
             <span>{simplifyBigNumbers(tribute.amount)}</span>
           </div>
           <StyledText
