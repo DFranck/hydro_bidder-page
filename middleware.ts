@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 export function middleware(request: NextRequest) {
+  const hostname = request.headers.get("host")
   const pathname = request.nextUrl.pathname
 
   // redirecting /voting -> /bids
@@ -12,9 +13,15 @@ export function middleware(request: NextRequest) {
     return response
   }
 
-  // Redirects below only work in production environments
-  if (process.env.CONTEXT !== "production") {
+  // Redirects below in development environment are not neede
+  if (process.env.NODE_ENV === "development") {
     return NextResponse.next()
+  }
+
+  // TODO: remove this hardcoded redirect
+  // redirecting /rewards -> /
+  if (pathname.startsWith("/rewards")) {
+    return NextResponse.redirect(new URL("/", request.url))
   }
 
   // TODO: remove this hardcoded redirect
