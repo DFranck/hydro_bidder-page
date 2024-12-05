@@ -150,7 +150,7 @@ export function VoteButton({
         onClick={() => setIsTryingToVoteWithExpiredLockups(true)}
       >
         <Icon name="solid:rotate-right" />
-        <span>Edit Lockups to Vote</span>
+        <span>Extend Lockups to Vote</span>
       </StyledText>
     )
   } else if (hasVotedForBid) {
