@@ -21,7 +21,7 @@ export function AverageRoundApr() {
     "valueInUsd"
   )
   const averageAPR =
-    (totalTributeValue / (totalLockedAtomGlobal / 1e6) / atomPrice) * 12
+    (totalTributeValue / (totalLockedAtomGlobal / 1e6) / atomPrice) * 12 || 0
 
   return (
     <StatCard
