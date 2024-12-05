@@ -22,6 +22,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
+import { range } from "lodash"
 import { unstable_cache } from "next/dist/server/web/spec-extension/unstable-cache"
 
 export interface BidFromContract extends Proposal {}
@@ -92,7 +93,6 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
   const [
     {
       constants: {
-        is_in_pilot_mode: currentRoundIsPilot,
         lock_epoch_length: lockupEpochLength,
         max_locked_tokens: maxLockedAtomGlobal,
       },
@@ -133,15 +133,18 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
   )
   const isAtMaxLockupCapacity = percentageLockedOverall === 100
 
-  // With currentRoundId, we can fetch all bids for all rounds
+  // [0, 1, 2, ...currentRoundId]
+  const allRoundIds = range(0, currentRoundId + 1)
+
   await Promise.all(
-    Array.from({ length: currentRoundId + 1 }, (_, roundId) =>
+    allRoundIds.map((roundId) =>
       Promise.all(
         tranches.map(async (tranche) => {
           const { proposals: unsanitizedBids } =
-            await hydroQueryClient.topNProposals({
-              numberOfProposals: 50,
+            await hydroQueryClient.roundProposals({
+              limit: 50,
               roundId,
+              startFrom: 0,
               trancheId: tranche.id,
             })
 
@@ -246,7 +249,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     bidsByRoundId,
     currentRoundEndDate,
     currentRoundId,
-    currentRoundIsPilot,
+    currentRoundIsPilot: true,
     currentRoundTranches: tranches,
     isAtMaxLockupCapacity,
     lockupEpochLength,

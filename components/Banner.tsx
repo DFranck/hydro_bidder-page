@@ -9,7 +9,6 @@ import { twMerge } from "tailwind-merge"
 export function Banner() {
   const backendData = useBackendData()
   const { currentRoundId, isAtMaxLockupCapacity, isLoading } = backendData
-  console.log({ isLoading, headerValue: isAtMaxLockupCapacity })
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const Banners = {
     maxCapacity: {
