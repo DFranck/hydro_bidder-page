@@ -1,8 +1,12 @@
+import { Icon } from "@/components/Icon"
+import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { bidTypeTooltip } from "@/components/ToolTips"
 import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { groupBy, sumBy } from "lodash"
+import { groupBy, startCase, sumBy } from "lodash"
+import Link from "next/link"
 
 export function BidTributes({
   bid,
@@ -11,22 +15,38 @@ export function BidTributes({
   bid: FullyAugmentedBid
   denomsOnly?: boolean
 }) {
+  const { bidDescriptionsByBidId } = useBackendData()
   const groupedTributes = groupBy(bid.tributes, "denom")
+
   return Object.entries(groupedTributes).map(([denom, tributes]) => {
     const totalAmount = sumBy(tributes, "amount")
-    const isTokenBased = tributes.every((tribute) => tribute.isTokenBased)
+    const isTokenBasedBid = tributes.every((tribute) => tribute.isTokenBased)
+    const bidDescription = bidDescriptionsByBidId[bid.id]
 
     return (
-      <Tooltip
-        key={denom}
-        tipContents={bidTypeTooltip({ isTokenBasedBid: isTokenBased })}
-      >
-        <p className="break-words text-xl font-bold not-italic">
-          <span>
-            {simplifyBigNumbers(totalAmount)}&nbsp;
-            {denom}
-          </span>
-        </p>
+      <Tooltip key={denom} tipContents={bidTypeTooltip({ isTokenBasedBid })}>
+        <div className="flex flex-col items-start">
+          <div className="flex items-center gap-1 text-xl font-bold">
+            {!isTokenBasedBid && <Icon name="solid:gem" />}
+            <div>{simplifyBigNumbers(totalAmount)}</div>
+            <div>{isTokenBasedBid ? denom : startCase(denom)}</div>
+          </div>
+          {!isTokenBasedBid &&
+            bidDescription &&
+            bidDescription.pointProgramUrl && (
+              <div className="text-sm">
+                <StyledText
+                  as={Link}
+                  href={bidDescription.pointProgramUrl}
+                  variant="link"
+                  className="flex items-center gap-1"
+                >
+                  <span>Learn More</span>
+                  <Icon name="arrow-up-right-from-square" />
+                </StyledText>
+              </div>
+            )}
+        </div>
       </Tooltip>
     )
   })
