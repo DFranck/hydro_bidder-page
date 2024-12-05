@@ -25,6 +25,12 @@ export function middleware(request: NextRequest) {
   }
 
   // TODO: remove this hardcoded redirect
+  // redirecting /metrics -> /
+  if (pathname.startsWith("/metrics")) {
+    return NextResponse.redirect(new URL("/", request.url))
+  }
+
+  // TODO: remove this hardcoded redirect
   // redirecting /airdrops -> /
   if (pathname.startsWith("/airdrops")) {
     return NextResponse.redirect(new URL("/", request.url))
