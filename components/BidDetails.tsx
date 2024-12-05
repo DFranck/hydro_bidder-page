@@ -213,8 +213,13 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             <div>
-              <StyledText as="h3" variant="label">
-                Tribute to Voters
+              <StyledText
+                as="h3"
+                variant="label"
+                className="flex items-center gap-1"
+              >
+                <span>Tribute to Voters</span>
+                <Icon name="circle-info" />
               </StyledText>
               <div className="max-w-64 overflow-x-auto">
                 <BidTributes bid={bid} />
@@ -236,7 +241,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                   not-italic
                 "
               >
-                <span>{Math.round(Math.round(bid.percentage * 100))}%</span>
+                <span>{Math.round(bid.percentage)}%</span>
                 {bid.percentage < VOTE_SHARE_THRESHOLD && (
                   <Tooltip tipContents={voteThresholdTooltip}>
                     <span
