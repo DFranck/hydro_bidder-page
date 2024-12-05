@@ -13,8 +13,11 @@ export function middleware(request: NextRequest) {
     return response
   }
 
-  // Redirects below in development environment are not neede
-  if (process.env.NODE_ENV === "development") {
+  // Redirects below in development environment are not needed
+  if (
+    process.env.NODE_ENV === "development" ||
+    process.env.CONTEXT !== "production"
+  ) {
     return NextResponse.next()
   }
 
