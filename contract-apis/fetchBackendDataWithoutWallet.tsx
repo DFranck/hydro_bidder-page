@@ -46,7 +46,9 @@ export interface BackendData {
   currentRoundId: number
   currentRoundIsPilot: boolean
   currentRoundTranches: Tranche[]
+  isAtMaxLockupCapacity: boolean
   lockupEpochLength: number
+  percentageLockedOverall: number
   maxLockedAtomGlobal: number
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsForPreHydroBids: SanitizedBidFromNumia[]
@@ -125,6 +127,11 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
   })
 
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
+
+  const percentageLockedOverall = Math.round(
+    (totalLockedAtomGlobal / maxLockedAtomGlobal) * 100
+  )
+  const isAtMaxLockupCapacity = percentageLockedOverall === 100
 
   // With currentRoundId, we can fetch all bids for all rounds
   await Promise.all(
@@ -241,11 +248,13 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     currentRoundId,
     currentRoundIsPilot,
     currentRoundTranches: tranches,
-    lockupEpochLength: lockupEpochLength,
+    isAtMaxLockupCapacity,
+    lockupEpochLength,
     maxLockedAtomGlobal,
     metricsGlobal: metrics,
     metricsForPreHydroBids: preHydroBids,
     metricsForPostHydroBids: postHydroBids,
+    percentageLockedOverall,
     totalLockedAtomGlobal,
   }
 }
