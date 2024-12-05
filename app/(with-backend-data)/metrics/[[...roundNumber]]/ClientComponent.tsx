@@ -18,6 +18,7 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { pluralize } from "@/lib/pluralize"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import { sumBy, uniq } from "lodash"
 import Image from "next/image"
@@ -92,7 +93,15 @@ export function ClientComponent({
           )}
         </InvisibleLink>
       ),
-      duration: <InvisibleLink href={rowURL}>{bid.durationDays}</InvisibleLink>,
+      duration: (
+        <InvisibleLink href={rowURL}>
+          {pluralize({
+            count: Math.round(bid.durationDays / 30),
+            prefixCount: true,
+            singular: "month",
+          })}
+        </InvisibleLink>
+      ),
       polRewards: (
         <InvisibleLink href={rowURL}>
           {"currentAllocationAmount" in bid &&
