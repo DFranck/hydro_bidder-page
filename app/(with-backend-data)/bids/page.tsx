@@ -210,7 +210,16 @@ export default function BidsPage() {
           propsForCells: {
             className: classNames.classNamesForCells,
           },
-          customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
+          customValueGetter: (row) => {
+            const isTokenBasedBid = row._bid.tributes.every(
+              (t) => t.isTokenBased
+            )
+            return isTokenBasedBid
+              ? isWalletConnected
+                ? row._bid.usersEstimatedRewards
+                : sumBy(row._bid.tributes, "valueInUsd")
+              : sumBy(row._bid.tributes, "amount")
+          },
         },
         {
           key: "currentVoteShare",
