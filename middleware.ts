@@ -2,7 +2,6 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 export function middleware(request: NextRequest) {
-  const hostname = request.headers.get("host")
   const pathname = request.nextUrl.pathname
 
   // redirecting /voting -> /bids
@@ -13,11 +12,7 @@ export function middleware(request: NextRequest) {
     return response
   }
 
-  // Redirects below in development environment are not needed
-  if (
-    process.env.NODE_ENV === "development" ||
-    process.env.CONTEXT !== "production"
-  ) {
+  if (process.env.CONTEXT !== "production") {
     return NextResponse.next()
   }
 
