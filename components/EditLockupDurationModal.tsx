@@ -189,7 +189,7 @@ export function EditLockupDurationModal({
                       text-palette-beige
                     "
                   >
-                    {formatAmount(lockup.funds.amount)}
+                    {formatAmount(lockup.funds.amount, 0)}
                   </div>
                 </div>
 
