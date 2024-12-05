@@ -21,7 +21,6 @@ import { useChain } from "@cosmos-kit/react"
 import { sumBy } from "lodash"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
-import { twMerge } from "tailwind-merge"
 
 export default function RewardsPage() {
   const { setToasts } = useToasts()
@@ -208,32 +207,34 @@ export default function RewardsPage() {
 
   async function handleClickClaimNow(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault()
+
     setToasts([
       {
-        message: "Claiming rewards...",
+        message: `Claiming rewards...`,
         variant: "working",
       },
     ])
 
-    await Promise.all(
-      selectedBidIds.map(async (bidId) => {
-        const bid = bidsByRoundId[currentRoundId].find(
-          (bid) => bid.id === bidId
-        )
+    for (const bidId of selectedBidIds) {
+      const bid = bidsByRoundId[currentRoundId].find((bid) => bid.id === bidId)
 
-        if (!bid) return
+      if (!bid) continue
 
-        await executeWalletClaimRewards(
-          getSigningCosmWasmClient,
-          address!,
-          Number(bid.roundId),
-          bid.trancheId,
-          Number(bid.id)
-        )
-      })
-    )
+      await executeWalletClaimRewards(
+        getSigningCosmWasmClient,
+        address!,
+        Number(bid.roundId),
+        bid.trancheId,
+        Number(bid.id)
+      )
+    }
 
-    setToasts([])
+    setToasts([
+      {
+        message: `Rewards claimed successfully`,
+        variant: "success",
+      },
+    ])
   }
 
   return (
@@ -245,27 +246,6 @@ export default function RewardsPage() {
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <div
-          className={twMerge(
-            "flex items-center justify-end",
-            rows.length > 0 ? "" : "hidden"
-          )}
-        >
-          <h2 className="sr-only">Your Rewards</h2>
-
-          <div className="flex items-center gap-6">
-            <StyledText
-              as="button"
-              variant="button.primary"
-              onClick={handleClickClaimRewards.bind(null, {
-                bidIds: allBidIdsFromPreviousRounds,
-              })}
-            >
-              Claim All Rewards
-            </StyledText>
-          </div>
-        </div>
-
         <BlurryBackdropBox>
           {rows.length > 0 ? (
             <StyledTable columns={columns} rows={rows} />
@@ -305,6 +285,7 @@ export default function RewardsPage() {
                     type="radio"
                     name="claimType"
                     value="native"
+                    defaultChecked={true}
                   />
                   Claim rewards in native token
                 </StyledText>

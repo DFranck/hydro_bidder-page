@@ -55,8 +55,6 @@ export default function AirdropsPage() {
       projectName,
       projectDetails,
       confirmationStatus,
-      eligibilitySummary,
-      nextSteps,
       actionType,
       actionLabel,
       actionURL,
@@ -100,8 +98,6 @@ export default function AirdropsPage() {
           />
         </div>
       ),
-      eligibilitySummary: <MarkdownContainer content={eligibilitySummary} />,
-      nextSteps: <MarkdownContainer content={nextSteps} />,
       action: (
         <CellContentRenderer
           descriptor={{
@@ -137,22 +133,6 @@ export default function AirdropsPage() {
         className: "relative",
       },
       customValueGetter: (row) => row._airdropDescriptor[0],
-    },
-    {
-      key: "eligibilitySummary",
-      label: "Eligibility Summary",
-      textAlign: "center",
-      propsForCells: {
-        className: "relative text-balance",
-      },
-    },
-    {
-      key: "nextSteps",
-      label: "Next Steps",
-      textAlign: "center",
-      propsForCells: {
-        className: "relative text-balance",
-      },
     },
     {
       key: "action",
