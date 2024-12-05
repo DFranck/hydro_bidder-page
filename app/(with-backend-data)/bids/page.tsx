@@ -20,6 +20,7 @@ import {
   bidTypeColumnTooltip,
   currentVoteShareTooltip,
   estimatedRewardsColumnTooltip,
+  polDurationTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -172,7 +173,14 @@ export default function BidsPage() {
         },
         {
           key: "deploymentDuration",
-          label: "PoL Duration",
+          label: (
+            <Tooltip tipContents={polDurationTooltip}>
+              <div className="flex items-center gap-1">
+                <span>PoL Duration</span>
+                <Icon name="circle-info" />
+              </div>
+            </Tooltip>
+          ),
           isSortable: true,
           textAlign: "right",
           initialSortDirection: "DESC",
