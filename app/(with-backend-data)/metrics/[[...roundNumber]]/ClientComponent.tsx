@@ -18,9 +18,8 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { pluralize } from "@/lib/pluralize"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { sumBy } from "lodash"
+import { sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -33,13 +32,8 @@ export function ClientComponent({
   requestedRoundNumberUnderHood: number | null
   isPreHydro: boolean
 }) {
-  const {
-    bidsByRoundId,
-    metricsForPreHydroBids,
-    metricsForPostHydroBids,
-    bidDescriptionsByBidId,
-    currentRoundId,
-  } = useBackendData()
+  const { metricsForPreHydroBids, metricsForPostHydroBids, currentRoundId } =
+    useBackendData()
 
   if (
     requestedRoundNumberUnderHood &&
@@ -48,9 +42,15 @@ export function ClientComponent({
     notFound()
   }
 
+  const postHydroRoundIdsWithBidData = uniq(
+    metricsForPostHydroBids.map((bid) => Number(bid.roundId))
+  )
+
   const bidsToRender = isPreHydro
     ? metricsForPreHydroBids
-    : metricsForPostHydroBids
+    : metricsForPostHydroBids.filter(
+        (bid) => bid.roundId === requestedRoundNumberUnderHood
+      )
 
   const rows = bidsToRender.map((bid) => {
     const rowURL = isPreHydro
@@ -92,19 +92,7 @@ export function ClientComponent({
           )}
         </InvisibleLink>
       ),
-      duration: (
-        <InvisibleLink href={rowURL}>
-          {(() => {
-            const monthCount = parseFloat((durationDays / 30).toFixed(1))
-
-            return `${monthCount > 0 ? "~" : ""}${pluralize({
-              count: monthCount,
-              singular: "month",
-              prefixCount: true,
-            })}`
-          })()}
-        </InvisibleLink>
-      ),
+      duration: <InvisibleLink href={rowURL}>{bid.durationDays}</InvisibleLink>,
       polRewards: (
         <InvisibleLink href={rowURL}>
           {"currentAllocationAmount" in bid &&
@@ -146,6 +134,7 @@ export function ClientComponent({
               {amountToUSDString(bid.onchainTributeUsdc)}
             </div>
           )}
+          {isPreHydro && <div className="text-sm opacity-60">0</div>}
         </InvisibleLink>
       ),
       status: <InvisibleLink href={rowURL}>{status}</InvisibleLink>,
@@ -292,31 +281,29 @@ export function ClientComponent({
           <h2 className="sr-only">PoL Metrics by Round</h2>
 
           <div>
-            {[null, ...Object.keys(bidsByRoundId).map(Number)].map(
-              (roundNumber) => {
-                const isActive = roundNumber === requestedRoundNumberUnderHood
-                return (
-                  <StyledText
-                    as={Link}
-                    variant={isActive ? "button.primary" : "button.secondary"}
-                    href={`/metrics/${roundNumber === null ? "" : roundNumber + 1}`}
-                    key={roundNumber ?? "pre-hydro"}
-                    className={twMerge(
-                      `
-                        rounded-none
-                        first:rounded-l-full
-                        last:rounded-r-full
-                      `,
-                      !isActive && "opacity-60"
-                    )}
-                  >
-                    {roundNumber === null
-                      ? "Pre-Hydro"
-                      : `Round ${roundNumber + 1}`}
-                  </StyledText>
-                )
-              }
-            )}
+            {[null, ...postHydroRoundIdsWithBidData].map((roundNumber) => {
+              const isActive = roundNumber === requestedRoundNumberUnderHood
+              return (
+                <StyledText
+                  as={Link}
+                  variant={isActive ? "button.primary" : "button.secondary"}
+                  href={`/metrics/${roundNumber === null ? "" : roundNumber + 1}`}
+                  key={roundNumber ?? "pre-hydro"}
+                  className={twMerge(
+                    `
+                      rounded-none
+                      first:rounded-l-full
+                      last:rounded-r-full
+                    `,
+                    !isActive && "opacity-60"
+                  )}
+                >
+                  {roundNumber === null
+                    ? "Pre-Hydro"
+                    : `Round ${roundNumber + 1}`}
+                </StyledText>
+              )
+            })}
           </div>
         </div>
 

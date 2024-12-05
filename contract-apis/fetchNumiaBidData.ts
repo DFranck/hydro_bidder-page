@@ -35,10 +35,15 @@ export interface BidFromNumia {
 export type SanitizedBidFromNumia = CamelCaseKeys<
   Omit<
     BidFromNumia,
-    "offchain_tribute" | "onchain_tribute_assets" | "tranche" | "project"
+    | "offchain_tribute"
+    | "onchain_tribute_assets"
+    | "tranche"
+    | "project"
+    | "round"
   > & {
     projectName: string
     tranche: number
+    roundId: number | "pre-hydro"
     offchain_tribute: OffchainTributeFromNumia[]
     onchain_tribute_assets: OnchainTributeFromNumia[]
   }
@@ -62,6 +67,8 @@ function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
     ...bid,
     projectName: bid.project,
     tranche: Number(bid.tranche),
+    roundId:
+      bid.round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(bid.round),
     offchain_tribute: (
       JSON.parse(bid.offchain_tribute) as OffchainTributeFromNumia[]
     )
@@ -96,10 +103,10 @@ export async function fetchNumiaBidData(): Promise<{
 
   const sanitizedBids = bids.map(sanitizeBid)
   const postHydroBids = sanitizedBids.filter(
-    (bid) => bid.round.toLowerCase() !== "pre-hydro"
+    (bid) => bid.roundId !== "pre-hydro"
   )
   const preHydroBids = sanitizedBids.filter(
-    (bid) => bid.round.toLowerCase() === "pre-hydro"
+    (bid) => bid.roundId === "pre-hydro"
   )
 
   return {
