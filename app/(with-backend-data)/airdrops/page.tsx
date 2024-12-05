@@ -160,7 +160,7 @@ export default function AirdropsPage() {
         <StatCards.AverageRoundsPerUser />
       </StatCards>
 
-      <ContentContainer className="gap-12 py-12">
+      <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox className="flex flex-col gap-12">
           <div className="grid grid-cols-[auto,1fr] gap-12 px-6 py-6">
             <div className="flex flex-col gap-6">
