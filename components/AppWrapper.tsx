@@ -1,13 +1,26 @@
 import LoadingState from "@/app/loading"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
 import { QueryClientProvider } from "@/components/QueryClientProvider"
 import { ScrollIndicator } from "@/components/ScrollIndicator"
 import { ToastContextProvider } from "@/components/Toasts"
 import { WalletProvider } from "@/components/WalletProvider"
+import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataWithoutWallet"
+import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import { ReactNode } from "react"
 
-export async function AppWrapper({ children }: { children: ReactNode }) {
+export async function AppWrapper({
+  children,
+  withBackendData,
+}: {
+  children: ReactNode
+  withBackendData?: boolean
+}) {
+  const backendData = withBackendData
+    ? await fetchBackendDataWithoutAddress()
+    : null
+
   return (
     <WalletProvider>
       <QueryClientProvider>
@@ -34,9 +47,18 @@ export async function AppWrapper({ children }: { children: ReactNode }) {
               grid-rows-[auto_1fr_auto]
             "
           >
-            <Header />
-            <div>{children}</div>
-            <Footer />
+            <ConditionalWrapper
+              condition={Boolean(withBackendData && backendData !== null)}
+              wrapper={(children) => (
+                <BackendDataContextProvider backendData={backendData!}>
+                  {children}
+                </BackendDataContextProvider>
+              )}
+            >
+              <Header />
+              <div>{children}</div>
+              <Footer />
+            </ConditionalWrapper>
           </div>
           <ScrollIndicator />
         </ToastContextProvider>

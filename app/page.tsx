@@ -192,7 +192,7 @@ export default function Home() {
   }
 
   return (
-    <AppWrapper>
+    <AppWrapper withBackendData={false}>
       <main
         className="
           flex
