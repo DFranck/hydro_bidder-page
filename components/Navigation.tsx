@@ -199,41 +199,59 @@ export default function Navigation() {
           </Link>
         </ConditionalWrapper>
 
-        <Tooltip tipContents={comingSoonTooltip}>
+        <ConditionalWrapper
+          condition={process.env.CONTEXT === "production"}
+          wrapper={(children) => (
+            <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
+          )}
+        >
           <Link
             href="/rewards"
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              "pointer-events-none opacity-60"
+              process.env.CONTEXT === "production" &&
+                "pointer-events-none opacity-60"
             )}
           >
             Rewards
           </Link>
-        </Tooltip>
+        </ConditionalWrapper>
 
-        <Tooltip tipContents={comingSoonTooltip}>
+        <ConditionalWrapper
+          condition={process.env.CONTEXT === "production"}
+          wrapper={(children) => (
+            <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
+          )}
+        >
           <Link
             href="/metrics"
             className={twMerge(
               navigationMenuTriggerStyle("/metrics"),
-              "pointer-events-none opacity-60"
+              process.env.CONTEXT === "production" &&
+                "pointer-events-none opacity-60"
             )}
           >
             Metrics
           </Link>
-        </Tooltip>
+        </ConditionalWrapper>
 
-        <Tooltip tipContents={comingSoonTooltip}>
+        <ConditionalWrapper
+          condition={process.env.CONTEXT === "production"}
+          wrapper={(children) => (
+            <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
+          )}
+        >
           <Link
             href="/airdrops"
             className={twMerge(
               navigationMenuTriggerStyle("/airdrops"),
-              "pointer-events-none opacity-60"
+              process.env.CONTEXT === "production" &&
+                "pointer-events-none opacity-60"
             )}
           >
             Airdrops
           </Link>
-        </Tooltip>
+        </ConditionalWrapper>
 
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>
