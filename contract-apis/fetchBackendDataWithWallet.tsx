@@ -114,10 +114,10 @@ async function uncachedFetchBackendDataWithWallet({
   ])
 
   // [0, 1, 2, ...currentRoundId]
-  const previousRoundIds = range(0, currentRoundId + 1)
+  const allRoundIds = range(0, currentRoundId + 1)
 
   const votes = await Promise.all(
-    previousRoundIds.map(async (roundId) =>
+    allRoundIds.map(async (roundId) =>
       Promise.all(
         currentRoundTranches.map(async (tranche) => {
           let fetchedVotes: VoteWithPower[] = []
