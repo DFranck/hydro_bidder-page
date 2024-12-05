@@ -8,19 +8,16 @@ import { StatCard } from "../StatCard"
 export function TotalAtomLocked() {
   const {
     isLoading,
-    totalLockedAtomGlobal,
+    isAtMaxLockupCapacity,
     maxLockedAtomGlobal,
-    metricsGlobal,
+    percentageLockedOverall,
+    totalLockedAtomGlobal,
   } = useBackendData()
-  const { currentRoundTotalAtomLocked } = metricsGlobal
-  const percentageLocked = Math.round(
-    (currentRoundTotalAtomLocked / maxLockedAtomGlobal) * 100
-  )
 
   return (
     <StatCard
       className={twMerge(
-        percentageLocked === 100 &&
+        isAtMaxLockupCapacity &&
           `
             bg-gradient-to-t
             from-palette-red/80
@@ -34,7 +31,7 @@ export function TotalAtomLocked() {
       title={<div className="flex items-center gap-1">Total ATOM in Hydro</div>}
       subTitle={
         <>
-          <strong>{percentageLocked}%</strong> of{" "}
+          <strong>{percentageLockedOverall}%</strong> of{" "}
           <strong>{formatAmount(maxLockedAtomGlobal)}</strong> max.
         </>
       }

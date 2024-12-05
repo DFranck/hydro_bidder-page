@@ -11,26 +11,21 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
 export function PopupOnMaxReached() {
-  const {
-    currentRoundId,
-    currentRoundIsPilot,
-    totalLockedAtomGlobal,
-    maxLockedAtomGlobal,
-  } = useBackendData()
+  const { currentRoundId, currentRoundIsPilot, isAtMaxLockupCapacity } =
+    useBackendData()
   const [isOpen, setIsOpen] = useState(false)
   const [dontShowAgain, setDontShowAgain] = useLocalStorage(
     "dont-show-max-reached-popup-again",
     false
   )
-  const isAtMaxCapacity = totalLockedAtomGlobal >= maxLockedAtomGlobal
 
   useEffect(() => {
-    if (dontShowAgain || !isAtMaxCapacity) {
+    if (dontShowAgain || !isAtMaxLockupCapacity) {
       return
     }
 
     setIsOpen(true)
-  }, [dontShowAgain, isAtMaxCapacity])
+  }, [dontShowAgain, isAtMaxLockupCapacity])
 
   function handleModalWindowClose() {
     setIsOpen(false)
