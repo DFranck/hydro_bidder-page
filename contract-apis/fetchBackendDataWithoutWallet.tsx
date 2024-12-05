@@ -1,7 +1,7 @@
 "use server"
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import { Coin, Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
+import { Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { fetchAssetListWithPrices } from "@/contract-apis/fetchAssetListWithPrices"
 import {
@@ -35,7 +35,7 @@ export interface AugmentedBidFromContract
   deploymentDurationInEpochs: number
   deploymentDurationInNanos: number
   percentage: number
-  tributes: AugmentedTribute[]
+  tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
 }
 
 export interface BackendData {
@@ -54,12 +54,25 @@ export interface BackendData {
   totalLockedAtomGlobal: number
 }
 
-export interface AugmentedTribute
-  extends Omit<CamelCaseKeys<Tribute>, "funds">,
-    Omit<CamelCaseKeys<Coin>, "amount"> {
+export type SanitizedTokenBasedTribute = Omit<
+  CamelCaseKeys<Tribute>,
+  "funds" | "proposalId"
+> & {
   amount: number
+  bidId: number
+  denom: string
   valueInUsd: number
-  isTokenBased: boolean
+  isTokenBased: true
+}
+
+export type SanitizedPointBasedTribute = {
+  amount: number
+  bidId: number
+  denom: string
+  isTokenBased: false
+  roundId: number
+  trancheId: number
+  valueInUsd: number
 }
 
 async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
@@ -118,23 +131,24 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
     Array.from({ length: currentRoundId + 1 }, (_, roundId) =>
       Promise.all(
         tranches.map(async (tranche) => {
-          const { proposals: bids } = await hydroQueryClient.topNProposals({
-            numberOfProposals: 50,
-            roundId,
-            trancheId: tranche.id,
-          })
+          const { proposals: unsanitizedBids } =
+            await hydroQueryClient.topNProposals({
+              numberOfProposals: 50,
+              roundId,
+              trancheId: tranche.id,
+            })
 
           // Fetch tributes for all bids
-          const tributes = (
+          const sanitizedTokenBasedTributes: SanitizedTokenBasedTribute[] = (
             await Promise.all(
-              bids.map((bid) =>
+              unsanitizedBids.map((bid) =>
                 fetchProposalTributes(roundId, tranche.id, bid.proposal_id)
               )
             )
           )
             .flat()
             .map(keysFromSnakeToCamelCase)
-            .map(({ funds, ...tribute }) => {
+            .map(({ funds, proposalId, ...tribute }) => {
               const assetListing = assetListWithPrices.get(funds.denom)
               const assetPrice = assetListing?.priceUsd ?? 0
               const decimals = assetListing?.decimals ?? 6
@@ -143,46 +157,77 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
                 ...tribute,
                 ...funds,
                 amount: parseFloat(funds.amount) / 10 ** decimals,
+                bidId: proposalId,
                 denom: assetListing?.symbol ?? funds.denom,
+                isTokenBased: true as const,
                 valueInUsd:
                   (parseFloat(funds.amount) / 10 ** decimals) * assetPrice,
               }
             })
 
-          // Add tributes to every bid
-          const sanitizedBidsWithTributes = bids
-            .map(keysFromSnakeToCamelCase)
-            .map(({ deploymentDuration, proposalId, ...bid }) => ({
-              ...bid,
-              id: proposalId,
-              deploymentDurationInEpochs: deploymentDuration,
-              deploymentDurationInNanos: deploymentDuration * lockupEpochLength,
-              description:
-                bidDescriptionsByBidId[proposalId]?.description ??
-                bid.description,
-              percentage: Number(bid.percentage),
-              title: bidDescriptionsByBidId[proposalId]?.title ?? bid.title,
-              tributes: tributes
-                .filter(
-                  (tribute) => Number(tribute.proposalId) === Number(proposalId)
-                )
-                .map((tribute) => {
-                  const isTokenBased =
-                    !bidDescriptionsByBidId[proposalId]?.points?.[0]
+          const sanitizedPointBasedTributes: SanitizedPointBasedTribute[] =
+            unsanitizedBids
+              .map((bid) => {
+                const bidDescription = bidDescriptionsByBidId[bid.proposal_id]
 
-                  return {
-                    ...tribute,
-                    amount: Number(tribute.amount),
-                    isTokenBased,
-                  }
-                }),
-            }))
+                if (!bidDescription) {
+                  return null
+                }
+
+                const hasPoints =
+                  bidDescription.points && Array.isArray(bidDescription.points)
+
+                if (!hasPoints) {
+                  return null
+                }
+
+                const [amount, denom] = bidDescription.points!
+                const assetListing = assetListWithPrices.get(denom)
+                const assetPrice = assetListing?.priceUsd ?? 0
+                const decimals = assetListing?.decimals ?? 6
+
+                return {
+                  amount,
+                  bidId: bid.proposal_id,
+                  denom,
+                  isTokenBased: false as const,
+                  roundId,
+                  trancheId: tranche.id,
+                  valueInUsd: (amount / 10 ** decimals) * assetPrice,
+                }
+              })
+              .filter((b) => b !== null)
+
+          // Add tributes to every bid
+          const bidsAugmentedWithTributes = unsanitizedBids
+            .map(keysFromSnakeToCamelCase)
+            .map(({ deploymentDuration, proposalId, ...bid }) => {
+              const bidDescription = bidDescriptionsByBidId[proposalId]
+              const description = bidDescription?.description ?? bid.description
+              const title = bidDescription?.title ?? bid.title
+              const bidTributes = [
+                ...sanitizedTokenBasedTributes,
+                ...sanitizedPointBasedTributes,
+              ].filter((tribute) => tribute.bidId === proposalId)
+
+              return {
+                ...bid,
+                id: proposalId,
+                deploymentDurationInEpochs: deploymentDuration,
+                deploymentDurationInNanos:
+                  deploymentDuration * lockupEpochLength,
+                description,
+                percentage: Number(bid.percentage),
+                title,
+                tributes: bidTributes,
+              }
+            })
 
           if (!(roundId in bidsByRoundId)) {
             bidsByRoundId[roundId] = []
           }
 
-          bidsByRoundId[roundId].push(...sanitizedBidsWithTributes)
+          bidsByRoundId[roundId].push(...bidsAugmentedWithTributes)
         })
       )
     )
