@@ -17,7 +17,7 @@ export function YourTotalAtomLocked() {
       isLoading={isLoading}
       value={
         <>
-          {(totalLockedAtomUser / 1e6).toLocaleString("en-US", {
+          {(totalLockedAtomUser).toLocaleString("en-US", {
             maximumFractionDigits: 4,
           })}
         </>
