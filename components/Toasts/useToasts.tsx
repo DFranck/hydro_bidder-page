@@ -17,7 +17,6 @@ export interface Toast {
   _id?: string
   isDismissible?: boolean
   message: ReactNode
-  revalidateTag?: string
   variant: keyof (typeof classNames)["variants"]
 }
 

@@ -25,8 +25,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
 import { pluralize } from "@/lib/pluralize"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import { revalidateTag } from "next/cache"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -85,12 +85,14 @@ export default function LockupsPage() {
       setToasts([
         {
           message: `${pluralizedLockupText} unlocked successfully`,
-          revalidateTag: "fetchBackendDataWithWallet",
           variant: "success",
         },
       ])
 
-      revalidateTag("fetchBackendDataWithWallet")
+      await revalidateTag("fetchBackendDataWithWallet")
+      await revalidateTag("fetchBackendDataWithoutWallet")
+
+      window.location.reload()
     } catch (error) {
       setToasts([
         {

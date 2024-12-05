@@ -231,5 +231,6 @@ export const fetchBackendDataWithWallet = unstable_cache(
   ["fetchBackendDataWithWallet"],
   {
     revalidate: 60 * 5, // 5 minutes
+    tags: ["fetchBackendDataWithWallet", "fetchBackendDataWithoutWallet"],
   }
 )

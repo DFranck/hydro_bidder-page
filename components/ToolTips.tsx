@@ -2,7 +2,7 @@
 
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { telegramLink } from "@/config"
+import { HYDRO_TELEGRAM_URL } from "@/config"
 import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
 import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
@@ -262,7 +262,7 @@ export const networkLimitReachedTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href={telegramLink}
+      href={HYDRO_TELEGRAM_URL}
       target="_blank"
       className="inline-flex items-center gap-1"
     >

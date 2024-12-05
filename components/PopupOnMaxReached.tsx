@@ -4,7 +4,7 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { telegramLink } from "@/config"
+import { HYDRO_TELEGRAM_URL } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { ChangeEvent, useEffect, useState } from "react"
@@ -57,7 +57,7 @@ export function PopupOnMaxReached() {
                 <StyledText
                   variant="link"
                   as={Link}
-                  href={telegramLink}
+                  href={HYDRO_TELEGRAM_URL}
                   target="_blank"
                 >
                   Telegram Group
@@ -70,7 +70,7 @@ export function PopupOnMaxReached() {
                 <StyledText
                   variant="link"
                   as={Link}
-                  href={telegramLink}
+                  href={HYDRO_TELEGRAM_URL}
                   target="_blank"
                 >
                   Telegram Group

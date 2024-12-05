@@ -6,6 +6,7 @@ import {
   fetchBackendDataWithWallet,
 } from "@/contract-apis/fetchBackendDataWithWallet"
 import { BackendData } from "@/contract-apis/fetchBackendDataWithoutWallet"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import { merge } from "lodash"
 import { usePathname, useRouter } from "next/navigation"
@@ -15,6 +16,7 @@ import {
   useContext,
   useDeferredValue,
   useEffect,
+  useMemo,
   useState,
 } from "react"
 
@@ -86,10 +88,12 @@ export function BackendDataContextProvider({
   const router = useRouter()
   const { setToasts } = useToasts()
   const [isLoading, setIsLoading] = useState(false)
+  const preMergedBackendData = useMemo(
+    () => merge({}, initialBackendDataContext, backendData),
+    [backendData]
+  )
   const [backendDataWithWallet, setBackendDataWithWallet] =
-    useState<BackendDataWithWallet>(
-      merge({}, initialBackendDataContext, backendData)
-    )
+    useState<BackendDataWithWallet>(preMergedBackendData)
   const contextValue = {
     ...backendDataWithWallet,
     isLoading,
@@ -97,8 +101,15 @@ export function BackendDataContextProvider({
   }
 
   useEffect(() => {
+    if (!address) {
+      setBackendDataWithWallet(preMergedBackendData)
+    }
+  }, [address, preMergedBackendData])
+
+  useEffect(() => {
     ;(async () => {
       if (!address) return
+
       setIsLoading(true)
       setToasts([
         {
@@ -137,28 +148,33 @@ export function BackendDataContextProvider({
 
   useEffect(() => {
     if (isWalletConnecting || isWalletDisconnected) return
+    ;(async () => {
+      const protectedRoutes = ["/rewards", "/lockups", "/lock-atom"]
+      const didJustConnect = !wasWalletConnected && isWalletConnected
+      const didJustDisconnect = wasWalletConnected && !isWalletConnected
+      const hasBeenRedirected =
+        window.sessionStorage.getItem("redirected") === "true"
+      const isProtectedRoute =
+        pathname &&
+        protectedRoutes.some((protectedRoute) =>
+          pathname.startsWith(protectedRoute)
+        )
 
-    const protectedRoutes = ["/rewards", "/lockups", "/lock-atom"]
-    const didJustConnect = !wasWalletConnected && isWalletConnected
-    const didJustDisconnect = wasWalletConnected && !isWalletConnected
-    const hasBeenRedirected =
-      window.sessionStorage.getItem("redirected") === "true"
-    const isProtectedRoute =
-      pathname &&
-      protectedRoutes.some((protectedRoute) =>
-        pathname.startsWith(protectedRoute)
-      )
+      if (didJustDisconnect || didJustConnect) {
+        await revalidateTag("fetchBackendDataWithWallet")
+      }
 
-    // Redirect to bids if user has just connected their wallet and is on homepage
-    if (didJustConnect && !hasBeenRedirected && pathname === "/") {
-      window.sessionStorage.setItem("redirected", "true")
-      router.push("/bids")
-    }
+      // Redirect to bids if user has just connected their wallet and is on homepage
+      if (didJustConnect && !hasBeenRedirected && pathname === "/") {
+        window.sessionStorage.setItem("redirected", "true")
+        router.push("/bids")
+      }
 
-    // Redirect to bids if user disconnects while on protected routes
-    if ((didJustDisconnect || !isWalletConnected) && isProtectedRoute) {
-      router.push("/bids")
-    }
+      // Redirect to bids if user disconnects while on protected routes
+      if ((didJustDisconnect || !isWalletConnected) && isProtectedRoute) {
+        router.push("/bids")
+      }
+    })()
   }, [
     isWalletConnected,
     isWalletConnecting,

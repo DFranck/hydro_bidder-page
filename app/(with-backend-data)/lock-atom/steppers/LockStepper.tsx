@@ -9,6 +9,7 @@ import { formatAmount } from "@/lib/formatAmount"
 import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -412,28 +413,34 @@ export const LockStepper = ({
           revalidateCache: true,
           title: "Success!",
           contents: (
-            <p>
-              You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
-              and received{" "}
-              <strong>
-                {formatAmount(
-                  scaleLockupPower({
-                    lockupEpochLength,
-                    lockupTime: lockDuration,
-                    rawPower: BigInt(amount),
-                  })
-                )}{" "}
-                voting power.
-              </strong>
+            <>
+              <p>
+                You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
+                and received{" "}
+                <strong>
+                  {formatAmount(
+                    scaleLockupPower({
+                      lockupEpochLength,
+                      lockupTime: lockDuration,
+                      rawPower: BigInt(amount),
+                    })
+                  )}{" "}
+                  voting power.
+                </strong>
+              </p>
               <p>You can now start voting with your Hydro tokens.</p>
-            </p>
+            </>
           ),
           buttons: [
             {
               label: "Start Voting",
-              onClick: () => {
-                router.push("/bids")
+              onClick: async () => {
                 onExit()
+
+                await revalidateTag("fetchBackendDataWithWallet")
+                await revalidateTag("fetchBackendDataWithoutWallet")
+
+                window.location.reload()
               },
             },
           ],
