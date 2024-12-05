@@ -59,6 +59,7 @@ export function ClientComponent({
       : `/bids/${bid.id}`
 
     const { projectLogoUrl, projectName, title, durationDays, status } = bid
+    const isInVotingPeriod = status.toLowerCase() === "voting period"
 
     return {
       _bid: bid,
@@ -83,14 +84,16 @@ export function ClientComponent({
       ),
       polValue: (
         <InvisibleLink href={rowURL}>
-          {"initialAllocationAmount" in bid && (
-            <>
-              {bid.initialAllocationAmount.toLocaleString(undefined, {
-                maximumFractionDigits: 4,
-              })}
-              &nbsp;ATOM
-            </>
-          )}
+          {isInVotingPeriod
+            ? "Pending"
+            : "initialAllocationAmount" in bid && (
+                <>
+                  {bid.initialAllocationAmount.toLocaleString(undefined, {
+                    maximumFractionDigits: 4,
+                  })}
+                  &nbsp;ATOM
+                </>
+              )}
         </InvisibleLink>
       ),
       duration: (
@@ -104,22 +107,24 @@ export function ClientComponent({
       ),
       polRewards: (
         <InvisibleLink href={rowURL}>
-          {"currentAllocationAmount" in bid &&
-            "initialAllocationAmount" in bid && (
-              <>
-                {(
-                  bid.currentAllocationAmount - bid.initialAllocationAmount
-                ).toLocaleString(undefined, {
-                  maximumFractionDigits: 4,
-                })}{" "}
-                ATOM
-              </>
-            )}
+          {isInVotingPeriod
+            ? "Pending"
+            : "currentAllocationAmount" in bid &&
+              "initialAllocationAmount" in bid && (
+                <>
+                  {(
+                    bid.currentAllocationAmount - bid.initialAllocationAmount
+                  ).toLocaleString(undefined, {
+                    maximumFractionDigits: 4,
+                  })}{" "}
+                  ATOM
+                </>
+              )}
         </InvisibleLink>
       ),
       polApr: (
         <InvisibleLink href={rowURL}>
-          {"apr" in bid && `${bid.apr}%`}
+          {isInVotingPeriod ? "Pending" : "apr" in bid && `${bid.apr}%`}
         </InvisibleLink>
       ),
       tribute: (
