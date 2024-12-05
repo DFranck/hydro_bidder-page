@@ -180,63 +180,93 @@ export default function AirdropsPage() {
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">
-        <BlurryBackdropBox className="flex items-center justify-center text-balance py-6 text-center">
-          <h2 className="sr-only">Airdrops for Hydro Users</h2>
-          <p className="prose prose-invert mx-auto gap-6">
-            Hydro participants are some of the most active and engaged users.
-            They also have the ability to vote on the deployments of liquidity
-            through the ecosystem. Many projects see value in airdropping a
-            portion of their token supply specifically to Hydro lockers. The
-            projects below have publicly shared their intention to do so. The
-            list is updated by the Hydro product team on a regular basis.
-          </p>
+        <BlurryBackdropBox className="flex flex-col gap-12">
+          <div className="grid grid-cols-[auto,1fr] gap-12 px-6 py-6">
+            <div className="flex flex-col gap-6">
+              <StyledText as="h3" variant="h3">
+                Confirmed Airdrops
+              </StyledText>
+              <p className="prose prose-invert text-balance">
+                Hydro participants are some of the most active and engaged
+                users. They also have the ability to vote on the deployments of
+                liquidity through the ecosystem. Many projects see value in
+                airdropping a portion of their token supply specifically to
+                Hydro lockers. The projects below have publicly shared their
+                intention to do so. The list is updated by the Hydro product
+                team on a regular basis.
+              </p>
+            </div>
+
+            <Toasts.Toast
+              className="my-0 w-full"
+              icon="solid:parachute-box"
+              isDismissible={false}
+              variant="info"
+            >
+              Are you a project planning an airdrop? We&rsquo;re here to help.{" "}
+              <StyledText
+                className="inline-flex items-center gap-1"
+                as={Link}
+                variant="link"
+                href="https://calendly.com/actional/hydro"
+                target="_blank"
+              >
+                <span>Get in Touch</span>
+                <Icon name="arrow-up-right-from-square" />
+              </StyledText>
+              .
+            </Toasts.Toast>
+          </div>
+
+          <StyledTable
+            columns={columns}
+            rows={confirmedRows}
+            initialSortedColumnKey="projectNameAndDescription"
+          />
         </BlurryBackdropBox>
 
-        <Toasts.Toast
-          className="mx-auto my-0 w-fit"
-          icon="solid:parachute-box"
-          isDismissible={false}
-          variant="info"
-        >
-          Are you a project planning an airdrop? We&rsquo;re here to help.{" "}
-          <StyledText
-            className="inline-flex items-center gap-1"
-            as={Link}
-            variant="link"
-            href="https://calendly.com/actional/hydro"
-            target="_blank"
-          >
-            <span>Get in touch with us here</span>
-            <Icon name="arrow-up-right-from-square" />
-          </StyledText>
-          .
-        </Toasts.Toast>
+        <BlurryBackdropBox className="flex flex-col gap-12">
+          <div className="grid grid-cols-[auto,1fr] gap-12 px-6 py-6">
+            <div className="flex flex-col gap-6">
+              <StyledText as="h3" variant="h3">
+                Rumored Airdrops
+              </StyledText>
+              <p className="prose prose-invert text-balance">
+                The projects listed below have been rumored (some of them
+                directly announcing it themselves) to target ATOM stakers in an
+                upcoming airdrop. The Hydro product team will be (or already
+                are) in contact with them to make the case for including Hydro
+                participants.
+              </p>
+            </div>
 
-        <div className="flex flex-col gap-6">
-          <StyledText as="h3" variant="h3">
-            Confirmed Airdrops
-          </StyledText>
-          <BlurryBackdropBox>
-            <StyledTable
-              columns={columns}
-              rows={confirmedRows}
-              initialSortedColumnKey="confirmationStatus"
-            />
-          </BlurryBackdropBox>
-        </div>
+            <Toasts.Toast
+              className="my-0 w-full"
+              icon="solid:comment-lines"
+              isDismissible={false}
+              variant="info"
+            >
+              Got a rumor about an airdrop? We&rsquo;re listening!{" "}
+              <StyledText
+                className="inline-flex items-center gap-1"
+                as={Link}
+                variant="link"
+                href="https://calendly.com/actional/hydro"
+                target="_blank"
+              >
+                <span>Get in Touch</span>
+                <Icon name="arrow-up-right-from-square" />
+              </StyledText>
+              .
+            </Toasts.Toast>
+          </div>
 
-        <div className="flex flex-col gap-6">
-          <StyledText as="h3" variant="h3">
-            Rumored Airdrops
-          </StyledText>
-          <BlurryBackdropBox>
-            <StyledTable
-              columns={columns}
-              rows={otherRows}
-              initialSortedColumnKey="confirmationStatus"
-            />
-          </BlurryBackdropBox>
-        </div>
+          <StyledTable
+            columns={columns}
+            rows={otherRows}
+            initialSortedColumnKey="projectNameAndDescription"
+          />
+        </BlurryBackdropBox>
       </ContentContainer>
     </>
   )
