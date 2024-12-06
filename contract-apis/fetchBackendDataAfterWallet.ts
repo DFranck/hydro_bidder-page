@@ -7,27 +7,30 @@ import {
 } from "@/app/ts_types/HydroBase.types"
 import {
   AugmentedBidFromContract,
-  BackendData,
-} from "@/contract-apis/fetchBackendDataWithoutWallet"
+  BackendDataBeforeWallet,
+} from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { range, sortBy, sumBy } from "lodash"
+import { groupBy, keyBy, range, sortBy, sumBy } from "lodash"
 import { unstable_cache } from "next/cache"
 
-export interface BackendDataWithWallet
-  extends Omit<BackendData, "bidsByRoundId"> {
+export interface BackendDataAfterWallet
+  extends Omit<BackendDataBeforeWallet, "bids"> {
   address: string
-  bidsByRoundId: Record<number, FullyAugmentedBid[]>
+  bids: SanitizedBid[]
+  bidsById: Record<number, SanitizedBid>
+  bidsByRoundId: Record<number, SanitizedBid[]>
   isLoading: boolean
   isWalletConnected: boolean
   maxLockedAtomUser: number
   totalLockedAtomUser: number
   lockups: SanitizedLockup[]
   votes: SanitizedVote[]
+  votesByRoundId: Record<string, SanitizedVote[]>
   votingPower: number
 }
 
@@ -48,7 +51,7 @@ export interface SanitizedVote
   bidId: number
 }
 
-export interface FullyAugmentedBid extends AugmentedBidFromContract {
+export interface SanitizedBid extends AugmentedBidFromContract {
   lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardsDeltaPercentage: number
@@ -78,13 +81,13 @@ function sanitizeVote(vote: VoteWithPower): SanitizedVote {
   }
 }
 
-async function uncachedFetchBackendDataWithWallet({
+async function uncachedFetchBackendDataAfterWallet({
   address,
   backendData,
 }: {
   address: string
-  backendData: BackendData
-}): Promise<BackendDataWithWallet> {
+  backendData: BackendDataBeforeWallet
+}): Promise<BackendDataAfterWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -97,7 +100,7 @@ async function uncachedFetchBackendDataWithWallet({
 
   const {
     bidDescriptionsByBidId,
-    bidsByRoundId,
+    bids,
     currentRoundEndDate,
     currentRoundId,
     currentRoundTranches,
@@ -150,69 +153,77 @@ async function uncachedFetchBackendDataWithWallet({
 
   const votedBidId = sanitizedVotes.find((vote) => vote.bidId)?.bidId ?? null
 
-  const augmentedBidsByRoundId = Object.fromEntries(
-    Object.entries(bidsByRoundId).map(([roundId, bids]) => {
-      const bidsWithEstimatedRewards = bids.map((bid) => {
-        const description =
-          bidDescriptionsByBidId[bid.id]?.description ?? bid.description
+  const bidsWithRewards = bids.map((bid) => {
+    const description =
+      bidDescriptionsByBidId[bid.id]?.description ?? bid.description
 
-        const usersEstimatedRewards =
-          estimatedRewardForPower(
-            sumBy(bid.tributes, "valueInUsd"),
-            votingPower,
-            Number(bid.power)
-          ) ?? 0
+    const usersEstimatedRewards =
+      estimatedRewardForPower({
+        proposalTotalTribute: sumBy(bid.tributes, "valueInUsd"),
+        myVotingPower: votingPower,
+        proposalPower: Number(bid.power),
+      }) ?? 0
 
-        const deploymentDurationMinusAnEpochInMilliseconds =
-          ((bid.deploymentDurationInEpochs - 1) * lockupEpochLength) / 1e6
+    const deploymentDurationMinusAnEpochInMilliseconds =
+      ((bid.deploymentDurationInEpochs - 1) * lockupEpochLength) / 1e6
 
-        const currentRoundEndDateForSure =
-          typeof currentRoundEndDate === "string"
-            ? new Date(currentRoundEndDate)
-            : currentRoundEndDate
+    const currentRoundEndDateForSure =
+      typeof currentRoundEndDate === "string"
+        ? new Date(currentRoundEndDate)
+        : currentRoundEndDate
 
-        const lockupsOutliveBidDeployment =
-          furthestLockupEndDate && currentRoundEndDate
-            ? furthestLockupEndDate >
-              new Date(
-                currentRoundEndDateForSure.getTime() +
-                  deploymentDurationMinusAnEpochInMilliseconds
-              )
-            : false
+    const lockupsOutliveBidDeployment =
+      furthestLockupEndDate && currentRoundEndDate
+        ? furthestLockupEndDate >
+          new Date(
+            currentRoundEndDateForSure.getTime() +
+              deploymentDurationMinusAnEpochInMilliseconds
+          )
+        : false
 
-        return {
-          ...bid,
-          description,
-          lockupsOutliveBidDeployment,
-          usersEstimatedRewards,
-          usersEstimatedRewardsDeltaPercentage: 0,
-        }
-      })
+    return {
+      ...bid,
+      description,
+      lockupsOutliveBidDeployment,
+      usersEstimatedRewards,
+      usersEstimatedRewardsDeltaPercentage: 0,
+    }
+  })
 
-      const votedBid =
-        bidsWithEstimatedRewards.find((bid) => bid.id === votedBidId) ?? null
+  const votedBid = bidsWithRewards.find((bid) => bid.id === votedBidId) ?? null
 
-      const bidsWithRelativeRewards = bidsWithEstimatedRewards.map((bid) => {
-        const delta = votedBid
-          ? bid.usersEstimatedRewards - votedBid?.usersEstimatedRewards
-          : 0
+  const bidsWithRelativeRewards = bidsWithRewards.map((bid) => {
+    const delta = votedBid
+      ? bid.usersEstimatedRewards - votedBid?.usersEstimatedRewards
+      : 0
 
-        return {
-          ...bid,
-          usersEstimatedRewardsDeltaPercentage: votedBid
-            ? (delta / votedBid.usersEstimatedRewards) * 100
-            : 0,
-        }
-      })
+    const usersEstimatedRewardsDeltaPercentage = votedBid
+      ? (delta / votedBid.usersEstimatedRewards) * 100
+      : 0
 
-      return [roundId, bidsWithRelativeRewards]
-    })
+    return {
+      ...bid,
+      usersEstimatedRewardsDeltaPercentage,
+    }
+  })
+
+  const sanitizedBids: SanitizedBid[] = bidsWithRelativeRewards
+
+  const bidsById = keyBy(sanitizedBids, (bid) => bid.id)
+
+  const bidsByRoundId = groupBy(sanitizedBids, (bid) => bid.roundId)
+
+  const votesByRoundId = groupBy(
+    sanitizedVotes,
+    (vote) => bidsById[vote.bidId].roundId
   )
 
-  const backendDataWithWallet = {
+  const backendDataAfterWallet: BackendDataAfterWallet = {
     ...backendData,
     address,
-    bidsByRoundId: augmentedBidsByRoundId,
+    bids: sanitizedBids,
+    bidsById,
+    bidsByRoundId,
     isLoading: false,
     isWalletConnected: true,
     // TODO: get this from contract
@@ -220,14 +231,15 @@ async function uncachedFetchBackendDataWithWallet({
     totalLockedAtomUser: sumBy(sanitizedLockups, "funds.amount"),
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
+    votesByRoundId,
     votingPower: votingPower / 1e6,
   }
 
-  return backendDataWithWallet
+  return backendDataAfterWallet
 }
 
-export const fetchBackendDataWithWallet = unstable_cache(
-  uncachedFetchBackendDataWithWallet,
+export const fetchBackendDataAfterWallet = unstable_cache(
+  uncachedFetchBackendDataAfterWallet,
   undefined,
   {
     revalidate: 60 * 5, // 5 minutes

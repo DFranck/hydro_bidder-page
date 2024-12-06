@@ -6,7 +6,7 @@ import { QueryClientProvider } from "@/components/QueryClientProvider"
 import { ScrollIndicator } from "@/components/ScrollIndicator"
 import { ToastContextProvider } from "@/components/Toasts"
 import { WalletProvider } from "@/components/WalletProvider"
-import { BackendData } from "@/contract-apis/fetchBackendDataWithoutWallet"
+import { BackendDataBeforeWallet } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import { ReactNode } from "react"
 
@@ -15,7 +15,7 @@ export function AppWrapper({
   backendData,
 }: {
   children: ReactNode
-  backendData?: BackendData
+  backendData?: BackendDataBeforeWallet
 }) {
   return (
     <WalletProvider>

@@ -7,11 +7,11 @@ export function userSpecificAPR(
   myLockedAtom: number
 ) {
   return (
-    (estimatedRewardForPower(
+    (estimatedRewardForPower({
       proposalTotalTribute,
       myVotingPower,
-      proposalPower
-    ) /
+      proposalPower,
+    }) /
       myLockedAtom) *
     12
   )
