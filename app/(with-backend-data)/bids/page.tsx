@@ -225,11 +225,11 @@ export default function BidsPage() {
             const isTokenBasedBid = row._bid.tributes.every(
               (t) => t.isTokenBased
             )
-            return isTokenBasedBid
-              ? isWalletConnected
+            return !isTokenBasedBid
+              ? 0
+              : hasVotedThisRound
                 ? row._bid.usersEstimatedRewards
                 : sumBy(row._bid.tributes, "valueInUsd")
-              : sumBy(row._bid.tributes, "amount")
           },
         },
         {
