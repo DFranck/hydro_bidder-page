@@ -200,16 +200,20 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={process.env.CONTEXT === "production"}
+          condition={process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"}
           wrapper={(children) => (
             <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
           )}
         >
           <Link
-            href="/rewards"
+            href={
+              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"
+                ? "#"
+                : "/rewards"
+            }
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              process.env.CONTEXT === "production" &&
+              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true" &&
                 "pointer-events-none opacity-60"
             )}
           >
@@ -218,16 +222,20 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={process.env.CONTEXT === "production"}
+          condition={process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"}
           wrapper={(children) => (
             <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
           )}
         >
           <Link
-            href="/metrics"
+            href={
+              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"
+                ? "#"
+                : "/metrics"
+            }
             className={twMerge(
               navigationMenuTriggerStyle("/metrics"),
-              process.env.CONTEXT === "production" &&
+              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true" &&
                 "pointer-events-none opacity-60"
             )}
           >
@@ -236,16 +244,20 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={process.env.CONTEXT === "production"}
+          condition={process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"}
           wrapper={(children) => (
             <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
           )}
         >
           <Link
-            href="/airdrops"
+            href={
+              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"
+                ? "#"
+                : "/airdrops"
+            }
             className={twMerge(
               navigationMenuTriggerStyle("/airdrops"),
-              process.env.CONTEXT === "production" &&
+              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true" &&
                 "pointer-events-none opacity-60"
             )}
           >
