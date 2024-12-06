@@ -12,7 +12,7 @@ Before submitting a proposal, projects choose the tranche ID you want to partici
 Submit a bid in the current auction round using the following CLI command:
 
 ```
-EXECUTE='{"create_proposal":{"tranche_id":[TRANCHE_ID],"title":"[PROPOSAL_TITLE]","description":"[PROPOSAL_DESCRIPTION]"}}'
+EXECUTE='{"create_proposal":{"deployment_duration":[deployment_duration],"description":"[description]","minimum_atom_liquidity_request":"[minimum request]","title":"[title]","tranche_id":[tranche_id]}}'
 
 neutrond tx wasm execute $HYDRO_CONTRACT_ADDR "$EXECUTE" \
 --chain-id neutron-1 \
@@ -48,10 +48,10 @@ If a bid is among the top N by voted power, the entire tribute becomes available
 To add a tribute to a proposal, send the following transaction to the Tribute smart contract:
 
 ```
-EXECUTE='{"add_tribute":{"tranche_id":[TRANCHE_ID],"proposal_id":[PROPOSAL_ID]}}'
+EXECUTE='{"add_tribute":{"proposal_id":[PROPOSAL_ID],"round_id":[ROUND_ID],"tranche_id": [TRANCHE_ID]}}'
 
 neutrond tx wasm execute $TRIBUTE_CONTRACT_ADDR "$EXECUTE" \
-	--amount [TRIBUTE_AMOUNT]
+--amount [TRIBUTE_AMOUNT]
 --chain-id neutron-1 \
 --gas auto \
 --gas-adjustment [GAS_ADJUSTMENT] \
