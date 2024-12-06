@@ -54,7 +54,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
   const {
     committeeComments,
     description,
-    projectAbout,
+    aboutProject,
     projectLogoUrl,
     projectName,
     projectUrl,
@@ -124,7 +124,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             <div className="flex flex-col gap-6 pl-16">
-              {projectAbout && (
+              {aboutProject && (
                 <div className="flex flex-col gap-3">
                   <StyledText
                     variant="superHeading"
@@ -140,7 +140,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                   >
                     About Project
                   </StyledText>
-                  <MarkdownContainer content={projectAbout} />
+                  <MarkdownContainer content={aboutProject} />
                 </div>
               )}
               {description && (
@@ -272,7 +272,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
-                  bidDescription.projectAbout && "About Project",
+                  bidDescription.aboutProject && "About Project",
                   bidDescription.description && "Bid Description",
                   bidDescription.committeeComments && "Committee Review",
                 ]

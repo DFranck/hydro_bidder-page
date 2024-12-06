@@ -2,17 +2,17 @@ export const BID_DESCRIPTIONS_URL =
   "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
 
 export interface BidDescription {
-  title: string
+  aboutProject?: string
+  appendix?: string
+  committeeComments?: string
   description: string
+  pointProgramUrl?: string
+  points?: RequestAmount
   projectLogoUrl?: string
-  projectAbout?: string
   projectName: string
   projectUrl: string
-  committeeComments?: string
   requestAmount: RequestAmount[]
-  points?: RequestAmount
-  pointProgramUrl?: string
-  appendix?: string
+  title: string
   // not available for all proposals (soft deprecated but still used)
   projectType?: string
 }

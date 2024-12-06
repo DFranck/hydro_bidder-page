@@ -59,6 +59,8 @@ export default function BidsPage() {
     votingPower,
   } = backendData
 
+  console.log({ backendData })
+
   const bidsToRender = bidsByRoundId[currentRoundId] ?? []
 
   const rows =
