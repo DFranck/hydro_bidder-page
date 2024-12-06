@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
     return response
   }
 
-  if (process.env.NEXT_SHOW_HIDDEN_FEATURES === "true") {
+  if (process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES === "true") {
     return NextResponse.next()
   }
 
