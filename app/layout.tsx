@@ -37,7 +37,7 @@ export default async function RootLayout({
           crossOrigin="anonymous"
           src="https://kit.fontawesome.com/401fb1e734.js"
         />
-        {process.env.CONTEXT === "production" && (
+        {process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true" && (
           <>
             <Script
               async
