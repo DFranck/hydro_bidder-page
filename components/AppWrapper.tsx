@@ -1,3 +1,5 @@
+"use server"
+
 import LoadingState from "@/app/loading"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Footer } from "@/components/Footer"
