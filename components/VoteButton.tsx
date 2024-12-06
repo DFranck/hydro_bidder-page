@@ -17,6 +17,7 @@ import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
+import { keyBy } from "lodash"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -39,6 +40,7 @@ export function VoteButton({
   const {
     address,
     bidsByRoundId,
+    currentRoundId,
     isWalletConnected,
     maxLockedAtomGlobal,
     totalLockedAtomGlobal,
@@ -47,12 +49,14 @@ export function VoteButton({
   } = useBackendData()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const bid = Object.values(bidsByRoundId)
-    .flat()
-    .find((bid) => bid.id === bidId)
+  const bidsById = keyBy(Object.values(bidsByRoundId).flat(), "id")
+  const bid = bidsById[bidId]
   const lockupsOutliveBidDeployment = bid?.lockupsOutliveBidDeployment
-  const hasVotedForAny = votes.length > 0
-  const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
+  const votesInThisRound = votes.filter(
+    (vote) => bidsById[vote.bidId].roundId === currentRoundId
+  )
+  const hasVotedForAny = votesInThisRound.length > 0
+  const hasVotedForBid = votesInThisRound.some((vote) => vote.bidId === bidId)
   const isLoading = toasts.some((toast) => toast.variant === "working")
 
   async function handleClickVote() {
