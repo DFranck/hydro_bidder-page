@@ -349,7 +349,7 @@ export default function LockupsPage() {
 
       <ModalWindow
         isOpen={isShowingNextStep}
-        onClose={handleClickToNextUnlockingStep}
+        onClose={() => setIsShowingNextStep(false)}
       >
         <Card>
           <Card.Header>Unlocked! Next, Revert</Card.Header>
