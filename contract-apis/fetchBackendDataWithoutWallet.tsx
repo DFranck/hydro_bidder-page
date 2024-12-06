@@ -266,9 +266,9 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
 
 export const fetchBackendDataWithoutAddress = unstable_cache(
   uncachedFetchBackendDataWithoutAddress,
-  ["fetchBackendDataWithoutAddress"],
+  undefined,
   {
     revalidate: 60 * 5, // 5 minutes
-    tags: ["fetchBackendDataWithoutAddress"],
+    tags: ["backendData"],
   }
 )

@@ -6,6 +6,7 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { revalidateTag } from "@/lib/revalidateTag"
+import { useRouter } from "next/navigation"
 import { ReactNode, useEffect } from "react"
 
 export function Step({
@@ -26,6 +27,7 @@ export function Step({
   revalidateCache?: boolean
 }) {
   const { setToasts } = useToasts()
+  const router = useRouter()
 
   useEffect(() => {
     if (revalidateCache) {
@@ -37,13 +39,13 @@ export function Step({
           },
         ])
 
-        await revalidateTag("fetchBackendDataWithWallet")
-        await revalidateTag("fetchBackendDataWithoutWallet")
+        await revalidateTag("backendData")
 
         setTimeout(() => {
           setToasts([])
-          window.location.reload()
-        }, 1500)
+          router.push("/lockups")
+          router.refresh()
+        }, 3000)
       }
 
       revalidateTags()

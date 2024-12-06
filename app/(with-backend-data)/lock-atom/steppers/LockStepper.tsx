@@ -437,10 +437,10 @@ export const LockStepper = ({
               onClick: async () => {
                 onExit()
 
-                await revalidateTag("fetchBackendDataWithWallet")
-                await revalidateTag("fetchBackendDataWithoutWallet")
+                await revalidateTag("backendData")
 
-                window.location.reload()
+                router.push("/bids")
+                router.refresh()
               },
             },
           ],

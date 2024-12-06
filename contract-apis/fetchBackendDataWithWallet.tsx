@@ -228,9 +228,9 @@ async function uncachedFetchBackendDataWithWallet({
 
 export const fetchBackendDataWithWallet = unstable_cache(
   uncachedFetchBackendDataWithWallet,
-  ["fetchBackendDataWithWallet"],
+  undefined,
   {
     revalidate: 60 * 5, // 5 minutes
-    tags: ["fetchBackendDataWithWallet", "fetchBackendDataWithoutWallet"],
+    tags: ["backendData"],
   }
 )
