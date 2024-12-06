@@ -148,6 +148,12 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
               trancheId: tranche.id,
             })
 
+          const topNProposals = await hydroQueryClient.topNProposals({
+            numberOfProposals: 50,
+            roundId,
+            trancheId: tranche.id,
+          })
+
           // Fetch tributes for all bids
           const sanitizedTokenBasedTributes: SanitizedTokenBasedTribute[] = (
             await Promise.all(
@@ -214,6 +220,9 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
           const bidsAugmentedWithTributes = unsanitizedBids
             .map(keysFromSnakeToCamelCase)
             .map(({ deploymentDuration, proposalId, ...bid }) => {
+              const matchingTopProposal = topNProposals.proposals.find(
+                (topProposal) => topProposal.proposal_id === proposalId
+              )
               const bidDescription = bidDescriptionsByBidId[proposalId]
               const description = bidDescription?.description ?? bid.description
               const title = bidDescription?.title ?? bid.title
@@ -229,7 +238,9 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendData> {
                 deploymentDurationInNanos:
                   deploymentDuration * lockupEpochLength,
                 description,
-                percentage: Number(bid.percentage),
+                percentage: matchingTopProposal
+                  ? Number(matchingTopProposal.percentage)
+                  : Number(bid.percentage),
                 title,
                 tributes: bidTributes,
               }
