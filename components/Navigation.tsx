@@ -200,20 +200,20 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"}
+          condition={process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"}
           wrapper={(children) => (
             <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
           )}
         >
           <Link
             href={
-              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"
+              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"
                 ? "#"
                 : "/rewards"
             }
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true" &&
+              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" &&
                 "pointer-events-none opacity-60"
             )}
           >
@@ -222,20 +222,20 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"}
+          condition={process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"}
           wrapper={(children) => (
             <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
           )}
         >
           <Link
             href={
-              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"
+              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"
                 ? "#"
                 : "/metrics"
             }
             className={twMerge(
               navigationMenuTriggerStyle("/metrics"),
-              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true" &&
+              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" &&
                 "pointer-events-none opacity-60"
             )}
           >

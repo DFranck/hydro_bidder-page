@@ -1,5 +1,3 @@
-"use server"
-
 import LoadingState from "@/app/loading"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Footer } from "@/components/Footer"
@@ -8,21 +6,17 @@ import { QueryClientProvider } from "@/components/QueryClientProvider"
 import { ScrollIndicator } from "@/components/ScrollIndicator"
 import { ToastContextProvider } from "@/components/Toasts"
 import { WalletProvider } from "@/components/WalletProvider"
-import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataWithoutWallet"
+import { BackendData } from "@/contract-apis/fetchBackendDataWithoutWallet"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import { ReactNode } from "react"
 
-export async function AppWrapper({
+export function AppWrapper({
   children,
-  withBackendData,
+  backendData,
 }: {
   children: ReactNode
-  withBackendData?: boolean
+  backendData?: BackendData
 }) {
-  const backendData = withBackendData
-    ? await fetchBackendDataWithoutAddress()
-    : null
-
   return (
     <WalletProvider>
       <QueryClientProvider>
@@ -50,7 +44,7 @@ export async function AppWrapper({
             "
           >
             <ConditionalWrapper
-              condition={Boolean(withBackendData && backendData !== null)}
+              condition={Boolean(backendData && backendData !== null)}
               wrapper={(children) => (
                 <BackendDataContextProvider backendData={backendData!}>
                   {children}
