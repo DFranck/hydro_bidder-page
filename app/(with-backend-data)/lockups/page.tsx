@@ -33,9 +33,9 @@ import { useState } from "react"
 
 export default function LockupsPage() {
   const router = useRouter()
-  const [isShowingNextStep, setIsShowingNextStep] = useState(false)
   const [isConfirmingUnlockExpired, setIsConfirmingUnlockExpired] =
     useState(false)
+  const [isShowingNextStep, setIsShowingNextStep] = useState(false)
   const {
     address,
     lockups,
@@ -55,7 +55,7 @@ export default function LockupsPage() {
   const { setToasts } = useToasts()
   const expiredLockups = lockups.filter((lockup) => new Date() > lockup.dateEnd)
 
-  function handleClickToNextUnlockingStep() {
+  async function handleClickToNextUnlockingStep() {
     router.push("/lock-atom")
     router.refresh()
   }
@@ -90,14 +90,15 @@ export default function LockupsPage() {
         getSigningCosmWasmClient,
       })
 
+      await revalidateTag("backendData")
+
       setToasts([
         {
-          variant: "success",
-          message: `${pluralizedLockupText} unlocked successfully.`,
+          variant: "info",
+          message: `${pluralizedLockupText} unlocked successfully. See next step!`,
+          isDismissible: true,
         },
       ])
-
-      await revalidateTag("backendData")
 
       setIsShowingNextStep(true)
     } catch (error) {
