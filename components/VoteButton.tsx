@@ -44,7 +44,7 @@ export function VoteButton({
     isWalletConnected,
     maxLockedAtomGlobal,
     totalLockedAtomGlobal,
-    votes,
+    votesByRoundId,
     votingPower,
   } = useBackendData()
 
@@ -52,11 +52,9 @@ export function VoteButton({
   const bidsById = keyBy(Object.values(bidsByRoundId).flat(), "id")
   const bid = bidsById[bidId]
   const lockupsOutliveBidDeployment = bid?.lockupsOutliveBidDeployment
-  const votesInThisRound = votes.filter(
-    (vote) => bidsById[vote.bidId].roundId === currentRoundId
-  )
-  const hasVotedForAny = votesInThisRound.length > 0
-  const hasVotedForBid = votesInThisRound.some((vote) => vote.bidId === bidId)
+  const votesThisRound = votesByRoundId[currentRoundId] ?? []
+  const hasVotedForAnyThisRound = votesThisRound.length > 0
+  const hasVotedForThisBid = votesThisRound.some((vote) => vote.bidId === bidId)
   const isLoading = toasts.some((toast) => toast.variant === "working")
 
   async function handleClickVote() {
@@ -166,7 +164,7 @@ export function VoteButton({
         </StyledText>
       </Tooltip>
     )
-  } else if (hasVotedForBid) {
+  } else if (hasVotedForThisBid) {
     Button = (
       <StyledText
         variant={`button.neutral${size ? `.${size}` : ""}` as StyledTextVariant}
@@ -178,7 +176,7 @@ export function VoteButton({
       </StyledText>
     )
   } else {
-    const hasVotedElsewhere = hasVotedForAny && !hasVotedForBid
+    const hasVotedElsewhere = hasVotedForAnyThisRound && !hasVotedForThisBid
     Button = (
       <StyledText
         as="button"

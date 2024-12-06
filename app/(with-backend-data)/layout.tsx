@@ -1,5 +1,5 @@
 import { AppWrapper } from "@/components/AppWrapper"
-import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataWithoutWallet"
+import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { ReactNode } from "react"
 
 export default async function LayoutWithContext({

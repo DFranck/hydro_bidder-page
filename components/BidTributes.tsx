@@ -2,7 +2,7 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { bidTypeTooltip } from "@/components/ToolTips"
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
+import { SanitizedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import { groupBy, startCase, sumBy } from "lodash"
@@ -12,7 +12,7 @@ export function BidTributes({
   bid,
   denomsOnly = false,
 }: {
-  bid: FullyAugmentedBid
+  bid: SanitizedBid
   denomsOnly?: boolean
 }) {
   const { bidDescriptionsByBidId } = useBackendData()

@@ -15,10 +15,9 @@ import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, votes, votingPower } = backendData
-  const bid = Object.values(backendData.bidsByRoundId)
-    .flat()
-    .find((bid) => bid.id === bidId)
+  const { bidDescriptionsByBidId, bidsById, currentRoundId, votesByRoundId } =
+    backendData
+  const bid = bidsById[bidId]
 
   if (!bid) return null
 
@@ -28,7 +27,8 @@ export function BidRewards({ bidId }: { bidId: number }) {
   )
   const roundedPercentage = Math.round(bid.usersEstimatedRewardsDeltaPercentage)
   const hasDelta = roundedPercentage > 0 || roundedPercentage < 0
-  const hasVotedThisRound = Boolean(votingPower)
+  const votesThisRound = votesByRoundId[currentRoundId] ?? []
+  const hasVotedThisRound = votesThisRound.length > 0
   const isPositive = roundedPercentage > 0
   const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
   const computedTooltipContent = estimatedRewardsTooltip({
@@ -37,7 +37,6 @@ export function BidRewards({ bidId }: { bidId: number }) {
     hasVotedThisRound,
     isTokenBasedBid,
   })
-  const votesThisRound = votes.filter((vote) => vote.bidId === bid.id)
 
   return !isTokenBasedBid ? (
     <Tooltip
@@ -64,7 +63,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
     </Tooltip>
   ) : (
     <Tooltip tipContents={computedTooltipContent}>
-      {!votesThisRound || votesThisRound.length === 0 ? (
+      {votesThisRound.length === 0 ? (
         <div className="flex items-center gap-1">
           <span>{totalEstimatedRewardsUsd}</span>
           <Icon name="circle-info" />

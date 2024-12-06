@@ -25,7 +25,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
+import { SanitizedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
@@ -35,7 +35,7 @@ import { Fragment, ReactNode, useCallback } from "react"
 import { classNames } from "./classNames"
 
 type Row = {
-  _bid: FullyAugmentedBid
+  _bid: SanitizedBid
   logoAndTitle: ReactNode
   deploymentDuration: ReactNode
   yourEstimatedReward: ReactNode
@@ -49,22 +49,25 @@ const pointBasedTributesLabel = "Points-Based Tributes"
 export default function BidsPage() {
   const backendData = useBackendData()
 
+  console.log({ backendData })
+
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
     currentRoundId,
     isLoading,
     isWalletConnected,
-    votes,
-    votingPower,
+    votesByRoundId,
   } = backendData
 
-  console.log({ backendData })
+  const bidsInRound = bidsByRoundId[currentRoundId] ?? []
 
-  const bidsToRender = bidsByRoundId[currentRoundId] ?? []
+  const votesInThisRound = votesByRoundId[currentRoundId] ?? []
+
+  const hasVotedThisRound = votesInThisRound.length > 0
 
   const rows =
-    bidsToRender?.map((bid) => {
+    bidsInRound?.map((bid) => {
       const bidURL = `/bids/${bid.id}`
       const bidDescription = bidDescriptionsByBidId[bid.id] ?? {}
       const { projectLogoUrl, projectName } = bidDescription
@@ -196,7 +199,7 @@ export default function BidsPage() {
           label: (
             <Tooltip
               tipContents={estimatedRewardsColumnTooltip({
-                hasVotingPower: Boolean(isWalletConnected && votingPower),
+                hasVotedThisRound,
                 isTokenBasedBid,
               })}
             >
@@ -204,7 +207,7 @@ export default function BidsPage() {
                 <span>
                   {!isTokenBasedBid
                     ? "Total Tribute"
-                    : isWalletConnected && votingPower
+                    : hasVotedThisRound
                       ? "Your Est. Reward"
                       : "Total Est. Reward"}{" "}
                 </span>
@@ -266,7 +269,6 @@ export default function BidsPage() {
       classNames.classNamesForCells,
       isWalletConnected,
       tokenBasedTributesLabel,
-      votingPower,
     ]
   )
 
@@ -292,8 +294,10 @@ export default function BidsPage() {
         Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
         Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
 
-      const userVotedForBid = votes.some(
-        (vote) => vote.bidId === Number(row._bid.id)
+      const votesThisRound = votesByRoundId[currentRoundId] ?? []
+
+      const userVotedForBid = votesThisRound.some(
+        (vote) => vote.bidId === row._bid.id
       )
 
       return (
