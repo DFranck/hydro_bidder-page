@@ -22,11 +22,11 @@ export function nonUserSpecificAPR({
     rawPower: BigInt(1),
   })
 
-  const oneUatomReward = estimatedRewardForPower(
+  const oneUatomReward = estimatedRewardForPower({
     proposalTotalTribute,
-    Number(oneUatomPower),
-    proposalPower
-  )
+    myVotingPower: Number(oneUatomPower),
+    proposalPower,
+  })
 
   const oneUatomPrice = atomPrice / 1e6
 

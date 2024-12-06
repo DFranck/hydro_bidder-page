@@ -1,7 +1,7 @@
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
+import { SanitizedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { startCase, uniq } from "lodash"
 
-export function BidDenoms({ bid }: { bid: FullyAugmentedBid }) {
+export function BidDenoms({ bid }: { bid: SanitizedBid }) {
   return uniq(
     bid.tributes.map((tribute) =>
       tribute.isTokenBased

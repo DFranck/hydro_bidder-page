@@ -3,7 +3,7 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
-import { FullyAugmentedBid } from "@/contract-apis/fetchBackendDataWithWallet"
+import { SanitizedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
@@ -93,10 +93,10 @@ export const currentVoteShareTooltip = (
 )
 
 export const estimatedRewardsColumnTooltip = ({
-  hasVotingPower,
+  hasVotedThisRound,
   isTokenBasedBid,
 }: {
-  hasVotingPower: boolean
+  hasVotedThisRound: boolean
   isTokenBasedBid: boolean
 }) => {
   const universalPointSystemMessage = (
@@ -106,7 +106,7 @@ export const estimatedRewardsColumnTooltip = ({
       on their individual voting power.
     </>
   )
-  const messageWithVotingPower = isTokenBasedBid ? (
+  const messageIfHasVotedThisRound = isTokenBasedBid ? (
     <>
       This is the expected USD-equivalent value of rewards you would receive
       from the bid&rsquo;s tribute. Over time, the value may increase if the
@@ -115,7 +115,7 @@ export const estimatedRewardsColumnTooltip = ({
   ) : (
     universalPointSystemMessage
   )
-  const messageWithoutVotingPower = isTokenBasedBid ? (
+  const messageIfHasNotVotedThisRound = isTokenBasedBid ? (
     <>
       This is the total estimated USD-equivalent value of the tribute offered by
       the project. The tribute is split amongst the users that vote for the
@@ -125,16 +125,18 @@ export const estimatedRewardsColumnTooltip = ({
     universalPointSystemMessage
   )
 
-  return hasVotingPower ? messageWithVotingPower : messageWithoutVotingPower
+  return hasVotedThisRound
+    ? messageIfHasVotedThisRound
+    : messageIfHasNotVotedThisRound
 }
 
 export const estimatedRewardsTooltip = ({
   bid,
   bidDescription,
-  hasVotedThisRound: hasVotingPower,
+  hasVotedThisRound,
   isTokenBasedBid,
 }: {
-  bid: FullyAugmentedBid
+  bid: SanitizedBid
   bidDescription: BidDescription
   hasVotedThisRound: boolean
   isTokenBasedBid: boolean
@@ -159,7 +161,7 @@ export const estimatedRewardsTooltip = ({
   const rewardDescription = isTokenBasedBid
     ? "estimated USD-equivalent value of rewards"
     : "amount of points"
-  const messageWithVotingPower = (
+  const messageIfHasVotedThisRound = (
     <>
       This is the {rewardDescription} you would receive from{" "}
       <strong>{projectName}</strong>. It represents{" "}
@@ -169,7 +171,7 @@ export const estimatedRewardsTooltip = ({
       if more voters choose the project.
     </>
   )
-  const messageWithoutVotingPower = (
+  const messageIfHasNotVotedThisRound = (
     <>
       This is the {rewardDescription} offered by <strong>{projectName}</strong>{" "}
       as a tribute. By voting for it, you would receive a portion of this value,
@@ -178,7 +180,9 @@ export const estimatedRewardsTooltip = ({
     </>
   )
 
-  return hasVotingPower ? messageWithVotingPower : messageWithoutVotingPower
+  return hasVotedThisRound
+    ? messageIfHasVotedThisRound
+    : messageIfHasNotVotedThisRound
 }
 
 export const lockupLimitReachedByUserTooltip = (
@@ -370,6 +374,13 @@ export const rewardsTributeRewardsColumnTooltip = (
   <>
     This is the value of the rewards from each tribute you voted for in past
     rounds.
+  </>
+)
+
+export const rewardsTributeRewardsTooltip = (
+  <>
+    This is the estimated USD-equivalent value of the rewards you&rsquo;ve
+    received from this tribute.
   </>
 )
 
