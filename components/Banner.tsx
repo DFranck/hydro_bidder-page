@@ -48,7 +48,7 @@ export function Banner() {
       ),
     },
   }
-  // TODO: Un-hardcode this when caps are increased
+  // TODO: Un-hardcode this when caps are increased!
   // const activeBannerName = isAtMaxLockupCapacity ? "maxCapacity" : "pilotRounds"
   const activeBannerName = "capNotYetIncreased"
   const { href, text } = Banners[activeBannerName]
