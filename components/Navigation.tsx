@@ -200,9 +200,20 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"}
+          condition={
+            process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" ||
+            !isConnected
+          }
           wrapper={(children) => (
-            <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
+            <Tooltip
+              tipContents={
+                process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"
+                  ? comingSoonTooltip
+                  : needsWalletConnectionTooltip
+              }
+            >
+              {children}
+            </Tooltip>
           )}
         >
           <Link
@@ -213,7 +224,8 @@ export default function Navigation() {
             }
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" &&
+              (process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" ||
+                !isConnected) &&
                 "pointer-events-none opacity-60"
             )}
           >

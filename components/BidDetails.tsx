@@ -21,11 +21,9 @@ import Link from "next/link"
 
 export function BidDetails({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, bidsByRoundId, votes } = backendData
+  const { bidDescriptionsByBidId, bidsById, votes } = backendData
 
-  const bid = Object.values(bidsByRoundId)
-    .flat()
-    .find((bid) => bid.id === bidId)
+  const bid = bidsById[bidId]
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
@@ -62,7 +60,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
     title,
   } = bidDescription
 
-  const hasVotedForBid = votes.some((vote) => vote.bidId === Number(bidId))
+  const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
   return (
     <ContentContainer className="py-6">

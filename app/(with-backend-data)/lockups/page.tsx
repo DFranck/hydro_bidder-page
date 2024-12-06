@@ -33,6 +33,7 @@ import { useState } from "react"
 
 export default function LockupsPage() {
   const router = useRouter()
+  const [isShowingNextStep, setIsShowingNextStep] = useState(false)
   const [isConfirmingUnlockExpired, setIsConfirmingUnlockExpired] =
     useState(false)
   const {
@@ -54,6 +55,11 @@ export default function LockupsPage() {
   const { setToasts } = useToasts()
   const expiredLockups = lockups.filter((lockup) => new Date() > lockup.dateEnd)
 
+  function handleClickToNextUnlockingStep() {
+    router.push("/lock-atom")
+    router.refresh()
+  }
+
   function handleClickUnlockExpired() {
     setIsConfirmingUnlockExpired(true)
   }
@@ -74,8 +80,8 @@ export default function LockupsPage() {
     try {
       setToasts([
         {
-          message: `Unlocking ${pluralizedLockupText}...`,
           variant: "working",
+          message: `Unlocking ${pluralizedLockupText}...`,
         },
       ])
 
@@ -86,23 +92,19 @@ export default function LockupsPage() {
 
       setToasts([
         {
-          message: `${pluralizedLockupText} unlocked successfully. Reloading...`,
-          variant: "working",
+          variant: "success",
+          message: `${pluralizedLockupText} unlocked successfully.`,
         },
       ])
 
       await revalidateTag("backendData")
 
-      setTimeout(() => {
-        setToasts([])
-        router.push("/lockups")
-        router.refresh()
-      }, 3000)
+      setIsShowingNextStep(true)
     } catch (error) {
       setToasts([
         {
-          message: `Error unlocking ${pluralizedLockupText}: ${error}`,
           variant: "error",
+          message: `Error unlocking ${pluralizedLockupText}: ${error}`,
         },
       ])
     }
@@ -339,6 +341,29 @@ export default function LockupsPage() {
               onClick={() => setIsConfirmingUnlockExpired(false)}
             >
               Cancel
+            </StyledText>
+          </Card.Footer>
+        </Card>
+      </ModalWindow>
+
+      <ModalWindow
+        isOpen={isShowingNextStep}
+        onClose={handleClickToNextUnlockingStep}
+      >
+        <Card>
+          <Card.Header>Unlocked! Next, Revert</Card.Header>
+          <Card.Body>
+            <p>You will now be able to revert your lockups on the next step:</p>
+          </Card.Body>
+          <Card.Footer>
+            <StyledText
+              as="button"
+              variant="button.primary"
+              onClick={handleClickToNextUnlockingStep}
+              className="flex items-center gap-1"
+            >
+              <span>Show Revertible Lockups</span>
+              <Icon name="arrow-right-long" />
             </StyledText>
           </Card.Footer>
         </Card>

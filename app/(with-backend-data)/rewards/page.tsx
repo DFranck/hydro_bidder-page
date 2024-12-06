@@ -13,10 +13,15 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { rewardsTributeRewardsColumnTooltip } from "@/components/ToolTips"
+import {
+  rewardsTributeRewardsColumnTooltip,
+  rewardsTributeRewardsTooltip,
+} from "@/components/ToolTips"
 import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
+import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import { useChain } from "@cosmos-kit/react"
 import { sumBy } from "lodash"
 import Image from "next/image"
@@ -25,103 +30,126 @@ import { MouseEvent, useState } from "react"
 export default function RewardsPage() {
   const { setToasts } = useToasts()
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const [isShowingClaimRewardsModal, setIsShowingClaimRewardsModal] =
-    useState(false)
   const {
     address,
     bidDescriptionsByBidId,
-    bidsByRoundId,
+    bids,
+    bidsById,
     currentRoundId,
     votes,
+    votingPower,
   } = useBackendData()
-
-  const allBidIdsFromPreviousRounds =
-    Object.values(bidsByRoundId)
-      .flat()
-      .filter((bid) => bid.roundId < currentRoundId)
-      .map((bid) => bid.id) ?? []
-  const [selectedBidIds, setSelectedBidIds] = useState<number[]>(
-    allBidIdsFromPreviousRounds
+  const bidsFromPreviousRounds = bids.filter(
+    (bid) => bid.roundId < currentRoundId
   )
-  const bidsUserVotedOn = Object.values(bidsByRoundId)
-    .flat()
-    .filter(
-      (bid) =>
-        bid.roundId < currentRoundId &&
-        votes.find((vote) => vote.bidId === bid.id)
-    )
+  const votesFromPreviousRounds = votes.filter(
+    (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
+  )
+  const bidsUserVotedOn = bidsFromPreviousRounds.filter((bid) =>
+    votesFromPreviousRounds.find((vote) => vote.bidId === bid.id)
+  )
+  const bidsWithTokenBasedTributes = bidsUserVotedOn.filter((bid) =>
+    bid.tributes.some((t) => t.isTokenBased)
+  )
+  const [selection, setSelection] = useState<{
+    bidId: number
+    tributeId: number
+  } | null>(null)
+  const selectedBid = selection ? bidsById[selection.bidId] : null
+  const selectedTribute = selection
+    ? (selectedBid?.tributes.find(
+        (t) => (t as SanitizedTokenBasedTribute).id === selection.tributeId
+      ) as SanitizedTokenBasedTribute)
+    : null
 
-  const rows = bidsUserVotedOn.map((bid) => {
-    const bidUrl = `/bids/${bid.id}`
-    const bidDescription = bidDescriptionsByBidId[bid.id]
-    const { projectLogoUrl, projectName, title } = bidDescription
+  const rows = bidsWithTokenBasedTributes
+    .map((bid) => {
+      const bidUrl = `/bids/${bid.id}`
+      const bidDescription = bidDescriptionsByBidId[bid.id]
+      const { projectLogoUrl, projectName, title } = bidDescription
+      const tokenBasedTributes = bid.tributes.filter(
+        (tribute) => tribute.isTokenBased
+      )
 
-    return {
-      _bid: bid,
+      return tokenBasedTributes.map((tribute) => ({
+        _bid: bid,
 
-      roundNumber: <InvisibleLink href={bidUrl}>1</InvisibleLink>,
+        _tribute: tribute,
 
-      logo: (
-        <InvisibleLink href={bidUrl}>
-          {projectLogoUrl ? (
-            <div className="relative size-12">
-              <Image
-                className="object-contain"
-                src={projectLogoUrl}
-                alt={projectName}
-                fill={true}
-              />
+        roundNumber: (
+          <InvisibleLink href={bidUrl}>{bid.roundId + 1}</InvisibleLink>
+        ),
+
+        logo: (
+          <InvisibleLink href={bidUrl}>
+            {projectLogoUrl ? (
+              <div className="relative size-12">
+                <Image
+                  className="object-contain"
+                  src={projectLogoUrl}
+                  alt={projectName}
+                  fill={true}
+                />
+              </div>
+            ) : null}
+          </InvisibleLink>
+        ),
+
+        bidTitleAndProjectName: (
+          <InvisibleLink href={bidUrl}>
+            <div className="flex flex-col">
+              <StyledText variant="h4">{title}</StyledText>
+              <StyledText variant="footnote">{projectName}</StyledText>
             </div>
-          ) : null}
-        </InvisibleLink>
-      ),
+          </InvisibleLink>
+        ),
 
-      bidTitleAndProjectName: (
-        <InvisibleLink href={bidUrl}>
-          <div className="flex flex-col">
-            <StyledText variant="h4">{title}</StyledText>
-            <StyledText variant="footnote">{projectName}</StyledText>
-          </div>
-        </InvisibleLink>
-      ),
+        token: (
+          <InvisibleLink href={bidUrl}>
+            {tribute.amount}&nbsp;{tribute.denom}
+          </InvisibleLink>
+        ),
 
-      token: (
-        <InvisibleLink href={bidUrl}>
-          {bid.tributes
-            .map((t) => (t.isTokenBased ? t.denom.toUpperCase() : t.denom))
-            .sort()
-            .join(", ")}
-        </InvisibleLink>
-      ),
+        polRewards: (
+          <InvisibleLink href={bidUrl}>
+            {amountToUSDString(tribute.valueInUsd)}
+          </InvisibleLink>
+        ),
 
-      polRewards: (
-        <InvisibleLink href={bidUrl}>
-          {amountToUSDString(sumBy(bid.tributes, "valueInUsd"))}
-        </InvisibleLink>
-      ),
+        tributeRewards: (
+          <InvisibleLink href={bidUrl}>
+            <Tooltip tipContents={rewardsTributeRewardsTooltip}>
+              <span>
+                {amountToUSDString(
+                  estimatedRewardForPower({
+                    proposalTotalTribute: tribute.valueInUsd,
+                    myVotingPower: votingPower,
+                    proposalPower: Number(bid.power),
+                  })
+                )}
+              </span>
+              <Icon name="circle-info" />
+            </Tooltip>
+          </InvisibleLink>
+        ),
 
-      tributeRewards: (
-        <InvisibleLink href={bidUrl}>
-          <Tooltip tipContents={rewardsTributeRewardsColumnTooltip}>
-            <span>{amountToUSDString(bid.usersEstimatedRewards)}</span>
-            <Icon name="circle-info" />
-          </Tooltip>
-        </InvisibleLink>
-      ),
-
-      actions: (
-        <InvisibleLink href={bidUrl}>
-          <StyledText
-            as="button"
-            variant="button.primary.small"
-            onClick={() => handleClickClaimRewards({ bidIds: [bid.id] })}
-          >
-            Claim
-          </StyledText>
-        </InvisibleLink>
-      ),
-    }
-  })
+        actions: (
+          <InvisibleLink href={bidUrl}>
+            <StyledText
+              as="button"
+              variant="button.primary.small"
+              onClick={handleClickClaimRewards.bind(null, {
+                bidId: bid.id,
+                tributeId: tribute.id,
+              })}
+            >
+              Claim
+            </StyledText>
+          </InvisibleLink>
+        ),
+      }))
+    })
+    .flat()
 
   type Row = (typeof rows)[number]
 
@@ -193,48 +221,59 @@ export default function RewardsPage() {
     },
   ]
 
-  function handleClickClaimRewards({ bidIds }: { bidIds?: number[] } = {}) {
-    setIsShowingClaimRewardsModal(true)
-    setSelectedBidIds(bidIds ?? allBidIdsFromPreviousRounds)
+  function handleClickClaimRewards({
+    bidId,
+    tributeId,
+  }: {
+    bidId: number
+    tributeId: number
+  }) {
+    setSelection({ bidId, tributeId })
   }
 
   function handleClickCloseClaimRewardsModal(
     event?: MouseEvent<HTMLButtonElement>
   ) {
     event?.preventDefault()
-    setIsShowingClaimRewardsModal(false)
+    setSelection(null)
   }
 
   async function handleClickClaimNow(event: MouseEvent<HTMLButtonElement>) {
+    if (!selectedBid || !selectedTribute || !address) return
+
     event.preventDefault()
 
-    setToasts([
-      {
-        message: `Claiming rewards...`,
-        variant: "working",
-      },
-    ])
+    try {
+      setToasts([
+        {
+          message: `Claiming rewards...`,
+          variant: "working",
+        },
+      ])
 
-    for (const bidId of selectedBidIds) {
-      const bid = bidsByRoundId[currentRoundId].find((bid) => bid.id === bidId)
-
-      if (!bid) continue
-
-      await executeWalletClaimRewards(
+      await executeWalletClaimRewards({
+        address,
+        roundId: selectedBid.roundId,
+        trancheId: selectedBid.trancheId,
+        tributeId: selectedTribute.id,
         getSigningCosmWasmClient,
-        address!,
-        Number(bid.roundId),
-        bid.trancheId,
-        Number(bid.id)
-      )
-    }
+      })
 
-    setToasts([
-      {
-        message: `Rewards claimed successfully`,
-        variant: "success",
-      },
-    ])
+      setToasts([
+        {
+          message: `Rewards claimed successfully`,
+          variant: "success",
+        },
+      ])
+    } catch (error) {
+      console.error(error)
+      setToasts([
+        {
+          message: `Error claiming rewards: ${error}`,
+          variant: "error",
+        },
+      ])
+    }
   }
 
   return (
@@ -256,7 +295,7 @@ export default function RewardsPage() {
       </ContentContainer>
 
       <ModalWindow
-        isOpen={isShowingClaimRewardsModal}
+        isOpen={!!selection}
         onClose={handleClickCloseClaimRewardsModal}
       >
         <form>
@@ -317,45 +356,10 @@ export default function RewardsPage() {
                   Rewards to be Claimed:
                 </StyledText>
 
-                <StyledTable
-                  initialSortedColumnKey="amount"
-                  columns={[
-                    {
-                      key: "token",
-                      label: "Token",
-                      isSortable: true,
-                      propsForCells: {
-                        className: "!py-1",
-                      },
-                    },
-                    {
-                      key: "amount",
-                      label: "Amount",
-                      textAlign: "right",
-                      isSortable: true,
-                      initialSortDirection: "DESC",
-                      propsForCells: {
-                        className: "!py-1",
-                      },
-                      customValueGetter: (row) =>
-                        row._bid?.usersEstimatedRewards ?? 0,
-                    },
-                  ]}
-                  rows={selectedBidIds.map((bidId) => {
-                    const bid = Object.values(bidsByRoundId)
-                      .flat()
-                      .find((bid) => bid.id === bidId)!
-
-                    return {
-                      _bid: bid,
-                      token: bid.tributes
-                        .map((t) => t.denom)
-                        .sort()
-                        .join(", "),
-                      amount: amountToUSDString(bid.usersEstimatedRewards),
-                    }
-                  })}
-                />
+                <div>
+                  {selectedBid &&
+                    amountToUSDString(selectedBid.usersEstimatedRewards)}
+                </div>
               </div>
             </Card.Body>
 
