@@ -12,7 +12,9 @@ import { SanitizedLockup } from "@/contract-apis/fetchBackendDataWithWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { calculateLockupVotingPower } from "@/lib/calculateLockupVotingPower"
 import { formatAmount } from "@/lib/formatAmount"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
+import { useRouter } from "next/navigation"
 import { FormEvent, useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { isToday } from "../lib/isToday"
@@ -40,6 +42,7 @@ export function EditLockupDurationModal({
   lockup,
   onSuccess,
 }: EditLockupDurationProps) {
+  const router = useRouter()
   const { address, lockupEpochLength } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -94,10 +97,19 @@ export function EditLockupDurationModal({
 
       setToasts([
         {
-          variant: "success",
-          message: "Lockup saved successfully!",
+          variant: "working",
+          message: "Lockup saved successfully! Reloading...",
         },
       ])
+
+      await revalidateTag("backendData")
+
+      setTimeout(() => {
+        setToasts([])
+        router.push("/lockups")
+        router.refresh()
+      }, 3000)
+
       setIsLockupModalOpen(false)
       onSuccess?.()
     } catch (err: any) {
