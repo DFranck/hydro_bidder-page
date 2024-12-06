@@ -8,7 +8,10 @@ import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText, StyledTextVariant } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { networkLimitReachedTooltip } from "@/components/ToolTips"
+import {
+  extendLockupsToVoteTooltip,
+  networkLimitReachedTooltip,
+} from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -80,14 +83,15 @@ export function VoteButton({
         },
       ])
 
-      await revalidateTag("fetchBackendDataWithWallet")
-      await revalidateTag("fetchBackendDataWithoutWallet")
+      await revalidateTag("backendData")
 
       setIsCelebrating(true)
 
       setTimeout(() => {
-        window.location.reload()
-      }, 3500)
+        setToasts([])
+        router.push("/bids")
+        router.refresh()
+      }, 3000)
     } catch (err: any) {
       setToasts([
         {
@@ -144,14 +148,19 @@ export function VoteButton({
     )
   } else if (!lockupsOutliveBidDeployment) {
     Button = (
-      <StyledText
-        variant={`button.neutral${size ? `.${size}` : ""}` as StyledTextVariant}
-        as="button"
-        onClick={() => setIsTryingToVoteWithExpiredLockups(true)}
-      >
-        <Icon name="solid:rotate-right" />
-        <span>Extend Lockups to Vote</span>
-      </StyledText>
+      <Tooltip tipContents={extendLockupsToVoteTooltip}>
+        <StyledText
+          variant={
+            `button.neutral${size ? `.${size}` : ""}` as StyledTextVariant
+          }
+          as="button"
+          onClick={() => setIsTryingToVoteWithExpiredLockups(true)}
+        >
+          <Icon name="solid:rotate-right" />
+          <span>Extend Lockups to Vote</span>
+          <Icon name="circle-info" />
+        </StyledText>
+      </Tooltip>
     )
   } else if (hasVotedForBid) {
     Button = (

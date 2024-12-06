@@ -28,9 +28,11 @@ import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function LockupsPage() {
+  const router = useRouter()
   const [isConfirmingUnlockExpired, setIsConfirmingUnlockExpired] =
     useState(false)
   const {
@@ -69,14 +71,14 @@ export default function LockupsPage() {
       singular: "expired lockup",
     })
 
-    setToasts([
-      {
-        message: `Unlocking ${pluralizedLockupText}...`,
-        variant: "working",
-      },
-    ])
-
     try {
+      setToasts([
+        {
+          message: `Unlocking ${pluralizedLockupText}...`,
+          variant: "working",
+        },
+      ])
+
       await executeWalletUnlockExpired({
         address,
         getSigningCosmWasmClient,
@@ -84,15 +86,18 @@ export default function LockupsPage() {
 
       setToasts([
         {
-          message: `${pluralizedLockupText} unlocked successfully`,
-          variant: "success",
+          message: `${pluralizedLockupText} unlocked successfully. Reloading...`,
+          variant: "working",
         },
       ])
 
-      await revalidateTag("fetchBackendDataWithWallet")
-      await revalidateTag("fetchBackendDataWithoutWallet")
+      await revalidateTag("backendData")
 
-      window.location.reload()
+      setTimeout(() => {
+        setToasts([])
+        router.push("/lockups")
+        router.refresh()
+      }, 3000)
     } catch (error) {
       setToasts([
         {

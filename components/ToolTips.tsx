@@ -201,6 +201,22 @@ export const lockupLimitTooltip = (
   </>
 )
 
+export const extendLockupsToVoteTooltip = (
+  <>
+    You can extend your lockups to vote for this project.{" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/voting-for-projects"
+      target="_blank"
+      variant="link"
+      className="inline-flex items-center gap-1"
+    >
+      <span>Learn More</span>
+      <Icon name="arrow-up-right-from-square" />
+    </StyledText>
+  </>
+)
+
 export const longerLockupsComingSoonTooltip = (
   <>Longer durations will be available after the pilot rounds</>
 )

@@ -6,7 +6,6 @@ import {
   fetchBackendDataWithWallet,
 } from "@/contract-apis/fetchBackendDataWithWallet"
 import { BackendData } from "@/contract-apis/fetchBackendDataWithoutWallet"
-import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import { merge } from "lodash"
 import { usePathname, useRouter } from "next/navigation"
@@ -111,6 +110,7 @@ export function BackendDataContextProvider({
       if (!address) return
 
       setIsLoading(true)
+
       setToasts([
         {
           message: "Loading...",
@@ -141,6 +141,7 @@ export function BackendDataContextProvider({
               : lockup.dateStart,
         })),
       })
+
       setToasts([])
       setIsLoading(false)
     })()
@@ -159,10 +160,6 @@ export function BackendDataContextProvider({
         protectedRoutes.some((protectedRoute) =>
           pathname.startsWith(protectedRoute)
         )
-
-      if (didJustDisconnect || didJustConnect) {
-        await revalidateTag("fetchBackendDataWithWallet")
-      }
 
       // Redirect to bids if user has just connected their wallet and is on homepage
       if (didJustConnect && !hasBeenRedirected && pathname === "/") {
