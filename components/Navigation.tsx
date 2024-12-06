@@ -243,27 +243,12 @@ export default function Navigation() {
           </Link>
         </ConditionalWrapper>
 
-        <ConditionalWrapper
-          condition={process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"}
-          wrapper={(children) => (
-            <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
-          )}
+        <Link
+          href="/airdrops"
+          className={twMerge(navigationMenuTriggerStyle("/airdrops"))}
         >
-          <Link
-            href={
-              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true"
-                ? "#"
-                : "/airdrops"
-            }
-            className={twMerge(
-              navigationMenuTriggerStyle("/airdrops"),
-              process.env.NEXT_SHOW_HIDDEN_FEATURES !== "true" &&
-                "pointer-events-none opacity-60"
-            )}
-          >
-            Airdrops
-          </Link>
-        </ConditionalWrapper>
+          Airdrops
+        </Link>
 
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>
