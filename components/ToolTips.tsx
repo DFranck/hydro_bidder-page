@@ -131,12 +131,12 @@ export const estimatedRewardsColumnTooltip = ({
 export const estimatedRewardsTooltip = ({
   bid,
   bidDescription,
-  hasVotingPower,
+  hasVotedThisRound: hasVotingPower,
   isTokenBasedBid,
 }: {
   bid: FullyAugmentedBid
   bidDescription: BidDescription
-  hasVotingPower: boolean
+  hasVotedThisRound: boolean
   isTokenBasedBid: boolean
 }) => {
   const { projectName } = bidDescription
@@ -341,7 +341,7 @@ export const polDurationTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href="/docs/users/voting-for-projects"
+      href="docs/users/voting-for-projects#voting-eligibility-based-on-pol-duration"
       target="_blank"
       className="inline-flex items-center gap-1"
     >

@@ -28,15 +28,16 @@ export function BidRewards({ bidId }: { bidId: number }) {
   )
   const roundedPercentage = Math.round(bid.usersEstimatedRewardsDeltaPercentage)
   const hasDelta = roundedPercentage > 0 || roundedPercentage < 0
-  const hasVotingPower = Boolean(votingPower)
+  const hasVotedThisRound = Boolean(votingPower)
   const isPositive = roundedPercentage > 0
   const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
   const computedTooltipContent = estimatedRewardsTooltip({
     bid,
     bidDescription,
-    hasVotingPower,
+    hasVotedThisRound,
     isTokenBasedBid,
   })
+  const votesThisRound = votes.filter((vote) => vote.bidId === bid.id)
 
   return !isTokenBasedBid ? (
     <Tooltip
@@ -63,7 +64,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
     </Tooltip>
   ) : (
     <Tooltip tipContents={computedTooltipContent}>
-      {!votes || votes.length === 0 ? (
+      {!votesThisRound || votesThisRound.length === 0 ? (
         <div className="flex items-center gap-1">
           <span>{totalEstimatedRewardsUsd}</span>
           <Icon name="circle-info" />
