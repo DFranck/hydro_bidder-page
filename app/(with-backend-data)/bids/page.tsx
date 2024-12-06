@@ -374,7 +374,7 @@ export default function BidsPage() {
         <StatCards.TimeLeft />
       </StatCards>
 
-      <ContentContainer className="gap-12 py-12">
+      <ContentContainer className="gap-12 py-6">
         <LoadingSpinner isLoading={isLoading} />
 
         {!isLoading && tokenBasedBids.length === 0 && (

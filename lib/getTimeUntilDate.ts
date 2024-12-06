@@ -33,6 +33,10 @@ export function getTimeUntilDate(date: Date | string) {
     unit = "sec"
   }
 
+  if (duration <= 0) {
+    return "Time's Up"
+  }
+
   return pluralize({
     count: Math.floor(duration),
     singular: unit,
