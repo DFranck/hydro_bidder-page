@@ -1,7 +1,8 @@
-export const upcomingAirdrops = `Elys	Elys Network makes crypto simple with universal access to tokens from all ecosystems. Whether you are a novice or an experienced user, you can easily navigate the DeFi space through a complete set of features, all in one place.	Confirmed	Text	Details Pending		FALSE
+export const upcomingAirdrops = `Elys	Elys Network makes crypto simple with universal access to tokens from all ecosystems. Whether you’re a novice or an experienced user, you can easily navigate the DeFi space through a complete set of features, all in one place.	Confirmed	Text	Details Pending		FALSE
 Side Protocol	Side Protocol is a fully Bitcoin-compatible Layer 1 blockchain	Confirmed	Button	More Info	https://genesis.side.one/	FALSE
 Dungeon Chain	Dungeon Chain (DGN) revolutionizes gaming with fast, low-cost blockchain tech secured by Cosmos Hub validators; first game, Kosmic Quest, launches Q1 2025.	Confirmed	Text	Details Pending		FALSE
 Drop	Drop, a liquid staking protocol backed by Lido, turns idle assets into economic flows to empower sovereign blockchains.	Confirmed	Text	Details Pending		FALSE
+Demex	Demex is a seamless, omni-chain DEX for trading perpetuals, spot, and earning yield across chains.	Confirmed	Text	Details Pending		FALSE
 Namada	Asset-agnostic privacy Layer 1 blockchain enabling shielded transfers with zero-knowledge proofs.	Rumored	Text	Details Pending		FALSE
 Soarchain	A DePIN project that incorporates AI and modularity, focusing on the mobility ecosystem.	Rumored	Text	Details Pending		FALSE
 Electron	The first DeFi Protocol designed to integrate RWAs on Neutron.	Rumored	Text	Details Pending		FALSE
