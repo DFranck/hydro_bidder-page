@@ -12,7 +12,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   metricsPolAprColumnTooltip,
   metricsPolRewardsColumnTooltip,
-  metricsPolValueColumnTooltip,
+  metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
   metricsTributeColumnTooltip,
 } from "@/components/ToolTips"
@@ -82,7 +82,7 @@ export function ClientComponent({
           </div>
         </InvisibleLink>
       ),
-      polValue: (
+      polSize: (
         <InvisibleLink href={rowURL}>
           {isInVotingPeriod
             ? "Pending"
@@ -166,11 +166,11 @@ export function ClientComponent({
       customValueGetter: (row) => row._bid.title,
     },
     {
-      key: "polValue",
+      key: "polSize",
       label: (
-        <Tooltip tipContents={metricsPolValueColumnTooltip}>
+        <Tooltip tipContents={metricsPolSizeColumnTooltip}>
           <div className="flex items-center gap-1">
-            PoL Value
+            PoL Size
             <Icon name="circle-info" />
           </div>
         </Tooltip>
@@ -340,7 +340,7 @@ export function ClientComponent({
           <StyledTable
             columns={columns}
             rows={rows}
-            initialSortedColumnKey="polValue"
+            initialSortedColumnKey="polSize"
           />
         </BlurryBackdropBox>
       </ContentContainer>
