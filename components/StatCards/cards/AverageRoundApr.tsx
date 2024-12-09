@@ -20,8 +20,11 @@ export function AverageRoundApr() {
     bids.map((bid) => bid.tributes).flat(),
     "valueInUsd"
   )
+  const averageBidDurationInEpochs =
+    sumBy(bids, "deploymentDurationInEpochs") / bids.length
   const averageAPR =
-    (totalTributeValue / (totalLockedAtomGlobal / 1e6) / atomPrice) * 12 || 0
+    ((totalTributeValue / (totalLockedAtomGlobal / 1e6) / atomPrice) * 12) /
+      averageBidDurationInEpochs || 0
 
   return (
     <StatCard
