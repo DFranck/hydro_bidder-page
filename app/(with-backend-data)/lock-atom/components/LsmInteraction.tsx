@@ -212,7 +212,7 @@ export function LsmInteraction({
             )}
 
           {isAtMaxLockupCapacity ? (
-            <BlurryBackdropBox>
+            <BlurryBackdropBox className="p-6">
               <p>
                 Hydro is currently at max capacity. Please wait for the next
                 round to start.
