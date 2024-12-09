@@ -6,7 +6,6 @@ export function amountToUSDString(
 ) {
   const amountToPrint = Number(amount ?? 0)
   return [
-    amountToPrint > 0 ? "≈" : null,
     amountToPrint.toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
