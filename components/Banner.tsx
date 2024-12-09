@@ -1,7 +1,6 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { HYDRO_TELEGRAM_URL } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Link from "next/link"
@@ -12,18 +11,6 @@ export function Banner() {
   const { currentRoundId, isAtMaxLockupCapacity, isLoading } = backendData
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const Banners = {
-    capNotYetIncreased: {
-      href: HYDRO_TELEGRAM_URL,
-      text: (
-        <>
-          Round {currentRoundId + 1} caps have not yet been increased. Stay
-          tuned in the Telegram group for the latest news.{" "}
-          <span className="inline-flex items-center gap-1 font-bold underline">
-            Learn More <Icon name="solid:arrow-up-right" />
-          </span>
-        </>
-      ),
-    },
     maxCapacity: {
       href: "/docs#max-capacity",
       text: (
@@ -48,9 +35,7 @@ export function Banner() {
       ),
     },
   }
-  // TODO: Un-hardcode this when caps are increased!
-  // const activeBannerName = isAtMaxLockupCapacity ? "maxCapacity" : "pilotRounds"
-  const activeBannerName = "capNotYetIncreased"
+  const activeBannerName = isAtMaxLockupCapacity ? "maxCapacity" : "pilotRounds"
   const { href, text } = Banners[activeBannerName]
 
   return (
