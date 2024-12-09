@@ -2,6 +2,7 @@
 
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
+import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
@@ -162,23 +163,10 @@ export const ContinueFromHubStepper = ({
               >
                 <div className="mb-4">
                   <label className="m block">Select Lock Duration:</label>
-                  <div className="flex space-x-2">
-                    {[1].map((months) => (
-                      <StyledText
-                        as="button"
-                        key={months}
-                        variant={
-                          lockDuration === months * EPOCH_LENGTH
-                            ? "button.primary"
-                            : "button.secondary"
-                        }
-                        onClick={() => setLockDuration(months * EPOCH_LENGTH)}
-                        className="flex-1"
-                      >
-                        {months} {months === 1 ? "month" : "months"}
-                      </StyledText>
-                    ))}
-                  </div>
+                  <InputForLockupPeriod
+                    selectedDuration={lockDuration}
+                    onChange={(value) => setLockDuration(value)}
+                  />
                 </div>
                 <p>This will require two wallet approvals.</p>
               </form>
