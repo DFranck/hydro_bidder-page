@@ -1,7 +1,10 @@
 "use client"
 
+import { LockForm } from "@/app/(with-backend-data)/lock-atom/components/LockForm"
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { useChain } from "@cosmos-kit/react"
 import { useEffect, useState } from "react"
@@ -16,7 +19,6 @@ import { checkForNeutronLSMShares } from "../transactions/checkForNeutronLSMShar
 import { IncompleteNotice, Stepper } from "../types"
 import { HubIncompleteNotice } from "./HubIncompleteNotice"
 import { LoaderCard } from "./LoaderCard"
-import { LockForm } from "./LockForm"
 import { NeutronIncompleteNotice } from "./NeutronIncompleteNotice"
 
 export function LsmInteraction({
@@ -24,6 +26,7 @@ export function LsmInteraction({
 }: {
   validatorMap: Map<string, Validator>
 }) {
+  const { isAtMaxLockupCapacity } = useBackendData()
   const hubChain = useChain("cosmoshub")
   const neutronChain = useChain("neutron")
   const [hubSigner, setHubSigner] = useState<SigningStargateClient | undefined>(
@@ -208,18 +211,27 @@ export function LsmInteraction({
               </StyledText>
             )}
 
-          <LockForm
-            onSubmit={(validator, amount, duration) =>
-              setStepper({
-                type: "lock",
-                validator,
-                amount,
-                duration,
-              })
-            }
-            hubChain={hubChain}
-            validatorMap={validatorMap}
-          />
+          {isAtMaxLockupCapacity ? (
+            <BlurryBackdropBox>
+              <p>
+                Hydro is currently at max capacity. Please wait for the next
+                round to start.
+              </p>
+            </BlurryBackdropBox>
+          ) : (
+            <LockForm
+              onSubmit={(validator, amount, duration) =>
+                setStepper({
+                  type: "lock",
+                  validator,
+                  amount,
+                  duration,
+                })
+              }
+              hubChain={hubChain}
+              validatorMap={validatorMap}
+            />
+          )}
         </div>
       </div>
     )) || (
