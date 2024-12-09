@@ -25,11 +25,13 @@ export function BidRewards({ bidId }: { bidId: number }) {
   const totalEstimatedRewardsUsd = amountToUSDString(
     sumBy(bid.tributes, "valueInUsd")
   )
-  const roundedPercentage = Math.round(bid.usersEstimatedRewardsDeltaPercentage)
-  const hasDelta = roundedPercentage > 0 || roundedPercentage < 0
+  const roundedDeltaPercentage = Math.round(
+    bid.usersEstimatedRewardRelativeToCurrentPick
+  )
+  const hasDelta = roundedDeltaPercentage > 0 || roundedDeltaPercentage < 0
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const hasVotedThisRound = votesThisRound.length > 0
-  const isPositive = roundedPercentage > 0
+  const isPositive = roundedDeltaPercentage > 0
   const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
   const computedTooltipContent = estimatedRewardsTooltip({
     bid,
@@ -82,7 +84,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
                 <Icon
                   name={isPositive ? "solid:arrow-up" : "solid:arrow-down"}
                 />
-                {roundedPercentage}%
+                {roundedDeltaPercentage}%
               </span>
             )}
             {amountToUSDString(bid.usersEstimatedRewards)}
