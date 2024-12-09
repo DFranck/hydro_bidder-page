@@ -240,7 +240,7 @@ export const metricsPolRewardsColumnTooltip = (
   </>
 )
 
-export const metricsPolValueColumnTooltip = (
+export const metricsPolSizeColumnTooltip = (
   <>
     The total amount of ATOM allocated to this project as Protocol-Owned
     Liquidity (PoL) during the specified round.
