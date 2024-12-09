@@ -95,14 +95,14 @@ export function EditLockupDurationModal({
         lockDurationInNanos: selectedDuration,
       })
 
+      await revalidateTag("backendData")
+
       setToasts([
         {
           variant: "working",
           message: "Lockup saved successfully! Reloading...",
         },
       ])
-
-      await revalidateTag("backendData")
 
       setTimeout(() => {
         setToasts([])
@@ -133,10 +133,6 @@ export function EditLockupDurationModal({
     } finally {
       setIsLoading(false)
     }
-  }
-
-  if (isLockupFromToday) {
-    return <div>Lockup created today</div>
   }
 
   return (
