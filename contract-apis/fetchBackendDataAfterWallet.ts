@@ -54,7 +54,7 @@ export interface SanitizedVote
 export interface SanitizedBid extends AugmentedBidFromContract {
   lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
-  usersEstimatedRewardsDeltaPercentage: number
+  usersEstimatedRewardRelativeToCurrentPick: number
 }
 
 function sanitizeLockup(lockup: LockEntryWithPower): SanitizedLockup {
@@ -151,7 +151,11 @@ async function uncachedFetchBackendDataAfterWallet({
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
 
-  const votedBidId = sanitizedVotes.find((vote) => vote.bidId)?.bidId ?? null
+  const votedBidId =
+    bids
+      .filter((bid) => bid.roundId === currentRoundId)
+      .find((bid) => sanitizedVotes.some((vote) => vote.bidId === bid.id))
+      ?.id ?? null
 
   const bidsWithRewards = bids.map((bid) => {
     const description =
@@ -186,28 +190,26 @@ async function uncachedFetchBackendDataAfterWallet({
       description,
       lockupsOutliveBidDeployment,
       usersEstimatedRewards,
-      usersEstimatedRewardsDeltaPercentage: 0,
+      usersEstimatedRewardRelativeToCurrentPick: 0,
     }
   })
 
   const votedBid = bidsWithRewards.find((bid) => bid.id === votedBidId) ?? null
 
-  const bidsWithRelativeRewards = bidsWithRewards.map((bid) => {
-    const delta = votedBid
-      ? bid.usersEstimatedRewards - votedBid?.usersEstimatedRewards
-      : 0
-
-    const usersEstimatedRewardsDeltaPercentage = votedBid
-      ? (delta / votedBid.usersEstimatedRewards) * 100
-      : 0
+  const bidsWithRewardsRelativeToCurrentPick = bidsWithRewards.map((bid) => {
+    const usersEstimatedRewardRelativeToCurrentPick =
+      votedBid && votedBid.usersEstimatedRewards && bid.usersEstimatedRewards
+        ? 100 -
+          (votedBid.usersEstimatedRewards / bid.usersEstimatedRewards) * 100
+        : 0
 
     return {
       ...bid,
-      usersEstimatedRewardsDeltaPercentage,
+      usersEstimatedRewardRelativeToCurrentPick,
     }
   })
 
-  const sanitizedBids: SanitizedBid[] = bidsWithRelativeRewards
+  const sanitizedBids: SanitizedBid[] = bidsWithRewardsRelativeToCurrentPick
 
   const bidsById = keyBy(sanitizedBids, (bid) => bid.id)
 
