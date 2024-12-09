@@ -148,7 +148,7 @@ export function ClientComponent({
               {amountToUSDString(bid.onchainTributeUsdc)}
             </div>
           )}
-          {isPreHydro && <div className="text-sm opacity-60">0</div>}
+          {isPreHydro && "0"}
         </InvisibleLink>
       ),
       status: <InvisibleLink href={rowURL}>{status}</InvisibleLink>,
@@ -293,8 +293,14 @@ export function ClientComponent({
       )}
 
       <ContentContainer className="gap-12 py-12">
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
           <h2 className="sr-only">PoL Metrics by Round</h2>
+
+          <div>
+            <StyledText as="p" variant="footnote">
+              Metrics are updated at the end of each round.
+            </StyledText>
+          </div>
 
           <div className="flex items-center backdrop-blur-sm">
             {[null, ...postHydroRoundIdsWithBidData].map((roundNumber) => {
