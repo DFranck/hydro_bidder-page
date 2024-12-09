@@ -73,7 +73,6 @@ export function BidRewards({ bidId }: { bidId: number }) {
       ) : (
         <div className="flex flex-col">
           <div className="flex items-center justify-end gap-1">
-            <Icon name="circle-info" />
             {hasDelta && (
               <span
                 className={twMerge(
@@ -88,6 +87,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
               </span>
             )}
             {amountToUSDString(bid.usersEstimatedRewards)}
+            <Icon name="circle-info" />
           </div>
           <StyledText variant="footnote" as="div" className="whitespace-nowrap">
             of {totalEstimatedRewardsUsd}
