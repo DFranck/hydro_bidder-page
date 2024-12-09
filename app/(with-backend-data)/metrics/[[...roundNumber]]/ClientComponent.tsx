@@ -296,7 +296,7 @@ export function ClientComponent({
         <div className="flex items-center justify-end">
           <h2 className="sr-only">PoL Metrics by Round</h2>
 
-          <div>
+          <div className="flex items-center backdrop-blur-sm">
             {[null, ...postHydroRoundIdsWithBidData].map((roundNumber) => {
               const isActive = roundNumber === requestedRoundNumberUnderHood
               return (
@@ -307,11 +307,18 @@ export function ClientComponent({
                   key={roundNumber ?? "pre-hydro"}
                   className={twMerge(
                     `
+                      -mx-px
                       rounded-none
+                      backdrop-blur-none
                       first:rounded-l-full
                       last:rounded-r-full
+                      hover:scale-100
                     `,
-                    !isActive && "opacity-60"
+                    !isActive &&
+                      `
+                        text-palette-green/50
+                        hover:text-palette-green
+                      `
                   )}
                 >
                   {roundNumber === null
