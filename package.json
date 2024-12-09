@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sync-all-to-develop": "git checkout main && git merge develop && git push && git checkout staging && git merge main && git push && git checkout staging-next && git merge main && git push && git checkout develop"
   },
   "dependencies": {
     "@chain-registry/types": "^0.50.24",
