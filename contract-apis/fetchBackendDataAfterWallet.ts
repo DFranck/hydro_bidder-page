@@ -9,6 +9,11 @@ import {
   AugmentedBidFromContract,
   BackendDataBeforeWallet,
 } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import {
+  augmentClaims,
+  AugmentedClaim,
+  fetchClaims,
+} from "@/contract-apis/fetchClaims"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
@@ -21,9 +26,11 @@ import { unstable_cache } from "next/cache"
 export interface BackendDataAfterWallet
   extends Omit<BackendDataBeforeWallet, "bids"> {
   address: string
-  bids: SanitizedBid[]
-  bidsById: Record<number, SanitizedBid>
-  bidsByRoundId: Record<number, SanitizedBid[]>
+  bids: AugmentedBid[]
+  bidsById: Record<number, AugmentedBid>
+  bidsByRoundId: Record<number, AugmentedBid[]>
+  claims: AugmentedClaim[]
+  claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
   isWalletConnected: boolean
   maxLockedAtomUser: number
@@ -51,7 +58,7 @@ export interface SanitizedVote
   bidId: number
 }
 
-export interface SanitizedBid extends AugmentedBidFromContract {
+export interface AugmentedBid extends AugmentedBidFromContract {
   lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardRelativeToCurrentPick: number
@@ -92,6 +99,10 @@ async function uncachedFetchBackendDataAfterWallet({
     throw new Error("Hydro contract address not set")
   }
 
+  if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
+    throw new Error("Tribute contract address not set")
+  }
+
   const cosmWasmClient = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     cosmWasmClient,
@@ -99,6 +110,7 @@ async function uncachedFetchBackendDataAfterWallet({
   )
 
   const {
+    assetListWithPrices,
     bidDescriptionsByBidId,
     bids,
     currentRoundEndDate,
@@ -209,7 +221,7 @@ async function uncachedFetchBackendDataAfterWallet({
     }
   })
 
-  const sanitizedBids: SanitizedBid[] = bidsWithRewardsRelativeToCurrentPick
+  const sanitizedBids: AugmentedBid[] = bidsWithRewardsRelativeToCurrentPick
 
   const bidsById = keyBy(sanitizedBids, (bid) => bid.id)
 
@@ -220,12 +232,26 @@ async function uncachedFetchBackendDataAfterWallet({
     (vote) => bidsById[vote.bidId].roundId
   )
 
+  const { claims, outstandingClaims } = await fetchClaims({ address })
+
+  const augmentedClaims = augmentClaims({
+    assetListWithPrices,
+    claims,
+  })
+
+  const augmentedOutstandingClaims = augmentClaims({
+    assetListWithPrices,
+    claims: outstandingClaims,
+  })
+
   const backendDataAfterWallet: BackendDataAfterWallet = {
     ...backendData,
     address,
     bids: sanitizedBids,
     bidsById,
     bidsByRoundId,
+    claims: augmentedClaims,
+    claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,
     isWalletConnected: true,
     // TODO: get this from contract

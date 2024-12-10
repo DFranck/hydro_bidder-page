@@ -23,7 +23,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import { useChain } from "@cosmos-kit/react"
-import { sumBy } from "lodash"
+import { keyBy, sumBy } from "lodash"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 
@@ -35,34 +35,40 @@ export default function RewardsPage() {
     bidDescriptionsByBidId,
     bids,
     bidsById,
+    claims,
+    claimsOutstanding,
     currentRoundId,
     votes,
     votingPower,
   } = useBackendData()
-  const bidsFromPreviousRounds = bids.filter(
-    (bid) => bid.roundId < currentRoundId
-  )
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
   )
-  const bidsUserVotedOn = bidsFromPreviousRounds.filter((bid) =>
-    votesFromPreviousRounds.find((vote) => vote.bidId === bid.id)
+  const bidsToRender = bids.filter(
+    (bid) =>
+      votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
+      bid.roundId < currentRoundId && // previous rounds
+      bid.tributes.some((t) => t.isTokenBased) // has token-based tributes
   )
-  const bidsWithTokenBasedTributes = bidsUserVotedOn.filter((bid) =>
-    bid.tributes.some((t) => t.isTokenBased)
+  const tributesById = keyBy(
+    bidsToRender.flatMap((bid) => bid.tributes),
+    "id"
   )
+
+  // "Claim" button sets selection and triggers confirmation modal
   const [selection, setSelection] = useState<{
-    bidId: number
     tributeId: number
   } | null>(null)
-  const selectedBid = selection ? bidsById[selection.bidId] : null
   const selectedTribute = selection
-    ? (selectedBid?.tributes.find(
-        (t) => (t as SanitizedTokenBasedTribute).id === selection.tributeId
-      ) as SanitizedTokenBasedTribute)
+    ? (tributesById[selection.tributeId] as SanitizedTokenBasedTribute)
     : null
+  const selectedBid =
+    selection && selectedTribute
+      ? bidsById[tributesById[selection.tributeId].bidId]
+      : null
 
-  const rows = bidsWithTokenBasedTributes
+  // Bids can have multiple tributes, so this turns each into a row
+  const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
       const bidDescription = bidDescriptionsByBidId[bid.id]
@@ -71,83 +77,120 @@ export default function RewardsPage() {
         (tribute) => tribute.isTokenBased
       )
 
-      return tokenBasedTributes.map((tribute) => ({
-        _bid: bid,
+      return tokenBasedTributes.map((tribute) => {
+        const matchingOutstandingClaim = claimsOutstanding.find(
+          (claim) =>
+            claim.bidId === bid.id &&
+            claim.tributeId === tribute.id &&
+            claim.roundId === bid.roundId &&
+            claim.trancheId === bid.trancheId
+        )
+        const matchingHistoricalClaim = claims.find(
+          (claim) =>
+            claim.bidId === bid.id &&
+            claim.tributeId === tribute.id &&
+            claim.roundId === bid.roundId &&
+            claim.trancheId === bid.trancheId
+        )
+        const matchingClaim =
+          (matchingOutstandingClaim || matchingHistoricalClaim) ?? null
 
-        _tribute: tribute,
+        return {
+          _bid: bid,
 
-        roundNumber: (
-          <InvisibleLink href={bidUrl}>{bid.roundId + 1}</InvisibleLink>
-        ),
+          _tribute: tribute,
 
-        logo: (
-          <InvisibleLink href={bidUrl}>
-            {projectLogoUrl ? (
-              <div className="relative size-12">
-                <Image
-                  className="object-contain"
-                  src={projectLogoUrl}
-                  alt={projectName}
-                  fill={true}
-                />
+          roundNumber: (
+            <InvisibleLink href={bidUrl}>{bid.roundId + 1}</InvisibleLink>
+          ),
+
+          logo: (
+            <InvisibleLink href={bidUrl}>
+              {projectLogoUrl ? (
+                <div className="relative size-12">
+                  <Image
+                    className="object-contain"
+                    src={projectLogoUrl}
+                    alt={projectName}
+                    fill={true}
+                  />
+                </div>
+              ) : null}
+            </InvisibleLink>
+          ),
+
+          bidTitleAndProjectName: (
+            <InvisibleLink href={bidUrl}>
+              <div className="flex flex-col">
+                <StyledText variant="h4">{title}</StyledText>
+                <StyledText variant="footnote">{projectName}</StyledText>
               </div>
-            ) : null}
-          </InvisibleLink>
-        ),
+            </InvisibleLink>
+          ),
 
-        bidTitleAndProjectName: (
-          <InvisibleLink href={bidUrl}>
-            <div className="flex flex-col">
-              <StyledText variant="h4">{title}</StyledText>
-              <StyledText variant="footnote">{projectName}</StyledText>
-            </div>
-          </InvisibleLink>
-        ),
+          token: (
+            <InvisibleLink href={bidUrl}>
+              {tribute.amount}&nbsp;{tribute.denom}
+            </InvisibleLink>
+          ),
 
-        token: (
-          <InvisibleLink href={bidUrl}>
-            {tribute.amount}&nbsp;{tribute.denom}
-          </InvisibleLink>
-        ),
+          polRewards: (
+            <InvisibleLink href={bidUrl}>
+              {amountToUSDString(tribute.valueInUsd)}
+            </InvisibleLink>
+          ),
 
-        polRewards: (
-          <InvisibleLink href={bidUrl}>
-            {amountToUSDString(tribute.valueInUsd)}
-          </InvisibleLink>
-        ),
-
-        tributeRewards: (
-          <InvisibleLink href={bidUrl}>
-            <Tooltip tipContents={rewardsTributeRewardsTooltip}>
-              <span>
-                {amountToUSDString(
-                  estimatedRewardForPower({
-                    proposalTotalTribute: tribute.valueInUsd,
+          tributeRewards: (
+            <InvisibleLink href={bidUrl}>
+              <Tooltip tipContents={rewardsTributeRewardsTooltip}>
+                <span>
+                  {estimatedRewardForPower({
+                    proposalTotalTribute: tribute.amount,
                     myVotingPower: votingPower,
                     proposalPower: Number(bid.power),
-                  })
-                )}
-              </span>
-              <Icon name="circle-info" />
-            </Tooltip>
-          </InvisibleLink>
-        ),
+                  }) * 1e6}
+                  &nbsp;{tribute.denom}(
+                  {amountToUSDString(
+                    estimatedRewardForPower({
+                      proposalTotalTribute: tribute.valueInUsd,
+                      myVotingPower: votingPower,
+                      proposalPower: Number(bid.power),
+                    })
+                  )}
+                  )
+                </span>
+                <Icon name="circle-info" />
+              </Tooltip>
+            </InvisibleLink>
+          ),
 
-        actions: (
-          <InvisibleLink href={bidUrl}>
-            <StyledText
-              as="button"
-              variant="button.primary.small"
-              onClick={handleClickClaimRewards.bind(null, {
-                bidId: bid.id,
-                tributeId: tribute.id,
-              })}
-            >
-              Claim
-            </StyledText>
-          </InvisibleLink>
-        ),
-      }))
+          actions: (
+            <InvisibleLink href={bidUrl}>
+              {matchingOutstandingClaim && (
+                <StyledText
+                  as="button"
+                  variant="button.primary.small"
+                  onClick={() =>
+                    setSelection({
+                      tributeId: tribute.id,
+                    })
+                  }
+                >
+                  Claim
+                </StyledText>
+              )}
+
+              {matchingHistoricalClaim && <>Claimed</>}
+
+              {bid.liquidityDeployment &&
+                sumBy(bid.liquidityDeployment.deployedFunds, "amount") ===
+                  0 && <>Refundable</>}
+
+              {!bid.liquidityDeployment && <>Unresolved</>}
+            </InvisibleLink>
+          ),
+        }
+      })
     })
     .flat()
 
@@ -220,16 +263,6 @@ export default function RewardsPage() {
       },
     },
   ]
-
-  function handleClickClaimRewards({
-    bidId,
-    tributeId,
-  }: {
-    bidId: number
-    tributeId: number
-  }) {
-    setSelection({ bidId, tributeId })
-  }
 
   function handleClickCloseClaimRewardsModal(
     event?: MouseEvent<HTMLButtonElement>
