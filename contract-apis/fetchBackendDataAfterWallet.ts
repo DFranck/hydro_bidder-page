@@ -33,8 +33,10 @@ export interface BackendDataAfterWallet
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
   isWalletConnected: boolean
-  maxLockedAtomUser: number
-  totalLockedAtomUser: number
+  lockedAtomIsAtWalletCapacity: boolean
+  lockedAtomMaxWallet: number
+  lockedAtomPercentageWallet: number
+  lockedAtomTotalWallet: number
   lockups: SanitizedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<string, SanitizedVote[]>
@@ -244,6 +246,15 @@ async function uncachedFetchBackendDataAfterWallet({
     claims: outstandingClaims,
   })
 
+  const lockedAtomTotalWallet = sumBy(sanitizedLockups, "funds.amount")
+
+  // TODO: get this from contract
+  const lockedAtomMaxWallet = 200
+
+  const lockedAtomPercentageWallet = Math.round(
+    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
+  )
+
   const backendDataAfterWallet: BackendDataAfterWallet = {
     ...backendData,
     address,
@@ -254,9 +265,10 @@ async function uncachedFetchBackendDataAfterWallet({
     claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,
     isWalletConnected: true,
-    // TODO: get this from contract
-    maxLockedAtomUser: 200,
-    totalLockedAtomUser: sumBy(sanitizedLockups, "funds.amount"),
+    lockedAtomIsAtWalletCapacity: lockedAtomTotalWallet === lockedAtomMaxWallet,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageWallet,
+    lockedAtomTotalWallet,
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
     votesByRoundId,

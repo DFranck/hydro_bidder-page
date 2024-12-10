@@ -13,7 +13,7 @@ export function AverageRoundApr() {
     bidsByRoundId,
     currentRoundId,
     isLoading,
-    totalLockedAtomGlobal,
+    lockedAtomTotalGlobal,
   } = useBackendData()
   const bids = bidsByRoundId[currentRoundId] ?? []
   const totalTributeValue = sumBy(
@@ -23,7 +23,7 @@ export function AverageRoundApr() {
   const averageBidDurationInEpochs =
     sumBy(bids, "deploymentDurationInEpochs") / bids.length
   const averageAPR =
-    ((totalTributeValue / (totalLockedAtomGlobal / 1e6) / atomPrice) * 12) /
+    ((totalTributeValue / (lockedAtomTotalGlobal / 1e6) / atomPrice) * 12) /
       averageBidDurationInEpochs || 0
 
   return (

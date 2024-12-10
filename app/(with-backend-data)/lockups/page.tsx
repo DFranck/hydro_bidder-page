@@ -20,7 +20,6 @@ import {
   lockupLimitReachedByUserTooltip,
   lockupLimitTooltip,
 } from "@/components/ToolTips"
-import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -41,21 +40,16 @@ export default function LockupsPage() {
   const {
     address,
     lockups,
-    maxLockedAtomGlobal,
-    totalLockedAtomGlobal,
-    totalLockedAtomUser,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageGlobal,
+    lockedAtomPercentageWallet,
+    lockedAtomTotalWallet,
   } = useBackendData()
-  const maxLockedAtomOverall = maxLockedAtomGlobal
-  const maxLockedAtomPerWallet = maxLockedTokensPerAddress ?? 0
-  const percentageLockedInWallet = Math.round(
-    (totalLockedAtomUser / maxLockedAtomPerWallet) * 100
-  )
-  const percentageLockedOverall = Math.round(
-    (totalLockedAtomGlobal / maxLockedAtomOverall) * 100
-  )
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
-  const expiredLockups = lockups.filter((lockup) => new Date() > lockup.dateEnd)
+  const expiredLockups = lockups.filter(
+    (lockup) => new Date() >= lockup.dateEnd
+  )
 
   async function handleClickToNextUnlockingStep() {
     router.push("/lock-atom")
@@ -153,16 +147,14 @@ export default function LockupsPage() {
               className="block w-96 shrink-0"
             >
               <ProgressBar
-                percentage={percentageLockedInWallet}
+                percentage={lockedAtomPercentageWallet}
                 warningZone={(percentage) => percentage >= 75}
                 dangerZone={(percentage) => percentage >= 95}
               >
                 <div className="flex items-center gap-1">
                   <span>
-                    {(totalLockedAtomUser / 1e6)
-                      .toFixed(4)
-                      .replace(".0000", "")}{" "}
-                    / {maxLockedAtomPerWallet / 1e6} ATOM max.
+                    {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
+                    {lockedAtomMaxWallet} ATOM max
                   </span>
                   <span>
                     <Icon name="circle-info" />
@@ -185,14 +177,14 @@ export default function LockupsPage() {
 
             <ConditionalWrapper
               condition={
-                percentageLockedInWallet === 100 ||
-                percentageLockedOverall === 100
+                lockedAtomPercentageWallet === 100 ||
+                lockedAtomPercentageGlobal === 100
               }
               wrapper={(children) => (
                 <Tooltip
                   classNamesForTooltip="-ml-12"
                   tipContents={
-                    percentageLockedInWallet === 100
+                    lockedAtomPercentageWallet === 100
                       ? lockupLimitReachedByUserTooltip
                       : lockupLimitReachedByNetworkTooltip
                   }

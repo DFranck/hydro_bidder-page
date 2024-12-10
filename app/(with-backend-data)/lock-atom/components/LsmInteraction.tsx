@@ -23,7 +23,7 @@ export function LsmInteraction({
 }: {
   validatorMap: Map<string, Validator>
 }) {
-  const { isAtMaxLockupCapacity } = useBackendData()
+  const { lockedAtomIsAtGlobalCapacity } = useBackendData()
   const {
     hubChain,
     hubSigner,
@@ -129,7 +129,7 @@ export function LsmInteraction({
               </StyledText>
             )}
 
-          {isAtMaxLockupCapacity ? (
+          {lockedAtomIsAtGlobalCapacity ? (
             <BlurryBackdropBox className="p-6">
               <p>
                 Hydro is currently at max capacity. Please wait for the next

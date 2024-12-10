@@ -28,10 +28,10 @@ export function LockForm({
 }) {
   const {
     lockupEpochLength,
-    maxLockedAtomGlobal,
-    maxLockedAtomUser,
-    totalLockedAtomGlobal,
-    totalLockedAtomUser,
+    lockedAtomMaxGlobal,
+    lockedAtomMaxWallet,
+    lockedAtomTotalGlobal,
+    lockedAtomTotalWallet,
   } = useBackendData()
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(lockupEpochLength)
@@ -45,11 +45,11 @@ export function LockForm({
   )
   const globalLimitRemainder = Math.max(
     0,
-    maxLockedAtomGlobal - totalLockedAtomGlobal
+    lockedAtomMaxGlobal - lockedAtomTotalGlobal
   )
   const usersLimitRemainder = Math.max(
     0,
-    maxLockedAtomUser - totalLockedAtomUser
+    lockedAtomMaxWallet - lockedAtomTotalWallet
   )
   const maxAtomToBeLocked = Math.min(
     delegationBalance / 1e6, // no more than they have
