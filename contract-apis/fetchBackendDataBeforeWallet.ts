@@ -139,7 +139,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
 
-  const lockedAtomPercentageGlobal = Math.round(
+  const lockedAtomPercentageGlobal = Math.floor(
     (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
   )
 
