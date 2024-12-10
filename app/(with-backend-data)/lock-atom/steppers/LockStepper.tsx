@@ -1,6 +1,7 @@
 "use client"
 
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
+import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
@@ -11,8 +12,6 @@ import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { twJoin } from "tailwind-merge"
@@ -53,25 +52,17 @@ export const LockStepper = ({
   amount,
   validator,
   lockDuration,
-  hubChain,
-  hubSigner,
-  neutronChain,
-  neutronSigner,
   startState,
   onExit,
-  validatorMap,
 }: {
   amount: string
   validator: string
   lockDuration: number
-  hubChain: ChainContext
-  hubSigner: SigningStargateClient
-  neutronChain: ChainContext
-  neutronSigner: SigningStargateClient
   startState?: LockStep
   onExit: () => void
-  validatorMap: Map<string, Validator>
 }) => {
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useIncompleteNotices()
   const { lockupEpochLength } = useBackendData()
   const [step, setStep] = useState<LockStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")

@@ -8,10 +8,10 @@ import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
-import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { signLockTokens } from "../transactions/signLockTokens"
+import { useIncompleteNotices } from "../useIncompleteNotices"
 
 type ContinueFromNeutronStep =
   | "Init"
@@ -31,25 +31,19 @@ export const ContinueFromNeutronStepper = ({
   amount,
   validator,
   denom,
-  baseDenom,
-  hubChain,
-  neutronChain,
   startState,
   onExit,
   validatorMap,
-  deleteIncompleteNotice,
 }: {
   amount: string
   validator: string
   denom: string
-  baseDenom: string
-  hubChain: ChainContext
-  neutronChain: ChainContext
   startState?: ContinueFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
-  deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
+  const { hubChain, neutronChain, deleteIncompleteNotice } =
+    useIncompleteNotices()
   const { lockupEpochLength } = useBackendData()
   const router = useRouter()
   const [step, setStep] = useState<ContinueFromNeutronStep>(
