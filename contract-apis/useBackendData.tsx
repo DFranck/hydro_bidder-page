@@ -26,11 +26,14 @@ export interface BackendDataContextType extends BackendDataAfterWallet {
 
 const initialBackendDataContext: BackendDataAfterWallet = {
   address: "",
+  assetListWithPrices: new Map(),
   atomPrice: 0,
   bidDescriptionsByBidId: {},
   bids: [],
   bidsById: {},
   bidsByRoundId: {},
+  claims: [],
+  claimsOutstanding: [],
   currentRoundEndDate: new Date(),
   currentRoundId: 0,
   currentRoundIsPilot: false,

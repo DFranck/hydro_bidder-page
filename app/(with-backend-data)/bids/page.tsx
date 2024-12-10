@@ -24,7 +24,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { SanitizedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
@@ -34,7 +34,7 @@ import { Fragment, ReactNode, useCallback } from "react"
 import { classNames } from "./classNames"
 
 type Row = {
-  _bid: SanitizedBid
+  _bid: AugmentedBid
   logoAndTitle: ReactNode
   deploymentDuration: ReactNode
   yourEstimatedReward: ReactNode

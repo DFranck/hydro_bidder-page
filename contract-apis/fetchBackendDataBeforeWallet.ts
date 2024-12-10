@@ -3,11 +3,19 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { fetchAssetListWithPrices } from "@/contract-apis/fetchAssetListWithPrices"
+import {
+  AssetListEntry,
+  fetchAssetListWithPrices,
+} from "@/contract-apis/fetchAssetListWithPrices"
 import {
   BidDescription,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
+import {
+  augmentLiquidityDeployment,
+  fetchLiquidityDeployments,
+  SanitizedLiquidityDeployment,
+} from "@/contract-apis/fetchLiquidityDeployments"
 import {
   fetchNumiaBidData,
   SanitizedBidFromNumia,
@@ -35,11 +43,13 @@ export interface AugmentedBidFromContract
   id: number
   deploymentDurationInEpochs: number
   deploymentDurationInNanos: number
+  liquidityDeployment: SanitizedLiquidityDeployment | null
   percentage: number
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
 }
 
 export interface BackendDataBeforeWallet {
+  assetListWithPrices: Map<string, AssetListEntry>
   atomPrice: number
   bidDescriptionsByBidId: Record<string, BidDescription>
   bids: AugmentedBidFromContract[]
@@ -81,7 +91,7 @@ export type SanitizedPointBasedTribute = {
   valueInUsd: number
 }
 
-async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBeforeWallet> {
+async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -219,8 +229,22 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
                 })
                 .filter((b) => b !== null)
 
-            // Add tributes to every bid
-            const bidsAugmentedWithTributes = unsanitizedBids
+            const liquidityDeployments =
+              (await fetchLiquidityDeployments({
+                roundId,
+                trancheId: tranche.id,
+              })) ?? []
+
+            const augmentedLiquidityDeployments = liquidityDeployments.map(
+              (liquidityDeployment) =>
+                augmentLiquidityDeployment({
+                  assetListWithPrices,
+                  liquidityDeployment,
+                })
+            )
+
+            // Add tributes and liquidity deployments to every bid
+            const augmentedBids = unsanitizedBids
               .map(keysFromSnakeToCamelCase)
               .map(({ deploymentDuration, proposalId, ...bid }) => {
                 const matchingTopProposal = topNProposals.proposals.find(
@@ -234,6 +258,10 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
                   ...sanitizedTokenBasedTributes,
                   ...sanitizedPointBasedTributes,
                 ].filter((tribute) => tribute.bidId === proposalId)
+                const liquidityDeployment =
+                  augmentedLiquidityDeployments.find(
+                    (deployment) => deployment.bidId === proposalId
+                  ) ?? null
 
                 return {
                   ...bid,
@@ -242,6 +270,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
                   deploymentDurationInNanos:
                     deploymentDuration * lockupEpochLength,
                   description,
+                  liquidityDeployment,
                   percentage: matchingTopProposal
                     ? Number(matchingTopProposal.percentage)
                     : Number(bid.percentage),
@@ -250,7 +279,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
                 }
               })
 
-            return bidsAugmentedWithTributes
+            return augmentedBids
           })
         )
       )
@@ -264,6 +293,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
   const bidsById = keyBy(bids, "id")
 
   const backendDataBeforeWallet: BackendDataBeforeWallet = {
+    assetListWithPrices,
     atomPrice,
     bidDescriptionsByBidId,
     bids,
@@ -286,8 +316,8 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
   return backendDataBeforeWallet
 }
 
-export const fetchBackendDataWithoutAddress = unstable_cache(
-  uncachedFetchBackendDataWithoutAddress,
+export const fetchBackendDataBeforeWallet = unstable_cache(
+  uncachedFetchBackendDataBeforeWallet,
   undefined,
   {
     revalidate: 60 * 5, // 5 minutes
