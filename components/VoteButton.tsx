@@ -42,8 +42,8 @@ export function VoteButton({
     bidsByRoundId,
     currentRoundId,
     isWalletConnected,
-    maxLockedAtomGlobal,
-    totalLockedAtomGlobal,
+    lockedAtomMaxGlobal,
+    lockedAtomTotalGlobal,
     votesByRoundId,
     votingPower,
   } = useBackendData()
@@ -130,7 +130,7 @@ export function VoteButton({
   } else if (votingPower === 0) {
     Button = (
       <ConditionalWrapper
-        condition={totalLockedAtomGlobal >= maxLockedAtomGlobal}
+        condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}
         wrapper={(children) => (
           <Tooltip tipContents={networkLimitReachedTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>

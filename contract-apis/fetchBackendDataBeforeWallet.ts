@@ -59,14 +59,14 @@ export interface BackendDataBeforeWallet {
   currentRoundId: number
   currentRoundIsPilot: boolean
   currentRoundTranches: Tranche[]
-  isAtMaxLockupCapacity: boolean
+  lockedAtomIsAtGlobalCapacity: boolean
   lockupEpochLength: number
-  percentageLockedOverall: number
-  maxLockedAtomGlobal: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomMaxGlobal: number
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
-  totalLockedAtomGlobal: number
+  lockedAtomTotalGlobal: number
 }
 
 export type SanitizedTokenBasedTribute = Omit<
@@ -107,12 +107,12 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     {
       constants: {
         lock_epoch_length: lockupEpochLength,
-        max_locked_tokens: maxLockedAtomGlobal,
+        max_locked_tokens: lockedAtomMaxGlobal,
       },
     },
     { round_id: currentRoundId },
     { tranches },
-    { total_locked_tokens: totalLockedAtomGlobal },
+    { total_locked_tokens: lockedAtomTotalGlobal },
     assetListWithPrices,
     { preHydroBids, postHydroBids },
     bidDescriptionsByBidId,
@@ -139,10 +139,11 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
 
-  const percentageLockedOverall = Math.round(
-    (totalLockedAtomGlobal / maxLockedAtomGlobal) * 100
+  const lockedAtomPercentageGlobal = Math.round(
+    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
   )
-  const isAtMaxLockupCapacity = percentageLockedOverall === 100
+
+  const lockedAtomIsAtGlobalCapacity = lockedAtomPercentageGlobal === 100
 
   // [0, 1, 2, ...currentRoundId]
   const allRoundIds = range(0, currentRoundId + 1)
@@ -303,14 +304,14 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     currentRoundId,
     currentRoundIsPilot: true,
     currentRoundTranches: tranches,
-    isAtMaxLockupCapacity,
+    lockedAtomIsAtGlobalCapacity,
     lockupEpochLength,
-    maxLockedAtomGlobal,
+    lockedAtomMaxGlobal,
     metricsGlobal: metrics,
     metricsForPreHydroBids: preHydroBids,
     metricsForPostHydroBids: postHydroBids,
-    percentageLockedOverall,
-    totalLockedAtomGlobal,
+    lockedAtomPercentageGlobal,
+    lockedAtomTotalGlobal,
   }
 
   return backendDataBeforeWallet

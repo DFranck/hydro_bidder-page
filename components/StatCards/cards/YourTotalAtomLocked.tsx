@@ -3,21 +3,23 @@
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { yourTotalAtomLockedTooltip } from "@/components/ToolTips"
-import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
 export function YourTotalAtomLocked() {
-  const { totalLockedAtomUser, maxLockedAtomUser, isLoading } = useBackendData()
-  const percentLocked = (totalLockedAtomUser / maxLockedAtomUser) * 100
+  const {
+    lockedAtomTotalWallet,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageWallet,
+    isLoading,
+  } = useBackendData()
 
   return (
     <StatCard
       isLoading={isLoading}
       value={
         <>
-          {(totalLockedAtomUser).toLocaleString("en-US", {
+          {lockedAtomTotalWallet.toLocaleString("en-US", {
             maximumFractionDigits: 4,
           })}
         </>
@@ -32,8 +34,8 @@ export function YourTotalAtomLocked() {
       }
       subTitle={
         <>
-          <strong>{percentLocked.toFixed(2)}%</strong> of{" "}
-          <strong>{formatAmount(maxLockedTokensPerAddress ?? 0)}</strong> max.
+          <strong>{lockedAtomPercentageWallet}%</strong> of{" "}
+          <strong>{lockedAtomMaxWallet}</strong> max
         </>
       }
     />
