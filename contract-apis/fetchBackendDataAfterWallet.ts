@@ -34,7 +34,6 @@ export interface BackendDataAfterWallet
   isLoading: boolean
   isWalletConnected: boolean
   lockedAtomIsAtWalletCapacity: boolean
-  lockedAtomMaxWallet: number
   lockedAtomPercentageWallet: number
   lockedAtomTotalWallet: number
   lockups: SanitizedLockup[]
@@ -118,6 +117,7 @@ async function uncachedFetchBackendDataAfterWallet({
     currentRoundEndDate,
     currentRoundId,
     currentRoundTranches,
+    lockedAtomMaxWallet,
     lockupEpochLength,
   } = backendData
 
@@ -247,9 +247,6 @@ async function uncachedFetchBackendDataAfterWallet({
   })
 
   const lockedAtomTotalWallet = sumBy(sanitizedLockups, "funds.amount")
-
-  // TODO: get this from contract
-  const lockedAtomMaxWallet = 200
 
   const lockedAtomPercentageWallet = Math.floor(
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100

@@ -63,6 +63,7 @@ export interface BackendDataBeforeWallet {
   lockupEpochLength: number
   lockedAtomPercentageGlobal: number
   lockedAtomMaxGlobal: number
+  lockedAtomMaxWallet: number
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
@@ -307,6 +308,8 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     lockedAtomIsAtGlobalCapacity,
     lockupEpochLength,
     lockedAtomMaxGlobal,
+    // TODO: get this from contract
+    lockedAtomMaxWallet: 200,
     metricsGlobal: metrics,
     metricsForPreHydroBids: preHydroBids,
     metricsForPostHydroBids: postHydroBids,
