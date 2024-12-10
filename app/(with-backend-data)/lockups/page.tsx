@@ -240,14 +240,15 @@ export default function LockupsPage() {
           )}
 
           {incompleteNotices.length > 0 && (
-            <Toasts.Toast
-              title="Incomplete Notices"
-              variant="info"
-              isDismissible={false}
-            >
+            <Toasts.Toast variant="error" isDismissible={false}>
               <p>
                 You have {incompleteNotices.length} incomplete lockups.{" "}
-                <StyledText variant="link" as={Link} href="/lock-atom">
+                <StyledText
+                  variant="link"
+                  as={Link}
+                  href="/lock-atom"
+                  // className="text-palette-text/70 hover:text-palette-text"
+                >
                   Review Incomplete Lockups <Icon name="arrow-right-long" />
                 </StyledText>
               </p>
