@@ -19,6 +19,11 @@ export const classNames = {
       container: "bg-white/90 text-palette-text",
       icon: <Icon name="regular:circle-info" />,
     },
+    warning: {
+      container: "bg-palette-beige/90 text-palette-text",
+      icon: <Icon name="regular:circle-exclamation" />,
+      isDismissible: false,
+    },
     working: {
       container: "bg-palette-beige/90 text-palette-text",
       icon: (
