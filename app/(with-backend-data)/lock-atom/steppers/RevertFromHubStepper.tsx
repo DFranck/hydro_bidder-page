@@ -1,11 +1,11 @@
 "use client"
 
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
+import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
-import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { broadcastTx } from "../transactions/broadcastTx"
@@ -29,23 +29,19 @@ export const RevertFromHubStepper = ({
   amount,
   validator,
   denom,
-  hubChain,
-  neutronChain,
   startState,
   onExit,
   validatorMap,
-  deleteIncompleteNotice,
 }: {
   amount: string
   validator: string
   denom: string
-  hubChain: ChainContext
-  neutronChain: ChainContext
   startState?: RevertFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
-  deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
+  const { hubChain, neutronChain, deleteIncompleteNotice } =
+    useIncompleteNotices()
   const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)

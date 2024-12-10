@@ -1,22 +1,19 @@
 "use client"
 
 import { LockForm } from "@/app/(with-backend-data)/lock-atom/components/LockForm"
+import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { useChain } from "@cosmos-kit/react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { classNames } from "../classNames"
 import { ContinueFromHubStepper } from "../steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "../steppers/ContinueFromNeutronStepper"
 import { LockStepper } from "../steppers/LockStepper"
 import { RevertFromHubStepper } from "../steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "../steppers/RevertFromNeutronStepper"
-import { checkForHubLSMShares } from "../transactions/checkForHubLSMShares"
-import { checkForNeutronLSMShares } from "../transactions/checkForNeutronLSMShares"
-import { IncompleteNotice, Stepper } from "../types"
+import { Stepper } from "../types"
 import { HubIncompleteNotice } from "./HubIncompleteNotice"
 import { LoaderCard } from "./LoaderCard"
 import { NeutronIncompleteNotice } from "./NeutronIncompleteNotice"
@@ -27,77 +24,16 @@ export function LsmInteraction({
   validatorMap: Map<string, Validator>
 }) {
   const { isAtMaxLockupCapacity } = useBackendData()
-  const hubChain = useChain("cosmoshub")
-  const neutronChain = useChain("neutron")
-  const [hubSigner, setHubSigner] = useState<SigningStargateClient | undefined>(
-    undefined
-  )
-  const [neutronSigner, setNeutronSigner] = useState<
-    SigningStargateClient | undefined
-  >(undefined)
+  const {
+    hubChain,
+    hubSigner,
+    neutronChain,
+    neutronSigner,
+    incompleteNotices,
+    deleteIncompleteNotice,
+  } = useIncompleteNotices()
   const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
   const [visibleNotices, setVisibleNotices] = useState(2)
-  const [incompleteNotices, setIncompleteNotices] = useState<
-    IncompleteNotice[]
-  >([])
-
-  function deleteIncompleteNotice(denom: string, amount: string) {
-    setIncompleteNotices((prevNotices) =>
-      prevNotices.filter(
-        (notice) => !(notice.denom === denom && notice.amount === amount)
-      )
-    )
-  }
-
-  useEffect(() => {
-    if (hubChain.address) {
-      hubChain.getSigningStargateClient().then(setHubSigner)
-    }
-    if (neutronChain.address) {
-      neutronChain.getSigningStargateClient().then(setNeutronSigner)
-    }
-  }, [hubChain.address, neutronChain.address])
-
-  useEffect(() => {
-    const checkLSMShares = async () => {
-      let newIncompleteNotices: IncompleteNotice[] = []
-      if (hubSigner && neutronSigner) {
-        const hubShares = await checkForHubLSMShares(hubChain, hubSigner)
-        hubShares.forEach((share) => {
-          newIncompleteNotices.push({
-            type: "LSMSharesOnHub",
-            validator: share.validator,
-            amount: share.amount,
-            denom: share.denom,
-          })
-        })
-
-        const neutronShares = await checkForNeutronLSMShares(
-          neutronChain,
-          neutronSigner
-        )
-        neutronShares.forEach((share) => {
-          newIncompleteNotices.push({
-            type: "LSMSharesOnNeutron",
-            validator: share.validator,
-            amount: share.amount,
-            denom: share.denom,
-            baseDenom: share.baseDenom,
-          })
-        })
-      }
-
-      // filter out incomplete notices whose amount is < 100uatom
-      // since very small amounts sometimes cannot be redeemed
-      newIncompleteNotices = newIncompleteNotices.filter(
-        (notice) => parseInt(notice.amount) >= 100
-      )
-
-      setIncompleteNotices(newIncompleteNotices)
-    }
-
-    checkLSMShares()
-  }, [hubSigner, neutronSigner])
 
   return (
     (hubSigner && neutronSigner && (
@@ -108,12 +44,7 @@ export function LsmInteraction({
               amount={stepper.amount}
               validator={stepper.validator}
               lockDuration={stepper.duration}
-              hubChain={hubChain}
-              hubSigner={hubSigner}
-              neutronChain={neutronChain}
-              neutronSigner={neutronSigner}
               onExit={() => setStepper(undefined)}
-              validatorMap={validatorMap}
             />
           </div>
         )}
@@ -123,11 +54,8 @@ export function LsmInteraction({
               amount={stepper.amount}
               validator={stepper.validator}
               denom={stepper.denom}
-              hubChain={hubChain}
-              neutronChain={neutronChain}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              deleteIncompleteNotice={deleteIncompleteNotice}
             />
           </div>
         )}
@@ -138,11 +66,8 @@ export function LsmInteraction({
               validator={stepper.validator}
               denom={stepper.denom}
               baseDenom={stepper.baseDenom}
-              hubChain={hubChain}
-              neutronChain={neutronChain}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              deleteIncompleteNotice={deleteIncompleteNotice}
             />
           </div>
         )}
@@ -152,11 +77,8 @@ export function LsmInteraction({
               amount={stepper.amount}
               validator={stepper.validator}
               denom={stepper.denom}
-              hubChain={hubChain}
-              neutronChain={neutronChain}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              deleteIncompleteNotice={deleteIncompleteNotice}
             />
           </div>
         )}
@@ -166,12 +88,8 @@ export function LsmInteraction({
               amount={stepper.amount}
               validator={stepper.validator}
               denom={stepper.denom}
-              baseDenom={stepper.baseDenom}
-              hubChain={hubChain}
-              neutronChain={neutronChain}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              deleteIncompleteNotice={deleteIncompleteNotice}
             />
           </div>
         )}

@@ -1,5 +1,6 @@
 "use client"
 
+import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
@@ -12,7 +13,7 @@ import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
-import { useToasts } from "@/components/Toasts"
+import { Toasts, useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
@@ -32,6 +33,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function LockupsPage() {
+  const { incompleteNotices } = useIncompleteNotices()
   const router = useRouter()
   const [isConfirmingUnlockExpired, setIsConfirmingUnlockExpired] =
     useState(false)
@@ -214,7 +216,7 @@ export default function LockupsPage() {
           </div>
         </div>
 
-        <BlurryBackdropBox>
+        <BlurryBackdropBox className="flex flex-col gap-6">
           {lockups.length === 0 && (
             <EmptyBox className="flex flex-col gap-1">
               <div>
@@ -235,6 +237,21 @@ export default function LockupsPage() {
                 </StyledText>
               </div>
             </EmptyBox>
+          )}
+
+          {incompleteNotices.length > 0 && (
+            <Toasts.Toast
+              title="Incomplete Notices"
+              variant="info"
+              isDismissible={false}
+            >
+              <p>
+                You have {incompleteNotices.length} incomplete lockups.{" "}
+                <StyledText variant="link" as={Link} href="/lock-atom">
+                  Review Incomplete Lockups <Icon name="arrow-right-long" />
+                </StyledText>
+              </p>
+            </Toasts.Toast>
           )}
 
           {lockups.length > 0 && (

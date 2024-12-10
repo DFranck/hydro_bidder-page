@@ -92,8 +92,9 @@ export default function RewardsPage() {
             claim.roundId === bid.roundId &&
             claim.trancheId === bid.trancheId
         )
-        const matchingClaim =
-          (matchingOutstandingClaim || matchingHistoricalClaim) ?? null
+        const isRefundable =
+          bid.liquidityDeployment &&
+          sumBy(bid.liquidityDeployment.deployedFunds, "amount") === 0
 
         return {
           _bid: bid,
@@ -143,23 +144,32 @@ export default function RewardsPage() {
           tributeRewards: (
             <InvisibleLink href={bidUrl}>
               <Tooltip tipContents={rewardsTributeRewardsTooltip}>
-                <span>
-                  {estimatedRewardForPower({
-                    proposalTotalTribute: tribute.amount,
-                    myVotingPower: votingPower,
-                    proposalPower: Number(bid.power),
-                  }) * 1e6}
-                  &nbsp;{tribute.denom}(
-                  {amountToUSDString(
-                    estimatedRewardForPower({
-                      proposalTotalTribute: tribute.valueInUsd,
-                      myVotingPower: votingPower,
-                      proposalPower: Number(bid.power),
-                    })
-                  )}
-                  )
-                </span>
-                <Icon name="circle-info" />
+                <div>
+                  <div>
+                    {(
+                      estimatedRewardForPower({
+                        proposalTotalTribute: tribute.amount,
+                        myVotingPower: votingPower,
+                        proposalPower: Number(bid.power),
+                      }) * 1e6
+                    ).toLocaleString("en", {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 2,
+                    })}
+                    &nbsp;{tribute.denom}
+                  </div>
+                  <div>
+                    (
+                    {amountToUSDString(
+                      estimatedRewardForPower({
+                        proposalTotalTribute: tribute.valueInUsd,
+                        myVotingPower: votingPower,
+                        proposalPower: Number(bid.power),
+                      })
+                    )}
+                    ) <Icon name="circle-info" />
+                  </div>
+                </div>
               </Tooltip>
             </InvisibleLink>
           ),
@@ -180,13 +190,19 @@ export default function RewardsPage() {
                 </StyledText>
               )}
 
-              {matchingHistoricalClaim && <>Claimed</>}
+              {matchingHistoricalClaim && (
+                <div className="flex items-center gap-1">
+                  Claimed <Icon name="check" />
+                </div>
+              )}
 
-              {bid.liquidityDeployment &&
-                sumBy(bid.liquidityDeployment.deployedFunds, "amount") ===
-                  0 && <>Refundable</>}
+              {isRefundable && <>Refundable</>}
 
-              {!bid.liquidityDeployment && <>Unresolved</>}
+              {!bid.liquidityDeployment && (
+                <div className="flex items-center gap-1">
+                  Unresolved <Icon name="clock" />
+                </div>
+              )}
             </InvisibleLink>
           ),
         }
