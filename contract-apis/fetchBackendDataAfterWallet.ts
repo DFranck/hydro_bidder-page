@@ -251,7 +251,7 @@ async function uncachedFetchBackendDataAfterWallet({
   // TODO: get this from contract
   const lockedAtomMaxWallet = 200
 
-  const lockedAtomPercentageWallet = Math.round(
+  const lockedAtomPercentageWallet = Math.floor(
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
 
