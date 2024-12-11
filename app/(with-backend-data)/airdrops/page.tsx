@@ -98,7 +98,7 @@ export default function AirdropsPage() {
           />
         </div>
       ),
-      action: (
+      nextSteps: (
         <CellContentRenderer
           descriptor={{
             type: actionType === "Button" ? "button" : "text",
@@ -135,8 +135,8 @@ export default function AirdropsPage() {
       customValueGetter: (row) => row._airdropDescriptor[0],
     },
     {
-      key: "action",
-      label: "Action",
+      key: "nextSteps",
+      label: "Next Steps",
       textAlign: "center",
       propsForCells: {
         className: "relative text-balance",
