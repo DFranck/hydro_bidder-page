@@ -20,11 +20,15 @@ const comingSoonTooltip = (
 
 export default function Navigation() {
   const backendData = useBackendData()
-  const { lockedAtomPercentageWallet, lockedAtomPercentageGlobal, lockups } =
-    backendData
-  const canCreateNewLockup = !(
-    lockedAtomPercentageWallet === 100 || lockedAtomPercentageGlobal === 100
-  )
+  const {
+    isWalletConnected,
+    lockedAtomPercentageWallet,
+    lockedAtomPercentageGlobal,
+    lockups,
+  } = backendData
+  const canCreateFirstLockup =
+    isWalletConnected &&
+    !(lockedAtomPercentageWallet === 100 || lockedAtomPercentageGlobal === 100)
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
 
@@ -270,7 +274,7 @@ export default function Navigation() {
           Airdrops
         </Link>
 
-        {canCreateNewLockup && lockups.length === 0 && (
+        {canCreateFirstLockup && lockups.length === 0 && (
           <StyledText
             as={Link}
             variant="button.primary.small"
