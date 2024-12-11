@@ -129,7 +129,7 @@ export default function RewardsPage() {
             </InvisibleLink>
           ),
 
-          token: (
+          tribute: (
             <InvisibleLink href={bidUrl}>
               {tribute.amount}&nbsp;{tribute.denom}
             </InvisibleLink>
@@ -240,8 +240,8 @@ export default function RewardsPage() {
       customValueGetter: (row) => row._bid.title,
     },
     {
-      key: "token",
-      label: "Token",
+      key: "tribute",
+      label: "Total Tribute",
       textAlign: "center",
       isSortable: true,
       propsForCells: {
@@ -328,9 +328,9 @@ export default function RewardsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.YourAprCurrentRound />
-        <StatCards.YourAprHistorical />
-        <StatCards.YourTotalRewardsAllTime />
+        <StatCards.CurrentRoundAprWallet />
+        <StatCards.AllTimeAprWallet />
+        <StatCards.AllTimeRewardsWallet />
       </StatCards>
 
       <ContentContainer className="gap-12 py-12">

@@ -78,22 +78,21 @@ export function VoteButton({
         Number(bid.trancheId)
       )
 
-      setToasts([
-        {
-          variant: "working",
-          message: "Vote submitted. Reloading page...",
-        },
-      ])
-
       await revalidateTag("backendData")
 
       setIsCelebrating(true)
 
-      setTimeout(() => {
-        setToasts([])
-        router.push("/bids")
-        router.refresh()
-      }, 3000)
+      setToasts([
+        {
+          variant: "success",
+          message: "Vote cast! Reload to see changes",
+          isDismissible: false,
+          actionButton: {
+            label: "Reload",
+            onClick: () => window.location.reload(),
+          },
+        },
+      ])
     } catch (err: any) {
       setToasts([
         {
@@ -204,10 +203,11 @@ export function VoteButton({
         onClose={() => setOpenChangeVoteModal(false)}
       >
         <Card>
-          <Card.Header title="Change your vote?" />
           <Card.Body>
-            Changing your vote will reallocate your total voting power to the
-            new project.
+            <div className="text-balance text-center">
+              Changing your vote will reallocate your total voting power to the
+              new project.
+            </div>
           </Card.Body>
           <Card.Footer>
             <StyledText
@@ -215,14 +215,14 @@ export function VoteButton({
               onClick={handleClickVote}
               variant="button.primary"
             >
-              Change Vote to This Proposal
+              Change
             </StyledText>
             <StyledText
               as="button"
               variant="button.secondary"
               onClick={() => setOpenChangeVoteModal(false)}
             >
-              Don&rsquo;t change my vote
+              Don&rsquo;t Change
             </StyledText>
           </Card.Footer>
         </Card>

@@ -1,6 +1,5 @@
 "use client"
 
-import { useToasts } from "@/components/Toasts"
 import {
   BackendDataAfterWallet,
   fetchBackendDataAfterWallet,
@@ -93,7 +92,6 @@ export function BackendDataContextProvider({
   const wasWalletConnected = useDeferredValue(isWalletConnected)
   const pathname = usePathname()
   const router = useRouter()
-  const { setToasts } = useToasts()
   const [isLoading, setIsLoading] = useState(false)
   const preMergedBackendData = useMemo(
     () => merge({}, initialBackendDataContext, backendData),
@@ -119,13 +117,6 @@ export function BackendDataContextProvider({
 
       setIsLoading(true)
 
-      setToasts([
-        {
-          message: "Loading...",
-          variant: "working",
-        },
-      ])
-
       const backendDataAfterWallet = await fetchBackendDataAfterWallet({
         address,
         backendData,
@@ -150,7 +141,6 @@ export function BackendDataContextProvider({
         })),
       })
 
-      setToasts([])
       setIsLoading(false)
     })()
   }, [address, backendData])

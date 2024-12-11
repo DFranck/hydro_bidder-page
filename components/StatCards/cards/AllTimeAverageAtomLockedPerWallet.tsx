@@ -6,7 +6,7 @@ import { averageAtomLockedPerWalletTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function AverageAtomLockedPerWallet() {
+export function AllTimeAverageAtomLockedPerWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
   const { allTimeUsersAvgTokenLocked } = metricsGlobal
 
@@ -22,7 +22,7 @@ export function AverageAtomLockedPerWallet() {
         </Tooltip>
       }
       subTitle="All Time"
-      value={Math.round(allTimeUsersAvgTokenLocked)}
+      value={allTimeUsersAvgTokenLocked.toFixed(1)}
     />
   )
 }

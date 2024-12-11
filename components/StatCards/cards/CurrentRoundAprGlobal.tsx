@@ -7,7 +7,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { sumBy } from "lodash"
 import { StatCard } from "../StatCard"
 
-export function AverageRoundApr() {
+export function CurrentRoundAprGlobal() {
   const {
     atomPrice,
     bidsByRoundId,

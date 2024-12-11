@@ -114,9 +114,9 @@ export default function LockupsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.TotalAtomLocked />
-        <StatCards.YourTotalAtomLocked />
-        <StatCards.YourVotingPower />
+        <StatCards.CurrentRoundAtomLockedGlobal />
+        <StatCards.CurrentRoundAtomLockedWallet />
+        <StatCards.CurrentRoundVotingPowerWallet />
       </StatCards>
 
       <ContentContainer className="gap-6 py-12">

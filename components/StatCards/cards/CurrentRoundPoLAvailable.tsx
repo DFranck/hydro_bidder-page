@@ -2,28 +2,28 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { yourTotalRewardsAllTimeTooltip } from "@/components/ToolTips"
+import { polAvailableTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
-export function YourTotalRewardsAllTime() {
+export function CurrentRoundPoLAvailable() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { allTimeUsersRewards } = metricsGlobal
+  const { currentRoundPolAvailable } = metricsGlobal
 
   return (
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={yourTotalRewardsAllTimeTooltip}>
+        <Tooltip tipContents={polAvailableTooltip}>
           <div className="flex items-center gap-1">
-            <span>Your Rewards</span>
+            <span>PoL Available</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
       }
-      subTitle="All-Time"
-      value={formatAmount(allTimeUsersRewards)}
+      subTitle="All Time"
+      value={formatAmount(currentRoundPolAvailable)}
     />
   )
 }

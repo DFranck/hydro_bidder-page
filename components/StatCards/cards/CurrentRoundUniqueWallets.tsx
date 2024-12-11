@@ -6,9 +6,9 @@ import { numberOfUniqueWalletsTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function NumberOfUniqueWallets() {
+export function CurrentRoundUniqueWallets() {
   const { metricsGlobal } = useBackendData()
-  const { currentRoundUniqueWallets, allTimeUniqueWallets } = metricsGlobal
+  const { currentRoundUniqueWallets } = metricsGlobal
 
   return (
     <StatCard
@@ -20,8 +20,8 @@ export function NumberOfUniqueWallets() {
           </div>
         </Tooltip>
       }
-      subTitle="All Time"
-      value={allTimeUniqueWallets}
+      subTitle="Current Round"
+      value={currentRoundUniqueWallets}
     />
   )
 }

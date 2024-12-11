@@ -155,9 +155,9 @@ export default function AirdropsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.NumberOfUniqueWallets />
-        <StatCards.AverageAtomLockedPerWallet />
-        <StatCards.AverageRoundsPerUser />
+        <StatCards.CurrentRoundUniqueWallets />
+        <StatCards.AllTimeAverageAtomLockedPerWallet />
+        <StatCards.AllTimeAverageRoundsPerWallet />
       </StatCards>
 
       <ContentContainer className="gap-12 py-6">

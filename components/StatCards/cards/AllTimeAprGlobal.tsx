@@ -7,12 +7,13 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { StatCard } from "../StatCard"
 
-export function HistoricalApr() {
+export function AllTimeAprGlobal() {
   const { isLoading, metricsGlobal } = useBackendData()
   const { allTimeApr } = metricsGlobal
 
   return (
     <StatCard
+      isLoading={isLoading}
       title={
         <div className="flex items-center gap-1">
           Historical APR

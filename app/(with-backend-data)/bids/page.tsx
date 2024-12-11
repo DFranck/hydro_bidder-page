@@ -48,8 +48,6 @@ const pointBasedTributesLabel = "Points-Based Tributes"
 export default function BidsPage() {
   const backendData = useBackendData()
 
-  console.log({ backendData })
-
   const {
     bidDescriptionsByBidId,
     bidsByRoundId,
@@ -374,9 +372,9 @@ export default function BidsPage() {
       <PopupOnWelcome />
 
       <StatCards>
-        <StatCards.NumberOfBids />
-        <StatCards.AverageRoundApr />
-        <StatCards.TimeLeft />
+        <StatCards.CurrentRoundNumberOfBids />
+        <StatCards.CurrentRoundAprGlobal />
+        <StatCards.CurrentRoundTimeLeft />
       </StatCards>
 
       <ContentContainer className="gap-12 py-6">

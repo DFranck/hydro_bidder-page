@@ -5,30 +5,30 @@ export const classNames = {
   variants: {
     error: {
       container: "bg-palette-red/90",
-      icon: <Icon name="regular:circle-exclamation" />,
+      icon: <Icon name="light:circle-exclamation" />,
     },
     success: {
       container: "bg-palette-green/90 text-palette-text",
-      icon: <Icon name="regular:circle-check" />,
+      icon: <Icon name="light:circle-check" />,
     },
     info: {
       container: "bg-palette-blue/90",
-      icon: <Icon name="regular:circle-info" />,
+      icon: <Icon name="light:circle-info" />,
     },
     neutral: {
       container: "bg-white/90 text-palette-text",
-      icon: <Icon name="regular:circle-info" />,
+      icon: <Icon name="light:circle-info" />,
     },
     warning: {
       container: "bg-palette-beige/90 text-palette-text",
-      icon: <Icon name="regular:circle-exclamation" />,
+      icon: <Icon name="light:circle-exclamation" />,
       isDismissible: false,
     },
     working: {
       container: "bg-palette-beige/90 text-palette-text",
       icon: (
         <div className="inline-flex animate-spin">
-          <Icon name="regular:loader" />
+          <Icon name="light:loader" />
         </div>
       ),
       isDismissible: false,
@@ -57,6 +57,7 @@ export const classNames = {
     grid-rows-2
     items-center
     rounded-md
+    text-xs
     text-white
     backdrop-blur-md
   `),
@@ -85,9 +86,10 @@ export const classNames = {
   messageContainer: twJoin(`
     row-span-2
     overflow-x-auto
+    text-balance
     p-3
   `),
-  dismissButtonContainer: twJoin(`
+  actionButtonsContainer: twJoin(`
     row-span-2
     grid
     grid-rows-subgrid
@@ -96,10 +98,30 @@ export const classNames = {
     border-l-2
     border-white/20
   `),
-  dismissButton: twJoin(`
-    row-span-2
-    px-3
-    bg-blend-overlay
-    hover:bg-black/10
-  `),
+  actionButton: ({ hasDismissButton = true }) =>
+    twJoin(
+      `
+        px-3
+        py-1
+        bg-blend-overlay
+        hover:bg-black/10
+      `,
+      hasDismissButton ? "row-span-1" : "row-span-2"
+    ),
+  dismissButton: ({ hasActionButton = false }) =>
+    twJoin(
+      `
+        px-3
+        py-1
+        bg-blend-overlay
+        hover:bg-black/10
+      `,
+      hasActionButton
+        ? `
+          row-span-1
+          border-t-2
+          border-white/20
+        `
+        : "row-span-2"
+    ),
 }
