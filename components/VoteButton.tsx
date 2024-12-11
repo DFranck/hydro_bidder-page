@@ -204,9 +204,11 @@ export function VoteButton({
       >
         <Card>
           <Card.Body>
-            <div className="text-balance text-center">
-              Changing your vote will reallocate your total voting power to the
-              new project.
+            <div className="text-balance">
+              Changing your vote will reallocate your total available voting
+              power to the selected bid. Keep in mind that your available voting
+              power will be allocated to this bid for the duration of the
+              liquidity deployment.
             </div>
           </Card.Body>
           <Card.Footer>
