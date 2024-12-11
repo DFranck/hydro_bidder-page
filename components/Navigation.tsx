@@ -21,12 +21,14 @@ const comingSoonTooltip = (
 export default function Navigation() {
   const backendData = useBackendData()
   const {
+    isLoading,
     isWalletConnected,
     lockedAtomPercentageWallet,
     lockedAtomPercentageGlobal,
     lockups,
   } = backendData
   const canCreateFirstLockup =
+    !isLoading &&
     isWalletConnected &&
     !(lockedAtomPercentageWallet === 100 || lockedAtomPercentageGlobal === 100)
   const pathname = usePathname()
