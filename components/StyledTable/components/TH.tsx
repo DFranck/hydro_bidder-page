@@ -52,12 +52,15 @@ export function TH({
             items-center
             gap-1
             whitespace-nowrap
+            opacity-60
+            transition-opacity
         `,
           textAlign === "center"
             ? "text-center"
             : textAlign === "right"
               ? "text-right"
-              : "text-left"
+              : "text-left",
+          isSorted && "opacity-100"
         )}
       >
         {children ?? <>&nbsp;</>}

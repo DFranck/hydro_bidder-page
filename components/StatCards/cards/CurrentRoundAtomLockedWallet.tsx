@@ -6,7 +6,7 @@ import { yourTotalAtomLockedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function YourTotalAtomLocked() {
+export function CurrentRoundAtomLockedWallet() {
   const {
     lockedAtomTotalWallet,
     lockedAtomMaxWallet,

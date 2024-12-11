@@ -5,12 +5,13 @@ import { averageRoundsPerUserTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function AverageRoundsPerUser() {
+export function AllTimeAverageRoundsPerWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
   const { allTimeUsersAvgActiveRounds } = metricsGlobal
 
   return (
     <StatCard
+      isLoading={isLoading}
       title={
         <div className="flex items-center gap-1">
           <span>Average Rounds Per User</span>

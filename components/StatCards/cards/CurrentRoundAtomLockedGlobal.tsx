@@ -5,7 +5,7 @@ import { formatAmount } from "@/lib/formatAmount"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 
-export function TotalAtomLocked() {
+export function CurrentRoundAtomLockedGlobal() {
   const {
     isLoading,
     lockedAtomIsAtGlobalCapacity,

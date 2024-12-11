@@ -6,7 +6,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
 
-export function NumberOfBids() {
+export function CurrentRoundNumberOfBids() {
   const { bidsByRoundId, isLoading, currentRoundId } = useBackendData()
   const bids = bidsByRoundId[currentRoundId] ?? []
   const numPointBasedBids = bids.filter(

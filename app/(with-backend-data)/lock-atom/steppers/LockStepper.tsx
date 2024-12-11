@@ -188,11 +188,12 @@ export const LockStepper = ({
 
         return {
           contents: (
-            <>
-              <p>
+            <div className="flex flex-col items-center gap-6">
+              <p className="text-balance text-center">
                 Next, you&rsquo;ll be asked to do three wallet approvals. This
                 takes a minute or two, tops.
               </p>
+
               <div className="grid grid-cols-3 items-center gap-10">
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
                   <div className="text-xs text-palette-beige">ATOM Amount</div>
@@ -239,11 +240,16 @@ export const LockStepper = ({
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ),
           buttons: [
             {
-              label: "Start Locking",
+              label: (
+                <div className="flex items-center gap-1">
+                  <span>Start Locking</span>
+                  <Icon name="solid:arrow-right-long" />
+                </div>
+              ),
               onClick: execute,
               className: "bg-palette-green",
             },

@@ -7,7 +7,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
 import { StatCard } from "../StatCard"
 
-export function TimeLeft() {
+export function CurrentRoundTimeLeft() {
   const { currentRoundEndDate, currentRoundId, isLoading } = useBackendData()
 
   return (
