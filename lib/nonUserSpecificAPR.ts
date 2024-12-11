@@ -23,9 +23,9 @@ export function nonUserSpecificAPR({
   })
 
   const oneUatomReward = estimatedRewardForPower({
-    proposalTotalTribute,
-    myVotingPower: Number(oneUatomPower),
-    proposalPower,
+    amount: proposalTotalTribute,
+    walletVotingPower: Number(oneUatomPower),
+    bidPower: proposalPower,
   })
 
   const oneUatomPrice = atomPrice / 1e6
