@@ -49,7 +49,7 @@ export const ContinueFromHubStepper = ({
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const { lockupEpochLength } = useBackendData()
+  const { lockedAtomEpochInNanos } = useBackendData()
   const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -142,7 +142,7 @@ export const ContinueFromHubStepper = ({
                 <strong>
                   {formatAmount(
                     scaleLockupPower({
-                      lockupEpochLength,
+                      lockedAtomEpochInNanos,
                       lockupTime: lockDuration,
                       rawPower: BigInt(amount),
                     })
@@ -246,7 +246,7 @@ export const ContinueFromHubStepper = ({
                 <strong>
                   {formatAmount(
                     scaleLockupPower({
-                      lockupEpochLength,
+                      lockedAtomEpochInNanos,
                       lockupTime: lockDuration,
                       rawPower: BigInt(amount),
                     })

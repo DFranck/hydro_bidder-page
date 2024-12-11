@@ -1,5 +1,5 @@
 import { Icon } from "@/components/Icon"
-import { ComponentProps } from "react"
+import { ComponentProps, useEffect, useRef } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function TH({
@@ -16,12 +16,23 @@ export function TH({
   sortDirection?: "ASC" | "DESC"
   textAlign?: "center" | "left" | "right"
 }) {
+  const prevDirectionRef = useRef(sortDirection)
+
+  useEffect(() => {
+    if (isSorted && sortDirection) {
+      prevDirectionRef.current = sortDirection
+    }
+  }, [isSorted, sortDirection])
+
+  const effectiveDirection = isSorted ? sortDirection : prevDirectionRef.current
+
   return (
     <th
       className={twMerge(
         `
           group/table-cell
           flex-grow
+          cursor-default
           px-5
           py-1
           text-sm
@@ -53,14 +64,17 @@ export function TH({
             gap-1
             whitespace-nowrap
             opacity-60
-            transition-opacity
-        `,
+            transition-all
+            duration-500
+          `,
           textAlign === "center"
             ? "text-center"
             : textAlign === "right"
               ? "text-right"
               : "text-left",
-          isSorted && "opacity-100"
+          isSorted && "opacity-100",
+          textAlign === "center" && "group-hover/table-cell:gap-1",
+          textAlign === "center" && isSortable && !isSorted && "gap-0"
         )}
       >
         {children ?? <>&nbsp;</>}
@@ -68,21 +82,16 @@ export function TH({
           <div
             className={twMerge(
               `
+                origin-center
                 transition-all
+                duration-500
                 group-hover/table-cell:opacity-50
               `,
               isSorted ? "!opacity-100" : "opacity-0",
-              sortDirection === "ASC" ? "rotate-0" : "rotate-180",
+              effectiveDirection === "ASC" ? "rotate-0" : "rotate-180",
               textAlign === "right" && "-order-1",
-              !isSorted &&
-                textAlign === "center" &&
-                `
-                  absolute
-                  left-full
-                  top-1/2
-                  -translate-y-1/2
-                  translate-x-1
-                `
+              textAlign === "center" && "group-hover/table-cell:max-w-6",
+              textAlign === "center" && (isSorted ? "max-w-6" : "max-w-0")
             )}
           >
             <Icon name="solid:chevron-up" />

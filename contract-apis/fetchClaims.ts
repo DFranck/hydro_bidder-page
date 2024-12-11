@@ -21,7 +21,7 @@ export type AugmentedClaim = Omit<SanitizedClaim, "amount"> & {
 }
 
 export async function fetchClaims({ address }: { address: string }): Promise<{
-  claims: SanitizedClaim[]
+  historicalClaims: SanitizedClaim[]
   outstandingClaims: SanitizedClaim[]
 }> {
   if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
@@ -34,19 +34,19 @@ export async function fetchClaims({ address }: { address: string }): Promise<{
     process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
   )
 
-  let claims: SanitizedClaim[]
+  let historicalClaims: SanitizedClaim[]
   let outstandingClaims: SanitizedClaim[]
 
   try {
-    const { claims: fetchedClaims } =
+    const { claims: fetchedHistoricalClaims } =
       await tributeQueryClient.historicalTributeClaims({
         limit: 10_000,
         startFrom: 0,
         userAddress: address,
       })
-    claims = sanitizeClaims(fetchedClaims)
+    historicalClaims = sanitizeClaims(fetchedHistoricalClaims)
   } catch (error) {
-    claims = []
+    historicalClaims = []
   }
 
   try {
@@ -64,7 +64,7 @@ export async function fetchClaims({ address }: { address: string }): Promise<{
   }
 
   return {
-    claims,
+    historicalClaims,
     outstandingClaims,
   }
 }

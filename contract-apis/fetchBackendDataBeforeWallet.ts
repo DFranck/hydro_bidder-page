@@ -53,21 +53,21 @@ export interface BackendDataBeforeWallet {
   atomPrice: number
   bidDescriptionsByBidId: Record<string, BidDescription>
   bids: AugmentedBidFromContract[]
-  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   bidsById: Record<number, AugmentedBidFromContract>
+  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
   currentRoundTranches: Tranche[]
-  lockedAtomIsAtGlobalCapacity: boolean
-  lockupEpochLength: number
-  lockedAtomPercentageGlobal: number
+  lockedAtomIsAtCapacityGlobal: boolean
+  lockedAtomEpochInNanos: number
   lockedAtomMaxGlobal: number
   lockedAtomMaxWallet: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomTotalGlobal: number
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
-  lockedAtomTotalGlobal: number
 }
 
 export type SanitizedTokenBasedTribute = Omit<
@@ -107,7 +107,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
   const [
     {
       constants: {
-        lock_epoch_length: lockupEpochLength,
+        lock_epoch_length: lockedAtomEpochInNanos,
         max_locked_tokens: lockedAtomMaxGlobal,
       },
     },
@@ -270,7 +270,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                   id: proposalId,
                   deploymentDurationInEpochs: deploymentDuration,
                   deploymentDurationInNanos:
-                    deploymentDuration * lockupEpochLength,
+                    deploymentDuration * lockedAtomEpochInNanos,
                   description,
                   liquidityDeployment,
                   percentage: matchingTopProposal
@@ -305,8 +305,8 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     currentRoundId,
     currentRoundIsPilot: true,
     currentRoundTranches: tranches,
-    lockedAtomIsAtGlobalCapacity,
-    lockupEpochLength,
+    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
+    lockedAtomEpochInNanos,
     lockedAtomMaxGlobal,
     // TODO: get this from contract
     lockedAtomMaxWallet: 200,

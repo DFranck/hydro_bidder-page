@@ -44,7 +44,7 @@ export const ContinueFromNeutronStepper = ({
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const { lockupEpochLength } = useBackendData()
+  const { lockedAtomEpochInNanos } = useBackendData()
   const router = useRouter()
   const [step, setStep] = useState<ContinueFromNeutronStep>(
     startState || "Init"
@@ -53,7 +53,7 @@ export const ContinueFromNeutronStepper = ({
     "ContinueFromNeutronStepper: "
   )
   const [showErrorLog, setShowErrorLog] = useState(false)
-  const [lockDuration, setLockDuration] = useState(lockupEpochLength)
+  const [lockDuration, setLockDuration] = useState(lockedAtomEpochInNanos)
 
   const executeContinueFromNeutron = async () => {
     try {
@@ -119,7 +119,7 @@ export const ContinueFromNeutronStepper = ({
                 <strong>
                   {formatAmount(
                     scaleLockupPower({
-                      lockupEpochLength,
+                      lockedAtomEpochInNanos,
                       lockupTime: lockDuration,
                       rawPower: BigInt(amount),
                     })
@@ -191,7 +191,7 @@ export const ContinueFromNeutronStepper = ({
               <strong>
                 {formatAmount(
                   scaleLockupPower({
-                    lockupEpochLength,
+                    lockedAtomEpochInNanos,
                     lockupTime: lockDuration,
                     rawPower: BigInt(amount),
                   })
