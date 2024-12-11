@@ -8,9 +8,9 @@ export function userSpecificAPR(
 ) {
   return (
     (estimatedRewardForPower({
-      proposalTotalTribute,
-      myVotingPower,
-      proposalPower,
+      amount: proposalTotalTribute,
+      walletVotingPower: myVotingPower,
+      bidPower: proposalPower,
     }) /
       myLockedAtom) *
     12

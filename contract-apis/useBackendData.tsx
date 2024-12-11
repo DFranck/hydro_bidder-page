@@ -179,6 +179,10 @@ export function BackendDataContextProvider({
     wasWalletConnected,
   ])
 
+  if (process.env.NODE_ENV === "development") {
+    console.log({ backendData: contextValue })
+  }
+
   return (
     <BackendDataContext.Provider value={contextValue}>
       {children}

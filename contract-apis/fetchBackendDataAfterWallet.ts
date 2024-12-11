@@ -177,9 +177,9 @@ async function uncachedFetchBackendDataAfterWallet({
 
     const usersEstimatedRewards =
       estimatedRewardForPower({
-        proposalTotalTribute: sumBy(bid.tributes, "valueInUsd"),
-        myVotingPower: votingPower,
-        proposalPower: Number(bid.power),
+        amount: sumBy(bid.tributes, "valueInUsd"),
+        walletVotingPower: votingPower,
+        bidPower: Number(bid.power),
       }) ?? 0
 
     const deploymentDurationMinusAnEpochInMilliseconds =

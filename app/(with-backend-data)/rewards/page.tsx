@@ -21,7 +21,6 @@ import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRew
 import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import { useChain } from "@cosmos-kit/react"
 import { keyBy, sumBy } from "lodash"
 import Image from "next/image"
@@ -92,9 +91,19 @@ export default function RewardsPage() {
             claim.roundId === bid.roundId &&
             claim.trancheId === bid.trancheId
         )
-        const isRefundable =
-          bid.liquidityDeployment &&
-          sumBy(bid.liquidityDeployment.deployedFunds, "amount") === 0
+        const matchingClaim =
+          matchingOutstandingClaim ?? matchingHistoricalClaim
+        const rewardInNativeToken = matchingClaim?.amount.amount ?? 0
+        const rewardsInUsd = matchingClaim?.amount.valueInUsd ?? 0
+        const totalDeployedFunds = sumBy(
+          bid.liquidityDeployment?.deployedFunds,
+          "amount"
+        )
+        const canClaim = Boolean(matchingOutstandingClaim)
+        const isClaimed = Boolean(matchingHistoricalClaim)
+        const hasDeployment = Boolean(bid.liquidityDeployment)
+        const isFunded = hasDeployment && totalDeployedFunds > 0
+        const isRefundable = hasDeployment && totalDeployedFunds === 0
 
         return {
           _bid: bid,
@@ -105,31 +114,28 @@ export default function RewardsPage() {
             <InvisibleLink href={bidUrl}>{bid.roundId + 1}</InvisibleLink>
           ),
 
-          logo: (
-            <InvisibleLink href={bidUrl}>
-              {projectLogoUrl ? (
-                <div className="relative size-12">
-                  <Image
-                    className="object-contain"
-                    src={projectLogoUrl}
-                    alt={projectName}
-                    fill={true}
-                  />
-                </div>
-              ) : null}
-            </InvisibleLink>
-          ),
-
           bidTitleAndProjectName: (
             <InvisibleLink href={bidUrl}>
-              <div className="flex flex-col">
-                <StyledText variant="h4">{title}</StyledText>
-                <StyledText variant="footnote">{projectName}</StyledText>
+              <div className="flex items-center gap-6">
+                {projectLogoUrl ? (
+                  <div className="relative size-12">
+                    <Image
+                      className="object-contain"
+                      src={projectLogoUrl}
+                      alt={projectName}
+                      fill={true}
+                    />
+                  </div>
+                ) : null}
+                <div className="flex flex-col">
+                  <StyledText variant="h4">{title}</StyledText>
+                  <StyledText variant="footnote">{projectName}</StyledText>
+                </div>
               </div>
             </InvisibleLink>
           ),
 
-          tribute: (
+          totalTribute: (
             <InvisibleLink href={bidUrl}>
               {tribute.amount}&nbsp;{tribute.denom}
             </InvisibleLink>
@@ -146,29 +152,13 @@ export default function RewardsPage() {
               <Tooltip tipContents={rewardsTributeRewardsTooltip}>
                 <div>
                   <div>
-                    {(
-                      estimatedRewardForPower({
-                        proposalTotalTribute: tribute.amount,
-                        myVotingPower: votingPower,
-                        proposalPower: Number(bid.power),
-                      }) * 1e6
-                    ).toLocaleString("en", {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 2,
-                    })}
-                    &nbsp;{tribute.denom}
+                    {rewardInNativeToken}
+                    &nbsp;{matchingClaim?.amount.denom ?? tribute.denom}
                   </div>
-                  <div>
-                    (
-                    {amountToUSDString(
-                      estimatedRewardForPower({
-                        proposalTotalTribute: tribute.valueInUsd,
-                        myVotingPower: votingPower,
-                        proposalPower: Number(bid.power),
-                      })
-                    )}
-                    ) <Icon name="circle-info" />
-                  </div>
+                  <StyledText variant="footnote">
+                    ({amountToUSDString(rewardsInUsd)}{" "}
+                    <Icon name="circle-info" />)
+                  </StyledText>
                 </div>
               </Tooltip>
             </InvisibleLink>
@@ -176,33 +166,33 @@ export default function RewardsPage() {
 
           actions: (
             <InvisibleLink href={bidUrl}>
-              {matchingOutstandingClaim && (
-                <StyledText
-                  as="button"
-                  variant="button.primary.small"
-                  onClick={() =>
-                    setSelection({
-                      tributeId: tribute.id,
-                    })
-                  }
-                >
-                  Claim
-                </StyledText>
-              )}
-
-              {matchingHistoricalClaim && (
-                <div className="flex items-center gap-1">
-                  Claimed <Icon name="check" />
-                </div>
-              )}
-
-              {isRefundable && <>Refundable</>}
-
-              {!bid.liquidityDeployment && (
-                <div className="flex items-center gap-1">
-                  Unresolved <Icon name="clock" />
-                </div>
-              )}
+              <div className="flex items-center justify-end gap-2">
+                {canClaim ? (
+                  <StyledText
+                    as="button"
+                    variant="button.primary.small"
+                    onClick={() =>
+                      setSelection({
+                        tributeId: tribute.id,
+                      })
+                    }
+                  >
+                    Claim
+                  </StyledText>
+                ) : isClaimed ? (
+                  <div className="flex items-center gap-1">
+                    Claimed <Icon name="check" />
+                  </div>
+                ) : isRefundable ? (
+                  <>Refundable</>
+                ) : !hasDeployment ? (
+                  <div className="flex items-center gap-1">
+                    Unresolved <Icon name="clock" />
+                  </div>
+                ) : isFunded ? (
+                  <div className="flex items-center gap-1">None</div>
+                ) : null}
+              </div>
             </InvisibleLink>
           ),
         }
@@ -224,13 +214,6 @@ export default function RewardsPage() {
       customValueGetter: () => 1,
     },
     {
-      key: "logo",
-      label: "",
-      propsForCells: {
-        className: "w-min",
-      },
-    },
-    {
       key: "bidTitleAndProjectName",
       label: "Bid Title / Project Name",
       isSortable: true,
@@ -240,7 +223,7 @@ export default function RewardsPage() {
       customValueGetter: (row) => row._bid.title,
     },
     {
-      key: "tribute",
+      key: "totalTribute",
       label: "Total Tribute",
       textAlign: "center",
       isSortable: true,
