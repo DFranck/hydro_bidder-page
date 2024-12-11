@@ -38,7 +38,6 @@ export default function RewardsPage() {
     claimsOutstanding,
     currentRoundId,
     votes,
-    votingPower,
   } = useBackendData()
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId

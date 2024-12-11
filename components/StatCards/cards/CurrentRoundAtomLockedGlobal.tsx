@@ -25,9 +25,7 @@ export function CurrentRoundAtomLockedGlobal() {
           `
       )}
       isLoading={isLoading}
-      value={((lockedAtomTotalGlobal ?? 0) / 1e6).toLocaleString(undefined, {
-        maximumFractionDigits: 0,
-      })}
+      value={Math.floor(lockedAtomTotalGlobal / 1e6).toLocaleString()}
       title={<div className="flex items-center gap-1">Total ATOM in Hydro</div>}
       subTitle={
         <>
