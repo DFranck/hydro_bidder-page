@@ -11,8 +11,11 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
 export function PopupOnMaxReached() {
-  const { currentRoundId, currentRoundIsPilot, lockedAtomIsAtGlobalCapacity } =
-    useBackendData()
+  const {
+    currentRoundId,
+    currentRoundIsPilot,
+    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
+  } = useBackendData()
   const [isOpen, setIsOpen] = useState(false)
   const [dontShowAgain, setDontShowAgain] = useLocalStorage(
     "dont-show-max-reached-popup-again",

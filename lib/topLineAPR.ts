@@ -3,7 +3,7 @@ import { nonUserSpecificAPR } from "./nonUserSpecificAPR"
 
 export function topLineAPR({
   atomPrice,
-  lockupEpochLength,
+  lockedAtomEpochInNanos,
   lockupPeriod,
   proposalAPRinputs,
   stakingAPR,
@@ -15,7 +15,7 @@ export function topLineAPR({
       proposalPower: number
     }[]
   >
-  lockupEpochLength: number
+  lockedAtomEpochInNanos: number
   lockupPeriod: AllowedLockupPeriodInEpochs
   atomPrice: number
   stakingAPR: number
@@ -27,7 +27,7 @@ export function topLineAPR({
       const proposalAPRs = trancheAPRinputs.map((input) =>
         nonUserSpecificAPR({
           atomPrice,
-          lockupEpochLength,
+          lockedAtomEpochInNanos,
           lockupPeriod,
           proposalPower: input.proposalPower,
           proposalTotalTribute: input.proposalTotalTribute,

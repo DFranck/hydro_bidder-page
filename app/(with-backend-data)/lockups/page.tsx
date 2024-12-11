@@ -119,7 +119,7 @@ export default function LockupsPage() {
         <StatCards.CurrentRoundVotingPowerWallet />
       </StatCards>
 
-      <ContentContainer className="gap-6 py-12">
+      <ContentContainer className="gap-6 py-6">
         <div
           className="
             flex

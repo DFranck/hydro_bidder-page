@@ -29,11 +29,11 @@ export interface BackendDataAfterWallet
   bids: AugmentedBid[]
   bidsById: Record<number, AugmentedBid>
   bidsByRoundId: Record<number, AugmentedBid[]>
-  claims: AugmentedClaim[]
+  claimsHistorical: AugmentedClaim[]
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
   isWalletConnected: boolean
-  lockedAtomIsAtWalletCapacity: boolean
+  lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
   lockedAtomTotalWallet: number
   lockups: SanitizedLockup[]
@@ -118,7 +118,7 @@ async function uncachedFetchBackendDataAfterWallet({
     currentRoundId,
     currentRoundTranches,
     lockedAtomMaxWallet,
-    lockupEpochLength,
+    lockedAtomEpochInNanos,
   } = backendData
 
   const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
@@ -183,7 +183,7 @@ async function uncachedFetchBackendDataAfterWallet({
       }) ?? 0
 
     const deploymentDurationMinusAnEpochInMilliseconds =
-      ((bid.deploymentDurationInEpochs - 1) * lockupEpochLength) / 1e6
+      ((bid.deploymentDurationInEpochs - 1) * lockedAtomEpochInNanos) / 1e6
 
     const currentRoundEndDateForSure =
       typeof currentRoundEndDate === "string"
@@ -234,11 +234,13 @@ async function uncachedFetchBackendDataAfterWallet({
     (vote) => bidsById[vote.bidId].roundId
   )
 
-  const { claims, outstandingClaims } = await fetchClaims({ address })
+  const { historicalClaims, outstandingClaims } = await fetchClaims({
+    address,
+  })
 
-  const augmentedClaims = augmentClaims({
+  const augmentedHistoricalClaims = augmentClaims({
     assetListWithPrices,
-    claims,
+    claims: historicalClaims,
   })
 
   const augmentedOutstandingClaims = augmentClaims({
@@ -258,11 +260,11 @@ async function uncachedFetchBackendDataAfterWallet({
     bids: sanitizedBids,
     bidsById,
     bidsByRoundId,
-    claims: augmentedClaims,
+    claimsHistorical: augmentedHistoricalClaims,
     claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,
     isWalletConnected: true,
-    lockedAtomIsAtWalletCapacity: lockedAtomTotalWallet === lockedAtomMaxWallet,
+    lockedAtomIsAtCapacityWallet: lockedAtomTotalWallet === lockedAtomMaxWallet,
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,

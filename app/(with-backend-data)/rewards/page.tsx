@@ -2,6 +2,7 @@
 
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
@@ -34,7 +35,7 @@ export default function RewardsPage() {
     bidDescriptionsByBidId,
     bids,
     bidsById,
-    claims,
+    claimsHistorical,
     claimsOutstanding,
     currentRoundId,
     votes,
@@ -83,7 +84,7 @@ export default function RewardsPage() {
             claim.roundId === bid.roundId &&
             claim.trancheId === bid.trancheId
         )
-        const matchingHistoricalClaim = claims.find(
+        const matchingHistoricalClaim = claimsHistorical.find(
           (claim) =>
             claim.bidId === bid.id &&
             claim.tributeId === tribute.id &&
@@ -140,26 +141,25 @@ export default function RewardsPage() {
             </InvisibleLink>
           ),
 
-          polRewards: (
-            <InvisibleLink href={bidUrl}>
-              {amountToUSDString(tribute.valueInUsd)}
-            </InvisibleLink>
-          ),
-
           tributeRewards: (
             <InvisibleLink href={bidUrl}>
-              <Tooltip tipContents={rewardsTributeRewardsTooltip}>
-                <div>
-                  <div>
-                    {rewardInNativeToken}
-                    &nbsp;{matchingClaim?.amount.denom ?? tribute.denom}
-                  </div>
-                  <StyledText variant="footnote">
-                    ({amountToUSDString(rewardsInUsd)}{" "}
-                    <Icon name="circle-info" />)
-                  </StyledText>
-                </div>
-              </Tooltip>
+              <ConditionalWrapper
+                condition={rewardsInUsd > 0}
+                wrapper={(children) => (
+                  <Tooltip tipContents={rewardsTributeRewardsTooltip}>
+                    <div>
+                      {children}
+                      <StyledText variant="footnote">
+                        ({amountToUSDString(rewardsInUsd)}{" "}
+                        <Icon name="circle-info" />)
+                      </StyledText>
+                    </div>
+                  </Tooltip>
+                )}
+              >
+                {rewardInNativeToken}
+                &nbsp;{matchingClaim?.amount.denom ?? tribute.denom}
+              </ConditionalWrapper>
             </InvisibleLink>
           ),
 
@@ -315,7 +315,7 @@ export default function RewardsPage() {
         <StatCards.AllTimeRewardsWallet />
       </StatCards>
 
-      <ContentContainer className="gap-12 py-12">
+      <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox>
           {rows.length > 0 ? (
             <StyledTable columns={columns} rows={rows} />

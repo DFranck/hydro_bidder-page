@@ -27,14 +27,16 @@ export function LockForm({
   validatorMap: Map<string, Validator>
 }) {
   const {
-    lockupEpochLength,
+    lockedAtomEpochInNanos,
     lockedAtomMaxGlobal,
     lockedAtomMaxWallet,
     lockedAtomTotalGlobal,
     lockedAtomTotalWallet,
   } = useBackendData()
   const [validator, setValidator] = useState("")
-  const [selectedDuration, setSelectedDuration] = useState(lockupEpochLength)
+  const [selectedDuration, setSelectedDuration] = useState(
+    lockedAtomEpochInNanos
+  )
   const { data: validators } = useWalletValidators(
     hubChain,
     hubChain.address || ""
@@ -278,7 +280,7 @@ export function LockForm({
                           Math.round(parseFloat(amount) * 1e6 || 0)
                         )
                         const lockupPower = scaleLockupPower({
-                          lockupEpochLength: lockupEpochLength,
+                          lockedAtomEpochInNanos: lockedAtomEpochInNanos,
                           lockupTime: selectedDuration,
                           rawPower: amountInUatom,
                         })

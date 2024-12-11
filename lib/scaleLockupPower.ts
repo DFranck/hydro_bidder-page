@@ -1,16 +1,16 @@
 import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
 
 export function scaleLockupPower({
-  lockupEpochLength,
+  lockedAtomEpochInNanos,
   lockupTime,
   rawPower,
 }: {
-  lockupEpochLength: number
+  lockedAtomEpochInNanos: number
   lockupTime: number
   rawPower: bigint
 }): bigint {
   const multiplier = getLockupPeriodMultiplier({
-    lockupEpochLength,
+    lockedAtomEpochInNanos,
     lockupTime,
   })
 

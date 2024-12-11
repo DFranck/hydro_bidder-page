@@ -23,7 +23,8 @@ export function LsmInteraction({
 }: {
   validatorMap: Map<string, Validator>
 }) {
-  const { lockedAtomIsAtGlobalCapacity } = useBackendData()
+  const { lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity } =
+    useBackendData()
   const {
     hubChain,
     hubSigner,

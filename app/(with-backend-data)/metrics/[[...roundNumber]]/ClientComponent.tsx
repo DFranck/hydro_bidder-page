@@ -292,7 +292,7 @@ export function ClientComponent({
         </StatCards>
       )}
 
-      <ContentContainer className="gap-12 py-12">
+      <ContentContainer className="gap-6 py-6">
         <div className="flex items-center justify-between">
           <h2 className="sr-only">PoL Metrics by Round</h2>
 

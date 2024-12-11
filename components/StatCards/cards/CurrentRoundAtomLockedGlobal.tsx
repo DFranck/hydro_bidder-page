@@ -8,7 +8,7 @@ import { StatCard } from "../StatCard"
 export function CurrentRoundAtomLockedGlobal() {
   const {
     isLoading,
-    lockedAtomIsAtGlobalCapacity,
+    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
     lockedAtomMaxGlobal,
     lockedAtomPercentageGlobal,
     lockedAtomTotalGlobal,

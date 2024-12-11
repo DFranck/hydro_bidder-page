@@ -4,12 +4,13 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { yourTotalRewardsAllTimeTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
+import { amountToUSDString } from "@/lib/amountToUSDString"
+import { sumBy } from "lodash"
 import { StatCard } from "../StatCard"
 
 export function AllTimeRewardsWallet() {
-  const { isLoading, metricsGlobal } = useBackendData()
-  const { allTimeUsersRewards } = metricsGlobal
+  const { isLoading, claimsHistorical } = useBackendData()
+  const allTimeUsersRewardsInUsd = sumBy(claimsHistorical, "amount.valueInUsd")
 
   return (
     <StatCard
@@ -23,7 +24,7 @@ export function AllTimeRewardsWallet() {
         </Tooltip>
       }
       subTitle="All-Time"
-      value={formatAmount(allTimeUsersRewards)}
+      value={amountToUSDString(allTimeUsersRewardsInUsd)}
     />
   )
 }
