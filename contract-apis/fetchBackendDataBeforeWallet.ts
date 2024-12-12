@@ -58,7 +58,7 @@ export interface BackendDataBeforeWallet {
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
-  currentRoundTranches: Tranche[]
+  tranches: Tranche[]
   lockedAtomIsAtCapacityGlobal: boolean
   lockedAtomEpochInNanos: number
   lockedAtomMaxGlobal: number
@@ -299,22 +299,21 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     atomPrice,
     bidDescriptionsByBidId,
     bids,
-    bidsByRoundId,
     bidsById,
+    bidsByRoundId,
     currentRoundEndDate,
     currentRoundId,
     currentRoundIsPilot: true,
-    currentRoundTranches: tranches,
-    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
     lockedAtomEpochInNanos,
+    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
     lockedAtomMaxGlobal,
-    // TODO: get this from contract
-    lockedAtomMaxWallet: 200,
-    metricsGlobal: metrics,
-    metricsForPreHydroBids: preHydroBids,
-    metricsForPostHydroBids: postHydroBids,
+    lockedAtomMaxWallet: 200, // TODO: get this from contract
     lockedAtomPercentageGlobal,
     lockedAtomTotalGlobal,
+    metricsForPostHydroBids: postHydroBids,
+    metricsForPreHydroBids: preHydroBids,
+    metricsGlobal: metrics,
+    tranches: tranches,
   }
 
   return backendDataBeforeWallet

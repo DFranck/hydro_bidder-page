@@ -116,7 +116,7 @@ async function uncachedFetchBackendDataAfterWallet({
     bids,
     currentRoundEndDate,
     currentRoundId,
-    currentRoundTranches,
+    tranches,
     lockedAtomMaxWallet,
     lockedAtomEpochInNanos,
   } = backendData
@@ -136,7 +136,7 @@ async function uncachedFetchBackendDataAfterWallet({
   const votes = await Promise.all(
     allRoundIds.map(async (roundId) =>
       Promise.all(
-        currentRoundTranches.map(async (tranche) => {
+        tranches.map(async (tranche) => {
           let fetchedVotes: VoteWithPower[] = []
 
           try {
@@ -236,6 +236,8 @@ async function uncachedFetchBackendDataAfterWallet({
 
   const { historicalClaims, outstandingClaims } = await fetchClaims({
     address,
+    currentRoundId,
+    trancheIds: tranches.map((tranche) => tranche.id),
   })
 
   const augmentedHistoricalClaims = augmentClaims({

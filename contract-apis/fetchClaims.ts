@@ -10,6 +10,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
+import { range } from "lodash"
 
 interface SanitizedClaim
   extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {
@@ -20,7 +21,15 @@ export type AugmentedClaim = Omit<SanitizedClaim, "amount"> & {
   amount: AugmentedCoin
 }
 
-export async function fetchClaims({ address }: { address: string }): Promise<{
+export async function fetchClaims({
+  address,
+  currentRoundId,
+  trancheIds,
+}: {
+  address: string
+  currentRoundId: number
+  trancheIds: number[]
+}): Promise<{
   historicalClaims: SanitizedClaim[]
   outstandingClaims: SanitizedClaim[]
 }> {
@@ -35,7 +44,7 @@ export async function fetchClaims({ address }: { address: string }): Promise<{
   )
 
   let historicalClaims: SanitizedClaim[]
-  let outstandingClaims: SanitizedClaim[]
+  let outstandingClaims: SanitizedClaim[] = []
 
   try {
     const { claims: fetchedHistoricalClaims } =
@@ -50,15 +59,24 @@ export async function fetchClaims({ address }: { address: string }): Promise<{
   }
 
   try {
-    const { claims: fetchedOutstandingClaims } =
-      await tributeQueryClient.outstandingTributeClaims({
-        limit: 10_000,
-        roundId: 0,
-        startFrom: 0,
-        trancheId: 0,
-        userAddress: address,
-      })
-    outstandingClaims = sanitizeClaims(fetchedOutstandingClaims)
+    const roundIds = range(0, currentRoundId + 1)
+
+    for (const roundId of roundIds) {
+      for (const trancheId of trancheIds) {
+        const { claims: fetchedOutstandingClaims } =
+          await tributeQueryClient.outstandingTributeClaims({
+            limit: 10_000,
+            roundId,
+            startFrom: 0,
+            trancheId,
+            userAddress: address,
+          })
+        outstandingClaims = [
+          ...outstandingClaims,
+          ...sanitizeClaims(fetchedOutstandingClaims),
+        ]
+      }
+    }
   } catch (error) {
     outstandingClaims = []
   }
