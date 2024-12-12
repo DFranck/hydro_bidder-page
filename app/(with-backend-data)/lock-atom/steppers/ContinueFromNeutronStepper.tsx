@@ -1,17 +1,16 @@
 "use client"
 
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
-import { Icon } from "@/components/Icon"
-import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
-import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
-import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { useRouter } from "next/navigation"
-import { ReactNode, useState } from "react"
+import { useState } from "react"
 import { signLockTokens } from "../transactions/signLockTokens"
 import { useIncompleteNotices } from "../useIncompleteNotices"
+import {
+  getCommonStepContents,
+  StepContent,
+} from "./shared/LockAtomStepperCommon"
 
 type ContinueFromNeutronStep =
   | "Init"
@@ -19,13 +18,6 @@ type ContinueFromNeutronStep =
   | "WaitingForLockBroadcast"
   | "Success"
   | "Error"
-
-function getValidatorMoniker(
-  validator: string,
-  validatorMap: Map<string, Validator>
-): string {
-  return validatorMap.get(validator)?.description.moniker || validator
-}
 
 export const ContinueFromNeutronStepper = ({
   amount,
@@ -94,70 +86,29 @@ export const ContinueFromNeutronStepper = ({
     }
   }
 
-  function getStepContents(): {
-    isWorking?: boolean
-    revalidateCache?: boolean
-    title?: ReactNode
-    contents: ReactNode
-    buttons?: {
-      label: ReactNode
-      onClick?: () => void
-      className?: string
-    }[]
-  } {
+  function getStepContents(): StepContent {
+    if (["Init", "Success", "Error"].includes(step)) {
+      return getCommonStepContents({
+        step: step as "Init" | "Success" | "Error",
+        amount,
+        validator,
+        validatorMap,
+        lockDuration,
+        lockedAtomEpochInNanos,
+        errorLog,
+        showErrorLog,
+        setShowErrorLog,
+        onExecute: executeContinueFromNeutron,
+        onCancel: () => {
+          router.push("/lock-atom")
+          onExit()
+        },
+        setLockDuration,
+        numApprovals: 1,
+      })
+    }
+
     switch (step) {
-      case "Init":
-        return {
-          title: `Continue Locking ${formatAmount(amount)} ATOM`,
-          contents: (
-            <>
-              <p>
-                Nice! You&rsquo;re about to lock{" "}
-                <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
-                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>{" "}
-                in Hydro to get{" "}
-                <strong>
-                  {formatAmount(
-                    scaleLockupPower({
-                      lockedAtomEpochInNanos,
-                      lockupTime: lockDuration,
-                      rawPower: BigInt(amount),
-                    })
-                  )}{" "}
-                  voting power.
-                </strong>
-              </p>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  executeContinueFromNeutron()
-                }}
-              >
-                <div className="mb-4">
-                  <label className="mb-2 block">Select Lock Duration:</label>
-                  <InputForLockupPeriod
-                    selectedDuration={lockDuration}
-                    onChange={(value) => setLockDuration(value)}
-                  />
-                </div>
-                <p>This will require one wallet approval.</p>
-              </form>
-            </>
-          ),
-          buttons: [
-            {
-              label: "Lock",
-              onClick: executeContinueFromNeutron,
-            },
-            {
-              label: "Cancel",
-              onClick: () => {
-                router.push("/lock-atom")
-                onExit()
-              },
-            },
-          ],
-        }
       case "WaitingForLockSigning":
         return {
           isWorking: true,
@@ -180,75 +131,8 @@ export const ContinueFromNeutronStepper = ({
             </>
           ),
         }
-      case "Success":
-        return {
-          revalidateCache: true,
-          title: "Success!",
-          contents: (
-            <p>
-              You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
-              and received{" "}
-              <strong>
-                {formatAmount(
-                  scaleLockupPower({
-                    lockedAtomEpochInNanos,
-                    lockupTime: lockDuration,
-                    rawPower: BigInt(amount),
-                  })
-                )}{" "}
-                voting power.
-              </strong>
-            </p>
-          ),
-          buttons: [
-            {
-              label: "Start Voting",
-              onClick: () => {
-                router.push("/bids")
-                onExit()
-              },
-            },
-          ],
-        }
-      case "Error":
-        return {
-          title: "Transaction Error",
-          contents: (
-            <>
-              <p>
-                This transaction could not be completed. Your staked ATOM has
-                not been locked in Hydro.
-              </p>
-              <p>Refresh the page to try again or recover your staked ATOM.</p>
-              <div className="mt-4">
-                {!showErrorLog ? (
-                  <StyledText
-                    as="button"
-                    variant="link.subtle"
-                    onClick={() => setShowErrorLog(true)}
-                  >
-                    Show Error Log
-                    <Icon name="solid:chevron-down" />
-                  </StyledText>
-                ) : (
-                  <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
-                    {errorLog}
-                  </pre>
-                )}
-              </div>
-            </>
-          ),
-          buttons: [
-            {
-              label: "Refresh page",
-              onClick: () => window.location.reload(),
-            },
-          ],
-        }
       default:
-        return {
-          contents: null,
-        }
+        return { contents: null }
     }
   }
 
