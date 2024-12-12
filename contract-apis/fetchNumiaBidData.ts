@@ -16,22 +16,20 @@ export interface BidFromNumia {
   initial_allocation_denom: string
   offchain_tribute_info: string
   offchain_tribute: string
+  onchain_tribute_assets: string
   onchain_tribute_usdc: number
   project_about: string
   project_logo_url: string
-  project_name: string
   project_url: string
   project: string
   requested_allocation_amount: number
   requested_allocation_denom: string
-  round_id: number
   round: string
   status: string
   title: string
   tranche: number
   voters: number
   voting_power: number
-  onchain_tribute_assets: string
 }
 
 export type SanitizedBidFromNumia = CamelCaseKeys<
