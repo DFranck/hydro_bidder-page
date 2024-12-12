@@ -371,6 +371,7 @@ export const LockStepper = ({
       case "WaitingForIBCBroadcastAndRelay":
         return {
           isWorking: true,
+          title: "Transferring to Hydro",
           contents: (
             <>
               <p>Sending your staked ATOM to Hydro...</p>
@@ -398,10 +399,11 @@ export const LockStepper = ({
       case "WaitingForLockingBroadcast":
         return {
           isWorking: true,
+          title: "Locking Your ATOM",
           contents: (
             <p>
-              Locking your ATOM. This should only take a few seconds, unless the
-              network is congested.
+              This should only take a few seconds, unless the network is
+              congested.
             </p>
           ),
         }
