@@ -36,7 +36,7 @@ const initialBackendDataContext: BackendDataAfterWallet = {
   currentRoundEndDate: new Date(),
   currentRoundId: 0,
   currentRoundIsPilot: false,
-  currentRoundTranches: [],
+  tranches: [],
   isLoading: false,
   isWalletConnected: false,
   lockedAtomEpochInNanos: 0,
