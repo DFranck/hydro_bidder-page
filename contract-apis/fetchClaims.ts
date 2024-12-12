@@ -61,22 +61,26 @@ export async function fetchClaims({
   try {
     const roundIds = range(0, currentRoundId + 1)
 
-    for (const roundId of roundIds) {
-      for (const trancheId of trancheIds) {
-        const { claims: fetchedOutstandingClaims } =
-          await tributeQueryClient.outstandingTributeClaims({
-            limit: 10_000,
-            roundId,
-            startFrom: 0,
-            trancheId,
-            userAddress: address,
-          })
-        outstandingClaims = [
-          ...outstandingClaims,
-          ...sanitizeClaims(fetchedOutstandingClaims),
-        ]
-      }
-    }
+    const allClaims = await Promise.all(
+      roundIds.map((roundId) =>
+        Promise.all(
+          trancheIds.map((trancheId) =>
+            tributeQueryClient.outstandingTributeClaims({
+              limit: 10_000,
+              roundId,
+              startFrom: 0,
+              trancheId,
+              userAddress: address,
+            })
+          )
+        )
+      )
+    )
+
+    outstandingClaims = allClaims
+      .flat()
+      .flat()
+      .flatMap(({ claims }) => sanitizeClaims(claims))
   } catch (error) {
     outstandingClaims = []
   }
