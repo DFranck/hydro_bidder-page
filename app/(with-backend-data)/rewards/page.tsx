@@ -22,7 +22,6 @@ import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRew
 import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { formatAmount } from "@/lib/formatAmount"
 import { useChain } from "@cosmos-kit/react"
 import { keyBy, sumBy } from "lodash"
 import Image from "next/image"
@@ -156,7 +155,7 @@ export default function RewardsPage() {
                   </Tooltip>
                 )}
               >
-                {formatAmount(rewardInNativeToken)}
+                {matchingClaim?.amount.printableAmount}
                 &nbsp;
                 {matchingClaim?.amount.humanReadableDenom ?? tribute.denom}
               </ConditionalWrapper>
