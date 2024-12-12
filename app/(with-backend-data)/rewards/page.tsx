@@ -3,6 +3,7 @@
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Confetti } from "@/components/Confetti"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
@@ -22,12 +23,14 @@ import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRew
 import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import { keyBy, sumBy } from "lodash"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 
 export default function RewardsPage() {
+  const [isCelebrating, setIsCelebrating] = useState(false)
   const { setToasts } = useToasts()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const {
@@ -93,7 +96,6 @@ export default function RewardsPage() {
         )
         const matchingClaim =
           matchingOutstandingClaim ?? matchingHistoricalClaim
-        const rewardInNativeToken = matchingClaim?.amount.amount ?? 0
         const rewardsInUsd = matchingClaim?.amount.valueInUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
@@ -289,10 +291,19 @@ export default function RewardsPage() {
         getSigningCosmWasmClient,
       })
 
+      await revalidateTag("backendData")
+
+      setIsCelebrating(true)
+
       setToasts([
         {
-          message: `Rewards claimed successfully`,
           variant: "success",
+          message: "Reward claimed! Reload to see changes",
+          isDismissible: false,
+          actionButton: {
+            label: "Reload",
+            onClick: () => window.location.reload(),
+          },
         },
       ])
     } catch (error) {
@@ -413,6 +424,11 @@ export default function RewardsPage() {
           </Card>
         </form>
       </ModalWindow>
+
+      <Confetti
+        trigger={isCelebrating}
+        onComplete={() => setIsCelebrating(false)}
+      />
     </>
   )
 }
