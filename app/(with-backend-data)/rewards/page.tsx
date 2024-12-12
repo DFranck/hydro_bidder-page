@@ -147,18 +147,17 @@ export default function RewardsPage() {
                 condition={rewardsInUsd > 0}
                 wrapper={(children) => (
                   <Tooltip tipContents={rewardsTributeRewardsTooltip}>
-                    <div>
-                      {children}
-                      <StyledText variant="footnote">
-                        ({amountToUSDString(rewardsInUsd)}{" "}
-                        <Icon name="circle-info" />)
-                      </StyledText>
-                    </div>
+                    <div>{children}</div>
+                    <StyledText variant="footnote">
+                      ({amountToUSDString(rewardsInUsd)}{" "}
+                      <Icon name="circle-info" />)
+                    </StyledText>
                   </Tooltip>
                 )}
               >
                 {rewardInNativeToken}
-                &nbsp;{matchingClaim?.amount.denom ?? tribute.denom}
+                &nbsp;
+                {matchingClaim?.amount.humanReadableDenom ?? tribute.denom}
               </ConditionalWrapper>
             </InvisibleLink>
           ),
