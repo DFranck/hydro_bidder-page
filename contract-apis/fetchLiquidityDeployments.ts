@@ -1,20 +1,16 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import { Coin, LiquidityDeployment } from "@/app/ts_types/HydroBase.types"
+import { LiquidityDeployment } from "@/app/ts_types/HydroBase.types"
 import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
 import { AssetListEntry } from "./fetchAssetListWithPrices"
-import { getCoinWithValueInUsd } from "./getCoinWithValueInUsd"
+import { AugmentedCoin, getCoinWithValueInUsd } from "./getCoinWithValueInUsd"
 import { getCosmWasmClient } from "./getCosmWasmClient"
-
-export interface CoinWithPrice extends Coin {
-  valueInUsd: number
-}
 
 export interface AugmentedLiquidityDeployment
   extends Omit<SanitizedLiquidityDeployment, "fundsBeforeDeployment"> {
-  fundsBeforeDeployment: CoinWithPrice[]
+  fundsBeforeDeployment: AugmentedCoin[]
 }
 
 export interface SanitizedLiquidityDeployment
