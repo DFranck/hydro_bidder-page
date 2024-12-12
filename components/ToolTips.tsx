@@ -293,11 +293,10 @@ export const networkLimitReachedTooltip = (
   </>
 )
 
-export const numberOfUniqueWalletsTooltip = (
+export const currentRoundUniqueWalletsTooltip = (
   <>
-    This represents the total number of individual wallets that have
-    participated in Hydro rounds since launch. Each wallet is counted once,
-    regardless of how many rounds it has participated in.
+    This represents the total number of individual wallets participating in
+    Hydro right now. Each wallet is counted once.
   </>
 )
 
