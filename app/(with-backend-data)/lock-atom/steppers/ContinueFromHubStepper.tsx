@@ -1,7 +1,5 @@
 "use client"
 
-import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -10,10 +8,13 @@ import { useState } from "react"
 import { broadcastAndRelayIBCHubToNeutron } from "../transactions/broadcastAndRelayIBCHubToNeutron"
 import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
 import { signLockTokens } from "../transactions/signLockTokens"
+import { useIncompleteNotices } from "../useIncompleteNotices"
+import { CommonSteps } from "./CommonSteps"
 import {
   getCommonStepContents,
   StepContent,
 } from "./shared/LockAtomStepperCommon"
+import { Step } from "./Step"
 
 type ContinueFromHubStep =
   | "Init"
@@ -133,59 +134,13 @@ export const ContinueFromHubStepper = ({
 
     switch (step) {
       case "WaitingForIBCSigning":
-        return {
-          isWorking: true,
-          title: "Approve IBC Transfer",
-          contents: (
-            <>
-              <p>Approve the transaction in your wallet to continue</p>
-              <p>
-                This will start the transfer of your tokenized ATOM to Hydro to
-                start the locking process.
-              </p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForIBCSigning")
       case "WaitingForIBCBroadcastAndRelay":
-        return {
-          isWorking: true,
-          title: "Transferring to Hydro",
-          contents: (
-            <>
-              <p>Sending your staked ATOM to Hydro...</p>
-              <p>
-                This could take 30 seconds or longer if the network is
-                congested. If you exit Hydro, this status may not be visible
-                when you return, but the transfer will continue. Once the
-                transfer is complete, you will need to return to initiate the
-                lockup process.
-              </p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForIBCBroadcastAndRelay")
       case "WaitingForLockingSigning":
-        return {
-          isWorking: true,
-          title: "Approve Locking",
-          contents: (
-            <p>
-              Approve in your wallet again to lock your ATOM. This will initiate
-              the locking of your staked ATOM into the Hydro contract to receive
-              voting power.
-            </p>
-          ),
-        }
+        return CommonSteps("WaitingForLockingSigning")
       case "WaitingForLockingBroadcast":
-        return {
-          isWorking: true,
-          title: "Locking in Progress",
-          contents: (
-            <>
-              <p>Locking your ATOM...</p>
-              <p>Just a few seconds, unless the network is congested</p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForLockingBroadcast")
       default:
         return { contents: null }
     }

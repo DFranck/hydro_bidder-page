@@ -126,8 +126,8 @@ export const StepperOverview: React.FC = () => {
         title="ContinueFromNeutron"
         states={[
           "Init",
-          "WaitingForLockSigning",
-          "WaitingForLockBroadcast",
+          "WaitingForLockingSigning",
+          "WaitingForLockingBroadcast",
           "Success",
           "Error",
         ]}
