@@ -9,8 +9,11 @@ import { sumBy } from "lodash"
 import { StatCard } from "../StatCard"
 
 export function AllTimeRewardsWallet() {
-  const { isLoading, claimsHistorical } = useBackendData()
-  const allTimeUsersRewardsInUsd = sumBy(claimsHistorical, "amount.valueInUsd")
+  const { isLoading, claimsHistorical, claimsOutstanding } = useBackendData()
+  const allTimeUsersRewardsInUsd = sumBy(
+    [...claimsHistorical, ...claimsOutstanding],
+    "amount.valueInUsd"
+  )
 
   return (
     <StatCard
