@@ -1,38 +1,38 @@
 import { StatCards as BaseStatCards } from "./StatCards"
-import { AverageAtomLockedPerWallet } from "./cards/AverageAtomLockedPerWallet"
-import { AverageRoundApr } from "./cards/AverageRoundApr"
-import { AverageRoundsPerUser } from "./cards/AverageRoundsPerUser"
-import { HistoricalApr } from "./cards/HistoricalApr"
-import { NumberOfBids } from "./cards/NumberOfBids"
-import { NumberOfUniqueWallets } from "./cards/NumberOfUniqueWallets"
-import { PoLAvailable } from "./cards/PoLAvailable"
-import { PoLDeployed } from "./cards/PoLDeployed"
-import { PoLRevenue } from "./cards/PoLRevenue"
-import { TimeLeft } from "./cards/TimeLeft"
-import { TotalAtomLocked } from "./cards/TotalAtomLocked"
-import { YourAprCurrentRound } from "./cards/YourAprCurrentRound"
-import { YourAprHistorical } from "./cards/YourAprHistorical"
-import { YourTotalAtomLocked } from "./cards/YourTotalAtomLocked"
-import { YourTotalRewardsAllTime } from "./cards/YourTotalRewardsAllTime"
-import { YourVotingPower } from "./cards/YourVotingPower"
+import { AllTimeAprGlobal } from "./cards/AllTimeAprGlobal"
+import { AllTimeAprWallet } from "./cards/AllTimeAprWallet"
+import { AllTimeAverageAtomLockedPerWallet } from "./cards/AllTimeAverageAtomLockedPerWallet"
+import { AllTimeAverageRoundsPerWallet } from "./cards/AllTimeAverageRoundsPerWallet"
+import { AllTimeRewardsWallet } from "./cards/AllTimeRewardsWallet"
+import { CurrentRoundAprGlobal } from "./cards/CurrentRoundAprGlobal"
+import { CurrentRoundAprWallet } from "./cards/CurrentRoundAprWallet"
+import { CurrentRoundAtomLockedGlobal } from "./cards/CurrentRoundAtomLockedGlobal"
+import { CurrentRoundAtomLockedWallet } from "./cards/CurrentRoundAtomLockedWallet"
+import { CurrentRoundNumberOfBids } from "./cards/CurrentRoundNumberOfBids"
+import { CurrentRoundPoLAvailable } from "./cards/CurrentRoundPoLAvailable"
+import { CurrentRoundPoLDeployed } from "./cards/CurrentRoundPoLDeployed"
+import { CurrentRoundPoLRevenue } from "./cards/CurrentRoundPoLRevenue"
+import { CurrentRoundTimeLeft } from "./cards/CurrentRoundTimeLeft"
+import { CurrentRoundUniqueWallets } from "./cards/CurrentRoundUniqueWallets"
+import { CurrentRoundVotingPowerWallet } from "./cards/CurrentRoundVotingPowerWallet"
 
 const StatCards = Object.assign(BaseStatCards, {
-  AverageRoundApr,
-  AverageAtomLockedPerWallet,
-  AverageRoundsPerUser,
-  TimeLeft,
-  HistoricalApr,
-  NumberOfUniqueWallets,
-  PoLAvailable,
-  PoLDeployed,
-  PoLRevenue,
-  TotalAtomLocked: TotalAtomLocked,
-  NumberOfBids,
-  YourAprCurrentRound,
-  YourAprHistorical,
-  YourTotalAtomLocked: YourTotalAtomLocked,
-  YourTotalRewardsAllTime,
-  YourVotingPower,
+  CurrentRoundAprGlobal,
+  AllTimeAverageAtomLockedPerWallet,
+  AllTimeAverageRoundsPerWallet,
+  CurrentRoundTimeLeft,
+  AllTimeAprGlobal,
+  CurrentRoundUniqueWallets,
+  CurrentRoundPoLAvailable,
+  CurrentRoundPoLDeployed,
+  CurrentRoundPoLRevenue,
+  CurrentRoundAtomLockedGlobal,
+  CurrentRoundNumberOfBids,
+  CurrentRoundAprWallet,
+  AllTimeAprWallet,
+  CurrentRoundAtomLockedWallet,
+  AllTimeRewardsWallet,
+  CurrentRoundVotingPowerWallet,
 })
 
 export { StatCards }

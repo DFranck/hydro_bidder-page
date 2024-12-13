@@ -1,6 +1,5 @@
 "use client"
 
-import { useToasts } from "@/components/Toasts"
 import {
   BackendDataAfterWallet,
   fetchBackendDataAfterWallet,
@@ -26,45 +25,55 @@ export interface BackendDataContextType extends BackendDataAfterWallet {
 
 const initialBackendDataContext: BackendDataAfterWallet = {
   address: "",
+  assetListWithPrices: new Map(),
   atomPrice: 0,
   bidDescriptionsByBidId: {},
   bids: [],
   bidsById: {},
   bidsByRoundId: {},
+  claimsHistorical: [],
+  claimsOutstanding: [],
   currentRoundEndDate: new Date(),
   currentRoundId: 0,
   currentRoundIsPilot: false,
-  currentRoundTranches: [],
-  isAtMaxLockupCapacity: false,
+  tranches: [],
   isLoading: false,
   isWalletConnected: false,
-  lockupEpochLength: 0,
+  lockedAtomEpochInNanos: 0,
+  lockedAtomIsAtCapacityGlobal: false,
+  lockedAtomIsAtCapacityWallet: false,
+  lockedAtomMaxGlobal: 0,
+  lockedAtomMaxWallet: 0,
+  lockedAtomPercentageGlobal: 0,
+  lockedAtomPercentageWallet: 0,
+  lockedAtomTotalGlobal: 0,
+  lockedAtomTotalWallet: 0,
   lockups: [],
-  maxLockedAtomGlobal: 0,
-  maxLockedAtomUser: 0,
   metricsForPostHydroBids: [],
   metricsForPreHydroBids: [],
-  percentageLockedOverall: 0,
-  totalLockedAtomGlobal: 0,
-  totalLockedAtomUser: 0,
-  votesByRoundId: {},
   votes: [],
+  votesByRoundId: {},
   votingPower: 0,
   metricsGlobal: {
-    allTimeApr: [],
+    allTimePolApr: 0,
+    allTimePolDeployed: 0,
     allTimeTotalActiveRounds: 0,
     allTimeTotalAtomLocked: 0,
+    allTimeTributeApr: 0,
+    allTimeTributeYield: 0,
     allTimeUniqueWallets: 0,
-    allTimeUsersApr: [],
-    allTimeUsersAvgActiveRounds: 0,
-    allTimeUsersAvgTokenLocked: 0,
-    allTimeUsersRewards: 0,
-    currentRoundPolAvailable: 0,
-    currentRoundPolDeployed: 0,
-    currentRoundTotalAtomLocked: 0,
-    currentRoundUniqueWallets: 0,
-    currentRoundUsersApr: [],
-    currentRoundUsersAvgTokenLocked: 0,
+    allTimeUsersAvgRoundsLocked: 0,
+    allTimeUsersAvgTokensLocked: 0,
+    currentPolAvailable: 0,
+    currentPolDeployed: 0,
+    currentPolDeploymentCap: 0,
+    currentPolTotal: 0,
+    currentTotalAtomLocked: 0,
+    currentTributeApr: 0,
+    currentTributeYield: 0,
+    currentUniqueWallets: 0,
+    currentUsersAvgRoundsLocked: 0,
+    currentUsersAvgTokensLocked: 0,
   },
 }
 
@@ -88,7 +97,6 @@ export function BackendDataContextProvider({
   const wasWalletConnected = useDeferredValue(isWalletConnected)
   const pathname = usePathname()
   const router = useRouter()
-  const { setToasts } = useToasts()
   const [isLoading, setIsLoading] = useState(false)
   const preMergedBackendData = useMemo(
     () => merge({}, initialBackendDataContext, backendData),
@@ -114,13 +122,6 @@ export function BackendDataContextProvider({
 
       setIsLoading(true)
 
-      setToasts([
-        {
-          message: "Loading...",
-          variant: "working",
-        },
-      ])
-
       const backendDataAfterWallet = await fetchBackendDataAfterWallet({
         address,
         backendData,
@@ -145,7 +146,6 @@ export function BackendDataContextProvider({
         })),
       })
 
-      setToasts([])
       setIsLoading(false)
     })()
   }, [address, backendData])
@@ -183,6 +183,10 @@ export function BackendDataContextProvider({
     router,
     wasWalletConnected,
   ])
+
+  if (process.env.CONTEXT !== "production") {
+    console.log({ backendData: contextValue })
+  }
 
   return (
     <BackendDataContext.Provider value={contextValue}>

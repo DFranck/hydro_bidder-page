@@ -1,5 +1,6 @@
 "use client"
 
+import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
@@ -12,14 +13,13 @@ import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
-import { useToasts } from "@/components/Toasts"
+import { Toasts, useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
   lockupLimitReachedByUserTooltip,
   lockupLimitTooltip,
 } from "@/components/ToolTips"
-import { maxLockedTokensPerAddress } from "@/contract-apis/_globals"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function LockupsPage() {
+  const { incompleteNotices } = useIncompleteNotices()
   const router = useRouter()
   const [isConfirmingUnlockExpired, setIsConfirmingUnlockExpired] =
     useState(false)
@@ -39,21 +40,16 @@ export default function LockupsPage() {
   const {
     address,
     lockups,
-    maxLockedAtomGlobal,
-    totalLockedAtomGlobal,
-    totalLockedAtomUser,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageGlobal,
+    lockedAtomPercentageWallet,
+    lockedAtomTotalWallet,
   } = useBackendData()
-  const maxLockedAtomOverall = maxLockedAtomGlobal
-  const maxLockedAtomPerWallet = maxLockedTokensPerAddress ?? 0
-  const percentageLockedInWallet = Math.round(
-    (totalLockedAtomUser / maxLockedAtomPerWallet) * 100
-  )
-  const percentageLockedOverall = Math.round(
-    (totalLockedAtomGlobal / maxLockedAtomOverall) * 100
-  )
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
-  const expiredLockups = lockups.filter((lockup) => new Date() > lockup.dateEnd)
+  const expiredLockups = lockups.filter(
+    (lockup) => new Date() >= lockup.dateEnd
+  )
 
   async function handleClickToNextUnlockingStep() {
     router.push("/lock-atom")
@@ -118,12 +114,12 @@ export default function LockupsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.TotalAtomLocked />
-        <StatCards.YourTotalAtomLocked />
-        <StatCards.YourVotingPower />
+        <StatCards.CurrentRoundAtomLockedGlobal />
+        <StatCards.CurrentRoundAtomLockedWallet />
+        <StatCards.CurrentRoundVotingPowerWallet />
       </StatCards>
 
-      <ContentContainer className="gap-6 py-12">
+      <ContentContainer className="gap-6 py-6">
         <div
           className="
             flex
@@ -151,16 +147,14 @@ export default function LockupsPage() {
               className="block w-96 shrink-0"
             >
               <ProgressBar
-                percentage={percentageLockedInWallet}
+                percentage={lockedAtomPercentageWallet}
                 warningZone={(percentage) => percentage >= 75}
                 dangerZone={(percentage) => percentage >= 95}
               >
                 <div className="flex items-center gap-1">
                   <span>
-                    {(totalLockedAtomUser / 1e6)
-                      .toFixed(4)
-                      .replace(".0000", "")}{" "}
-                    / {maxLockedAtomPerWallet / 1e6} ATOM max.
+                    {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
+                    {lockedAtomMaxWallet} ATOM max
                   </span>
                   <span>
                     <Icon name="circle-info" />
@@ -183,14 +177,14 @@ export default function LockupsPage() {
 
             <ConditionalWrapper
               condition={
-                percentageLockedInWallet === 100 ||
-                percentageLockedOverall === 100
+                lockedAtomPercentageWallet === 100 ||
+                lockedAtomPercentageGlobal === 100
               }
               wrapper={(children) => (
                 <Tooltip
                   classNamesForTooltip="-ml-12"
                   tipContents={
-                    percentageLockedInWallet === 100
+                    lockedAtomPercentageWallet === 100
                       ? lockupLimitReachedByUserTooltip
                       : lockupLimitReachedByNetworkTooltip
                   }
@@ -214,7 +208,7 @@ export default function LockupsPage() {
           </div>
         </div>
 
-        <BlurryBackdropBox>
+        <BlurryBackdropBox className="flex flex-col gap-6">
           {lockups.length === 0 && (
             <EmptyBox className="flex flex-col gap-1">
               <div>
@@ -235,6 +229,22 @@ export default function LockupsPage() {
                 </StyledText>
               </div>
             </EmptyBox>
+          )}
+
+          {incompleteNotices.length > 0 && (
+            <Toasts.Toast variant="error" isDismissible={false}>
+              <p>
+                You have {incompleteNotices.length} incomplete lockups.{" "}
+                <StyledText
+                  variant="link"
+                  as={Link}
+                  href="/lock-atom"
+                  // className="text-palette-text/70 hover:text-palette-text"
+                >
+                  Review Incomplete Lockups <Icon name="arrow-right-long" />
+                </StyledText>
+              </p>
+            </Toasts.Toast>
           )}
 
           {lockups.length > 0 && (

@@ -3,11 +3,19 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { fetchAssetListWithPrices } from "@/contract-apis/fetchAssetListWithPrices"
+import {
+  AssetListEntry,
+  fetchAssetListWithPrices,
+} from "@/contract-apis/fetchAssetListWithPrices"
 import {
   BidDescription,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
+import {
+  augmentLiquidityDeployment,
+  fetchLiquidityDeployments,
+  SanitizedLiquidityDeployment,
+} from "@/contract-apis/fetchLiquidityDeployments"
 import {
   fetchNumiaBidData,
   SanitizedBidFromNumia,
@@ -35,28 +43,31 @@ export interface AugmentedBidFromContract
   id: number
   deploymentDurationInEpochs: number
   deploymentDurationInNanos: number
+  liquidityDeployment: SanitizedLiquidityDeployment | null
   percentage: number
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
 }
 
 export interface BackendDataBeforeWallet {
+  assetListWithPrices: Map<string, AssetListEntry>
   atomPrice: number
   bidDescriptionsByBidId: Record<string, BidDescription>
   bids: AugmentedBidFromContract[]
-  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   bidsById: Record<number, AugmentedBidFromContract>
+  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
-  currentRoundTranches: Tranche[]
-  isAtMaxLockupCapacity: boolean
-  lockupEpochLength: number
-  percentageLockedOverall: number
-  maxLockedAtomGlobal: number
+  tranches: Tranche[]
+  lockedAtomIsAtCapacityGlobal: boolean
+  lockedAtomEpochInNanos: number
+  lockedAtomMaxGlobal: number
+  lockedAtomMaxWallet: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomTotalGlobal: number
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
-  totalLockedAtomGlobal: number
 }
 
 export type SanitizedTokenBasedTribute = Omit<
@@ -81,7 +92,7 @@ export type SanitizedPointBasedTribute = {
   valueInUsd: number
 }
 
-async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBeforeWallet> {
+async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -96,13 +107,13 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
   const [
     {
       constants: {
-        lock_epoch_length: lockupEpochLength,
-        max_locked_tokens: maxLockedAtomGlobal,
+        lock_epoch_length: lockedAtomEpochInNanos,
+        max_locked_tokens: lockedAtomMaxGlobal,
       },
     },
     { round_id: currentRoundId },
     { tranches },
-    { total_locked_tokens: totalLockedAtomGlobal },
+    { total_locked_tokens: lockedAtomTotalGlobal },
     assetListWithPrices,
     { preHydroBids, postHydroBids },
     bidDescriptionsByBidId,
@@ -129,10 +140,11 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
 
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
 
-  const percentageLockedOverall = Math.round(
-    (totalLockedAtomGlobal / maxLockedAtomGlobal) * 100
+  const lockedAtomPercentageGlobal = Math.floor(
+    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
   )
-  const isAtMaxLockupCapacity = percentageLockedOverall === 100
+
+  const lockedAtomIsAtGlobalCapacity = lockedAtomPercentageGlobal === 100
 
   // [0, 1, 2, ...currentRoundId]
   const allRoundIds = range(0, currentRoundId + 1)
@@ -219,8 +231,22 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
                 })
                 .filter((b) => b !== null)
 
-            // Add tributes to every bid
-            const bidsAugmentedWithTributes = unsanitizedBids
+            const liquidityDeployments =
+              (await fetchLiquidityDeployments({
+                roundId,
+                trancheId: tranche.id,
+              })) ?? []
+
+            const augmentedLiquidityDeployments = liquidityDeployments.map(
+              (liquidityDeployment) =>
+                augmentLiquidityDeployment({
+                  assetListWithPrices,
+                  liquidityDeployment,
+                })
+            )
+
+            // Add tributes and liquidity deployments to every bid
+            const augmentedBids = unsanitizedBids
               .map(keysFromSnakeToCamelCase)
               .map(({ deploymentDuration, proposalId, ...bid }) => {
                 const matchingTopProposal = topNProposals.proposals.find(
@@ -234,14 +260,19 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
                   ...sanitizedTokenBasedTributes,
                   ...sanitizedPointBasedTributes,
                 ].filter((tribute) => tribute.bidId === proposalId)
+                const liquidityDeployment =
+                  augmentedLiquidityDeployments.find(
+                    (deployment) => deployment.bidId === proposalId
+                  ) ?? null
 
                 return {
                   ...bid,
                   id: proposalId,
                   deploymentDurationInEpochs: deploymentDuration,
                   deploymentDurationInNanos:
-                    deploymentDuration * lockupEpochLength,
+                    deploymentDuration * lockedAtomEpochInNanos,
                   description,
+                  liquidityDeployment,
                   percentage: matchingTopProposal
                     ? Number(matchingTopProposal.percentage)
                     : Number(bid.percentage),
@@ -250,7 +281,7 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
                 }
               })
 
-            return bidsAugmentedWithTributes
+            return augmentedBids
           })
         )
       )
@@ -264,30 +295,32 @@ async function uncachedFetchBackendDataWithoutAddress(): Promise<BackendDataBefo
   const bidsById = keyBy(bids, "id")
 
   const backendDataBeforeWallet: BackendDataBeforeWallet = {
+    assetListWithPrices,
     atomPrice,
     bidDescriptionsByBidId,
     bids,
-    bidsByRoundId,
     bidsById,
+    bidsByRoundId,
     currentRoundEndDate,
     currentRoundId,
     currentRoundIsPilot: true,
-    currentRoundTranches: tranches,
-    isAtMaxLockupCapacity,
-    lockupEpochLength,
-    maxLockedAtomGlobal,
-    metricsGlobal: metrics,
-    metricsForPreHydroBids: preHydroBids,
+    lockedAtomEpochInNanos,
+    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
+    lockedAtomMaxGlobal,
+    lockedAtomMaxWallet: 200, // TODO: get this from contract
+    lockedAtomPercentageGlobal,
+    lockedAtomTotalGlobal,
     metricsForPostHydroBids: postHydroBids,
-    percentageLockedOverall,
-    totalLockedAtomGlobal,
+    metricsForPreHydroBids: preHydroBids,
+    metricsGlobal: metrics,
+    tranches: tranches,
   }
 
   return backendDataBeforeWallet
 }
 
-export const fetchBackendDataWithoutAddress = unstable_cache(
-  uncachedFetchBackendDataWithoutAddress,
+export const fetchBackendDataBeforeWallet = unstable_cache(
+  uncachedFetchBackendDataBeforeWallet,
   undefined,
   {
     revalidate: 60 * 5, // 5 minutes

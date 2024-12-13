@@ -42,8 +42,8 @@ export function VoteButton({
     bidsByRoundId,
     currentRoundId,
     isWalletConnected,
-    maxLockedAtomGlobal,
-    totalLockedAtomGlobal,
+    lockedAtomMaxGlobal,
+    lockedAtomTotalGlobal,
     votesByRoundId,
     votingPower,
   } = useBackendData()
@@ -78,22 +78,21 @@ export function VoteButton({
         Number(bid.trancheId)
       )
 
-      setToasts([
-        {
-          variant: "working",
-          message: "Vote submitted. Reloading page...",
-        },
-      ])
-
       await revalidateTag("backendData")
 
       setIsCelebrating(true)
 
-      setTimeout(() => {
-        setToasts([])
-        router.push("/bids")
-        router.refresh()
-      }, 3000)
+      setToasts([
+        {
+          variant: "success",
+          message: "Vote cast! Reload to see changes",
+          isDismissible: false,
+          actionButton: {
+            label: "Reload",
+            onClick: () => window.location.reload(),
+          },
+        },
+      ])
     } catch (err: any) {
       setToasts([
         {
@@ -130,7 +129,7 @@ export function VoteButton({
   } else if (votingPower === 0) {
     Button = (
       <ConditionalWrapper
-        condition={totalLockedAtomGlobal >= maxLockedAtomGlobal}
+        condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}
         wrapper={(children) => (
           <Tooltip tipContents={networkLimitReachedTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>
@@ -204,10 +203,13 @@ export function VoteButton({
         onClose={() => setOpenChangeVoteModal(false)}
       >
         <Card>
-          <Card.Header title="Change your vote?" />
           <Card.Body>
-            Changing your vote will reallocate your total voting power to the
-            new project.
+            <div className="text-balance">
+              Changing your vote will reallocate your total available voting
+              power to the selected bid. Keep in mind that your available voting
+              power will be allocated to this bid for the duration of the
+              liquidity deployment.
+            </div>
           </Card.Body>
           <Card.Footer>
             <StyledText
@@ -215,14 +217,14 @@ export function VoteButton({
               onClick={handleClickVote}
               variant="button.primary"
             >
-              Change Vote to This Proposal
+              Change
             </StyledText>
             <StyledText
               as="button"
               variant="button.secondary"
               onClick={() => setOpenChangeVoteModal(false)}
             >
-              Don&rsquo;t change my vote
+              Don&rsquo;t Change
             </StyledText>
           </Card.Footer>
         </Card>

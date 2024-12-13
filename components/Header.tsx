@@ -44,6 +44,7 @@ export function Header() {
               flex-row
               items-center
               justify-between
+              gap-6
               bg-black
               text-sm
               transition-all

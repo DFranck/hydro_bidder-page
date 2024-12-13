@@ -4,28 +4,28 @@ import { scaleLockupPower } from "./scaleLockupPower"
 
 export function nonUserSpecificAPR({
   atomPrice,
-  lockupEpochLength,
+  lockedAtomEpochInNanos,
   lockupPeriod,
   proposalPower,
   proposalTotalTribute,
 }: {
   atomPrice: number
-  lockupEpochLength: number
+  lockedAtomEpochInNanos: number
   lockupPeriod: AllowedLockupPeriodInEpochs
   proposalPower: number
   proposalTotalTribute: number
 }) {
   // Get the power of 1 uatom locked for the specified time
   const oneUatomPower = scaleLockupPower({
-    lockupEpochLength,
-    lockupTime: lockupEpochLength * lockupPeriod,
+    lockedAtomEpochInNanos,
+    lockupTime: lockedAtomEpochInNanos * lockupPeriod,
     rawPower: BigInt(1),
   })
 
   const oneUatomReward = estimatedRewardForPower({
-    proposalTotalTribute,
-    myVotingPower: Number(oneUatomPower),
-    proposalPower,
+    amount: proposalTotalTribute,
+    walletVotingPower: Number(oneUatomPower),
+    bidPower: proposalPower,
   })
 
   const oneUatomPrice = atomPrice / 1e6

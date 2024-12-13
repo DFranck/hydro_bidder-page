@@ -1,5 +1,5 @@
 import { AppWrapper } from "@/components/AppWrapper"
-import { fetchBackendDataWithoutAddress } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { fetchBackendDataBeforeWallet } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { ReactNode } from "react"
 
 export default async function LayoutWithContext({
@@ -7,7 +7,7 @@ export default async function LayoutWithContext({
 }: {
   children: ReactNode
 }) {
-  const backendData = await fetchBackendDataWithoutAddress()
+  const backendData = await fetchBackendDataBeforeWallet()
 
   return <AppWrapper backendData={backendData}>{children}</AppWrapper>
 }

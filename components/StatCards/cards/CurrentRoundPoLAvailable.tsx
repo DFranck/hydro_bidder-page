@@ -7,9 +7,9 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
-export function PoLAvailable() {
+export function CurrentRoundPoLAvailable() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { currentRoundPolAvailable } = metricsGlobal
+  const { currentPolAvailable } = metricsGlobal
 
   return (
     <StatCard
@@ -23,7 +23,7 @@ export function PoLAvailable() {
         </Tooltip>
       }
       subTitle="All Time"
-      value={formatAmount(currentRoundPolAvailable)}
+      value={formatAmount(currentPolAvailable)}
     />
   )
 }

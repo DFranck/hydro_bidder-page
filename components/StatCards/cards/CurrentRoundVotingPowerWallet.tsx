@@ -6,7 +6,7 @@ import { yourVotingPowerTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function YourVotingPower() {
+export function CurrentRoundVotingPowerWallet() {
   const { isLoading, votingPower } = useBackendData()
 
   return (

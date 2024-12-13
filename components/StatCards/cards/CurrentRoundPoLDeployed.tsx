@@ -2,26 +2,28 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { numberOfUniqueWalletsTooltip } from "@/components/ToolTips"
+import { polDeployedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
-export function NumberOfUniqueWallets() {
-  const { metricsGlobal } = useBackendData()
-  const { currentRoundUniqueWallets, allTimeUniqueWallets } = metricsGlobal
+export function CurrentRoundPoLDeployed() {
+  const { isLoading, metricsGlobal } = useBackendData()
+  const { currentPolDeployed } = metricsGlobal
 
   return (
     <StatCard
+      isLoading={isLoading}
       title={
-        <Tooltip tipContents={numberOfUniqueWalletsTooltip}>
+        <Tooltip tipContents={polDeployedTooltip}>
           <div className="flex items-center gap-1">
-            <span>Number of Unique Wallets</span>
+            <span>PoL Deployed</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
       }
       subTitle="All Time"
-      value={allTimeUniqueWallets}
+      value={formatAmount(currentPolDeployed)}
     />
   )
 }

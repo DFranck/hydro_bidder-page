@@ -1,17 +1,17 @@
 "use client"
 
-import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
-import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { broadcastAndRelayIBCNeutronToHub } from "../transactions/broadcastAndRelayIBCNeutronToHub"
 import { broadcastTx } from "../transactions/broadcastTx"
 import { signIBCTransferNeutronToHub } from "../transactions/signIBCTransferNeutronToHub"
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
+import { useIncompleteNotices } from "../useIncompleteNotices"
+import { Step } from "./Step"
 
 type RevertFromNeutronStep =
   | "Init"
@@ -34,24 +34,20 @@ export const RevertFromNeutronStepper = ({
   validator,
   denom,
   baseDenom,
-  hubChain,
-  neutronChain,
   startState,
   onExit,
   validatorMap,
-  deleteIncompleteNotice,
 }: {
   amount: string
   validator: string
   denom: string
   baseDenom: string
-  hubChain: ChainContext
-  neutronChain: ChainContext
   startState?: RevertFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
-  deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
+  const { hubChain, neutronChain, deleteIncompleteNotice } =
+    useIncompleteNotices()
   const router = useRouter()
   const [step, setStep] = useState<RevertFromNeutronStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromNeutronStepper: ")
@@ -182,15 +178,11 @@ export const RevertFromNeutronStepper = ({
       case "WaitingForIBCBroadcast":
         return {
           isWorking: true,
-          title: "Transferring to Cosmos Hub",
+          title: "Transferring to Cosmos Hub...",
           contents: (
-            <>
-              <p>Transferring tokenized ATOM to Cosmos Hub...</p>
-              <p>
-                This could take 30 seconds or longer if the network is
-                congested.
-              </p>
-            </>
+            <p>
+              This could take 30 seconds or longer if the network is congested.
+            </p>
           ),
         }
       case "WaitingForRedeemSigning":
@@ -211,14 +203,11 @@ export const RevertFromNeutronStepper = ({
       case "WaitingForRedeemBroadcast":
         return {
           isWorking: true,
-          title: "Redeeming ATOM",
+          title: "Redeeming ATOM...",
           contents: (
-            <>
-              <p>Redeeming ATOM...</p>
-              <p>
-                Hang tight, we&rsquo;re restoring your previous staked position.
-              </p>
-            </>
+            <p>
+              Hang tight, we&rsquo;re restoring your previous staked position.
+            </p>
           ),
         }
       case "Success":

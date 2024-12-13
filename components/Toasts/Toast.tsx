@@ -3,7 +3,6 @@ import { Icon } from "@/components/Icon"
 import { IconString } from "@/components/Icon/types"
 import { Toast as ToastType, useToasts } from "@/components/Toasts/useToasts"
 import { get } from "lodash"
-import { useRouter } from "next/navigation"
 import { ComponentProps, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
@@ -17,18 +16,19 @@ interface ToastProps
 
 export function Toast({
   id,
+  actionButton,
   children,
   className,
   icon,
-  isDismissible,
+  isDismissible: isDismissibleOverride,
   variant = "info",
   ...otherProps
 }: ToastProps) {
-  const router = useRouter()
   const { setToasts } = useToasts()
   const [isDismissed, setIsDismissed] = useState(false)
-  const isActuallyDismissible =
-    isDismissible ?? get(classNames.variants[variant], "isDismissible", true)
+  const isDismissible =
+    isDismissibleOverride ??
+    get(classNames.variants[variant], "isDismissible", true)
 
   function handleDismiss() {
     setIsDismissed(true)
@@ -53,19 +53,40 @@ export function Toast({
         )}
       >
         <div className={classNames.iconContainer}>
-          {icon ? <Icon name={icon} /> : classNames.variants[variant].icon}
+          {icon ? (
+            <Icon name={icon} variant="light" />
+          ) : (
+            classNames.variants[variant].icon
+          )}
         </div>
 
         <div className={classNames.messageContainer}>{children}</div>
 
-        {isActuallyDismissible && (
-          <div className={classNames.dismissButtonContainer}>
-            <button
-              className={classNames.dismissButton}
-              onClick={handleDismiss}
-            >
-              Dismiss
-            </button>
+        {(isDismissible || actionButton) && (
+          <div className={classNames.actionButtonsContainer}>
+            {actionButton && (
+              <button
+                className={classNames.actionButton({
+                  hasDismissButton: isDismissible,
+                })}
+                onClick={() => {
+                  actionButton.onClick()
+                  handleDismiss()
+                }}
+              >
+                {actionButton.label}
+              </button>
+            )}
+            {isDismissible && (
+              <button
+                className={classNames.dismissButton({
+                  hasActionButton: Boolean(actionButton),
+                })}
+                onClick={handleDismiss}
+              >
+                Dismiss
+              </button>
+            )}
           </div>
         )}
       </div>

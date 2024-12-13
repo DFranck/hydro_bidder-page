@@ -1,17 +1,15 @@
 export function estimatedRewardForPower({
-  proposalTotalTribute,
-  myVotingPower,
-  proposalPower,
+  amount,
+  walletVotingPower,
+  bidPower,
 }: {
-  proposalTotalTribute: number
-  myVotingPower: number
-  proposalPower: number
+  amount: number
+  walletVotingPower: number
+  bidPower: number
 }) {
-  if (proposalPower === 0) {
-    return proposalTotalTribute
+  if (bidPower === 0) {
+    return amount
   }
 
-  return (
-    proposalTotalTribute * (myVotingPower / (proposalPower + myVotingPower))
-  )
+  return amount * (walletVotingPower / (bidPower + walletVotingPower))
 }

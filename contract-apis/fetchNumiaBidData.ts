@@ -5,31 +5,29 @@ import {
 import { startCase } from "lodash"
 
 export interface BidFromNumia {
-  round: string
-  tranche: string
-  project: string
-  project_url: string
-  project_logo_url: string
-  project_about: string
-  id: string
-  title: string
-  description: string
+  apr: number
   comments: string
+  current_allocation_amount: number
+  description: string
+  duration_days: number
+  id: string
+  initial_allocation_amount: number
+  offchain_tribute_info: string
+  offchain_tribute: string
   onchain_tribute_assets: string
   onchain_tribute_usdc: number
-  offchain_tribute: string
-  offchain_tribute_info: string
+  project_about: string
+  project_logo_url: string
+  project_url: string
+  project: string
+  requested_allocation_amount: number
+  requested_allocation_denom: string
+  round: string
+  status: string
+  title: string
+  tranche: number
   voters: number
   voting_power: number
-  requested_allocation_denom: string
-  requested_allocation_amount: number
-  initial_allocation_denom: string
-  initial_allocation_amount: number
-  current_allocation_denom: string
-  current_allocation_amount: number
-  status: string
-  duration_days: number
-  apr: number
 }
 
 export type SanitizedBidFromNumia = CamelCaseKeys<
@@ -55,7 +53,7 @@ type OffchainTributeFromNumia = {
 
 type OnchainTributeFromNumia = {
   amount: number
-  asset: string
+  denom: string
 }
 
 const typeToTokenMap = {
@@ -79,13 +77,13 @@ function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
     )
       .filter((t) => !!t.amount)
       .map((t) => {
-        const asset = Object.entries(typeToTokenMap).find(([key, value]) =>
-          t.asset.startsWith(key)
+        const denom = Object.entries(typeToTokenMap).find(([key, value]) =>
+          t.denom.startsWith(key)
         )?.[1]
 
         return {
           ...t,
-          asset: asset ?? t.asset.toUpperCase(),
+          denom: denom ?? t.denom.toUpperCase(),
         }
       }),
   })
@@ -95,8 +93,18 @@ export async function fetchNumiaBidData(): Promise<{
   postHydroBids: SanitizedBidFromNumia[]
   preHydroBids: SanitizedBidFromNumia[]
 }> {
+  if (!process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT) {
+    throw new Error("NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT is not set")
+  }
+
   const response = await fetch(
-    "https://www.datalenses.zone/numia/cosmos/lensesV2/hydro/deployments_overview"
+    process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT,
+    {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+      },
+    }
   )
 
   const bids = (await response.json()) as BidFromNumia[]

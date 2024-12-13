@@ -2,9 +2,11 @@
 
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
+import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -17,6 +19,18 @@ const comingSoonTooltip = (
 )
 
 export default function Navigation() {
+  const backendData = useBackendData()
+  const {
+    isLoading,
+    isWalletConnected,
+    lockedAtomPercentageWallet,
+    lockedAtomPercentageGlobal,
+    lockups,
+  } = backendData
+  const canCreateFirstLockup =
+    !isLoading &&
+    isWalletConnected &&
+    !(lockedAtomPercentageWallet === 100 || lockedAtomPercentageGlobal === 100)
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
 
@@ -45,19 +59,19 @@ export default function Navigation() {
       className="
         group/navbar
         z-40
-        max-md:fixed
-        max-md:right-0
-        max-md:top-0
-        max-md:h-12
-        max-md:w-12
-        max-md:overflow-hidden
-        max-md:transition-all
-        max-md:duration-500
-        max-md:focus-within:size-auto
-        max-md:focus-within:h-full
-        max-md:focus-within:w-1/2
-        md:relative
-        md:bg-transparent
+        max-lg:fixed
+        max-lg:right-0
+        max-lg:top-0
+        max-lg:h-12
+        max-lg:w-12
+        max-lg:overflow-hidden
+        max-lg:transition-all
+        max-lg:duration-500
+        max-lg:focus-within:size-auto
+        max-lg:focus-within:h-full
+        max-lg:focus-within:w-1/2
+        lg:relative
+        lg:bg-transparent
       "
       tabIndex={0}
     >
@@ -73,7 +87,7 @@ export default function Navigation() {
           transition-all
           duration-500
           group-focus-within/navbar:rotate-180
-          md:hidden
+          lg:hidden
         "
       >
         <span
@@ -126,7 +140,7 @@ export default function Navigation() {
           duration-500
           group-focus-within/navbar:pointer-events-auto
           group-focus-within/navbar:opacity-100
-          md:hidden
+          lg:hidden
         "
         onClick={blurActiveElement}
       />
@@ -142,7 +156,7 @@ export default function Navigation() {
           transition-all
           duration-500
           group-focus-within/navbar:opacity-100
-          md:hidden
+          lg:hidden
         "
       />
 
@@ -155,12 +169,12 @@ export default function Navigation() {
           items-center
           justify-between
           gap-6
-          max-md:py-12
-          max-md:indent-96
-          max-md:transition-all
-          max-md:duration-500
-          max-md:group-focus-within/navbar:indent-0
-          md:flex-row
+          max-lg:py-12
+          max-lg:indent-96
+          max-lg:transition-all
+          max-lg:duration-500
+          max-lg:group-focus-within/navbar:indent-0
+          lg:flex-row
         "
         onClick={blurActiveElement}
       >
@@ -170,7 +184,7 @@ export default function Navigation() {
           className={twMerge(
             navigationMenuTriggerStyle("/docs"),
             `flex items-center gap-1`,
-            `md:border-r-2 md:border-palette-beige/50 md:pr-5`
+            `md:border-r-2 lg:border-palette-beige/50 lg:pr-5`
           )}
         >
           Docs <Icon name="solid:arrow-up-right" />
@@ -261,6 +275,18 @@ export default function Navigation() {
         >
           Airdrops
         </Link>
+
+        {canCreateFirstLockup && lockups.length === 0 && (
+          <StyledText
+            as={Link}
+            variant="button.primary.small"
+            className="flex items-center gap-1"
+            href="/lock-atom"
+          >
+            <Icon name="solid:plus" />
+            Create Lockup
+          </StyledText>
+        )}
 
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>
