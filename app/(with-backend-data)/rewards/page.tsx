@@ -2,6 +2,8 @@
 
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Confetti } from "@/components/Confetti"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
@@ -21,13 +23,14 @@ import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRew
 import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
+import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import { sumBy } from "lodash"
+import { keyBy, sumBy } from "lodash"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 
 export default function RewardsPage() {
+  const [isCelebrating, setIsCelebrating] = useState(false)
   const { setToasts } = useToasts()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const {
@@ -35,34 +38,39 @@ export default function RewardsPage() {
     bidDescriptionsByBidId,
     bids,
     bidsById,
+    claimsHistorical,
+    claimsOutstanding,
     currentRoundId,
     votes,
-    votingPower,
   } = useBackendData()
-  const bidsFromPreviousRounds = bids.filter(
-    (bid) => bid.roundId < currentRoundId
-  )
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
   )
-  const bidsUserVotedOn = bidsFromPreviousRounds.filter((bid) =>
-    votesFromPreviousRounds.find((vote) => vote.bidId === bid.id)
+  const bidsToRender = bids.filter(
+    (bid) =>
+      votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
+      bid.roundId < currentRoundId && // previous rounds
+      bid.tributes.some((t) => t.isTokenBased) // has token-based tributes
   )
-  const bidsWithTokenBasedTributes = bidsUserVotedOn.filter((bid) =>
-    bid.tributes.some((t) => t.isTokenBased)
+  const tributesById = keyBy(
+    bidsToRender.flatMap((bid) => bid.tributes),
+    "id"
   )
+
+  // "Claim" button sets selection and triggers confirmation modal
   const [selection, setSelection] = useState<{
-    bidId: number
     tributeId: number
   } | null>(null)
-  const selectedBid = selection ? bidsById[selection.bidId] : null
   const selectedTribute = selection
-    ? (selectedBid?.tributes.find(
-        (t) => (t as SanitizedTokenBasedTribute).id === selection.tributeId
-      ) as SanitizedTokenBasedTribute)
+    ? (tributesById[selection.tributeId] as SanitizedTokenBasedTribute)
     : null
+  const selectedBid =
+    selection && selectedTribute
+      ? bidsById[tributesById[selection.tributeId].bidId]
+      : null
 
-  const rows = bidsWithTokenBasedTributes
+  // Bids can have multiple tributes, so this turns each into a row
+  const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
       const bidDescription = bidDescriptionsByBidId[bid.id]
@@ -71,83 +79,124 @@ export default function RewardsPage() {
         (tribute) => tribute.isTokenBased
       )
 
-      return tokenBasedTributes.map((tribute) => ({
-        _bid: bid,
+      return tokenBasedTributes.map((tribute) => {
+        const matchingOutstandingClaim = claimsOutstanding.find(
+          (claim) =>
+            claim.bidId === bid.id &&
+            claim.tributeId === tribute.id &&
+            claim.roundId === bid.roundId &&
+            claim.trancheId === bid.trancheId
+        )
+        const matchingHistoricalClaim = claimsHistorical.find(
+          (claim) =>
+            claim.bidId === bid.id &&
+            claim.tributeId === tribute.id &&
+            claim.roundId === bid.roundId &&
+            claim.trancheId === bid.trancheId
+        )
+        const matchingClaim =
+          matchingOutstandingClaim ?? matchingHistoricalClaim
+        const rewardsInUsd = matchingClaim?.amount.valueInUsd ?? 0
+        const totalDeployedFunds = sumBy(
+          bid.liquidityDeployment?.deployedFunds,
+          "amount"
+        )
+        const canClaim = Boolean(matchingOutstandingClaim)
+        const isClaimed = Boolean(matchingHistoricalClaim)
+        const hasDeployment = Boolean(bid.liquidityDeployment)
+        const isFunded = hasDeployment && totalDeployedFunds > 0
+        const isRefundable = hasDeployment && totalDeployedFunds === 0
 
-        _tribute: tribute,
+        return {
+          _bid: bid,
 
-        roundNumber: (
-          <InvisibleLink href={bidUrl}>{bid.roundId + 1}</InvisibleLink>
-        ),
+          _tribute: tribute,
 
-        logo: (
-          <InvisibleLink href={bidUrl}>
-            {projectLogoUrl ? (
-              <div className="relative size-12">
-                <Image
-                  className="object-contain"
-                  src={projectLogoUrl}
-                  alt={projectName}
-                  fill={true}
-                />
+          roundNumber: (
+            <InvisibleLink href={bidUrl}>{bid.roundId + 1}</InvisibleLink>
+          ),
+
+          bidTitleAndProjectName: (
+            <InvisibleLink href={bidUrl}>
+              <div className="flex items-center gap-6">
+                {projectLogoUrl ? (
+                  <div className="relative size-12">
+                    <Image
+                      className="object-contain"
+                      src={projectLogoUrl}
+                      alt={projectName}
+                      fill={true}
+                    />
+                  </div>
+                ) : null}
+                <div className="flex flex-col">
+                  <StyledText variant="h4">{title}</StyledText>
+                  <StyledText variant="footnote">{projectName}</StyledText>
+                </div>
               </div>
-            ) : null}
-          </InvisibleLink>
-        ),
+            </InvisibleLink>
+          ),
 
-        bidTitleAndProjectName: (
-          <InvisibleLink href={bidUrl}>
-            <div className="flex flex-col">
-              <StyledText variant="h4">{title}</StyledText>
-              <StyledText variant="footnote">{projectName}</StyledText>
-            </div>
-          </InvisibleLink>
-        ),
+          totalTribute: (
+            <InvisibleLink href={bidUrl}>
+              {tribute.amount}&nbsp;{tribute.denom}
+            </InvisibleLink>
+          ),
 
-        token: (
-          <InvisibleLink href={bidUrl}>
-            {tribute.amount}&nbsp;{tribute.denom}
-          </InvisibleLink>
-        ),
-
-        polRewards: (
-          <InvisibleLink href={bidUrl}>
-            {amountToUSDString(tribute.valueInUsd)}
-          </InvisibleLink>
-        ),
-
-        tributeRewards: (
-          <InvisibleLink href={bidUrl}>
-            <Tooltip tipContents={rewardsTributeRewardsTooltip}>
-              <span>
-                {amountToUSDString(
-                  estimatedRewardForPower({
-                    proposalTotalTribute: tribute.valueInUsd,
-                    myVotingPower: votingPower,
-                    proposalPower: Number(bid.power),
-                  })
+          tributeRewards: (
+            <InvisibleLink href={bidUrl}>
+              <ConditionalWrapper
+                condition={rewardsInUsd > 0}
+                wrapper={(children) => (
+                  <Tooltip tipContents={rewardsTributeRewardsTooltip}>
+                    <div>{children}</div>
+                    <StyledText variant="footnote">
+                      ({amountToUSDString(rewardsInUsd)}{" "}
+                      <Icon name="circle-info" />)
+                    </StyledText>
+                  </Tooltip>
                 )}
-              </span>
-              <Icon name="circle-info" />
-            </Tooltip>
-          </InvisibleLink>
-        ),
+              >
+                {matchingClaim?.amount.printableAmount}
+                &nbsp;
+                {matchingClaim?.amount.humanReadableDenom ?? tribute.denom}
+              </ConditionalWrapper>
+            </InvisibleLink>
+          ),
 
-        actions: (
-          <InvisibleLink href={bidUrl}>
-            <StyledText
-              as="button"
-              variant="button.primary.small"
-              onClick={handleClickClaimRewards.bind(null, {
-                bidId: bid.id,
-                tributeId: tribute.id,
-              })}
-            >
-              Claim
-            </StyledText>
-          </InvisibleLink>
-        ),
-      }))
+          actions: (
+            <InvisibleLink href={bidUrl}>
+              <div className="flex items-center justify-end gap-2">
+                {canClaim ? (
+                  <StyledText
+                    as="button"
+                    variant="button.primary.small"
+                    onClick={() =>
+                      setSelection({
+                        tributeId: tribute.id,
+                      })
+                    }
+                  >
+                    Claim
+                  </StyledText>
+                ) : isClaimed ? (
+                  <div className="flex items-center gap-1">
+                    Claimed <Icon name="check" />
+                  </div>
+                ) : isRefundable ? (
+                  <>Refundable</>
+                ) : !hasDeployment ? (
+                  <div className="flex items-center gap-1">
+                    Unresolved <Icon name="clock" />
+                  </div>
+                ) : isFunded ? (
+                  <div className="flex items-center gap-1">None</div>
+                ) : null}
+              </div>
+            </InvisibleLink>
+          ),
+        }
+      })
     })
     .flat()
 
@@ -165,13 +214,6 @@ export default function RewardsPage() {
       customValueGetter: () => 1,
     },
     {
-      key: "logo",
-      label: "",
-      propsForCells: {
-        className: "w-min",
-      },
-    },
-    {
       key: "bidTitleAndProjectName",
       label: "Bid Title / Project Name",
       isSortable: true,
@@ -181,8 +223,8 @@ export default function RewardsPage() {
       customValueGetter: (row) => row._bid.title,
     },
     {
-      key: "token",
-      label: "Token",
+      key: "totalTribute",
+      label: "Total Tribute",
       textAlign: "center",
       isSortable: true,
       propsForCells: {
@@ -221,16 +263,6 @@ export default function RewardsPage() {
     },
   ]
 
-  function handleClickClaimRewards({
-    bidId,
-    tributeId,
-  }: {
-    bidId: number
-    tributeId: number
-  }) {
-    setSelection({ bidId, tributeId })
-  }
-
   function handleClickCloseClaimRewardsModal(
     event?: MouseEvent<HTMLButtonElement>
   ) {
@@ -259,10 +291,19 @@ export default function RewardsPage() {
         getSigningCosmWasmClient,
       })
 
+      await revalidateTag("backendData")
+
+      setIsCelebrating(true)
+
       setToasts([
         {
-          message: `Rewards claimed successfully`,
           variant: "success",
+          message: "Reward claimed! Reload to see changes",
+          isDismissible: false,
+          actionButton: {
+            label: "Reload",
+            onClick: () => window.location.reload(),
+          },
         },
       ])
     } catch (error) {
@@ -279,12 +320,12 @@ export default function RewardsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.YourAprCurrentRound />
-        <StatCards.YourAprHistorical />
-        <StatCards.YourTotalRewardsAllTime />
+        <StatCards.CurrentRoundAprWallet />
+        <StatCards.AllTimeAprWallet />
+        <StatCards.AllTimeRewardsWallet />
       </StatCards>
 
-      <ContentContainer className="gap-12 py-12">
+      <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox>
           {rows.length > 0 ? (
             <StyledTable columns={columns} rows={rows} />
@@ -383,6 +424,11 @@ export default function RewardsPage() {
           </Card>
         </form>
       </ModalWindow>
+
+      <Confetti
+        trigger={isCelebrating}
+        onComplete={() => setIsCelebrating(false)}
+      />
     </>
   )
 }

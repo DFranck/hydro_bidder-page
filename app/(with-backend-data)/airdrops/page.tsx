@@ -98,7 +98,7 @@ export default function AirdropsPage() {
           />
         </div>
       ),
-      action: (
+      nextSteps: (
         <CellContentRenderer
           descriptor={{
             type: actionType === "Button" ? "button" : "text",
@@ -135,8 +135,8 @@ export default function AirdropsPage() {
       customValueGetter: (row) => row._airdropDescriptor[0],
     },
     {
-      key: "action",
-      label: "Action",
+      key: "nextSteps",
+      label: "Next Steps",
       textAlign: "center",
       propsForCells: {
         className: "relative text-balance",
@@ -155,14 +155,14 @@ export default function AirdropsPage() {
   return (
     <>
       <StatCards>
-        <StatCards.NumberOfUniqueWallets />
-        <StatCards.AverageAtomLockedPerWallet />
-        <StatCards.AverageRoundsPerUser />
+        <StatCards.CurrentRoundUniqueWallets />
+        <StatCards.AllTimeAverageAtomLockedPerWallet />
+        <StatCards.AllTimeAverageRoundsPerWallet />
       </StatCards>
 
       <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox className="flex flex-col gap-12">
-          <div className="grid grid-cols-[auto,1fr] gap-12 px-6 py-6">
+          <div className="grid grid-cols-[auto,1fr] items-center gap-12 px-6 py-6">
             <div className="flex flex-col gap-6">
               <StyledText as="h3" variant="h3">
                 Confirmed Airdrops
@@ -207,7 +207,7 @@ export default function AirdropsPage() {
         </BlurryBackdropBox>
 
         <BlurryBackdropBox className="flex flex-col gap-12">
-          <div className="grid grid-cols-[auto,1fr] gap-12 px-6 py-6">
+          <div className="grid grid-cols-[auto,1fr] items-center gap-12 px-6 py-6">
             <div className="flex flex-col gap-6">
               <StyledText as="h3" variant="h3">
                 Rumored Airdrops

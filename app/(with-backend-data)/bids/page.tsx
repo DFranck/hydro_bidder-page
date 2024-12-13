@@ -24,7 +24,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { SanitizedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
@@ -34,7 +34,7 @@ import { Fragment, ReactNode, useCallback } from "react"
 import { classNames } from "./classNames"
 
 type Row = {
-  _bid: SanitizedBid
+  _bid: AugmentedBid
   logoAndTitle: ReactNode
   deploymentDuration: ReactNode
   yourEstimatedReward: ReactNode
@@ -47,8 +47,6 @@ const pointBasedTributesLabel = "Points-Based Tributes"
 
 export default function BidsPage() {
   const backendData = useBackendData()
-
-  console.log({ backendData })
 
   const {
     bidDescriptionsByBidId,
@@ -142,7 +140,8 @@ export default function BidsPage() {
             <div className="flex items-center justify-end gap-3">
               <VoteButton bidId={bid.id} size="small" />
               <StyledText variant="link" className={classNames.bidDetailsLink}>
-                <span>Bid Details</span> <Icon name="chevron-right" />
+                <span className="sr-only">Bid Details</span>{" "}
+                <Icon name="chevron-right" />
               </StyledText>
             </div>
           </InvisibleLink>
@@ -374,9 +373,9 @@ export default function BidsPage() {
       <PopupOnWelcome />
 
       <StatCards>
-        <StatCards.NumberOfBids />
-        <StatCards.AverageRoundApr />
-        <StatCards.TimeLeft />
+        <StatCards.CurrentRoundNumberOfBids />
+        <StatCards.CurrentRoundAprGlobal />
+        <StatCards.CurrentRoundTimeLeft />
       </StatCards>
 
       <ContentContainer className="gap-12 py-6">

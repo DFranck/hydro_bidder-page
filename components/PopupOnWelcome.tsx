@@ -10,13 +10,16 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
 export function PopupOnWelcome() {
-  const { lockups, isAtMaxLockupCapacity } = useBackendData()
+  const {
+    lockups,
+    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
+  } = useBackendData()
   const [isOpen, setIsOpen] = useState(false)
   const [dontShowAgain, setDontShowAgain] = useLocalStorage(
     "dont-show-welcome-popup-again",
     false
   )
-  const shouldWelcome = !isAtMaxLockupCapacity && lockups.length === 0
+  const shouldWelcome = !lockedAtomIsAtGlobalCapacity && lockups.length === 0
 
   useEffect(() => {
     if (dontShowAgain || !shouldWelcome) {

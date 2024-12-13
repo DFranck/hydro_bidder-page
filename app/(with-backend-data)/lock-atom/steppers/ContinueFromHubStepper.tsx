@@ -1,27 +1,20 @@
 "use client"
 
-import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
-import { Icon } from "@/components/Icon"
-import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
-import { StyledText } from "@/components/StyledText"
 import { EPOCH_LENGTH } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
-import { scaleLockupPower } from "@/lib/scaleLockupPower"
-import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
-import { ReactNode, useState } from "react"
+import { useState } from "react"
 import { broadcastAndRelayIBCHubToNeutron } from "../transactions/broadcastAndRelayIBCHubToNeutron"
 import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
 import { signLockTokens } from "../transactions/signLockTokens"
-
-function getValidatorMoniker(
-  validator: string,
-  validatorMap: Map<string, Validator>
-): string {
-  return validatorMap.get(validator)?.description.moniker || validator
-}
+import { useIncompleteNotices } from "../useIncompleteNotices"
+import { CommonSteps } from "./CommonSteps"
+import {
+  getCommonStepContents,
+  StepContent,
+} from "./shared/LockAtomStepperCommon"
+import { Step } from "./Step"
 
 type ContinueFromHubStep =
   | "Init"
@@ -36,24 +29,20 @@ export const ContinueFromHubStepper = ({
   amount,
   validator,
   denom,
-  hubChain,
-  neutronChain,
   startState,
   onExit,
   validatorMap,
-  deleteIncompleteNotice,
 }: {
   amount: string
   validator: string
   denom: string
-  hubChain: ChainContext
-  neutronChain: ChainContext
   startState?: ContinueFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
-  deleteIncompleteNotice: (denom: string, amount: string) => void
 }) => {
-  const { lockupEpochLength } = useBackendData()
+  const { hubChain, neutronChain, deleteIncompleteNotice } =
+    useIncompleteNotices()
+  const { lockedAtomEpochInNanos } = useBackendData()
   const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -121,194 +110,39 @@ export const ContinueFromHubStepper = ({
     }
   }
 
-  function getStepContents(): {
-    isWorking?: boolean
-    revalidateCache?: boolean
-    title?: ReactNode
-    contents: ReactNode
-    buttons?: {
-      label: ReactNode
-      onClick?: () => void
-      className?: string
-    }[]
-  } {
+  function getStepContents(): StepContent {
+    if (["Init", "Success", "Error"].includes(step)) {
+      return getCommonStepContents({
+        step: step as "Init" | "Success" | "Error",
+        amount,
+        validator,
+        validatorMap,
+        lockDuration,
+        lockedAtomEpochInNanos,
+        errorLog,
+        showErrorLog,
+        setShowErrorLog,
+        onExecute: execute,
+        onCancel: () => {
+          router.push("/lock-atom")
+          onExit()
+        },
+        setLockDuration,
+        numApprovals: 2,
+      })
+    }
+
     switch (step) {
-      case "Init":
-        return {
-          title: `Continue Locking ${formatAmount(amount)} ATOM`,
-          contents: (
-            <>
-              <p>
-                Nice! You&rsquo;re about to lock{" "}
-                <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
-                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>{" "}
-                in Hydro to get{" "}
-                <strong>
-                  {formatAmount(
-                    scaleLockupPower({
-                      lockupEpochLength,
-                      lockupTime: lockDuration,
-                      rawPower: BigInt(amount),
-                    })
-                  )}{" "}
-                  voting power.
-                </strong>
-              </p>
-              <form
-                className="mt-12"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  execute()
-                }}
-              >
-                <div className="mb-4">
-                  <label className="m block">Select Lock Duration:</label>
-                  <InputForLockupPeriod
-                    selectedDuration={lockDuration}
-                    onChange={(value) => setLockDuration(value)}
-                  />
-                </div>
-                <p>This will require two wallet approvals.</p>
-              </form>
-            </>
-          ),
-          buttons: [
-            {
-              label: "Lock",
-              onClick: execute,
-            },
-            {
-              label: "Cancel",
-              onClick: () => {
-                router.push("/lock-atom")
-                onExit()
-              },
-            },
-          ],
-        }
       case "WaitingForIBCSigning":
-        return {
-          isWorking: true,
-          title: "Approve IBC Transfer",
-          contents: (
-            <>
-              <p>Approve the transaction in your wallet to continue</p>
-              <p>
-                This will start the transfer of your tokenized ATOM to Hydro to
-                start the locking process.
-              </p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForIBCSigning")
       case "WaitingForIBCBroadcastAndRelay":
-        return {
-          isWorking: true,
-          title: "Transferring to Hydro",
-          contents: (
-            <>
-              <p>Sending your staked ATOM to Hydro...</p>
-              <p>
-                This could take 30 seconds or longer if the network is
-                congested. If you exit Hydro, this status may not be visible
-                when you return, but the transfer will continue. Once the
-                transfer is complete, you will need to return to initiate the
-                lockup process.
-              </p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForIBCBroadcastAndRelay")
       case "WaitingForLockingSigning":
-        return {
-          isWorking: true,
-          title: "Approve Locking",
-          contents: (
-            <>
-              <p>Approve in your wallet again to lock your ATOM</p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForLockingSigning")
       case "WaitingForLockingBroadcast":
-        return {
-          isWorking: true,
-          title: "Locking in Progress",
-          contents: (
-            <>
-              <p>Locking your ATOM...</p>
-              <p>Just a few seconds, unless the network is congested</p>
-            </>
-          ),
-        }
-      case "Success":
-        return {
-          revalidateCache: true,
-          title: "Success!",
-          contents: (
-            <>
-              <p>
-                You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
-                and received{" "}
-                <strong>
-                  {formatAmount(
-                    scaleLockupPower({
-                      lockupEpochLength,
-                      lockupTime: lockDuration,
-                      rawPower: BigInt(amount),
-                    })
-                  )}{" "}
-                  voting power.
-                </strong>
-              </p>
-            </>
-          ),
-          buttons: [
-            {
-              label: "Done",
-              onClick: () => {
-                router.push("/bids")
-                onExit()
-              },
-            },
-          ],
-        }
-      case "Error":
-        return {
-          title: "Transaction Error",
-          contents: (
-            <>
-              <p>
-                This transaction could not be completed. Your staked ATOM has
-                not been locked in Hydro.
-              </p>
-              <p>Refresh the page to try again or recover your staked ATOM.</p>
-              <div className="mt-4">
-                {!showErrorLog ? (
-                  <StyledText
-                    as="button"
-                    variant="link.subtle"
-                    onClick={() => setShowErrorLog(true)}
-                  >
-                    Show Error Log
-                    <Icon name="solid:chevron-down" />
-                  </StyledText>
-                ) : (
-                  <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
-                    {errorLog}
-                  </pre>
-                )}
-              </div>
-            </>
-          ),
-          buttons: [
-            {
-              label: "Refresh page",
-              onClick: () => window.location.reload(),
-            },
-          ],
-        }
+        return CommonSteps("WaitingForLockingBroadcast")
       default:
-        return {
-          contents: null,
-        }
+        return { contents: null }
     }
   }
 

@@ -18,6 +18,10 @@ export interface Toast {
   isDismissible?: boolean
   message: ReactNode
   variant: keyof (typeof classNames)["variants"]
+  actionButton?: {
+    label: string
+    onClick: () => void
+  }
 }
 
 export const ToastContext = createContext<{

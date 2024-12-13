@@ -2,29 +2,27 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { yourAggregateAprTooltip } from "@/components/ToolTips"
+import { averageAtomLockedPerWalletTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { sumBy } from "lodash"
 import { StatCard } from "../StatCard"
 
-export function YourAprHistorical() {
+export function AllTimeAverageAtomLockedPerWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { allTimeUsersApr } = metricsGlobal
-  const averageApr = sumBy(allTimeUsersApr, "apr") / allTimeUsersApr.length
+  const { allTimeUsersAvgTokensLocked } = metricsGlobal
 
   return (
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={yourAggregateAprTooltip}>
+        <Tooltip tipContents={averageAtomLockedPerWalletTooltip}>
           <div className="flex items-center gap-1">
-            <span>Your Aggregate APR</span>
+            <span>Average ATOM Locked Per Wallet</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
       }
-      subTitle="No historical data yet"
-      value={`${Math.round(averageApr * 100)}%`}
+      subTitle="All Time"
+      value={allTimeUsersAvgTokensLocked.toFixed(1)}
     />
   )
 }

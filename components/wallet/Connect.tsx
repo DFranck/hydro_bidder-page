@@ -1,3 +1,4 @@
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { StyledTextVariant } from "@/components/StyledText/StyledText"
@@ -23,7 +24,6 @@ function noop() {}
 
 export function WButton({
   text,
-  address,
   connected,
   loading,
   disabled,
@@ -37,13 +37,14 @@ export function WButton({
       disabled={disabled}
       onClick={onClick}
     >
-      <Icon name={`regular:${connected ? "link" : "wallet"}`} />
-      {loading && (
-        <span className="animate-spin">
-          <Icon name="solid:loader" />
-        </span>
-      )}
-      <span>{address ? address : text}</span>
+      <ConditionalWrapper
+        condition={Boolean(loading)}
+        wrapper={(children) => <span className="animate-spin">{children}</span>}
+      >
+        <Icon name={loading ? "solid:loader" : "solid:wallet"} />
+      </ConditionalWrapper>
+
+      {!connected && <span>{text}</span>}
     </StyledText>
   )
 }

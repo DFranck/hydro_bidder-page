@@ -3,7 +3,7 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
-import { SanitizedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
@@ -136,7 +136,7 @@ export const estimatedRewardsTooltip = ({
   hasVotedThisRound,
   isTokenBasedBid,
 }: {
-  bid: SanitizedBid
+  bid: AugmentedBid
   bidDescription: BidDescription
   hasVotedThisRound: boolean
   isTokenBasedBid: boolean
@@ -293,11 +293,10 @@ export const networkLimitReachedTooltip = (
   </>
 )
 
-export const numberOfUniqueWalletsTooltip = (
+export const currentRoundUniqueWalletsTooltip = (
   <>
-    This represents the total number of individual wallets that have
-    participated in Hydro rounds since launch. Each wallet is counted once,
-    regardless of how many rounds it has participated in.
+    This represents the total number of individual wallets participating in
+    Hydro right now. Each wallet is counted once.
   </>
 )
 

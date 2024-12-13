@@ -1,19 +1,34 @@
 const nonBreakingSpaceCharacter = String.fromCharCode(160)
 
+interface AmountToUSDStringOptions {
+  appendUsd: boolean
+  numberOfDecimals: number
+  removeTrailingZeros: boolean
+}
+
 export function amountToUSDString(
   amount: number,
-  numberOfDecimals: number = 2
+  options: AmountToUSDStringOptions = {
+    appendUsd: true,
+    numberOfDecimals: 2,
+    removeTrailingZeros: true,
+  }
 ) {
+  const { appendUsd, numberOfDecimals, removeTrailingZeros } = options
   const amountToPrint = Number(amount ?? 0)
-  return [
-    amountToPrint.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: numberOfDecimals,
-      maximumFractionDigits: numberOfDecimals,
-    }),
-    "USD",
-  ]
-    .filter(Boolean)
-    .join(nonBreakingSpaceCharacter)
+  const formattedAmount = amountToPrint.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: numberOfDecimals,
+    maximumFractionDigits: numberOfDecimals,
+  })
+  const amountWithoutTrailingZeros = removeTrailingZeros
+    ? formattedAmount.replace(/\.0+$/, "")
+    : formattedAmount
+  const amountWithUsd =
+    appendUsd && amountToPrint > 0
+      ? [amountWithoutTrailingZeros, "USD"]
+      : [amountWithoutTrailingZeros]
+
+  return amountWithUsd.join(nonBreakingSpaceCharacter)
 }

@@ -17,7 +17,6 @@ import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
 import { FormEvent, useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { isToday } from "../lib/isToday"
 
 interface FormValues {
   lockupPeriod: number
@@ -43,7 +42,7 @@ export function EditLockupDurationModal({
   onSuccess,
 }: EditLockupDurationProps) {
   const router = useRouter()
-  const { address, lockupEpochLength } = useBackendData()
+  const { address, lockedAtomEpochInNanos } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isLockupModalOpen, setIsLockupModalOpen] = useState(false)
@@ -55,11 +54,10 @@ export function EditLockupDurationModal({
   const originalPower = lockup.currentVotingPower
   const newPower = calculateLockupVotingPower(
     lockup.funds.amount * 1e6,
-    selectedDuration / lockupEpochLength
+    selectedDuration / lockedAtomEpochInNanos
   )
   const currentLockupEndDate = lockup.dateEnd
   const powerDifference = newPower - originalPower
-  const isLockupFromToday = isToday(lockup.dateStart)
 
   useEffect(() => {
     if (isLockupModalOpen) return

@@ -1,6 +1,8 @@
 "use client"
 
+import { CommonSteps } from "@/app/(with-backend-data)/lock-atom/steppers/CommonSteps"
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
+import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
@@ -11,8 +13,6 @@ import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
-import { SigningStargateClient } from "@cosmjs/stargate"
-import { ChainContext } from "@cosmos-kit/core"
 import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { twJoin } from "tailwind-merge"
@@ -53,26 +53,18 @@ export const LockStepper = ({
   amount,
   validator,
   lockDuration,
-  hubChain,
-  hubSigner,
-  neutronChain,
-  neutronSigner,
   startState,
   onExit,
-  validatorMap,
 }: {
   amount: string
   validator: string
   lockDuration: number
-  hubChain: ChainContext
-  hubSigner: SigningStargateClient
-  neutronChain: ChainContext
-  neutronSigner: SigningStargateClient
   startState?: LockStep
   onExit: () => void
-  validatorMap: Map<string, Validator>
 }) => {
-  const { lockupEpochLength } = useBackendData()
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useIncompleteNotices()
+  const { lockedAtomEpochInNanos } = useBackendData()
   const [step, setStep] = useState<LockStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -197,11 +189,12 @@ export const LockStepper = ({
 
         return {
           contents: (
-            <>
-              <p>
+            <div className="flex flex-col items-center gap-6">
+              <p className="text-balance text-center">
                 Next, you&rsquo;ll be asked to do three wallet approvals. This
                 takes a minute or two, tops.
               </p>
+
               <div className="grid grid-cols-3 items-center gap-10">
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
                   <div className="text-xs text-palette-beige">ATOM Amount</div>
@@ -233,14 +226,14 @@ export const LockStepper = ({
                     Voting Power (
                     {getLockupPeriodMultiplier({
                       lockupTime: lockDuration,
-                      lockupEpochLength,
+                      lockedAtomEpochInNanos,
                     })}
                     &thinsp;&times;)
                   </div>
                   <div className="text-2xl font-bold">
                     {formatAmount(
                       scaleLockupPower({
-                        lockupEpochLength,
+                        lockedAtomEpochInNanos,
                         lockupTime: lockDuration,
                         rawPower: BigInt(amount),
                       })
@@ -248,11 +241,16 @@ export const LockStepper = ({
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ),
           buttons: [
             {
-              label: "Start Locking",
+              label: (
+                <div className="flex items-center gap-1">
+                  <span>Start Locking</span>
+                  <Icon name="solid:arrow-right-long" />
+                </div>
+              ),
               onClick: execute,
               className: "bg-palette-green",
             },
@@ -330,6 +328,7 @@ export const LockStepper = ({
         }
       case "Error":
         return {
+          title: "Transaction Error",
           contents: (
             <>
               <p>
@@ -362,52 +361,13 @@ export const LockStepper = ({
           ],
         }
       case "WaitingForIBCSigning":
-        return {
-          isWorking: true,
-          contents: (
-            <p>
-              Approve the transaction in your wallet to continue. This will
-              start the transfer of your tokenized ATOM to Hydro.
-            </p>
-          ),
-        }
+        return CommonSteps("WaitingForIBCSigning")
       case "WaitingForIBCBroadcastAndRelay":
-        return {
-          isWorking: true,
-          contents: (
-            <>
-              <p>Sending your staked ATOM to Hydro...</p>
-              <p>
-                This could take 30 seconds or longer if the network is
-                congested. If you exit Hydro, this status may not be visible
-                when you return, but the transfer will continue. Once the
-                transfer is complete, you will need to return to initiate the
-                lockup process.
-              </p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForIBCBroadcastAndRelay")
       case "WaitingForLockingSigning":
-        return {
-          isWorking: true,
-          contents: (
-            <p>
-              Approve in your wallet again to lock your ATOM. This will initiate
-              the locking of your staked ATOM into the Hydro contract to receive
-              voting power.
-            </p>
-          ),
-        }
+        return CommonSteps("WaitingForLockingSigning")
       case "WaitingForLockingBroadcast":
-        return {
-          isWorking: true,
-          contents: (
-            <p>
-              Locking your ATOM. This should only take a few seconds, unless the
-              network is congested.
-            </p>
-          ),
-        }
+        return CommonSteps("WaitingForLockingBroadcast")
       case "Success":
         return {
           revalidateCache: true,
@@ -420,7 +380,7 @@ export const LockStepper = ({
                 <strong>
                   {formatAmount(
                     scaleLockupPower({
-                      lockupEpochLength,
+                      lockedAtomEpochInNanos,
                       lockupTime: lockDuration,
                       rawPower: BigInt(amount),
                     })

@@ -9,6 +9,11 @@ import {
   AugmentedBidFromContract,
   BackendDataBeforeWallet,
 } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import {
+  augmentClaims,
+  AugmentedClaim,
+  fetchClaims,
+} from "@/contract-apis/fetchClaims"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
@@ -21,13 +26,16 @@ import { unstable_cache } from "next/cache"
 export interface BackendDataAfterWallet
   extends Omit<BackendDataBeforeWallet, "bids"> {
   address: string
-  bids: SanitizedBid[]
-  bidsById: Record<number, SanitizedBid>
-  bidsByRoundId: Record<number, SanitizedBid[]>
+  bids: AugmentedBid[]
+  bidsById: Record<number, AugmentedBid>
+  bidsByRoundId: Record<number, AugmentedBid[]>
+  claimsHistorical: AugmentedClaim[]
+  claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
   isWalletConnected: boolean
-  maxLockedAtomUser: number
-  totalLockedAtomUser: number
+  lockedAtomIsAtCapacityWallet: boolean
+  lockedAtomPercentageWallet: number
+  lockedAtomTotalWallet: number
   lockups: SanitizedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<string, SanitizedVote[]>
@@ -51,7 +59,7 @@ export interface SanitizedVote
   bidId: number
 }
 
-export interface SanitizedBid extends AugmentedBidFromContract {
+export interface AugmentedBid extends AugmentedBidFromContract {
   lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardRelativeToCurrentPick: number
@@ -92,6 +100,10 @@ async function uncachedFetchBackendDataAfterWallet({
     throw new Error("Hydro contract address not set")
   }
 
+  if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
+    throw new Error("Tribute contract address not set")
+  }
+
   const cosmWasmClient = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     cosmWasmClient,
@@ -99,12 +111,14 @@ async function uncachedFetchBackendDataAfterWallet({
   )
 
   const {
+    assetListWithPrices,
     bidDescriptionsByBidId,
     bids,
     currentRoundEndDate,
     currentRoundId,
-    currentRoundTranches,
-    lockupEpochLength,
+    tranches,
+    lockedAtomMaxWallet,
+    lockedAtomEpochInNanos,
   } = backendData
 
   const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
@@ -122,7 +136,7 @@ async function uncachedFetchBackendDataAfterWallet({
   const votes = await Promise.all(
     allRoundIds.map(async (roundId) =>
       Promise.all(
-        currentRoundTranches.map(async (tranche) => {
+        tranches.map(async (tranche) => {
           let fetchedVotes: VoteWithPower[] = []
 
           try {
@@ -163,13 +177,13 @@ async function uncachedFetchBackendDataAfterWallet({
 
     const usersEstimatedRewards =
       estimatedRewardForPower({
-        proposalTotalTribute: sumBy(bid.tributes, "valueInUsd"),
-        myVotingPower: votingPower,
-        proposalPower: Number(bid.power),
+        amount: sumBy(bid.tributes, "valueInUsd"),
+        walletVotingPower: votingPower,
+        bidPower: Number(bid.power),
       }) ?? 0
 
     const deploymentDurationMinusAnEpochInMilliseconds =
-      ((bid.deploymentDurationInEpochs - 1) * lockupEpochLength) / 1e6
+      ((bid.deploymentDurationInEpochs - 1) * lockedAtomEpochInNanos) / 1e6
 
     const currentRoundEndDateForSure =
       typeof currentRoundEndDate === "string"
@@ -209,7 +223,7 @@ async function uncachedFetchBackendDataAfterWallet({
     }
   })
 
-  const sanitizedBids: SanitizedBid[] = bidsWithRewardsRelativeToCurrentPick
+  const sanitizedBids: AugmentedBid[] = bidsWithRewardsRelativeToCurrentPick
 
   const bidsById = keyBy(sanitizedBids, (bid) => bid.id)
 
@@ -220,17 +234,42 @@ async function uncachedFetchBackendDataAfterWallet({
     (vote) => bidsById[vote.bidId].roundId
   )
 
+  const { historicalClaims, outstandingClaims } = await fetchClaims({
+    address,
+    currentRoundId,
+    trancheIds: tranches.map((tranche) => tranche.id),
+  })
+
+  const augmentedHistoricalClaims = augmentClaims({
+    assetListWithPrices,
+    claims: historicalClaims,
+  })
+
+  const augmentedOutstandingClaims = augmentClaims({
+    assetListWithPrices,
+    claims: outstandingClaims,
+  })
+
+  const lockedAtomTotalWallet = sumBy(sanitizedLockups, "funds.amount")
+
+  const lockedAtomPercentageWallet = Math.floor(
+    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
+  )
+
   const backendDataAfterWallet: BackendDataAfterWallet = {
     ...backendData,
     address,
     bids: sanitizedBids,
     bidsById,
     bidsByRoundId,
+    claimsHistorical: augmentedHistoricalClaims,
+    claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,
     isWalletConnected: true,
-    // TODO: get this from contract
-    maxLockedAtomUser: 200,
-    totalLockedAtomUser: sumBy(sanitizedLockups, "funds.amount"),
+    lockedAtomIsAtCapacityWallet: lockedAtomTotalWallet === lockedAtomMaxWallet,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageWallet,
+    lockedAtomTotalWallet,
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
     votesByRoundId,

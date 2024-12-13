@@ -130,9 +130,9 @@ export function ClientComponent({
       tribute: (
         <InvisibleLink href={rowURL}>
           {bid.onchainTributeAssets.map((t) => (
-            <div key={t.asset}>
+            <div key={t.denom}>
               {simplifyBigNumbers(t.amount)}&nbsp;
-              <span title={t.asset}>{t.asset.slice(0, 12)}</span>
+              <span title={t.denom}>{t.denom.slice(0, 12)}</span>
             </div>
           ))}
           {bid.offchainTribute.map((t) => (
@@ -286,13 +286,13 @@ export function ClientComponent({
     <>
       {process.env.CONTEXT !== "production" && (
         <StatCards>
-          <StatCards.PoLAvailable />
-          <StatCards.PoLDeployed />
-          <StatCards.PoLRevenue />
+          <StatCards.CurrentRoundPoLAvailable />
+          <StatCards.CurrentRoundPoLDeployed />
+          <StatCards.CurrentRoundPoLRevenue />
         </StatCards>
       )}
 
-      <ContentContainer className="gap-12 py-12">
+      <ContentContainer className="gap-6 py-6">
         <div className="flex items-center justify-between">
           <h2 className="sr-only">PoL Metrics by Round</h2>
 
