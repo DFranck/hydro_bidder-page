@@ -303,16 +303,17 @@ export function ClientComponent({
           </div>
 
           <div className="flex items-center backdrop-blur-sm">
-            {[null, ...postHydroRoundIdsWithBidData].map((roundNumber) => {
-              const isActive = roundNumber === requestedRoundNumberUnderHood
-              return (
-                <StyledText
-                  as={Link}
-                  variant={isActive ? "button.primary" : "button.secondary"}
-                  href={`/metrics/${roundNumber === null ? "" : roundNumber + 1}`}
-                  key={roundNumber ?? "pre-hydro"}
-                  className={twMerge(
-                    `
+            {[null, ...postHydroRoundIdsWithBidData.sort()].map(
+              (roundNumber) => {
+                const isActive = roundNumber === requestedRoundNumberUnderHood
+                return (
+                  <StyledText
+                    as={Link}
+                    variant={isActive ? "button.primary" : "button.secondary"}
+                    href={`/metrics/${roundNumber === null ? "" : roundNumber + 1}`}
+                    key={roundNumber ?? "pre-hydro"}
+                    className={twMerge(
+                      `
                       -mx-px
                       rounded-none
                       backdrop-blur-none
@@ -320,19 +321,20 @@ export function ClientComponent({
                       last:rounded-r-full
                       hover:scale-100
                     `,
-                    !isActive &&
-                      `
+                      !isActive &&
+                        `
                         text-palette-green/50
                         hover:text-palette-green
                       `
-                  )}
-                >
-                  {roundNumber === null
-                    ? "Pre-Hydro"
-                    : `Round ${roundNumber + 1}`}
-                </StyledText>
-              )
-            })}
+                    )}
+                  >
+                    {roundNumber === null
+                      ? "Pre-Hydro"
+                      : `Round ${roundNumber + 1}`}
+                  </StyledText>
+                )
+              }
+            )}
           </div>
         </div>
 
