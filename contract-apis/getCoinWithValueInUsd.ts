@@ -12,7 +12,7 @@ export function getCoinWithValueInUsd({
   assetListWithPrices,
 }: {
   coin: Coin
-  assetListWithPrices: Map<string, AssetListEntry>
+  assetListWithPrices: Record<string, AssetListEntry>
 }): AugmentedCoin {
   if (!("get" in assetListWithPrices))
     return {
@@ -22,7 +22,7 @@ export function getCoinWithValueInUsd({
       valueInUsd: 0,
     }
 
-  const asset = assetListWithPrices.get(coin.denom)
+  const asset = assetListWithPrices[coin.denom]
   const assetPriceUsd = asset?.priceUsd ?? 0
   const decimals = asset?.decimals ?? 6
   const humanReadableDenom = asset?.symbol ?? coin.denom

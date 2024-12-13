@@ -49,7 +49,7 @@ export interface AugmentedBidFromContract
 }
 
 export interface BackendDataBeforeWallet {
-  assetListWithPrices: Map<string, AssetListEntry>
+  assetListWithPrices: Record<string, AssetListEntry>
   atomPrice: number
   bidDescriptionsByBidId: Record<string, BidDescription>
   bids: AugmentedBidFromContract[]
@@ -130,9 +130,9 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
   ])
 
   const atomPrice =
-    assetListWithPrices.get(
+    assetListWithPrices[
       "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-    )?.priceUsd ?? 0
+    ]?.priceUsd ?? 0
 
   const { round_end } = await hydroQueryClient.roundEnd({
     roundId: currentRoundId,
@@ -178,7 +178,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
               .flat()
               .map(keysFromSnakeToCamelCase)
               .map(({ funds, proposalId, tributeId, ...tribute }) => {
-                const assetListing = assetListWithPrices.get(funds.denom)
+                const assetListing = assetListWithPrices[funds.denom]
                 const assetPrice = assetListing?.priceUsd ?? 0
                 const decimals = assetListing?.decimals ?? 6
                 const amount = parseFloat(funds.amount) / 10 ** decimals
@@ -215,7 +215,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                   }
 
                   const [amount, denom] = bidDescription.points!
-                  const assetListing = assetListWithPrices.get(denom)
+                  const assetListing = assetListWithPrices[denom]
                   const assetPrice = assetListing?.priceUsd ?? 0
                   const decimals = assetListing?.decimals ?? 6
 
