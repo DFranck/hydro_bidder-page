@@ -53,7 +53,6 @@ export async function fetchClaims({
         startFrom: 0,
         userAddress: address,
       })
-    console.log({ fetchedHistoricalClaims })
     historicalClaims = sanitizeClaims(fetchedHistoricalClaims as any)
   } catch (error) {
     historicalClaims = []
