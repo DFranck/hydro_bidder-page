@@ -162,7 +162,7 @@ export default function AirdropsPage() {
 
       <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox className="flex flex-col gap-12">
-          <div className="grid grid-cols-[auto,1fr] gap-12 px-6 py-6">
+          <div className="grid grid-cols-[auto,1fr] items-center gap-12 px-6 py-6">
             <div className="flex flex-col gap-6">
               <StyledText as="h3" variant="h3">
                 Confirmed Airdrops
@@ -207,7 +207,7 @@ export default function AirdropsPage() {
         </BlurryBackdropBox>
 
         <BlurryBackdropBox className="flex flex-col gap-12">
-          <div className="grid grid-cols-[auto,1fr] gap-12 px-6 py-6">
+          <div className="grid grid-cols-[auto,1fr] items-center gap-12 px-6 py-6">
             <div className="flex flex-col gap-6">
               <StyledText as="h3" variant="h3">
                 Rumored Airdrops
