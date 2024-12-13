@@ -9,7 +9,7 @@ import { StatCard } from "../StatCard"
 
 export function CurrentRoundPoLDeployed() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { currentPolDeployed } = metricsGlobal
+  const { allTimePolDeployed } = metricsGlobal
 
   return (
     <StatCard
@@ -23,7 +23,7 @@ export function CurrentRoundPoLDeployed() {
         </Tooltip>
       }
       subTitle="All Time"
-      value={formatAmount(currentPolDeployed)}
+      value={formatAmount(allTimePolDeployed, 0, 0)}
     />
   )
 }
