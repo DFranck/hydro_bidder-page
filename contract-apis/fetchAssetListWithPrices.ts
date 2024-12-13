@@ -1,5 +1,6 @@
+"use server"
+
 import { getPriceFeedUrl } from "@/config"
-import { cacheRevalidationInterval } from "./_globals"
 
 export interface AssetListEntry {
   token: string
@@ -14,10 +15,7 @@ export async function fetchAssetListWithPrices(): Promise<
 > {
   // Fetch the asset list
   const response = await fetch(
-    "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json",
-    {
-      next: { revalidate: cacheRevalidationInterval }, // Revalidate every 5 minutes
-    }
+    "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json"
   )
   const data: AssetListEntry[] = await response.json()
 

@@ -14,14 +14,6 @@ export function getCoinWithValueInUsd({
   coin: Coin
   assetListWithPrices: Record<string, AssetListEntry>
 }): AugmentedCoin {
-  if (!("get" in assetListWithPrices))
-    return {
-      ...coin,
-      humanReadableDenom: coin.denom,
-      printableAmount: Number(coin.amount) / 1e6,
-      valueInUsd: 0,
-    }
-
   const asset = assetListWithPrices[coin.denom]
   const assetPriceUsd = asset?.priceUsd ?? 0
   const decimals = asset?.decimals ?? 6
