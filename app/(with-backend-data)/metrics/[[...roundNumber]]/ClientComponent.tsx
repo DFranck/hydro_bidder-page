@@ -130,9 +130,9 @@ export function ClientComponent({
       tribute: (
         <InvisibleLink href={rowURL}>
           {bid.onchainTributeAssets.map((t) => (
-            <div key={t.asset}>
+            <div key={t.denom}>
               {simplifyBigNumbers(t.amount)}&nbsp;
-              <span title={t.asset}>{t.asset.slice(0, 12)}</span>
+              <span title={t.denom}>{t.denom.slice(0, 12)}</span>
             </div>
           ))}
           {bid.offchainTribute.map((t) => (

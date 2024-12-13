@@ -53,7 +53,7 @@ type OffchainTributeFromNumia = {
 
 type OnchainTributeFromNumia = {
   amount: number
-  asset: string
+  denom: string
 }
 
 const typeToTokenMap = {
@@ -77,13 +77,13 @@ function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
     )
       .filter((t) => !!t.amount)
       .map((t) => {
-        const asset = Object.entries(typeToTokenMap).find(([key, value]) =>
-          t.asset.startsWith(key)
+        const denom = Object.entries(typeToTokenMap).find(([key, value]) =>
+          t.denom.startsWith(key)
         )?.[1]
 
         return {
           ...t,
-          asset: asset ?? t.asset.toUpperCase(),
+          denom: denom ?? t.denom.toUpperCase(),
         }
       }),
   })
