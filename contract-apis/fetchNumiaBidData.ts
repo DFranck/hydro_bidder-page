@@ -8,12 +8,10 @@ export interface BidFromNumia {
   apr: number
   comments: string
   current_allocation_amount: number
-  current_allocation_denom: string
   description: string
   duration_days: number
   id: string
   initial_allocation_amount: number
-  initial_allocation_denom: string
   offchain_tribute_info: string
   offchain_tribute: string
   onchain_tribute_assets: string
