@@ -23,7 +23,7 @@ export function CurrentRoundPoLRevenue() {
           </div>
         </Tooltip>
       }
-      subTitle="All Time"
+      subTitle="Current Round"
       value={formatAmount(currentRoundPoLRevenue)}
     />
   )
