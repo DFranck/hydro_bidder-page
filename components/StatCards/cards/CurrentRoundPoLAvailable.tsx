@@ -4,7 +4,6 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polAvailableTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundPoLAvailable() {
@@ -23,7 +22,7 @@ export function CurrentRoundPoLAvailable() {
         </Tooltip>
       }
       subTitle="Current Round"
-      value={formatAmount(currentPolTotal, 0, 0)}
+      value={Math.round(currentPolTotal).toLocaleString()}
     />
   )
 }
