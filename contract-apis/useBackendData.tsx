@@ -57,6 +57,8 @@ const initialBackendDataContext: BackendDataAfterWallet = {
   metricsGlobal: {
     allTimePolApr: 0,
     allTimePolDeployed: 0,
+    allTimePolRevenue: 0,
+    allTimePolYield: 0,
     allTimeTotalActiveRounds: 0,
     allTimeTotalAtomLocked: 0,
     allTimeTributeApr: 0,
