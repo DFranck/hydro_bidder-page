@@ -4,7 +4,6 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polDeployedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundPoLDeployed() {
@@ -23,7 +22,7 @@ export function CurrentRoundPoLDeployed() {
         </Tooltip>
       }
       subTitle="All Time"
-      value={formatAmount(allTimePolDeployed, 0, 0)}
+      value={Math.round(allTimePolDeployed).toLocaleString()}
     />
   )
 }
