@@ -21,7 +21,14 @@ import Link from "next/link"
 
 export function BidDetails({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, bidsById, votes } = backendData
+
+  const {
+    bidDescriptionsByBidId,
+    bidsById,
+    currentRoundId,
+    votes,
+    metricsForPostHydroBids,
+  } = backendData
 
   const bid = bidsById[bidId]
 
@@ -30,6 +37,10 @@ export function BidDetails({ bidId }: { bidId: number }) {
   }
 
   const bidDescription = bidDescriptionsByBidId[bidId]
+
+  const metrics = metricsForPostHydroBids.find(
+    (metric) => Number(metric.id) === bidId
+  )!
 
   if (!bidDescription) {
     return (
@@ -184,9 +195,11 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
-            <div className="*:!w-full">
-              <VoteButton bidId={bidId} size="large" />
-            </div>
+            {bid.roundId === currentRoundId && (
+              <div className="*:!w-full">
+                <VoteButton bidId={bidId} size="large" />
+              </div>
+            )}
 
             <div className="flex flex-col gap-2">
               <StyledText as="h3" variant="label">
@@ -209,6 +222,54 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 </StyledText>
               </div>
             </div>
+
+            {Boolean(metrics.currentAllocationAmount) && (
+              <div>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex items-center gap-1 text-palette-green"
+                >
+                  <span>PoL Size</span>
+                </StyledText>
+
+                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                  {metrics.currentAllocationAmount.toLocaleString()} ATOM
+                </div>
+              </div>
+            )}
+
+            {Boolean(metrics.apr) && (
+              <div>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex items-center gap-1 text-palette-green"
+                >
+                  <span>PoL APR</span>
+                </StyledText>
+
+                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                  {metrics.apr.toFixed(1)}%
+                </div>
+              </div>
+            )}
+
+            {metrics.status?.toLowerCase() === "ongoing" && (
+              <div>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex items-center gap-1 text-palette-green"
+                >
+                  <span>Status</span>
+                </StyledText>
+
+                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                  {metrics.status}
+                </div>
+              </div>
+            )}
 
             <div>
               <StyledText
