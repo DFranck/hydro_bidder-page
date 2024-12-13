@@ -83,7 +83,7 @@ function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
 
         return {
           ...t,
-          denom: denom ?? t.denom.toUpperCase(),
+          denom: denom ?? t.denom?.toUpperCase(),
         }
       }),
   })
