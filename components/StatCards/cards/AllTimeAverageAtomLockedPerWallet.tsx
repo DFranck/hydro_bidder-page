@@ -8,7 +8,7 @@ import { StatCard } from "../StatCard"
 
 export function AllTimeAverageAtomLockedPerWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { allTimeUsersAvgTokenLocked } = metricsGlobal
+  const { allTimeUsersAvgTokensLocked } = metricsGlobal
 
   return (
     <StatCard
@@ -22,7 +22,7 @@ export function AllTimeAverageAtomLockedPerWallet() {
         </Tooltip>
       }
       subTitle="All Time"
-      value={allTimeUsersAvgTokenLocked.toFixed(1)}
+      value={allTimeUsersAvgTokensLocked.toFixed(1)}
     />
   )
 }

@@ -4,20 +4,25 @@ import {
 } from "@/lib/keysFromSnakeToCamelCase"
 
 interface MetricsFromNumia {
-  all_time_apr: Array<{ period: string; apr: string }>
+  all_time_pol_apr: number
+  all_time_pol_deployed: number
   all_time_total_active_rounds: number
   all_time_total_atom_locked: number
+  all_time_tribute_apr: number
+  all_time_tribute_yield: number
   all_time_unique_wallets: number
-  all_time_users_apr: Array<{ period: string; apr: string }>
-  all_time_users_avg_active_rounds: number
-  all_time_users_avg_token_locked: number
-  all_time_users_rewards: number
-  current_round_pol_available: number
-  current_round_pol_deployed: number
-  current_round_total_atom_locked: number
-  current_round_unique_wallets: number
-  current_round_users_apr: Array<{ period: string; apr: string }>
-  current_round_users_avg_token_locked: number
+  all_time_users_avg_rounds_locked: number
+  all_time_users_avg_tokens_locked: number
+  current_pol_available: number
+  current_pol_deployed: number
+  current_pol_deployment_cap: number
+  current_pol_total: number
+  current_total_atom_locked: number
+  current_tribute_apr: number
+  current_tribute_yield: number
+  current_unique_wallets: number
+  current_users_avg_rounds_locked: number
+  current_users_avg_tokens_locked: number
 }
 
 export interface SanitizedMetricsFromNumia

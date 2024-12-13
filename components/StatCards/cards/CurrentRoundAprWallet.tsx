@@ -9,7 +9,7 @@ import { StatCard } from "../StatCard"
 export function CurrentRoundAprWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
   const { currentRoundId } = useBackendData()
-  const { currentRoundUsersApr } = metricsGlobal
+  const { currentTributeApr } = metricsGlobal
 
   return (
     <StatCard
@@ -23,7 +23,7 @@ export function CurrentRoundAprWallet() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={`${Math.round(parseFloat(currentRoundUsersApr[0]?.apr || "0") * 100)}%`}
+      value={`${(currentTributeApr * 100).toFixed(1)}%`}
     />
   )
 }
