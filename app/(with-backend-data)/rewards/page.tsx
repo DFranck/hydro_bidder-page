@@ -160,7 +160,8 @@ export default function RewardsPage() {
               >
                 {matchingClaim?.amount.printableAmount}
                 &nbsp;
-                {matchingClaim?.amount.humanReadableDenom ?? tribute.denom}
+                {matchingClaim?.amount.humanReadableDenom?.slice(0, 12) ??
+                  tribute.denom?.slice(0, 12)}
               </ConditionalWrapper>
             </InvisibleLink>
           ),

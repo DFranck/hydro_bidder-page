@@ -10,7 +10,7 @@ export interface AssetListEntry {
 }
 
 export async function fetchAssetListWithPrices(): Promise<
-  Map<string, AssetListEntry>
+  Record<string, AssetListEntry>
 > {
   // Fetch the asset list
   const response = await fetch(
@@ -32,16 +32,15 @@ export async function fetchAssetListWithPrices(): Promise<
   )
   const prices: Record<string, { usd: number }> = await pricesResponse.json()
 
-  // Create a Map with token as key and updated AssetListEntry as value
-  const assetMap = new Map<string, AssetListEntry>()
-
-  data.forEach((asset) => {
+  // Create an object with token as key and updated AssetListEntry as value
+  const assetMap = data.reduce<Record<string, AssetListEntry>>((acc, asset) => {
     const updatedAsset =
       asset.coingeckoId && prices[asset.coingeckoId]
         ? { ...asset, priceUsd: prices[asset.coingeckoId].usd }
         : asset
-    assetMap.set(asset.token, updatedAsset)
-  })
+    acc[asset.token] = updatedAsset
+    return acc
+  }, {})
 
   return assetMap
 }
