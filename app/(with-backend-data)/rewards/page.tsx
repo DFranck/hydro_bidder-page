@@ -23,6 +23,7 @@ import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRew
 import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
+import { formatAmount } from "@/lib/formatAmount"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import { keyBy, sumBy } from "lodash"
@@ -398,8 +399,12 @@ export default function RewardsPage() {
                 </StyledText>
 
                 <div>
-                  {selectedBid &&
-                    amountToUSDString(selectedBid.usersEstimatedRewards)}
+                  {selectedTribute && (
+                    <>
+                      {formatAmount(selectedTribute.amount)}
+                      &nbsp;{selectedTribute.denom}
+                    </>
+                  )}
                 </div>
               </div>
             </Card.Body>
