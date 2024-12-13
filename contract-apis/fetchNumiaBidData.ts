@@ -78,7 +78,7 @@ function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
       .filter((t) => !!t.amount)
       .map((t) => {
         const denom = Object.entries(typeToTokenMap).find(([key, value]) =>
-          t.denom.startsWith(key)
+          t.denom?.startsWith(key)
         )?.[1]
 
         return {

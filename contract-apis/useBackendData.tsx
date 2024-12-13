@@ -161,7 +161,7 @@ export function BackendDataContextProvider({
       const isProtectedRoute =
         pathname &&
         protectedRoutes.some((protectedRoute) =>
-          pathname.startsWith(protectedRoute)
+          pathname?.startsWith(protectedRoute)
         )
 
       // Redirect to bids if user has just connected their wallet and is on homepage
