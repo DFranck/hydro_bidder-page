@@ -1,7 +1,5 @@
 "use client"
 
-import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
@@ -12,6 +10,8 @@ import { broadcastAndRelayIBCNeutronToHub } from "../transactions/broadcastAndRe
 import { broadcastTx } from "../transactions/broadcastTx"
 import { signIBCTransferNeutronToHub } from "../transactions/signIBCTransferNeutronToHub"
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
+import { useIncompleteNotices } from "../useIncompleteNotices"
+import { Step } from "./Step"
 
 type RevertFromNeutronStep =
   | "Init"
@@ -178,15 +178,11 @@ export const RevertFromNeutronStepper = ({
       case "WaitingForIBCBroadcast":
         return {
           isWorking: true,
-          title: "Transferring to Cosmos Hub",
+          title: "Transferring to Cosmos Hub...",
           contents: (
-            <>
-              <p>Transferring tokenized ATOM to Cosmos Hub...</p>
-              <p>
-                This could take 30 seconds or longer if the network is
-                congested.
-              </p>
-            </>
+            <p>
+              This could take 30 seconds or longer if the network is congested.
+            </p>
           ),
         }
       case "WaitingForRedeemSigning":
@@ -207,14 +203,11 @@ export const RevertFromNeutronStepper = ({
       case "WaitingForRedeemBroadcast":
         return {
           isWorking: true,
-          title: "Redeeming ATOM",
+          title: "Redeeming ATOM...",
           contents: (
-            <>
-              <p>Redeeming ATOM...</p>
-              <p>
-                Hang tight, we&rsquo;re restoring your previous staked position.
-              </p>
-            </>
+            <p>
+              Hang tight, we&rsquo;re restoring your previous staked position.
+            </p>
           ),
         }
       case "Success":

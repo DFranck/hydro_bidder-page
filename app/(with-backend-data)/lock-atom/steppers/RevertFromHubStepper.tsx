@@ -1,7 +1,5 @@
 "use client"
 
-import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
@@ -10,6 +8,8 @@ import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { broadcastTx } from "../transactions/broadcastTx"
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
+import { useIncompleteNotices } from "../useIncompleteNotices"
+import { Step } from "./Step"
 
 function getValidatorMoniker(
   validator: string,

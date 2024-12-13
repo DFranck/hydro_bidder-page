@@ -1,5 +1,6 @@
 "use client"
 
+import { CommonSteps } from "@/app/(with-backend-data)/lock-atom/steppers/CommonSteps"
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
@@ -327,6 +328,7 @@ export const LockStepper = ({
         }
       case "Error":
         return {
+          title: "Transaction Error",
           contents: (
             <>
               <p>
@@ -359,54 +361,13 @@ export const LockStepper = ({
           ],
         }
       case "WaitingForIBCSigning":
-        return {
-          isWorking: true,
-          contents: (
-            <p>
-              Approve the transaction in your wallet to continue. This will
-              start the transfer of your tokenized ATOM to Hydro.
-            </p>
-          ),
-        }
+        return CommonSteps("WaitingForIBCSigning")
       case "WaitingForIBCBroadcastAndRelay":
-        return {
-          isWorking: true,
-          title: "Transferring to Hydro",
-          contents: (
-            <>
-              <p>Sending your staked ATOM to Hydro...</p>
-              <p>
-                This could take 30 seconds or longer if the network is
-                congested. If you exit Hydro, this status may not be visible
-                when you return, but the transfer will continue. Once the
-                transfer is complete, you will need to return to initiate the
-                lockup process.
-              </p>
-            </>
-          ),
-        }
+        return CommonSteps("WaitingForIBCBroadcastAndRelay")
       case "WaitingForLockingSigning":
-        return {
-          isWorking: true,
-          contents: (
-            <p>
-              Approve in your wallet again to lock your ATOM. This will initiate
-              the locking of your staked ATOM into the Hydro contract to receive
-              voting power.
-            </p>
-          ),
-        }
+        return CommonSteps("WaitingForLockingSigning")
       case "WaitingForLockingBroadcast":
-        return {
-          isWorking: true,
-          title: "Locking Your ATOM",
-          contents: (
-            <p>
-              This should only take a few seconds, unless the network is
-              congested.
-            </p>
-          ),
-        }
+        return CommonSteps("WaitingForLockingBroadcast")
       case "Success":
         return {
           revalidateCache: true,

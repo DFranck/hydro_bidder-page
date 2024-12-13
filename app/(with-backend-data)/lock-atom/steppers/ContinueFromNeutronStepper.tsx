@@ -1,21 +1,22 @@
 "use client"
 
-import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { signLockTokens } from "../transactions/signLockTokens"
 import { useIncompleteNotices } from "../useIncompleteNotices"
+import { CommonSteps } from "./CommonSteps"
 import {
   getCommonStepContents,
   StepContent,
 } from "./shared/LockAtomStepperCommon"
+import { Step } from "./Step"
 
 type ContinueFromNeutronStep =
   | "Init"
-  | "WaitingForLockSigning"
-  | "WaitingForLockBroadcast"
+  | "WaitingForLockingSigning"
+  | "WaitingForLockingBroadcast"
   | "Success"
   | "Error"
 
@@ -65,7 +66,7 @@ export const ContinueFromNeutronStepper = ({
       }
 
       // Wait for the user to sign the lock tokens transaction
-      setStep("WaitingForLockSigning")
+      setStep("WaitingForLockingSigning")
       const signedLockTx = await signLockTokens(
         neutronChain,
         neutronSigner,
@@ -75,7 +76,7 @@ export const ContinueFromNeutronStepper = ({
       )
 
       // Broadcast the lock tokens transaction
-      // setStep('WaitingForLockBroadcast');
+      // setStep('WaitingForLockingBroadcast');
 
       setStep("Success")
       deleteIncompleteNotice(denom, amount)
@@ -109,28 +110,10 @@ export const ContinueFromNeutronStepper = ({
     }
 
     switch (step) {
-      case "WaitingForLockSigning":
-        return {
-          isWorking: true,
-          title: "Approve Locking",
-          contents: (
-            <p>
-              Approve in your wallet again to lock your ATOM into the Hydro
-              contract to receive voting power.
-            </p>
-          ),
-        }
-      case "WaitingForLockBroadcast":
-        return {
-          isWorking: true,
-          title: "Locking in Progress",
-          contents: (
-            <>
-              <p>Locking your ATOM...</p>
-              <p>Just a few seconds, unless the network is congested</p>
-            </>
-          ),
-        }
+      case "WaitingForLockingSigning":
+        return CommonSteps("WaitingForLockingSigning")
+      case "WaitingForLockingBroadcast":
+        return CommonSteps("WaitingForLockingBroadcast")
       default:
         return { contents: null }
     }
