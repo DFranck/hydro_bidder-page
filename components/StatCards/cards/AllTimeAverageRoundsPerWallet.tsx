@@ -7,7 +7,7 @@ import { StatCard } from "../StatCard"
 
 export function AllTimeAverageRoundsPerWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { allTimeUsersAvgActiveRounds } = metricsGlobal
+  const { allTimeUsersAvgRoundsLocked } = metricsGlobal
 
   return (
     <StatCard
@@ -19,7 +19,7 @@ export function AllTimeAverageRoundsPerWallet() {
         </div>
       }
       subTitle="All Time"
-      value={Math.round(allTimeUsersAvgActiveRounds)}
+      value={allTimeUsersAvgRoundsLocked.toFixed(1)}
     />
   )
 }

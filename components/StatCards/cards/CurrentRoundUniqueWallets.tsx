@@ -8,7 +8,7 @@ import { StatCard } from "../StatCard"
 
 export function CurrentRoundUniqueWallets() {
   const { metricsGlobal } = useBackendData()
-  const { currentRoundUniqueWallets } = metricsGlobal
+  const { currentUniqueWallets } = metricsGlobal
 
   return (
     <StatCard
@@ -21,7 +21,7 @@ export function CurrentRoundUniqueWallets() {
         </Tooltip>
       }
       subTitle="Current Round"
-      value={currentRoundUniqueWallets}
+      value={currentUniqueWallets}
     />
   )
 }

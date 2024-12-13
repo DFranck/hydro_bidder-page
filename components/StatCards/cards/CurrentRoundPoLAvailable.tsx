@@ -9,7 +9,7 @@ import { StatCard } from "../StatCard"
 
 export function CurrentRoundPoLAvailable() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { currentRoundPolAvailable } = metricsGlobal
+  const { currentPolAvailable } = metricsGlobal
 
   return (
     <StatCard
@@ -23,7 +23,7 @@ export function CurrentRoundPoLAvailable() {
         </Tooltip>
       }
       subTitle="All Time"
-      value={formatAmount(currentRoundPolAvailable)}
+      value={formatAmount(currentPolAvailable)}
     />
   )
 }

@@ -4,13 +4,11 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { yourAggregateAprTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { sumBy } from "lodash"
 import { StatCard } from "../StatCard"
 
 export function AllTimeAprWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { allTimeUsersApr } = metricsGlobal
-  const averageApr = sumBy(allTimeUsersApr, "apr") / allTimeUsersApr.length
+  const { allTimeTributeApr } = metricsGlobal
 
   return (
     <StatCard
@@ -24,7 +22,7 @@ export function AllTimeAprWallet() {
         </Tooltip>
       }
       subTitle="No historical data yet"
-      value={`${Math.round(averageApr * 100)}%`}
+      value={`${Math.round(allTimeTributeApr * 100)}%`}
     />
   )
 }
