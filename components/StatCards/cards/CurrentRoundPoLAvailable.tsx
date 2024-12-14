@@ -21,7 +21,7 @@ export function CurrentRoundPoLAvailable() {
           </div>
         </Tooltip>
       }
-      subTitle="Current Round"
+      subTitle="All-Time"
       value={Math.round(currentPolTotal).toLocaleString()}
     />
   )

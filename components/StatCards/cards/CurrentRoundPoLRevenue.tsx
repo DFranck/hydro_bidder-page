@@ -22,7 +22,7 @@ export function CurrentRoundPoLRevenue() {
           </div>
         </Tooltip>
       }
-      subTitle="Current Round"
+      subTitle="All-Time"
       value={Math.round(currentRoundPoLRevenue).toLocaleString()}
     />
   )

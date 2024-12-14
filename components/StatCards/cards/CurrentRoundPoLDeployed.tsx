@@ -21,7 +21,7 @@ export function CurrentRoundPoLDeployed() {
           </div>
         </Tooltip>
       }
-      subTitle="All Time"
+      subTitle="All-Time"
       value={Math.round(allTimePolDeployed).toLocaleString()}
     />
   )
