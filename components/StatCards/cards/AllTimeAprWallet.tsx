@@ -21,7 +21,7 @@ export function AllTimeAprWallet() {
           </div>
         </Tooltip>
       }
-      subTitle={`Pilot Round ${currentRoundId + 1}`}
+      subTitle="All-Time"
       value={`${(allTimeTributeApr * 100).toFixed(1)}%`}
     />
   )
