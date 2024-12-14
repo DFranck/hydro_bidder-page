@@ -43,7 +43,7 @@ export type SanitizedBidFromNumia = CamelCaseKeys<
     tranche: number
     roundId: number | "pre-hydro"
     offchain_tribute: OffchainTributeFromNumia[]
-    onchain_tribute_assets: OnchainTributeFromNumia[]
+    onchain_tribute_assets: SanitizedOffchainTributeFromNumia[]
   }
 >
 type OffchainTributeFromNumia = {
@@ -53,6 +53,12 @@ type OffchainTributeFromNumia = {
 
 type OnchainTributeFromNumia = {
   amount: number
+  denom?: string
+  asset?: string
+}
+
+type SanitizedOffchainTributeFromNumia = {
+  amount: number
   denom: string
 }
 
@@ -60,13 +66,16 @@ const typeToTokenMap = {
   "ibc/837E876E": "SWTH",
 }
 
-function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
+function sanitizeBid({
+  project,
+  round,
+  ...bid
+}: BidFromNumia): SanitizedBidFromNumia {
   return keysFromSnakeToCamelCase({
     ...bid,
-    projectName: bid.project,
+    projectName: project,
     tranche: Number(bid.tranche),
-    roundId:
-      bid.round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(bid.round),
+    roundId: round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(round),
     offchain_tribute: (
       JSON.parse(bid.offchain_tribute) as OffchainTributeFromNumia[]
     )
@@ -76,15 +85,16 @@ function sanitizeBid(bid: BidFromNumia): SanitizedBidFromNumia {
       JSON.parse(bid.onchain_tribute_assets) as OnchainTributeFromNumia[]
     )
       .filter((t) => !!t.amount)
-      .map((t) => {
-        const denom = Object.entries(typeToTokenMap).find(([key, value]) =>
-          t.denom?.startsWith(key)
-        )?.[1]
+      .map(({ denom, asset, ...t }) => {
+        const actualDenom = denom ?? asset
+        const token = Object.entries(typeToTokenMap).find(([key]) => {
+          return actualDenom?.startsWith(key)
+        })?.[1]
 
         return {
           ...t,
-          denom: denom ?? t.denom?.toUpperCase(),
-        }
+          denom: token ?? actualDenom?.toUpperCase(),
+        } as SanitizedOffchainTributeFromNumia
       }),
   })
 }
