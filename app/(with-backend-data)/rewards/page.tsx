@@ -16,8 +16,9 @@ import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  rewardsTributeRewardsColumnTooltip,
-  rewardsTributeRewardsTooltip,
+  rewardsTotalTributeColumnTooltip,
+  rewardsYourTributeColumnTooltip,
+  rewardsYourTributeTooltip,
 } from "@/components/ToolTips"
 import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
 import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
@@ -144,12 +145,12 @@ export default function RewardsPage() {
             </InvisibleLink>
           ),
 
-          tributeRewards: (
+          yourTribute: (
             <InvisibleLink href={bidUrl}>
               <ConditionalWrapper
                 condition={rewardsInUsd > 0}
                 wrapper={(children) => (
-                  <Tooltip tipContents={rewardsTributeRewardsTooltip}>
+                  <Tooltip tipContents={rewardsYourTributeTooltip}>
                     <div>{children}</div>
                     <StyledText variant="footnote">
                       ({amountToUSDString(rewardsInUsd)}{" "}
@@ -166,7 +167,7 @@ export default function RewardsPage() {
             </InvisibleLink>
           ),
 
-          actions: (
+          claimStatus: (
             <InvisibleLink href={bidUrl}>
               <div className="flex items-center justify-end gap-2">
                 {canClaim ? (
@@ -226,7 +227,14 @@ export default function RewardsPage() {
     },
     {
       key: "totalTribute",
-      label: "Total Tribute",
+      label: (
+        <Tooltip tipContents={rewardsTotalTributeColumnTooltip}>
+          <div className="flex items-center gap-1">
+            <span>Total Tribute</span>
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       textAlign: "center",
       isSortable: true,
       propsForCells: {
@@ -239,11 +247,11 @@ export default function RewardsPage() {
           .join(", "),
     },
     {
-      key: "tributeRewards",
+      key: "yourTribute",
       label: (
-        <Tooltip tipContents={rewardsTributeRewardsColumnTooltip}>
+        <Tooltip tipContents={rewardsYourTributeColumnTooltip}>
           <div className="flex items-center gap-1">
-            <span>Tribute Rewards</span>
+            <span>Your Tribute</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
@@ -256,8 +264,8 @@ export default function RewardsPage() {
       customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
     },
     {
-      key: "actions",
-      label: "Actions",
+      key: "claimStatus",
+      label: "Claim Status",
       textAlign: "right",
       propsForCells: {
         className: "whitespace-nowrap",
@@ -294,6 +302,8 @@ export default function RewardsPage() {
       })
 
       await revalidateTag("backendData")
+
+      setSelection(null)
 
       setIsCelebrating(true)
 
