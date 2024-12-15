@@ -62,7 +62,7 @@ export function augmentLiquidityDeployment({
   assetListWithPrices,
   liquidityDeployment,
 }: {
-  assetListWithPrices: Map<string, AssetListEntry>
+  assetListWithPrices: Record<string, AssetListEntry>
   liquidityDeployment: SanitizedLiquidityDeployment
 }): AugmentedLiquidityDeployment {
   const augmentedDeployedFunds = liquidityDeployment.deployedFunds.map((coin) =>

@@ -27,9 +27,9 @@ export async function checkForHubLSMShares(
   ).then((res) => res.json())
 
   const lsmShares = response.balances
-    .filter((balance) => balance.denom.startsWith("cosmosvaloper"))
+    .filter((balance) => balance.denom?.startsWith("cosmosvaloper"))
     .map((balance) => {
-      const [validator, _] = balance.denom.split("/")
+      const [validator, _] = balance.denom?.split("/") ?? []
       return {
         validator,
         amount: balance.amount,

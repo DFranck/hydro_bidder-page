@@ -5,7 +5,7 @@ export function BidDenoms({ bid }: { bid: AugmentedBid }) {
   return uniq(
     bid.tributes.map((tribute) =>
       tribute.isTokenBased
-        ? tribute.denom.toUpperCase()
+        ? tribute.denom?.toUpperCase()
         : startCase(tribute.denom)
     )
   ).join(", ")

@@ -7,7 +7,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function AllTimeAprWallet() {
-  const { isLoading, metricsGlobal } = useBackendData()
+  const { currentRoundId, isLoading, metricsGlobal } = useBackendData()
   const { allTimeTributeApr } = metricsGlobal
 
   return (
@@ -21,8 +21,8 @@ export function AllTimeAprWallet() {
           </div>
         </Tooltip>
       }
-      subTitle="No historical data yet"
-      value={`${Math.round(allTimeTributeApr * 100)}%`}
+      subTitle="All-Time"
+      value={`${(allTimeTributeApr * 100).toFixed(1)}%`}
     />
   )
 }

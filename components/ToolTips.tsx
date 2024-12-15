@@ -369,14 +369,22 @@ export const rewardsPolRewardsColumnTooltip = (
   </>
 )
 
-export const rewardsTributeRewardsColumnTooltip = (
+export const rewardsYourTributeColumnTooltip = (
   <>
-    This is the value of the rewards from each tribute you voted for in past
-    rounds.
+    This is the tribute you earned from this bid in this round. Rewards are
+    distributed based on your voting power and the tributes offered by the bid
+    you supported.
   </>
 )
 
-export const rewardsTributeRewardsTooltip = (
+export const rewardsTotalTributeColumnTooltip = (
+  <>
+    This is the total tribute that was offered for this bid in the round
+    displayed.
+  </>
+)
+
+export const rewardsYourTributeTooltip = (
   <>
     This is the estimated USD-equivalent value of the rewards you&rsquo;ve
     received from this tribute.
