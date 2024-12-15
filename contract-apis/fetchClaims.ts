@@ -47,13 +47,13 @@ export async function fetchClaims({
   let outstandingClaims: SanitizedClaim[] = []
 
   try {
-    const { claims: fetchedHistoricalClaims } =
+    const fetchedHistoricalClaims =
       await tributeQueryClient.historicalTributeClaims({
-        limit: 10_000,
+        limit: 100,
         startFrom: 0,
         userAddress: address,
       })
-    historicalClaims = sanitizeClaims(fetchedHistoricalClaims)
+    historicalClaims = sanitizeClaims(fetchedHistoricalClaims as any)
   } catch (error) {
     historicalClaims = []
   }
@@ -66,7 +66,7 @@ export async function fetchClaims({
         Promise.all(
           trancheIds.map((trancheId) =>
             tributeQueryClient.outstandingTributeClaims({
-              limit: 10_000,
+              limit: 100,
               roundId,
               startFrom: 0,
               trancheId,
@@ -104,7 +104,7 @@ export function augmentClaims({
   assetListWithPrices,
   claims,
 }: {
-  assetListWithPrices: Map<string, AssetListEntry>
+  assetListWithPrices: Record<string, AssetListEntry>
   claims: SanitizedClaim[]
 }): AugmentedClaim[] {
   return claims.map((claim) => ({

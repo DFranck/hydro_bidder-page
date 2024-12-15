@@ -4,12 +4,11 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polDeployedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
-export function CurrentRoundPoLDeployed() {
+export function AllTimePoLDeployed() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { currentPolDeployed } = metricsGlobal
+  const { allTimePolDeployed } = metricsGlobal
 
   return (
     <StatCard
@@ -22,8 +21,8 @@ export function CurrentRoundPoLDeployed() {
           </div>
         </Tooltip>
       }
-      subTitle="All Time"
-      value={formatAmount(currentPolDeployed)}
+      subTitle="All-Time"
+      value={Math.round(allTimePolDeployed).toLocaleString()}
     />
   )
 }

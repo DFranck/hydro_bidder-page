@@ -30,7 +30,7 @@ export function useIsLoadingNewRoute() {
       if (Date.now() - clickTime > 1000) return
 
       const url = toURL(data.fetchUrl)
-      if (url?.search.startsWith("?_rsc=") && data.dest === "") {
+      if (url?.search?.startsWith("?_rsc=") && data.dest === "") {
         clickTime = 0
         setLoading(true)
       }

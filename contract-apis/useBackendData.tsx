@@ -25,7 +25,7 @@ export interface BackendDataContextType extends BackendDataAfterWallet {
 
 const initialBackendDataContext: BackendDataAfterWallet = {
   address: "",
-  assetListWithPrices: new Map(),
+  assetListWithPrices: {},
   atomPrice: 0,
   bidDescriptionsByBidId: {},
   bids: [],
@@ -57,6 +57,8 @@ const initialBackendDataContext: BackendDataAfterWallet = {
   metricsGlobal: {
     allTimePolApr: 0,
     allTimePolDeployed: 0,
+    allTimePolRevenue: 0,
+    allTimePolYield: 0,
     allTimeTotalActiveRounds: 0,
     allTimeTotalAtomLocked: 0,
     allTimeTributeApr: 0,
@@ -161,7 +163,7 @@ export function BackendDataContextProvider({
       const isProtectedRoute =
         pathname &&
         protectedRoutes.some((protectedRoute) =>
-          pathname.startsWith(protectedRoute)
+          pathname?.startsWith(protectedRoute)
         )
 
       // Redirect to bids if user has just connected their wallet and is on homepage

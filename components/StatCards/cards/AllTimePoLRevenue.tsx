@@ -4,13 +4,11 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polRevenueTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
-export function CurrentRoundPoLRevenue() {
+export function AllTimePoLRevenue() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { currentPolAvailable, currentPolDeployed } = metricsGlobal
-  const currentRoundPoLRevenue = currentPolAvailable - currentPolDeployed
+  const { allTimePolRevenue } = metricsGlobal
 
   return (
     <StatCard
@@ -23,8 +21,8 @@ export function CurrentRoundPoLRevenue() {
           </div>
         </Tooltip>
       }
-      subTitle="Current Round"
-      value={formatAmount(currentRoundPoLRevenue)}
+      subTitle="All Time"
+      value={Math.round(allTimePolRevenue).toLocaleString()}
     />
   )
 }

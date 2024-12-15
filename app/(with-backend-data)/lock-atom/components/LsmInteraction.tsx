@@ -4,8 +4,10 @@ import { LockForm } from "@/app/(with-backend-data)/lock-atom/components/LockFor
 import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { StyledText } from "@/components/StyledText"
+import { HYDRO_TELEGRAM_URL } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import Link from "next/link"
 import { useState } from "react"
 import { classNames } from "../classNames"
 import { ContinueFromHubStepper } from "../steppers/ContinueFromHubStepper"
@@ -23,7 +25,7 @@ export function LsmInteraction({
 }: {
   validatorMap: Map<string, Validator>
 }) {
-  const { lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity } =
+  const { lockedAtomIsAtCapacityGlobal, lockedAtomIsAtCapacityWallet } =
     useBackendData()
   const {
     hubChain,
@@ -130,11 +132,22 @@ export function LsmInteraction({
               </StyledText>
             )}
 
-          {lockedAtomIsAtGlobalCapacity ? (
+          {lockedAtomIsAtCapacityWallet ? (
+            <BlurryBackdropBox className="p-6">
+              <p>
+                You&rsquo;ve reached the maximum of ATOM you can lock for this
+                pilot round.
+              </p>
+            </BlurryBackdropBox>
+          ) : lockedAtomIsAtCapacityGlobal ? (
             <BlurryBackdropBox className="p-6">
               <p>
                 Hydro is currently at max capacity. Please wait for the next
-                round to start.
+                round or for the cap to be increased. Check{" "}
+                <StyledText as={Link} href={HYDRO_TELEGRAM_URL} variant="link">
+                  Telegram
+                </StyledText>{" "}
+                for updates.
               </p>
             </BlurryBackdropBox>
           ) : (

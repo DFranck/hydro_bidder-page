@@ -4,7 +4,6 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { polAvailableTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundPoLAvailable() {
@@ -22,8 +21,8 @@ export function CurrentRoundPoLAvailable() {
           </div>
         </Tooltip>
       }
-      subTitle="All Time"
-      value={formatAmount(currentPolAvailable)}
+      subTitle="Current Round"
+      value={Math.round(currentPolAvailable).toLocaleString()}
     />
   )
 }
