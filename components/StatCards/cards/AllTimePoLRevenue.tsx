@@ -6,10 +6,9 @@ import { polRevenueTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function CurrentRoundPoLRevenue() {
+export function AllTimePoLRevenue() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { allTimeTributeYield, allTimePolYield } = metricsGlobal
-  const currentRoundPoLRevenue = allTimePolYield + allTimeTributeYield
+  const { allTimePolRevenue } = metricsGlobal
 
   return (
     <StatCard
@@ -22,8 +21,8 @@ export function CurrentRoundPoLRevenue() {
           </div>
         </Tooltip>
       }
-      subTitle="All-Time"
-      value={Math.round(currentRoundPoLRevenue).toLocaleString()}
+      subTitle="All Time"
+      value={Math.round(allTimePolRevenue).toLocaleString()}
     />
   )
 }

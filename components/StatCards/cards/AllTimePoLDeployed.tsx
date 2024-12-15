@@ -6,7 +6,7 @@ import { polDeployedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function CurrentRoundPoLDeployed() {
+export function AllTimePoLDeployed() {
   const { isLoading, metricsGlobal } = useBackendData()
   const { allTimePolDeployed } = metricsGlobal
 

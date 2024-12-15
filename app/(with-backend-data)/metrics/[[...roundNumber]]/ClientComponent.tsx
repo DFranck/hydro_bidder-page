@@ -287,8 +287,8 @@ export function ClientComponent({
       {process.env.CONTEXT !== "production" && (
         <StatCards>
           <StatCards.CurrentRoundPoLAvailable />
-          <StatCards.CurrentRoundPoLDeployed />
-          <StatCards.CurrentRoundPoLRevenue />
+          <StatCards.AllTimePoLDeployed />
+          <StatCards.AllTimePoLRevenue />
         </StatCards>
       )}
 

@@ -8,7 +8,7 @@ import { StatCard } from "../StatCard"
 
 export function CurrentRoundPoLAvailable() {
   const { isLoading, metricsGlobal } = useBackendData()
-  const { currentPolTotal } = metricsGlobal
+  const { currentPolAvailable } = metricsGlobal
 
   return (
     <StatCard
@@ -21,8 +21,8 @@ export function CurrentRoundPoLAvailable() {
           </div>
         </Tooltip>
       }
-      subTitle="All-Time"
-      value={Math.round(currentPolTotal).toLocaleString()}
+      subTitle="Current Round"
+      value={Math.round(currentPolAvailable).toLocaleString()}
     />
   )
 }
