@@ -8,10 +8,7 @@ import { twMerge } from "tailwind-merge"
 
 export function Banner() {
   const backendData = useBackendData()
-  const {
-    currentRoundId,
-    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
-  } = backendData
+  const { currentRoundId, lockedAtomIsAtCapacityGlobal } = backendData
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const Banners = {
     maxCapacity: {
@@ -38,7 +35,7 @@ export function Banner() {
       ),
     },
   }
-  const activeBannerName = lockedAtomIsAtGlobalCapacity
+  const activeBannerName = lockedAtomIsAtCapacityGlobal
     ? "maxCapacity"
     : "pilotRounds"
   const { href, text } = Banners[activeBannerName]

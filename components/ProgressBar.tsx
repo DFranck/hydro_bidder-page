@@ -78,7 +78,7 @@ export function ProgressBar({
               `absolute inset-0 right-auto`,
               classNamesByVariant[variant].innerBar
             )}
-            style={{ width: `${percentage}%` }}
+            style={{ width: `${Math.max(1, percentage)}%` }}
           />
         </div>
       </div>

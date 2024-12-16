@@ -1,10 +1,12 @@
 "use client"
 
+import { useToasts } from "@/components/Toasts"
 import {
   BackendDataAfterWallet,
   fetchBackendDataAfterWallet,
 } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BackendDataBeforeWallet } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { useChain } from "@cosmos-kit/react"
 import { merge } from "lodash"
 import { usePathname, useRouter } from "next/navigation"
@@ -46,6 +48,7 @@ const initialBackendDataContext: BackendDataAfterWallet = {
   lockedAtomMaxWallet: 0,
   lockedAtomPercentageGlobal: 0,
   lockedAtomPercentageWallet: 0,
+  lockedAtomRemainingCapacityGlobal: 0,
   lockedAtomTotalGlobal: 0,
   lockedAtomTotalWallet: 0,
   lockups: [],
@@ -90,6 +93,7 @@ export function BackendDataContextProvider({
   backendData: BackendDataBeforeWallet
   children: ReactNode
 }) {
+  const { setToasts } = useToasts()
   const {
     address,
     isWalletConnected,
@@ -117,6 +121,41 @@ export function BackendDataContextProvider({
       setBackendDataAfterWallet(preMergedBackendData)
     }
   }, [address, preMergedBackendData])
+
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS) return
+
+    async function queryLockupCapacity() {
+      setToasts([
+        {
+          variant: "workingInBackground",
+          message: null,
+        },
+      ])
+
+      try {
+        const globalLockupCapacity = await fetchGlobalLockupCapacity()
+
+        setBackendDataAfterWallet((prev) => ({
+          ...prev,
+          ...globalLockupCapacity,
+        }))
+      } catch (error) {
+        console.warn("Error fetching lockup capacity", error)
+      }
+
+      setToasts([])
+    }
+
+    queryLockupCapacity()
+
+    const timer = setInterval(
+      queryLockupCapacity,
+      1000 * Number(process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS)
+    )
+
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     ;(async () => {

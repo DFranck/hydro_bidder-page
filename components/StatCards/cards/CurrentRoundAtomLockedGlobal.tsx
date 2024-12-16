@@ -1,14 +1,13 @@
 "use client"
 
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAtomLockedGlobal() {
   const {
     isLoading,
-    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
+    lockedAtomIsAtCapacityGlobal,
     lockedAtomMaxGlobal,
     lockedAtomPercentageGlobal,
     lockedAtomTotalGlobal,
@@ -17,7 +16,7 @@ export function CurrentRoundAtomLockedGlobal() {
   return (
     <StatCard
       className={twMerge(
-        lockedAtomIsAtGlobalCapacity &&
+        lockedAtomIsAtCapacityGlobal &&
           `
             bg-gradient-to-t
             from-palette-red/80
@@ -25,12 +24,12 @@ export function CurrentRoundAtomLockedGlobal() {
           `
       )}
       isLoading={isLoading}
-      value={Math.floor(lockedAtomTotalGlobal / 1e6).toLocaleString()}
+      value={Math.floor(lockedAtomTotalGlobal).toLocaleString()}
       title={<div className="flex items-center gap-1">Total ATOM in Hydro</div>}
       subTitle={
         <>
           <strong>{lockedAtomPercentageGlobal}%</strong> of{" "}
-          <strong>{formatAmount(lockedAtomMaxGlobal)}</strong> max
+          <strong>{lockedAtomMaxGlobal.toLocaleString()}</strong> max
         </>
       }
     />

@@ -60,7 +60,9 @@ export function Toast({
           )}
         </div>
 
-        <div className={classNames.messageContainer}>{children}</div>
+        {children && (
+          <div className={classNames.messageContainer}>{children}</div>
+        )}
 
         {(isDismissible || actionButton) && (
           <div className={classNames.actionButtonsContainer}>
