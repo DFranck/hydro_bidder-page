@@ -33,6 +33,15 @@ export const classNames = {
       ),
       isDismissible: false,
     },
+    workingInBackground: {
+      container: "bg-black text-white rounded-full w-min pr-3 ml-auto",
+      icon: (
+        <div className="inline-flex animate-spin">
+          <Icon name="light:loader" />
+        </div>
+      ),
+      isDismissible: false,
+    },
   },
   toastsContainer: twJoin(`
     group

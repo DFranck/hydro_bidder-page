@@ -28,10 +28,9 @@ export function LockForm({
 }) {
   const {
     lockedAtomEpochInNanos,
-    lockedAtomMaxGlobal,
     lockedAtomMaxWallet,
-    lockedAtomTotalGlobal,
     lockedAtomTotalWallet,
+    lockedAtomRemainingCapacityGlobal,
   } = useBackendData()
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(
@@ -45,10 +44,6 @@ export function LockForm({
     validators?.find((v) => v.validator.operator_address === validator)
       ?.delegation_balance.amount ?? 0
   )
-  const globalLimitRemainder = Math.max(
-    0,
-    lockedAtomMaxGlobal - lockedAtomTotalGlobal
-  )
   const usersLimitRemainder = Math.max(
     0,
     lockedAtomMaxWallet - lockedAtomTotalWallet
@@ -56,13 +51,13 @@ export function LockForm({
   const maxAtomToBeLocked = Math.min(
     delegationBalance / 1e6, // no more than they have
     usersLimitRemainder, // no more than their limit
-    globalLimitRemainder // no more than the global limit
+    lockedAtomRemainingCapacityGlobal // no more than the global limit
   )
   const [amount, setAmount] = useState<string>("")
 
   useEffect(() => {
     if (maxAtomToBeLocked > 0) {
-      setAmount(maxAtomToBeLocked.toString())
+      setAmount(maxAtomToBeLocked.toFixed(6))
     }
   }, [maxAtomToBeLocked])
 
@@ -96,9 +91,9 @@ export function LockForm({
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       const numValue = parseFloat(value) || 0
       if (numValue <= maxAtomToBeLocked) {
-        setAmount(value)
+        setAmount(numValue.toFixed(6))
       } else {
-        setAmount(maxAtomToBeLocked.toString())
+        setAmount(maxAtomToBeLocked.toFixed(6))
       }
     }
   }
@@ -107,9 +102,9 @@ export function LockForm({
     const value = parseFloat(e.target.value) || 0
     const minAmount = 1 / 1e6
     if (value < minAmount && value !== 0) {
-      setAmount(minAmount.toString())
+      setAmount(minAmount.toFixed(6))
     } else {
-      setAmount(Math.min(value, maxAtomToBeLocked).toString())
+      setAmount(Math.min(value, maxAtomToBeLocked).toFixed(6))
     }
   }
 
@@ -219,6 +214,7 @@ export function LockForm({
                     <StyledText as="label" variant="label">
                       Amount:
                     </StyledText>
+
                     <div className="flex items-center gap-3">
                       <StyledText
                         as="input"
@@ -230,6 +226,7 @@ export function LockForm({
                         onBlur={handleBlur}
                         onChange={handleChange}
                       />
+
                       <StyledText
                         as="p"
                         className="
@@ -241,16 +238,19 @@ export function LockForm({
                       >
                         <Icon name="triangle-exclamation" /> Invalid amount
                       </StyledText>
+
                       <StyledText as="span" variant="footnote">
-                        Max: <strong>{maxAtomToBeLocked}</strong> ATOM
+                        Max: <strong>{maxAtomToBeLocked.toFixed(6)}</strong>{" "}
+                        ATOM
                       </StyledText>
+
                       {parseFloat(amount) < maxAtomToBeLocked && (
                         <StyledText
                           as="button"
                           type="button"
                           variant="link"
                           onClick={() =>
-                            setAmount(maxAtomToBeLocked.toString())
+                            setAmount(maxAtomToBeLocked.toFixed(6))
                           }
                         >
                           Set to Max
@@ -300,7 +300,7 @@ export function LockForm({
                     </StyledText>
 
                     <StyledText as={Link} href="/lockups" variant="link">
-                      Go Back
+                      Cancel
                     </StyledText>
                   </div>
                 </div>
