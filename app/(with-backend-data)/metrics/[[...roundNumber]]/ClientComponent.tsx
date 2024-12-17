@@ -59,7 +59,12 @@ export function ClientComponent({
       : `/bids/${bid.id}`
 
     const { projectLogoUrl, projectName, title, durationDays, status } = bid
-    const isInVotingPeriod = status.toLowerCase() === "voting period"
+
+    const isPending =
+      status.toLowerCase() === "voting period" ||
+      (status.toLowerCase() === "ongoing" &&
+        (bid.apr === 0 ||
+          bid.currentAllocationAmount - bid.initialAllocationAmount <= 0))
 
     return {
       _bid: bid,
@@ -84,7 +89,7 @@ export function ClientComponent({
       ),
       polSize: (
         <InvisibleLink href={rowURL}>
-          {isInVotingPeriod
+          {isPending
             ? "Pending"
             : "initialAllocationAmount" in bid && (
                 <>
@@ -98,16 +103,24 @@ export function ClientComponent({
       ),
       duration: (
         <InvisibleLink href={rowURL}>
-          {pluralize({
-            count: Math.round(bid.durationDays / 30),
-            prefixCount: true,
-            singular: "month",
-          })}
+          {!bid.durationDays 
+            ? "Pending"
+            : bid.durationDays < 30
+              ? pluralize({
+                  count: bid.durationDays,
+                  prefixCount: true,
+                  singular: "day",
+                })
+              : pluralize({
+                  count: Math.round(bid.durationDays / 30),
+                  prefixCount: true,
+                  singular: "month",
+                })}
         </InvisibleLink>
       ),
       polRewards: (
         <InvisibleLink href={rowURL}>
-          {isInVotingPeriod
+          {isPending
             ? "Pending"
             : "currentAllocationAmount" in bid &&
               "initialAllocationAmount" in bid && (
@@ -124,7 +137,7 @@ export function ClientComponent({
       ),
       polApr: (
         <InvisibleLink href={rowURL}>
-          {isInVotingPeriod ? "Pending" : "apr" in bid && `${bid.apr}%`}
+          {isPending ? "Pending" : "apr" in bid && `${bid.apr}%`}
         </InvisibleLink>
       ),
       tribute: (
@@ -188,7 +201,14 @@ export function ClientComponent({
     },
     {
       key: "duration",
-      label: "Duration",
+      label: (
+        <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
+          <div className="flex items-center gap-1">
+            Duration
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       propsForCells: {
         className: "whitespace-nowrap",
       },

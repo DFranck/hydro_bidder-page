@@ -232,6 +232,10 @@ export const metricsPolAprColumnTooltip = (
   </>
 )
 
+export const metricsDurationColumnTooltip = (
+  <>The current duration for which this PoL has been deployed.</>
+)
+
 export const metricsPolRewardsColumnTooltip = (
   <>
     The rewards generated from this PoL deployment, including returns on
@@ -322,9 +326,8 @@ export const pointSystemTooltip = ({
 
 export const polAvailableTooltip = (
   <>
-    This is the total amount of ATOM designated for Protocol-Owned Liquidity
-    (PoL) to be deployed across projects via Hydro. It includes the currently
-    deployed PoL in the total.
+    This is the total ATOM available for Protocol-Owned Liquidity (PoL) to be
+    deployed across projects in the Hydro Committee Treasury.
   </>
 )
 
