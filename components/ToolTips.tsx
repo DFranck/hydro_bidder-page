@@ -471,3 +471,17 @@ export const yourVotingPowerTooltip = (
     tributes you will receive
   </>
 )
+
+export const bidDetailsPolSizeTooltip = (
+  <>
+    The total amount of ATOM allocated to this project as Protocol-Owned
+    Liquidity (PoL) during the specified round.
+  </>
+)
+
+export const bidDetailsStatusTooltip = (
+  <>
+    The current status of the liquidity deployment (voting period, ongoing,
+    concluded).
+  </>
+)
