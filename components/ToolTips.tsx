@@ -485,3 +485,5 @@ export const bidDetailsStatusTooltip = (
     concluded).
   </>
 )
+
+export const globalTotalAtomLockedTooltip = <>Total ATOM locked in Hydro.</>

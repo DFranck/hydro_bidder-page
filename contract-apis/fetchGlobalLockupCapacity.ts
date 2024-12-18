@@ -35,8 +35,10 @@ export async function fetchGlobalLockupCapacity(): Promise<GlobalLockupCapacityI
 
   const lockedAtomTotalGlobal = lockedUatomTotalGlobal / 1e6
 
-  const lockedAtomRemainingCapacityGlobal =
-    lockedAtomMaxGlobal - lockedAtomTotalGlobal
+  // must be rounded to 6 decimal places
+  const lockedAtomRemainingCapacityGlobal = Number(
+    (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
+  )
 
   const lockedAtomPercentageGlobal = Math.floor(
     (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
