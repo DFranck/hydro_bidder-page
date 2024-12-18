@@ -153,7 +153,11 @@ export default function RewardsPage() {
                   <Tooltip tipContents={rewardsYourTributeTooltip}>
                     <div>{children}</div>
                     <StyledText variant="footnote">
-                      ({amountToUSDString(rewardsInUsd)}{" "}
+                      ({amountToUSDString(rewardsInUsd, {
+                        appendUsd: false,
+                        numberOfDecimals: 2,
+                        removeTrailingZeros: true,
+                      })}{" "}
                       <Icon name="circle-info" />)
                     </StyledText>
                   </Tooltip>
