@@ -9,13 +9,17 @@ import { useWalletValidators } from "@/contract-apis/useWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ChainContext } from "@cosmos-kit/core"
-import { isNumber } from "lodash"
+import { debounce, isNumber } from "lodash"
 import Link from "next/link"
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useMemo, useState } from "react"
 import { classNames } from "../classNames"
 import { ValidatorListItem } from "../components/ValidatorListItem"
 import { calculateLsmCapacity } from "../functions/calculateLsmCapacity"
 import { getValidatorMoniker } from "../functions/getValidatorMoniker"
+import {
+  fetchGlobalLockupCapacity,
+  GlobalLockupCapacityInfo,
+} from "@/contract-apis/fetchGlobalLockupCapacity"
 
 export function LockForm({
   onSubmit,
@@ -26,12 +30,16 @@ export function LockForm({
   hubChain: ChainContext
   validatorMap: Map<string, Validator>
 }) {
+  const [isRefreshing, setIsRefreshing] = useState(true)
   const {
     lockedAtomEpochInNanos,
     lockedAtomMaxWallet,
     lockedAtomTotalWallet,
     lockedAtomRemainingCapacityGlobal,
   } = useBackendData()
+
+  const [availableAtomToBeLocked, setAvailableAtomToBeLocked] =
+    useState<number>(lockedAtomRemainingCapacityGlobal || 0)
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(
     lockedAtomEpochInNanos
@@ -51,15 +59,34 @@ export function LockForm({
   const maxAtomToBeLocked = Math.min(
     delegationBalance / 1e6, // no more than they have
     usersLimitRemainder, // no more than their limit
-    lockedAtomRemainingCapacityGlobal // no more than the global limit
+    availableAtomToBeLocked // no more than the global limit
   )
   const [amount, setAmount] = useState<string>("")
+
+  //  refresh data every 60 seconds
+  useEffect(() => {
+    const getData = async () => {
+      setIsRefreshing(true)
+      const globalLockupCapacityInfo = await fetchGlobalLockupCapacity()
+      setAvailableAtomToBeLocked(
+        globalLockupCapacityInfo.lockedAtomRemainingCapacityGlobal || 0
+      )
+      setIsRefreshing(false)
+    }
+    getData()
+
+    // Set up interval to refresh data every 60 seconds
+    const interval = setInterval(getData, 60000)
+
+    // Clean up interval on unmount
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     if (maxAtomToBeLocked > 0) {
       setAmount(maxAtomToBeLocked.toFixed(6))
     }
-  }, [maxAtomToBeLocked])
+  }, [maxAtomToBeLocked, availableAtomToBeLocked])
 
   useEffect(() => {
     const numericAmount = parseFloat(amount)
@@ -89,12 +116,7 @@ export function LockForm({
     const value = e.target.value
     // Allow empty string, numbers, and decimals
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
-      const numValue = parseFloat(value) || 0
-      if (numValue <= maxAtomToBeLocked) {
-        setAmount(numValue.toFixed(6))
-      } else {
-        setAmount(maxAtomToBeLocked.toFixed(6))
-      }
+      setAmount(value)
     }
   }
 
@@ -239,10 +261,17 @@ export function LockForm({
                         <Icon name="triangle-exclamation" /> Invalid amount
                       </StyledText>
 
-                      <StyledText as="span" variant="footnote">
-                        Max: <strong>{maxAtomToBeLocked.toFixed(6)}</strong>{" "}
-                        ATOM
-                      </StyledText>
+                      <div className="flex items-center gap-1">
+                        <StyledText as="span" variant="footnote">
+                          Max: <strong>{maxAtomToBeLocked.toFixed(6)}</strong>{" "}
+                          ATOM
+                        </StyledText>
+                        {isRefreshing && (
+                          <div className="animate-spin">
+                            <Icon name="light:loader" />
+                          </div>
+                        )}
+                      </div>
 
                       {parseFloat(amount) < maxAtomToBeLocked && (
                         <StyledText
@@ -292,7 +321,14 @@ export function LockForm({
                   <div className="col-span-2 flex flex-row-reverse items-center gap-6">
                     <StyledText
                       as="button"
-                      disabled={!validator || !amount || !selectedDuration}
+                      disabled={
+                        !validator ||
+                        !amount ||
+                        !selectedDuration ||
+                        parseFloat(amount) > maxAtomToBeLocked ||
+                        parseFloat(amount) === 0 ||
+                        isRefreshing
+                      }
                       variant="button.primary"
                       type="submit"
                     >

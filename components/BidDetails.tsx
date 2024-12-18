@@ -333,7 +333,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 <span>Tribute to Voters</span>
                 <Icon name="circle-info" />
               </StyledText>
-              <div className="max-w-64 overflow-x-auto">
+              <div className="flex max-w-64 flex-col overflow-x-auto">
                 <BidTributes bid={bid} />
               </div>
             </div>
