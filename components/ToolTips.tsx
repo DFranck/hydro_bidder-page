@@ -374,16 +374,14 @@ export const rewardsPolRewardsColumnTooltip = (
 
 export const rewardsYourTributeColumnTooltip = (
   <>
-    This is the tribute you earned from this bid in this round. Rewards are
-    distributed based on your voting power and the tributes offered by the bid
-    you supported.
+    This is the tribute you earned from this bid in this round, based on your voting power. If a project added additional tributes in a round to a bid, or used multiple tokens as tribute, you may see multiple rows for the same bid.
   </>
 )
 
 export const rewardsTotalTributeColumnTooltip = (
   <>
     This is the total tribute that was offered for this bid in the round
-    displayed.
+    displayed. If a project added additional tributes in a round to a bid, or used multiple tokens as tribute, you may see multiple rows for the same bid.
   </>
 )
 
@@ -438,15 +436,13 @@ export const voteThresholdTooltip = (
 
 export const yourAggregateAprTooltip = (
   <>
-    This is your historical APR based on past rounds. It reflects your average
-    performance over time.
+    This is the Aggregate historical APR based on all past rounds, based on total votes and total tributes that were paid out as rewards.
   </>
 )
 
 export const yourRoundAprTooltip = (
   <>
-    This is your estimated personal APR for the current round based on your
-    voting power and the bids for which you&rsquo;ve voted.
+    This is the Average APR for the previous round, based on the total votes and total tributes that were paid out as rewards.
   </>
 )
 
