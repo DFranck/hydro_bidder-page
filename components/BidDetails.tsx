@@ -313,7 +313,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                       variant="label"
                       className="flex items-center gap-1 "
                     >
-                      <span>Yield APR</span>
+                      <span>PoL APR</span>
                       <Icon name="circle-info" />
                     </StyledText>
                   </Tooltip>
@@ -330,7 +330,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 variant="label"
                 className="flex items-center gap-1"
               >
-                <span>Tribute to Voters</span>
+                <span>Tribute</span>
                 <Icon name="circle-info" />
               </StyledText>
               <div className="flex max-w-64 flex-col overflow-x-auto">
@@ -340,7 +340,8 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
             <div>
               <StyledText as="h3" variant="label">
-                Vote Percentage
+                % Vote Received
+                <Icon name="circle-info" />
               </StyledText>
               <div
                 className="

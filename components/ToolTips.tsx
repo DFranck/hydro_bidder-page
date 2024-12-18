@@ -233,7 +233,7 @@ export const metricsPolAprColumnTooltip = (
 )
 
 export const metricsDurationColumnTooltip = (
-  <>The current duration for which this PoL has been deployed.</>
+  <>The duration for which this PoL has been (or was) deployed.</>
 )
 
 export const metricsPolRewardsColumnTooltip = (
@@ -253,8 +253,8 @@ export const metricsPolSizeColumnTooltip = (
 
 export const metricsStatusColumnTooltip = (
   <>
-    The current status of the liquidity deployment, such as
-    &lsquo;Ongoing&rsquo; for active deployments or &lsquo;Concluded&rsquo; for
+    The current status of the liquidity deployment, such as &lsquo;Voting Period&rsquo; for current round bids,
+    &lsquo;Ongoing&rsquo; for active deployments, or &lsquo;Completed&rsquo; for
     completed ones.
   </>
 )
@@ -262,7 +262,7 @@ export const metricsStatusColumnTooltip = (
 export const metricsTributeColumnTooltip = (
   <>
     The amount offered by the project as tribute to incentivize Hydro voters to
-    allocate liquidity to their bid.{" "}
+    allocate liquidity to their bid. Tribute was not offered Pre-Hydro.{" "}
     <StyledText
       as={Link}
       href="/docs/projects/bidding#tribute-additions"
@@ -327,7 +327,7 @@ export const pointSystemTooltip = ({
 export const polAvailableTooltip = (
   <>
     This is the total ATOM available for Protocol-Owned Liquidity (PoL) to be
-    deployed across projects in the Hydro Committee Treasury.
+    deployed across projects in the Hydro Committee.
   </>
 )
 
@@ -481,8 +481,9 @@ export const bidDetailsPolSizeTooltip = (
 
 export const bidDetailsStatusTooltip = (
   <>
-    The current status of the liquidity deployment (voting period, ongoing,
-    concluded).
+    The current status of the liquidity deployment, such as &lsquo;Voting Period&rsquo; for current round bids,
+    &lsquo;Ongoing&rsquo; for active deployments, or &lsquo;Completed&rsquo; for
+    completed ones.
   </>
 )
 
