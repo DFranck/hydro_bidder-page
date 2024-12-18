@@ -327,15 +327,15 @@ export const pointSystemTooltip = ({
 export const polAvailableTooltip = (
   <>
     This is the total ATOM available for Protocol-Owned Liquidity (PoL) to be
-    deployed across projects in the Hydro Committee.
+    deployed across projects from the Hydro Committee.
   </>
 )
 
 export const polDeployedTooltip = (
   <>
-    This is the total amount of Protocol-Owned Liquidity (PoL) deployed to
-    projects through Hydro. It is the aggregate amount of all past-round
-    deployments.
+    This is the total amount of Protocol-Owned Liquidity (PoL) that has been deployed to
+    projects over time. It is the aggregate amount of all past-round
+    and Pre-Hydro deployments.
   </>
 )
 
