@@ -27,7 +27,11 @@ export function AllTimeRewardsWallet() {
         </Tooltip>
       }
       subTitle="All-Time"
-      value={amountToUSDString(allTimeUsersRewardsInUsd)}
+      value={amountToUSDString(allTimeUsersRewardsInUsd, {
+        appendUsd: false,
+        numberOfDecimals: 2,
+        removeTrailingZeros: true,
+      })}
     />
   )
 }
