@@ -11,6 +11,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   bidDetailsPolSizeTooltip,
   bidDetailsStatusTooltip,
+  bidDetailsVoteReceivedTooltip,
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
   VOTE_SHARE_THRESHOLD,
@@ -229,21 +230,26 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             {Boolean(metrics.currentAllocationAmount) && (
-              <div>
-                <Tooltip tipContents={bidDetailsPolSizeTooltip}>
-                  <StyledText
-                    as="h3"
-                    variant="label"
-                    className="flex items-center gap-1 text-palette-green"
-                  >
-                    <span>PoL Size</span>
-                    <Icon name="circle-info" />
-                  </StyledText>
-                </Tooltip>
-                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
-                  {metrics.currentAllocationAmount.toLocaleString()} ATOM
+              <>
+                <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                  Round {bid.roundId + 1}
                 </div>
-              </div>
+                <div>
+                  <Tooltip tipContents={bidDetailsPolSizeTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex items-center gap-1 text-palette-green"
+                    >
+                      <span>PoL Size</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                    {metrics.currentAllocationAmount.toLocaleString()} ATOM
+                  </div>
+                </div>
+              </>
             )}
 
             {Boolean(metrics.apr) && (
@@ -262,6 +268,26 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </div>
             )}
 
+            {metrics.status?.toLowerCase() === "voting period" && (
+              <>
+                <div>
+                  <Tooltip tipContents={bidDetailsStatusTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex items-center gap-1"
+                    >
+                      <span>Status</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize">
+                    {metrics.status}
+                  </div>
+                </div>
+              </>
+            )}
+
             {metrics.status?.toLowerCase() === "ongoing" && (
               <>
                 <div>
@@ -275,7 +301,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                       <Icon name="circle-info" />
                     </StyledText>
                   </Tooltip>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize text-palette-green">
                     {metrics.status}
                   </div>
                 </div>
@@ -339,9 +365,16 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             <div>
-              <StyledText as="h3" variant="label">
-                % Vote Received
-              </StyledText>
+              <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex items-center gap-1 "
+                >
+                  <span>% Vote Received</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+              </Tooltip>
               <div
                 className="
                   flex

@@ -55,7 +55,8 @@ export const baseBidTypeTooltip = ({
   isPlural?: boolean
 }) => (
   <>
-    Bids are submitted by projects.{" "}
+    The amount offered as tribute in this bid to incentivize Hydro voters to
+    allocate liquidity to their bid.{" "}
     {isTokenBasedBid ? (
       <>
         {isPlural ? "These bids use" : "This bid uses"} live tokens as their
@@ -66,9 +67,7 @@ export const baseBidTypeTooltip = ({
         {isPlural ? "These bids use" : "This bid uses"} points as their tribute
         because they do not yet have a live token.
       </>
-    )}{" "}
-    You can only vote once (per bucket per tranche) but you can switch your vote
-    as many times as you want.
+    )}
   </>
 )
 
@@ -253,9 +252,9 @@ export const metricsPolSizeColumnTooltip = (
 
 export const metricsStatusColumnTooltip = (
   <>
-    The current status of the liquidity deployment, such as &lsquo;Voting Period&rsquo; for current round bids,
-    &lsquo;Ongoing&rsquo; for active deployments, or &lsquo;Completed&rsquo; for
-    completed ones.
+    The current status of the liquidity deployment, such as &lsquo;Voting
+    Period&rsquo; for current round bids, &lsquo;Ongoing&rsquo; for active
+    deployments, or &lsquo;Completed&rsquo; for completed ones.
   </>
 )
 
@@ -333,8 +332,8 @@ export const polAvailableTooltip = (
 
 export const polDeployedTooltip = (
   <>
-    This is the total amount of Protocol-Owned Liquidity (PoL) that has been deployed to
-    projects over time. It is the aggregate amount of all past-round
+    This is the total amount of Protocol-Owned Liquidity (PoL) that has been
+    deployed to projects over time. It is the aggregate amount of all past-round
     and Pre-Hydro deployments.
   </>
 )
@@ -374,14 +373,17 @@ export const rewardsPolRewardsColumnTooltip = (
 
 export const rewardsYourTributeColumnTooltip = (
   <>
-    This is the tribute you earned from this bid in this round, based on your voting power. If a project added additional tributes in a round to a bid, or used multiple tokens as tribute, you may see multiple rows for the same bid.
+    This is the tribute you earned from this bid in this round, based on your
+    voting power. If a project added additional tributes in a round to a bid, or
+    used multiple tokens as tribute, you may see multiple rows for the same bid.
   </>
 )
 
 export const rewardsTotalTributeColumnTooltip = (
   <>
     This is the total tribute that was offered for this bid in the round
-    displayed. If a project added additional tributes in a round to a bid, or used multiple tokens as tribute, you may see multiple rows for the same bid.
+    displayed. If a project added additional tributes in a round to a bid, or
+    used multiple tokens as tribute, you may see multiple rows for the same bid.
   </>
 )
 
@@ -436,13 +438,15 @@ export const voteThresholdTooltip = (
 
 export const yourAggregateAprTooltip = (
   <>
-    This is the Aggregate historical APR based on all past rounds, based on total votes and total tributes that were paid out as rewards.
+    This is the Aggregate historical APR based on all past rounds, based on
+    total votes and total tributes that were paid out as rewards.
   </>
 )
 
 export const yourRoundAprTooltip = (
   <>
-    This is the Average APR for the previous round, based on the total votes and total tributes that were paid out as rewards.
+    This is the Average APR for the previous round, based on the total votes and
+    total tributes that were paid out as rewards.
   </>
 )
 
@@ -477,9 +481,16 @@ export const bidDetailsPolSizeTooltip = (
 
 export const bidDetailsStatusTooltip = (
   <>
-    The current status of the liquidity deployment, such as &lsquo;Voting Period&rsquo; for current round bids,
-    &lsquo;Ongoing&rsquo; for active deployments, or &lsquo;Completed&rsquo; for
-    completed ones.
+    The current status of the liquidity deployment, such as &lsquo;Voting
+    Period&rsquo; for current round bids, &lsquo;Ongoing&rsquo; for active
+    deployments, or &lsquo;Completed&rsquo; for completed ones.
+  </>
+)
+
+export const bidDetailsVoteReceivedTooltip = (
+  <>
+    This is the percentage of votes that this project received during the
+    specified round.
   </>
 )
 

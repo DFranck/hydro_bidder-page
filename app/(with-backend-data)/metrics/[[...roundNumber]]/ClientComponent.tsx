@@ -10,12 +10,14 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
+  metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
   metricsTributeColumnTooltip,
 } from "@/components/ToolTips"
+import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
@@ -66,6 +68,48 @@ export function ClientComponent({
         (bid.apr === 0 ||
           bid.currentAllocationAmount - bid.initialAllocationAmount <= 0))
 
+    const renderTributeAmount = (
+      bid: SanitizedBidFromNumia,
+      isPreHydro: boolean
+    ) => {
+      if (isPreHydro) {
+        return "0"
+      }
+
+      if (
+        bid.onchainTributeAssets.length === 0 &&
+        bid.offchainTribute.length === 0 &&
+        bid.onchainTributeUsdc === 0
+      ) {
+        return "0"
+      }
+
+      return (
+        <>
+          {bid.onchainTributeAssets.map((t) => (
+            <div key={t.denom}>
+              {simplifyBigNumbers(t.amount)}&nbsp;
+              <span title={t.denom}>{t.denom.slice(0, 12)}</span>
+            </div>
+          ))}
+          {bid.offchainTribute.map((t) => (
+            <div key={t.type} className="flex items-center gap-1">
+              <Icon name="solid:gem" />
+              <span>
+                {simplifyBigNumbers(t.amount)}&nbsp;{t.type}
+              </span>
+            </div>
+          ))}
+          {bid.onchainTributeUsdc > 0 && (
+            <div className="text-sm opacity-60">
+              {amountToUSDString(bid.onchainTributeUsdc)}
+            </div>
+          )}
+          {isPreHydro && "0"}
+        </>
+      )
+    }
+
     return {
       _bid: bid,
       logoAndTitle: (
@@ -103,7 +147,7 @@ export function ClientComponent({
       ),
       duration: (
         <InvisibleLink href={rowURL}>
-          {!bid.durationDays 
+          {!bid.durationDays
             ? "Pending"
             : bid.durationDays < 30
               ? pluralize({
@@ -142,26 +186,7 @@ export function ClientComponent({
       ),
       tribute: (
         <InvisibleLink href={rowURL}>
-          {bid.onchainTributeAssets.map((t) => (
-            <div key={t.denom}>
-              {simplifyBigNumbers(t.amount)}&nbsp;
-              <span title={t.denom}>{t.denom.slice(0, 12)}</span>
-            </div>
-          ))}
-          {bid.offchainTribute.map((t) => (
-            <div key={t.type} className="flex items-center gap-1">
-              <Icon name="solid:gem" />
-              <span>
-                {simplifyBigNumbers(t.amount)}&nbsp;{t.type}
-              </span>
-            </div>
-          ))}
-          {bid.onchainTributeUsdc > 0 && (
-            <div className="text-sm opacity-60">
-              {amountToUSDString(bid.onchainTributeUsdc)}
-            </div>
-          )}
-          {isPreHydro && "0"}
+          {renderTributeAmount(bid, isPreHydro)}
         </InvisibleLink>
       ),
       status: <InvisibleLink href={rowURL}>{status}</InvisibleLink>,
@@ -202,13 +227,14 @@ export function ClientComponent({
     {
       key: "duration",
       label: (
-        <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
+        <Tooltip tipContents={metricsDurationColumnTooltip}>
           <div className="flex items-center gap-1">
             Duration
             <Icon name="circle-info" />
           </div>
         </Tooltip>
       ),
+      textAlign: "right",
       propsForCells: {
         className: "whitespace-nowrap",
       },
@@ -267,7 +293,6 @@ export function ClientComponent({
           classNamesForTooltip="-ml-12"
         >
           <div className="flex items-center gap-1">
-            Tribute
             <Icon name="circle-info" />
           </div>
         </Tooltip>
