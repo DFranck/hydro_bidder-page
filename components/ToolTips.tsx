@@ -438,7 +438,7 @@ export const voteThresholdTooltip = (
 
 export const yourAggregateAprTooltip = (
   <>
-    This is the Aggregate historical APR based on all past rounds, based on
+    This is the Aggregate historical APR for all past rounds, based on
     total votes and total tributes that were paid out as rewards.
   </>
 )
