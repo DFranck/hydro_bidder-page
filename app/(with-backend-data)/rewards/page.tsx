@@ -175,7 +175,7 @@ export default function RewardsPage() {
             <InvisibleLink href={bidUrl}>
               <div className="flex items-center justify-end gap-2">
                 {canClaim ? (
-                  <Tooltip tipContents="Claim will be enabled soon!">
+                  <Tooltip tipContents="Claiming will be enabled soon!">
                     <StyledText
                       as="button"
                       variant="button.primary.small"

@@ -341,7 +341,6 @@ export function BidDetails({ bidId }: { bidId: number }) {
             <div>
               <StyledText as="h3" variant="label">
                 % Vote Received
-                <Icon name="circle-info" />
               </StyledText>
               <div
                 className="
