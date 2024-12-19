@@ -238,17 +238,21 @@ export function LockForm({
                     </StyledText>
 
                     <div className="flex items-center gap-3">
-                      <StyledText
-                        as="input"
-                        className="peer"
-                        type="text"
-                        pattern="^\d+(\.\d{1,6})?$"
-                        variant="input.text"
-                        value={amount}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                      />
-
+                      <div>
+                        <StyledText
+                          as="input"
+                          className="peer"
+                          type="text"
+                          pattern="^\d+(\.\d{1,6})?$"
+                          variant="input.text"
+                          value={amount}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                        />
+                        <StyledText as="p" variant="footnote" className="pt-1 text-xs">
+                          Available capacity: {availableAtomToBeLocked} ATOM
+                        </StyledText>
+                      </div>
                       <StyledText
                         as="p"
                         className="
@@ -261,7 +265,7 @@ export function LockForm({
                         <Icon name="triangle-exclamation" /> Invalid amount
                       </StyledText>
 
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 pb-4">
                         <StyledText as="span" variant="footnote">
                           Max: <strong>{maxAtomToBeLocked.toFixed(6)}</strong>{" "}
                           ATOM

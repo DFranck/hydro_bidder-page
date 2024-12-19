@@ -25,8 +25,11 @@ export function LsmInteraction({
 }: {
   validatorMap: Map<string, Validator>
 }) {
-  const { lockedAtomIsAtCapacityGlobal, lockedAtomIsAtCapacityWallet } =
-    useBackendData()
+  const {
+    lockedAtomIsAtCapacityGlobal,
+    lockedAtomIsAtCapacityWallet,
+    lockedAtomRemainingCapacityGlobal,
+  } = useBackendData()
   const {
     hubChain,
     hubSigner,
@@ -105,6 +108,10 @@ export function LsmInteraction({
                   validator={notice.validator}
                   validatorMap={validatorMap}
                   denom={notice.denom}
+                  canFinalizeLockup={
+                    lockedAtomRemainingCapacityGlobal >=
+                    Number((Number(notice.amount) / 10 ** 6).toFixed(6))
+                  }
                   setStepper={setStepper}
                 />
               )}
@@ -114,6 +121,10 @@ export function LsmInteraction({
                   validator={notice.validator}
                   validatorMap={validatorMap}
                   denom={notice.denom}
+                  canFinalizeLockup={
+                    lockedAtomRemainingCapacityGlobal >=
+                    Number((Number(notice.amount) / 10 ** 6).toFixed(6))
+                  }
                   baseDenom={notice.baseDenom}
                   setStepper={setStepper}
                 />
