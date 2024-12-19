@@ -298,8 +298,8 @@ export const networkLimitReachedTooltip = (
 
 export const currentRoundUniqueWalletsTooltip = (
   <>
-    This represents the total number of individual wallets participating in
-    Hydro right now. Each wallet is counted once.
+    This represents the total number of individual wallets that have participate
+    in Hydro. Each wallet is counted once.
   </>
 )
 
@@ -438,8 +438,8 @@ export const voteThresholdTooltip = (
 
 export const yourAggregateAprTooltip = (
   <>
-    This is the Aggregate historical APR for all past rounds, based on
-    total votes and total tributes that were paid out as rewards.
+    This is the Aggregate historical APR for all past rounds, based on total
+    votes and total tributes that were paid out as rewards.
   </>
 )
 
