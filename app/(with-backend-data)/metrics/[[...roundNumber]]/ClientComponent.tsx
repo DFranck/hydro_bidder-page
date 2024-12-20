@@ -293,6 +293,7 @@ export function ClientComponent({
           classNamesForTooltip="-ml-12"
         >
           <div className="flex items-center gap-1">
+            Tribute
             <Icon name="circle-info" />
           </div>
         </Tooltip>
