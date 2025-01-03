@@ -1,8 +1,11 @@
-export const upcomingAirdrops = `Elys	Elys Network makes crypto simple with universal access to tokens from all ecosystems. Whether you’re a novice or an experienced user, you can easily navigate the DeFi space through a complete set of features, all in one place.	Confirmed	Text	Pending		FALSE
+export const upcomingAirdrops = `Elys	Elys Network makes crypto simple with universal access to tokens from all ecosystems. Whether you’re a novice or an experienced user, you can easily navigate the DeFi space through a complete set of features, all in one place.	Confirmed	Button	More Info	https://airdrop.elys.network	FALSE
 Side Protocol	Side Protocol is a fully Bitcoin-compatible Layer 1 blockchain	Confirmed	Button	More Info	https://genesis.side.one/	FALSE
 Dungeon Chain	Dungeon Chain (DGN) revolutionizes gaming with fast, low-cost blockchain tech secured by Cosmos Hub validators; first game, Kosmic Quest, launches Q1 2025.	Confirmed	Text	Pending		FALSE
 Drop	Drop, a liquid staking protocol backed by Lido, turns idle assets into economic flows to empower sovereign blockchains.	Confirmed	Text	Pending		FALSE
 Demex	Demex is a seamless, omni-chain DEX for trading perpetuals, spot, and earning yield across chains.	Confirmed	Text	Pending		FALSE
+Symphony	The first self-balancing stablecoin blockchain	Confirmed	Text	Pending		FALSE
+OmniFlix	The p2p network for creators, DAOs, dApps & appchains to engage and educate their communities with media IP.	Confirmed	Button	More Info	https://x.com/HydroTeam_/status/1869803133519704077	FALSE
+Tribbles	Tribbles is a groundbreaking multi-chain meme coin with real utility. Launching on Agoric and powered by the people.	Confirmed	Button	More Info	https://x.com/Airdrops_one/status/1869892003464651067	FALSE
 Namada	Asset-agnostic privacy Layer 1 blockchain enabling shielded transfers with zero-knowledge proofs.	Rumored	Text	Pending		FALSE
 Soarchain	A DePIN project that incorporates AI and modularity, focusing on the mobility ecosystem.	Rumored	Text	Pending		FALSE
 Electron	The first DeFi Protocol designed to integrate RWAs on Neutron.	Rumored	Text	Pending		FALSE
@@ -21,6 +24,5 @@ Nillion	Nillion decentralizes trust for sensitive data in the same way that bloc
 Berachain	Berachain is a high-performance EVM-compatible blockchain built on Proof-of-Liquidity consensus.	Rumored	Text	Pending		FALSE
 Hyperlane	Hyperlane is an open interoperability framework for blockchain smart contract devs and users. Send and receive messages, bridge ERC-20 tokens & NFTs and mroe.	Rumored	Text	Pending		FALSE
 Babylon	Unlocking 21 Milion Bitcoins to Secure the Decentralized Economy	Rumored	Text	Pending		FALSE
-Symphony	The first self-balancing stablecoin blockchain	Rumored	Text	Pending		FALSE
 Tabi	Gaming L1 with any VM-compatibility	Rumored	Text	Pending		FALSE
 Aaron Network	Independent messaging exchange platform	Rumored	Text	Pending		FALSE`
