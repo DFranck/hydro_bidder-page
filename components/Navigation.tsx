@@ -211,64 +211,34 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={
-            process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" ||
-            !isConnected
-          }
+          condition={!isConnected}
           wrapper={(children) => (
-            <Tooltip
-              tipContents={
-                process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"
-                  ? comingSoonTooltip
-                  : needsWalletConnectionTooltip
-              }
-            >
+            <Tooltip tipContents={needsWalletConnectionTooltip}>
               {children}
             </Tooltip>
           )}
         >
           <Link
-            href={
-              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"
-                ? "#"
-                : "/rewards"
-            }
+            href="/rewards"
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              (process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" ||
-                !isConnected) &&
-                "pointer-events-none opacity-60"
+              !isConnected && "pointer-events-none opacity-60"
             )}
           >
             Rewards
           </Link>
         </ConditionalWrapper>
 
-        <ConditionalWrapper
-          condition={process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"}
-          wrapper={(children) => (
-            <Tooltip tipContents={comingSoonTooltip}>{children}</Tooltip>
-          )}
+        <Link
+          href={"/metrics"}
+          className={navigationMenuTriggerStyle("/metrics")}
         >
-          <Link
-            href={
-              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true"
-                ? "#"
-                : "/metrics"
-            }
-            className={twMerge(
-              navigationMenuTriggerStyle("/metrics"),
-              process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" &&
-                "pointer-events-none opacity-60"
-            )}
-          >
-            Metrics
-          </Link>
-        </ConditionalWrapper>
+          Metrics
+        </Link>
 
         <Link
           href="/airdrops"
-          className={twMerge(navigationMenuTriggerStyle("/airdrops"))}
+          className={navigationMenuTriggerStyle("/airdrops")}
         >
           Airdrops
         </Link>
