@@ -23,7 +23,12 @@ export function BidRewards({ bidId }: { bidId: number }) {
 
   const isTokenBasedBid = bid.tributes.every((tribute) => tribute.isTokenBased)
   const totalEstimatedRewardsUsd = amountToUSDString(
-    sumBy(bid.tributes, "valueInUsd")
+    sumBy(bid.tributes, "valueInUsd"),
+    {
+      appendUsd: false,
+      numberOfDecimals: 2,
+      removeTrailingZeros: true,
+    }
   )
   const roundedDeltaPercentage = Math.round(
     bid.usersEstimatedRewardRelativeToCurrentPick
@@ -72,7 +77,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
         </div>
       ) : (
         <div className="flex flex-col">
-          <div className="flex items-center justify-end gap-1">
+          <div className="flex items-center justify-end gap-2">
             {hasDelta && (
               <span
                 className={twMerge(
@@ -86,7 +91,11 @@ export function BidRewards({ bidId }: { bidId: number }) {
                 {roundedDeltaPercentage}%
               </span>
             )}
-            {amountToUSDString(bid.usersEstimatedRewards)}
+            {amountToUSDString(bid.usersEstimatedRewards, {
+              appendUsd: false,
+              numberOfDecimals: 2,
+              removeTrailingZeros: true,
+            })}
             <Icon name="circle-info" />
           </div>
           <StyledText variant="footnote" as="div" className="whitespace-nowrap">

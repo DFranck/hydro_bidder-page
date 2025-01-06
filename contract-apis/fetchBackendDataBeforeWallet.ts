@@ -11,6 +11,7 @@ import {
   BidDescription,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
+import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import {
   augmentLiquidityDeployment,
   fetchLiquidityDeployments,
@@ -64,6 +65,7 @@ export interface BackendDataBeforeWallet {
   lockedAtomMaxGlobal: number
   lockedAtomMaxWallet: number
   lockedAtomPercentageGlobal: number
+  lockedAtomRemainingCapacityGlobal: number
   lockedAtomTotalGlobal: number
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsForPreHydroBids: SanitizedBidFromNumia[]
@@ -106,27 +108,24 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
   const [
     {
-      constants: {
-        lock_epoch_length: lockedAtomEpochInNanos,
-        max_locked_tokens: lockedAtomMaxGlobal,
-      },
+      constants: { lock_epoch_length: lockedAtomEpochInNanos },
     },
     { round_id: currentRoundId },
     { tranches },
-    { total_locked_tokens: lockedAtomTotalGlobal },
     assetListWithPrices,
     { preHydroBids, postHydroBids },
     bidDescriptionsByBidId,
     metrics,
+    globalLockupCapacityInfo,
   ] = await Promise.all([
     hydroQueryClient.constants(),
     hydroQueryClient.currentRound(),
     hydroQueryClient.tranches(),
-    hydroQueryClient.totalLockedTokens(),
     fetchAssetListWithPrices(),
     fetchNumiaBidData(),
     fetchBidDescriptionsById(),
     fetchNumiaMetricsData(),
+    fetchGlobalLockupCapacity(),
   ])
 
   const atomPrice =
@@ -139,12 +138,6 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
   })
 
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
-
-  const lockedAtomPercentageGlobal = Math.floor(
-    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
-  )
-
-  const lockedAtomIsAtGlobalCapacity = lockedAtomPercentageGlobal === 100
 
   // [0, 1, 2, ...currentRoundId]
   const allRoundIds = range(0, currentRoundId + 1)
@@ -305,15 +298,12 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     currentRoundId,
     currentRoundIsPilot: true,
     lockedAtomEpochInNanos,
-    lockedAtomIsAtCapacityGlobal: lockedAtomIsAtGlobalCapacity,
-    lockedAtomMaxGlobal,
     lockedAtomMaxWallet: 200, // TODO: get this from contract
-    lockedAtomPercentageGlobal,
-    lockedAtomTotalGlobal,
     metricsForPostHydroBids: postHydroBids,
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: metrics,
     tranches: tranches,
+    ...globalLockupCapacityInfo,
   }
 
   return backendDataBeforeWallet

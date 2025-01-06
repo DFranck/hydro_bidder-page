@@ -16,7 +16,7 @@ export function AllTimeAprWallet() {
       title={
         <Tooltip tipContents={yourAggregateAprTooltip}>
           <div className="flex items-center gap-1">
-            <span>Your Aggregate APR</span>
+            <span>Aggregate APR</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>

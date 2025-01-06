@@ -211,10 +211,17 @@ async function uncachedFetchBackendDataAfterWallet({
   const votedBid = bidsWithRewards.find((bid) => bid.id === votedBidId) ?? null
 
   const bidsWithRewardsRelativeToCurrentPick = bidsWithRewards.map((bid) => {
+    // // this formula is not correct
+    // const usersEstimatedRewardRelativeToCurrentPick =
+    //   votedBid && votedBid.usersEstimatedRewards && bid.usersEstimatedRewards
+    //     ? 100 -
+    //       (votedBid.usersEstimatedRewards / bid.usersEstimatedRewards) * 100
+    //     : 0
+
     const usersEstimatedRewardRelativeToCurrentPick =
       votedBid && votedBid.usersEstimatedRewards && bid.usersEstimatedRewards
-        ? 100 -
-          (votedBid.usersEstimatedRewards / bid.usersEstimatedRewards) * 100
+        ? (100 * (bid.usersEstimatedRewards - votedBid.usersEstimatedRewards)) /
+          votedBid.usersEstimatedRewards
         : 0
 
     return {

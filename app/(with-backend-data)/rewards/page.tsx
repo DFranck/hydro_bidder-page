@@ -153,7 +153,12 @@ export default function RewardsPage() {
                   <Tooltip tipContents={rewardsYourTributeTooltip}>
                     <div>{children}</div>
                     <StyledText variant="footnote">
-                      ({amountToUSDString(rewardsInUsd)}{" "}
+                      (
+                      {amountToUSDString(rewardsInUsd, {
+                        appendUsd: false,
+                        numberOfDecimals: 2,
+                        removeTrailingZeros: true,
+                      })}{" "}
                       <Icon name="circle-info" />)
                     </StyledText>
                   </Tooltip>
@@ -171,17 +176,20 @@ export default function RewardsPage() {
             <InvisibleLink href={bidUrl}>
               <div className="flex items-center justify-end gap-2">
                 {canClaim ? (
-                  <StyledText
-                    as="button"
-                    variant="button.primary.small"
-                    onClick={() =>
-                      setSelection({
-                        tributeId: tribute.id,
-                      })
-                    }
-                  >
-                    Claim
-                  </StyledText>
+                  <Tooltip tipContents="Claiming will be enabled soon!">
+                    <StyledText
+                      as="button"
+                      variant="button.primary.small"
+                      className="pointer-events-none opacity-50"
+                      onClick={() =>
+                        setSelection({
+                          tributeId: tribute.id,
+                        })
+                      }
+                    >
+                      Claim
+                    </StyledText>
+                  </Tooltip>
                 ) : isClaimed ? (
                   <div className="flex items-center gap-1">
                     Claimed <Icon name="check" />
