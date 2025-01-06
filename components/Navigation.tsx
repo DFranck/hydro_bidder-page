@@ -27,10 +27,7 @@ export default function Navigation() {
     lockedAtomPercentageGlobal,
     lockups,
   } = backendData
-  const canCreateFirstLockup =
-    !isLoading &&
-    isWalletConnected &&
-    !(lockedAtomPercentageWallet === 100 || lockedAtomPercentageGlobal === 100)
+  const showLockupBtn = !isLoading && isWalletConnected
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
 
@@ -276,7 +273,7 @@ export default function Navigation() {
           Airdrops
         </Link>
 
-        {canCreateFirstLockup && lockups.length === 0 && (
+        {showLockupBtn && (
           <StyledText
             as={Link}
             variant="button.primary.small"

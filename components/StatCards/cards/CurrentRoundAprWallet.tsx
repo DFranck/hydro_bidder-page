@@ -17,12 +17,12 @@ export function CurrentRoundAprWallet() {
       title={
         <Tooltip tipContents={yourRoundAprTooltip}>
           <div className="flex items-center gap-1">
-            <span>Your Round APR</span>
+            <span>Last Round APR</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
       }
-      subTitle={`Pilot Round ${currentRoundId + 1}`}
+      subTitle={`Pilot Round ${currentRoundId}`}
       value={`${(currentTributeApr * 100).toFixed(1)}%`}
     />
   )

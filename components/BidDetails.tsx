@@ -9,6 +9,11 @@ import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
+  bidDetailsPolSizeTooltip,
+  bidDetailsStatusTooltip,
+  bidDetailsVoteReceivedTooltip,
+  metricsDurationColumnTooltip,
+  metricsPolAprColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -18,6 +23,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { kebabCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
+import { pluralize } from "@/lib/pluralize"
 
 export function BidDetails({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
@@ -224,19 +230,26 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             {Boolean(metrics.currentAllocationAmount) && (
-              <div>
-                <StyledText
-                  as="h3"
-                  variant="label"
-                  className="flex items-center gap-1 text-palette-green"
-                >
-                  <span>PoL Size</span>
-                </StyledText>
-
-                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
-                  {metrics.currentAllocationAmount.toLocaleString()} ATOM
+              <>
+                <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                  Round {bid.roundId + 1}
                 </div>
-              </div>
+                <div>
+                  <Tooltip tipContents={bidDetailsPolSizeTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex items-center gap-1 text-palette-green"
+                    >
+                      <span>PoL Size</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                    {metrics.currentAllocationAmount.toLocaleString()} ATOM
+                  </div>
+                </div>
+              </>
             )}
 
             {Boolean(metrics.apr) && (
@@ -255,20 +268,86 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </div>
             )}
 
-            {metrics.status?.toLowerCase() === "ongoing" && (
-              <div>
-                <StyledText
-                  as="h3"
-                  variant="label"
-                  className="flex items-center gap-1 text-palette-green"
-                >
-                  <span>Status</span>
-                </StyledText>
-
-                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
-                  {metrics.status}
+            {metrics.status?.toLowerCase() === "voting period" && (
+              <>
+                <div>
+                  <Tooltip tipContents={bidDetailsStatusTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex items-center gap-1"
+                    >
+                      <span>Status</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize">
+                    {metrics.status}
+                  </div>
                 </div>
-              </div>
+              </>
+            )}
+
+            {metrics.status?.toLowerCase() === "ongoing" && (
+              <>
+                <div>
+                  <Tooltip tipContents={bidDetailsStatusTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex items-center gap-1 text-palette-green"
+                    >
+                      <span>Status</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize text-palette-green">
+                    {metrics.status}
+                  </div>
+                </div>
+                <div>
+                  <Tooltip tipContents={metricsDurationColumnTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex items-center gap-1 "
+                    >
+                      <span>PoL Duration</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold ">
+                    {!metrics.durationDays
+                      ? "Pending"
+                      : metrics.durationDays < 30
+                        ? pluralize({
+                            count: metrics.durationDays,
+                            prefixCount: true,
+                            singular: "day",
+                          })
+                        : pluralize({
+                            count: Math.round(metrics.durationDays / 30),
+                            prefixCount: true,
+                            singular: "month",
+                          })}
+                  </div>
+                </div>
+                <div>
+                  <Tooltip tipContents={metricsPolAprColumnTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex items-center gap-1 "
+                    >
+                      <span>PoL APR</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold ">
+                    {!metrics.apr ? "Pending" : `${metrics.apr}%`}
+                  </div>
+                </div>
+              </>
             )}
 
             <div>
@@ -277,18 +356,25 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 variant="label"
                 className="flex items-center gap-1"
               >
-                <span>Tribute to Voters</span>
+                <span>Tribute</span>
                 <Icon name="circle-info" />
               </StyledText>
-              <div className="max-w-64 overflow-x-auto">
+              <div className="flex max-w-64 flex-col overflow-x-auto">
                 <BidTributes bid={bid} />
               </div>
             </div>
 
             <div>
-              <StyledText as="h3" variant="label">
-                Vote Percentage
-              </StyledText>
+              <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex items-center gap-1 "
+                >
+                  <span>% Vote Received</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+              </Tooltip>
               <div
                 className="
                   flex

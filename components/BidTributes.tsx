@@ -21,6 +21,7 @@ export function BidTributes({
     ([denom, tributes]) => {
       const totalAmount = sumBy(tributes, "amount")
       const isTokenBasedBid = tributes.every((tribute) => tribute.isTokenBased)
+      const isPointBasedBid = !isTokenBasedBid
       const bidDescription = bidDescriptionsByBidId[bid.id]
 
       return (
@@ -31,7 +32,8 @@ export function BidTributes({
               <div>{simplifyBigNumbers(totalAmount)}</div>
               <div>{isTokenBasedBid ? denom : startCase(denom)}</div>
             </div>
-            {!isTokenBasedBid &&
+
+            {isPointBasedBid &&
               bidDescription &&
               bidDescription.pointProgramUrl && (
                 <div className="text-sm">
