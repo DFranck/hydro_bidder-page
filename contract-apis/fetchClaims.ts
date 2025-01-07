@@ -43,7 +43,7 @@ export async function fetchClaims({
     process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
   )
 
-  let historicalClaims: SanitizedClaim[]
+  let historicalClaims: SanitizedClaim[] = []
   let outstandingClaims: SanitizedClaim[] = []
 
   try {
@@ -58,32 +58,33 @@ export async function fetchClaims({
     historicalClaims = []
   }
 
-  try {
-    const roundIds = range(0, currentRoundId + 1)
+  const roundIds = range(0, currentRoundId + 1)
 
-    const allClaims = await Promise.all(
-      roundIds.map((roundId) =>
-        Promise.all(
-          trancheIds.map((trancheId) =>
-            tributeQueryClient.outstandingTributeClaims({
+  const allClaims = await Promise.all(
+    roundIds.map(async (roundId) =>
+      Promise.all(
+        trancheIds.map(async (trancheId) => {
+          try {
+            const result = await tributeQueryClient.outstandingTributeClaims({
               limit: 100,
               roundId,
               startFrom: 0,
               trancheId,
               userAddress: address,
             })
-          )
-        )
+            return result
+          } catch (error) {
+            return { claims: [] }
+          }
+        })
       )
     )
+  )
 
-    outstandingClaims = allClaims
-      .flat()
-      .flat()
-      .flatMap(({ claims }) => sanitizeClaims(claims))
-  } catch (error) {
-    outstandingClaims = []
-  }
+  outstandingClaims = allClaims
+    .flat()
+    .flat()
+    .flatMap(({ claims }) => sanitizeClaims(claims))
 
   return {
     historicalClaims,
