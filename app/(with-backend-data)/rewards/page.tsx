@@ -98,7 +98,8 @@ export default function RewardsPage() {
         )
         const matchingClaim =
           matchingOutstandingClaim ?? matchingHistoricalClaim
-        const rewardsInUsd = matchingClaim?.amount.valueInUsd ?? 0
+        const matchingClaimAmount = matchingClaim?.amount
+        const rewardsInUsd = matchingClaimAmount?.valueInUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
           "amount"
@@ -147,28 +148,32 @@ export default function RewardsPage() {
 
           yourTribute: (
             <InvisibleLink href={bidUrl}>
-              <ConditionalWrapper
-                condition={rewardsInUsd > 0}
-                wrapper={(children) => (
-                  <Tooltip tipContents={rewardsYourTributeTooltip}>
-                    <div>{children}</div>
-                    <StyledText variant="footnote">
-                      (
-                      {amountToUSDString(rewardsInUsd, {
-                        appendUsd: false,
-                        numberOfDecimals: 2,
-                        removeTrailingZeros: true,
-                      })}{" "}
-                      <Icon name="circle-info" />)
-                    </StyledText>
-                  </Tooltip>
-                )}
-              >
-                {matchingClaim?.amount.printableAmount}
-                &nbsp;
-                {matchingClaim?.amount.humanReadableDenom?.slice(0, 12) ??
-                  tribute.denom?.slice(0, 12)}
-              </ConditionalWrapper>
+              {!matchingClaimAmount ? (
+                <div>&ndash;</div>
+              ) : (
+                <ConditionalWrapper
+                  condition={rewardsInUsd > 0}
+                  wrapper={(children) => (
+                    <Tooltip tipContents={rewardsYourTributeTooltip}>
+                      <div>{children}</div>
+                      <StyledText variant="footnote">
+                        (
+                        {amountToUSDString(rewardsInUsd, {
+                          appendUsd: false,
+                          numberOfDecimals: 2,
+                          removeTrailingZeros: true,
+                        })}{" "}
+                        <Icon name="circle-info" />)
+                      </StyledText>
+                    </Tooltip>
+                  )}
+                >
+                  {matchingClaimAmount?.printableAmount}
+                  &nbsp;
+                  {matchingClaimAmount?.humanReadableDenom?.slice(0, 12) ??
+                    tribute.denom?.slice(0, 12)}
+                </ConditionalWrapper>
+              )}
             </InvisibleLink>
           ),
 
