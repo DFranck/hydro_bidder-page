@@ -34,8 +34,8 @@ export function Step({
       async function revalidateTags() {
         setToasts([
           {
-            message: "Reloading...",
             variant: "working",
+            message: "Reloading...",
           },
         ])
 

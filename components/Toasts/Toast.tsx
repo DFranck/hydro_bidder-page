@@ -1,97 +1,82 @@
-import { CollapsibleBox } from "@/components/CollapsibleBox"
+"use client"
+
 import { Icon } from "@/components/Icon"
 import { IconString } from "@/components/Icon/types"
-import { Toast as ToastType, useToasts } from "@/components/Toasts/useToasts"
-import { get } from "lodash"
-import { ComponentProps, useState } from "react"
+import { ComponentProps, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
-import { classNames } from "./classNames"
+import { classNamesAndVariants } from "./classNamesAndVariants"
 
 interface ToastProps
   extends ComponentProps<"div">,
-    Omit<ToastType, "message" | "variant" | "_id"> {
+    Omit<ToastDescriptor, "message" | "variant" | "_id"> {
   icon?: IconString
-  variant?: keyof (typeof classNames)["variants"]
+  variant?: keyof (typeof classNamesAndVariants)["variants"]
+}
+
+export interface ToastDescriptor {
+  _id?: string
+  message: ReactNode
+  variant: keyof (typeof classNamesAndVariants)["variants"]
+  actionButtonPrimary?: {
+    label: ReactNode
+    onClick: () => void
+  }
+  actionButtonSecondary?: {
+    label: ReactNode
+    onClick: () => void
+  }
 }
 
 export function Toast({
   id,
-  actionButton,
   children,
   className,
+  actionButtonPrimary,
+  actionButtonSecondary,
   icon,
-  isDismissible: isDismissibleOverride,
   variant = "info",
-  ...otherProps
 }: ToastProps) {
-  const { setToasts } = useToasts()
-  const [isDismissed, setIsDismissed] = useState(false)
-  const isDismissible =
-    isDismissibleOverride ??
-    get(classNames.variants[variant], "isDismissible", true)
-
-  function handleDismiss() {
-    setIsDismissed(true)
-  }
-
-  function dismiss() {
-    setToasts((prevToasts) => prevToasts.filter((toast) => toast._id !== id))
-  }
-
   return (
-    <CollapsibleBox
-      isCollapsed={isDismissed}
-      onCollapseEnd={dismiss}
-      {...otherProps}
+    <div
+      className={twMerge(
+        "js-toast",
+        classNamesAndVariants.toastContainer,
+        classNamesAndVariants.variants[variant].container,
+        className
+      )}
     >
-      <div
-        className={twMerge(
-          "js-toast",
-          classNames.toastContainer,
-          classNames.variants[variant].container,
-          className
-        )}
-      >
-        <div className={classNames.iconContainer}>
-          {icon ? (
-            <Icon name={icon} variant="light" />
-          ) : (
-            classNames.variants[variant].icon
-          )}
-        </div>
-
-        {children && (
-          <div className={classNames.messageContainer}>{children}</div>
-        )}
-
-        {(isDismissible || actionButton) && (
-          <div className={classNames.actionButtonsContainer}>
-            {actionButton && (
-              <button
-                className={classNames.actionButton({
-                  hasDismissButton: isDismissible,
-                })}
-                onClick={() => {
-                  actionButton.onClick()
-                  handleDismiss()
-                }}
-              >
-                {actionButton.label}
-              </button>
-            )}
-            {isDismissible && (
-              <button
-                className={classNames.dismissButton({
-                  hasActionButton: Boolean(actionButton),
-                })}
-                onClick={handleDismiss}
-              >
-                Dismiss
-              </button>
-            )}
-          </div>
+      <div className={classNamesAndVariants.iconContainer}>
+        {icon ? (
+          <Icon name={icon} variant="light" />
+        ) : (
+          classNamesAndVariants.variants[variant].icon
         )}
       </div>
-    </CollapsibleBox>
+
+      {children && (
+        <div className={classNamesAndVariants.messageContainer}>{children}</div>
+      )}
+
+      {(actionButtonPrimary || actionButtonSecondary) && (
+        <div className={classNamesAndVariants.actionButtonsContainer}>
+          {actionButtonPrimary && (
+            <button
+              className={classNamesAndVariants.actionButton}
+              onClick={actionButtonPrimary.onClick}
+            >
+              {actionButtonPrimary.label}
+            </button>
+          )}
+          {actionButtonSecondary && (
+            <button
+              className={classNamesAndVariants.actionButton}
+              onClick={actionButtonSecondary.onClick}
+            >
+              {actionButtonSecondary.label}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   )
 }

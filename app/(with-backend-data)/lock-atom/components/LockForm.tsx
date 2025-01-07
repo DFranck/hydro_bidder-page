@@ -2,24 +2,21 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
-import { Toasts } from "@/components/Toasts"
+import { Toast } from "@/components/Toasts"
+import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useWalletValidators } from "@/contract-apis/useWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ChainContext } from "@cosmos-kit/core"
-import { debounce, isNumber } from "lodash"
+import { isNumber } from "lodash"
 import Link from "next/link"
-import { ChangeEvent, useEffect, useMemo, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { classNames } from "../classNames"
 import { ValidatorListItem } from "../components/ValidatorListItem"
 import { calculateLsmCapacity } from "../functions/calculateLsmCapacity"
 import { getValidatorMoniker } from "../functions/getValidatorMoniker"
-import {
-  fetchGlobalLockupCapacity,
-  GlobalLockupCapacityInfo,
-} from "@/contract-apis/fetchGlobalLockupCapacity"
 
 export function LockForm({
   onSubmit,
@@ -161,11 +158,11 @@ export function LockForm({
         <>
           <Card.Header title="Get Voting Power" />
           <Card.Body className={classNames.cardContent}>
-            <Toasts.Toast variant="info" isDismissible={false}>
+            <Toast variant="info">
               Once locked, your staked ATOMs are inaccessible for the duration
               of the lock. They will continue to accrue staking rewards but you
               will not be able to vote in Cosmos Hub governance.
-            </Toasts.Toast>
+            </Toast>
 
             <form onSubmit={handleSubmit}>
               {!validator && validators && (
@@ -249,7 +246,11 @@ export function LockForm({
                           onBlur={handleBlur}
                           onChange={handleChange}
                         />
-                        <StyledText as="p" variant="footnote" className="pt-1 text-xs">
+                        <StyledText
+                          as="p"
+                          variant="footnote"
+                          className="pt-1 text-xs"
+                        >
                           Available capacity: {availableAtomToBeLocked} ATOM
                         </StyledText>
                       </div>
