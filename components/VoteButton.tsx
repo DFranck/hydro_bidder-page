@@ -65,7 +65,6 @@ export function VoteButton({
     try {
       setToasts([
         {
-          isDismissible: false,
           variant: "working",
           message: "Processing your vote...",
         },
@@ -87,7 +86,7 @@ export function VoteButton({
           variant: "success",
           message: "Vote cast! Reload to see changes",
           isDismissible: false,
-          actionButton: {
+          actionButtonPrimary: {
             label: "Reload",
             onClick: () => window.location.reload(),
           },

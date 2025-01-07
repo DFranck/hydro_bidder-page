@@ -13,7 +13,7 @@ import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
-import { Toasts, useToasts } from "@/components/Toasts"
+import { Toast, useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
@@ -92,7 +92,6 @@ export default function LockupsPage() {
         {
           variant: "info",
           message: `${pluralizedLockupText} unlocked successfully. See next step!`,
-          isDismissible: true,
         },
       ])
 
@@ -232,7 +231,7 @@ export default function LockupsPage() {
           )}
 
           {incompleteNotices.length > 0 && (
-            <Toasts.Toast variant="error" isDismissible={false}>
+            <Toast variant="error">
               <p>
                 You have {incompleteNotices.length} incomplete lockups.{" "}
                 <StyledText
@@ -244,9 +243,8 @@ export default function LockupsPage() {
                   Review Incomplete Lockups <Icon name="arrow-right-long" />
                 </StyledText>
               </p>
-            </Toasts.Toast>
+            </Toast>
           )}
-
           {lockups.length > 0 && (
             <StyledTable
               columns={[

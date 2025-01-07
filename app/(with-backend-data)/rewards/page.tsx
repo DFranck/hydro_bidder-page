@@ -198,7 +198,7 @@ export default function RewardsPage() {
                   <>Refundable</>
                 ) : !hasDeployment ? (
                   <div className="flex items-center gap-1">
-                    Unresolved <Icon name="clock" />
+                    Pending Deployment <Icon name="clock" />
                   </div>
                 ) : isFunded ? (
                   <div className="flex items-center gap-1">None</div>
@@ -296,8 +296,8 @@ export default function RewardsPage() {
     try {
       setToasts([
         {
-          message: `Claiming rewards...`,
           variant: "working",
+          message: "Claiming rewards...",
         },
       ])
 
@@ -320,7 +320,7 @@ export default function RewardsPage() {
           variant: "success",
           message: "Reward claimed! Reload to see changes",
           isDismissible: false,
-          actionButton: {
+          actionButtonPrimary: {
             label: "Reload",
             onClick: () => window.location.reload(),
           },
@@ -330,8 +330,8 @@ export default function RewardsPage() {
       console.error(error)
       setToasts([
         {
-          message: `Error claiming rewards: ${error}`,
           variant: "error",
+          message: `Error claiming rewards: ${error}`,
         },
       ])
     }

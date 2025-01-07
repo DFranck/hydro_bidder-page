@@ -33,6 +33,7 @@ export type IncompleteNotice =
       validator: string
       amount: string
       denom: string
+      baseDenom: never
     }
   | {
       type: "LSMSharesOnNeutron"
