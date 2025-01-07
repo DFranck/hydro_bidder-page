@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon"
 import { twJoin } from "tailwind-merge"
 
-export const classNames = {
+export const classNamesAndVariants = {
   variants: {
     error: {
       container: "bg-palette-red/90",
@@ -22,7 +22,6 @@ export const classNames = {
     warning: {
       container: "bg-palette-beige/90 text-palette-text",
       icon: <Icon name="light:circle-exclamation" />,
-      isDismissible: false,
     },
     working: {
       container: "bg-palette-beige/90 text-palette-text",
@@ -31,7 +30,6 @@ export const classNames = {
           <Icon name="light:loader" />
         </div>
       ),
-      isDismissible: false,
     },
     workingInBackground: {
       container: "bg-black text-white rounded-full w-min pr-3 ml-auto",
@@ -40,11 +38,10 @@ export const classNames = {
           <Icon name="light:loader" />
         </div>
       ),
-      isDismissible: false,
     },
   },
   toastsContainer: twJoin(`
-    group
+    group/toasts-container
     fixed
     bottom-6
     right-6
@@ -54,13 +51,13 @@ export const classNames = {
     w-96
     flex-col-reverse
     items-end
+    gap-3
     transition-opacity
     [&:not(:has(.js-toast))]:pointer-events-none
     [&:not(:has(.js-toast))]:opacity-0
     [&_.js-toast-container]:w-full
   `),
   toastContainer: twJoin(`
-    mt-3
     grid
     grid-cols-[min-content,auto,min-content]
     grid-rows-2
@@ -107,30 +104,14 @@ export const classNames = {
     border-l-2
     border-white/20
   `),
-  actionButton: ({ hasDismissButton = true }) =>
-    twJoin(
-      `
-        px-3
-        py-1
-        bg-blend-overlay
-        hover:bg-black/10
-      `,
-      hasDismissButton ? "row-span-1" : "row-span-2"
-    ),
-  dismissButton: ({ hasActionButton = false }) =>
-    twJoin(
-      `
-        px-3
-        py-1
-        bg-blend-overlay
-        hover:bg-black/10
-      `,
-      hasActionButton
-        ? `
-          row-span-1
-          border-t-2
-          border-white/20
-        `
-        : "row-span-2"
-    ),
+  actionButton: twJoin(`
+    row-span-1
+    px-3
+    py-1
+    bg-blend-overlay
+    only:row-span-2
+    hover:bg-black/10
+    [&+&]:border-t-2
+    [&+&]:border-white/20
+  `),
 }

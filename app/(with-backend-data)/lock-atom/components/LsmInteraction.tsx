@@ -1,14 +1,22 @@
 "use client"
 
 import { LockForm } from "@/app/(with-backend-data)/lock-atom/components/LockForm"
+import { getValidatorMoniker } from "@/app/(with-backend-data)/lock-atom/functions/getValidatorMoniker"
 import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
+import { Toast } from "@/components/Toasts/Toast"
+import { Tooltip } from "@/components/Tooltip"
+import { cannotContinueLockupTooltip } from "@/components/ToolTips"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
 import Link from "next/link"
 import { useState } from "react"
+import { twJoin } from "tailwind-merge"
 import { classNames } from "../classNames"
 import { ContinueFromHubStepper } from "../steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "../steppers/ContinueFromNeutronStepper"
@@ -16,9 +24,7 @@ import { LockStepper } from "../steppers/LockStepper"
 import { RevertFromHubStepper } from "../steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "../steppers/RevertFromNeutronStepper"
 import { Stepper } from "../types"
-import { HubIncompleteNotice } from "./HubIncompleteNotice"
 import { LoaderCard } from "./LoaderCard"
-import { NeutronIncompleteNotice } from "./NeutronIncompleteNotice"
 
 export function LsmInteraction({
   validatorMap,
@@ -36,10 +42,9 @@ export function LsmInteraction({
     neutronChain,
     neutronSigner,
     incompleteNotices,
-    deleteIncompleteNotice,
   } = useIncompleteNotices()
   const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
-  const [visibleNotices, setVisibleNotices] = useState(2)
+  const [numVisibleNotices, setVisibleNotices] = useState(2)
 
   return (
     (hubSigner && neutronSigner && (
@@ -100,48 +105,99 @@ export function LsmInteraction({
           </div>
         )}
         <div className="flex flex-col gap-6">
-          {incompleteNotices.slice(0, visibleNotices).map((notice, index) => (
-            <div key={index}>
-              {notice.type === "LSMSharesOnHub" && (
-                <HubIncompleteNotice
-                  amount={notice.amount}
-                  validator={notice.validator}
-                  validatorMap={validatorMap}
-                  denom={notice.denom}
-                  canFinalizeLockup={
+          {incompleteNotices.length >= 1 && (
+            <>
+              {incompleteNotices
+                .slice(0, numVisibleNotices)
+                .map((notice, index) => {
+                  const canFinalizeLockup =
                     lockedAtomRemainingCapacityGlobal >=
                     Number((Number(notice.amount) / 10 ** 6).toFixed(6))
-                  }
-                  setStepper={setStepper}
-                />
-              )}
-              {notice.type === "LSMSharesOnNeutron" && (
-                <NeutronIncompleteNotice
-                  amount={notice.amount}
-                  validator={notice.validator}
-                  validatorMap={validatorMap}
-                  denom={notice.denom}
-                  canFinalizeLockup={
-                    lockedAtomRemainingCapacityGlobal >=
-                    Number((Number(notice.amount) / 10 ** 6).toFixed(6))
-                  }
-                  baseDenom={notice.baseDenom}
-                  setStepper={setStepper}
-                />
-              )}
-            </div>
-          ))}
 
-          {incompleteNotices.length > 2 &&
-            visibleNotices < incompleteNotices.length && (
-              <StyledText
-                as="button"
-                variant="link.subtle"
-                onClick={() => setVisibleNotices(incompleteNotices.length)}
-              >
-                Show {incompleteNotices.length - visibleNotices} more
-              </StyledText>
-            )}
+                  function getStepperConfigForAction(
+                    action: "continue" | "revert"
+                  ) {
+                    const baseConfig = {
+                      validator: notice.validator,
+                      amount: notice.amount,
+                      denom: notice.denom,
+                    }
+
+                    const source =
+                      notice.type === "LSMSharesOnHub" ? "Hub" : "Neutron"
+                    const type = `${action}From${source}LSM` as const
+                    return (
+                      source === "Neutron"
+                        ? { ...baseConfig, type, baseDenom: notice.baseDenom }
+                        : { ...baseConfig, type }
+                    ) as any
+                  }
+
+                  return (
+                    <Toast
+                      variant="warning"
+                      key={index}
+                      actionButtonPrimary={{
+                        label: (
+                          <ConditionalWrapper
+                            condition={!canFinalizeLockup}
+                            wrapper={(children) => (
+                              <Tooltip
+                                tipContents={cannotContinueLockupTooltip}
+                              >
+                                {children}
+                              </Tooltip>
+                            )}
+                          >
+                            <div
+                              className={twJoin(
+                                "flex items-center justify-center gap-1",
+                                !canFinalizeLockup &&
+                                  "cursor-default opacity-60"
+                              )}
+                            >
+                              Resume <Icon name="arrow-right-long" />
+                            </div>
+                          </ConditionalWrapper>
+                        ),
+                        onClick: () => {
+                          if (!canFinalizeLockup) return
+                          setStepper(getStepperConfigForAction("continue"))
+                        },
+                      }}
+                      actionButtonSecondary={{
+                        label: (
+                          <div className="flex items-center justify-center gap-1">
+                            <Icon name="rotate-left" /> Revert
+                          </div>
+                        ),
+                        onClick: () => {
+                          setStepper(getStepperConfigForAction("revert"))
+                        },
+                      }}
+                    >
+                      <strong>{formatAmount(notice.amount)} ATOM</strong> staked
+                      with{" "}
+                      <strong>
+                        {getValidatorMoniker(notice.validator, validatorMap)}
+                      </strong>{" "}
+                      is not fully locked
+                    </Toast>
+                  )
+                })}
+
+              {incompleteNotices.length > 2 &&
+                numVisibleNotices < incompleteNotices.length && (
+                  <StyledText
+                    as="button"
+                    variant="link.subtle"
+                    onClick={() => setVisibleNotices(incompleteNotices.length)}
+                  >
+                    Show {incompleteNotices.length - numVisibleNotices} more
+                  </StyledText>
+                )}
+            </>
+          )}
 
           {lockedAtomIsAtCapacityWallet ? (
             <BlurryBackdropBox className="p-6">
