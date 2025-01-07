@@ -3,8 +3,7 @@
 import { ComponentProps } from "react"
 import { twMerge } from "tailwind-merge"
 import { useIsClient } from "usehooks-ts"
-import { classNames } from "./classNames"
-import { Toast } from "./Toast"
+import { classNamesAndVariants } from "./classNamesAndVariants"
 
 interface ToastsProps extends ComponentProps<"div"> {}
 
@@ -15,14 +14,12 @@ export function Toasts({ children, className, ...otherProps }: ToastsProps) {
 
   return (
     <div
-      className={twMerge(classNames.toastsContainer, className)}
+      className={twMerge(classNamesAndVariants.toastsContainer, className)}
       {...otherProps}
     >
-      <div className={classNames.gradientOverlay} />
+      <div className={classNamesAndVariants.gradientOverlay} />
 
       {children}
     </div>
   )
 }
-
-Toasts.Toast = Toast

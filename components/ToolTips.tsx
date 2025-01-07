@@ -91,6 +91,13 @@ export const currentVoteShareTooltip = (
   </>
 )
 
+export const cannotContinueLockupTooltip = (
+  <>
+    This lockup is larger than the remaining capacity. You may either revert it
+    to get back your staked ATOM, or wait and continue when there is capacity.
+  </>
+)
+
 export const estimatedRewardsColumnTooltip = ({
   hasVotedThisRound,
   isTokenBasedBid,
