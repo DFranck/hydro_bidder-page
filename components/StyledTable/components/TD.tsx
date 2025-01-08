@@ -22,8 +22,9 @@ export function TD({
           first:rounded-l-md
           last:rounded-r-md
           max-sm:block
-          sm:p-5
+          sm:p-3
           sm:group-hover/table-row:bg-palette-beige/10
+          xl:p-5
         `,
 
         textAlign === "center"
