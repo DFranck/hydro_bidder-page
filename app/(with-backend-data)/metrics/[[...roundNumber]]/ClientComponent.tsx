@@ -5,8 +5,8 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { StatCards } from "@/components/StatCards"
-import { StyledTable } from "@/components/StyledTable"
-import { ColumnObject } from "@/components/StyledTable/types"
+import { StyledTable, TD, TR } from "@/components/StyledTable"
+import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -16,6 +16,8 @@ import {
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
   metricsTributeColumnTooltip,
+  VOTE_SHARE_THRESHOLD,
+  voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -26,6 +28,7 @@ import { sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { Fragment, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function ClientComponent({
@@ -35,8 +38,12 @@ export function ClientComponent({
   requestedRoundNumberUnderHood: number | null
   isPreHydro: boolean
 }) {
-  const { metricsForPreHydroBids, metricsForPostHydroBids, currentRoundId } =
-    useBackendData()
+  const {
+    bidsById,
+    metricsForPreHydroBids,
+    metricsForPostHydroBids,
+    currentRoundId,
+  } = useBackendData()
 
   if (
     requestedRoundNumberUnderHood &&
@@ -56,12 +63,9 @@ export function ClientComponent({
       )
 
   const rows = bidsToRender.map((bid) => {
-    const rowURL = isPreHydro
-      ? `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
-      : `/bids/${bid.id}`
-
     const {
       apr,
+      id,
       currentAllocationAmount,
       durationDays,
       initialAllocationAmount,
@@ -73,6 +77,14 @@ export function ClientComponent({
       status,
       title,
     } = bid
+
+    const bidFromContract = bidsById[Number(id)] ?? null
+
+    const rowURL = isPreHydro
+      ? `https://www.mintscan.io/cosmos/proposals/${id.replace("#", "")}`
+      : `/bids/${id}`
+
+    const percentage = bidFromContract?.percentage ?? null
 
     const isPending =
       status.toLowerCase() === "voting period" ||
@@ -122,7 +134,7 @@ export function ClientComponent({
     }
 
     return {
-      _bid: bid,
+      _bid: { ...bid, percentage },
 
       logoAndTitle: (
         <InvisibleLink href={rowURL} className="flex items-center gap-6">
@@ -344,6 +356,74 @@ export function ClientComponent({
     },
   ]
 
+  const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
+    ({ children, row, rowProps }) => {
+      const shouldShowVoteThresholdLine =
+        row._bid.percentage !== null &&
+        row._bid.percentage < VOTE_SHARE_THRESHOLD
+
+      return (
+        <Fragment key={row._bid.id}>
+          {!!shouldShowVoteThresholdLine && (
+            <TR
+              className="
+                js-vote-threshold-line
+                [&~&]:hidden
+              "
+            >
+              <TD colSpan={99} className="!p-0">
+                <div
+                  className="
+                    flex
+                    items-center
+                    justify-between
+                    gap-3
+                    whitespace-nowrap
+                    text-xs
+                    text-palette-beige
+                  "
+                >
+                  <div
+                    className="
+                      w-full
+                      border-t-2
+                      border-palette-beige
+                    "
+                  />
+
+                  <Tooltip tipContents={voteThresholdTooltip}>
+                    <div className="flex items-center gap-1">
+                      <Icon name="solid:circle" />
+                      <span>
+                        These bids are below the{" "}
+                        <strong>
+                          {VOTE_SHARE_THRESHOLD}% vote share threshold
+                        </strong>
+                      </span>
+                      <Icon name="circle-info" />
+                    </div>
+                  </Tooltip>
+
+                  <div
+                    className="
+                      w-full
+                      border-t-2
+                      border-palette-beige
+                    "
+                  />
+                </div>
+              </TD>
+            </TR>
+          )}
+          <TR key={row._bid.id} {...rowProps}>
+            {children}
+          </TR>
+        </Fragment>
+      )
+    },
+    [voteThresholdTooltip]
+  )
+
   return (
     <>
       {process.env.CONTEXT !== "production" && (
@@ -405,6 +485,16 @@ export function ClientComponent({
             columns={columns}
             rows={rows}
             initialSortedColumnKey="polSize"
+            renderRow={renderRow}
+            sortRows={(rows) =>
+              rows.sort((a, b) => {
+                const aExceedsThreshold =
+                  a._bid.percentage && a._bid.percentage >= VOTE_SHARE_THRESHOLD
+                const bExceedsThreshold =
+                  b._bid.percentage && b._bid.percentage >= VOTE_SHARE_THRESHOLD
+                return Number(bExceedsThreshold) - Number(aExceedsThreshold)
+              })
+            }
           />
         </BlurryBackdropBox>
       </ContentContainer>
