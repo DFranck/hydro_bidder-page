@@ -98,7 +98,8 @@ export default function RewardsPage() {
         )
         const matchingClaim =
           matchingOutstandingClaim ?? matchingHistoricalClaim
-        const rewardsInUsd = matchingClaim?.amount.valueInUsd ?? 0
+        const matchingClaimAmount = matchingClaim?.amount
+        const rewardsInUsd = matchingClaimAmount?.valueInUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
           "amount"
@@ -147,28 +148,32 @@ export default function RewardsPage() {
 
           yourTribute: (
             <InvisibleLink href={bidUrl}>
-              <ConditionalWrapper
-                condition={rewardsInUsd > 0}
-                wrapper={(children) => (
-                  <Tooltip tipContents={rewardsYourTributeTooltip}>
-                    <div>{children}</div>
-                    <StyledText variant="footnote">
-                      (
-                      {amountToUSDString(rewardsInUsd, {
-                        appendUsd: false,
-                        numberOfDecimals: 2,
-                        removeTrailingZeros: true,
-                      })}{" "}
-                      <Icon name="circle-info" />)
-                    </StyledText>
-                  </Tooltip>
-                )}
-              >
-                {matchingClaim?.amount.printableAmount}
-                &nbsp;
-                {matchingClaim?.amount.humanReadableDenom?.slice(0, 12) ??
-                  tribute.denom?.slice(0, 12)}
-              </ConditionalWrapper>
+              {!matchingClaimAmount ? (
+                <div>&ndash;</div>
+              ) : (
+                <ConditionalWrapper
+                  condition={rewardsInUsd > 0}
+                  wrapper={(children) => (
+                    <Tooltip tipContents={rewardsYourTributeTooltip}>
+                      <div>{children}</div>
+                      <StyledText variant="footnote">
+                        (
+                        {amountToUSDString(rewardsInUsd, {
+                          appendUsd: false,
+                          numberOfDecimals: 2,
+                          removeTrailingZeros: true,
+                        })}{" "}
+                        <Icon name="circle-info" />)
+                      </StyledText>
+                    </Tooltip>
+                  )}
+                >
+                  {matchingClaimAmount?.printableAmount}
+                  &nbsp;
+                  {matchingClaimAmount?.humanReadableDenom?.slice(0, 12) ??
+                    tribute.denom?.slice(0, 12)}
+                </ConditionalWrapper>
+              )}
             </InvisibleLink>
           ),
 
@@ -198,7 +203,7 @@ export default function RewardsPage() {
                   <>Refundable</>
                 ) : !hasDeployment ? (
                   <div className="flex items-center gap-1">
-                    Unresolved <Icon name="clock" />
+                    Pending Deployment <Icon name="clock" />
                   </div>
                 ) : isFunded ? (
                   <div className="flex items-center gap-1">None</div>
@@ -296,8 +301,8 @@ export default function RewardsPage() {
     try {
       setToasts([
         {
-          message: `Claiming rewards...`,
           variant: "working",
+          message: "Claiming rewards...",
         },
       ])
 
@@ -320,7 +325,7 @@ export default function RewardsPage() {
           variant: "success",
           message: "Reward claimed! Reload to see changes",
           isDismissible: false,
-          actionButton: {
+          actionButtonPrimary: {
             label: "Reload",
             onClick: () => window.location.reload(),
           },
@@ -330,8 +335,8 @@ export default function RewardsPage() {
       console.error(error)
       setToasts([
         {
-          message: `Error claiming rewards: ${error}`,
           variant: "error",
+          message: `Error claiming rewards: ${error}`,
         },
       ])
     }

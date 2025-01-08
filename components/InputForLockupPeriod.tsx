@@ -1,5 +1,5 @@
 import { StyledText } from "@/components/StyledText"
-import { Toasts } from "@/components/Toasts"
+import { Toast } from "@/components/Toasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
@@ -53,9 +53,9 @@ export function InputForLockupPeriod({
   return (
     <>
       {lockupPeriodOptions.length === 0 && (
-        <Toasts.Toast isDismissible={false} variant="error" className="w-full">
+        <Toast variant="error" className="w-full">
           This lockup cannot be refreshed at this time
-        </Toasts.Toast>
+        </Toast>
       )}
       <div className="flex w-min">
         {lockupPeriodOptions.map(({ label, duration }) => {

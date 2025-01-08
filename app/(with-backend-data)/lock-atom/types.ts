@@ -27,17 +27,10 @@ export type Stepper =
       baseDenom: string
     }
 
-export type IncompleteNotice =
-  | {
-      type: "LSMSharesOnHub"
-      validator: string
-      amount: string
-      denom: string
-    }
-  | {
-      type: "LSMSharesOnNeutron"
-      validator: string
-      amount: string
-      denom: string
-      baseDenom: string
-    }
+export type IncompleteNotice = {
+  type: "LSMSharesOnNeutron" | "LSMSharesOnHub"
+  validator: string
+  amount: string
+  denom: string
+  baseDenom?: string
+}

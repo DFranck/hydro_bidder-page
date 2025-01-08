@@ -8,7 +8,7 @@ import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
-import { Toasts } from "@/components/Toasts"
+import { Toast } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import Link from "next/link"
@@ -178,10 +178,9 @@ export default function AirdropsPage() {
               </p>
             </div>
 
-            <Toasts.Toast
+            <Toast
               className="my-0 w-full"
               icon="solid:parachute-box"
-              isDismissible={false}
               variant="info"
             >
               Are you a project planning an airdrop? We&rsquo;re here to help.{" "}
@@ -196,7 +195,7 @@ export default function AirdropsPage() {
                 <Icon name="arrow-up-right-from-square" />
               </StyledText>
               .
-            </Toasts.Toast>
+            </Toast>
           </div>
 
           <StyledTable
@@ -221,10 +220,9 @@ export default function AirdropsPage() {
               </p>
             </div>
 
-            <Toasts.Toast
+            <Toast
               className="my-0 w-full"
               icon="solid:comment-lines"
-              isDismissible={false}
               variant="info"
             >
               Got a rumor about an airdrop?{" "}
@@ -239,7 +237,7 @@ export default function AirdropsPage() {
                 <Icon name="arrow-up-right-from-square" />
               </StyledText>
               .
-            </Toasts.Toast>
+            </Toast>
           </div>
 
           <StyledTable

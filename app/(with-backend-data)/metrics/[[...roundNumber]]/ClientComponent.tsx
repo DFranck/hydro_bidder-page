@@ -60,13 +60,24 @@ export function ClientComponent({
       ? `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
       : `/bids/${bid.id}`
 
-    const { projectLogoUrl, projectName, title, durationDays, status } = bid
+    const {
+      apr,
+      currentAllocationAmount,
+      durationDays,
+      initialAllocationAmount,
+      offchainTribute,
+      onchainTributeAssets,
+      onchainTributeUsdc,
+      projectLogoUrl,
+      projectName,
+      status,
+      title,
+    } = bid
 
     const isPending =
       status.toLowerCase() === "voting period" ||
       (status.toLowerCase() === "ongoing" &&
-        (bid.apr === 0 ||
-          bid.currentAllocationAmount - bid.initialAllocationAmount <= 0))
+        (apr === 0 || currentAllocationAmount - initialAllocationAmount <= 0))
 
     const renderTributeAmount = (
       bid: SanitizedBidFromNumia,
@@ -77,22 +88,22 @@ export function ClientComponent({
       }
 
       if (
-        bid.onchainTributeAssets.length === 0 &&
-        bid.offchainTribute.length === 0 &&
-        bid.onchainTributeUsdc === 0
+        onchainTributeAssets.length === 0 &&
+        offchainTribute.length === 0 &&
+        onchainTributeUsdc === 0
       ) {
         return "0"
       }
 
       return (
         <>
-          {bid.onchainTributeAssets.map((t) => (
+          {onchainTributeAssets.map((t) => (
             <div key={t.denom}>
               {simplifyBigNumbers(t.amount)}&nbsp;
               <span title={t.denom}>{t.denom.slice(0, 12)}</span>
             </div>
           ))}
-          {bid.offchainTribute.map((t) => (
+          {offchainTribute.map((t) => (
             <div key={t.type} className="flex items-center gap-1">
               <Icon name="solid:gem" />
               <span>
@@ -100,9 +111,9 @@ export function ClientComponent({
               </span>
             </div>
           ))}
-          {bid.onchainTributeUsdc > 0 && (
+          {onchainTributeUsdc > 0 && (
             <div className="text-sm opacity-60">
-              {amountToUSDString(bid.onchainTributeUsdc)}
+              {amountToUSDString(onchainTributeUsdc)}
             </div>
           )}
           {isPreHydro && "0"}
@@ -112,6 +123,7 @@ export function ClientComponent({
 
     return {
       _bid: bid,
+
       logoAndTitle: (
         <InvisibleLink href={rowURL} className="flex items-center gap-6">
           <div className="relative size-12 shrink-0 rounded-full border text-[0]">
@@ -131,37 +143,38 @@ export function ClientComponent({
           </div>
         </InvisibleLink>
       ),
+
       polSize: (
         <InvisibleLink href={rowURL}>
-          {isPending
-            ? "Pending"
-            : "initialAllocationAmount" in bid && (
-                <>
-                  {bid.initialAllocationAmount.toLocaleString(undefined, {
-                    maximumFractionDigits: 4,
-                  })}
-                  &nbsp;ATOM
-                </>
-              )}
+          {currentAllocationAmount && (
+            <>
+              {currentAllocationAmount.toLocaleString(undefined, {
+                maximumFractionDigits: 4,
+              })}
+              &nbsp;ATOM
+            </>
+          )}
         </InvisibleLink>
       ),
+
       duration: (
         <InvisibleLink href={rowURL}>
-          {!bid.durationDays
+          {!durationDays
             ? "Pending"
-            : bid.durationDays < 30
+            : durationDays < 30
               ? pluralize({
-                  count: bid.durationDays,
+                  count: durationDays,
                   prefixCount: true,
                   singular: "day",
                 })
               : pluralize({
-                  count: Math.round(bid.durationDays / 30),
+                  count: Math.round(durationDays / 30),
                   prefixCount: true,
                   singular: "month",
                 })}
         </InvisibleLink>
       ),
+
       polRewards: (
         <InvisibleLink href={rowURL}>
           {isPending
@@ -170,7 +183,7 @@ export function ClientComponent({
               "initialAllocationAmount" in bid && (
                 <>
                   {(
-                    bid.currentAllocationAmount - bid.initialAllocationAmount
+                    currentAllocationAmount - initialAllocationAmount
                   ).toLocaleString(undefined, {
                     maximumFractionDigits: 4,
                   })}{" "}
@@ -179,16 +192,19 @@ export function ClientComponent({
               )}
         </InvisibleLink>
       ),
+
       polApr: (
         <InvisibleLink href={rowURL}>
-          {isPending ? "Pending" : "apr" in bid && `${bid.apr}%`}
+          {isPending ? "Pending" : "apr" in bid && `${apr}%`}
         </InvisibleLink>
       ),
+
       tribute: (
         <InvisibleLink href={rowURL}>
           {renderTributeAmount(bid, isPreHydro)}
         </InvisibleLink>
       ),
+
       status: <InvisibleLink href={rowURL}>{status}</InvisibleLink>,
     }
   })
