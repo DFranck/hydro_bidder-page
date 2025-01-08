@@ -46,16 +46,17 @@ export interface ColumnObject<R extends BaseRowObject, K extends keyof R> {
 export interface TableProps<R extends BaseRowObject, K extends keyof R>
   extends Omit<ComponentPropsWithRef<"table">, "children"> {
   columns: ColumnObject<R, K>[]
-  contentAfterHeaderRow?: ReactNode
-  contentBeforeHeaderRow?: ReactNode
-  contentForFirstRow?: ReactNode
-  contentForFooterRow?: ReactNode
-  contentForLastRow?: ReactNode
+  rows: R[]
   initialSortedColumnKey?: K
+  slotBeforeHeaderRow?: ReactNode
+  slotAfterHeaderRow?: ReactNode
+  slotBeforeFirstRow?: ReactNode
+  slotAfterLastRow?: ReactNode
+  slotForFooterRow?: ReactNode
   renderCells?: Record<K, CellRenderFunction<R, K>>
   renderHeaderCells?: Record<K, HeaderCellRenderFunction<R, K>>
   renderRow?: RowRenderFunction<R, K>
-  rows: R[]
+  sortRows?: (rows: R[], sortDirection: SortDirection | null) => R[]
 }
 
 export interface CellRenderFunction<

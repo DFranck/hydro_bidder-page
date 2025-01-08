@@ -1,7 +1,8 @@
 "use client"
 
+import { usePersistedReducer } from "@/lib/usePersistedReducer"
 import isEqual from "lodash/isEqual"
-import { MouseEvent, useEffect, useMemo, useReducer } from "react"
+import { MouseEvent, useEffect, useMemo } from "react"
 import { TABLE } from "./components/TABLE"
 import { TBODY } from "./components/TBODY"
 import { TD } from "./components/TD"
@@ -10,25 +11,39 @@ import { TH } from "./components/TH"
 import { THEAD } from "./components/THEAD"
 import { TR } from "./components/TR"
 import { initialTableState, tableStateReducer } from "./reducer"
-import { BaseRowObject, TableProps } from "./types"
+import {
+  BaseRowObject,
+  TableProps,
+  TableState,
+  TableStateAction,
+} from "./types"
 
 export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   className,
   columns,
-  contentForFirstRow = null,
-  contentForFooterRow = null,
-  contentAfterHeaderRow = null,
-  contentBeforeHeaderRow = null,
-  contentForLastRow = null,
+  rows,
   initialSortedColumnKey,
   renderRow,
-  rows,
+  slotBeforeHeaderRow = null,
+  slotAfterHeaderRow = null,
+  slotBeforeFirstRow = null,
+  slotAfterLastRow = null,
+  slotForFooterRow = null,
+  sortRows = (rows) => rows,
   ...otherProps
 }: TableProps<R, K>) {
-  const [tableState, tableDispatch] = useReducer(
-    tableStateReducer,
-    initialTableState
-  )
+  const uniqueTableId = columns.map((column) => column.key).join("-")
+
+  const [tableState, tableDispatch] = usePersistedReducer<
+    TableState<R, K>,
+    TableStateAction<R, K>
+  >({
+    reducer: tableStateReducer,
+    initialState: initialTableState,
+    key: `tableState-${uniqueTableId}`,
+    persistedKeys: ["sortDirection", "sortedColumnKey"],
+    storage: sessionStorage,
+  })
 
   const {
     columns: columnsInState,
@@ -37,6 +52,10 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
     sortedColumnKey,
     sortedRows,
   } = tableState
+
+  const twiceSortedRows = useMemo(() => {
+    return sortRows(sortedRows, sortDirection || "ASC")
+  }, [sortedRows, sortRows, sortDirection])
 
   useEffect(() => {
     if (
@@ -95,7 +114,7 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
 
   const renderedRows = useMemo(
     () =>
-      sortedRows.map((row, rowIndex) => {
+      twiceSortedRows.map((row, rowIndex) => {
         const rowProps = row.propsForRow ?? {}
 
         const renderedCells = columnsInState.map((column) => (
@@ -116,7 +135,7 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
             rowIndex,
             rowProps,
             sortDirection,
-            sortedColumnKey,
+            sortedColumnKey: sortedColumnKey as K,
             sortedRows,
           })
         ) : (
@@ -125,26 +144,33 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
           </TR>
         )
       }),
-    [columnsInState, renderRow, sortedRows, sortDirection, sortedColumnKey]
+    [
+      columnsInState,
+      renderRow,
+      sortDirection,
+      sortedColumnKey,
+      sortedRows,
+      twiceSortedRows,
+    ]
   )
 
   return (
     <TABLE {...otherProps}>
       <THEAD>
-        {contentBeforeHeaderRow}
+        {slotBeforeHeaderRow}
         <TR className="max-sm:hidden" variant="thead">
           {renderedHeaderCells}
         </TR>
-        {contentAfterHeaderRow}
+        {slotAfterHeaderRow}
       </THEAD>
 
       <TBODY>
-        {contentForFirstRow}
+        {slotBeforeFirstRow}
         {renderedRows}
-        {contentForLastRow}
+        {slotAfterLastRow}
       </TBODY>
 
-      {contentForFooterRow && <TFOOT>{contentForFooterRow}</TFOOT>}
+      {slotForFooterRow && <TFOOT>{slotForFooterRow}</TFOOT>}
     </TABLE>
   )
 }
