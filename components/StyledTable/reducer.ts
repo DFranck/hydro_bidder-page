@@ -56,17 +56,19 @@ export const tableStateReducer: Reducer<
 
     case "setTableData": {
       const { columns, dispatch, initialSortedColumnKey, rows } = action.payload
+      const { sortedColumnKey, sortDirection } = state
 
       const sortedColumn = columns.find(
-        (column) => column.key === initialSortedColumnKey
+        (column) => column.key === (sortedColumnKey ?? initialSortedColumnKey)
       )
 
       if (sortedColumn) {
         dispatch({
           type: "setSortedColumnKey",
           payload: {
-            sortDirection: sortedColumn.initialSortDirection ?? "ASC",
-            sortedColumnKey: initialSortedColumnKey,
+            sortDirection:
+              sortDirection ?? sortedColumn.initialSortDirection ?? "ASC",
+            sortedColumnKey: sortedColumnKey ?? initialSortedColumnKey,
           },
         })
       }
