@@ -20,6 +20,10 @@ export function useIsLoadingNewRoute() {
   }, [curPath])
 
   useEffect(() => {
+    setLoading(false)
+  }, [])
+
+  useEffect(() => {
     if (typeof navigator === "undefined") return
 
     const onMessage = ({
@@ -30,6 +34,11 @@ export function useIsLoadingNewRoute() {
       if (Date.now() - clickTime > 1000) return
 
       const url = toURL(data.fetchUrl)
+
+      const nextPath = url?.pathname
+
+      if (nextPath === curPath) return
+
       if (url?.search?.startsWith("?_rsc=") && data.dest === "") {
         clickTime = 0
         setLoading(true)
@@ -50,7 +59,7 @@ export function useIsLoadingNewRoute() {
       sw?.removeEventListener("message", onMessage)
       removeEventListener("click", onClick, true)
     }
-  }, [])
+  }, [curPath])
 
   return loading
 }
