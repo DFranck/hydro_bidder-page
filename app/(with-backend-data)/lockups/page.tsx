@@ -247,6 +247,7 @@ export default function LockupsPage() {
           )}
           {lockups.length > 0 && (
             <StyledTable
+              initialSortedColumnKey="endDate"
               columns={[
                 {
                   key: "lockedATOM",
@@ -280,7 +281,6 @@ export default function LockupsPage() {
                   textAlign: "right",
                 },
               ]}
-              initialSortedColumnKey="endDate"
               rows={lockups.map((lockup) => {
                 const isExpired = new Date() > lockup.dateEnd
                 return {
