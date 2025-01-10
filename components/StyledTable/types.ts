@@ -56,7 +56,7 @@ export interface TableProps<R extends BaseRowObject, K extends keyof R>
   renderCells?: Record<K, CellRenderFunction<R, K>>
   renderHeaderCells?: Record<K, HeaderCellRenderFunction<R, K>>
   renderRow?: RowRenderFunction<R, K>
-  sortRows?: (rows: R[], sortDirection: SortDirection | null) => R[]
+  secondSortRows?: (sortedRows: R[], sortDirection: SortDirection | null) => R[]
 }
 
 export interface CellRenderFunction<

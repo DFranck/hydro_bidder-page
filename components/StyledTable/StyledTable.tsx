@@ -29,7 +29,7 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   slotBeforeFirstRow = null,
   slotAfterLastRow = null,
   slotForFooterRow = null,
-  sortRows = (rows) => rows,
+  secondSortRows = (sortedRows) => sortedRows,
   ...otherProps
 }: TableProps<R, K>) {
   const uniqueTableId = columns.map((column) => column.key).join("-")
@@ -53,9 +53,9 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
     sortedRows,
   } = tableState
 
-  const twiceSortedRows = useMemo(() => {
-    return sortRows(sortedRows, sortDirection || "ASC")
-  }, [sortedRows, sortRows, sortDirection])
+  const secondSortedRows = useMemo(() => {
+    return secondSortRows(sortedRows, sortDirection || "ASC")
+  }, [sortedRows, secondSortRows, sortDirection])
 
   useEffect(() => {
     if (
@@ -114,7 +114,7 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
 
   const renderedRows = useMemo(
     () =>
-      twiceSortedRows.map((row, rowIndex) => {
+      secondSortedRows.map((row, rowIndex) => {
         const rowProps = row.propsForRow ?? {}
 
         const renderedCells = columnsInState.map((column) => (
@@ -150,7 +150,7 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
       sortDirection,
       sortedColumnKey,
       sortedRows,
-      twiceSortedRows,
+      secondSortedRows,
     ]
   )
 
