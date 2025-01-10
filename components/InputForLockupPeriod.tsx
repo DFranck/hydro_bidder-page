@@ -57,6 +57,7 @@ export function InputForLockupPeriod({
           This lockup cannot be refreshed at this time
         </Toast>
       )}
+
       <div className="flex w-min">
         {lockupPeriodOptions.map(({ label, duration }) => {
           const isSelected = innerSelectedDuration === duration

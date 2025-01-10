@@ -158,7 +158,7 @@ export function ClientComponent({
 
       polSize: (
         <InvisibleLink href={rowURL}>
-          {currentAllocationAmount && (
+          {!!currentAllocationAmount && (
             <>
               {currentAllocationAmount.toLocaleString(undefined, {
                 maximumFractionDigits: 4,
@@ -456,18 +456,18 @@ export function ClientComponent({
                     key={roundNumber ?? "pre-hydro"}
                     className={twMerge(
                       `
-                      -mx-px
-                      rounded-none
-                      backdrop-blur-none
-                      first:rounded-l-full
-                      last:rounded-r-full
-                      hover:scale-100
-                    `,
+                        -mx-px
+                        rounded-none
+                        backdrop-blur-none
+                        first:rounded-l-full
+                        last:rounded-r-full
+                        hover:scale-100
+                      `,
                       !isActive &&
                         `
-                        text-palette-green/50
-                        hover:text-palette-green
-                      `
+                          text-palette-green/50
+                          hover:text-palette-green
+                        `
                     )}
                   >
                     {roundNumber === null
@@ -486,8 +486,8 @@ export function ClientComponent({
             rows={rows}
             initialSortedColumnKey="polSize"
             renderRow={renderRow}
-            sortRows={(rows) =>
-              rows.sort((a, b) => {
+            secondSortRows={(sortedRows) =>
+              [...sortedRows].sort((a, b) => {
                 const aExceedsThreshold =
                   a._bid.percentage && a._bid.percentage >= VOTE_SHARE_THRESHOLD
                 const bExceedsThreshold =
