@@ -31,7 +31,7 @@ import { notFound } from "next/navigation"
 import { Fragment, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
 
-export function ClientComponent({
+export function MetricsPage({
   requestedRoundNumberUnderHood,
   isPreHydro,
 }: {
