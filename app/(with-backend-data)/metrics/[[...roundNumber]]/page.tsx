@@ -1,4 +1,4 @@
-import { ClientComponent } from "./ClientComponent"
+import { MetricsPage } from "./MetricsPage"
 
 export default async function Page({
   params,
@@ -14,7 +14,7 @@ export default async function Page({
   const isPreHydro = requestedRoundNumber === null
 
   return (
-    <ClientComponent
+    <MetricsPage
       requestedRoundNumberUnderHood={requestedRoundNumberUnderHood}
       isPreHydro={isPreHydro}
     />
