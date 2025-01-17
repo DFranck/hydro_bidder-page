@@ -12,21 +12,9 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
-const comingSoonTooltip = (
-  <>
-    <strong>Coming Soon</strong>
-  </>
-)
-
 export default function Navigation() {
   const backendData = useBackendData()
-  const {
-    isLoading,
-    isWalletConnected,
-    lockedAtomPercentageWallet,
-    lockedAtomPercentageGlobal,
-    lockups,
-  } = backendData
+  const { isLoading, isWalletConnected } = backendData
   const showLockupBtn = !isLoading && isWalletConnected
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
@@ -34,6 +22,7 @@ export default function Navigation() {
   const navigationMenuTriggerStyle = (link: string) => {
     return twMerge(
       `
+        block
         text-sm
         font-medium
         leading-tight
@@ -42,6 +31,10 @@ export default function Navigation() {
         hover:text-palette-beige
         focus:bg-transparent
         focus:text-palette-beige
+        max-lg:w-full
+        max-lg:justify-center
+        max-lg:py-3
+        max-lg:text-center
       `,
       pathname?.startsWith(link) ? "font-bold text-palette-beige" : ""
     )
@@ -165,13 +158,13 @@ export default function Navigation() {
           flex-col
           items-center
           justify-between
-          gap-6
           max-lg:py-12
           max-lg:indent-96
           max-lg:transition-all
           max-lg:duration-500
           max-lg:group-focus-within/navbar:indent-0
           lg:flex-row
+          lg:gap-6
         "
         onClick={blurActiveElement}
       >
