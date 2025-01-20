@@ -6,6 +6,7 @@ export function formatAmount(
   amount = Number(amount) / 10 ** decimals
   return amount.toLocaleString("en-US", {
     minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
     trailingZeroDisplay: "stripIfInteger",
   })
 }

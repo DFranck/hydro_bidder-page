@@ -54,6 +54,7 @@ const initialBackendDataContext: BackendDataAfterWallet = {
   lockups: [],
   metricsForPostHydroBids: [],
   metricsForPreHydroBids: [],
+  minTributeFactor: 0,
   votes: [],
   votesByRoundId: {},
   votingPower: 0,
