@@ -20,7 +20,7 @@ The information required includes the following items:
 
 The full template can be found [here](https://docs.google.com/document/d/1t_K0PxpH4nVWrme6l_8dNQxrUiw0OceNoQ0S959Kp_0/edit?usp=sharing). 
 For reference, an example of a completed, approved bid teplate can be found [here](https://docs.google.com/document/d/1wlJ0PC6oY2Tu34nbNL1wX5VGUJyy7bibjG8jIQLMWDM/edit#heading=h.tzgjlv8wdq8b).
-To start the conversation, you can schedule a call with [Milos](https://calendly.com/milos-informal/30-minute-meeting-hydro) from Informal Systems (the main contributor to Hydro).
+To start the conversation, you can schedule a call with [Brian](https://calendly.com/actional/hydro) from the Hydro Team.
 
 ## Committee review
 
