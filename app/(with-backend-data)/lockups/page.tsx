@@ -25,11 +25,13 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
 import { pluralize } from "@/lib/pluralize"
+import { preventOrphans } from "@/lib/preventOrphans"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { twJoin, twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -39,6 +41,9 @@ export default function LockupsPage() {
   const [isShowingNextStep, setIsShowingNextStep] = useState(false)
   const {
     address,
+    bidsById,
+    currentRoundId,
+    currentRoundEndDate,
     lockups,
     lockedAtomMaxWallet,
     lockedAtomPercentageGlobal,
@@ -247,33 +252,30 @@ export default function LockupsPage() {
           )}
           {lockups.length > 0 && (
             <StyledTable
-              initialSortedColumnKey="endDate"
+              initialSortedColumnKey="timeLeft"
               columns={[
                 {
-                  key: "lockedATOM",
-                  label: "Locked ATOM",
+                  key: "amount",
+                  label: "Amount",
                   isSortable: true,
-                },
-                {
-                  key: "multiplier",
-                  label: "Multiplier",
-                  isSortable: true,
-                  textAlign: "right",
                 },
                 {
                   key: "votingPower",
                   label: "Voting Power",
                   isSortable: true,
-                  textAlign: "right",
+                  textAlign: "center",
                 },
                 {
-                  key: "endDate",
-                  label: "End Date",
+                  key: "timeLeft",
+                  label: "Time Left",
                   isSortable: true,
-                  textAlign: "right",
                   customValueGetter: (row) => {
-                    return row._lockup.dateEnd?.getTime() ?? 0
+                    return row._lockup.daysLeft ?? 0
                   },
+                },
+                {
+                  key: "status",
+                  label: "Status",
                 },
                 {
                   key: "actions",
@@ -282,29 +284,172 @@ export default function LockupsPage() {
                 },
               ]}
               rows={lockups.map((lockup) => {
+                const isLocked = true // one day we might render lockups in limbo
+                const votedOnBidId =
+                  Object.values(lockup.metaDataByTrancheId).find(
+                    (trancheInfo) => trancheInfo.votedOnBidId !== null
+                  )?.votedOnBidId ?? null
+                const hasVoted = votedOnBidId !== null
+                const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
+                const hasDeployed = !!votedOnBid?.liquidityDeployment
                 const isExpired = new Date() > lockup.dateEnd
+                const daysLeft = Math.ceil(
+                  (new Date(lockup.dateEnd).getTime() - Date.now()) /
+                    (1000 * 60 * 60 * 24)
+                )
+                const roundsLeftOnDeployment =
+                  votedOnBid?.liquidityDeployment?.remainingRounds ?? -1
+
+                const [statusTopline, statusBottomline, statusExplanation] =
+                  hasDeployed
+                    ? [
+                        "Tied to bid deployment",
+                        roundsLeftOnDeployment > 0
+                          ? `${roundsLeftOnDeployment} rounds left`
+                          : roundsLeftOnDeployment === 0
+                            ? "Deployment ends with current round"
+                            : "Deployment complete",
+                        <>
+                          This lockup is currently tied to the bid above, which
+                          may or may not receive a deployment of some amount
+                          when the round ends.
+                        </>,
+                      ]
+                    : hasVoted
+                      ? [
+                          "Voted for bid in current round",
+                          `${getTimeUntilDate(currentRoundEndDate)} left in round`,
+                          <>
+                            This lockup is currently tied to the bid above in
+                            the current round
+                          </>,
+                        ]
+                      : isExpired
+                        ? [
+                            `Expired ${pluralize({
+                              count: -daysLeft,
+                              prefixCount: true,
+                              singular: "day",
+                            })} ago`,
+                            null,
+                            <>
+                              This lockup has expired and is no longer eligible
+                              to vote.
+                            </>,
+                          ]
+                        : [
+                            "Eligible to vote",
+                            null,
+                            <>
+                              This lockup is eligible to vote in the current
+                              round.
+                            </>,
+                          ]
+
                 return {
-                  _lockup: lockup,
-                  lockedATOM: <>{lockup.funds.amount} ATOM</>,
-                  multiplier: <>{lockup.multiplier.toPrecision(3)} &times;</>,
-                  votingPower: formatAmount(lockup.currentVotingPower),
-                  endDate: (
-                    <div className="flex flex-col items-end">
-                      <div className="flex items-center gap-1 whitespace-nowrap">
-                        {isExpired && (
-                          <Icon name="solid:triangle-exclamation" />
-                        )}
-                        {lockup.dateEnd.toLocaleString("en", {
-                          dateStyle: "medium",
-                        })}{" "}
-                      </div>
-                      <StyledText variant="footnote">
-                        {isExpired
-                          ? "Expired"
-                          : getTimeUntilDate(lockup.dateEnd)}
-                      </StyledText>
-                    </div>
+                  _lockup: { ...lockup, daysLeft },
+
+                  amount: (
+                    <>
+                      {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
+                      <StyledText variant="footnote">ATOM</StyledText>
+                    </>
                   ),
+
+                  votingPower: formatAmount(lockup.currentVotingPower),
+
+                  timeLeft:
+                    daysLeft <= 0
+                      ? "–"
+                      : pluralize({
+                          count: daysLeft,
+                          prefixCount: true,
+                          singular: "day",
+                        }),
+
+                  status: (
+                    <Tooltip
+                      className="whitespace-nowrap"
+                      classNamesForTooltip="w-80"
+                      tipContents={
+                        <div className="flex flex-col gap-2">
+                          <div
+                            className={twJoin(
+                              "grid grid-cols-3",
+                              "-mx-4 -mt-2", // negate padding from Tooltip
+                              "bg-palette-green/5"
+                            )}
+                          >
+                            {(
+                              [
+                                ["locked", isLocked],
+                                ["voted", hasVoted],
+                                ["deployed", hasDeployed],
+                              ] as const
+                            ).map(([status, isActive]) => (
+                              <div
+                                key={status}
+                                className={twMerge(
+                                  "flex items-center justify-center gap-1",
+                                  "px-3 py-2",
+                                  "text-xs font-bold uppercase",
+                                  isActive
+                                    ? "bg-palette-green/10 text-palette-green"
+                                    : "text-white/30"
+                                )}
+                              >
+                                <Icon
+                                  name={
+                                    isActive
+                                      ? "solid:check"
+                                      : "solid:circle-dashed"
+                                  }
+                                />
+                                {status}
+                              </div>
+                            ))}
+                          </div>
+
+                          {hasVoted && votedOnBid && (
+                            <div className="flex flex-col">
+                              <StyledText variant="label">
+                                Voted for bid:
+                              </StyledText>
+                              <StyledText
+                                as="a"
+                                variant="link"
+                                href={`/bids/${votedOnBidId}`}
+                                target="_blank"
+                              >
+                                {preventOrphans({
+                                  text: votedOnBid.title,
+                                  numWordsToWrap: 1,
+                                  append: (
+                                    <Icon name="arrow-up-right-from-square" />
+                                  ),
+                                })}
+                              </StyledText>
+                            </div>
+                          )}
+
+                          {statusExplanation}
+                        </div>
+                      }
+                    >
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-1">
+                          {statusTopline}
+                          <Icon name="circle-info" />
+                        </div>
+                        {statusBottomline && (
+                          <StyledText variant="footnote">
+                            {statusBottomline}
+                          </StyledText>
+                        )}
+                      </div>
+                    </Tooltip>
+                  ),
+
                   actions: <EditLockupDurationModal lockup={lockup} />,
                 }
               })}
