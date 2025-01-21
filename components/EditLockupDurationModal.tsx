@@ -12,21 +12,19 @@ import { SanitizedLockup } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { calculateLockupVotingPower } from "@/lib/calculateLockupVotingPower"
 import { formatAmount } from "@/lib/formatAmount"
+import { getDaysAway } from "@/lib/getDaysAway"
+import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
-import { FormEvent, useEffect, useState } from "react"
+import { FormEvent, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
-interface FormValues {
-  lockupPeriod: number
-  shares: string
-  power: string
-}
-
 type EditLockupDurationProps = {
-  lockup: SanitizedLockup
-  onSuccess?: () => void
+  lockup: SanitizedLockup | null
+  isOpen: boolean
+  onClose: () => void
+  onCloseComplete: () => void
 }
 
 const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
@@ -39,32 +37,34 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 
 export function EditLockupDurationModal({
   lockup,
-  onSuccess,
+  isOpen,
+  onClose,
+  onCloseComplete,
 }: EditLockupDurationProps) {
   const router = useRouter()
   const { address, lockedAtomEpochInNanos } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [isLockupModalOpen, setIsLockupModalOpen] = useState(false)
   const { setToasts } = useToasts()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const [selectedDuration, setSelectedDuration] = useState(
     AllowedLockupPeriodInEpochs.ONE_EPOCH
   )
-  const originalPower = lockup.currentVotingPower
+  const originalPower = lockup?.currentVotingPower ?? 0
   const newPower = calculateLockupVotingPower(
-    lockup.funds.amount * 1e6,
+    (lockup?.funds.amount ?? 0) * 1e6 ?? 0,
     selectedDuration / lockedAtomEpochInNanos
   )
-  const currentLockupEndDate = lockup.dateEnd
+  const currentLockupEndDate = lockup?.dateEnd ?? new Date()
+  const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
 
-  useEffect(() => {
-    if (isLockupModalOpen) return
+  function innerOnCloseComplete() {
     setHasChanged(false)
     setIsLoading(false)
     setToasts([])
-  }, [isLockupModalOpen])
+    onCloseComplete()
+  }
 
   async function handleChange(newDuration: number) {
     setSelectedDuration(newDuration)
@@ -102,14 +102,13 @@ export function EditLockupDurationModal({
         },
       ])
 
+      innerOnCloseComplete()
+
       setTimeout(() => {
         setToasts([])
         router.push("/lockups")
         router.refresh()
       }, 3000)
-
-      setIsLockupModalOpen(false)
-      onSuccess?.()
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
         setToasts([
@@ -134,123 +133,99 @@ export function EditLockupDurationModal({
   }
 
   return (
-    <>
-      <StyledText
-        as="button"
-        variant="button.secondary"
-        onClick={() => setIsLockupModalOpen(true)}
-      >
-        Edit Lockup
-      </StyledText>
+    <ModalWindow
+      isOpen={isOpen}
+      onClose={onClose}
+      onCloseComplete={innerOnCloseComplete}
+      className="w-96"
+    >
+      <Card>
+        <Card.Header title="Edit Lockup" />
+        <Card.Body>
+          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-2">
+              <div className="font-bold">Current End Date:</div>
 
-      <ModalWindow
-        className="w-96"
-        isOpen={isLockupModalOpen}
-        onClose={() => setIsLockupModalOpen(false)}
-      >
-        <Card>
-          <Card.Header title="Edit Lockup" />
-          <Card.Body>
-            <form
-              className="
-                flex
-                flex-col
-                gap-6
-              "
-              onSubmit={handleSubmit}
-            >
-              <div className="flex flex-col gap-2">
-                <div className="font-bold">Current End Date:</div>
+              <div className="flex items-center gap-2 opacity-60">
+                {dateFormatter.format(currentLockupEndDate)} (
+                {daysUntilEndDate === 0 ? (
+                  "today!"
+                ) : (
+                  <>
+                    {pluralize({
+                      count: Math.abs(daysUntilEndDate),
+                      singular: "day",
+                      prefixCount: true,
+                    })}{" "}
+                    {daysUntilEndDate > 0 ? "away" : "ago"}
+                  </>
+                )}
+                )
+              </div>
+            </div>
 
-                <div className="flex items-center gap-2 opacity-60">
-                  {dateFormatter.format(currentLockupEndDate)} (
-                  {relativeTimeFormatter.format(
-                    Math.floor(
-                      (currentLockupEndDate.getTime() - new Date().getTime()) /
-                        (1000 * 60 * 60 * 24)
-                    ),
-                    "day"
+            <div className="flex flex-col gap-2">
+              <div className="font-bold">New Lockup Duration:</div>
+
+              <InputForLockupPeriod
+                currentLockupEndDate={currentLockupEndDate}
+                selectedDuration={selectedDuration}
+                className="w-full"
+                classNamesForButtons="!w-full"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex items-center justify-around gap-3">
+              <div className="flex flex-col items-center text-center">
+                <div>Locked ATOM</div>
+                <div className="text-4xl font-bold text-palette-beige">
+                  {formatAmount(lockup?.funds.amount ?? 0, 0)}
+                </div>
+              </div>
+
+              <div className="relative flex flex-col items-center text-center">
+                <div>{hasChanged && "New "}Voting Power</div>
+                <div
+                  className={twMerge(
+                    "text-4xl font-bold text-palette-beige",
+                    powerDifference > 0 && "text-palette-green"
                   )}
-                  )
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div className="font-bold">New End Date:</div>
-
-                <InputForLockupPeriod
-                  currentLockupEndDate={currentLockupEndDate}
-                  selectedDuration={selectedDuration}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="flex items-center justify-around gap-3">
-                <div className="flex flex-col items-center text-center">
-                  <div>Locked ATOM</div>
-                  <div
-                    className="
-                      text-4xl
-                      font-bold
-                      text-palette-beige
-                    "
-                  >
-                    {formatAmount(lockup.funds.amount, 0)}
-                  </div>
-                </div>
-
-                <div className="relative flex flex-col items-center text-center">
-                  <div>{hasChanged && "New "}Voting Power</div>
-                  <div
-                    className={twMerge(
-                      `
-                        text-4xl
-                        font-bold
-                        text-palette-beige
-                      `,
-                      powerDifference > 0 && "text-palette-green"
-                    )}
-                  >
-                    {formatAmount(hasChanged ? newPower : originalPower)}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-row-reverse gap-2">
-                <StyledText
-                  as="button"
-                  variant="button.primary"
-                  type="submit"
-                  disabled={isLoading || !hasChanged}
                 >
-                  {isLoading ? (
-                    <div
-                      className={`
-                        animate-spin
-                        text-lg
-                      `}
-                    >
-                      <Icon name="solid:loader" />
-                    </div>
-                  ) : (
-                    "Confirm"
-                  )}
-                </StyledText>
-
-                <StyledText
-                  as="button"
-                  variant="button.secondary"
-                  type="button"
-                  disabled={isLoading}
-                  onClick={() => setIsLockupModalOpen(false)}
-                >
-                  Cancel
-                </StyledText>
+                  {formatAmount(hasChanged ? newPower : originalPower)}
+                </div>
               </div>
-            </form>
-          </Card.Body>
-        </Card>
-      </ModalWindow>
-    </>
+            </div>
+
+            <div className="flex flex-row-reverse gap-2">
+              <StyledText
+                as="button"
+                variant="button.primary"
+                type="submit"
+                disabled={isLoading || !hasChanged}
+              >
+                {isLoading ? (
+                  <div className="animate-spin text-lg">
+                    <Icon name="solid:loader" />
+                  </div>
+                ) : (
+                  "Confirm"
+                )}
+              </StyledText>
+
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                type="button"
+                disabled={isLoading}
+                onClick={onClose}
+              >
+                Cancel
+              </StyledText>
+            </div>
+          </form>
+        </Card.Body>
+      </Card>
+    </ModalWindow>
   )
 }

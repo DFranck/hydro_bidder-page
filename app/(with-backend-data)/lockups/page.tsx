@@ -21,8 +21,10 @@ import {
   lockupLimitTooltip,
 } from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
+import { SanitizedLockup } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
+import { getDaysAway } from "@/lib/getDaysAway"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
 import { pluralize } from "@/lib/pluralize"
 import { preventOrphans } from "@/lib/preventOrphans"
@@ -55,6 +57,10 @@ export default function LockupsPage() {
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
+  const [editingLockup, setEditingLockup] = useState<SanitizedLockup | null>(
+    null
+  )
+  const [isEditingLockup, setIsEditingLockup] = useState(false)
 
   async function handleClickToNextUnlockingStep() {
     router.push("/lock-atom")
@@ -270,6 +276,7 @@ export default function LockupsPage() {
                   key: "timeLeft",
                   label: "Time Left",
                   isSortable: true,
+                  textAlign: "center",
                   customValueGetter: (row) => {
                     return row._lockup.daysLeft ?? 0
                   },
@@ -294,58 +301,70 @@ export default function LockupsPage() {
                 const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
                 const hasDeployed = !!votedOnBid?.liquidityDeployment
                 const isExpired = new Date() > lockup.dateEnd
-                const daysLeft = Math.ceil(
-                  (new Date(lockup.dateEnd).getTime() - Date.now()) /
-                    (1000 * 60 * 60 * 24)
-                )
+                const daysLeft = getDaysAway(lockup.dateEnd)
                 const roundsLeftOnDeployment =
                   votedOnBid?.liquidityDeployment?.remainingRounds ?? -1
 
-                const [statusTopline, statusBottomline, statusExplanation] =
-                  hasDeployed
-                    ? [
-                        "Tied to bid deployment",
+                const {
+                  editLockupButtonLabel = null,
+                  statusTopline,
+                  statusBottomline = null,
+                  statusExplanation,
+                } = hasDeployed
+                  ? {
+                      statusTopline: "Tied to bid deployment",
+                      statusBottomline:
                         roundsLeftOnDeployment > 0
                           ? `${roundsLeftOnDeployment} rounds left`
                           : roundsLeftOnDeployment === 0
                             ? "Deployment ends with current round"
                             : "Deployment complete",
+                      statusExplanation: (
                         <>
                           This lockup is currently tied to the bid above, which
                           may or may not receive a deployment of some amount
                           when the round ends.
-                        </>,
-                      ]
-                    : hasVoted
-                      ? [
-                          "Voted for bid in current round",
-                          `${getTimeUntilDate(currentRoundEndDate)} left in round`,
+                        </>
+                      ),
+                    }
+                  : hasVoted
+                    ? {
+                        statusTopline: "Voted for bid in current round",
+                        statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
+                        statusExplanation: (
                           <>
                             This lockup is currently tied to the bid above in
                             the current round
-                          </>,
-                        ]
-                      : isExpired
-                        ? [
-                            `Expired ${pluralize({
-                              count: -daysLeft,
-                              prefixCount: true,
-                              singular: "day",
-                            })} ago`,
-                            null,
+                          </>
+                        ),
+                      }
+                    : isExpired
+                      ? {
+                          editLockupButtonLabel: "Refresh",
+                          statusTopline: `Expired ${pluralize({
+                            count: Math.abs(daysLeft),
+                            prefixCount: true,
+                            singular: "day",
+                          })} ago`,
+                          statusBottomline: (
+                            <>You can refresh this lockup, or unlock it</>
+                          ),
+                          statusExplanation: (
                             <>
                               This lockup has expired and is no longer eligible
                               to vote.
-                            </>,
-                          ]
-                        : [
-                            "Eligible to vote",
-                            null,
+                            </>
+                          ),
+                        }
+                      : {
+                          statusTopline: "Eligible to vote",
+                          statusExplanation: (
                             <>
                               This lockup is eligible to vote in the current
                               round.
-                            </>,
-                          ]
+                            </>
+                          ),
+                        }
 
                 return {
                   _lockup: { ...lockup, daysLeft },
@@ -360,13 +379,15 @@ export default function LockupsPage() {
                   votingPower: formatAmount(lockup.currentVotingPower),
 
                   timeLeft:
-                    daysLeft <= 0
-                      ? "–"
-                      : pluralize({
-                          count: daysLeft,
-                          prefixCount: true,
-                          singular: "day",
-                        }),
+                    daysLeft <= 0 ? (
+                      <Icon name="solid:triangle-exclamation" />
+                    ) : (
+                      pluralize({
+                        count: daysLeft,
+                        prefixCount: true,
+                        singular: "day",
+                      })
+                    ),
 
                   status: (
                     <Tooltip
@@ -453,13 +474,31 @@ export default function LockupsPage() {
                     </Tooltip>
                   ),
 
-                  actions: <EditLockupDurationModal lockup={lockup} />,
+                  actions: (
+                    <StyledText
+                      as="button"
+                      variant="button.secondary"
+                      onClick={() => {
+                        setIsEditingLockup(true)
+                        setEditingLockup(lockup)
+                      }}
+                    >
+                      {editLockupButtonLabel ?? "Edit Lockup"}
+                    </StyledText>
+                  ),
                 }
               })}
             />
           )}
         </BlurryBackdropBox>
       </ContentContainer>
+
+      <EditLockupDurationModal
+        lockup={editingLockup}
+        isOpen={isEditingLockup}
+        onClose={() => setIsEditingLockup(false)}
+        onCloseComplete={() => setEditingLockup(null)}
+      />
 
       <ModalWindow
         isOpen={isConfirmingUnlockExpired}
