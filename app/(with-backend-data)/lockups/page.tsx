@@ -374,42 +374,44 @@ export default function LockupsPage() {
                       classNamesForTooltip="w-80"
                       tipContents={
                         <div className="flex flex-col gap-2">
-                          <div
-                            className={twJoin(
-                              "grid grid-cols-3",
-                              "-mx-4 -mt-2", // negate padding from Tooltip
-                              "bg-palette-green/5"
-                            )}
-                          >
-                            {(
-                              [
-                                ["locked", isLocked],
-                                ["voted", hasVoted],
-                                ["deployed", hasDeployed],
-                              ] as const
-                            ).map(([status, isActive]) => (
-                              <div
-                                key={status}
-                                className={twMerge(
-                                  "flex items-center justify-center gap-1",
-                                  "px-3 py-2",
-                                  "text-xs font-bold uppercase",
-                                  isActive
-                                    ? "bg-palette-green/10 text-palette-green"
-                                    : "text-white/30"
-                                )}
-                              >
-                                <Icon
-                                  name={
+                          {!isExpired && (
+                            <div
+                              className={twJoin(
+                                "grid grid-cols-3",
+                                "-mx-4 -mt-2", // negate padding from Tooltip
+                                "bg-palette-green/5"
+                              )}
+                            >
+                              {(
+                                [
+                                  ["locked", isLocked],
+                                  ["voted", hasVoted],
+                                  ["deployed", hasDeployed],
+                                ] as const
+                              ).map(([status, isActive]) => (
+                                <div
+                                  key={status}
+                                  className={twMerge(
+                                    "flex items-center justify-center gap-1",
+                                    "px-3 py-2",
+                                    "text-xs font-bold uppercase",
                                     isActive
-                                      ? "solid:check"
-                                      : "solid:circle-dashed"
-                                  }
-                                />
-                                {status}
-                              </div>
-                            ))}
-                          </div>
+                                      ? "bg-palette-green/10 text-palette-green"
+                                      : "text-white/30"
+                                  )}
+                                >
+                                  <Icon
+                                    name={
+                                      isActive
+                                        ? "solid:check"
+                                        : "solid:circle-dashed"
+                                    }
+                                  />
+                                  {status}
+                                </div>
+                              ))}
+                            </div>
+                          )}
 
                           {hasVoted && votedOnBid && (
                             <div className="flex flex-col">
