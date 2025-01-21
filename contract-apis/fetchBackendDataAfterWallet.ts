@@ -2,7 +2,7 @@
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import {
-  LockEntryWithPower,
+  LockupWithPerTrancheInfo,
   VoteWithPower,
 } from "@/app/ts_types/HydroBase.types"
 import {
@@ -52,6 +52,13 @@ export interface SanitizedLockup {
     denom: string
   }
   multiplier: number
+  metaDataByTrancheId: Record<
+    number,
+    {
+      nextRoundEligibleToVote: number | null
+      votedOnBidId: number | null
+    }
+  >
 }
 
 export interface SanitizedVote
@@ -65,19 +72,31 @@ export interface AugmentedBid extends AugmentedBidFromContract {
   usersEstimatedRewardRelativeToCurrentPick: number
 }
 
-function sanitizeLockup(lockup: LockEntryWithPower): SanitizedLockup {
+function sanitizeLockup(lockup: LockupWithPerTrancheInfo): SanitizedLockup {
   return {
-    id: lockup.lock_entry.lock_id,
-    currentVotingPower: Number(lockup.current_voting_power),
-    dateEnd: new Date(Number(lockup.lock_entry.lock_end) / 1e6),
-    dateStart: new Date(Number(lockup.lock_entry.lock_start) / 1e6),
+    id: lockup.lock_with_power.lock_entry.lock_id,
+    currentVotingPower: Number(lockup.lock_with_power.current_voting_power),
+    dateEnd: new Date(Number(lockup.lock_with_power.lock_entry.lock_end) / 1e6),
+    dateStart: new Date(
+      Number(lockup.lock_with_power.lock_entry.lock_start) / 1e6
+    ),
     funds: {
-      amount: Number(lockup.lock_entry.funds.amount) / 1e6,
-      denom: lockup.lock_entry.funds.denom,
+      amount: Number(lockup.lock_with_power.lock_entry.funds.amount) / 1e6,
+      denom: lockup.lock_with_power.lock_entry.funds.denom,
     },
     multiplier:
-      Number(lockup.current_voting_power) /
-      Number(lockup.lock_entry.funds.amount),
+      Number(lockup.lock_with_power.current_voting_power) /
+      Number(lockup.lock_with_power.lock_entry.funds.amount),
+    metaDataByTrancheId: Object.fromEntries(
+      lockup.per_tranche_info.map((trancheInfo) => [
+        trancheInfo.tranche_id,
+        {
+          nextRoundEligibleToVote:
+            trancheInfo.next_round_lockup_can_vote ?? null,
+          votedOnBidId: trancheInfo.current_voted_on_proposal ?? null,
+        },
+      ])
+    ),
   }
 }
 
@@ -121,9 +140,12 @@ async function uncachedFetchBackendDataAfterWallet({
     lockedAtomEpochInNanos,
   } = backendData
 
-  const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
+  const [
+    { voting_power: votingPower },
+    { lockups_with_per_tranche_infos: lockups },
+  ] = await Promise.all([
     hydroQueryClient.userVotingPower({ address }),
-    hydroQueryClient.allUserLockups({
+    hydroQueryClient.allUserLockupsWithTrancheInfos({
       address,
       limit: 10_000,
       startFrom: 0,

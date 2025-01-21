@@ -24,6 +24,19 @@ export interface Coin {
   amount: Uint128;
   denom: string;
 }
+export interface AllUserLockupsWithTrancheInfosResponse {
+  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[];
+}
+export interface LockupWithPerTrancheInfo {
+  lock_with_power: LockEntryWithPower;
+  per_tranche_info: PerTrancheLockupInfo[];
+}
+export interface PerTrancheLockupInfo {
+  current_voted_on_proposal?: number | null;
+  next_round_lockup_can_vote: number;
+  tranche_id: number;
+}
+export type Decimal = string;
 export interface ConstantsResponse {
   constants: Constants;
 }
@@ -32,13 +45,20 @@ export interface Constants {
   hub_connection_id: string;
   hub_transfer_channel_id: string;
   icq_update_period: number;
-  is_in_pilot_mode: boolean;
   lock_epoch_length: number;
   max_deployment_duration: number;
   max_locked_tokens: number;
   max_validator_shares_participating: number;
   paused: boolean;
   round_length: number;
+  round_lock_power_schedule: RoundLockPowerSchedule;
+}
+export interface RoundLockPowerSchedule {
+  round_lock_power_schedule: LockPowerEntry[];
+}
+export interface LockPowerEntry {
+  locked_rounds: number;
+  power_scaling_factor: Decimal;
 }
 export interface CurrentRoundResponse {
   round_end: Timestamp;
@@ -54,12 +74,15 @@ export type ExecuteMsg = {
     lock_ids: number[];
   };
 } | {
-  unlock_tokens: {};
+  unlock_tokens: {
+    lock_ids?: number[] | null;
+  };
 } | {
   create_proposal: {
     deployment_duration: number;
     description: string;
     minimum_atom_liquidity_request: Uint128;
+    round_id?: number | null;
     title: string;
     tranche_id: number;
   };
@@ -149,12 +172,12 @@ export interface InstantiateMsg {
   icq_managers: string[];
   icq_update_period: number;
   initial_whitelist: string[];
-  is_in_pilot_mode: boolean;
   lock_epoch_length: number;
   max_deployment_duration: number;
   max_locked_tokens: Uint128;
   max_validator_shares_participating: number;
   round_length: number;
+  round_lock_power_schedule: [number, Decimal][];
   tranches: TrancheInfo[];
   whitelist_admins: string[];
 }
@@ -194,6 +217,22 @@ export type QueryMsg = {
     address: string;
     limit: number;
     start_from: number;
+  };
+} | {
+  specific_user_lockups: {
+    address: string;
+    lock_ids: number[];
+  };
+} | {
+  all_user_lockups_with_tranche_infos: {
+    address: string;
+    limit: number;
+    start_from: number;
+  };
+} | {
+  specific_user_lockups_with_tranche_infos: {
+    address: string;
+    lock_ids: number[];
   };
 } | {
   expired_user_lockups: {
@@ -284,6 +323,12 @@ export interface RoundTotalVotingPowerResponse {
 export interface RoundTrancheLiquidityDeploymentsResponse {
   liquidity_deployments: LiquidityDeployment[];
 }
+export interface SpecificUserLockupsResponse {
+  lockups: LockEntryWithPower[];
+}
+export interface SpecificUserLockupsWithTrancheInfosResponse {
+  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[];
+}
 export interface TopNProposalsResponse {
   proposals: Proposal[];
 }
@@ -298,7 +343,6 @@ export interface Tranche {
   metadata: string;
   name: string;
 }
-export type Decimal = string;
 export interface UserVotesResponse {
   votes: VoteWithPower[];
 }

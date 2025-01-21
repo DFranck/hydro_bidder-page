@@ -12,9 +12,6 @@ const config = {
   ],
   prefix: "",
   theme: {
-    fontFamily: {
-      inter: ["Inter"],
-    },
     container: {
       center: true,
       padding: "2rem",
@@ -23,6 +20,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        inter: ["Inter"],
+      },
       borderColor: {
         DEFAULT: "rgba(255, 255, 255, 0.2)",
       },
