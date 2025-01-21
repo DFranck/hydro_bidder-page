@@ -4,9 +4,11 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 export async function executeWalletUnlockExpired({
   address,
   getSigningCosmWasmClient,
+  lockIds,
 }: {
   address: string
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
+  lockIds: number[]
 }) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
@@ -20,7 +22,7 @@ export async function executeWalletUnlockExpired({
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
-  const response = await hydroClient.unlockTokens()
+  const response = await hydroClient.unlockTokens({ lockIds })
 
   return response
 }

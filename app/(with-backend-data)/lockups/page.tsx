@@ -89,6 +89,7 @@ export default function LockupsPage() {
       await executeWalletUnlockExpired({
         address,
         getSigningCosmWasmClient,
+        lockIds: expiredLockups.map((lockup) => lockup.id),
       })
 
       await revalidateTag("backendData")
