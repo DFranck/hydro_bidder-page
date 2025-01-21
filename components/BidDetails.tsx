@@ -20,20 +20,23 @@ import {
 import { VoteButton } from "@/components/VoteButton"
 import { BID_DESCRIPTIONS_URL } from "@/contract-apis/fetchBidDescriptions"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
+import { pluralize } from "@/lib/pluralize"
 import { kebabCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
-import { pluralize } from "@/lib/pluralize"
 
 export function BidDetails({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
 
   const {
+    atomPrice,
     bidDescriptionsByBidId,
     bidsById,
     currentRoundId,
     votes,
     metricsForPostHydroBids,
+    minTributeFactor,
   } = backendData
 
   const bid = bidsById[bidId]
@@ -73,11 +76,14 @@ export function BidDetails({ bidId }: { bidId: number }) {
     projectLogoUrl,
     projectName,
     projectUrl,
-    requestAmount,
     title,
   } = bidDescription
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
+
+  const totalTributeValueInAtom = metrics.onchainTributeUsdc / atomPrice
+
+  const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 
   return (
     <ContentContainer className="py-6">
@@ -363,6 +369,21 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 <BidTributes bid={bid} />
               </div>
             </div>
+
+            <Tooltip tipContents={<>Explanation</>}>
+              <StyledText
+                as="h3"
+                variant="label"
+                className="flex items-center gap-1"
+              >
+                <span>Max Deployment Amount</span>
+                <Icon name="circle-info" />
+              </StyledText>
+              <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                ~{formatAmount(maxDeploymentAmountInAtom * 1e6, undefined, 0)}{" "}
+                ATOM
+              </div>
+            </Tooltip>
 
             <div>
               <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
