@@ -52,7 +52,7 @@ export function EditLockupDurationModal({
   )
   const originalPower = lockup?.currentVotingPower ?? 0
   const newPower = calculateLockupVotingPower(
-    (lockup?.funds.amount ?? 0) * 1e6 ?? 0,
+    (lockup?.funds.amount ?? 0) * 1e6,
     selectedDuration / lockedAtomEpochInNanos
   )
   const currentLockupEndDate = lockup?.dateEnd ?? new Date()
