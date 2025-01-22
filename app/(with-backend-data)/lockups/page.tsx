@@ -19,6 +19,7 @@ import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
   lockupLimitReachedByUserTooltip,
   lockupLimitTooltip,
+  lockupsTableVotingAndMultiplierColumnTooltip,
 } from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { SanitizedLockup } from "@/contract-apis/fetchBackendDataAfterWallet"
@@ -230,7 +231,15 @@ export default function LockupsPage() {
               },
               {
                 key: "votingPower",
-                label: "Voting Power",
+                label: (
+                  <Tooltip
+                    tipContents={lockupsTableVotingAndMultiplierColumnTooltip}
+                    className="flex items-center gap-1"
+                  >
+                    <span>Voting Power / Multiplier</span>
+                    <Icon name="circle-info" />
+                  </Tooltip>
+                ),
                 isSortable: true,
                 textAlign: "center",
               },
@@ -320,6 +329,11 @@ export default function LockupsPage() {
                       }
                     : {
                         statusTopline: "Eligible to vote",
+                        statusBottomline: (
+                          <StyledText variant="link" href="/bids" as={Link}>
+                            Browse Bids
+                          </StyledText>
+                        ),
                         statusExplanation: (
                           <>
                             This lockup is eligible to vote in the current
@@ -338,7 +352,14 @@ export default function LockupsPage() {
                   </>
                 ),
 
-                votingPower: formatAmount(lockup.currentVotingPower),
+                votingPower: (
+                  <div>
+                    <div>{formatAmount(lockup.currentVotingPower)}</div>
+                    <StyledText variant="footnote">
+                      {lockup.multiplier}&times;
+                    </StyledText>
+                  </div>
+                ),
 
                 timeLeft:
                   daysLeft <= 0 ? (

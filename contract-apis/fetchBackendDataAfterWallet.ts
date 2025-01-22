@@ -84,9 +84,12 @@ function sanitizeLockup(lockup: LockupWithPerTrancheInfo): SanitizedLockup {
       amount: Number(lockup.lock_with_power.lock_entry.funds.amount) / 1e6,
       denom: lockup.lock_with_power.lock_entry.funds.denom,
     },
-    multiplier:
-      Number(lockup.lock_with_power.current_voting_power) /
-      Number(lockup.lock_with_power.lock_entry.funds.amount),
+    multiplier: Number(
+      (
+        Number(lockup.lock_with_power.current_voting_power) /
+        Number(lockup.lock_with_power.lock_entry.funds.amount)
+      ).toFixed(2)
+    ),
     metaDataByTrancheId: Object.fromEntries(
       lockup.per_tranche_info.map((trancheInfo) => [
         trancheInfo.tranche_id,
