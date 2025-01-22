@@ -19,6 +19,7 @@ import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
   lockupLimitReachedByUserTooltip,
   lockupLimitTooltip,
+  lockupsTableTimeLeftColumnTooltip,
   lockupsTableVotingAndMultiplierColumnTooltip,
 } from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
@@ -136,45 +137,46 @@ export default function LockupsPage() {
           className="
             flex
             flex-col
-            justify-end
+            items-center
+            justify-between
             gap-3
             lg:flex-row
           "
         >
           <h2 className="sr-only">Your Lockups</h2>
 
+          <Tooltip
+            tipContents={lockupLimitTooltip}
+            className="block w-96 shrink-0"
+          >
+            <ProgressBar
+              percentage={lockedAtomPercentageWallet}
+              warningZone={(percentage) => percentage >= 75}
+              dangerZone={(percentage) => percentage >= 95}
+            >
+              <div className="flex items-center gap-1 opacity-60">
+                <span>
+                  {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
+                  {lockedAtomMaxWallet} ATOM max
+                </span>
+                <span>
+                  <Icon name="circle-info" />
+                </span>
+              </div>
+            </ProgressBar>
+          </Tooltip>
+
           <div
             className="
               flex
               flex-col
               items-end
-              justify-end
+              justify-between
               gap-6
               md:flex-row
               md:items-center
             "
           >
-            <Tooltip
-              tipContents={lockupLimitTooltip}
-              className="block w-96 shrink-0"
-            >
-              <ProgressBar
-                percentage={lockedAtomPercentageWallet}
-                warningZone={(percentage) => percentage >= 75}
-                dangerZone={(percentage) => percentage >= 95}
-              >
-                <div className="flex items-center gap-1">
-                  <span>
-                    {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                    {lockedAtomMaxWallet} ATOM max
-                  </span>
-                  <span>
-                    <Icon name="circle-info" />
-                  </span>
-                </div>
-              </ProgressBar>
-            </Tooltip>
-
             {expiredLockups.length > 0 && (
               <StyledText
                 as="button"
@@ -245,7 +247,15 @@ export default function LockupsPage() {
               },
               {
                 key: "timeLeft",
-                label: "Time Left",
+                label: (
+                  <Tooltip
+                    tipContents={lockupsTableTimeLeftColumnTooltip}
+                    className="flex items-center gap-1"
+                  >
+                    <span>Time Left</span>
+                    <Icon name="circle-info" />
+                  </Tooltip>
+                ),
                 isSortable: true,
                 textAlign: "center",
                 customValueGetter: (row) => {
