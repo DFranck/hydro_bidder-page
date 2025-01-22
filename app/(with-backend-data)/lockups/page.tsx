@@ -458,7 +458,7 @@ export default function LockupsPage() {
                       className={twJoin(
                         "flex items-center justify-center gap-1",
                         "rounded px-3 py-2",
-                        "bg-palette-beige text-palette-text",
+                        "text-palette-white bg-palette-red",
                         "text-xs"
                       )}
                     >
@@ -472,7 +472,12 @@ export default function LockupsPage() {
                         })}
                         .
                       </span>
-                      <StyledText variant="link" className="text-palette-text">
+                      <StyledText
+                        as={Link}
+                        variant="link"
+                        className="text-palette-white"
+                        href="/lock-atom"
+                      >
                         Continue Locking <Icon name="solid:arrow-right-long" />
                       </StyledText>
                     </div>
