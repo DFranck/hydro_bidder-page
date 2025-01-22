@@ -215,6 +215,10 @@ export const lockupsTableVotingAndMultiplierColumnTooltip = (
   <>Some explanation of voting power and the multiplier</>
 )
 
+export const lockupsTableTimeLeftColumnTooltip = (
+  <>Some explanation of time left</>
+)
+
 export const extendLockupsToVoteTooltip = (
   <>
     You can extend your lockups to vote for this project.{" "}
