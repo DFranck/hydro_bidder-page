@@ -211,6 +211,10 @@ export const lockupLimitTooltip = (
   </>
 )
 
+export const lockupsTableVotingAndMultiplierColumnTooltip = (
+  <>Some explanation of voting power and the multiplier</>
+)
+
 export const extendLockupsToVoteTooltip = (
   <>
     You can extend your lockups to vote for this project.{" "}
