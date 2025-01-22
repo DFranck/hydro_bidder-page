@@ -13,7 +13,7 @@ import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { StyledText } from "@/components/StyledText"
-import { Toast, useToasts } from "@/components/Toasts"
+import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
@@ -220,276 +220,294 @@ export default function LockupsPage() {
         </div>
 
         <BlurryBackdropBox className="flex flex-col gap-6">
-          {lockups.length === 0 && (
-            <EmptyBox className="flex flex-col gap-1">
-              <div>
-                You don&rsquo;t have any lockups yet. To create one, click the
-                &ldquo;New Lockup&rdquo; button&nbsp;
-                <Icon name="arrow-up-right" />
-              </div>
-              <div>
-                <StyledText
-                  as={Link}
-                  variant="link"
-                  href="/docs/users/locking-lsm-shares"
-                  target="_blank"
-                  className="flex items-center gap-1 text-xs"
-                >
-                  <span>Learn more about Lockups</span>{" "}
-                  <Icon name="arrow-up-right-from-square" />
-                </StyledText>
-              </div>
-            </EmptyBox>
-          )}
+          <StyledTable
+            initialSortedColumnKey="timeLeft"
+            columns={[
+              {
+                key: "amount",
+                label: "Amount",
+                isSortable: true,
+              },
+              {
+                key: "votingPower",
+                label: "Voting Power",
+                isSortable: true,
+                textAlign: "center",
+              },
+              {
+                key: "timeLeft",
+                label: "Time Left",
+                isSortable: true,
+                textAlign: "center",
+                customValueGetter: (row) => {
+                  return row._lockup.daysLeft ?? 0
+                },
+              },
+              {
+                key: "status",
+                label: "Status",
+              },
+              {
+                key: "actions",
+                label: "Actions",
+                textAlign: "right",
+              },
+            ]}
+            rows={lockups.map((lockup) => {
+              const isLocked = true // one day we might render lockups in limbo
+              const votedOnBidId =
+                Object.values(lockup.metaDataByTrancheId).find(
+                  (trancheInfo) => trancheInfo.votedOnBidId !== null
+                )?.votedOnBidId ?? null
+              const hasVoted = votedOnBidId !== null
+              const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
+              const hasDeployed = !!votedOnBid?.liquidityDeployment
+              const isExpired = new Date() > lockup.dateEnd
+              const daysLeft = getDaysAway(lockup.dateEnd)
+              const roundsLeftOnDeployment =
+                votedOnBid?.liquidityDeployment?.remainingRounds ?? -1
 
-          {incompleteNotices.length > 0 && (
-            <Toast variant="error">
-              <p>
-                You have {incompleteNotices.length} incomplete lockups.{" "}
-                <StyledText
-                  variant="link"
-                  as={Link}
-                  href="/lock-atom"
-                  // className="text-palette-text/70 hover:text-palette-text"
-                >
-                  Review Incomplete Lockups <Icon name="arrow-right-long" />
-                </StyledText>
-              </p>
-            </Toast>
-          )}
-          {lockups.length > 0 && (
-            <StyledTable
-              initialSortedColumnKey="timeLeft"
-              columns={[
-                {
-                  key: "amount",
-                  label: "Amount",
-                  isSortable: true,
-                },
-                {
-                  key: "votingPower",
-                  label: "Voting Power",
-                  isSortable: true,
-                  textAlign: "center",
-                },
-                {
-                  key: "timeLeft",
-                  label: "Time Left",
-                  isSortable: true,
-                  textAlign: "center",
-                  customValueGetter: (row) => {
-                    return row._lockup.daysLeft ?? 0
-                  },
-                },
-                {
-                  key: "status",
-                  label: "Status",
-                },
-                {
-                  key: "actions",
-                  label: "Actions",
-                  textAlign: "right",
-                },
-              ]}
-              rows={lockups.map((lockup) => {
-                const isLocked = true // one day we might render lockups in limbo
-                const votedOnBidId =
-                  Object.values(lockup.metaDataByTrancheId).find(
-                    (trancheInfo) => trancheInfo.votedOnBidId !== null
-                  )?.votedOnBidId ?? null
-                const hasVoted = votedOnBidId !== null
-                const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
-                const hasDeployed = !!votedOnBid?.liquidityDeployment
-                const isExpired = new Date() > lockup.dateEnd
-                const daysLeft = getDaysAway(lockup.dateEnd)
-                const roundsLeftOnDeployment =
-                  votedOnBid?.liquidityDeployment?.remainingRounds ?? -1
-
-                const {
-                  editLockupButtonLabel = null,
-                  statusTopline,
-                  statusBottomline = null,
-                  statusExplanation,
-                } = hasDeployed
+              const {
+                editLockupButtonLabel = null,
+                statusTopline,
+                statusBottomline = null,
+                statusExplanation,
+              } = hasDeployed
+                ? {
+                    statusTopline: "Tied to bid deployment",
+                    statusBottomline:
+                      roundsLeftOnDeployment > 0
+                        ? `${roundsLeftOnDeployment} rounds left`
+                        : roundsLeftOnDeployment === 0
+                          ? "Deployment ends with current round"
+                          : "Deployment complete",
+                    statusExplanation: (
+                      <>
+                        This lockup is currently tied to the bid above, which
+                        may or may not receive a deployment of some amount when
+                        the round ends.
+                      </>
+                    ),
+                  }
+                : hasVoted
                   ? {
-                      statusTopline: "Tied to bid deployment",
-                      statusBottomline:
-                        roundsLeftOnDeployment > 0
-                          ? `${roundsLeftOnDeployment} rounds left`
-                          : roundsLeftOnDeployment === 0
-                            ? "Deployment ends with current round"
-                            : "Deployment complete",
+                      statusTopline: "Voted for bid in current round",
+                      statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
                       statusExplanation: (
                         <>
-                          This lockup is currently tied to the bid above, which
-                          may or may not receive a deployment of some amount
-                          when the round ends.
+                          This lockup is currently tied to the bid above in the
+                          current round
                         </>
                       ),
                     }
-                  : hasVoted
+                  : isExpired
                     ? {
-                        statusTopline: "Voted for bid in current round",
-                        statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
+                        editLockupButtonLabel: "Refresh",
+                        statusTopline: `Expired ${pluralize({
+                          count: Math.abs(daysLeft),
+                          prefixCount: true,
+                          singular: "day",
+                        })} ago`,
+                        statusBottomline: (
+                          <>You can refresh this lockup, or unlock it</>
+                        ),
                         statusExplanation: (
                           <>
-                            This lockup is currently tied to the bid above in
-                            the current round
+                            This lockup has expired and is no longer eligible to
+                            vote.
                           </>
                         ),
                       }
-                    : isExpired
-                      ? {
-                          editLockupButtonLabel: "Refresh",
-                          statusTopline: `Expired ${pluralize({
-                            count: Math.abs(daysLeft),
-                            prefixCount: true,
-                            singular: "day",
-                          })} ago`,
-                          statusBottomline: (
-                            <>You can refresh this lockup, or unlock it</>
-                          ),
-                          statusExplanation: (
-                            <>
-                              This lockup has expired and is no longer eligible
-                              to vote.
-                            </>
-                          ),
-                        }
-                      : {
-                          statusTopline: "Eligible to vote",
-                          statusExplanation: (
-                            <>
-                              This lockup is eligible to vote in the current
-                              round.
-                            </>
-                          ),
-                        }
-
-                return {
-                  _lockup: { ...lockup, daysLeft },
-
-                  amount: (
-                    <>
-                      {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
-                      <StyledText variant="footnote">ATOM</StyledText>
-                    </>
-                  ),
-
-                  votingPower: formatAmount(lockup.currentVotingPower),
-
-                  timeLeft:
-                    daysLeft <= 0 ? (
-                      <Icon name="solid:triangle-exclamation" />
-                    ) : (
-                      pluralize({
-                        count: daysLeft,
-                        prefixCount: true,
-                        singular: "day",
-                      })
-                    ),
-
-                  status: (
-                    <Tooltip
-                      className="whitespace-nowrap"
-                      classNamesForTooltip="w-80"
-                      tipContents={
-                        <div className="flex flex-col gap-2">
-                          {!isExpired && (
-                            <div
-                              className={twJoin(
-                                "grid grid-cols-3",
-                                "-mx-4 -mt-2", // negate padding from Tooltip
-                                "bg-palette-green/5"
-                              )}
-                            >
-                              {(
-                                [
-                                  ["locked", isLocked],
-                                  ["voted", hasVoted],
-                                  ["deployed", hasDeployed],
-                                ] as const
-                              ).map(([status, isActive]) => (
-                                <div
-                                  key={status}
-                                  className={twMerge(
-                                    "flex items-center justify-center gap-1",
-                                    "px-3 py-2",
-                                    "text-xs font-bold uppercase",
-                                    isActive
-                                      ? "bg-palette-green/10 text-palette-green"
-                                      : "text-white/30"
-                                  )}
-                                >
-                                  <Icon
-                                    name={
-                                      isActive
-                                        ? "solid:check"
-                                        : "solid:circle-dashed"
-                                    }
-                                  />
-                                  {status}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-
-                          {hasVoted && votedOnBid && (
-                            <div className="flex flex-col">
-                              <StyledText variant="label">
-                                Voted for bid:
-                              </StyledText>
-                              <StyledText
-                                as="a"
-                                variant="link"
-                                href={`/bids/${votedOnBidId}`}
-                                target="_blank"
-                              >
-                                {preventOrphans({
-                                  text: votedOnBid.title,
-                                  numWordsToWrap: 1,
-                                  append: (
-                                    <Icon name="arrow-up-right-from-square" />
-                                  ),
-                                })}
-                              </StyledText>
-                            </div>
-                          )}
-
-                          {statusExplanation}
-                        </div>
+                    : {
+                        statusTopline: "Eligible to vote",
+                        statusExplanation: (
+                          <>
+                            This lockup is eligible to vote in the current
+                            round.
+                          </>
+                        ),
                       }
-                    >
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1">
-                          {statusTopline}
-                          <Icon name="circle-info" />
-                        </div>
-                        {statusBottomline && (
-                          <StyledText variant="footnote">
-                            {statusBottomline}
-                          </StyledText>
-                        )}
-                      </div>
-                    </Tooltip>
+
+              return {
+                _lockup: { ...lockup, daysLeft },
+
+                amount: (
+                  <>
+                    {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
+                    <StyledText variant="footnote">ATOM</StyledText>
+                  </>
+                ),
+
+                votingPower: formatAmount(lockup.currentVotingPower),
+
+                timeLeft:
+                  daysLeft <= 0 ? (
+                    <Icon name="solid:triangle-exclamation" />
+                  ) : (
+                    pluralize({
+                      count: daysLeft,
+                      prefixCount: true,
+                      singular: "day",
+                    })
                   ),
 
-                  actions: (
-                    <StyledText
-                      as="button"
-                      variant="button.secondary"
-                      onClick={() => {
-                        setIsEditingLockup(true)
-                        setEditingLockup(lockup)
-                      }}
+                status: (
+                  <Tooltip
+                    className="whitespace-nowrap"
+                    classNamesForTooltip="w-80"
+                    tipContents={
+                      <div className="flex flex-col gap-2">
+                        {!isExpired && (
+                          <div
+                            className={twJoin(
+                              "grid grid-cols-3",
+                              "-mx-4 -mt-2", // negate padding from Tooltip
+                              "bg-palette-green/5"
+                            )}
+                          >
+                            {(
+                              [
+                                ["locked", isLocked],
+                                ["voted", hasVoted],
+                                ["deployed", hasDeployed],
+                              ] as const
+                            ).map(([status, isActive]) => (
+                              <div
+                                key={status}
+                                className={twMerge(
+                                  "flex items-center justify-center gap-1",
+                                  "px-3 py-2",
+                                  "text-xs font-bold uppercase",
+                                  isActive
+                                    ? "bg-palette-green/10 text-palette-green"
+                                    : "text-white/30"
+                                )}
+                              >
+                                <Icon
+                                  name={
+                                    isActive
+                                      ? "solid:check"
+                                      : "solid:circle-dashed"
+                                  }
+                                />
+                                {status}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {hasVoted && votedOnBid && (
+                          <div className="flex flex-col">
+                            <StyledText variant="label">
+                              Voted for bid:
+                            </StyledText>
+                            <StyledText
+                              as="a"
+                              variant="link"
+                              href={`/bids/${votedOnBidId}`}
+                              target="_blank"
+                            >
+                              {preventOrphans({
+                                text: votedOnBid.title,
+                                numWordsToWrap: 1,
+                                append: (
+                                  <Icon name="arrow-up-right-from-square" />
+                                ),
+                              })}
+                            </StyledText>
+                          </div>
+                        )}
+
+                        {statusExplanation}
+                      </div>
+                    }
+                  >
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-1">
+                        {statusTopline}
+                        <Icon name="circle-info" />
+                      </div>
+                      {statusBottomline && (
+                        <StyledText variant="footnote">
+                          {statusBottomline}
+                        </StyledText>
+                      )}
+                    </div>
+                  </Tooltip>
+                ),
+
+                actions: (
+                  <StyledText
+                    as="button"
+                    variant="button.secondary"
+                    onClick={() => {
+                      setIsEditingLockup(true)
+                      setEditingLockup(lockup)
+                    }}
+                  >
+                    {editLockupButtonLabel ?? "Edit Lockup"}
+                  </StyledText>
+                ),
+              }
+            })}
+            slotAfterHeaderRow={
+              incompleteNotices.length > 0 && (
+                <tr>
+                  <td colSpan={99}>
+                    <div
+                      className={twJoin(
+                        "flex items-center justify-center gap-1",
+                        "rounded px-3 py-2",
+                        "bg-palette-beige text-palette-text",
+                        "text-xs"
+                      )}
                     >
-                      {editLockupButtonLabel ?? "Edit Lockup"}
-                    </StyledText>
-                  ),
-                }
-              })}
-            />
-          )}
+                      <Icon name="solid:triangle-exclamation" />
+                      <span>
+                        You have <strong>{incompleteNotices.length}</strong>{" "}
+                        incomplete{" "}
+                        {pluralize({
+                          count: incompleteNotices.length,
+                          singular: "lockup",
+                        })}
+                        .
+                      </span>
+                      <StyledText variant="link" className="text-palette-text">
+                        Continue Locking <Icon name="solid:arrow-right-long" />
+                      </StyledText>
+                    </div>
+                  </td>
+                </tr>
+              )
+            }
+            slotAfterLastRow={
+              lockups.length === 0 && (
+                <tr>
+                  <td colSpan={99}>
+                    <EmptyBox className="flex flex-col gap-1">
+                      <div>
+                        You don&rsquo;t have any lockups yet. To create one,
+                        click the &ldquo;New Lockup&rdquo; button&nbsp;
+                        <Icon name="arrow-up-right" />
+                      </div>
+                      <div>
+                        <StyledText
+                          as={Link}
+                          variant="link"
+                          href="/docs/users/locking-lsm-shares"
+                          target="_blank"
+                          className="flex items-center gap-1 text-xs"
+                        >
+                          <span>Learn more about Lockups</span>{" "}
+                          <Icon name="arrow-up-right-from-square" />
+                        </StyledText>
+                      </div>
+                    </EmptyBox>
+                  </td>
+                </tr>
+              )
+            }
+          />
         </BlurryBackdropBox>
       </ContentContainer>
 
