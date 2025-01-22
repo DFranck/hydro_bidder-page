@@ -51,7 +51,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
     (metric) => Number(metric.id) === bidId
   )!
 
-  if (!bidDescription) {
+  if (!bidDescription && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
         The requested bid is not listed in the official{" "}
