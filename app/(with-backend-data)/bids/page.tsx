@@ -151,7 +151,7 @@ export default function BidsPage() {
 
   const buildColumns = useCallback(
     (projectBidLabel: string): ColumnObject<Row, keyof Row>[] => {
-      const isTokenBasedBid = projectBidLabel === tokenBasedTributesLabel
+      const isTokenBased = projectBidLabel === tokenBasedTributesLabel
 
       return [
         {
@@ -159,7 +159,7 @@ export default function BidsPage() {
           label: (
             <Tooltip
               tipContents={bidTypeColumnTooltip({
-                isTokenBasedBid,
+                isTokenBased,
               })}
             >
               <div className="flex items-center gap-1">
@@ -198,12 +198,12 @@ export default function BidsPage() {
             <Tooltip
               tipContents={estimatedRewardsColumnTooltip({
                 hasVotedThisRound,
-                isTokenBasedBid,
+                isTokenBased,
               })}
             >
               <div className="flex items-center gap-1">
                 <span>
-                  {!isTokenBasedBid
+                  {!isTokenBased
                     ? "Total Tribute"
                     : hasVotedThisRound
                       ? "Your Est. Reward"
@@ -220,10 +220,8 @@ export default function BidsPage() {
             className: classNames.classNamesForCells,
           },
           customValueGetter: (row) => {
-            const isTokenBasedBid = row._bid.tributes.every(
-              (t) => t.isTokenBased
-            )
-            return !isTokenBasedBid
+            const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
+            return !isTokenBased
               ? 0
               : hasVotedThisRound
                 ? row._bid.usersEstimatedRewards

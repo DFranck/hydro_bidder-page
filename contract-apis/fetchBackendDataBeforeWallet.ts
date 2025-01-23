@@ -313,7 +313,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
 export const fetchBackendDataBeforeWallet = unstable_cache(
   uncachedFetchBackendDataBeforeWallet,
-  undefined,
+  ["fetchBackendDataBeforeWallet"],
   {
     revalidate: 60 * 5, // 5 minutes
     tags: ["backendData"],

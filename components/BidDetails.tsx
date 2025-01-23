@@ -365,25 +365,30 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 <span>Tribute</span>
                 <Icon name="circle-info" />
               </StyledText>
-              <div className="flex max-w-64 flex-col overflow-x-auto">
+
+              <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
                 <BidTributes bid={bid} />
               </div>
             </div>
 
-            <Tooltip tipContents={<>Explanation</>}>
-              <StyledText
-                as="h3"
-                variant="label"
-                className="flex items-center gap-1"
-              >
-                <span>Max Deployment Amount</span>
-                <Icon name="circle-info" />
-              </StyledText>
-              <div className="max-w-64 overflow-x-auto text-xl font-bold">
-                ~{formatAmount(maxDeploymentAmountInAtom * 1e6, undefined, 0)}{" "}
-                ATOM
-              </div>
-            </Tooltip>
+            {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
+            {/* And if there are any point-based tributes, we can't show this */}
+            {bid.roundId >= 2 && metrics.offchainTribute.length === 0 && (
+              <Tooltip tipContents={<>Explanation</>}>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex items-center gap-1"
+                >
+                  <span>Max Deployment Amount</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+                <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                  ~{formatAmount(maxDeploymentAmountInAtom * 1e6, undefined, 0)}{" "}
+                  ATOM
+                </div>
+              </Tooltip>
+            )}
 
             <div>
               <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
