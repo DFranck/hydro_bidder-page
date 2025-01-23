@@ -48,16 +48,16 @@ export const averageRoundsPerUserTooltip = (
 )
 
 export const baseBidTypeTooltip = ({
-  isTokenBasedBid,
+  isTokenBased,
   isPlural,
 }: {
-  isTokenBasedBid: boolean
+  isTokenBased: boolean
   isPlural?: boolean
 }) => (
   <>
     The amount offered as tribute in this bid to incentivize Hydro voters to
     allocate liquidity to their bid.{" "}
-    {isTokenBasedBid ? (
+    {isTokenBased ? (
       <>
         {isPlural ? "These bids use" : "This bid uses"} live tokens as their
         tribute.
@@ -72,16 +72,13 @@ export const baseBidTypeTooltip = ({
 )
 
 export const bidTypeColumnTooltip = ({
-  isTokenBasedBid,
+  isTokenBased,
 }: {
-  isTokenBasedBid: boolean
-}) => baseBidTypeTooltip({ isTokenBasedBid, isPlural: true })
+  isTokenBased: boolean
+}) => baseBidTypeTooltip({ isTokenBased, isPlural: true })
 
-export const bidTypeTooltip = ({
-  isTokenBasedBid,
-}: {
-  isTokenBasedBid: boolean
-}) => baseBidTypeTooltip({ isTokenBasedBid, isPlural: false })
+export const bidTypeTooltip = ({ isTokenBased }: { isTokenBased: boolean }) =>
+  baseBidTypeTooltip({ isTokenBased, isPlural: false })
 
 export const currentVoteShareTooltip = (
   <>
@@ -100,10 +97,10 @@ export const cannotContinueLockupTooltip = (
 
 export const estimatedRewardsColumnTooltip = ({
   hasVotedThisRound,
-  isTokenBasedBid,
+  isTokenBased,
 }: {
   hasVotedThisRound: boolean
-  isTokenBasedBid: boolean
+  isTokenBased: boolean
 }) => {
   const universalPointSystemMessage = (
     <>
@@ -112,7 +109,7 @@ export const estimatedRewardsColumnTooltip = ({
       on their individual voting power.
     </>
   )
-  const messageIfHasVotedThisRound = isTokenBasedBid ? (
+  const messageIfHasVotedThisRound = isTokenBased ? (
     <>
       This is the expected USD-equivalent value of rewards you would receive
       from the bid&rsquo;s tribute. Over time, the value may increase if the
@@ -121,7 +118,7 @@ export const estimatedRewardsColumnTooltip = ({
   ) : (
     universalPointSystemMessage
   )
-  const messageIfHasNotVotedThisRound = isTokenBasedBid ? (
+  const messageIfHasNotVotedThisRound = isTokenBased ? (
     <>
       This is the total estimated USD-equivalent value of the tribute offered by
       the project. The tribute is split amongst the users that vote for the
@@ -140,15 +137,15 @@ export const estimatedRewardsTooltip = ({
   bid,
   bidDescription,
   hasVotedThisRound,
-  isTokenBasedBid,
+  isTokenBased,
 }: {
   bid: AugmentedBid
   bidDescription: BidDescription
   hasVotedThisRound: boolean
-  isTokenBasedBid: boolean
+  isTokenBased: boolean
 }) => {
   const { projectName } = bidDescription
-  const totalTributeValue = isTokenBasedBid
+  const totalTributeValue = isTokenBased
     ? (sumBy(bid.tributes, "valueInUsd") ?? 0)
     : (sumBy(bid.tributes, "amount") ?? 0)
   const percentageOfTotalTributeValue =
@@ -157,14 +154,14 @@ export const estimatedRewardsTooltip = ({
       : 0
   const formattedTotalTribute = (
     <strong className="text-palette-beige">
-      {isTokenBasedBid
+      {isTokenBased
         ? // $1,234 USD
           amountToUSDString(totalTributeValue)
         : // 1,234 POINTS
           `${formatAmount(totalTributeValue)} ${bid.tributes[0].denom}`}
     </strong>
   )
-  const rewardDescription = isTokenBasedBid
+  const rewardDescription = isTokenBased
     ? "estimated USD-equivalent value of rewards"
     : "amount of points"
   const messageIfHasVotedThisRound = (

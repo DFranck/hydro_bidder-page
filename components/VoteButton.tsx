@@ -45,7 +45,7 @@ export function VoteButton({
     lockedAtomMaxGlobal,
     lockedAtomTotalGlobal,
     votesByRoundId,
-    votingPower,
+    votingPowerAvailable,
   } = useBackendData()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -125,7 +125,7 @@ export function VoteButton({
         Loading...
       </StyledText>
     )
-  } else if (votingPower === 0) {
+  } else if (votingPowerAvailable === 0) {
     Button = (
       <ConditionalWrapper
         condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}

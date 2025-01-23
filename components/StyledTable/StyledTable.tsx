@@ -58,11 +58,7 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   }, [sortedRows, secondSortRows, sortDirection])
 
   useEffect(() => {
-    if (
-      columns.length === 0 ||
-      rows.length === 0 ||
-      (isEqual(columns, columnsInState) && isEqual(rows, rowsInState))
-    ) {
+    if (isEqual(columns, columnsInState) && isEqual(rows, rowsInState)) {
       return
     }
 

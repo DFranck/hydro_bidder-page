@@ -1,5 +1,6 @@
 "use client"
 
+import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -19,12 +20,10 @@ import {
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
-import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
-import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { sumBy, uniq } from "lodash"
+import { max, sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -32,11 +31,9 @@ import { Fragment, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function MetricsPage({
-  requestedRoundNumberUnderHood,
-  isPreHydro,
+  requestedRoundNumber,
 }: {
-  requestedRoundNumberUnderHood: number | null
-  isPreHydro: boolean
+  requestedRoundNumber: number | null
 }) {
   const {
     bidsById,
@@ -45,10 +42,14 @@ export function MetricsPage({
     currentRoundId,
   } = useBackendData()
 
-  if (
-    requestedRoundNumberUnderHood &&
-    requestedRoundNumberUnderHood > currentRoundId
-  ) {
+  const requestedPreHydro = requestedRoundNumber === 0
+
+  // rounds are 0-indexed
+  if (requestedRoundNumber && requestedRoundNumber >= 1) {
+    requestedRoundNumber = requestedRoundNumber - 1
+  }
+
+  if (requestedRoundNumber && requestedRoundNumber > currentRoundId) {
     notFound()
   }
 
@@ -56,10 +57,14 @@ export function MetricsPage({
     metricsForPostHydroBids.map((bid) => Number(bid.roundId))
   )
 
-  const bidsToRender = isPreHydro
+  if (requestedRoundNumber === null) {
+    requestedRoundNumber = max(postHydroRoundIdsWithBidData) ?? 0
+  }
+
+  const bidsToRender = requestedPreHydro
     ? metricsForPreHydroBids
     : metricsForPostHydroBids.filter(
-        (bid) => bid.roundId === requestedRoundNumberUnderHood
+        (bid) => bid.roundId === requestedRoundNumber
       )
 
   const rows = bidsToRender.map((bid) => {
@@ -69,9 +74,6 @@ export function MetricsPage({
       currentAllocationAmount,
       durationDays,
       initialAllocationAmount,
-      offchainTribute,
-      onchainTributeAssets,
-      onchainTributeUsdc,
       projectLogoUrl,
       projectName,
       status,
@@ -80,7 +82,7 @@ export function MetricsPage({
 
     const bidFromContract = bidsById[Number(id)] ?? null
 
-    const rowURL = isPreHydro
+    const rowURL = requestedPreHydro
       ? `https://www.mintscan.io/cosmos/proposals/${id.replace("#", "")}`
       : `/bids/${id}`
 
@@ -90,48 +92,6 @@ export function MetricsPage({
       status.toLowerCase() === "voting period" ||
       (status.toLowerCase() === "ongoing" &&
         (apr === 0 || currentAllocationAmount - initialAllocationAmount <= 0))
-
-    const renderTributeAmount = (
-      bid: SanitizedBidFromNumia,
-      isPreHydro: boolean
-    ) => {
-      if (isPreHydro) {
-        return "0"
-      }
-
-      if (
-        onchainTributeAssets.length === 0 &&
-        offchainTribute.length === 0 &&
-        onchainTributeUsdc === 0
-      ) {
-        return "0"
-      }
-
-      return (
-        <>
-          {onchainTributeAssets.map((t) => (
-            <div key={t.denom}>
-              {simplifyBigNumbers(t.amount)}&nbsp;
-              <span title={t.denom}>{t.denom.slice(0, 12)}</span>
-            </div>
-          ))}
-          {offchainTribute.map((t) => (
-            <div key={t.type} className="flex items-center gap-1">
-              <Icon name="solid:gem" />
-              <span>
-                {simplifyBigNumbers(t.amount)}&nbsp;{t.type}
-              </span>
-            </div>
-          ))}
-          {onchainTributeUsdc > 0 && (
-            <div className="text-sm opacity-60">
-              {amountToUSDString(onchainTributeUsdc)}
-            </div>
-          )}
-          {isPreHydro && "0"}
-        </>
-      )
-    }
 
     return {
       _bid: { ...bid, percentage },
@@ -213,7 +173,11 @@ export function MetricsPage({
 
       tribute: (
         <InvisibleLink href={rowURL}>
-          {renderTributeAmount(bid, isPreHydro)}
+          {bidFromContract ? (
+            <BidTributes bid={bidFromContract} textAlign="right" />
+          ) : (
+            0
+          )}
         </InvisibleLink>
       ),
 
@@ -445,17 +409,16 @@ export function MetricsPage({
           </div>
 
           <div className="flex items-center backdrop-blur-sm">
-            {[null, ...postHydroRoundIdsWithBidData.sort()].map(
-              (roundNumber) => {
-                const isActive = roundNumber === requestedRoundNumberUnderHood
-                return (
-                  <StyledText
-                    as={Link}
-                    variant={isActive ? "button.primary" : "button.secondary"}
-                    href={`/metrics/${roundNumber === null ? "" : roundNumber + 1}`}
-                    key={roundNumber ?? "pre-hydro"}
-                    className={twMerge(
-                      `
+            {[-1, ...postHydroRoundIdsWithBidData.sort()].map((roundNumber) => {
+              const isActive = roundNumber === requestedRoundNumber
+              return (
+                <StyledText
+                  as={Link}
+                  variant={isActive ? "button.primary" : "button.secondary"}
+                  href={`/metrics/${roundNumber + 1}`}
+                  key={roundNumber ?? "pre-hydro"}
+                  className={twMerge(
+                    `
                         -mx-px
                         rounded-none
                         backdrop-blur-none
@@ -463,20 +426,19 @@ export function MetricsPage({
                         last:rounded-r-full
                         hover:scale-100
                       `,
-                      !isActive &&
-                        `
+                    !isActive &&
+                      `
                           text-palette-green/50
                           hover:text-palette-green
                         `
-                    )}
-                  >
-                    {roundNumber === null
-                      ? "Pre-Hydro"
-                      : `Round ${roundNumber + 1}`}
-                  </StyledText>
-                )
-              }
-            )}
+                  )}
+                >
+                  {roundNumber === null
+                    ? "Pre-Hydro"
+                    : `Round ${roundNumber + 1}`}
+                </StyledText>
+              )
+            })}
           </div>
         </div>
 
