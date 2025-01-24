@@ -26,46 +26,37 @@ import { pluralize } from "@/lib/pluralize"
 import { max, sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
-import { notFound } from "next/navigation"
 import { Fragment, useCallback } from "react"
 import { twMerge } from "tailwind-merge"
+
+const PRE_HYDRO_ROUND_ID = -1
 
 export function MetricsPage({
   requestedRoundNumber,
 }: {
   requestedRoundNumber: number | null
 }) {
-  const {
-    bidsById,
-    metricsForPreHydroBids,
-    metricsForPostHydroBids,
-    currentRoundId,
-  } = useBackendData()
-
-  const requestedPreHydro = requestedRoundNumber === 0
-
-  // rounds are 0-indexed
-  if (requestedRoundNumber && requestedRoundNumber >= 1) {
-    requestedRoundNumber = requestedRoundNumber - 1
-  }
-
-  if (requestedRoundNumber && requestedRoundNumber > currentRoundId) {
-    notFound()
-  }
+  const { bidsById, metricsForPreHydroBids, metricsForPostHydroBids } =
+    useBackendData()
 
   const postHydroRoundIdsWithBidData = uniq(
     metricsForPostHydroBids.map((bid) => Number(bid.roundId))
   )
 
-  if (requestedRoundNumber === null) {
-    requestedRoundNumber = max(postHydroRoundIdsWithBidData) ?? 0
-  }
+  const requestedRoundId =
+    typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
+      ? Math.min(
+          requestedRoundNumber - 1,
+          max(postHydroRoundIdsWithBidData) ?? 0
+        )
+      : PRE_HYDRO_ROUND_ID
 
-  const bidsToRender = requestedPreHydro
-    ? metricsForPreHydroBids
-    : metricsForPostHydroBids.filter(
-        (bid) => bid.roundId === requestedRoundNumber
-      )
+  const bidsToRender =
+    requestedRoundId === PRE_HYDRO_ROUND_ID
+      ? metricsForPreHydroBids
+      : metricsForPostHydroBids.filter(
+          (bid) => bid.roundId === requestedRoundId
+        )
 
   const rows = bidsToRender.map((bid) => {
     const {
@@ -82,9 +73,10 @@ export function MetricsPage({
 
     const bidFromContract = bidsById[Number(id)] ?? null
 
-    const rowURL = requestedPreHydro
-      ? `https://www.mintscan.io/cosmos/proposals/${id.replace("#", "")}`
-      : `/bids/${id}`
+    const rowURL =
+      requestedRoundId === PRE_HYDRO_ROUND_ID
+        ? `https://www.mintscan.io/cosmos/proposals/${id.replace("#", "")}`
+        : `/bids/${id}`
 
     const percentage = bidFromContract?.percentage ?? null
 
@@ -409,16 +401,18 @@ export function MetricsPage({
           </div>
 
           <div className="flex items-center backdrop-blur-sm">
-            {[-1, ...postHydroRoundIdsWithBidData.sort()].map((roundNumber) => {
-              const isActive = roundNumber === requestedRoundNumber
-              return (
-                <StyledText
-                  as={Link}
-                  variant={isActive ? "button.primary" : "button.secondary"}
-                  href={`/metrics/${roundNumber + 1}`}
-                  key={roundNumber ?? "pre-hydro"}
-                  className={twMerge(
-                    `
+            {[PRE_HYDRO_ROUND_ID, ...postHydroRoundIdsWithBidData.sort()].map(
+              (roundId) => {
+                const isActive = roundId === requestedRoundId
+
+                return (
+                  <StyledText
+                    as={Link}
+                    variant={isActive ? "button.primary" : "button.secondary"}
+                    href={`/metrics/${roundId + 1}`}
+                    key={roundId}
+                    className={twMerge(
+                      `
                         -mx-px
                         rounded-none
                         backdrop-blur-none
@@ -426,19 +420,18 @@ export function MetricsPage({
                         last:rounded-r-full
                         hover:scale-100
                       `,
-                    !isActive &&
-                      `
+                      !isActive &&
+                        `
                           text-palette-green/50
                           hover:text-palette-green
                         `
-                  )}
-                >
-                  {roundNumber === null
-                    ? "Pre-Hydro"
-                    : `Round ${roundNumber + 1}`}
-                </StyledText>
-              )
-            })}
+                    )}
+                  >
+                    {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
+                  </StyledText>
+                )
+              }
+            )}
           </div>
         </div>
 
