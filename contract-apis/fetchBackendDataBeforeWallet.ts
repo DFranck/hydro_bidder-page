@@ -299,7 +299,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     currentRoundId,
     currentRoundIsPilot: true,
     lockedAtomEpochInNanos,
-    lockedAtomMaxWallet: 200, // TODO: get this from contract
+    lockedAtomMaxWallet: 250, // TODO: get this from contract
     metricsForPostHydroBids: postHydroBids,
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: metrics,
