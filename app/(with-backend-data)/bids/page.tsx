@@ -24,23 +24,13 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { sumBy } from "lodash"
 import Image from "next/image"
-import { Fragment, ReactNode, useCallback } from "react"
+import { Fragment, useCallback } from "react"
 import { classNames } from "./classNames"
-
-type Row = {
-  _bid: AugmentedBid
-  logoAndTitle: ReactNode
-  deploymentDuration: ReactNode
-  yourEstimatedReward: ReactNode
-  currentVoteShare: ReactNode
-  actions: ReactNode
-}
 
 const tokenBasedTributesLabel = "Token-Based Tributes"
 const pointBasedTributesLabel = "Points-Based Tributes"
@@ -95,7 +85,7 @@ export default function BidsPage() {
             </div>
           </InvisibleLink>
         ),
-        deploymentDuration: (
+        duration: (
           <InvisibleLink href={bidURL}>
             {pluralize({
               count: bidDeploymentDurationToRender,
@@ -150,7 +140,9 @@ export default function BidsPage() {
     }) ?? []
 
   const buildColumns = useCallback(
-    (projectBidLabel: string): ColumnObject<Row, keyof Row>[] => {
+    (
+      projectBidLabel: string
+    ): ColumnObject<(typeof rows)[number], keyof (typeof rows)[number]>[] => {
       const isTokenBased = projectBidLabel === tokenBasedTributesLabel
 
       return [
@@ -175,11 +167,11 @@ export default function BidsPage() {
           customValueGetter: (row) => row._bid.title,
         },
         {
-          key: "deploymentDuration",
+          key: "duration",
           label: (
             <Tooltip tipContents={polDurationTooltip}>
               <div className="flex items-center gap-1">
-                <span>PoL Duration</span>
+                <span>Duration</span>
                 <Icon name="circle-info" />
               </div>
             </Tooltip>
@@ -268,7 +260,9 @@ export default function BidsPage() {
     ]
   )
 
-  const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
+  const renderRow = useCallback<
+    RowRenderFunction<(typeof rows)[number], keyof (typeof rows)[number]>
+  >(
     ({
       children,
       row,
