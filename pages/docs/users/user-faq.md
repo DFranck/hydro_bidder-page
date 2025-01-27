@@ -5,7 +5,7 @@ When using Hydro, your wallet may connect to Neutron because the Hydro smart con
 
 
 ## What does "Voting Power" mean, and how do I get it?
-Voting power is how much influence you have when voting on proposals. To get voting power, you need to lock up your staked ATOM on Hydro. The more ATOM you lock and the longer the lock-up period, the more voting power you receive. Locking your ATOM grants you the ability to participate in decision-making by voting for projects on Hydro.
+Voting power is how much influence you have when voting on bids. To get voting power, you need to lock up your staked ATOM on Hydro. The more ATOM you lock and the longer the lock-up period, the more voting power you receive. Locking your ATOM grants you the ability to participate in decision-making by voting for projects on Hydro.
 
 ## What are "tributes," and why are they important?
 Tributes are the rewards that projects offer to attract your votes. When you vote for a project, you are essentially "locking" your support in exchange for a share of the tributes. These tributes are distributed to voters after the round ends, and they can vary from project to project. Think of tributes as the incentive projects offer to win your vote!
@@ -26,8 +26,13 @@ Here are a few key things to know:
 ## How do I know which project to vote for? What does "bidding" mean?
 Bidding is the process by which projects compete for liquidity on Hydro. Each project offers tributes as rewards to attract your vote. When deciding which project to vote for, you can consider the tributes they offer, their proposal goals, and their potential impact on the ecosystem. We recommend reading each project’s details before making your decision, and you can always view how others are voting as well.
 
+## What determines the maximum deployment amount for a bid?
+The maximum deployment amount for a bid is directly tied to the tribute the project offers. Starting in Round 3, Hydro enforces a minimum tribute floor of 1% of the liquidity exported by the bidder. This ensures fair contributions in exchange for liquidity and helps maintain healthy APRs for users. The maximum deployment is calculated as:
+
+`Max Deployment` = `current_tribute_amount` / `min_tribute_factor` 
+
 ## What is APR, and why is it relevant to voting?
-APR (Annual Percentage Rate) shows the potential return you can earn from your locked ATOM, including rewards from tributes. It gives you a snapshot of how much you could gain by participating in the Hydro voting process. Keep in mind that this APR may fluctuate as more voters participate or as projects adjust their tributes. You'll see a real-time APR when locking your ATOM and voting on proposals. For more details on the Hydro APR, check out the [dedicated page](https://hydro.cosmos.network/docs/users/calculating-staking-apr) in the user documentation.
+APR (Annual Percentage Rate) shows the potential return you can earn from your locked ATOM, including rewards from tributes. It gives you a snapshot of how much you could gain by participating in the Hydro voting process. Keep in mind that this APR may fluctuate as more voters participate or as projects adjust their tributes. You'll see a real-time APR when locking your ATOM and voting on bids. For more details on the Hydro APR, check out the [dedicated page](https://hydro.cosmos.network/docs/users/calculating-staking-apr) in the user documentation.
 
 ## Can I change my vote after I’ve locked my ATOM?
 Yes! Hydro allows you to change your vote after locking your ATOM. If you decide to support a different project during the voting round, you can switch your vote. However, you can only vote for one project per tranche, per round, so if you want to change your vote you’ll need to adjust it within the same tranche.
