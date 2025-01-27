@@ -410,7 +410,7 @@ export default function Home() {
               <StyledText
                 as="a"
                 variant="button.primary.large"
-                href="https://calendly.com/milos-informal/30-minute-meeting-hydro"
+                href="https://calendly.com/actional/hydro"
                 target="_blank"
               >
                 Get in Touch <Icon name="solid:arrow-up-right" />
