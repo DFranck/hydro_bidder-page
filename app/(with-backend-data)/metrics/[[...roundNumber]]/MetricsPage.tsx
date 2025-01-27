@@ -43,13 +43,14 @@ export function MetricsPage({
     metricsForPostHydroBids.map((bid) => Number(bid.roundId))
   )
 
+  const highestRoundId = max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
+
   const requestedRoundId =
-    typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
-      ? Math.min(
-          requestedRoundNumber - 1,
-          max(postHydroRoundIdsWithBidData) ?? 0
-        )
-      : PRE_HYDRO_ROUND_ID
+    requestedRoundNumber === null
+      ? highestRoundId
+      : typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
+        ? Math.min(requestedRoundNumber - 1, highestRoundId)
+        : PRE_HYDRO_ROUND_ID
 
   const bidsToRender =
     requestedRoundId === PRE_HYDRO_ROUND_ID
