@@ -1,5 +1,5 @@
 export const defaultMetadata = {
-  title: "Hydro - The Interchain Liquidity Allocator",
+  title: "The Interchain Liquidity Allocator",
   description:
     "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote, and earn today!",
   metadataBase: new URL("https://hydro.cosmos.network"),
@@ -21,41 +21,38 @@ export const defaultMetadata = {
 const { title: defaultTitle, description: defaultDescription } = defaultMetadata
 
 export const metadataByRoute = {
-  "/": defaultMetadata,
+  "/": {
+    ...defaultMetadata,
+    title: `Hydro - ${defaultTitle}`,
+  },
 
   "/airdrops": {
     ...defaultMetadata,
-    title: `Airdrops - ${defaultTitle}`,
-    description: `Airdrops - ${defaultDescription}`,
+    title: `Hydro Airdrops - ${defaultTitle}`,
   },
 
   "/bids": {
     ...defaultMetadata,
-    title: `Bids - ${defaultTitle}`,
-    description: `Bids - ${defaultDescription}`,
+    title: `Hydro Bids - ${defaultTitle}`,
   },
 
   "/lock-atom": {
     ...defaultMetadata,
-    title: `Lock Atom - ${defaultTitle}`,
-    description: `Lock Atom - ${defaultDescription}`,
+    title: `Hydro Lock Atom - ${defaultTitle}`,
   },
 
   "/lockups": {
     ...defaultMetadata,
-    title: `Lockups - ${defaultTitle}`,
-    description: `Lockups - ${defaultDescription}`,
+    title: `Hydro Lockups - ${defaultTitle}`,
   },
 
   "/metrics": {
     ...defaultMetadata,
-    title: `Metrics - ${defaultTitle}`,
-    description: `Metrics - ${defaultDescription}`,
+    title: `Hydro Metrics - ${defaultTitle}`,
   },
 
   "/rewards": {
     ...defaultMetadata,
-    title: `Rewards - ${defaultTitle}`,
-    description: `Rewards - ${defaultDescription}`,
+    title: `Hydro Rewards - ${defaultTitle}`,
   },
 }
