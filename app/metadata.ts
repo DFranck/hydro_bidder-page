@@ -38,7 +38,7 @@ export const metadataByRoute = {
 
   "/lock-atom": {
     ...defaultMetadata,
-    title: `Hydro Lock Atom - ${defaultTitle}`,
+    title: `Lock Atom on Hydro - ${defaultTitle}`,
   },
 
   "/lockups": {
