@@ -1,5 +1,6 @@
 "use client"
 
+import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -12,7 +13,6 @@ import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   metricsDurationColumnTooltip,
-  metricsPolAprColumnTooltip,
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
@@ -21,13 +21,12 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { amountToUSDString } from "@/lib/amountToUSDString"
 import { pluralize } from "@/lib/pluralize"
 import { max, sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, useCallback } from "react"
-import { twMerge } from "tailwind-merge"
+import { twJoin, twMerge } from "tailwind-merge"
 
 const PRE_HYDRO_ROUND_ID = -1
 
@@ -112,12 +111,12 @@ export function MetricsPage({
       polSize: (
         <InvisibleLink href={rowURL}>
           {!!currentAllocationAmount && (
-            <>
-              {currentAllocationAmount.toLocaleString(undefined, {
+            <AmountAndUnitPair
+              amount={currentAllocationAmount.toLocaleString(undefined, {
                 maximumFractionDigits: 4,
               })}
-              &nbsp;ATOM
-            </>
+              unit="ATOM"
+            />
           )}
         </InvisibleLink>
       ),
@@ -140,34 +139,57 @@ export function MetricsPage({
         </InvisibleLink>
       ),
 
-      polRewards: (
-        <InvisibleLink href={rowURL}>
-          {isPending
-            ? "Pending"
-            : "currentAllocationAmount" in bid &&
-              "initialAllocationAmount" in bid && (
-                <>
-                  {(
-                    currentAllocationAmount - initialAllocationAmount
-                  ).toLocaleString(undefined, {
-                    maximumFractionDigits: 4,
-                  })}{" "}
-                  ATOM
-                </>
-              )}
-        </InvisibleLink>
-      ),
-
       polApr: (
         <InvisibleLink href={rowURL}>
-          {isPending ? "Pending" : "apr" in bid && `${apr}%`}
+          <Tooltip
+            tipContents={
+              isPending
+                ? "No rewards yet — still pending"
+                : "currentAllocationAmount" in bid &&
+                  "initialAllocationAmount" in bid && (
+                    <div className="flex items-center justify-between gap-6">
+                      <StyledText variant="label">PoL Rewards</StyledText>
+                      <AmountAndUnitPair
+                        amount={(
+                          currentAllocationAmount - initialAllocationAmount
+                        ).toLocaleString(undefined, {
+                          maximumFractionDigits: 4,
+                        })}
+                        unit="ATOM"
+                        textAlign="right"
+                      />
+                    </div>
+                  )
+            }
+            className={twJoin(
+              "inline-flex items-center gap-1",
+              "border-b-2 border-dotted border-white/50 hover:border-white"
+            )}
+            classNamesForTooltip="w-fit"
+          >
+            <span>{bid.apr}%</span>
+          </Tooltip>
         </InvisibleLink>
       ),
 
-      tribute: (
+      tributeApr: (
         <InvisibleLink href={rowURL}>
           {bidFromContract ? (
-            <BidTributes bid={bidFromContract} textAlign="right" />
+            <Tooltip
+              tipContents={
+                <div className="flex items-center justify-between gap-6">
+                  <StyledText variant="label">Tribute Size</StyledText>
+                  <BidTributes bid={bidFromContract} textAlign="right" />
+                </div>
+              }
+              className={twJoin(
+                "inline-flex items-center gap-1",
+                "border-b-2 border-dotted border-white/50 hover:border-white"
+              )}
+              classNamesForTooltip="w-fit"
+            >
+              <span>{(bidFromContract.tributeApr * 100).toFixed(2)}%</span>
+            </Tooltip>
           ) : (
             0
           )}
@@ -228,11 +250,11 @@ export function MetricsPage({
       customValueGetter: (row) => row._bid.durationDays,
     },
     {
-      key: "polRewards",
+      key: "polApr",
       label: (
         <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
           <div className="flex items-center gap-1">
-            PoL Rewards
+            PoL APR
             <Icon name="circle-info" />
           </div>
         </Tooltip>
@@ -243,42 +265,17 @@ export function MetricsPage({
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) =>
-        "currentAllocationAmount" in row._bid &&
-        "initialAllocationAmount" in row._bid
-          ? row._bid.currentAllocationAmount - row._bid.initialAllocationAmount
-          : 0,
+      customValueGetter: (row) => row._bid.apr,
     },
     {
-      key: "polApr",
-      label: (
-        <Tooltip
-          tipContents={metricsPolAprColumnTooltip}
-          classNamesForTooltip="-ml-12"
-        >
-          <div className="flex items-center gap-1">
-            PoL APR
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
-      ),
-      textAlign: "right",
-      propsForCells: {
-        className: "text-palette-beige font-bold",
-      },
-      isSortable: true,
-      initialSortDirection: "DESC",
-      customValueGetter: (row) => ("apr" in row._bid ? row._bid.apr : 0),
-    },
-    {
-      key: "tribute",
+      key: "tributeApr",
       label: (
         <Tooltip
           tipContents={metricsTributeColumnTooltip}
           classNamesForTooltip="-ml-12"
         >
           <div className="flex items-center gap-1">
-            Tribute
+            Tribute APR
             <Icon name="circle-info" />
           </div>
         </Tooltip>
@@ -287,7 +284,7 @@ export function MetricsPage({
       isSortable: true,
       initialSortDirection: "DESC",
       customValueGetter: (row) =>
-        amountToUSDString(row._bid.onchainTributeUsdc) ||
+        row._bid.onchainTributeUsdc ||
         sumBy(row._bid.offchainTribute, "amount"),
     },
     {

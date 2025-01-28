@@ -50,9 +50,11 @@ export const averageRoundsPerUserTooltip = (
 export const baseBidTypeTooltip = ({
   isTokenBased,
   isPlural,
+  pointProgramUrl,
 }: {
   isTokenBased: boolean
   isPlural?: boolean
+  pointProgramUrl?: string
 }) => (
   <>
     The amount offered as tribute in this bid to incentivize Hydro voters to
@@ -67,6 +69,17 @@ export const baseBidTypeTooltip = ({
         {isPlural ? "These bids use" : "This bid uses"} points as their tribute
         because they do not yet have a live token.
       </>
+    )}{" "}
+    {pointProgramUrl && (
+      <StyledText
+        as={Link}
+        href={pointProgramUrl}
+        variant="link"
+        className="inline-flex items-center gap-1"
+        target="_blank"
+      >
+        Learn More <Icon name="solid:arrow-up-right" />
+      </StyledText>
     )}
   </>
 )
@@ -77,8 +90,13 @@ export const bidTypeColumnTooltip = ({
   isTokenBased: boolean
 }) => baseBidTypeTooltip({ isTokenBased, isPlural: true })
 
-export const bidTypeTooltip = ({ isTokenBased }: { isTokenBased: boolean }) =>
-  baseBidTypeTooltip({ isTokenBased, isPlural: false })
+export const bidTypeTooltip = ({
+  isTokenBased,
+  pointProgramUrl,
+}: {
+  isTokenBased: boolean
+  pointProgramUrl?: string
+}) => baseBidTypeTooltip({ isTokenBased, isPlural: false, pointProgramUrl })
 
 export const currentVoteShareTooltip = (
   <>
