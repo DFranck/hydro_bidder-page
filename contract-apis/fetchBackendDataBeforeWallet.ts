@@ -47,6 +47,7 @@ export interface AugmentedBidFromContract
   liquidityDeployment: SanitizedLiquidityDeployment | null
   percentage: number
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
+  tributeApr: number
 }
 
 export interface BackendDataBeforeWallet {
@@ -258,6 +259,14 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                   augmentedLiquidityDeployments.find(
                     (deployment) => deployment.bidId === proposalId
                   ) ?? null
+                const bidData =
+                  postHydroBids.find(
+                    (bidFromNumia) => Number(bidFromNumia.id) === proposalId
+                  ) ?? null
+                const onchainTributeUsdc = bidData?.onchainTributeUsdc ?? 0
+                const polSize = bidData?.currentAllocationAmount ?? 0
+                const tributeApr =
+                  polSize > 0 ? (onchainTributeUsdc * 12) / polSize : 0
 
                 return {
                   ...bid,
@@ -272,6 +281,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                     : Number(bid.percentage),
                   title,
                   tributes: bidTributes,
+                  tributeApr,
                 }
               })
 

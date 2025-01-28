@@ -187,13 +187,13 @@ export default function LockupsPage() {
             }
           : {
               statusTopline: "Eligible to vote",
-              statusBottomline: (
-                <StyledText variant="link" href="/bids" as={Link}>
-                  Browse Bids
-                </StyledText>
-              ),
               statusExplanation: (
-                <>This lockup is eligible to vote in the current round.</>
+                <span>
+                  This lockup is eligible to vote in the current round.{" "}
+                  <StyledText variant="link" href="/bids" as={Link}>
+                    Browse Bids
+                  </StyledText>
+                </span>
               ),
             }
 
