@@ -13,14 +13,10 @@ import { StatCard } from "../StatCard"
 export function CurrentRoundVotingPowerWallet() {
   const {
     isLoading,
-    votingPowerAvailable: votingPowerFromBackend,
-    votingPowerSpent: votingPowerSpentFromBackend,
-    votingPowerTotal: votingPowerTotalFromBackend,
+    votingPowerAvailable,
+    votingPowerSpent,
+    votingPowerTotal,
   } = useBackendData()
-
-  const votingPowerTotal: number = 200 * 1e6
-  const votingPowerAvailable: number = 200 * 1e6
-  const votingPowerSpent: number = 0 * 1e6
 
   const hasVotingPowerOfAnyKind = votingPowerTotal > 0
 
@@ -37,39 +33,37 @@ export function CurrentRoundVotingPowerWallet() {
 
   const yourVotingPowerTooltipRevised = (
     <div className="flex flex-col gap-2">
-      {(hasVotingPowerAvailableButNotAll || hasVotingPowerButNoneAvailable) && (
-        <div
-          className={twJoin(
-            "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
-            "whitespace-nowrap border-b pb-2"
-          )}
-        >
-          <StyledText variant="label" className="col-span-2">
-            Voting Power Breakdown
-          </StyledText>
+      <div
+        className={twJoin(
+          "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
+          "whitespace-nowrap border-b pb-2"
+        )}
+      >
+        <StyledText variant="label" className="col-span-2">
+          Voting Power Breakdown
+        </StyledText>
 
-          {[
-            ["Spent Voting Power", formatAmount(votingPowerSpent)],
-            [
-              "Available Voting Power",
-              <span className="text-palette-green" key="available-voting-power">
-                {formatAmount(votingPowerAvailable)}
-              </span>,
-            ],
-            [
-              <strong key="total-voting-power">Total Voting Power</strong>,
-              formatAmount(votingPowerTotal),
-            ],
-          ].map(([label, value], index) => (
-            <Fragment key={index}>
-              <div>{label}</div>
-              <div className="text-right">
-                <strong>{value}</strong>
-              </div>
-            </Fragment>
-          ))}
-        </div>
-      )}
+        {[
+          ["Spent Voting Power", formatAmount(votingPowerSpent)],
+          [
+            "Available Voting Power",
+            <span className="text-palette-green" key="available-voting-power">
+              {formatAmount(votingPowerAvailable)}
+            </span>,
+          ],
+          [
+            <strong key="total-voting-power">Total Voting Power</strong>,
+            formatAmount(votingPowerTotal),
+          ],
+        ].map(([label, value], index) => (
+          <Fragment key={index}>
+            <div>{label}</div>
+            <div className="text-right">
+              <strong>{value}</strong>
+            </div>
+          </Fragment>
+        ))}
+      </div>
 
       <div className="flex flex-col gap-1">
         {!hasVotingPowerOfAnyKind && (
