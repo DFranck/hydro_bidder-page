@@ -91,6 +91,19 @@ neutrond tx wasm execute $TRIBUTE_CONTRACT_ADDR "$EXECUTE" \
 
 After the transaction is successfully executed, the entire amount of the tribute will be refunded to the sender's account.
 
+## Minimum Tribute Floor and Maximum Deployment Amount
+
+Hydro ensures fair contributions by bidders through a minimum tribute floor of 1% of the liquidity exported by the bidder. This mechanism ensures healthy APRs for Hydro users while preventing projects from gaining liquidity without offering fair tribute.
+
+The maximum deployment amount for a bid is capped by the tribute offered and is calculated as:
+
+`Max Deployment` = `current_tribute_amount` / `min_tribute_factor `
+
+
+For example, if a project offers 10 ATOM in tribute and the minimum tribute factor is 1%, the bid can receive up to 1,000 ATOM in liquidity deployment.
+
+This system helps balance fair rewards for users and equitable access to liquidity for projects, ensuring sustainable growth across the Hydro ecosystem.
+
 ## Bids without Tokens 
 Some projects may not have a live token with which to bid. In that case, the simple option is to bid with another token (e.g., ATOM, USDC, OSMO, etc.). No technical work is required: the project simply submits the tribute with the token it desires to pay. 
 
