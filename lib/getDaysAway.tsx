@@ -5,7 +5,7 @@ export function getDaysAway(date: Date | string) {
     date = new Date(date)
   }
 
-  return Math.floor(
+  return Math.round(
     (date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   )
 }

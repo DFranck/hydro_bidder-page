@@ -47,6 +47,7 @@ export default function LockupsPage() {
   const {
     address,
     bidsById,
+    currentRoundId,
     currentRoundEndDate,
     lockups,
     lockedAtomMaxWallet,
@@ -121,57 +122,67 @@ export default function LockupsPage() {
       Object.values(lockup.metaDataByTrancheId).find(
         (trancheInfo) => trancheInfo.votedOnBidId !== null
       )?.votedOnBidId ?? null
-    const hasVoted = votedOnBidId !== null
     const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
-    const hasDeployed = !!votedOnBid?.liquidityDeployment
+    const nextRoundEligibleToVote =
+      Object.values(lockup.metaDataByTrancheId).find(
+        (trancheInfo) => trancheInfo.nextRoundEligibleToVote !== null
+      )?.nextRoundEligibleToVote ?? null
     const isExpired = new Date() > lockup.dateEnd
+    console.log(lockup.funds.amount, lockup.dateEnd)
     const daysLeft = getDaysAway(lockup.dateEnd)
-    const roundsLeftOnDeployment =
-      votedOnBid?.liquidityDeployment?.remainingRounds ?? -1
+    const isEligibleThisRound =
+      !isExpired &&
+      !!nextRoundEligibleToVote &&
+      nextRoundEligibleToVote <= currentRoundId
+    const isEligibleToChangeVote =
+      !isExpired && isEligibleThisRound && !!votedOnBidId
+    const isTiedToDeployment =
+      !isExpired &&
+      nextRoundEligibleToVote &&
+      nextRoundEligibleToVote > currentRoundId
+    const numRoundsLeftOnDeployment = isTiedToDeployment
+      ? nextRoundEligibleToVote - currentRoundId
+      : -1
 
     const {
       editLockupButtonLabel = null,
       statusTopline,
       statusBottomline = null,
       statusExplanation,
-    } = hasDeployed
+    } = isExpired
       ? {
-          statusTopline: "Tied to bid deployment",
-          statusBottomline:
-            roundsLeftOnDeployment > 0
-              ? `${roundsLeftOnDeployment} rounds left`
-              : roundsLeftOnDeployment === 0
-                ? "Deployment ends with current round"
-                : "Deployment complete",
+          editLockupButtonLabel: "Refresh",
+          statusTopline: `Expired ${pluralize({
+            count: Math.abs(daysLeft),
+            prefixCount: true,
+            singular: "day",
+          })} ago`,
+          statusBottomline: <>You can refresh this lockup, or unlock it</>,
           statusExplanation: (
-            <>
-              This lockup is currently tied to the bid above, which may or may
-              not receive a deployment of some amount when the round ends.
-            </>
+            <>This lockup has expired and is no longer eligible to vote.</>
           ),
         }
-      : hasVoted
+      : isTiedToDeployment
         ? {
-            statusTopline: "Voted for bid in current round",
-            statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
+            statusTopline: "Tied to bid deployment",
+            statusBottomline: `${pluralize({
+              count: numRoundsLeftOnDeployment,
+              prefixCount: true,
+              singular: "round",
+            })} left`,
             statusExplanation: (
-              <>
-                This lockup is currently tied to the bid above in the current
-                round
-              </>
+              <>This lockup is currently tied to the bid above.</>
             ),
           }
-        : isExpired
+        : isEligibleToChangeVote
           ? {
-              editLockupButtonLabel: "Refresh",
-              statusTopline: `Expired ${pluralize({
-                count: Math.abs(daysLeft),
-                prefixCount: true,
-                singular: "day",
-              })} ago`,
-              statusBottomline: <>You can refresh this lockup, or unlock it</>,
+              statusTopline: "Voted for bid in current round",
+              statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
               statusExplanation: (
-                <>This lockup has expired and is no longer eligible to vote.</>
+                <>
+                  This lockup is currently tied to the bid above in the current
+                  round, but you can still change your vote.
+                </>
               ),
             }
           : {
@@ -199,8 +210,8 @@ export default function LockupsPage() {
             {(
               [
                 ["locked", isLocked],
-                ["voted", hasVoted],
-                ["deployed", hasDeployed],
+                ["voted", isEligibleToChangeVote || isTiedToDeployment],
+                ["deployed", isTiedToDeployment],
               ] as const
             ).map(([status, isActive]) => (
               <div
@@ -221,7 +232,7 @@ export default function LockupsPage() {
           </div>
         )}
 
-        {hasVoted && votedOnBid && (
+        {votedOnBid && (
           <div className="flex flex-col">
             <StyledText variant="label">Voted for bid:</StyledText>
             <StyledText
@@ -261,7 +272,11 @@ export default function LockupsPage() {
       votingPower: (
         <div>
           <div>{formatAmount(lockup.currentVotingPower)}</div>
-          <StyledText variant="footnote">{lockup.multiplier}&times;</StyledText>
+          {!!lockup.multiplier && (
+            <StyledText variant="footnote">
+              {lockup.multiplier}&times;
+            </StyledText>
+          )}
         </div>
       ),
 
