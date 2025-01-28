@@ -31,6 +31,16 @@ export function CurrentRoundVotingPowerWallet() {
   const hasVotingPowerAvailableButNotAll =
     hasVotingPowerAvailable && !hasAllVotingPowerAvailable
 
+  console.log({
+    votingPowerAvailable,
+    votingPowerSpent,
+    votingPowerTotal,
+    hasVotingPowerOfAnyKind,
+    hasVotingPowerAvailable,
+    hasAllVotingPowerAvailable,
+    hasVotingPowerAvailableButNotAll,
+  })
+
   const yourVotingPowerTooltipRevised = (
     <div className="flex flex-col gap-2">
       <div
@@ -44,16 +54,16 @@ export function CurrentRoundVotingPowerWallet() {
         </StyledText>
 
         {[
-          ["Spent Voting Power", formatAmount(votingPowerSpent)],
+          ["Spent Voting Power", formatAmount(votingPowerSpent, 0, 4)],
           [
             "Available Voting Power",
             <span className="text-palette-green" key="available-voting-power">
-              {formatAmount(votingPowerAvailable)}
+              {formatAmount(votingPowerAvailable, 0, 4)}
             </span>,
           ],
           [
             <strong key="total-voting-power">Total Voting Power</strong>,
-            formatAmount(votingPowerTotal),
+            formatAmount(votingPowerTotal, 0, 4),
           ],
         ].map(([label, value], index) => (
           <Fragment key={index}>
@@ -98,10 +108,10 @@ export function CurrentRoundVotingPowerWallet() {
           <>
             <p>
               <strong className="text-palette-green">
-                {formatAmount(votingPowerAvailable)}
+                {formatAmount(votingPowerAvailable, 0, 4)}
               </strong>{" "}
-              of <strong>{formatAmount(votingPowerTotal)} total</strong> voting
-              power is available.
+              of <strong>{formatAmount(votingPowerTotal, 0, 4)} total</strong>{" "}
+              voting power is available.
             </p>
 
             <p>
@@ -121,7 +131,7 @@ export function CurrentRoundVotingPowerWallet() {
   return (
     <StatCard
       isLoading={isLoading}
-      value={formatAmount(votingPowerAvailable)}
+      value={formatAmount(votingPowerAvailable, 0, 4)}
       title={
         <Tooltip
           tipContents={yourVotingPowerTooltipRevised}
@@ -133,7 +143,7 @@ export function CurrentRoundVotingPowerWallet() {
           </div>
         </Tooltip>
       }
-      subTitle={<span>{formatAmount(votingPowerTotal)} Total</span>}
+      subTitle={<span>{formatAmount(votingPowerTotal, 0, 4)} Total</span>}
     />
   )
 }
