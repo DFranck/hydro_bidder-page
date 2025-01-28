@@ -31,16 +31,6 @@ export function CurrentRoundVotingPowerWallet() {
   const hasVotingPowerAvailableButNotAll =
     hasVotingPowerAvailable && !hasAllVotingPowerAvailable
 
-  console.log({
-    votingPowerAvailable,
-    votingPowerSpent,
-    votingPowerTotal,
-    hasVotingPowerOfAnyKind,
-    hasVotingPowerAvailable,
-    hasAllVotingPowerAvailable,
-    hasVotingPowerAvailableButNotAll,
-  })
-
   const yourVotingPowerTooltipRevised = (
     <div className="flex flex-col gap-2">
       <div

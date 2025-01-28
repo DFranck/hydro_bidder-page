@@ -128,18 +128,18 @@ export default function LockupsPage() {
         (trancheInfo) => trancheInfo.nextRoundEligibleToVote !== null
       )?.nextRoundEligibleToVote ?? null
     const isExpired = new Date() > lockup.dateEnd
-    console.log(lockup.funds.amount, lockup.dateEnd)
     const daysLeft = getDaysAway(lockup.dateEnd)
     const isEligibleThisRound =
       !isExpired &&
       !!nextRoundEligibleToVote &&
       nextRoundEligibleToVote <= currentRoundId
-    const isEligibleToChangeVote =
-      !isExpired && isEligibleThisRound && !!votedOnBidId
+    const isEligibleToChangeVote = isEligibleThisRound && !!votedOnBidId
+    const isEligibleButHasNotVoted = isEligibleThisRound && !votedOnBidId
     const isTiedToDeployment =
       !isExpired &&
-      nextRoundEligibleToVote &&
-      nextRoundEligibleToVote > currentRoundId
+      !!nextRoundEligibleToVote &&
+      nextRoundEligibleToVote > currentRoundId &&
+      !!votedOnBid
     const numRoundsLeftOnDeployment = isTiedToDeployment
       ? nextRoundEligibleToVote - currentRoundId
       : -1
