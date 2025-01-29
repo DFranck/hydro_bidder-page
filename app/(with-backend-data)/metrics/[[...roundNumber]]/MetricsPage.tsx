@@ -144,7 +144,7 @@ export function MetricsPage({
           <Tooltip
             tipContents={
               isPending
-                ? "No rewards yet — still pending"
+                ? "This deployment is still active or has not been withdrawn. PoL APR will be updated once the deployment is fully concluded."
                 : "currentAllocationAmount" in bid &&
                   "initialAllocationAmount" in bid && (
                     <div className="flex flex-col">
