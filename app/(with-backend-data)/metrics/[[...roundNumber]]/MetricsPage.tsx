@@ -147,7 +147,7 @@ export function MetricsPage({
                 ? "No rewards yet — still pending"
                 : "currentAllocationAmount" in bid &&
                   "initialAllocationAmount" in bid && (
-                    <div className="flex items-center justify-between gap-6">
+                    <div className="flex flex-col">
                       <StyledText variant="label">PoL Rewards</StyledText>
                       <AmountAndUnitPair
                         amount={(
@@ -156,7 +156,7 @@ export function MetricsPage({
                           maximumFractionDigits: 4,
                         })}
                         unit="ATOM"
-                        textAlign="right"
+                        textAlign="left"
                       />
                     </div>
                   )
@@ -177,9 +177,9 @@ export function MetricsPage({
           {bidFromContract ? (
             <Tooltip
               tipContents={
-                <div className="flex items-center justify-between gap-6">
+                <div className="flex flex-col">
                   <StyledText variant="label">Tribute Size</StyledText>
-                  <BidTributes bid={bidFromContract} textAlign="right" />
+                  <BidTributes bid={bidFromContract} textAlign="left" />
                 </div>
               }
               className={twJoin(

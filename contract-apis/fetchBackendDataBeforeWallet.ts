@@ -266,7 +266,9 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                 const onchainTributeUsdc = bidData?.onchainTributeUsdc ?? 0
                 const polSize = bidData?.currentAllocationAmount ?? 0
                 const tributeApr =
-                  polSize > 0 ? (onchainTributeUsdc * 12) / polSize : 0
+                  polSize > 0
+                    ? (onchainTributeUsdc * 12) / (polSize * atomPrice)
+                    : 0
 
                 return {
                   ...bid,
