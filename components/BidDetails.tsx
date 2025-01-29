@@ -5,6 +5,7 @@ import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
 import { BidTributeApr } from "@/components/BidTributeApr"
+import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { ErrorBox } from "@/components/ErrorBox"
@@ -18,6 +19,8 @@ import {
   bidDetailsVoteReceivedTooltip,
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
+  metricsTributeAprColumnTooltip,
+  metricsTributeColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -87,6 +90,8 @@ export function BidDetails({ bidId }: { bidId: number }) {
   const totalTributeValueInAtom = metrics.onchainTributeUsdc / atomPrice
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
+
+  const isTokenBased = metrics.offchainTribute.length === 0
 
   return (
     <ContentContainer className="py-6">
@@ -248,7 +253,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                     <StyledText
                       as="h3"
                       variant="label"
-                      className="flex items-center gap-1 text-palette-green"
+                      className="flex cursor-default items-center gap-1 text-palette-green"
                     >
                       <span>PoL Size</span>
                       <Icon name="circle-info" />
@@ -266,7 +271,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 <StyledText
                   as="h3"
                   variant="label"
-                  className="flex items-center gap-1 text-palette-green"
+                  className="flex cursor-default items-center gap-1 text-palette-green"
                 >
                   <span>Status</span>
                   <Icon name="circle-info" />
@@ -287,48 +292,62 @@ export function BidDetails({ bidId }: { bidId: number }) {
                     <StyledText
                       as="h3"
                       variant="label"
-                      className="flex items-center gap-1 "
+                      className="flex cursor-default items-center gap-1"
                     >
                       <span>Duration</span>
                       <Icon name="circle-info" />
                     </StyledText>
                   </Tooltip>
 
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold ">
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold">
                     <BidDuration bidId={bidId} />
                   </div>
                 </div>
 
-                <div>
-                  <Tooltip tipContents={metricsPolAprColumnTooltip}>
-                    <StyledText
-                      as="h3"
-                      variant="label"
-                      className="flex items-center gap-1 "
-                    >
-                      <span>PoL APR</span>
-                      <Icon name="circle-info" />
-                    </StyledText>
-                  </Tooltip>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold ">
-                    <BidPolApr bidId={bidId} />
+                {isTokenBased && (
+                  <div>
+                    <Tooltip tipContents={metricsPolAprColumnTooltip}>
+                      <StyledText
+                        as="h3"
+                        variant="label"
+                        className="flex cursor-default items-center gap-1"
+                      >
+                        <span>PoL APR</span>
+                        <Icon name="circle-info" />
+                      </StyledText>
+                    </Tooltip>
+                    <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                      <BidPolApr bidId={bidId} />
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
 
             <div>
-              <StyledText
-                as="h3"
-                variant="label"
-                className="flex items-center gap-1"
+              <Tooltip
+                tipContents={
+                  !isTokenBased
+                    ? metricsTributeColumnTooltip
+                    : metricsTributeAprColumnTooltip
+                }
               >
-                <span>Tribute APR</span>
-                <Icon name="circle-info" />
-              </StyledText>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1"
+                >
+                  <span>{!isTokenBased ? "Tribute" : "Tribute APR"}</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+              </Tooltip>
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
-                <BidTributeApr bidId={bidId} />
+                {!isTokenBased ? (
+                  <BidTributes bid={bid} />
+                ) : (
+                  <BidTributeApr bidId={bidId} />
+                )}
               </div>
             </div>
 
@@ -339,7 +358,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 <StyledText
                   as="h3"
                   variant="label"
-                  className="flex items-center gap-1"
+                  className="flex cursor-default items-center gap-1"
                 >
                   <span>Max Deployment Amount</span>
                   <Icon name="circle-info" />
@@ -356,7 +375,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 <StyledText
                   as="h3"
                   variant="label"
-                  className="flex items-center gap-1 "
+                  className="flex cursor-default items-center gap-1"
                 >
                   <span>% Vote Received</span>
                   <Icon name="circle-info" />
@@ -379,6 +398,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                     <span
                       className="
                         flex
+                        cursor-default
                         items-center
                         gap-1
                         whitespace-nowrap
