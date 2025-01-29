@@ -167,7 +167,7 @@ export function MetricsPage({
             )}
             classNamesForTooltip="w-fit"
           >
-            <span>{bid.apr}%</span>
+            <span>{isPending ? "Pending" : `${bid.apr}%`}</span>
           </Tooltip>
         </InvisibleLink>
       ),
