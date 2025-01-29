@@ -1,7 +1,11 @@
 "use client"
 
 import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
-import { BidTributes } from "@/components/BidTributes"
+import { BidDuration } from "@/components/BidDuration"
+import { BidPolApr } from "@/components/BidPolApr"
+import { BidPolSize } from "@/components/BidPolSize"
+import { BidStatus } from "@/components/BidStatus"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -22,11 +26,11 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
-import { max, sumBy, uniq } from "lodash"
+import { max, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, useCallback } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge"
 
 const PRE_HYDRO_ROUND_ID = -1
 
@@ -51,18 +55,16 @@ export function MetricsPage({
         ? Math.min(requestedRoundNumber - 1, highestRoundId)
         : PRE_HYDRO_ROUND_ID
 
-  const bidsToRender =
-    requestedRoundId === PRE_HYDRO_ROUND_ID
-      ? metricsForPreHydroBids
-      : metricsForPostHydroBids.filter(
-          (bid) => bid.roundId === requestedRoundId
-        )
+  const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
+
+  const bidsToRender = requestedPreHydro
+    ? metricsForPreHydroBids
+    : metricsForPostHydroBids.filter((bid) => bid.roundId === requestedRoundId)
 
   const rows = bidsToRender.map((bid) => {
     const {
       apr,
       id,
-      currentAllocationAmount,
       durationDays,
       initialAllocationAmount,
       projectLogoUrl,
@@ -79,11 +81,6 @@ export function MetricsPage({
         : `/bids/${id}`
 
     const percentage = bidFromContract?.percentage ?? null
-
-    const isPending =
-      status.toLowerCase() === "voting period" ||
-      (status.toLowerCase() === "ongoing" &&
-        (apr === 0 || currentAllocationAmount - initialAllocationAmount <= 0))
 
     return {
       _bid: { ...bid, percentage },
@@ -110,93 +107,50 @@ export function MetricsPage({
 
       polSize: (
         <InvisibleLink href={rowURL}>
-          {!!currentAllocationAmount && (
+          {requestedPreHydro ? (
             <AmountAndUnitPair
-              amount={currentAllocationAmount.toLocaleString(undefined, {
+              amount={initialAllocationAmount.toLocaleString(undefined, {
                 maximumFractionDigits: 4,
               })}
               unit="ATOM"
             />
+          ) : (
+            <BidPolSize bidId={Number(id)} />
           )}
         </InvisibleLink>
       ),
 
       duration: (
         <InvisibleLink href={rowURL}>
-          {!durationDays
-            ? "Pending"
-            : durationDays < 30
-              ? pluralize({
-                  count: durationDays,
-                  prefixCount: true,
-                  singular: "day",
-                })
-              : pluralize({
-                  count: Math.round(durationDays / 30),
-                  prefixCount: true,
-                  singular: "month",
-                })}
+          {requestedPreHydro ? (
+            pluralize({
+              count: durationDays,
+              prefixCount: true,
+              singular: "day",
+            })
+          ) : (
+            <BidDuration bidId={Number(id)} />
+          )}
         </InvisibleLink>
       ),
 
       polApr: (
         <InvisibleLink href={rowURL}>
-          <Tooltip
-            tipContents={
-              isPending
-                ? "This deployment is still active or has not been withdrawn. PoL APR will be updated once the deployment is fully concluded."
-                : "currentAllocationAmount" in bid &&
-                  "initialAllocationAmount" in bid && (
-                    <div className="flex flex-col">
-                      <StyledText variant="label">PoL Rewards</StyledText>
-                      <AmountAndUnitPair
-                        amount={(
-                          currentAllocationAmount - initialAllocationAmount
-                        ).toLocaleString(undefined, {
-                          maximumFractionDigits: 4,
-                        })}
-                        unit="ATOM"
-                        textAlign="left"
-                      />
-                    </div>
-                  )
-            }
-            className={twJoin(
-              "inline-flex items-center gap-1",
-              "border-b-2 border-dotted border-white/50 hover:border-white"
-            )}
-            classNamesForTooltip="w-fit"
-          >
-            <span>{isPending ? "Pending" : `${bid.apr}%`}</span>
-          </Tooltip>
+          {requestedPreHydro ? `${apr}%` : <BidPolApr bidId={Number(id)} />}
         </InvisibleLink>
       ),
 
       tributeApr: (
         <InvisibleLink href={rowURL}>
-          {bidFromContract ? (
-            <Tooltip
-              tipContents={
-                <div className="flex flex-col">
-                  <StyledText variant="label">Tribute Size</StyledText>
-                  <BidTributes bid={bidFromContract} textAlign="left" />
-                </div>
-              }
-              className={twJoin(
-                "inline-flex items-center gap-1",
-                "border-b-2 border-dotted border-white/50 hover:border-white"
-              )}
-              classNamesForTooltip="w-fit"
-            >
-              <span>{(bidFromContract.tributeApr * 100).toFixed(2)}%</span>
-            </Tooltip>
-          ) : (
-            0
-          )}
+          {requestedPreHydro ? 0 : <BidTributeApr bidId={Number(id)} />}
         </InvisibleLink>
       ),
 
-      status: <InvisibleLink href={rowURL}>{status}</InvisibleLink>,
+      status: (
+        <InvisibleLink href={rowURL}>
+          {requestedPreHydro ? status : <BidStatus bidId={Number(id)} />}
+        </InvisibleLink>
+      ),
     }
   })
 
@@ -226,10 +180,7 @@ export function MetricsPage({
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) =>
-        "initialAllocationAmount" in row._bid
-          ? row._bid.initialAllocationAmount
-          : 0,
+      customValueGetter: (row) => row._bid.initialAllocationAmount,
     },
     {
       key: "duration",
@@ -283,9 +234,10 @@ export function MetricsPage({
       textAlign: "right",
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) =>
-        row._bid.onchainTributeUsdc ||
-        sumBy(row._bid.offchainTribute, "amount"),
+      customValueGetter: (row) => {
+        const bidFromContract = bidsById[Number(row._bid.id)]
+        return bidFromContract?.tributeApr ?? 0
+      },
     },
     {
       key: "status",
