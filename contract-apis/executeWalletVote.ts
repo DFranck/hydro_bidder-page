@@ -13,17 +13,28 @@ export async function executeWalletVote(
   }
 
   const client = await getSigningCosmWasmClient()
-  const lockups = await fetchWalletLockups(address)
+
+  const sanitizedLockups = await fetchWalletLockups(address)
+
   const hydroClient = new HydroBaseClient(
     client,
     address,
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
+
+  const { round_id: currentRoundId } = await hydroClient.currentRound()
+
+  const validLockups = sanitizedLockups.filter(
+    (lockup) =>
+      (lockup.metaDataByTrancheId[trancheId]?.nextRoundEligibleToVote ??
+        Infinity) <= currentRoundId
+  )
+
   const response = await hydroClient.vote(
     {
       proposalsVotes: [
         {
-          lock_ids: lockups.map((lockup) => lockup.lock_entry.lock_id),
+          lock_ids: validLockups.map((lockup) => lockup.id),
           proposal_id: proposalId,
         },
       ],
