@@ -444,25 +444,29 @@ export function MetricsPage({
           </div>
         </div>
 
-        <BlurryBackdropBox>
-          <StyledTable
-            columns={tokenBasedColumns}
-            rows={tokenBasedRows}
-            initialSortedColumnKey="polSize"
-            renderRow={renderRow}
-            secondPassSortFunction={secondSortRows}
-          />
-        </BlurryBackdropBox>
+        {tokenBasedRows.length > 0 && (
+          <BlurryBackdropBox>
+            <StyledTable
+              columns={tokenBasedColumns}
+              rows={tokenBasedRows}
+              initialSortedColumnKey="polSize"
+              renderRow={renderRow}
+              secondPassSortFunction={secondSortRows}
+            />
+          </BlurryBackdropBox>
+        )}
 
-        <BlurryBackdropBox>
-          <StyledTable
-            columns={pointBasedColumns}
-            rows={pointBasedRows}
-            initialSortedColumnKey="polSize"
-            renderRow={renderRow}
-            secondPassSortFunction={secondSortRows}
-          />
-        </BlurryBackdropBox>
+        {pointBasedRows.length > 0 && (
+          <BlurryBackdropBox>
+            <StyledTable
+              columns={pointBasedColumns}
+              rows={pointBasedRows}
+              initialSortedColumnKey="polSize"
+              renderRow={renderRow}
+              secondPassSortFunction={secondSortRows}
+            />
+          </BlurryBackdropBox>
+        )}
       </ContentContainer>
     </>
   )
