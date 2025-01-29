@@ -43,6 +43,7 @@ export default function RewardsPage() {
     claimsHistorical,
     claimsOutstanding,
     currentRoundId,
+    isWalletConnected,
     votes,
   } = useBackendData()
   const votesFromPreviousRounds = votes.filter(
@@ -355,7 +356,10 @@ export default function RewardsPage() {
           {rows.length > 0 ? (
             <StyledTable columns={columns} rows={rows} />
           ) : (
-            <EmptyBox>Stake to lock. Lock to vote. Vote to earn.</EmptyBox>
+            <EmptyBox>
+              Stake to lock. Lock to vote. Vote to earn. Connect your wallet to
+              get started!
+            </EmptyBox>
           )}
         </BlurryBackdropBox>
       </ContentContainer>
