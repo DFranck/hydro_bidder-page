@@ -9,6 +9,7 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
+import { PopupOnMaxReached } from "@/components/PopupOnMaxReached"
 import { PopupOnWelcome } from "@/components/PopupOnWelcome"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
@@ -360,7 +361,7 @@ export default function BidsPage() {
 
   return (
     <>
-      {/* <PopupOnMaxReached /> */}
+      {process.env.NODE_ENV !== "development" && <PopupOnMaxReached />}
 
       <PopupOnWelcome />
 
