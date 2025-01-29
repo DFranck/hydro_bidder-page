@@ -234,6 +234,23 @@ export const lockupsTableTimeLeftColumnTooltip = (
   <>Some explanation of time left</>
 )
 
+export const lockAtomToVoteTooltip = (
+  <>
+    All of your lockups are in use or expired. Lock more ATOM to vote for this
+    project.{" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/voting-for-projects"
+      target="_blank"
+      variant="link"
+      className="inline-flex items-center gap-1"
+    >
+      <span>Learn More</span>
+      <Icon name="arrow-up-right-from-square" />
+    </StyledText>
+  </>
+)
+
 export const extendLockupsToVoteTooltip = (
   <>
     You can extend your lockups to vote for this project.{" "}
