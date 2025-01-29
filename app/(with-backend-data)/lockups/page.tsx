@@ -22,6 +22,7 @@ import {
   lockupLimitTooltip,
   lockupsTableTimeLeftColumnTooltip,
   lockupsTableVotingAndMultiplierColumnTooltip,
+  needsWalletConnectionTooltip,
 } from "@/components/ToolTips"
 import { WordWrapper } from "@/components/WordWrapper"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
@@ -49,6 +50,7 @@ export default function LockupsPage() {
     bidsById,
     currentRoundId,
     currentRoundEndDate,
+    isWalletConnected,
     lockups,
     lockedAtomMaxWallet,
     lockedAtomPercentageGlobal,
@@ -454,6 +456,7 @@ export default function LockupsPage() {
 
             <ConditionalWrapper
               condition={
+                !isWalletConnected ||
                 lockedAtomPercentageWallet === 100 ||
                 lockedAtomPercentageGlobal === 100
               }
@@ -461,9 +464,11 @@ export default function LockupsPage() {
                 <Tooltip
                   classNamesForTooltip="-ml-12"
                   tipContents={
-                    lockedAtomPercentageWallet === 100
-                      ? lockupLimitReachedByUserTooltip
-                      : lockupLimitReachedByNetworkTooltip
+                    !isWalletConnected
+                      ? needsWalletConnectionTooltip
+                      : lockedAtomPercentageWallet === 100
+                        ? lockupLimitReachedByUserTooltip
+                        : lockupLimitReachedByNetworkTooltip
                   }
                 >
                   <div
@@ -488,11 +493,18 @@ export default function LockupsPage() {
         <BlurryBackdropBox className="flex flex-col gap-6">
           {lockups.length === 0 ? (
             <EmptyBox className="flex flex-col gap-1">
-              <div>
-                You don&rsquo;t have any lockups yet. To create one, click the
-                &ldquo;New Lockup&rdquo; button&nbsp;
-                <Icon name="arrow-up-right" />
-              </div>
+              {!isWalletConnected ? (
+                <>
+                  Stake to lock. Lock to vote. Vote to earn. Connect your wallet
+                  to get started!
+                </>
+              ) : (
+                <div>
+                  You don&rsquo;t have any lockups yet. To create one, click the
+                  &ldquo;New Lockup&rdquo; button&nbsp;
+                  <Icon name="arrow-up-right" />
+                </div>
+              )}
               <div>
                 <StyledText
                   as={Link}
