@@ -15,9 +15,8 @@ export const VOTE_SHARE_THRESHOLD = 5
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
     <p>
-      This number is the average APR available to Hydro voters during the
-      current active round. This is separate and additional to your standard
-      staking APR as an ATOM staker.
+      The average APR available to Hydro voters during the
+      current active round. Hydro APR is separate and additional to your staking APR as an ATOM staker.
     </p>
 
     <StyledText
@@ -100,9 +99,9 @@ export const bidTypeTooltip = ({
 
 export const currentVoteShareTooltip = (
   <>
-    This is the percentage of votes that this project has received so far. It
-    may increase or decrease if other users decide to switch their votes before
-    the round ends
+    The percentage of votes that this bid has received so far. It
+    may change if other users decide to switch their vote before
+    the round ends.
   </>
 )
 
@@ -122,25 +121,25 @@ export const estimatedRewardsColumnTooltip = ({
 }) => {
   const universalPointSystemMessage = (
     <>
-      This is the total points offered by this project as a tribute to users.
-      The tribute is split amongst the users that vote for this project, based
+      The total points offered by this bid as tribute to users.
+      The tribute is split by the users that vote for this bid, based
       on their individual voting power.
     </>
   )
   const messageIfHasVotedThisRound = isTokenBased ? (
     <>
-      This is the expected USD-equivalent value of rewards you would receive
+      The expected USD-equivalent value of tribute you would receive
       from the bid&rsquo;s tribute. Over time, the value may increase if the
-      project adds tributes or decrease if more voters choose the project.
+      bidder adds tributes or decrease if more voters choose the bid.
     </>
   ) : (
     universalPointSystemMessage
   )
   const messageIfHasNotVotedThisRound = isTokenBased ? (
     <>
-      This is the total estimated USD-equivalent value of the tribute offered by
-      the project. The tribute is split amongst the users that vote for the
-      project, based on their individual voting power.
+      The total estimated USD-equivalent value of the tribute offered in this
+      bid. The tribute is split amongst the users that vote for the
+      bid, based on their individual voting power.
     </>
   ) : (
     universalPointSystemMessage
@@ -184,20 +183,18 @@ export const estimatedRewardsTooltip = ({
     : "amount of points"
   const messageIfHasVotedThisRound = (
     <>
-      This is the {rewardDescription} you would receive from{" "}
+      The {rewardDescription} you would receive from{" "}
       <strong>{projectName}</strong>. It represents{" "}
       <strong>{percentageOfTotalTributeValue}%</strong> of the total tribute{" "}
       <strong className="text-palette-beige">{formattedTotalTribute}</strong>.
-      Over time, the value may increase if the project adds tributes or decrease
-      if more voters choose the project.
+      Over time, the value may increase if the bidder adds tribute or decrease
+      if more voters choose the bid.
     </>
   )
   const messageIfHasNotVotedThisRound = (
     <>
-      This is the {rewardDescription} offered by <strong>{projectName}</strong>{" "}
-      as a tribute. By voting for it, you would receive a portion of this value,
-      relative to your voting power, and the voting power of the bid at the end
-      of the round.
+      The {rewardDescription} offered by <strong>{projectName}</strong>{" "}
+      as tribute. If you vote for this bid and it passes minimum thresholds, you will receive a portion of this value relative to your voting power.
     </>
   )
 
@@ -212,7 +209,7 @@ export const lockupLimitReachedByUserTooltip = (
 
 export const lockupLimitTooltip = (
   <>
-    For the pilot round, there is a maximum limit of ATOM you can lockup.{" "}
+    During Pilot Rounds, there is a maximum limit of ATOM you can lockup.{" "}
     <StyledText
       as={Link}
       href="/docs#pilot-rounds"
@@ -227,17 +224,28 @@ export const lockupLimitTooltip = (
 )
 
 export const lockupsTableVotingAndMultiplierColumnTooltip = (
-  <>Some explanation of voting power and the multiplier</>
+  <>Each lockup provides different voting power. The voting power and multiplier are determined by the amount of ATOM and duration of each lockup.{" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/locking-lsm-shares#voting-power"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      Learn more
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
+  </>
 )
 
 export const lockupsTableTimeLeftColumnTooltip = (
-  <>Some explanation of time left</>
+  <>Voting power decays over time as the lockup period gets closer to expiration. You can edit a lockup at any time to extend the time left, reclaiming the max voting power for each lockup.</>
 )
 
 export const lockAtomToVoteTooltip = (
   <>
     All of your lockups are in use or expired. Lock more ATOM to vote for this
-    project.{" "}
+    bid.{" "}
     <StyledText
       as={Link}
       href="/docs/users/voting-for-projects"
@@ -253,7 +261,7 @@ export const lockAtomToVoteTooltip = (
 
 export const extendLockupsToVoteTooltip = (
   <>
-    You can extend your lockups to vote for this project.{" "}
+    You can extend your lockups to vote for this bid.{" "}
     <StyledText
       as={Link}
       href="/docs/users/voting-for-projects"
@@ -268,7 +276,7 @@ export const extendLockupsToVoteTooltip = (
 )
 
 export const longerLockupsComingSoonTooltip = (
-  <>Longer durations will be available after the pilot rounds</>
+  <>Longer durations will be available after the pilot rounds.</>
 )
 
 export const metricsPolAprColumnTooltip = (
@@ -292,23 +300,32 @@ export const metricsPolRewardsColumnTooltip = (
 
 export const metricsPolSizeColumnTooltip = (
   <>
-    The total amount of ATOM allocated to this project as Protocol-Owned
-    Liquidity (PoL) during the specified round.
+    The total amount of ATOM allocated to this bid as PoL during the specified round.{" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      What is PoL?
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
 export const metricsStatusColumnTooltip = (
   <>
     The current status of the liquidity deployment, such as &lsquo;Voting
-    Period&rsquo; for current round bids, &lsquo;Ongoing&rsquo; for active
-    deployments, or &lsquo;Completed&rsquo; for completed ones.
+    Period&rsquo;, &lsquo;Ongoing&rsquo; for active
+    deployments, &lsquo;Completed&rsquo;, or &lsquo;Rejected&rsquo; for bids that did not meet minimum thresholds.
   </>
 )
 
 export const metricsTributeColumnTooltip = (
   <>
-    The amount offered by the project as tribute to incentivize Hydro voters to
-    allocate liquidity to their bid. Tribute was not offered Pre-Hydro.{" "}
+    The amount offered by this bid as tribute to incentivize Hydro voters to
+    choose this liquidity allocation. Tribute was not offered Pre-Hydro.{" "}
     <StyledText
       as={Link}
       href="/docs/projects/bidding#tribute-additions"
@@ -323,7 +340,7 @@ export const metricsTributeColumnTooltip = (
 )
 
 export const needsWalletConnectionTooltip = (
-  <>Connect your wallet to access this feature</>
+  <>Connect your wallet to access this feature.</>
 )
 
 export const networkLimitReachedTooltip = (
@@ -345,7 +362,7 @@ export const networkLimitReachedTooltip = (
 
 export const currentRoundUniqueWalletsTooltip = (
   <>
-    This represents the total number of individual wallets that have participate
+    The total number of individual wallets that have participated
     in Hydro. Each wallet is counted once.
   </>
 )
@@ -356,7 +373,7 @@ export const pointSystemTooltip = ({
   learnMoreURL?: string
 }) => (
   <>
-    This project is using a point system. Voters get points instead of live
+    This bid is using a point system for tribute. Voters get points instead of live
     tokens.{" "}
     {learnMoreURL && (
       <a
@@ -372,23 +389,43 @@ export const pointSystemTooltip = ({
 
 export const polAvailableTooltip = (
   <>
-    This is the total ATOM available for Protocol-Owned Liquidity (PoL) to be
-    deployed across projects from the Hydro Committee.
+    The total ATOM available to be
+    deployed across all bids from the Hydro Committee as PoL. {" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      What is PoL?
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
 export const polDeployedTooltip = (
   <>
-    This is the total amount of Protocol-Owned Liquidity (PoL) that has been
-    deployed to projects over time. It is the aggregate amount of all past-round
-    and Pre-Hydro deployments.
+    The total amount of PoL that has been
+    deployed to bids over time. It is the aggregate amount of all past-round
+    and Pre-Hydro deployments.{" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      What is PoL?
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
 export const polDurationTooltip = (
   <>
-    This represents the length of time the project will receive liquidity from
-    Hydro. You can only vote for bids with a PoL Duration that matches or is
+    The length of time the bid will receive liquidity from
+    Hydro. Users can only vote for bids with a PoL Duration that matches or is
     shorter than your longest lockup period.{" "}
     <StyledText
       variant="link"
@@ -405,39 +442,56 @@ export const polDurationTooltip = (
 
 export const polRevenueTooltip = (
   <>
-    This represents the total revenue generated from deployed Protocol-Owned
-    Liquidity (PoL) for the Cosmos Hub and Hydro, including rewards and tributes
-    from funded projects.
+    The total revenue generated from deployed PoL for the Cosmos Hub and Hydro, including rewards and tribute from funded bids. {" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      What is PoL?
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
 export const rewardsPolRewardsColumnTooltip = (
   <>
-    This number is your share of the PoL rewards generated by this PoL
-    deployment.
+    Your share of the PoL rewards generated by this PoL deployment.{" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      What is PoL?
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
 export const rewardsYourTributeColumnTooltip = (
   <>
-    This is the tribute you earned from this bid in this round, based on your
-    voting power. If a project added additional tributes in a round to a bid, or
+    The tribute you earned from this bid in this round, based on your
+    voting power. If a bidder added additional tributes in a round to a bid, or
     used multiple tokens as tribute, you may see multiple rows for the same bid.
   </>
 )
 
 export const rewardsTotalTributeColumnTooltip = (
   <>
-    This is the total tribute that was offered for this bid in the round
-    displayed. If a project added additional tributes in a round to a bid, or
+    The tribute that was offered for this bid in the round
+    displayed. If a bidder added additional tribute in a round to a bid, or
     used multiple tokens as tribute, you may see multiple rows for the same bid.
   </>
 )
 
 export const rewardsYourTributeTooltip = (
   <>
-    This is the estimated USD-equivalent value of the rewards you&rsquo;ve
-    received from this tribute.
+    The estimated USD-equivalent value of the tribute you&rsquo;ve
+    received from this bid.
   </>
 )
 
@@ -469,7 +523,7 @@ export const voteThresholdTooltip = (
   <>
     Bids below the minimum threshold of{" "}
     <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
-    liquidity, and will not pay out rewards to users.{" "}
+    liquidity, and will not pay out tribute to users.{" "}
     <StyledText
       as="a"
       href="/docs#tribute-refunds"
@@ -485,29 +539,29 @@ export const voteThresholdTooltip = (
 
 export const yourAggregateAprTooltip = (
   <>
-    This is the Aggregate historical APR for all past rounds, based on total
-    votes and total tributes that were paid out as rewards.
+    The Aggregate historical APR for all past rounds, based on total
+    votes and total tribute paid out to users.
   </>
 )
 
 export const yourRoundAprTooltip = (
   <>
-    This is the Average APR for the previous round, based on the total votes and
-    total tributes that were paid out as rewards.
+    The Average APR for the previous round, based on total votes and
+    total tribute paid out to users.
   </>
 )
 
 export const yourTotalAtomLockedTooltip = (
   <>
-    Your staked ATOM locked in Hydro. The more ATOMs you lock, the higher your
-    voting power will be
+    Your staked ATOM locked in Hydro. The more ATOM you lock, the higher your
+    voting power will be.
   </>
 )
 
 export const yourTotalRewardsAllTimeTooltip = (
   <>
-    Based on today&rsquo;s prices, this is the expected aggregate USD-equivalent
-    value of all the rewards you have accumulated across the Hydro rounds you
+    Based on today&rsquo;s prices, the expected aggregate USD-equivalent
+    value of tribute you have accumulated across the Hydro rounds you
     have participated in.
   </>
 )
@@ -521,22 +575,31 @@ export const yourVotingPowerTooltip = (
 
 export const bidDetailsPolSizeTooltip = (
   <>
-    The total amount of ATOM allocated to this project as Protocol-Owned
-    Liquidity (PoL) during the specified round.
+    The total amount of ATOM allocated to this bid as PoL during the specified round. {" "}
+    <StyledText
+      as={Link}
+      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      What is PoL?
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
 export const bidDetailsStatusTooltip = (
   <>
     The current status of the liquidity deployment, such as &lsquo;Voting
-    Period&rsquo; for current round bids, &lsquo;Ongoing&rsquo; for active
-    deployments, or &lsquo;Completed&rsquo; for completed ones.
+    Period&rsquo;, &lsquo;Ongoing&rsquo; for active
+    deployments, &lsquo;Completed&rsquo;, or &lsquo;Rejected&rsquo; for completed ones.
   </>
 )
 
 export const bidDetailsVoteReceivedTooltip = (
   <>
-    This is the percentage of votes that this project received during the
+    The percentage of votes that this bid received during the
     specified round.
   </>
 )
