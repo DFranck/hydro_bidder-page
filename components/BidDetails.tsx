@@ -4,7 +4,7 @@ import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
-import { BidTributes } from "@/components/BidTributes"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { ErrorBox } from "@/components/ErrorBox"
@@ -323,12 +323,12 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 variant="label"
                 className="flex items-center gap-1"
               >
-                <span>Tribute</span>
+                <span>Tribute APR</span>
                 <Icon name="circle-info" />
               </StyledText>
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
-                <BidTributes bid={bid} />
+                <BidTributeApr bidId={bidId} />
               </div>
             </div>
 
