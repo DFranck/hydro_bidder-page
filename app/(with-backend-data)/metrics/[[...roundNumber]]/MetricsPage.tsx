@@ -6,6 +6,7 @@ import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
 import { BidTributeApr } from "@/components/BidTributeApr"
+import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -26,7 +27,7 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
-import { max, uniq } from "lodash"
+import { max, sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, useCallback } from "react"
@@ -61,206 +62,261 @@ export function MetricsPage({
     ? metricsForPreHydroBids
     : metricsForPostHydroBids.filter((bid) => bid.roundId === requestedRoundId)
 
-  const rows = bidsToRender.map((bid) => {
-    const {
-      apr,
-      id,
-      durationDays,
-      initialAllocationAmount,
-      projectLogoUrl,
-      projectName,
-      status,
-      title,
-    } = bid
+  const tokenBasedBids = bidsToRender.filter(
+    (bid) => bid.offchainTribute.length === 0
+  )
+  const pointBasedBids = bidsToRender.filter(
+    (bid) => bid.offchainTribute.length > 0
+  )
 
-    const bidFromContract = bidsById[Number(id)] ?? null
-
-    const rowURL =
-      requestedRoundId === PRE_HYDRO_ROUND_ID
-        ? `https://www.mintscan.io/cosmos/proposals/${id.replace("#", "")}`
-        : `/bids/${id}`
-
-    const percentage = bidFromContract?.percentage ?? null
-
-    return {
-      _bid: { ...bid, percentage },
-
-      logoAndTitle: (
-        <InvisibleLink href={rowURL} className="flex items-center gap-6">
-          <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-            {projectLogoUrl ? (
-              <Image
-                className="object-contain"
-                src={projectLogoUrl}
-                alt={projectName}
-                fill={true}
-              />
-            ) : null}
-          </div>
-
-          <div className="flex flex-col">
-            <StyledText variant="h4">{title}</StyledText>
-            <StyledText variant="footnote">{projectName}</StyledText>
-          </div>
-        </InvisibleLink>
-      ),
-
-      polSize: (
-        <InvisibleLink href={rowURL}>
-          {requestedPreHydro ? (
-            <AmountAndUnitPair
-              amount={initialAllocationAmount.toLocaleString(undefined, {
-                maximumFractionDigits: 4,
-              })}
-              unit="ATOM"
-            />
-          ) : (
-            <BidPolSize bidId={Number(id)} />
-          )}
-        </InvisibleLink>
-      ),
-
-      duration: (
-        <InvisibleLink href={rowURL}>
-          {requestedPreHydro ? (
-            pluralize({
-              count: durationDays,
-              prefixCount: true,
-              singular: "day",
-            })
-          ) : (
-            <BidDuration bidId={Number(id)} />
-          )}
-        </InvisibleLink>
-      ),
-
-      polApr: (
-        <InvisibleLink href={rowURL}>
-          {requestedPreHydro ? `${apr}%` : <BidPolApr bidId={Number(id)} />}
-        </InvisibleLink>
-      ),
-
-      tributeApr: (
-        <InvisibleLink href={rowURL}>
-          {requestedPreHydro ? 0 : <BidTributeApr bidId={Number(id)} />}
-        </InvisibleLink>
-      ),
-
-      status: (
-        <InvisibleLink href={rowURL}>
-          {requestedPreHydro ? status : <BidStatus bidId={Number(id)} />}
-        </InvisibleLink>
-      ),
-    }
+  const tokenBasedRows = buildRows({ bids: tokenBasedBids, isTokenBased: true })
+  const pointBasedRows = buildRows({
+    bids: pointBasedBids,
+    isTokenBased: false,
   })
 
-  type Row = (typeof rows)[number]
+  type Row = (typeof tokenBasedRows)[number]
 
-  const columns: ColumnObject<Row, keyof Row>[] = [
-    {
-      key: "logoAndTitle",
-      label: "Bid Title / Project Name",
-      isSortable: true,
-      initialSortDirection: "ASC",
-      customValueGetter: (row) => row._bid.title,
-    },
-    {
-      key: "polSize",
-      label: (
-        <Tooltip tipContents={metricsPolSizeColumnTooltip}>
-          <div className="flex items-center gap-1">
-            PoL Size
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
-      ),
-      textAlign: "right",
-      propsForCells: {
-        className: "text-balance",
+  const tokenBasedColumns = buildColumns({ isTokenBased: true })
+  const pointBasedColumns = buildColumns({ isTokenBased: false }).filter(
+    (column) => column.key !== "polApr"
+  )
+
+  function buildColumns({
+    isTokenBased,
+  }: {
+    isTokenBased: boolean
+  }): ColumnObject<Row, keyof Row>[] {
+    return [
+      {
+        key: "logoAndTitle",
+        label: isTokenBased
+          ? "Token-Based Bid Title / Project Name"
+          : "Point-Based Bid Title / Project Name",
+        isSortable: true,
+        initialSortDirection: "ASC",
+        customValueGetter: (row) => row._bid.title,
       },
-      isSortable: true,
-      initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bid.initialAllocationAmount,
-    },
-    {
-      key: "duration",
-      label: (
-        <Tooltip tipContents={metricsDurationColumnTooltip}>
-          <div className="flex items-center gap-1">
-            Duration
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
-      ),
-      textAlign: "right",
-      propsForCells: {
-        className: "whitespace-nowrap",
+      {
+        key: "polSize",
+        label: (
+          <Tooltip tipContents={metricsPolSizeColumnTooltip}>
+            <div className="flex items-center gap-1">
+              PoL Size
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        textAlign: "right",
+        propsForCells: {
+          className: "text-balance",
+        },
+        isSortable: true,
+        initialSortDirection: "DESC",
+        customValueGetter: (row) => row._bid.initialAllocationAmount,
       },
-      isSortable: true,
-      initialSortDirection: "ASC",
-      customValueGetter: (row) => row._bid.durationDays,
-    },
-    {
-      key: "polApr",
-      label: (
-        <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
-          <div className="flex items-center gap-1">
-            PoL APR
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
-      ),
-      textAlign: "right",
-      propsForCells: {
-        className: "whitespace-nowrap",
+      {
+        key: "duration",
+        label: (
+          <Tooltip tipContents={metricsDurationColumnTooltip}>
+            <div className="flex items-center gap-1">
+              Duration
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        textAlign: "right",
+        propsForCells: {
+          className: "whitespace-nowrap",
+        },
+        isSortable: true,
+        initialSortDirection: "ASC",
+        customValueGetter: (row) => row._bid.durationDays,
       },
-      isSortable: true,
-      initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bid.apr,
-    },
-    {
-      key: "tributeApr",
-      label: (
-        <Tooltip
-          tipContents={metricsTributeColumnTooltip}
-          classNamesForTooltip="-ml-12"
-        >
-          <div className="flex items-center gap-1">
-            Tribute APR
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
-      ),
-      textAlign: "right",
-      isSortable: true,
-      initialSortDirection: "DESC",
-      customValueGetter: (row) => {
-        const bidFromContract = bidsById[Number(row._bid.id)]
-        return bidFromContract?.tributeApr ?? 0
+      {
+        key: "polApr",
+        label: (
+          <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
+            <div className="flex items-center gap-1">
+              PoL APR
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        textAlign: "right",
+        propsForCells: {
+          className: "whitespace-nowrap",
+        },
+        isSortable: true,
+        initialSortDirection: "DESC",
+        customValueGetter: (row) => row._bid.apr,
       },
-    },
-    {
-      key: "status",
-      label: (
-        <Tooltip
-          tipContents={metricsStatusColumnTooltip}
-          classNamesForTooltip="-ml-12"
-        >
-          <div className="flex items-center gap-1">
-            Status
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
-      ),
-      textAlign: "right",
-      propsForCells: {
-        className: "text-balance",
+      {
+        key: "tributeApr",
+        label: (
+          <Tooltip
+            tipContents={
+              !isTokenBased
+                ? metricsTributeColumnTooltip
+                : metricsTributeColumnTooltip
+            }
+            classNamesForTooltip="-ml-12"
+          >
+            <div className="flex items-center gap-1">
+              {!isTokenBased ? "Tribute" : "Tribute APR"}
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        textAlign: "right",
+        isSortable: true,
+        initialSortDirection: "DESC",
+        customValueGetter: (row) => {
+          const bidFromContract = bidsById[Number(row._bid.id)]
+          return !isTokenBased
+            ? sumBy(row._bid.offchainTribute, "amount")
+            : (bidFromContract?.tributeApr ?? 0)
+        },
       },
-      isSortable: true,
-      initialSortDirection: "ASC",
-      customValueGetter: (row) => ("status" in row._bid ? row._bid.status : ""),
-    },
-  ]
+      {
+        key: "status",
+        label: (
+          <Tooltip
+            tipContents={metricsStatusColumnTooltip}
+            classNamesForTooltip="-ml-12"
+          >
+            <div className="flex items-center gap-1">
+              Status
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        textAlign: "right",
+        propsForCells: {
+          className: "text-balance",
+        },
+        isSortable: true,
+        initialSortDirection: "ASC",
+        customValueGetter: (row) =>
+          "status" in row._bid ? row._bid.status : "",
+      },
+    ]
+  }
+
+  function buildRows({
+    bids,
+    isTokenBased,
+  }: {
+    bids: typeof bidsToRender
+    isTokenBased: boolean
+  }) {
+    return bids.map((bid) => {
+      const {
+        apr,
+        id,
+        durationDays,
+        initialAllocationAmount,
+        projectLogoUrl,
+        projectName,
+        status,
+        title,
+      } = bid
+
+      const bidFromContract = bidsById[Number(id)] ?? null
+      const percentage = bidFromContract?.percentage ?? null
+      const rowURL =
+        requestedRoundId === PRE_HYDRO_ROUND_ID
+          ? `https://www.mintscan.io/cosmos/proposals/${id.replace("#", "")}`
+          : `/bids/${id}`
+
+      return {
+        _bid: { ...bid, percentage },
+
+        logoAndTitle: (
+          <InvisibleLink href={rowURL} className="flex items-center gap-6">
+            <div className="relative size-12 shrink-0 rounded-full border text-[0]">
+              {projectLogoUrl ? (
+                <Image
+                  className="object-contain"
+                  src={projectLogoUrl}
+                  alt={projectName}
+                  fill={true}
+                />
+              ) : null}
+            </div>
+
+            <div className="flex flex-col">
+              <StyledText variant="h4">{title}</StyledText>
+              <StyledText variant="footnote">{projectName}</StyledText>
+            </div>
+          </InvisibleLink>
+        ),
+
+        polSize: (
+          <InvisibleLink href={rowURL}>
+            {requestedPreHydro ? (
+              <AmountAndUnitPair
+                amount={initialAllocationAmount.toLocaleString(undefined, {
+                  maximumFractionDigits: 4,
+                })}
+                unit="ATOM"
+              />
+            ) : (
+              <BidPolSize bidId={Number(id)} />
+            )}
+          </InvisibleLink>
+        ),
+
+        duration: (
+          <InvisibleLink href={rowURL}>
+            {requestedPreHydro ? (
+              pluralize({
+                count: durationDays,
+                prefixCount: true,
+                singular: "day",
+              })
+            ) : (
+              <BidDuration bidId={Number(id)} />
+            )}
+          </InvisibleLink>
+        ),
+
+        polApr: !isTokenBased ? undefined : (
+          <InvisibleLink href={rowURL}>
+            {requestedPreHydro ? `${apr}%` : <BidPolApr bidId={Number(id)} />}
+          </InvisibleLink>
+        ),
+
+        tributeApr: (
+          <InvisibleLink href={rowURL}>
+            {requestedPreHydro ? (
+              0
+            ) : !isTokenBased ? (
+              <BidTributes bid={bidsById[Number(id)]} textAlign="right" />
+            ) : (
+              <BidTributeApr bidId={Number(id)} />
+            )}
+          </InvisibleLink>
+        ),
+
+        status: (
+          <InvisibleLink href={rowURL}>
+            {requestedPreHydro ? status : <BidStatus bidId={Number(id)} />}
+          </InvisibleLink>
+        ),
+      }
+    })
+  }
+
+  function secondSortRows(sortedRows: Row[]) {
+    return [...sortedRows].sort((a, b) => {
+      const aExceedsThreshold =
+        a._bid.percentage && a._bid.percentage >= VOTE_SHARE_THRESHOLD
+      const bExceedsThreshold =
+        b._bid.percentage && b._bid.percentage >= VOTE_SHARE_THRESHOLD
+      return Number(bExceedsThreshold) - Number(aExceedsThreshold)
+    })
+  }
 
   const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
     ({ children, row, rowProps }) => {
@@ -341,7 +397,10 @@ export function MetricsPage({
       )}
 
       <ContentContainer className="gap-6 py-6">
-        <div className="flex items-center justify-between">
+        <div
+          id="metrics-page-round-navigation"
+          className="flex items-center justify-between"
+        >
           <h2 className="sr-only">PoL Metrics by Round</h2>
 
           <div>
@@ -387,19 +446,21 @@ export function MetricsPage({
 
         <BlurryBackdropBox>
           <StyledTable
-            columns={columns}
-            rows={rows}
+            columns={tokenBasedColumns}
+            rows={tokenBasedRows}
             initialSortedColumnKey="polSize"
             renderRow={renderRow}
-            secondSortRows={(sortedRows) =>
-              [...sortedRows].sort((a, b) => {
-                const aExceedsThreshold =
-                  a._bid.percentage && a._bid.percentage >= VOTE_SHARE_THRESHOLD
-                const bExceedsThreshold =
-                  b._bid.percentage && b._bid.percentage >= VOTE_SHARE_THRESHOLD
-                return Number(bExceedsThreshold) - Number(aExceedsThreshold)
-              })
-            }
+            secondPassSortFunction={secondSortRows}
+          />
+        </BlurryBackdropBox>
+
+        <BlurryBackdropBox>
+          <StyledTable
+            columns={pointBasedColumns}
+            rows={pointBasedRows}
+            initialSortedColumnKey="polSize"
+            renderRow={renderRow}
+            secondPassSortFunction={secondSortRows}
           />
         </BlurryBackdropBox>
       </ContentContainer>
