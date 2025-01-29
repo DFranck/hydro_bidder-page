@@ -129,12 +129,12 @@ export default function LockupsPage() {
       )?.nextRoundEligibleToVote ?? null
     const isExpired = new Date() > lockup.dateEnd
     const daysLeft = getDaysAway(lockup.dateEnd)
-    const isEligibleThisRound =
+    const isEligibleThisRoundAtAll =
       !isExpired &&
       !!nextRoundEligibleToVote &&
       nextRoundEligibleToVote <= currentRoundId
-    const isEligibleToChangeVote = isEligibleThisRound && !!votedOnBidId
-    const isEligibleButHasNotVoted = isEligibleThisRound && !votedOnBidId
+    const isEligibleToChangeVote = isEligibleThisRoundAtAll && !!votedOnBidId
+    const isEligibleButHasNotVoted = isEligibleThisRoundAtAll && !votedOnBidId
     const isTiedToDeployment =
       !isExpired &&
       !!nextRoundEligibleToVote &&
@@ -152,11 +152,14 @@ export default function LockupsPage() {
     } = isExpired
       ? {
           editLockupButtonLabel: "Refresh",
-          statusTopline: `Expired ${pluralize({
-            count: Math.abs(daysLeft),
-            prefixCount: true,
-            singular: "day",
-          })} ago`,
+          statusTopline:
+            Math.abs(daysLeft) === 0
+              ? "Expired today"
+              : `Expired ${pluralize({
+                  count: Math.abs(daysLeft),
+                  prefixCount: true,
+                  singular: "day",
+                })} ago`,
           statusBottomline: <>You can refresh this lockup, or unlock it</>,
           statusExplanation: (
             <>This lockup has expired and is no longer eligible to vote.</>

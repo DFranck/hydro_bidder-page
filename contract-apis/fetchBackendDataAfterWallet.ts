@@ -1,10 +1,7 @@
 "use server"
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import {
-  LockupWithPerTrancheInfo,
-  VoteWithPower,
-} from "@/app/ts_types/HydroBase.types"
+import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import {
   AugmentedBidFromContract,
   BackendDataBeforeWallet,
@@ -14,6 +11,7 @@ import {
   AugmentedClaim,
   fetchClaims,
 } from "@/contract-apis/fetchClaims"
+import { fetchWalletLockups } from "@/contract-apis/fetchWalletLockups"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
@@ -74,37 +72,6 @@ export interface AugmentedBid extends AugmentedBidFromContract {
   usersEstimatedRewardRelativeToCurrentPick: number
 }
 
-function sanitizeLockup(lockup: LockupWithPerTrancheInfo): SanitizedLockup {
-  return {
-    id: lockup.lock_with_power.lock_entry.lock_id,
-    currentVotingPower: Number(lockup.lock_with_power.current_voting_power),
-    dateEnd: new Date(Number(lockup.lock_with_power.lock_entry.lock_end) / 1e6),
-    dateStart: new Date(
-      Number(lockup.lock_with_power.lock_entry.lock_start) / 1e6
-    ),
-    funds: {
-      amount: Number(lockup.lock_with_power.lock_entry.funds.amount) / 1e6,
-      denom: lockup.lock_with_power.lock_entry.funds.denom,
-    },
-    multiplier: Number(
-      (
-        Number(lockup.lock_with_power.current_voting_power) /
-        Number(lockup.lock_with_power.lock_entry.funds.amount)
-      ).toFixed(2)
-    ),
-    metaDataByTrancheId: Object.fromEntries(
-      lockup.per_tranche_info.map((trancheInfo) => [
-        trancheInfo.tranche_id,
-        {
-          nextRoundEligibleToVote:
-            trancheInfo.next_round_lockup_can_vote ?? null,
-          votedOnBidId: trancheInfo.current_voted_on_proposal ?? null,
-        },
-      ])
-    ),
-  }
-}
-
 function sanitizeVote(vote: VoteWithPower): SanitizedVote {
   const { propId, ...rest } = keysFromSnakeToCamelCase(vote)
   return {
@@ -141,17 +108,11 @@ async function uncachedFetchBackendDataAfterWallet({
     lockedAtomEpochInNanos,
   } = backendData
 
-  const [
-    { voting_power: votingPowerFromContract },
-    { lockups_with_per_tranche_infos: lockups },
-  ] = await Promise.all([
-    hydroQueryClient.userVotingPower({ address }),
-    hydroQueryClient.allUserLockupsWithTrancheInfos({
-      address,
-      limit: 10_000,
-      startFrom: 0,
-    }),
-  ])
+  const [{ voting_power: votingPowerFromContract }, sanitizedLockups] =
+    await Promise.all([
+      hydroQueryClient.userVotingPower({ address }),
+      fetchWalletLockups(address),
+    ])
 
   // [0, 1, 2, ...currentRoundId]
   const allRoundIds = range(0, currentRoundId + 1)
@@ -180,8 +141,6 @@ async function uncachedFetchBackendDataAfterWallet({
       )
     )
   )
-
-  const sanitizedLockups = lockups.map(sanitizeLockup)
 
   const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
 
