@@ -83,20 +83,13 @@ export default function RewardsPage() {
       )
 
       return tokenBasedTributes.map((tribute) => {
-        const matchingOutstandingClaim = claimsOutstanding.find(
-          (claim) =>
-            claim.bidId === bid.id &&
-            claim.tributeId === tribute.id &&
-            claim.roundId === bid.roundId &&
-            claim.trancheId === bid.trancheId
-        )
-        const matchingHistoricalClaim = claimsHistorical.find(
-          (claim) =>
-            claim.bidId === bid.id &&
-            claim.tributeId === tribute.id &&
-            claim.roundId === bid.roundId &&
-            claim.trancheId === bid.trancheId
-        )
+        const findClaimForBid = (claim: (typeof claimsOutstanding)[number]) =>
+          claim.bidId === bid.id &&
+          claim.tributeId === tribute.id &&
+          claim.roundId === bid.roundId &&
+          claim.trancheId === bid.trancheId
+        const matchingOutstandingClaim = claimsOutstanding.find(findClaimForBid)
+        const matchingHistoricalClaim = claimsHistorical.find(findClaimForBid)
         const matchingClaim =
           matchingOutstandingClaim ?? matchingHistoricalClaim
         const matchingClaimAmount = matchingClaim?.amount
