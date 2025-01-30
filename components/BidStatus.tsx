@@ -11,7 +11,7 @@ export function BidStatus({ bidId }: { bidId: number }) {
     (metric) => Number(metric.id) === bid.id
   )
 
-  if (!bidInfoFromNumia) return null
+  if (!bidInfoFromNumia) return "Unknown"
 
   const { status } = bidInfoFromNumia
 
