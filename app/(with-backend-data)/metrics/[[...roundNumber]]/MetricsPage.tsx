@@ -21,6 +21,7 @@ import {
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
+  metricsTributeAprColumnTooltip,
   metricsTributeColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
@@ -158,7 +159,7 @@ export function MetricsPage({
             tipContents={
               !isTokenBased
                 ? metricsTributeColumnTooltip
-                : metricsTributeColumnTooltip
+                : metricsTributeAprColumnTooltip
             }
             classNamesForTooltip="-ml-12"
           >
