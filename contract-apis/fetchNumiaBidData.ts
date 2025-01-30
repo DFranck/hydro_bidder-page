@@ -108,7 +108,7 @@ export async function fetchNumiaBidData(): Promise<{
   }
 
   const response = await fetch(
-    process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT,
+    `${process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT}?${new Date().getTime()}`,
     {
       headers: {
         Accept: "application/json",
