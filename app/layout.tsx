@@ -1,28 +1,26 @@
+import { defaultMetadata, metadataByRoute } from "@/app/metadata"
 import { inter } from "@/lib/font"
+import { sortBy } from "lodash"
+import { headers } from "next/headers"
 import Script from "next/script"
 import "./globals.css"
 import "./injectServiceWorker.js"
 
 export async function generateMetadata() {
-  return {
-    title: "Hydro - The Interchain Liquidity Allocator",
-    description:
-      "Hydro is a liquidity-allocation platform built for the Cosmos Hub. Lock, vote, and earn today!",
-    metadataBase: new URL("https://hydro.cosmos.network"),
-    openGraph: {
-      url: "https://hydro.cosmos.network",
-      siteName: "Hydro",
-      locale: "en_US",
-      type: "website",
-      images: [
-        {
-          url: "https://hydro.cosmos.network/images/opengraph-image.jpg",
-          width: 1200,
-          height: 630,
-        },
-      ],
-    },
-  }
+  const headersList = await headers()
+  const requestedPathname = new URL(headersList.get("x-url") || "").pathname
+
+  const sortedMetadataByRoute = sortBy(
+    Object.entries(metadataByRoute),
+    ([route]) => route.length
+  )
+
+  const routeMetadataEntry =
+    sortedMetadataByRoute.find(([pathname]) =>
+      pathname.startsWith(requestedPathname)
+    )?.[1] ?? defaultMetadata
+
+  return routeMetadataEntry
 }
 
 export default async function RootLayout({

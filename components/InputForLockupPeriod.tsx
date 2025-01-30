@@ -10,10 +10,14 @@ import { MouseEvent, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function InputForLockupPeriod({
+  className,
+  classNamesForButtons,
   currentLockupEndDate,
   selectedDuration,
   onChange,
 }: {
+  className?: string
+  classNamesForButtons?: string
   currentLockupEndDate?: Date
   selectedDuration: number
   onChange?: (value: number) => void
@@ -52,51 +56,45 @@ export function InputForLockupPeriod({
 
   return (
     <>
-      {lockupPeriodOptions.length === 0 && (
+      {lockupPeriodOptions.length === 0 ? (
         <Toast variant="error" className="w-full">
           This lockup cannot be refreshed at this time
         </Toast>
-      )}
-      <div className="flex w-min">
-        {lockupPeriodOptions.map(({ label, duration }) => {
-          const isSelected = innerSelectedDuration === duration
+      ) : (
+        <>
+          <div className={twMerge("flex w-min", className)}>
+            {lockupPeriodOptions.map(({ label, duration }) => {
+              const isSelected = innerSelectedDuration === duration
 
-          return (
-            <StyledText
-              variant={isSelected ? "button.primary" : "button.secondary"}
-              as="button"
-              key={duration}
-              onClick={handleClick.bind(null, duration)}
-              className={twMerge(
-                `
-                  flex
-                  flex-col
-                  items-center
-                  justify-center
-                  gap-0
-                  rounded-none
-                  border-r-0
-                  backdrop-blur-none
-                  first:rounded-l-md
-                  last:rounded-r-md
-                  last:border-r-2
-                  hover:scale-100
-                `
-              )}
-            >
-              <span>{label}</span>
-              <StyledText className="text-xs opacity-60">
-                {getLockupPeriodMultiplier({
-                  lockedAtomEpochInNanos,
-                  lockupTime: duration,
-                })}
-                &thinsp;&times;
-              </StyledText>
-            </StyledText>
-          )
-        })}
-      </div>
-      <input type="hidden" value={innerSelectedDuration} />
+              return (
+                <StyledText
+                  variant={isSelected ? "button.primary" : "button.secondary"}
+                  as="button"
+                  key={duration}
+                  onClick={handleClick.bind(null, duration)}
+                  className={twMerge(
+                    `!scale-100`,
+                    `flex flex-col items-center justify-center gap-0`,
+                    `rounded-none border-r-0 backdrop-blur-none`,
+                    `first:rounded-l-md last:rounded-r-md last:border-r-2`,
+                    classNamesForButtons
+                  )}
+                >
+                  <span>{label}</span>
+                  <StyledText className="text-xs opacity-60">
+                    {getLockupPeriodMultiplier({
+                      lockedAtomEpochInNanos,
+                      lockupTime: duration,
+                    })}
+                    &thinsp;&times;
+                  </StyledText>
+                </StyledText>
+              )
+            })}
+          </div>
+          <input type="hidden" value={innerSelectedDuration} />
+        </>
+      )}
     </>
   )
 }

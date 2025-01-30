@@ -5,6 +5,9 @@ const meta = {
   bidding: {
     title: "Bidding process",
   },
+   deployment: {
+    title: "Deployment process",
+  },
   faq: {
     title: "FAQ",
   },

@@ -10,6 +10,7 @@ import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   extendLockupsToVoteTooltip,
+  lockAtomToVoteTooltip,
   networkLimitReachedTooltip,
 } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
@@ -19,7 +20,6 @@ import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import { keyBy } from "lodash"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export function VoteButton({
@@ -36,16 +36,16 @@ export function VoteButton({
   ] = useState(false)
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { toasts, setToasts } = useToasts()
-  const router = useRouter()
   const {
     address,
     bidsByRoundId,
     currentRoundId,
     isWalletConnected,
+    lockups,
     lockedAtomMaxGlobal,
     lockedAtomTotalGlobal,
     votesByRoundId,
-    votingPower,
+    votingPowerAvailable,
   } = useBackendData()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -56,6 +56,11 @@ export function VoteButton({
   const hasVotedForAnyThisRound = votesThisRound.length > 0
   const hasVotedForThisBid = votesThisRound.some((vote) => vote.bidId === bidId)
   const isLoading = toasts.some((toast) => toast.variant === "working")
+  const validLockups = lockups.filter(
+    (lockup) =>
+      (lockup.metaDataByTrancheId[bid?.trancheId]?.nextRoundEligibleToVote ??
+        Infinity) <= currentRoundId
+  )
 
   async function handleClickVote() {
     if (!bid) {
@@ -125,7 +130,7 @@ export function VoteButton({
         Loading...
       </StyledText>
     )
-  } else if (votingPower === 0) {
+  } else if (votingPowerAvailable === 0) {
     Button = (
       <ConditionalWrapper
         condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}
@@ -158,6 +163,22 @@ export function VoteButton({
         >
           <Icon name="solid:rotate-right" />
           <span>Extend Lockups to Vote</span>
+          <Icon name="circle-info" />
+        </StyledText>
+      </Tooltip>
+    )
+  } else if (validLockups.length === 0) {
+    Button = (
+      <Tooltip tipContents={lockAtomToVoteTooltip}>
+        <StyledText
+          variant={
+            `button.neutral${size ? `.${size}` : ""}` as StyledTextVariant
+          }
+          as="button"
+          onClick={() => setIsTryingToVoteWithExpiredLockups(true)}
+        >
+          <Icon name="solid:rotate-right" />
+          <span>Lock ATOM to Vote</span>
           <Icon name="circle-info" />
         </StyledText>
       </Tooltip>

@@ -1,5 +1,10 @@
 "use client"
 
+import { BidDuration } from "@/components/BidDuration"
+import { BidPolApr } from "@/components/BidPolApr"
+import { BidPolSize } from "@/components/BidPolSize"
+import { BidStatus } from "@/components/BidStatus"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -14,26 +19,30 @@ import {
   bidDetailsVoteReceivedTooltip,
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
+  metricsTributeAprColumnTooltip,
+  metricsTributeColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { BID_DESCRIPTIONS_URL } from "@/contract-apis/fetchBidDescriptions"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
 import { kebabCase } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
-import { pluralize } from "@/lib/pluralize"
 
 export function BidDetails({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
 
   const {
+    atomPrice,
     bidDescriptionsByBidId,
     bidsById,
     currentRoundId,
     votes,
     metricsForPostHydroBids,
+    minTributeFactor,
   } = backendData
 
   const bid = bidsById[bidId]
@@ -46,9 +55,14 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const metrics = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
-  )!
+  ) ?? {
+    offchainTribute: [],
+    status: "unknown",
+    currentAllocationAmount: 0,
+    onchainTributeUsdc: 0,
+  }
 
-  if (!bidDescription) {
+  if (!bidDescription && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
         The requested bid is not listed in the official{" "}
@@ -73,11 +87,16 @@ export function BidDetails({ bidId }: { bidId: number }) {
     projectLogoUrl,
     projectName,
     projectUrl,
-    requestAmount,
     title,
   } = bidDescription
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
+
+  const totalTributeValueInAtom = metrics.onchainTributeUsdc / atomPrice
+
+  const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
+
+  const isTokenBased = metrics?.offchainTribute.length === 0
 
   return (
     <ContentContainer className="py-6">
@@ -239,137 +258,129 @@ export function BidDetails({ bidId }: { bidId: number }) {
                     <StyledText
                       as="h3"
                       variant="label"
-                      className="flex items-center gap-1 text-palette-green"
+                      className="flex cursor-default items-center gap-1 text-palette-green"
                     >
                       <span>PoL Size</span>
                       <Icon name="circle-info" />
                     </StyledText>
                   </Tooltip>
                   <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
-                    {metrics.currentAllocationAmount.toLocaleString()} ATOM
-                  </div>
-                </div>
-              </>
-            )}
-
-            {Boolean(metrics.apr) && (
-              <div>
-                <StyledText
-                  as="h3"
-                  variant="label"
-                  className="flex items-center gap-1 text-palette-green"
-                >
-                  <span>PoL APR</span>
-                </StyledText>
-
-                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
-                  {metrics.apr.toFixed(1)}%
-                </div>
-              </div>
-            )}
-
-            {metrics.status?.toLowerCase() === "voting period" && (
-              <>
-                <div>
-                  <Tooltip tipContents={bidDetailsStatusTooltip}>
-                    <StyledText
-                      as="h3"
-                      variant="label"
-                      className="flex items-center gap-1"
-                    >
-                      <span>Status</span>
-                      <Icon name="circle-info" />
-                    </StyledText>
-                  </Tooltip>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize">
-                    {metrics.status}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {metrics.status?.toLowerCase() === "ongoing" && (
-              <>
-                <div>
-                  <Tooltip tipContents={bidDetailsStatusTooltip}>
-                    <StyledText
-                      as="h3"
-                      variant="label"
-                      className="flex items-center gap-1 text-palette-green"
-                    >
-                      <span>Status</span>
-                      <Icon name="circle-info" />
-                    </StyledText>
-                  </Tooltip>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize text-palette-green">
-                    {metrics.status}
-                  </div>
-                </div>
-                <div>
-                  <Tooltip tipContents={metricsDurationColumnTooltip}>
-                    <StyledText
-                      as="h3"
-                      variant="label"
-                      className="flex items-center gap-1 "
-                    >
-                      <span>PoL Duration</span>
-                      <Icon name="circle-info" />
-                    </StyledText>
-                  </Tooltip>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold ">
-                    {!metrics.durationDays
-                      ? "Pending"
-                      : metrics.durationDays < 30
-                        ? pluralize({
-                            count: metrics.durationDays,
-                            prefixCount: true,
-                            singular: "day",
-                          })
-                        : pluralize({
-                            count: Math.round(metrics.durationDays / 30),
-                            prefixCount: true,
-                            singular: "month",
-                          })}
-                  </div>
-                </div>
-                <div>
-                  <Tooltip tipContents={metricsPolAprColumnTooltip}>
-                    <StyledText
-                      as="h3"
-                      variant="label"
-                      className="flex items-center gap-1 "
-                    >
-                      <span>PoL APR</span>
-                      <Icon name="circle-info" />
-                    </StyledText>
-                  </Tooltip>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold ">
-                    {!metrics.apr ? "Pending" : `${metrics.apr}%`}
+                    <BidPolSize bidId={bidId} />
                   </div>
                 </div>
               </>
             )}
 
             <div>
-              <StyledText
-                as="h3"
-                variant="label"
-                className="flex items-center gap-1"
-              >
-                <span>Tribute</span>
-                <Icon name="circle-info" />
-              </StyledText>
-              <div className="flex max-w-64 flex-col overflow-x-auto">
-                <BidTributes bid={bid} />
+              <Tooltip tipContents={bidDetailsStatusTooltip}>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1 text-palette-green"
+                >
+                  <span>Status</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+              </Tooltip>
+
+              <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize text-palette-green">
+                <BidStatus bidId={bidId} />
               </div>
             </div>
+
+            {["ongoing", "completed"].includes(
+              metrics.status?.toLowerCase()
+            ) && (
+              <>
+                <div>
+                  <Tooltip tipContents={metricsDurationColumnTooltip}>
+                    <StyledText
+                      as="h3"
+                      variant="label"
+                      className="flex cursor-default items-center gap-1"
+                    >
+                      <span>Duration</span>
+                      <Icon name="circle-info" />
+                    </StyledText>
+                  </Tooltip>
+
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                    <BidDuration bidId={bidId} />
+                  </div>
+                </div>
+
+                {isTokenBased && (
+                  <div>
+                    <Tooltip tipContents={metricsPolAprColumnTooltip}>
+                      <StyledText
+                        as="h3"
+                        variant="label"
+                        className="flex cursor-default items-center gap-1"
+                      >
+                        <span>PoL APR</span>
+                        <Icon name="circle-info" />
+                      </StyledText>
+                    </Tooltip>
+                    <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                      <BidPolApr bidId={bidId} />
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            <div>
+              <Tooltip
+                tipContents={
+                  !isTokenBased
+                    ? metricsTributeColumnTooltip
+                    : metricsTributeAprColumnTooltip
+                }
+              >
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1"
+                >
+                  <span>{!isTokenBased ? "Tribute" : "Tribute APR"}</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+              </Tooltip>
+
+              <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
+                {!isTokenBased ? (
+                  <BidTributes bid={bid} />
+                ) : (
+                  <BidTributeApr bidId={bidId} />
+                )}
+              </div>
+            </div>
+
+            {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
+            {/* And if there are any point-based tributes, we can't show this */}
+            {bid.roundId >= 2 && metrics.offchainTribute.length === 0 && (
+              <Tooltip tipContents={<>Explanation</>}>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1"
+                >
+                  <span>Max Deployment Amount</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+                <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                  ~{formatAmount(maxDeploymentAmountInAtom * 1e6, undefined, 0)}{" "}
+                  ATOM
+                </div>
+              </Tooltip>
+            )}
 
             <div>
               <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
                 <StyledText
                   as="h3"
                   variant="label"
-                  className="flex items-center gap-1 "
+                  className="flex cursor-default items-center gap-1"
                 >
                   <span>% Vote Received</span>
                   <Icon name="circle-info" />
@@ -392,6 +403,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                     <span
                       className="
                         flex
+                        cursor-default
                         items-center
                         gap-1
                         whitespace-nowrap

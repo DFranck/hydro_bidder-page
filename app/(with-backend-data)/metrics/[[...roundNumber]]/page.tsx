@@ -1,4 +1,4 @@
-import { ClientComponent } from "./ClientComponent"
+import { MetricsPage } from "./MetricsPage"
 
 export default async function Page({
   params,
@@ -8,15 +8,6 @@ export default async function Page({
   const roundNumberParam = (await params).roundNumber
   const requestedRoundNumber =
     typeof roundNumberParam === "undefined" ? null : Number(roundNumberParam)
-  const requestedRoundNumberUnderHood = requestedRoundNumber
-    ? requestedRoundNumber - 1
-    : null
-  const isPreHydro = requestedRoundNumber === null
 
-  return (
-    <ClientComponent
-      requestedRoundNumberUnderHood={requestedRoundNumberUnderHood}
-      isPreHydro={isPreHydro}
-    />
-  )
+  return <MetricsPage requestedRoundNumber={requestedRoundNumber} />
 }

@@ -21,7 +21,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
 
   if (!bid) return null
 
-  const isTokenBasedBid = bid.tributes.every((tribute) => tribute.isTokenBased)
+  const isTokenBased = bid.tributes.every((tribute) => tribute.isTokenBased)
   const totalEstimatedRewardsUsd = amountToUSDString(
     sumBy(bid.tributes, "valueInUsd"),
     {
@@ -42,10 +42,10 @@ export function BidRewards({ bidId }: { bidId: number }) {
     bid,
     bidDescription,
     hasVotedThisRound,
-    isTokenBasedBid,
+    isTokenBased,
   })
 
-  return !isTokenBasedBid ? (
+  return !isTokenBased ? (
     <Tooltip
       tipContents={pointSystemTooltip({
         learnMoreURL: bidDescription.pointProgramUrl,
