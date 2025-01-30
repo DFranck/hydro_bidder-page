@@ -55,7 +55,12 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const metrics = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
-  )!
+  ) ?? {
+    offchainTribute: [],
+    status: "unknown",
+    currentAllocationAmount: 0,
+    onchainTributeUsdc: 0,
+  }
 
   if (!bidDescription && process.env.NODE_ENV !== "development") {
     return (
@@ -91,7 +96,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 
-  const isTokenBased = metrics.offchainTribute.length === 0
+  const isTokenBased = metrics?.offchainTribute.length === 0
 
   return (
     <ContentContainer className="py-6">
