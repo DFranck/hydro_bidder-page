@@ -175,7 +175,7 @@ export default function LockupsPage() {
               singular: "round",
             })} left`,
             statusExplanation: (
-              <>This lockup is currently tied to the bid above.</>
+              <>This lockup is currently tied to a deployment.</>
             ),
           }
         : isEligibleToChangeVote
