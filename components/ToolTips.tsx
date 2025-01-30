@@ -333,7 +333,8 @@ export const metricsStatusColumnTooltip = (
 
 export const metricsTributeColumnTooltip = (
   <>
-    Additional yield from tribute, rewarded by the bidder to voters who supported this bid in a Hydro auction. Tribute was not available Pre-Hydro.{" "}
+    Additional yield from tribute, rewarded by the bidder to voters who
+    supported this bid in a Hydro auction. Tribute was not available Pre-Hydro.{" "}
     <StyledText
       as={Link}
       href="/docs/projects/bidding#tribute-additions"
@@ -347,18 +348,22 @@ export const metricsTributeColumnTooltip = (
   </>
 )
 
-export const metricsTributeAprColumnTooltip = <>Additional yield from tribute, rewarded by the bidder to voters who supported this bid in a Hydro auction.{" "}
-<StyledText
-  as={Link}
-  href="/docs/projects/bidding#tribute-additions"
-  variant="link"
-  className="inline-flex items-center gap-1"
-  target="_blank"
->
-  Learn more
-  <Icon name="solid:arrow-up-right" />
-</StyledText>
-</>
+export const metricsTributeAprColumnTooltip = (
+  <>
+    Additional yield from tribute, rewarded by the bidder to voters who
+    supported this bid in a Hydro auction.{" "}
+    <StyledText
+      as={Link}
+      href="/docs/projects/bidding#tribute-additions"
+      variant="link"
+      className="relative z-10 inline-flex items-center gap-1"
+      target="_blank"
+    >
+      Learn more
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
+  </>
+)
 
 export const needsWalletConnectionTooltip = (
   <>Connect your wallet to access this feature.</>

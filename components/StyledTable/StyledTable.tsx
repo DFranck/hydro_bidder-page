@@ -2,7 +2,7 @@
 
 import { usePersistedReducer } from "@/lib/usePersistedReducer"
 import isEqual from "lodash/isEqual"
-import { MouseEvent, useEffect, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { TABLE } from "./components/TABLE"
 import { TBODY } from "./components/TBODY"
 import { TD } from "./components/TD"
@@ -74,12 +74,7 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   }, [columns, columnsInState, initialSortedColumnKey, rows, rowsInState])
 
   const renderedHeaderCells = useMemo(() => {
-    function handleClickToSort(
-      columnKey: K,
-      event: MouseEvent<HTMLTableCellElement>
-    ) {
-      event.preventDefault()
-
+    function handleClickToSort(columnKey: K) {
       tableDispatch({
         type: "setSortedColumnKey",
         payload: {
