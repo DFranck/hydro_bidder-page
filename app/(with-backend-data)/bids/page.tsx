@@ -9,6 +9,7 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
+import { PopupOnMaxReached } from "@/components/PopupOnMaxReached"
 import { PopupOnWelcome } from "@/components/PopupOnWelcome"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
@@ -24,23 +25,13 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { sumBy } from "lodash"
 import Image from "next/image"
-import { Fragment, ReactNode, useCallback } from "react"
+import { Fragment, useCallback } from "react"
 import { classNames } from "./classNames"
-
-type Row = {
-  _bid: AugmentedBid
-  logoAndTitle: ReactNode
-  deploymentDuration: ReactNode
-  yourEstimatedReward: ReactNode
-  currentVoteShare: ReactNode
-  actions: ReactNode
-}
 
 const tokenBasedTributesLabel = "Token-Based Tributes"
 const pointBasedTributesLabel = "Points-Based Tributes"
@@ -95,7 +86,7 @@ export default function BidsPage() {
             </div>
           </InvisibleLink>
         ),
-        deploymentDuration: (
+        duration: (
           <InvisibleLink href={bidURL}>
             {pluralize({
               count: bidDeploymentDurationToRender,
@@ -150,8 +141,10 @@ export default function BidsPage() {
     }) ?? []
 
   const buildColumns = useCallback(
-    (projectBidLabel: string): ColumnObject<Row, keyof Row>[] => {
-      const isTokenBasedBid = projectBidLabel === tokenBasedTributesLabel
+    (
+      projectBidLabel: string
+    ): ColumnObject<(typeof rows)[number], keyof (typeof rows)[number]>[] => {
+      const isTokenBased = projectBidLabel === tokenBasedTributesLabel
 
       return [
         {
@@ -159,7 +152,7 @@ export default function BidsPage() {
           label: (
             <Tooltip
               tipContents={bidTypeColumnTooltip({
-                isTokenBasedBid,
+                isTokenBased,
               })}
             >
               <div className="flex items-center gap-1">
@@ -175,11 +168,11 @@ export default function BidsPage() {
           customValueGetter: (row) => row._bid.title,
         },
         {
-          key: "deploymentDuration",
+          key: "duration",
           label: (
             <Tooltip tipContents={polDurationTooltip}>
               <div className="flex items-center gap-1">
-                <span>PoL Duration</span>
+                <span>Duration</span>
                 <Icon name="circle-info" />
               </div>
             </Tooltip>
@@ -198,12 +191,12 @@ export default function BidsPage() {
             <Tooltip
               tipContents={estimatedRewardsColumnTooltip({
                 hasVotedThisRound,
-                isTokenBasedBid,
+                isTokenBased,
               })}
             >
               <div className="flex items-center gap-1">
                 <span>
-                  {!isTokenBasedBid
+                  {!isTokenBased
                     ? "Total Tribute"
                     : hasVotedThisRound
                       ? "Your Est. Reward"
@@ -220,10 +213,8 @@ export default function BidsPage() {
             className: classNames.classNamesForCells,
           },
           customValueGetter: (row) => {
-            const isTokenBasedBid = row._bid.tributes.every(
-              (t) => t.isTokenBased
-            )
-            return !isTokenBasedBid
+            const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
+            return !isTokenBased
               ? 0
               : hasVotedThisRound
                 ? row._bid.usersEstimatedRewards
@@ -270,7 +261,9 @@ export default function BidsPage() {
     ]
   )
 
-  const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
+  const renderRow = useCallback<
+    RowRenderFunction<(typeof rows)[number], keyof (typeof rows)[number]>
+  >(
     ({
       children,
       row,
@@ -368,7 +361,7 @@ export default function BidsPage() {
 
   return (
     <>
-      {/* <PopupOnMaxReached /> */}
+      {process.env.NODE_ENV !== "development" && <PopupOnMaxReached />}
 
       <PopupOnWelcome />
 

@@ -1,5 +1,6 @@
 // https://dev.to/tyuen/nextjs-app-router-navigation-indicator-and-the-delay-after-onclick-5aba
 // Injected in @/app/injectServiceWorker.js
+// Used in @/lib/useIsLoadingNewRoute.tsx
 let ignore = { image: 1, audio: 1, video: 1, style: 1, font: 1 }
 
 self.addEventListener("fetch", (e) => {

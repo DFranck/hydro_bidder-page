@@ -42,11 +42,11 @@ export type SanitizedBidFromNumia = CamelCaseKeys<
     projectName: string
     tranche: number
     roundId: number | "pre-hydro"
-    offchain_tribute: OffchainTributeFromNumia[]
-    onchain_tribute_assets: SanitizedOffchainTributeFromNumia[]
+    offchain_tribute: SanitizedOffchainTributeFromNumia[]
+    onchain_tribute_assets: SanitizedOnchainTributeFromNumia[]
   }
 >
-type OffchainTributeFromNumia = {
+type SanitizedOffchainTributeFromNumia = {
   amount: number
   type: string
 }
@@ -57,7 +57,7 @@ type OnchainTributeFromNumia = {
   asset?: string
 }
 
-type SanitizedOffchainTributeFromNumia = {
+type SanitizedOnchainTributeFromNumia = {
   amount: number
   denom: string
 }
@@ -77,7 +77,7 @@ function sanitizeBid({
     tranche: Number(bid.tranche),
     roundId: round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(round),
     offchain_tribute: (
-      JSON.parse(bid.offchain_tribute) as OffchainTributeFromNumia[]
+      JSON.parse(bid.offchain_tribute) as SanitizedOffchainTributeFromNumia[]
     )
       .filter((t) => !!t.amount)
       .map((t) => ({ ...t, type: startCase(t.type) })),
@@ -94,7 +94,7 @@ function sanitizeBid({
         return {
           ...t,
           denom: token ?? actualDenom?.toUpperCase(),
-        } as SanitizedOffchainTributeFromNumia
+        } as SanitizedOnchainTributeFromNumia
       }),
   })
 }

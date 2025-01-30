@@ -47,6 +47,7 @@ export interface AugmentedBidFromContract
   liquidityDeployment: SanitizedLiquidityDeployment | null
   percentage: number
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
+  tributeApr: number
 }
 
 export interface BackendDataBeforeWallet {
@@ -70,6 +71,7 @@ export interface BackendDataBeforeWallet {
   metricsForPostHydroBids: SanitizedBidFromNumia[]
   metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
+  minTributeFactor: number
 }
 
 export type SanitizedTokenBasedTribute = Omit<
@@ -257,6 +259,16 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                   augmentedLiquidityDeployments.find(
                     (deployment) => deployment.bidId === proposalId
                   ) ?? null
+                const bidData =
+                  postHydroBids.find(
+                    (bidFromNumia) => Number(bidFromNumia.id) === proposalId
+                  ) ?? null
+                const onchainTributeUsdc = bidData?.onchainTributeUsdc ?? 0
+                const polSize = bidData?.currentAllocationAmount ?? 0
+                const tributeApr =
+                  polSize > 0
+                    ? (onchainTributeUsdc * 12) / (polSize * atomPrice)
+                    : 0
 
                 return {
                   ...bid,
@@ -271,6 +283,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                     : Number(bid.percentage),
                   title,
                   tributes: bidTributes,
+                  tributeApr,
                 }
               })
 
@@ -298,10 +311,11 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     currentRoundId,
     currentRoundIsPilot: true,
     lockedAtomEpochInNanos,
-    lockedAtomMaxWallet: 200, // TODO: get this from contract
+    lockedAtomMaxWallet: 250, // TODO: get this from contract
     metricsForPostHydroBids: postHydroBids,
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: metrics,
+    minTributeFactor: 0.01, // TODO: get this from contract
     tranches: tranches,
     ...globalLockupCapacityInfo,
   }
@@ -311,7 +325,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
 export const fetchBackendDataBeforeWallet = unstable_cache(
   uncachedFetchBackendDataBeforeWallet,
-  undefined,
+  ["fetchBackendDataBeforeWallet"],
   {
     revalidate: 60 * 5, // 5 minutes
     tags: ["backendData"],

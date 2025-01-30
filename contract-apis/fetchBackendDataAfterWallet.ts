@@ -1,10 +1,7 @@
 "use server"
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import {
-  LockEntryWithPower,
-  VoteWithPower,
-} from "@/app/ts_types/HydroBase.types"
+import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
 import {
   AugmentedBidFromContract,
   BackendDataBeforeWallet,
@@ -14,6 +11,7 @@ import {
   AugmentedClaim,
   fetchClaims,
 } from "@/contract-apis/fetchClaims"
+import { fetchWalletLockups } from "@/contract-apis/fetchWalletLockups"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
@@ -39,7 +37,9 @@ export interface BackendDataAfterWallet
   lockups: SanitizedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<string, SanitizedVote[]>
-  votingPower: number
+  votingPowerAvailable: number
+  votingPowerSpent: number
+  votingPowerTotal: number
 }
 
 export interface SanitizedLockup {
@@ -52,6 +52,13 @@ export interface SanitizedLockup {
     denom: string
   }
   multiplier: number
+  metaDataByTrancheId: Record<
+    number,
+    {
+      nextRoundEligibleToVote: number | null
+      votedOnBidId: number | null
+    }
+  >
 }
 
 export interface SanitizedVote
@@ -63,22 +70,6 @@ export interface AugmentedBid extends AugmentedBidFromContract {
   lockupsOutliveBidDeployment: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardRelativeToCurrentPick: number
-}
-
-function sanitizeLockup(lockup: LockEntryWithPower): SanitizedLockup {
-  return {
-    id: lockup.lock_entry.lock_id,
-    currentVotingPower: Number(lockup.current_voting_power),
-    dateEnd: new Date(Number(lockup.lock_entry.lock_end) / 1e6),
-    dateStart: new Date(Number(lockup.lock_entry.lock_start) / 1e6),
-    funds: {
-      amount: Number(lockup.lock_entry.funds.amount) / 1e6,
-      denom: lockup.lock_entry.funds.denom,
-    },
-    multiplier:
-      Number(lockup.current_voting_power) /
-      Number(lockup.lock_entry.funds.amount),
-  }
 }
 
 function sanitizeVote(vote: VoteWithPower): SanitizedVote {
@@ -100,10 +91,6 @@ async function uncachedFetchBackendDataAfterWallet({
     throw new Error("Hydro contract address not set")
   }
 
-  if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
-    throw new Error("Tribute contract address not set")
-  }
-
   const cosmWasmClient = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     cosmWasmClient,
@@ -121,14 +108,11 @@ async function uncachedFetchBackendDataAfterWallet({
     lockedAtomEpochInNanos,
   } = backendData
 
-  const [{ voting_power: votingPower }, { lockups }] = await Promise.all([
-    hydroQueryClient.userVotingPower({ address }),
-    hydroQueryClient.allUserLockups({
-      address,
-      limit: 10_000,
-      startFrom: 0,
-    }),
-  ])
+  const [{ voting_power: votingPowerFromContract }, sanitizedLockups] =
+    await Promise.all([
+      hydroQueryClient.userVotingPower({ address }),
+      fetchWalletLockups(address),
+    ])
 
   // [0, 1, 2, ...currentRoundId]
   const allRoundIds = range(0, currentRoundId + 1)
@@ -158,8 +142,6 @@ async function uncachedFetchBackendDataAfterWallet({
     )
   )
 
-  const sanitizedLockups = lockups.map(sanitizeLockup)
-
   const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
 
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
@@ -178,7 +160,7 @@ async function uncachedFetchBackendDataAfterWallet({
     const usersEstimatedRewards =
       estimatedRewardForPower({
         amount: sumBy(bid.tributes, "valueInUsd"),
-        walletVotingPower: votingPower,
+        walletVotingPower: votingPowerFromContract,
         bidPower: Number(bid.power),
       }) ?? 0
 
@@ -211,13 +193,6 @@ async function uncachedFetchBackendDataAfterWallet({
   const votedBid = bidsWithRewards.find((bid) => bid.id === votedBidId) ?? null
 
   const bidsWithRewardsRelativeToCurrentPick = bidsWithRewards.map((bid) => {
-    // // this formula is not correct
-    // const usersEstimatedRewardRelativeToCurrentPick =
-    //   votedBid && votedBid.usersEstimatedRewards && bid.usersEstimatedRewards
-    //     ? 100 -
-    //       (votedBid.usersEstimatedRewards / bid.usersEstimatedRewards) * 100
-    //     : 0
-
     const usersEstimatedRewardRelativeToCurrentPick =
       votedBid && votedBid.usersEstimatedRewards && bid.usersEstimatedRewards
         ? (100 * (bid.usersEstimatedRewards - votedBid.usersEstimatedRewards)) /
@@ -263,6 +238,10 @@ async function uncachedFetchBackendDataAfterWallet({
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
 
+  const votingPowerSpent = sumBy(sanitizedVotes, (v) => Number(v.power) / 1e6)
+
+  const votingPowerTotal = votingPowerFromContract / 1e6 + votingPowerSpent
+
   const backendDataAfterWallet: BackendDataAfterWallet = {
     ...backendData,
     address,
@@ -280,7 +259,9 @@ async function uncachedFetchBackendDataAfterWallet({
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
     votesByRoundId,
-    votingPower: votingPower / 1e6,
+    votingPowerAvailable: votingPowerFromContract / 1e6,
+    votingPowerSpent,
+    votingPowerTotal,
   }
 
   return backendDataAfterWallet
@@ -288,7 +269,7 @@ async function uncachedFetchBackendDataAfterWallet({
 
 export const fetchBackendDataAfterWallet = unstable_cache(
   uncachedFetchBackendDataAfterWallet,
-  undefined,
+  ["fetchBackendDataAfterWallet"],
   {
     revalidate: 60 * 5, // 5 minutes
     tags: ["backendData"],

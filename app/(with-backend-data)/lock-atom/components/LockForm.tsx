@@ -300,7 +300,7 @@ export function LockForm({
 
                     <InputForLockupPeriod
                       selectedDuration={selectedDuration}
-                      onChange={(value) => setSelectedDuration(value)}
+                      onChange={setSelectedDuration}
                     />
                   </div>
 
