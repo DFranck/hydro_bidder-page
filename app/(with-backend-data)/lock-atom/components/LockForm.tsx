@@ -129,8 +129,15 @@ export function LockForm({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const uatomAmount = BigInt(Math.round(parseFloat(amount) * 1e6)).toString()
-    onSubmit(validator, uatomAmount, selectedDuration)
+    const uatomAmount = parseFloat(amount) * 1e6
+    const maxUatomToBeLocked = maxAtomToBeLocked * 1e6
+    const actualUatomToLock = Math.min(uatomAmount, maxUatomToBeLocked)
+
+    onSubmit(
+      validator,
+      BigInt(Math.round(actualUatomToLock)).toString(),
+      selectedDuration
+    )
   }
 
   return (
