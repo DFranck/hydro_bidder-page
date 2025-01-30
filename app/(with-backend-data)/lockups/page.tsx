@@ -140,8 +140,7 @@ export default function LockupsPage() {
     const isTiedToDeployment =
       !isExpired &&
       !!nextRoundEligibleToVote &&
-      nextRoundEligibleToVote > currentRoundId &&
-      !!votedOnBid
+      nextRoundEligibleToVote > currentRoundId
     const numRoundsLeftOnDeployment = isTiedToDeployment
       ? nextRoundEligibleToVote - currentRoundId
       : -1
