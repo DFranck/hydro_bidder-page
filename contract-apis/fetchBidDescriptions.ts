@@ -20,7 +20,9 @@ export interface BidDescription {
 export type RequestAmount = [amount: number, description: string]
 
 export async function fetchBidDescriptionsById() {
-  const response = await fetch(BID_DESCRIPTIONS_URL)
+  const response = await fetch(
+    `${BID_DESCRIPTIONS_URL}?${new Date().getTime()}`
+  )
 
   return (await response.json()) as Record<string, BidDescription>
 }
