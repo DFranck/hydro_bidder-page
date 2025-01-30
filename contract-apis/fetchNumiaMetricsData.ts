@@ -35,12 +35,15 @@ export async function fetchNumiaMetricsData(): Promise<SanitizedMetricsFromNumia
     throw new Error("NUMIA_METRICS_ENDPOINT is not set")
   }
 
-  const response = await fetch(process.env.NUMIA_METRICS_ENDPOINT, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
-    },
-  })
+  const response = await fetch(
+    `${process.env.NUMIA_METRICS_ENDPOINT}?${new Date().getTime()}`,
+    {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+      },
+    }
+  )
 
   const metrics = (await response.json()) as MetricsFromNumia[]
 
