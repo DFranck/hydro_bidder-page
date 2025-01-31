@@ -38,8 +38,8 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 export function EditLockupDurationModal({
   lockup,
   isOpen,
-  onClose,
-  onCloseComplete,
+  onClose: outerOnClose,
+  onCloseComplete: outerOnCloseComplete,
 }: EditLockupDurationProps) {
   const router = useRouter()
   const { address, lockedAtomEpochInNanos } = useBackendData()
@@ -59,11 +59,11 @@ export function EditLockupDurationModal({
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
 
-  function innerOnCloseComplete() {
+  function onCloseComplete() {
     setHasChanged(false)
     setIsLoading(false)
     setToasts([])
-    onCloseComplete()
+    outerOnCloseComplete()
   }
 
   async function handleChange(newDuration: number) {
@@ -102,10 +102,7 @@ export function EditLockupDurationModal({
         },
       ])
 
-      innerOnCloseComplete()
-
       setTimeout(() => {
-        setToasts([])
         router.push("/lockups")
         router.refresh()
       }, 3000)
@@ -128,15 +125,15 @@ export function EditLockupDurationModal({
         },
       ])
     } finally {
-      setIsLoading(false)
+      outerOnClose()
     }
   }
 
   return (
     <ModalWindow
       isOpen={isOpen}
-      onClose={onClose}
-      onCloseComplete={innerOnCloseComplete}
+      onClose={outerOnClose}
+      onCloseComplete={onCloseComplete}
       className="w-96"
     >
       <Card>
@@ -218,7 +215,7 @@ export function EditLockupDurationModal({
                 variant="button.secondary"
                 type="button"
                 disabled={isLoading}
-                onClick={onClose}
+                onClick={outerOnClose}
               >
                 Cancel
               </StyledText>
