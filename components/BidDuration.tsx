@@ -1,3 +1,4 @@
+import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
 
@@ -10,13 +11,17 @@ export function BidDuration({ bidId }: { bidId: number }) {
 
   if (!bidInfoFromNumia) return null
 
-  const { durationDays } = bidInfoFromNumia
+  const { durationDays, isPending, isRejected } = bidInfoFromNumia
 
-  return !durationDays
-    ? "Pending"
-    : pluralize({
-        count: durationDays,
-        prefixCount: true,
-        singular: "day",
-      })
+  return isRejected ? null : isPending ? (
+    <StyledText variant="footnote">Pending</StyledText>
+  ) : !durationDays ? (
+    "Pending"
+  ) : (
+    pluralize({
+      count: durationDays,
+      prefixCount: true,
+      singular: "day",
+    })
+  )
 }

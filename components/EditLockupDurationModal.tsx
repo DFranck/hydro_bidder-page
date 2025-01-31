@@ -27,10 +27,6 @@ type EditLockupDurationProps = {
   onCloseComplete: () => void
 }
 
-const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
-  style: "short",
-})
-
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "medium",
 })
@@ -38,8 +34,8 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 export function EditLockupDurationModal({
   lockup,
   isOpen,
-  onClose,
-  onCloseComplete,
+  onClose: outerOnClose,
+  onCloseComplete: outerOnCloseComplete,
 }: EditLockupDurationProps) {
   const router = useRouter()
   const { address, lockedAtomEpochInNanos } = useBackendData()
@@ -59,11 +55,19 @@ export function EditLockupDurationModal({
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
 
-  function innerOnCloseComplete() {
-    setHasChanged(false)
+  function resetModalState() {
     setIsLoading(false)
     setToasts([])
-    onCloseComplete()
+  }
+
+  function onClose() {
+    resetModalState()
+    outerOnClose()
+  }
+
+  function onCloseComplete() {
+    resetModalState()
+    outerOnCloseComplete()
   }
 
   async function handleChange(newDuration: number) {
@@ -102,12 +106,10 @@ export function EditLockupDurationModal({
         },
       ])
 
-      innerOnCloseComplete()
-
       setTimeout(() => {
-        setToasts([])
         router.push("/lockups")
         router.refresh()
+        onCloseComplete()
       }, 3000)
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
@@ -128,7 +130,7 @@ export function EditLockupDurationModal({
         },
       ])
     } finally {
-      setIsLoading(false)
+      onClose()
     }
   }
 
@@ -136,7 +138,7 @@ export function EditLockupDurationModal({
     <ModalWindow
       isOpen={isOpen}
       onClose={onClose}
-      onCloseComplete={innerOnCloseComplete}
+      onCloseComplete={onCloseComplete}
       className="w-96"
     >
       <Card>
@@ -218,7 +220,7 @@ export function EditLockupDurationModal({
                 variant="button.secondary"
                 type="button"
                 disabled={isLoading}
-                onClick={onClose}
+                onClick={outerOnClose}
               >
                 Cancel
               </StyledText>

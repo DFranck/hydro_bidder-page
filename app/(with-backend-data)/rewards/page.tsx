@@ -1,5 +1,6 @@
 "use client"
 
+import { BidTribute } from "@/components/BidTribute"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
@@ -53,7 +54,7 @@ export default function RewardsPage() {
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
-      bid.tributes.some((t) => t.isTokenBased) // has token-based tributes
+      bid.tributes.some((t) => t.isTokenBased) // has token-based tribute
   )
   const tributesById = keyBy(
     bidsToRender.flatMap((bid) => bid.tributes),
@@ -136,7 +137,7 @@ export default function RewardsPage() {
 
           totalTribute: (
             <InvisibleLink href={bidUrl}>
-              {tribute.amount}&nbsp;{tribute.denom}
+              <BidTribute bid={bid} textAlign="right" />
             </InvisibleLink>
           ),
 
