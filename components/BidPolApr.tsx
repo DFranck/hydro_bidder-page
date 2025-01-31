@@ -21,6 +21,7 @@ export function BidPolApr({ bidId }: { bidId: number }) {
     bidInfoFromNumia
 
   const isPending =
+    status.toLowerCase() === "pending deployment" ||
     status.toLowerCase() === "voting period" ||
     (status.toLowerCase() === "ongoing" &&
       (apr === 0 || currentAllocationAmount - initialAllocationAmount <= 0))
