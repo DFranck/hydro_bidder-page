@@ -1,7 +1,7 @@
 import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { bidTypeTooltip } from "@/components/ToolTips"
+import { tributeAmountTooltip } from "@/components/ToolTips"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
@@ -60,7 +60,7 @@ export function BidTribute({
             return (
               <Tooltip
                 key={index}
-                tipContents={bidTypeTooltip({
+                tipContents={tributeAmountTooltip({
                   isTokenBased,
                   pointProgramUrl,
                 })}

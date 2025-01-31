@@ -17,7 +17,7 @@ import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTypeColumnTooltip,
+  bidTableFirstColumnTooltip,
   currentVoteShareTooltip,
   estimatedRewardsColumnTooltip,
   polDurationTooltip,
@@ -127,7 +127,7 @@ export default function BidsPage() {
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={bidTypeColumnTooltip({
+            tipContents={bidTableFirstColumnTooltip({
               isTokenBased,
             })}
           >
