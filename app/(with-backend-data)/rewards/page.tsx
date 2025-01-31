@@ -1,5 +1,6 @@
 "use client"
 
+import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
@@ -136,7 +137,7 @@ export default function RewardsPage() {
 
           totalTribute: (
             <InvisibleLink href={bidUrl}>
-              {tribute.amount}&nbsp;{tribute.denom}
+              <BidTributes bid={bid} textAlign="right" />
             </InvisibleLink>
           ),
 
