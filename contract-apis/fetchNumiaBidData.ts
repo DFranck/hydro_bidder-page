@@ -39,6 +39,9 @@ export type SanitizedBidFromNumia = CamelCaseKeys<
     | "project"
     | "round"
   > & {
+    isOngoing: boolean
+    isPending: boolean
+    isRejected: boolean
     projectName: string
     tranche: number
     roundId: number | "pre-hydro"
@@ -71,8 +74,18 @@ function sanitizeBid({
   round,
   ...bid
 }: BidFromNumia): SanitizedBidFromNumia {
+  const { status } = bid
+  const isOngoing = status.toLowerCase().includes("ongoing")
+  const isPending =
+    status.toLowerCase().includes("pending") ||
+    status.toLowerCase().includes("voting")
+  const isRejected = status.toLowerCase().includes("rejected")
+
   return keysFromSnakeToCamelCase({
     ...bid,
+    isOngoing,
+    isPending,
+    isRejected,
     projectName: project,
     tranche: Number(bid.tranche),
     roundId: round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(round),

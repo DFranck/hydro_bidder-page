@@ -1,3 +1,4 @@
+import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { AmountAndUnitPair } from "./AmountAndUnitPair"
 
@@ -14,16 +15,16 @@ export function BidPolSize({ bidId }: { bidId: number }) {
 
   if (!bidInfoFromNumia) return null
 
-  const { currentAllocationAmount } = bidInfoFromNumia
+  const { currentAllocationAmount, isPending } = bidInfoFromNumia
 
-  return (
-    !!currentAllocationAmount && (
-      <AmountAndUnitPair
-        amount={currentAllocationAmount.toLocaleString(undefined, {
-          maximumFractionDigits: 4,
-        })}
-        unit="ATOM"
-      />
-    )
-  )
+  return isPending ? (
+    <StyledText variant="footnote">Pending</StyledText>
+  ) : !!currentAllocationAmount ? (
+    <AmountAndUnitPair
+      amount={currentAllocationAmount.toLocaleString(undefined, {
+        maximumFractionDigits: 4,
+      })}
+      unit="ATOM"
+    />
+  ) : null
 }

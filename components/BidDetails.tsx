@@ -357,7 +357,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
-            {/* And if there are any point-based tributes, we can't show this */}
+            {/* And if there are any point-based tribute amounts, we can't show this */}
             {bid.roundId >= 2 && metrics.offchainTribute.length === 0 && (
               <Tooltip tipContents={<>Explanation</>}>
                 <StyledText
