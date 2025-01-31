@@ -4,8 +4,8 @@ import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
+import { BidTribute } from "@/components/BidTribute"
 import { BidTributeApr } from "@/components/BidTributeApr"
-import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { ErrorBox } from "@/components/ErrorBox"
@@ -349,7 +349,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
                 {!isTokenBased ? (
-                  <BidTributes bid={bid} />
+                  <BidTribute bid={bid} />
                 ) : (
                   <BidTributeApr bidId={bidId} />
                 )}
