@@ -6,12 +6,20 @@ import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidsById } = backendData
+  const { bidsById, metricsForPostHydroBids } = backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
 
-  return (
+  const bidInfoFromNumia = metricsForPostHydroBids.find(
+    (metric) => Number(metric.id) === bid.id
+  )
+
+  if (!bidInfoFromNumia) return null
+
+  const { isPending, isRejected } = bidInfoFromNumia
+
+  return isRejected ? null : (
     <Tooltip
       tipContents={
         <div className="flex flex-col">
@@ -25,7 +33,11 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       )}
       classNamesForTooltip="w-fit"
     >
-      <span>{(bid.tributeApr * 100).toFixed(2)}%</span>
+      {isPending ? (
+        <StyledText variant="footnote">Pending</StyledText>
+      ) : (
+        <span>{(bid.tributeApr * 100).toFixed(2)}%</span>
+      )}
     </Tooltip>
   )
 }

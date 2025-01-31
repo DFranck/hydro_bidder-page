@@ -2,6 +2,7 @@
 
 import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidDuration } from "@/components/BidDuration"
+import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
@@ -17,6 +18,7 @@ import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
+  bidTypeColumnTooltip,
   metricsDurationColumnTooltip,
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
@@ -41,8 +43,12 @@ export function MetricsPage({
 }: {
   requestedRoundNumber: number | null
 }) {
-  const { bidsById, metricsForPreHydroBids, metricsForPostHydroBids } =
-    useBackendData()
+  const {
+    bidsById,
+    bidDescriptionsByBidId,
+    metricsForPreHydroBids,
+    metricsForPostHydroBids,
+  } = useBackendData()
 
   const postHydroRoundIdsWithBidData = uniq(
     metricsForPostHydroBids.map((bid) => Number(bid.roundId))
@@ -91,9 +97,18 @@ export function MetricsPage({
     return [
       {
         key: "logoAndTitle",
-        label: isTokenBased
-          ? "Token-Based Bid Title / Project Name"
-          : "Point-Based Bid Title / Project Name",
+        label: (
+          <Tooltip
+            tipContents={bidTypeColumnTooltip({
+              isTokenBased,
+            })}
+          >
+            <div className="flex items-center gap-1">
+              {isTokenBased ? "Token-Based Tribute" : "Point-Based Tribute"}
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
         isSortable: true,
         initialSortDirection: "ASC",
         customValueGetter: (row) => row._bid.title,
@@ -205,51 +220,50 @@ export function MetricsPage({
   }
 
   function buildRows({
-    bids,
+    bids: bidsFromNumia,
     isTokenBased,
   }: {
     bids: typeof bidsToRender
     isTokenBased: boolean
   }) {
-    return bids.map((bid) => {
-      const {
-        apr,
-        id,
-        durationDays,
-        initialAllocationAmount,
-        projectLogoUrl,
-        projectName,
-        status,
-        title,
-      } = bid
-
-      const bidFromContract = bidsById[Number(id)] ?? null
+    return bidsFromNumia.map((bidFromNumia) => {
+      const bidDescriptionFromGithub =
+        bidDescriptionsByBidId[Number(bidFromNumia.id)] ?? null
+      const bidFromContract = bidsById[Number(bidFromNumia.id)] ?? null
       const percentage = bidFromContract?.percentage ?? null
       const rowURL =
         requestedRoundId === PRE_HYDRO_ROUND_ID
-          ? `https://www.mintscan.io/cosmos/proposals/${id.replace("#", "")}`
-          : `/bids/${id}`
+          ? `https://www.mintscan.io/cosmos/proposals/${bidFromNumia.id.replace("#", "")}`
+          : `/bids/${bidFromNumia.id}`
+      const projectLogoUrl =
+        bidFromNumia.projectLogoUrl || bidDescriptionFromGithub?.projectLogoUrl
+      const projectName =
+        bidFromNumia.projectName || bidDescriptionFromGithub?.projectName
+      const title = bidFromNumia.title || bidDescriptionFromGithub?.title
 
       return {
-        _bid: { ...bid, percentage },
+        _bid: { ...bidFromNumia, percentage },
 
         logoAndTitle: (
-          <InvisibleLink href={rowURL} className="flex items-center gap-6">
-            <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-              {projectLogoUrl ? (
-                <Image
-                  className="object-contain"
-                  src={projectLogoUrl}
-                  alt={projectName}
-                  fill={true}
-                />
-              ) : null}
-            </div>
+          <InvisibleLink href={rowURL}>
+            {requestedPreHydro ? (
+              <div className="flex items-center gap-6">
+                <div className="relative size-12 shrink-0 rounded-full border text-[0]">
+                  {projectLogoUrl ? (
+                    <Image
+                      className="object-contain"
+                      src={projectLogoUrl}
+                      alt={projectName}
+                      fill={true}
+                    />
+                  ) : null}
+                </div>
 
-            <div className="flex flex-col">
-              <StyledText variant="h4">{title}</StyledText>
-              <StyledText variant="footnote">{projectName}</StyledText>
-            </div>
+                <StyledText variant="h4">{title}</StyledText>
+              </div>
+            ) : (
+              <BidLogoAndTitle bidId={Number(bidFromNumia.id)} />
+            )}
           </InvisibleLink>
         ),
 
@@ -257,13 +271,16 @@ export function MetricsPage({
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               <AmountAndUnitPair
-                amount={initialAllocationAmount.toLocaleString(undefined, {
-                  maximumFractionDigits: 4,
-                })}
+                amount={bidFromNumia.initialAllocationAmount.toLocaleString(
+                  undefined,
+                  {
+                    maximumFractionDigits: 4,
+                  }
+                )}
                 unit="ATOM"
               />
             ) : (
-              <BidPolSize bidId={Number(id)} />
+              <BidPolSize bidId={Number(bidFromNumia.id)} />
             )}
           </InvisibleLink>
         ),
@@ -272,19 +289,23 @@ export function MetricsPage({
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               pluralize({
-                count: durationDays,
+                count: bidFromNumia.durationDays,
                 prefixCount: true,
                 singular: "day",
               })
             ) : (
-              <BidDuration bidId={Number(id)} />
+              <BidDuration bidId={Number(bidFromNumia.id)} />
             )}
           </InvisibleLink>
         ),
 
         polApr: !isTokenBased ? undefined : (
           <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? `${apr}%` : <BidPolApr bidId={Number(id)} />}
+            {requestedPreHydro ? (
+              `${bidFromNumia.apr}%`
+            ) : (
+              <BidPolApr bidId={Number(bidFromNumia.id)} />
+            )}
           </InvisibleLink>
         ),
 
@@ -293,23 +314,27 @@ export function MetricsPage({
             {requestedPreHydro ? (
               0
             ) : !isTokenBased ? (
-              <BidTributes bid={bidsById[Number(id)]} textAlign="right" />
+              <BidTributes bid={bidFromContract} textAlign="right" />
             ) : (
-              <BidTributeApr bidId={Number(id)} />
+              <BidTributeApr bidId={Number(bidFromNumia.id)} />
             )}
           </InvisibleLink>
         ),
 
         status: (
           <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? status : <BidStatus bidId={Number(id)} />}
+            {requestedPreHydro ? (
+              bidFromNumia.status
+            ) : (
+              <BidStatus bidId={Number(bidFromNumia.id)} />
+            )}
           </InvisibleLink>
         ),
       }
     })
   }
 
-  function secondSortRows(sortedRows: Row[]) {
+  function secondPassSortFunction(sortedRows: Row[]) {
     return [...sortedRows].sort((a, b) => {
       const aExceedsThreshold =
         a._bid.percentage && a._bid.percentage >= VOTE_SHARE_THRESHOLD
@@ -452,7 +477,7 @@ export function MetricsPage({
               rows={tokenBasedRows}
               initialSortedColumnKey="polSize"
               renderRow={renderRow}
-              secondPassSortFunction={secondSortRows}
+              secondPassSortFunction={secondPassSortFunction}
             />
           </BlurryBackdropBox>
         )}
@@ -464,7 +489,7 @@ export function MetricsPage({
               rows={pointBasedRows}
               initialSortedColumnKey="polSize"
               renderRow={renderRow}
-              secondPassSortFunction={secondSortRows}
+              secondPassSortFunction={secondPassSortFunction}
             />
           </BlurryBackdropBox>
         )}

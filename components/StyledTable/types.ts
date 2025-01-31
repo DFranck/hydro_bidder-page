@@ -83,16 +83,18 @@ export interface HeaderRowRenderFunction<
   (renderProps: { children: ReactNode }): ReactNode
 }
 
+export interface RowRenderProps<R extends BaseRowObject, K extends keyof R> {
+  children: ReactNode
+  row: R
+  rowIndex: number
+  rowProps: ComponentPropsWithRef<"tr">
+  sortDirection: SortDirection | null
+  sortedColumnKey: K
+  sortedRows: R[]
+}
+
 export interface RowRenderFunction<R extends BaseRowObject, K extends keyof R> {
-  (renderProps: {
-    children: ReactNode
-    row: R
-    rowIndex: number
-    rowProps: ComponentPropsWithRef<"tr">
-    sortDirection: SortDirection | null
-    sortedColumnKey: K
-    sortedRows: R[]
-  }): ReactNode
+  (renderProps: RowRenderProps<R, K>): ReactNode
 }
 
 export type SortDirection = "ASC" | "DESC"

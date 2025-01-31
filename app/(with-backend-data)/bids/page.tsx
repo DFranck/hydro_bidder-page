@@ -1,6 +1,6 @@
 "use client"
 
-import { BidDenoms } from "@/components/BidDenoms"
+import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { BidRewards } from "@/components/BidRewards"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
@@ -13,7 +13,7 @@ import { PopupOnMaxReached } from "@/components/PopupOnMaxReached"
 import { PopupOnWelcome } from "@/components/PopupOnWelcome"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
-import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
+import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -29,12 +29,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 import { sumBy } from "lodash"
-import Image from "next/image"
-import { Fragment, useCallback } from "react"
+import { Fragment } from "react"
 import { classNames } from "./classNames"
-
-const tokenBasedTributesLabel = "Token-Based Tributes"
-const pointBasedTributesLabel = "Points-Based Tributes"
 
 export default function BidsPage() {
   const backendData = useBackendData()
@@ -65,25 +61,8 @@ export default function BidsPage() {
       return {
         _bid: bid,
         logoAndTitle: (
-          <InvisibleLink href={bidURL} className="flex items-center gap-6">
-            {projectLogoUrl ? (
-              <div className={classNames.bidLogo}>
-                <Image
-                  className="object-contain"
-                  src={projectLogoUrl}
-                  alt={projectName}
-                  fill={true}
-                />
-              </div>
-            ) : null}
-
-            <div>
-              <p className={classNames.bidTitle}>{bid.title}</p>
-
-              <StyledText variant="footnote">
-                <BidDenoms bid={bid} />
-              </StyledText>
-            </div>
+          <InvisibleLink href={bidURL}>
+            <BidLogoAndTitle bidId={bid.id} />
           </InvisibleLink>
         ),
         duration: (
@@ -140,217 +119,203 @@ export default function BidsPage() {
       }
     }) ?? []
 
-  const buildColumns = useCallback(
-    (
-      projectBidLabel: string
-    ): ColumnObject<(typeof rows)[number], keyof (typeof rows)[number]>[] => {
-      const isTokenBased = projectBidLabel === tokenBasedTributesLabel
-
-      return [
-        {
-          key: "logoAndTitle",
-          label: (
-            <Tooltip
-              tipContents={bidTypeColumnTooltip({
-                isTokenBased,
-              })}
-            >
-              <div className="flex items-center gap-1">
-                {projectBidLabel}
-                <Icon name="circle-info" />
-              </div>
-            </Tooltip>
-          ),
-          isSortable: true,
-          propsForCells: {
-            className: classNames.classNamesForCells,
-          },
-          customValueGetter: (row) => row._bid.title,
+  function buildColumns({
+    isTokenBased,
+  }: {
+    isTokenBased: boolean
+  }): ColumnObject<(typeof rows)[number], keyof (typeof rows)[number]>[] {
+    return [
+      {
+        key: "logoAndTitle",
+        label: (
+          <Tooltip
+            tipContents={bidTypeColumnTooltip({
+              isTokenBased,
+            })}
+          >
+            <div className="flex items-center gap-1">
+              {isTokenBased ? "Token-Based Tribute" : "Point-Based Tribute"}
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        isSortable: true,
+        propsForCells: {
+          className: classNames.classNamesForCells,
         },
-        {
-          key: "duration",
-          label: (
-            <Tooltip tipContents={polDurationTooltip}>
-              <div className="flex items-center gap-1">
-                <span>Duration</span>
-                <Icon name="circle-info" />
-              </div>
-            </Tooltip>
-          ),
-          isSortable: true,
-          textAlign: "right",
-          initialSortDirection: "DESC",
-          propsForCells: {
-            className: classNames.classNamesForCells,
-          },
-          customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
+        customValueGetter: (row) => row._bid.title,
+      },
+      {
+        key: "duration",
+        label: (
+          <Tooltip tipContents={polDurationTooltip}>
+            <div className="flex items-center gap-1">
+              <span>Duration</span>
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        isSortable: true,
+        textAlign: "right",
+        initialSortDirection: "DESC",
+        propsForCells: {
+          className: classNames.classNamesForCells,
         },
-        {
-          key: "yourEstimatedReward",
-          label: (
-            <Tooltip
-              tipContents={estimatedRewardsColumnTooltip({
-                hasVotedThisRound,
-                isTokenBased,
-              })}
-            >
-              <div className="flex items-center gap-1">
-                <span>
-                  {!isTokenBased
-                    ? "Total Tribute"
-                    : hasVotedThisRound
-                      ? "Your Est. Reward"
-                      : "Total Est. Reward"}{" "}
-                </span>
-                <Icon name="circle-info" />
-              </div>
-            </Tooltip>
-          ),
-          isSortable: true,
-          textAlign: "right",
-          initialSortDirection: "DESC",
-          propsForCells: {
-            className: classNames.classNamesForCells,
-          },
-          customValueGetter: (row) => {
-            const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
-            return !isTokenBased
-              ? 0
-              : hasVotedThisRound
-                ? row._bid.usersEstimatedRewards
-                : sumBy(row._bid.tributes, "valueInUsd")
-          },
+        customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
+      },
+      {
+        key: "yourEstimatedReward",
+        label: (
+          <Tooltip
+            tipContents={estimatedRewardsColumnTooltip({
+              hasVotedThisRound,
+              isTokenBased,
+            })}
+          >
+            <div className="flex items-center gap-1">
+              <span>
+                {!isTokenBased
+                  ? "Total Tribute"
+                  : hasVotedThisRound
+                    ? "Your Est. Reward"
+                    : "Total Est. Reward"}{" "}
+              </span>
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        isSortable: true,
+        textAlign: "right",
+        initialSortDirection: "DESC",
+        propsForCells: {
+          className: classNames.classNamesForCells,
         },
-        {
-          key: "currentVoteShare",
-          label: (
-            <Tooltip
-              classNamesForTooltip="-ml-24"
-              tipContents={currentVoteShareTooltip}
-            >
-              <div className="flex items-center gap-1">
-                <span>Vote %</span>
-                <Icon name="circle-info" />
-              </div>
-            </Tooltip>
-          ),
-          isSortable: true,
-          initialSortDirection: "DESC",
-          textAlign: "right",
-          propsForCells: {
-            className: classNames.classNamesForCells,
-          },
-          customValueGetter: (row) => Number(row._bid.percentage),
+        customValueGetter: (row) => {
+          const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
+          return !isTokenBased
+            ? 0
+            : hasVotedThisRound
+              ? row._bid.usersEstimatedRewards
+              : sumBy(row._bid.tributes, "valueInUsd")
         },
-        {
-          key: "actions",
-          label: "Actions",
-          isSortable: false,
-          textAlign: "right",
-          propsForCells: {
-            className: classNames.classNamesForCells,
-          },
+      },
+      {
+        key: "currentVoteShare",
+        label: (
+          <Tooltip
+            classNamesForTooltip="-ml-24"
+            tipContents={currentVoteShareTooltip}
+          >
+            <div className="flex items-center gap-1">
+              <span>Vote %</span>
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        isSortable: true,
+        initialSortDirection: "DESC",
+        textAlign: "right",
+        propsForCells: {
+          className: classNames.classNamesForCells,
         },
-      ]
-    },
-    [
-      backendData,
-      classNames.classNamesForCells,
-      isWalletConnected,
-      tokenBasedTributesLabel,
+        customValueGetter: (row) => Number(row._bid.percentage),
+      },
+      {
+        key: "actions",
+        label: "Actions",
+        isSortable: false,
+        textAlign: "right",
+        propsForCells: {
+          className: classNames.classNamesForCells,
+        },
+      },
     ]
-  )
+  }
 
-  const renderRow = useCallback<
-    RowRenderFunction<(typeof rows)[number], keyof (typeof rows)[number]>
-  >(
-    ({
-      children,
-      row,
-      rowIndex,
-      rowProps,
-      sortedColumnKey,
-      sortDirection,
-      sortedRows,
-    }) => {
-      const previousRow = sortedRows?.[
-        rowIndex - 1
-      ] as (typeof sortedRows)[number]
-      const nextRow = sortedRows?.[rowIndex + 1] as (typeof sortedRows)[number]
+  function renderRow({
+    children,
+    row,
+    rowIndex,
+    rowProps,
+    sortedColumnKey,
+    sortedRows,
+  }: RowRenderProps<(typeof rows)[number], keyof (typeof rows)[number]>) {
+    const previousRow = sortedRows?.[
+      rowIndex - 1
+    ] as (typeof sortedRows)[number]
+    const nextRow = sortedRows?.[rowIndex + 1] as (typeof sortedRows)[number]
 
-      const shouldShowVoteThresholdLine =
-        sortedColumnKey === "currentVoteShare" &&
-        previousRow &&
-        nextRow &&
-        Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
-        Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
+    const shouldShowVoteThresholdLine =
+      sortedColumnKey === "currentVoteShare" &&
+      previousRow &&
+      nextRow &&
+      Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
+      Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
 
-      const votesThisRound = votesByRoundId[currentRoundId] ?? []
+    const votesThisRound = votesByRoundId[currentRoundId] ?? []
 
-      const userVotedForBid = votesThisRound.some(
-        (vote) => vote.bidId === row._bid.id
-      )
+    const userVotedForBid = votesThisRound.some(
+      (vote) => vote.bidId === row._bid.id
+    )
 
-      return (
-        <Fragment key={row._bid.id}>
-          {!!shouldShowVoteThresholdLine && (
-            <TR className="js-vote-threshold-line">
-              <TD colSpan={99} className="!p-0">
+    return (
+      <Fragment key={row._bid.id}>
+        {!!shouldShowVoteThresholdLine && (
+          <TR className="js-vote-threshold-line">
+            <TD colSpan={99} className="!p-0">
+              <div
+                className="
+                  flex
+                  items-center
+                  justify-between
+                  gap-3
+                  whitespace-nowrap
+                  text-xs
+                  text-palette-beige
+                "
+              >
                 <div
                   className="
-                    flex
-                    items-center
-                    justify-between
-                    gap-3
-                    whitespace-nowrap
-                    text-xs
-                    text-palette-beige
+                    w-full
+                    border-t-2
+                    border-palette-beige
                   "
-                >
-                  <div
-                    className="
-                      w-full
-                      border-t-2
-                      border-palette-beige
-                    "
-                  />
+                />
 
-                  <Tooltip tipContents={voteThresholdTooltip}>
-                    <div className="flex items-center gap-1">
-                      <Icon name="solid:circle" />
-                      <span>
-                        These bids are below the{" "}
-                        <strong>
-                          {VOTE_SHARE_THRESHOLD}% vote share threshold
-                        </strong>
-                      </span>
-                      <Icon name="circle-info" />
-                    </div>
-                  </Tooltip>
+                <Tooltip tipContents={voteThresholdTooltip}>
+                  <div className="flex items-center gap-1">
+                    <Icon name="solid:circle" />
+                    <span>
+                      These bids are below the{" "}
+                      <strong>
+                        {VOTE_SHARE_THRESHOLD}% vote share threshold
+                      </strong>
+                    </span>
+                    <Icon name="circle-info" />
+                  </div>
+                </Tooltip>
 
-                  <div
-                    className="
-                      w-full
-                      border-t-2
-                      border-palette-beige
-                    "
-                  />
-                </div>
-              </TD>
-            </TR>
-          )}
-          <TR
-            className={userVotedForBid ? classNames.hasVotedRow : undefined}
-            key={row._bid.id}
-            {...rowProps}
-          >
-            {children}
+                <div
+                  className="
+                    w-full
+                    border-t-2
+                    border-palette-beige
+                  "
+                />
+              </div>
+            </TD>
           </TR>
-        </Fragment>
-      )
-    },
-    [classNames.hasVotedRow, voteThresholdTooltip]
-  )
+        )}
+        <TR
+          className={userVotedForBid ? classNames.hasVotedRow : undefined}
+          key={row._bid.id}
+          {...rowProps}
+        >
+          {children}
+        </TR>
+      </Fragment>
+    )
+  }
 
   const tokenBasedBids = rows.filter((row) =>
     row._bid.tributes.every((t) => t.isTokenBased)
@@ -384,7 +349,7 @@ export default function BidsPage() {
           <BlurryBackdropBox>
             <StyledTable
               initialSortedColumnKey="yourEstimatedReward"
-              columns={buildColumns(tokenBasedTributesLabel)}
+              columns={buildColumns({ isTokenBased: true })}
               rows={tokenBasedBids}
               renderRow={renderRow}
             />
@@ -395,7 +360,7 @@ export default function BidsPage() {
           <BlurryBackdropBox>
             <StyledTable
               initialSortedColumnKey="yourEstimatedReward"
-              columns={buildColumns(pointBasedTributesLabel)}
+              columns={buildColumns({ isTokenBased: false })}
               rows={pointBasedBids}
               renderRow={renderRow}
             />

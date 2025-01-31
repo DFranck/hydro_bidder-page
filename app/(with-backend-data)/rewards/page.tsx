@@ -53,7 +53,7 @@ export default function RewardsPage() {
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
-      bid.tributes.some((t) => t.isTokenBased) // has token-based tributes
+      bid.tributes.some((t) => t.isTokenBased) // has token-based tribute
   )
   const tributesById = keyBy(
     bidsToRender.flatMap((bid) => bid.tributes),
