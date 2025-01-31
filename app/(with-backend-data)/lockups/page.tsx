@@ -62,10 +62,9 @@ export default function LockupsPage() {
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
-  const [editingLockup, setEditingLockup] = useState<SanitizedLockup | null>(
-    null
-  )
-  const [isEditingLockup, setIsEditingLockup] = useState(false)
+  const [lockupBeingEdited, setLockupBeingEdited] =
+    useState<SanitizedLockup | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   const columnDescriptors = [
     {
@@ -318,8 +317,8 @@ export default function LockupsPage() {
           as="button"
           variant="button.secondary"
           onClick={() => {
-            setIsEditingLockup(true)
-            setEditingLockup(lockup)
+            setIsEditModalOpen(true)
+            setLockupBeingEdited(lockup)
           }}
         >
           {editLockupButtonLabel ?? "Edit Lockup"}
@@ -564,10 +563,10 @@ export default function LockupsPage() {
       </ContentContainer>
 
       <EditLockupDurationModal
-        lockup={editingLockup}
-        isOpen={isEditingLockup}
-        onClose={() => setIsEditingLockup(false)}
-        onCloseComplete={() => setEditingLockup(null)}
+        lockup={lockupBeingEdited}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onCloseComplete={() => setLockupBeingEdited(null)}
       />
 
       <ModalWindow
