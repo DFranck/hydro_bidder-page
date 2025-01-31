@@ -76,9 +76,12 @@ export function MetricsPage({
     (bid) => bid.offchainTribute.length > 0
   )
 
-  const tokenBasedRows = buildRows({ bids: tokenBasedBids, isTokenBased: true })
+  const tokenBasedRows = buildRows({
+    bidsFromNumia: tokenBasedBids,
+    isTokenBased: true,
+  })
   const pointBasedRows = buildRows({
-    bids: pointBasedBids,
+    bidsFromNumia: pointBasedBids,
     isTokenBased: false,
   })
 
@@ -220,10 +223,10 @@ export function MetricsPage({
   }
 
   function buildRows({
-    bids: bidsFromNumia,
+    bidsFromNumia,
     isTokenBased,
   }: {
-    bids: typeof bidsToRender
+    bidsFromNumia: typeof bidsToRender
     isTokenBased: boolean
   }) {
     return bidsFromNumia.map((bidFromNumia) => {
