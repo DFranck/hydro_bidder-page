@@ -71,14 +71,14 @@ export function CurrentRoundVotingPowerWallet() {
             <StyledText variant="link" as={Link} href="/lock-atom">
               Create a lockup
             </StyledText>{" "}
-            to start voting.
+            to start&nbsp;voting.
           </p>
         )}
 
         {hasAllVotingPowerAvailable && (
           <p>
             <strong className="text-palette-green">All</strong> of your voting
-            power is available.
+            power is&nbsp;available.
           </p>
         )}
 
@@ -90,7 +90,7 @@ export function CurrentRoundVotingPowerWallet() {
             <StyledText variant="link" as={Link} href="/lock-atom">
               Create a lockup
             </StyledText>{" "}
-            to start voting.
+            to start&nbsp;voting.
           </p>
         )}
 
@@ -101,7 +101,7 @@ export function CurrentRoundVotingPowerWallet() {
                 {formatAmount(votingPowerAvailable, 0, 4)}
               </strong>{" "}
               of <strong>{formatAmount(votingPowerTotal, 0, 4)} total</strong>{" "}
-              voting power is available.
+              voting power is&nbsp;available.
             </p>
 
             <p>
@@ -110,7 +110,7 @@ export function CurrentRoundVotingPowerWallet() {
               <StyledText variant="link" as={Link} href="/lock-atom">
                 Create a new lockup
               </StyledText>{" "}
-              for more voting power.
+              for more voting&nbsp;power.
             </p>
           </>
         )}
@@ -125,7 +125,7 @@ export function CurrentRoundVotingPowerWallet() {
       title={
         <Tooltip
           tipContents={yourVotingPowerTooltipRevised}
-          classNamesForTooltip="w-fit"
+          classNamesForTooltip="w-72"
         >
           <div className="flex items-center gap-1">
             <span>Available Voting Power</span>
