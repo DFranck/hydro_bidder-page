@@ -1,4 +1,4 @@
-import { BidTributes } from "@/components/BidTributes"
+import { BidTribute } from "@/components/BidTribute"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -6,17 +6,25 @@ import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidsById } = backendData
+  const { bidsById, metricsForPostHydroBids } = backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
 
-  return (
+  const bidInfoFromNumia = metricsForPostHydroBids.find(
+    (metric) => Number(metric.id) === bid.id
+  )
+
+  if (!bidInfoFromNumia) return null
+
+  const { isPending, isRejected } = bidInfoFromNumia
+
+  return isRejected ? null : (
     <Tooltip
       tipContents={
         <div className="flex flex-col">
           <StyledText variant="label">Tribute Size</StyledText>
-          <BidTributes bid={bid} textAlign="left" />
+          <BidTribute bid={bid} textAlign="left" />
         </div>
       }
       className={twJoin(
@@ -25,7 +33,11 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       )}
       classNamesForTooltip="w-fit"
     >
-      <span>{(bid.tributeApr * 100).toFixed(2)}%</span>
+      {isPending ? (
+        <StyledText variant="footnote">Pending</StyledText>
+      ) : (
+        <span>{(bid.tributeApr * 100).toFixed(2)}%</span>
+      )}
     </Tooltip>
   )
 }

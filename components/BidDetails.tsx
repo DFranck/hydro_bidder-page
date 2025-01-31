@@ -4,8 +4,8 @@ import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
+import { BidTribute } from "@/components/BidTribute"
 import { BidTributeApr } from "@/components/BidTributeApr"
-import { BidTributes } from "@/components/BidTributes"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { ErrorBox } from "@/components/ErrorBox"
@@ -349,7 +349,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
                 {!isTokenBased ? (
-                  <BidTributes bid={bid} />
+                  <BidTribute bid={bid} />
                 ) : (
                   <BidTributeApr bidId={bidId} />
                 )}
@@ -357,7 +357,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
-            {/* And if there are any point-based tributes, we can't show this */}
+            {/* And if there are any point-based tribute amounts, we can't show this */}
             {bid.roundId >= 2 && metrics.offchainTribute.length === 0 && (
               <Tooltip tipContents={<>Explanation</>}>
                 <StyledText

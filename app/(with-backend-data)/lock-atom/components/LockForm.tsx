@@ -2,7 +2,7 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
-import { Toast } from "@/components/Toasts"
+import { Toast, useToasts } from "@/components/Toasts"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -12,6 +12,7 @@ import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ChainContext } from "@cosmos-kit/core"
 import { isNumber } from "lodash"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ChangeEvent, useEffect, useState } from "react"
 import { classNames } from "../classNames"
 import { ValidatorListItem } from "../components/ValidatorListItem"
@@ -27,6 +28,7 @@ export function LockForm({
   hubChain: ChainContext
   validatorMap: Map<string, Validator>
 }) {
+  const router = useRouter()
   const [isRefreshing, setIsRefreshing] = useState(true)
   const {
     lockedAtomEpochInNanos,
@@ -34,7 +36,7 @@ export function LockForm({
     lockedAtomTotalWallet,
     lockedAtomRemainingCapacityGlobal,
   } = useBackendData()
-
+  const { setToasts } = useToasts()
   const [availableAtomToBeLocked, setAvailableAtomToBeLocked] =
     useState<number>(lockedAtomRemainingCapacityGlobal || 0)
   const [validator, setValidator] = useState("")
@@ -80,8 +82,18 @@ export function LockForm({
   }, [])
 
   useEffect(() => {
-    if (maxAtomToBeLocked > 0) {
+    if (maxAtomToBeLocked > 0 && availableAtomToBeLocked > 0) {
       setAmount(maxAtomToBeLocked.toFixed(6))
+    } else {
+      setAmount((0).toFixed(6))
+      setToasts([
+        {
+          message:
+            "Oops — there's no longer any capacity to lock. Check back often!",
+          variant: "info",
+        },
+      ])
+      router.push("/lockups")
     }
   }, [maxAtomToBeLocked, availableAtomToBeLocked])
 
@@ -129,8 +141,15 @@ export function LockForm({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const uatomAmount = BigInt(Math.round(parseFloat(amount) * 1e6)).toString()
-    onSubmit(validator, uatomAmount, selectedDuration)
+    const uatomAmount = parseFloat(amount) * 1e6
+    const maxUatomToBeLocked = maxAtomToBeLocked * 1e6
+    const actualUatomToLock = Math.min(uatomAmount, maxUatomToBeLocked)
+
+    onSubmit(
+      validator,
+      BigInt(Math.round(actualUatomToLock)).toString(),
+      selectedDuration
+    )
   }
 
   return (

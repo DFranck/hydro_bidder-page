@@ -17,18 +17,21 @@ export function BidPolApr({ bidId }: { bidId: number }) {
 
   if (!bidInfoFromNumia) return null
 
-  const { apr, status, currentAllocationAmount, initialAllocationAmount } =
-    bidInfoFromNumia
+  const {
+    apr,
+    isOngoing,
+    isPending,
+    isRejected,
+    currentAllocationAmount,
+    initialAllocationAmount,
+  } = bidInfoFromNumia
 
-  const isPending =
-    status.toLowerCase() === "voting period" ||
-    (status.toLowerCase() === "ongoing" &&
-      (apr === 0 || currentAllocationAmount - initialAllocationAmount <= 0))
+  const isPendingOrOngoing = isPending || (isOngoing && !apr)
 
-  return (
+  return isRejected ? null : (
     <Tooltip
       tipContents={
-        isPending ? (
+        isPendingOrOngoing ? (
           "This deployment is still active or has not been withdrawn. PoL APR will be updated once the deployment is fully concluded."
         ) : (
           <div className="flex flex-col">
@@ -54,7 +57,11 @@ export function BidPolApr({ bidId }: { bidId: number }) {
         "border-b-2 border-dotted border-white/50 hover:border-white"
       )}
     >
-      <span>{isPending ? "Pending" : `${apr}%`}</span>
+      {isPendingOrOngoing ? (
+        <StyledText variant="footnote">Pending</StyledText>
+      ) : (
+        <span>{`${apr}%`}</span>
+      )}
     </Tooltip>
   )
 }
