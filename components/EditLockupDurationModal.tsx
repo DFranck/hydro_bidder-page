@@ -27,10 +27,6 @@ type EditLockupDurationProps = {
   onCloseComplete: () => void
 }
 
-const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", {
-  style: "short",
-})
-
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "medium",
 })
@@ -59,10 +55,18 @@ export function EditLockupDurationModal({
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
 
-  function onCloseComplete() {
-    setHasChanged(false)
+  function resetModalState() {
     setIsLoading(false)
     setToasts([])
+  }
+
+  function onClose() {
+    resetModalState()
+    outerOnClose()
+  }
+
+  function onCloseComplete() {
+    resetModalState()
     outerOnCloseComplete()
   }
 
@@ -105,6 +109,7 @@ export function EditLockupDurationModal({
       setTimeout(() => {
         router.push("/lockups")
         router.refresh()
+        onCloseComplete()
       }, 3000)
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
@@ -125,14 +130,14 @@ export function EditLockupDurationModal({
         },
       ])
     } finally {
-      outerOnClose()
+      onClose()
     }
   }
 
   return (
     <ModalWindow
       isOpen={isOpen}
-      onClose={outerOnClose}
+      onClose={onClose}
       onCloseComplete={onCloseComplete}
       className="w-96"
     >
