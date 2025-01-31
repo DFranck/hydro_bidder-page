@@ -1,7 +1,8 @@
 "use client"
 
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
-import { BidRewards } from "@/components/BidRewards"
+import { BidPolApr } from "@/components/BidPolApr"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -19,7 +20,9 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   bidTypeColumnTooltip,
   currentVoteShareTooltip,
-  estimatedRewardsColumnTooltip,
+  metricsPolAprColumnTooltip,
+  metricsTributeAprColumnTooltip,
+  metricsTributeColumnTooltip,
   polDurationTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
@@ -40,7 +43,7 @@ export default function BidsPage() {
     bidsByRoundId,
     currentRoundId,
     isLoading,
-    isWalletConnected,
+    metricsForPostHydroBids,
     votesByRoundId,
   } = backendData
 
@@ -74,9 +77,14 @@ export default function BidsPage() {
             })}
           </InvisibleLink>
         ),
-        yourEstimatedReward: (
+        tributeApr: (
           <InvisibleLink href={bidURL}>
-            <BidRewards bidId={bid.id} />
+            <BidTributeApr bidId={bid.id} />
+          </InvisibleLink>
+        ),
+        polApr: (
+          <InvisibleLink href={bidURL}>
+            <BidPolApr bidId={bid.id} />
           </InvisibleLink>
         ),
         currentVoteShare: (
@@ -119,11 +127,13 @@ export default function BidsPage() {
       }
     }) ?? []
 
+  type Row = (typeof rows)[number]
+
   function buildColumns({
     isTokenBased,
   }: {
     isTokenBased: boolean
-  }): ColumnObject<(typeof rows)[number], keyof (typeof rows)[number]>[] {
+  }): ColumnObject<Row, keyof Row>[] {
     return [
       {
         key: "logoAndTitle",
@@ -164,22 +174,40 @@ export default function BidsPage() {
         customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
       },
       {
-        key: "yourEstimatedReward",
+        key: "polApr",
+        label: (
+          <Tooltip tipContents={metricsPolAprColumnTooltip}>
+            <div className="flex items-center gap-1">
+              PoL APR
+              <Icon name="circle-info" />
+            </div>
+          </Tooltip>
+        ),
+        textAlign: "right",
+        propsForCells: {
+          className: "whitespace-nowrap",
+        },
+        isSortable: true,
+        initialSortDirection: "DESC",
+        customValueGetter: (row) => {
+          const bidFromNumia = metricsForPostHydroBids.find(
+            (bid) => Number(bid.id) === row._bid.id
+          )
+          return bidFromNumia?.apr ?? 0
+        },
+      },
+      {
+        key: "tributeApr",
         label: (
           <Tooltip
-            tipContents={estimatedRewardsColumnTooltip({
-              hasVotedThisRound,
-              isTokenBased,
-            })}
+            tipContents={
+              !isTokenBased
+                ? metricsTributeColumnTooltip
+                : metricsTributeAprColumnTooltip
+            }
           >
             <div className="flex items-center gap-1">
-              <span>
-                {!isTokenBased
-                  ? "Total Tribute"
-                  : hasVotedThisRound
-                    ? "Your Est. Reward"
-                    : "Total Est. Reward"}{" "}
-              </span>
+              <span>{!isTokenBased ? "Total Tribute" : "Tribute APR"}</span>
               <Icon name="circle-info" />
             </div>
           </Tooltip>
@@ -348,7 +376,7 @@ export default function BidsPage() {
         {!isLoading && tokenBasedBids.length > 0 && (
           <BlurryBackdropBox>
             <StyledTable
-              initialSortedColumnKey="yourEstimatedReward"
+              initialSortedColumnKey="tributeApr"
               columns={buildColumns({ isTokenBased: true })}
               rows={tokenBasedBids}
               renderRow={renderRow}
@@ -359,8 +387,10 @@ export default function BidsPage() {
         {!isLoading && pointBasedBids.length > 0 && (
           <BlurryBackdropBox>
             <StyledTable
-              initialSortedColumnKey="yourEstimatedReward"
-              columns={buildColumns({ isTokenBased: false })}
+              initialSortedColumnKey="tributeApr"
+              columns={buildColumns({ isTokenBased: false }).filter(
+                (column) => column.key !== "polApr"
+              )}
               rows={pointBasedBids}
               renderRow={renderRow}
             />
