@@ -8,7 +8,7 @@ import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import { groupBy } from "lodash"
 import { twJoin } from "tailwind-merge"
 
-export function BidTributes({
+export function BidTribute({
   bid,
   textAlign = "left",
 }: {

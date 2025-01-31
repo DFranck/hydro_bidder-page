@@ -1,4 +1,4 @@
-import { BidTributes } from "@/components/BidTributes"
+import { BidTribute } from "@/components/BidTribute"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -24,7 +24,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       tipContents={
         <div className="flex flex-col">
           <StyledText variant="label">Tribute Size</StyledText>
-          <BidTributes bid={bid} textAlign="left" />
+          <BidTribute bid={bid} textAlign="left" />
         </div>
       }
       className={twJoin(
