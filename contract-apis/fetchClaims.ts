@@ -47,12 +47,13 @@ export async function fetchClaims({
   let outstandingClaims: SanitizedClaim[] = []
 
   try {
-    const fetchedHistoricalClaims =
+    const { claims: fetchedHistoricalClaims } =
       await tributeQueryClient.historicalTributeClaims({
         limit: 100,
         startFrom: 0,
         userAddress: address,
       })
+
     historicalClaims = sanitizeClaims(fetchedHistoricalClaims as any)
   } catch (error) {
     historicalClaims = []
