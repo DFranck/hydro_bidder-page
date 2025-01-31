@@ -53,8 +53,6 @@ export default function BidsPage() {
   const rows =
     bidsInRound?.map((bid) => {
       const bidURL = `/bids/${bid.id}`
-      const bidDescription = bidDescriptionsByBidId[bid.id] ?? {}
-      const { projectLogoUrl, projectName } = bidDescription
       const { value: bidDeploymentDurationToRender, unit } =
         getTimeUnitFromNanos(bid.deploymentDurationInNanos)
 
