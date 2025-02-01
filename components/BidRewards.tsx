@@ -10,26 +10,27 @@ import {
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { startCase, sumBy } from "lodash"
+import { startCase } from "lodash"
 import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, bidsById, currentRoundId, votesByRoundId } =
-    backendData
+  const {
+    bidDescriptionsByBidId,
+    bidsById,
+    currentRoundId,
+    metricsForPostHydroBids,
+    votesByRoundId,
+  } = backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
 
   const isTokenBased = bid.tributes.every((tribute) => tribute.isTokenBased)
-  const totalEstimatedRewardsUsd = amountToUSDString(
-    sumBy(bid.tributes, "valueInUsd"),
-    {
-      appendUsd: false,
-      numberOfDecimals: 2,
-      removeTrailingZeros: true,
-    }
-  )
+  const totalEstimatedRewardsUsdFromNumia = metricsForPostHydroBids.find(
+    (bidFromNumia) => Number(bidFromNumia.id) === bidId
+  )?.onchainTributeUsdc
+  const totalEstimatedRewardsUsd = totalEstimatedRewardsUsdFromNumia ?? 0
   const roundedDeltaPercentage = Math.round(
     bid.usersEstimatedRewardRelativeToCurrentPick
   )
@@ -99,7 +100,12 @@ export function BidRewards({ bidId }: { bidId: number }) {
             <Icon name="circle-info" />
           </div>
           <StyledText variant="footnote" as="div" className="whitespace-nowrap">
-            of {totalEstimatedRewardsUsd}
+            of{" "}
+            {amountToUSDString(totalEstimatedRewardsUsd, {
+              appendUsd: false,
+              numberOfDecimals: 2,
+              removeTrailingZeros: true,
+            })}
           </StyledText>
         </div>
       )}
