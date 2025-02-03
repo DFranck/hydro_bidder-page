@@ -98,7 +98,12 @@ export function BidRewards({ bidId }: { bidId: number }) {
                 <Icon
                   name={isPositive ? "solid:arrow-up" : "solid:arrow-down"}
                 />
-                {roundedDeltaPercentage}%
+                {roundedDeltaPercentage > 1000 ? (
+                  <>&gt;&nbsp;1,000</>
+                ) : (
+                  roundedDeltaPercentage
+                )}
+                %
               </span>
             )}
             {amountToUSDString(bid.usersEstimatedRewards, {
