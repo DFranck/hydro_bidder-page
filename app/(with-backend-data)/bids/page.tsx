@@ -39,7 +39,6 @@ export default function BidsPage() {
   const backendData = useBackendData()
 
   const {
-    bidDescriptionsByBidId,
     bidsByRoundId,
     currentRoundId,
     isLoading,
@@ -61,11 +60,13 @@ export default function BidsPage() {
 
       return {
         _bid: bid,
+
         logoAndTitle: (
           <InvisibleLink href={bidURL}>
             <BidLogoAndTitle bidId={bid.id} />
           </InvisibleLink>
         ),
+
         duration: (
           <InvisibleLink href={bidURL}>
             {pluralize({
@@ -75,16 +76,19 @@ export default function BidsPage() {
             })}
           </InvisibleLink>
         ),
+
         tributeApr: (
           <InvisibleLink href={bidURL}>
             <BidTributeApr bidId={bid.id} />
           </InvisibleLink>
         ),
+
         polApr: (
           <InvisibleLink href={bidURL}>
             <BidPolApr bidId={bid.id} />
           </InvisibleLink>
         ),
+
         currentVoteShare: (
           <InvisibleLink
             href={bidURL}
@@ -111,6 +115,7 @@ export default function BidsPage() {
             </ConditionalWrapper>
           </InvisibleLink>
         ),
+
         actions: (
           <InvisibleLink href={bidURL}>
             <div className="flex items-center justify-end gap-3">
