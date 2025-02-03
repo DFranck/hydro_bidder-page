@@ -18,11 +18,11 @@ import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTypeColumnTooltip,
   metricsDurationColumnTooltip,
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
+  metricsTableFirstColumnTooltip,
   metricsTributeAprColumnTooltip,
   metricsTributeColumnTooltip,
   VOTE_SHARE_THRESHOLD,
@@ -99,7 +99,7 @@ export function MetricsPage({
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={bidTypeColumnTooltip({
+            tipContents={metricsTableFirstColumnTooltip({
               isTokenBased,
             })}
           >

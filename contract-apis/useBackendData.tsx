@@ -89,6 +89,13 @@ const BackendDataContext = createContext<BackendDataAfterWallet>(
   initialBackendDataContext
 )
 
+// Declare backendData property on Window interface
+declare global {
+  interface Window {
+    backendData: BackendDataAfterWallet
+  }
+}
+
 export function BackendDataContextProvider({
   backendData,
   children,
@@ -227,8 +234,8 @@ export function BackendDataContextProvider({
     router,
     wasWalletConnected,
   ])
-
   if (process.env.CONTEXT !== "production") {
+    window.backendData = contextValue
     console.log({ backendData: contextValue })
   }
 

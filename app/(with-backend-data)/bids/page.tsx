@@ -17,7 +17,7 @@ import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTypeColumnTooltip,
+  bidTableFirstColumnTooltip,
   currentVoteShareTooltip,
   estimatedRewardsColumnTooltip,
   polDurationTooltip,
@@ -35,14 +35,8 @@ import { classNames } from "./classNames"
 export default function BidsPage() {
   const backendData = useBackendData()
 
-  const {
-    bidDescriptionsByBidId,
-    bidsByRoundId,
-    currentRoundId,
-    isLoading,
-    isWalletConnected,
-    votesByRoundId,
-  } = backendData
+  const { bidsByRoundId, currentRoundId, isLoading, votesByRoundId } =
+    backendData
 
   const bidsInRound = bidsByRoundId[currentRoundId] ?? []
 
@@ -53,18 +47,18 @@ export default function BidsPage() {
   const rows =
     bidsInRound?.map((bid) => {
       const bidURL = `/bids/${bid.id}`
-      const bidDescription = bidDescriptionsByBidId[bid.id] ?? {}
-      const { projectLogoUrl, projectName } = bidDescription
       const { value: bidDeploymentDurationToRender, unit } =
         getTimeUnitFromNanos(bid.deploymentDurationInNanos)
 
       return {
         _bid: bid,
+
         logoAndTitle: (
           <InvisibleLink href={bidURL}>
             <BidLogoAndTitle bidId={bid.id} />
           </InvisibleLink>
         ),
+
         duration: (
           <InvisibleLink href={bidURL}>
             {pluralize({
@@ -74,11 +68,13 @@ export default function BidsPage() {
             })}
           </InvisibleLink>
         ),
+
         yourEstimatedReward: (
           <InvisibleLink href={bidURL}>
             <BidRewards bidId={bid.id} />
           </InvisibleLink>
         ),
+
         currentVoteShare: (
           <InvisibleLink
             href={bidURL}
@@ -105,6 +101,7 @@ export default function BidsPage() {
             </ConditionalWrapper>
           </InvisibleLink>
         ),
+
         actions: (
           <InvisibleLink href={bidURL}>
             <div className="flex items-center justify-end gap-3">
@@ -129,7 +126,7 @@ export default function BidsPage() {
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={bidTypeColumnTooltip({
+            tipContents={bidTableFirstColumnTooltip({
               isTokenBased,
             })}
           >

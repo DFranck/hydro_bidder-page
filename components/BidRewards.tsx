@@ -10,20 +10,29 @@ import {
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { startCase, sumBy } from "lodash"
+import { startCase } from "lodash"
 import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, bidsById, currentRoundId, votesByRoundId } =
-    backendData
+  const {
+    bidDescriptionsByBidId,
+    bidsById,
+    currentRoundId,
+    metricsForPostHydroBids,
+    votesByRoundId,
+  } = backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
 
+  const bidFromNumia = metricsForPostHydroBids.find(
+    (bid) => Number(bid.id) === bidId
+  )
+
   const isTokenBased = bid.tributes.every((tribute) => tribute.isTokenBased)
   const totalEstimatedRewardsUsd = amountToUSDString(
-    sumBy(bid.tributes, "valueInUsd"),
+    bidFromNumia?.onchainTributeUsdc ?? 0,
     {
       appendUsd: false,
       numberOfDecimals: 2,
@@ -41,6 +50,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
   const computedTooltipContent = estimatedRewardsTooltip({
     bid,
     bidDescription,
+    bidFromNumia,
     hasVotedThisRound,
     isTokenBased,
   })
@@ -77,7 +87,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
         </div>
       ) : (
         <div className="flex flex-col">
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end gap-1">
             {hasDelta && (
               <span
                 className={twMerge(
@@ -88,7 +98,12 @@ export function BidRewards({ bidId }: { bidId: number }) {
                 <Icon
                   name={isPositive ? "solid:arrow-up" : "solid:arrow-down"}
                 />
-                {roundedDeltaPercentage}%
+                {roundedDeltaPercentage > 1000 ? (
+                  <>&gt;&nbsp;1,000</>
+                ) : (
+                  roundedDeltaPercentage
+                )}
+                %
               </span>
             )}
             {amountToUSDString(bid.usersEstimatedRewards, {
