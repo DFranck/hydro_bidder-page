@@ -283,7 +283,8 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                     deploymentDuration * lockedAtomEpochInNanos,
                   description,
                   liquidityDeployment,
-                  percentage: (Number(bid.power) / totalPower) * 100,
+                  // if totalPower is 0, percentage is 0 (avoid division by 0)
+                  percentage: totalPower > 0 ? (Number(bid.power) / totalPower) * 100 : 0,
                   title,
                   tributes: bidTributes,
                   tributeApr,
