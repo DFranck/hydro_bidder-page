@@ -188,7 +188,7 @@ export default function BidsPage() {
         ),
         textAlign: "right",
         propsForCells: {
-          className: "whitespace-nowrap",
+          className: classNames.classNamesForCells,
         },
         isSortable: true,
         initialSortDirection: "DESC",
