@@ -26,7 +26,7 @@ export async function fetchAssetListWithPrices(): Promise<
 
   // Fetch prices using getPriceFeedUrl
   const pricesResponse = await fetch(
-    getPriceFeedUrl([...coingeckoIds, "switcheo"])
+    getPriceFeedUrl([...coingeckoIds, "switcheo", "agoric"])
   )
   const prices: Record<string, { usd: number }> = await pricesResponse.json()
 
