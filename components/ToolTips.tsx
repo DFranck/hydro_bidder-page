@@ -5,6 +5,7 @@ import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { sumBy } from "lodash"
@@ -185,22 +186,29 @@ export const estimatedRewardsColumnTooltip = ({
 export const estimatedRewardsTooltip = ({
   bid,
   bidDescription,
+  bidFromNumia,
   hasVotedThisRound,
   isTokenBased,
 }: {
   bid: AugmentedBid
   bidDescription: BidDescription
+  bidFromNumia?: SanitizedBidFromNumia
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
   const { projectName } = bidDescription
-  const totalTributeValue = isTokenBased
-    ? (sumBy(bid.tributes, "valueInUsd") ?? 0)
-    : (sumBy(bid.tributes, "amount") ?? 0)
+
+  const totalTributeValue =
+    bidFromNumia?.onchainTributeUsdc ??
+    (isTokenBased
+      ? (sumBy(bid.tributes, "valueInUsd") ?? 0)
+      : (sumBy(bid.tributes, "amount") ?? 0))
+
   const percentageOfTotalTributeValue =
     totalTributeValue > 0
       ? Math.round(((bid.usersEstimatedRewards ?? 0) / totalTributeValue) * 100)
       : 0
+
   const formattedTotalTribute = (
     <strong className="text-palette-beige">
       {isTokenBased
@@ -210,9 +218,11 @@ export const estimatedRewardsTooltip = ({
           `${formatAmount(totalTributeValue)} ${bid.tributes[0].denom}`}
     </strong>
   )
+
   const rewardDescription = isTokenBased
     ? "estimated USD-equivalent value of rewards"
     : "amount of points"
+
   const messageIfHasVotedThisRound = (
     <>
       The {rewardDescription} you would receive from{" "}
