@@ -315,7 +315,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     metricsForPostHydroBids: postHydroBids,
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: metrics,
-    minTributeFactor: 0.01, // TODO: get this from contract
+    minTributeFactor: 0.0001, // TODO: get this from contract
     tranches: tranches,
     ...globalLockupCapacityInfo,
   }
