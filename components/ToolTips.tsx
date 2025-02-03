@@ -5,6 +5,7 @@ import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { sumBy } from "lodash"
@@ -47,29 +48,75 @@ export const averageRoundsPerUserTooltip = (
   </>
 )
 
-export const baseBidTypeTooltip = ({
+// All copy is put together here
+export const getTributeTypeDescription = ({
   isTokenBased,
   isPlural,
-  pointProgramUrl,
 }: {
   isTokenBased: boolean
   isPlural?: boolean
+}) => {
+  const theseBidsOrThisBid = isPlural ? "These bids" : "This bid"
+  const useOrUses = isPlural ? "use" : "uses"
+  const themOrIt = isPlural ? "them" : "it"
+
+  return (
+    <>
+      The amount offered as tribute by {theseBidsOrThisBid} to incentivize Hydro
+      voters to allocate liquidity to {themOrIt}.{" "}
+      {isTokenBased ? (
+        <>
+          {theseBidsOrThisBid} {useOrUses} live tokens as their tribute.
+        </>
+      ) : (
+        <>
+          {theseBidsOrThisBid} {useOrUses} points as their tribute because they
+          do not yet have a live token.
+        </>
+      )}
+    </>
+  )
+}
+
+export const bidTableFirstColumnTooltip = ({
+  isTokenBased,
+}: {
+  isTokenBased: boolean
+}) => (
+  <div className="flex flex-col gap-2">
+    {/* Remove this if you don't want the type description */}
+    <p>{getTributeTypeDescription({ isTokenBased, isPlural: true })}</p>
+
+    <p>Custom text for bid table</p>
+  </div>
+)
+
+export const metricsTableFirstColumnTooltip = ({
+  isTokenBased,
+}: {
+  isTokenBased: boolean
+}) => (
+  <div className="flex flex-col gap-2">
+    {/* Remove this if you don't want the type description */}
+    <p>{getTributeTypeDescription({ isTokenBased, isPlural: true })}</p>
+
+    <p>Custom text for metrics table</p>
+  </div>
+)
+
+export const tributeAmountTooltip = ({
+  isTokenBased,
+  pointProgramUrl,
+}: {
+  isTokenBased: boolean
   pointProgramUrl?: string
 }) => (
-  <>
-    The amount offered as tribute in this bid to incentivize Hydro voters to
-    allocate liquidity to their bid.{" "}
-    {isTokenBased ? (
-      <>
-        {isPlural ? "These bids use" : "This bid uses"} live tokens as their
-        tribute.
-      </>
-    ) : (
-      <>
-        {isPlural ? "These bids use" : "This bid uses"} points as their tribute
-        because they do not yet have a live token.
-      </>
-    )}{" "}
+  <div>
+    {getTributeTypeDescription({
+      isTokenBased,
+      isPlural: false,
+    })}
+
     {pointProgramUrl && (
       <StyledText
         as={Link}
@@ -81,22 +128,8 @@ export const baseBidTypeTooltip = ({
         Learn More <Icon name="solid:arrow-up-right" />
       </StyledText>
     )}
-  </>
+  </div>
 )
-
-export const bidTypeColumnTooltip = ({
-  isTokenBased,
-}: {
-  isTokenBased: boolean
-}) => baseBidTypeTooltip({ isTokenBased, isPlural: true })
-
-export const bidTypeTooltip = ({
-  isTokenBased,
-  pointProgramUrl,
-}: {
-  isTokenBased: boolean
-  pointProgramUrl?: string
-}) => baseBidTypeTooltip({ isTokenBased, isPlural: false, pointProgramUrl })
 
 export const currentVoteShareTooltip = (
   <>
@@ -153,22 +186,29 @@ export const estimatedRewardsColumnTooltip = ({
 export const estimatedRewardsTooltip = ({
   bid,
   bidDescription,
+  bidFromNumia,
   hasVotedThisRound,
   isTokenBased,
 }: {
   bid: AugmentedBid
   bidDescription: BidDescription
+  bidFromNumia?: SanitizedBidFromNumia
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
   const { projectName } = bidDescription
-  const totalTributeValue = isTokenBased
-    ? (sumBy(bid.tributes, "valueInUsd") ?? 0)
-    : (sumBy(bid.tributes, "amount") ?? 0)
+
+  const totalTributeValue =
+    bidFromNumia?.onchainTributeUsdc ??
+    (isTokenBased
+      ? (sumBy(bid.tributes, "valueInUsd") ?? 0)
+      : (sumBy(bid.tributes, "amount") ?? 0))
+
   const percentageOfTotalTributeValue =
     totalTributeValue > 0
       ? Math.round(((bid.usersEstimatedRewards ?? 0) / totalTributeValue) * 100)
       : 0
+
   const formattedTotalTribute = (
     <strong className="text-palette-beige">
       {isTokenBased
@@ -178,9 +218,11 @@ export const estimatedRewardsTooltip = ({
           `${formatAmount(totalTributeValue)} ${bid.tributes[0].denom}`}
     </strong>
   )
+
   const rewardDescription = isTokenBased
     ? "estimated USD-equivalent value of rewards"
     : "amount of points"
+
   const messageIfHasVotedThisRound = (
     <>
       The {rewardDescription} you would receive from{" "}
