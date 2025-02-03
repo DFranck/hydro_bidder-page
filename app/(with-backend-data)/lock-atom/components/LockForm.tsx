@@ -35,6 +35,7 @@ export function LockForm({
     lockedAtomMaxWallet,
     lockedAtomTotalWallet,
     lockedAtomRemainingCapacityGlobal,
+    lockedAtomTotalGlobal,
   } = useBackendData()
   const { setToasts } = useToasts()
   const [availableAtomToBeLocked, setAvailableAtomToBeLocked] =
@@ -56,10 +57,11 @@ export function LockForm({
     lockedAtomMaxWallet - lockedAtomTotalWallet
   )
   const maxAtomToBeLocked = Math.min(
-    delegationBalance / 1e6, // no more than they have
+    delegationBalance ? delegationBalance / 1e6 : Infinity, // no more than they have
     usersLimitRemainder, // no more than their limit
     availableAtomToBeLocked // no more than the global limit
   )
+
   const [amount, setAmount] = useState<string>("")
 
   //  refresh data every 60 seconds
@@ -84,7 +86,10 @@ export function LockForm({
   useEffect(() => {
     if (maxAtomToBeLocked > 0 && availableAtomToBeLocked > 0) {
       setAmount(maxAtomToBeLocked.toFixed(6))
-    } else {
+    } else if (
+      lockedAtomTotalGlobal &&
+      (maxAtomToBeLocked === 0 || availableAtomToBeLocked === 0)
+    ) {
       setAmount((0).toFixed(6))
       setToasts([
         {
