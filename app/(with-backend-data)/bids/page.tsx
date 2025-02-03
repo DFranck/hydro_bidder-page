@@ -18,7 +18,7 @@ import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTypeColumnTooltip,
+  bidTableFirstColumnTooltip,
   currentVoteShareTooltip,
   metricsPolAprColumnTooltip,
   metricsTributeAprColumnTooltip,
@@ -56,8 +56,6 @@ export default function BidsPage() {
   const rows =
     bidsInRound?.map((bid) => {
       const bidURL = `/bids/${bid.id}`
-      const bidDescription = bidDescriptionsByBidId[bid.id] ?? {}
-      const { projectLogoUrl, projectName } = bidDescription
       const { value: bidDeploymentDurationToRender, unit } =
         getTimeUnitFromNanos(bid.deploymentDurationInNanos)
 
@@ -139,7 +137,7 @@ export default function BidsPage() {
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={bidTypeColumnTooltip({
+            tipContents={bidTableFirstColumnTooltip({
               isTokenBased,
             })}
           >

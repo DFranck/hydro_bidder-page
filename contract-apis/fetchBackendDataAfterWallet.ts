@@ -103,9 +103,10 @@ async function uncachedFetchBackendDataAfterWallet({
     bids,
     currentRoundEndDate,
     currentRoundId,
-    tranches,
     lockedAtomMaxWallet,
     lockedAtomEpochInNanos,
+    metricsForPostHydroBids,
+    tranches,
   } = backendData
 
   const [{ voting_power: votingPowerFromContract }, sanitizedLockups] =
@@ -157,9 +158,14 @@ async function uncachedFetchBackendDataAfterWallet({
     const description =
       bidDescriptionsByBidId[bid.id]?.description ?? bid.description
 
+    const bidFromNumia = metricsForPostHydroBids.find(
+      (bidFromNumia) => Number(bidFromNumia.id) === bid.id
+    )
+
     const usersEstimatedRewards =
       estimatedRewardForPower({
-        amount: sumBy(bid.tributes, "valueInUsd"),
+        amount:
+          bidFromNumia?.onchainTributeUsdc ?? sumBy(bid.tributes, "valueInUsd"),
         walletVotingPower: votingPowerFromContract,
         bidPower: Number(bid.power),
       }) ?? 0

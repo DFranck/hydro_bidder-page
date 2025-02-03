@@ -163,7 +163,13 @@ export default function RewardsPage() {
                     </Tooltip>
                   )}
                 >
-                  {matchingClaimAmount?.printableAmount}
+                  {matchingClaimAmount?.printableAmount.toLocaleString(
+                    "en-US",
+                    {
+                      maximumFractionDigits: 3,
+                      trailingZeroDisplay: "stripIfInteger",
+                    }
+                  )}
                   &nbsp;
                   {matchingClaimAmount?.humanReadableDenom?.slice(0, 12) ??
                     tribute.denom?.slice(0, 12)}

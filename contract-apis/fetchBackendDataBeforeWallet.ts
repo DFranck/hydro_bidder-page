@@ -240,6 +240,11 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                 })
             )
 
+            const totalPower = unsanitizedBids.reduce(
+              (acc, bid) => acc + Number(bid.power),
+              0
+            )
+
             // Add tributes and liquidity deployments to every bid
             const augmentedBids = unsanitizedBids
               .map(keysFromSnakeToCamelCase)
@@ -278,9 +283,8 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
                     deploymentDuration * lockedAtomEpochInNanos,
                   description,
                   liquidityDeployment,
-                  percentage: matchingTopProposal
-                    ? Number(matchingTopProposal.percentage)
-                    : Number(bid.percentage),
+                  // if totalPower is 0, percentage is 0 (avoid division by 0)
+                  percentage: totalPower > 0 ? (Number(bid.power) / totalPower) * 100 : 0,
                   title,
                   tributes: bidTributes,
                   tributeApr,
@@ -315,7 +319,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     metricsForPostHydroBids: postHydroBids,
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: metrics,
-    minTributeFactor: 0.01, // TODO: get this from contract
+    minTributeFactor: 0.0001, // TODO: get this from contract
     tranches: tranches,
     ...globalLockupCapacityInfo,
   }

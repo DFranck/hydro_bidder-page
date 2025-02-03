@@ -26,6 +26,8 @@ export const ToastContext = createContext<{
   setToasts: () => {},
 })
 
+const dismissibleByDefault = ["info", "warning", "error", "success"]
+
 export function ToastContextProvider({ children }: { children: ReactNode }) {
   const isClient = useIsClient()
   const [toasts, setInnerToasts] = useState<ToastDescriptor[]>([])
@@ -48,12 +50,9 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
 
           const toastId = isNewToast ? crypto.randomUUID() : toast._id!
 
-          const isDismissibleByDefault = [
-            "info",
-            "warning",
-            "error",
-            "success",
-          ].includes(toast.variant)
+          const isDismissibleByDefault = dismissibleByDefault.includes(
+            toast.variant
+          )
 
           const dismissButton =
             isNewToast &&
