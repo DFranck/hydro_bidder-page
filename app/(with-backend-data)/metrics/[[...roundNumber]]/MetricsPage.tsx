@@ -34,7 +34,7 @@ import { max, sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, useCallback } from "react"
-import { twMerge } from "tailwind-merge"
+import { twJoin, twMerge } from "tailwind-merge"
 
 const PRE_HYDRO_ROUND_ID = -1
 
@@ -46,6 +46,7 @@ export function MetricsPage({
   const {
     bidsById,
     bidDescriptionsByBidId,
+    currentRoundId,
     metricsForPreHydroBids,
     metricsForPostHydroBids,
   } = useBackendData()
@@ -54,13 +55,14 @@ export function MetricsPage({
     metricsForPostHydroBids.map((bid) => Number(bid.roundId))
   )
 
-  const highestRoundId = max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
+  const highestRoundIdWithData =
+    max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
 
   const requestedRoundId =
     requestedRoundNumber === null
-      ? highestRoundId
+      ? Math.min(highestRoundIdWithData, currentRoundId - 1)
       : typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
-        ? Math.min(requestedRoundNumber - 1, highestRoundId)
+        ? Math.min(requestedRoundNumber - 1, highestRoundIdWithData)
         : PRE_HYDRO_ROUND_ID
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
@@ -449,22 +451,33 @@ export function MetricsPage({
                     href={`/metrics/${roundId + 1}`}
                     key={roundId}
                     className={twMerge(
-                      `
-                        -mx-px
-                        rounded-none
-                        backdrop-blur-none
-                        first:rounded-l-full
-                        last:rounded-r-full
-                        hover:scale-100
-                      `,
+                      "group relative -mx-px rounded-none backdrop-blur-none",
+                      "first:rounded-l-full last:rounded-r-full",
+                      "hover:scale-100",
+                      "transition-all",
                       !isActive &&
-                        `
-                          text-palette-green/50
-                          hover:text-palette-green
-                        `
+                        "text-palette-green/50 hover:text-palette-green"
                     )}
                   >
-                    {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
+                    <span>
+                      {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
+                    </span>
+                    {roundId === currentRoundId && (
+                      <span
+                        className={twJoin(
+                          "absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/4",
+                          "rounded-full px-2 py-0.5 transition-all",
+                          "border-2 border-palette-text bg-palette-text text-xs",
+                          "before:absolute before:inset-0 before:-z-10 before:rounded-full",
+                          "group-hover:text-palette-text group-hover:before:bg-palette-beige",
+                          isActive
+                            ? "text-palette-text before:bg-palette-beige"
+                            : "text-palette-text/50 before:bg-palette-beige/60"
+                        )}
+                      >
+                        Current
+                      </span>
+                    )}
                   </StyledText>
                 )
               }
