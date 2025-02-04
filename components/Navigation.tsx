@@ -13,11 +13,12 @@ import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function Navigation() {
-  const backendData = useBackendData()
-  const { isLoading, isWalletConnected } = backendData
-  const showLockupBtn = !isLoading && isWalletConnected
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
+  const backendData = useBackendData()
+  const { isLoading, isWalletConnected, lockups } = backendData
+  const shouldShowLockupButton =
+    !isLoading && isWalletConnected && lockups.length === 0
 
   const navigationMenuTriggerStyle = (link: string) => {
     return twMerge(
@@ -236,7 +237,7 @@ export default function Navigation() {
           Airdrops
         </Link>
 
-        {showLockupBtn && (
+        {shouldShowLockupButton && (
           <StyledText
             as={Link}
             variant="button.primary.small"
