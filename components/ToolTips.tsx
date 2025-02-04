@@ -18,8 +18,6 @@ export const averageAPRTooltip = (
       The average APR available to Hydro voters during the current active round.
       Hydro APR is separate and additional to your staking APR as an ATOM
       staker.
-    </p>
-
     <StyledText
       variant="link"
       as={Link}
@@ -29,6 +27,7 @@ export const averageAPRTooltip = (
       <span>Learn More</span>
       <Icon name="solid:arrow-up-right" />
     </StyledText>
+    </p>
   </div>
 )
 

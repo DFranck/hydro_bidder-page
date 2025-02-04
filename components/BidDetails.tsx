@@ -361,7 +361,15 @@ export function BidDetails({ bidId }: { bidId: number }) {
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
             {/* And if there are any point-based tribute amounts, we can't show this */}
             {bid.roundId >= 2 && metrics.offchainTribute.length === 0 && (
-              <Tooltip tipContents={<>Explanation</>}>
+              <Tooltip tipContents={<>The maximum liquidity this bid can receive is capped by the tribute offered, based on Hydro’s tribute floor rule. <StyledText
+                variant="link"
+                as={Link}
+                href="/docs/projects/bidding#minimum-tribute-floor-and-maximum-deployment-amount"
+                target="_blank"
+              >
+                <span>Learn More</span>
+                <Icon name="solid:arrow-up-right" />
+              </StyledText></>}>
                 <StyledText
                   as="h3"
                   variant="label"
