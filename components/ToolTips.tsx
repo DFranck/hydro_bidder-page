@@ -84,13 +84,13 @@ export const bidTablesFirstColumnTooltips = {
   bidsTable: {
     tokenBased: (
       <div className="flex flex-col gap-2">
-        <p>{tributeTypeDescriptions.tokenBased.multipleBids}</p>
+        {tributeTypeDescriptions.tokenBased.multipleBids}
         <p>Text specific to this.</p>
       </div>
     ),
     pointBased: (
       <div className="flex flex-col gap-2">
-        <p>{tributeTypeDescriptions.pointBased.multipleBids}</p>
+        {tributeTypeDescriptions.pointBased.multipleBids}
         <p>Text specific to this.</p>
       </div>
     ),
@@ -98,13 +98,13 @@ export const bidTablesFirstColumnTooltips = {
   metricsTable: {
     tokenBased: (
       <div className="flex flex-col gap-2">
-        <p>{tributeTypeDescriptions.tokenBased.multipleBids}</p>
+        {tributeTypeDescriptions.tokenBased.multipleBids}
         <p>Text specific to this.</p>
       </div>
     ),
     pointBased: (
       <div className="flex flex-col gap-2">
-        <p>{tributeTypeDescriptions.pointBased.multipleBids}</p>
+        {tributeTypeDescriptions.pointBased.multipleBids}
         <p>Text specific to this.</p>
       </div>
     ),
