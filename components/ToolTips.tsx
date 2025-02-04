@@ -85,13 +85,13 @@ export const bidTablesFirstColumnTooltips = {
     tokenBased: (
       <div className="flex flex-col gap-2">
         {tributeTypeDescriptions.tokenBased.multipleBids}
-        <p>Text specific to this.</p>
+        <p>These bids uses a token as their tribute to incentivize Hydro voters to vote for them.</p>
       </div>
     ),
     pointBased: (
       <div className="flex flex-col gap-2">
         {tributeTypeDescriptions.pointBased.multipleBids}
-        <p>Text specific to this.</p>
+        <p>These bids uses a token as their tribute to incentivize Hydro voters to vote for them.</p>
       </div>
     ),
   },
@@ -99,13 +99,13 @@ export const bidTablesFirstColumnTooltips = {
     tokenBased: (
       <div className="flex flex-col gap-2">
         {tributeTypeDescriptions.tokenBased.multipleBids}
-        <p>Text specific to this.</p>
+        <p>These bids used a live token as tribute for their bid.</p>
       </div>
     ),
     pointBased: (
       <div className="flex flex-col gap-2">
         {tributeTypeDescriptions.pointBased.multipleBids}
-        <p>Text specific to this.</p>
+        <p>These bids used a points system as tribute for their bid.</p>
       </div>
     ),
   },
@@ -114,7 +114,7 @@ export const bidTablesFirstColumnTooltips = {
 export const tokenBasedTributeAmountTooltip = (
   <>
     {tributeTypeDescriptions.tokenBased.singleBid}
-    <p>Text specific to this.</p>
+    <p>This bids used a token as their tribute to incentivize Hydro voters to vote for them.</p>
   </>
 )
 
