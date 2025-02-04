@@ -94,7 +94,7 @@ export default function RewardsPage() {
         const matchingClaim =
           matchingOutstandingClaim ?? matchingHistoricalClaim
         const matchingClaimAmount = matchingClaim?.amount
-        const rewardsInUsd = matchingClaimAmount?.valueInUsd ?? 0
+        const rewardsInUsd = matchingClaimAmount?.valueUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
           "amount"
@@ -275,7 +275,7 @@ export default function RewardsPage() {
         className: "whitespace-nowrap",
       },
       isSortable: true,
-      customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
+      customValueGetter: (row) => sumBy(row._bid.tributes, "valueUsd"),
     },
     {
       key: "claimStatus",

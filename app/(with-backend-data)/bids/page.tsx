@@ -193,7 +193,7 @@ export default function BidsPage() {
             ? 0
             : hasVotedThisRound
               ? row._bid.usersEstimatedRewards
-              : sumBy(row._bid.tributes, "valueInUsd")
+              : sumBy(row._bid.tributes, "valueUsd")
         },
       },
       {

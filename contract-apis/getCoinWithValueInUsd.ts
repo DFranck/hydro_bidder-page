@@ -4,7 +4,8 @@ import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
 export interface AugmentedCoin extends Coin {
   humanReadableDenom: string
   printableAmount: number
-  valueInUsd: number
+  priceUsd: number
+  valueUsd: number
 }
 
 export function getCoinWithValueInUsd({
@@ -24,6 +25,7 @@ export function getCoinWithValueInUsd({
     ...coin,
     humanReadableDenom,
     printableAmount,
-    valueInUsd: printableAmount * assetPriceUsd,
+    priceUsd: assetPriceUsd,
+    valueUsd: printableAmount * assetPriceUsd,
   } as AugmentedCoin
 }

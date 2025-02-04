@@ -10,29 +10,20 @@ import {
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { startCase } from "lodash"
+import { startCase, sumBy } from "lodash"
 import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const {
-    bidDescriptionsByBidId,
-    bidsById,
-    currentRoundId,
-    metricsForPostHydroBids,
-    votesByRoundId,
-  } = backendData
+  const { bidDescriptionsByBidId, bidsById, currentRoundId, votesByRoundId } =
+    backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
 
-  const bidFromNumia = metricsForPostHydroBids.find(
-    (bid) => Number(bid.id) === bidId
-  )
-
   const isTokenBased = bid.tributes.every((tribute) => tribute.isTokenBased)
   const totalEstimatedRewardsUsd = amountToUSDString(
-    bidFromNumia?.onchainTributeUsdc ?? 0,
+    sumBy(bid.tributes, "valueUsd"),
     {
       appendUsd: false,
       numberOfDecimals: 2,
@@ -50,7 +41,6 @@ export function BidRewards({ bidId }: { bidId: number }) {
   const computedTooltipContent = estimatedRewardsTooltip({
     bid,
     bidDescription,
-    bidFromNumia,
     hasVotedThisRound,
     isTokenBased,
   })
