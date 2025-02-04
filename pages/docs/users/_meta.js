@@ -3,7 +3,7 @@ const meta = {
     title: "Lockups",
   },
   "voting-for-projects": {
-    title: "Voting",
+    title: "Bids",
   },
   "calculating-staking-apr": {
     title: "Hydro APR",
