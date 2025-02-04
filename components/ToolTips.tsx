@@ -46,7 +46,6 @@ export const averageRoundsPerUserTooltip = (
   </>
 )
 
-<<<<<<< HEAD
 export const tributeTypeDescriptions = {
   tokenBased: {
     singleBid: (
@@ -79,36 +78,6 @@ export const tributeTypeDescriptions = {
       </p>
     ),
   },
-=======
-// All copy is put together here
-export const getTributeTypeDescription = ({
-  isTokenBased,
-  isPlural,
-}: {
-  isTokenBased: boolean
-  isPlural?: boolean
-}) => {
-  const theseBidsOrThisBid = isPlural ? "these bids" : "this bid"
-  const useOrUses = isPlural ? "use" : "uses"
-  const themOrIt = isPlural ? "them" : "it"
-
-  return (
-    <>
-      The amount offered as tribute by {theseBidsOrThisBid} to incentivize Hydro
-      voters to allocate liquidity to {themOrIt}.{" "}
-      {isTokenBased ? (
-        <>
-          {theseBidsOrThisBid} {useOrUses} live tokens as their tribute.
-        </>
-      ) : (
-        <>
-          {theseBidsOrThisBid} {useOrUses} points as their tribute because they
-          do not yet have a live token.
-        </>
-      )}
-    </>
-  )
->>>>>>> main
 }
 
 export const bidTablesFirstColumnTooltips = {
@@ -142,7 +111,6 @@ export const bidTablesFirstColumnTooltips = {
   },
 }
 
-<<<<<<< HEAD
 export const tokenBasedTributeAmountTooltip = (
   <>
     {tributeTypeDescriptions.tokenBased.singleBid}
@@ -151,27 +119,6 @@ export const tokenBasedTributeAmountTooltip = (
 )
 
 export const pointBasedTributeAmountTooltip = ({
-=======
-    <p>These bids use a live token as their tribute to incentivize Hydro voters to vote for them.</p>
-  </div>
-)
-
-export const metricsTableFirstColumnTooltip = ({
-  isTokenBased,
-}: {
-  isTokenBased: boolean
-}) => (
-  <div className="flex flex-col gap-2">
-    {/* Remove this if you don't want the type description */}
-    <p>{getTributeTypeDescription({ isTokenBased, isPlural: true })}</p>
-
-    <p>These bids used a live token as tribute for their bid.</p>
-  </div>
-)
-
-export const tributeAmountTooltip = ({
-  isTokenBased,
->>>>>>> main
   pointProgramUrl,
 }: {
   pointProgramUrl?: string
