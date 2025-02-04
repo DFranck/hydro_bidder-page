@@ -124,7 +124,7 @@ export const pointBasedTributeAmountTooltip = ({
   pointProgramUrl?: string
 }) => (
   <>
-    <p>{tributeTypeDescriptions.pointBased.singleBid}</p>
+    {tributeTypeDescriptions.pointBased.singleBid}
     {pointProgramUrl && (
       <p>
         <StyledText
