@@ -164,8 +164,7 @@ async function uncachedFetchBackendDataAfterWallet({
 
     const usersEstimatedRewards =
       estimatedRewardForPower({
-        amount:
-          bidFromNumia?.onchainTributeUsdc ?? sumBy(bid.tributes, "valueUsd"),
+        amount: sumBy(bid.tributes, "valueUsd"),
         walletVotingPower: votingPowerFromContract,
         bidPower: Number(bid.power),
       }) ?? 0

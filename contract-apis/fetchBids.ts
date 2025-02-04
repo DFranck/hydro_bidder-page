@@ -16,7 +16,7 @@ import { fetchProposalTributes } from "@/contract-apis/fetchProposalTributes"
 import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
-import { range } from "lodash"
+import { range, sumBy } from "lodash"
 
 export async function fetchBids({
   assetListWithPrices,
@@ -169,12 +169,12 @@ export async function fetchBids({
                   augmentedLiquidityDeployments.find(
                     (deployment) => deployment.bidId === proposalId
                   ) ?? null
-                const bidData =
+                const bidFromHydro =
                   postHydroBids.find(
                     (bidFromNumia) => Number(bidFromNumia.id) === proposalId
                   ) ?? null
-                const onchainTributeUsdc = bidData?.onchainTributeUsdc ?? 0
-                const polSize = bidData?.currentAllocationAmount ?? 0
+                const onchainTributeUsdc = sumBy(bidTributes, "valueUsd") ?? 0
+                const polSize = bidFromHydro?.currentAllocationAmount ?? 0
                 const tributeApr =
                   polSize > 0
                     ? (onchainTributeUsdc * 12) / (polSize * atomPrice)

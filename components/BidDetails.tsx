@@ -28,7 +28,7 @@ import { VoteButton } from "@/components/VoteButton"
 import { BID_DESCRIPTIONS_URL } from "@/contract-apis/fetchBidDescriptions"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
-import { kebabCase } from "lodash"
+import { kebabCase, sumBy } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -92,7 +92,9 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
-  const totalTributeValueInAtom = metrics.onchainTributeUsdc / atomPrice
+  const tributeUsdc = sumBy(bid.tributes, "valueUsd")
+
+  const totalTributeValueInAtom = tributeUsdc / atomPrice
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 
