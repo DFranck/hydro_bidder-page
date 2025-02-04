@@ -2,6 +2,7 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { Toast, useToasts } from "@/components/Toasts"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
@@ -91,13 +92,7 @@ export function LockForm({
       (maxAtomToBeLocked === 0 || availableAtomToBeLocked === 0)
     ) {
       setAmount((0).toFixed(6))
-      setToasts([
-        {
-          message:
-            "Oops — there's no longer any capacity to lock. Check back often!",
-          variant: "info",
-        },
-      ])
+      setToasts([toastMessages.lockupCapacityFull])
       router.push("/lockups")
     }
   }, [maxAtomToBeLocked, availableAtomToBeLocked])

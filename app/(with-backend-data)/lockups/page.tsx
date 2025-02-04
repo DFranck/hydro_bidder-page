@@ -14,6 +14,7 @@ import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -350,12 +351,7 @@ export default function LockupsPage() {
     })
 
     try {
-      setToasts([
-        {
-          variant: "working",
-          message: `Unlocking ${pluralizedLockupText}...`,
-        },
-      ])
+      setToasts([toastMessages.unlockingExpiredLockups(expiredLockups.length)])
 
       await executeWalletUnlockExpired({
         address,
@@ -365,20 +361,15 @@ export default function LockupsPage() {
 
       await revalidateTag("backendData")
 
-      setToasts([
-        {
-          variant: "info",
-          message: `${pluralizedLockupText} unlocked successfully. See next step!`,
-        },
-      ])
+      setToasts([toastMessages.unlockingExpiredLockups(expiredLockups.length)])
 
       setIsShowingNextStep(true)
     } catch (error) {
       setToasts([
-        {
-          variant: "error",
-          message: `Error unlocking ${pluralizedLockupText}: ${error}`,
-        },
+        toastMessages.unlockingExpiredLockupsError(
+          expiredLockups.length,
+          error as Error
+        ),
       ])
     }
   }

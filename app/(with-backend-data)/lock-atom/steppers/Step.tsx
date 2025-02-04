@@ -4,6 +4,7 @@ import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useRouter } from "next/navigation"
@@ -32,12 +33,7 @@ export function Step({
   useEffect(() => {
     if (revalidateCache) {
       async function revalidateTags() {
-        setToasts([
-          {
-            variant: "working",
-            message: "Reloading...",
-          },
-        ])
+        setToasts([toastMessages.reloadingTheWindow])
 
         await revalidateTag("backendData")
 
