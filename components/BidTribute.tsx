@@ -1,7 +1,10 @@
 import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { tributeAmountTooltip } from "@/components/ToolTips"
+import {
+  pointBasedTributeAmountTooltip,
+  tokenBasedTributeAmountTooltip,
+} from "@/components/ToolTips"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
@@ -54,16 +57,18 @@ export function BidTribute({
           key={index}
         >
           {tributes.map((tribute, index) => {
-            const isTokenBased = tribute.tributeType === "tokens"
             const isPointBased = tribute.tributeType === "points"
 
             return (
               <Tooltip
                 key={index}
-                tipContents={tributeAmountTooltip({
-                  isTokenBased,
-                  pointProgramUrl,
-                })}
+                tipContents={
+                  isPointBased
+                    ? pointBasedTributeAmountTooltip({
+                        pointProgramUrl,
+                      })
+                    : tokenBasedTributeAmountTooltip
+                }
               >
                 <AmountAndUnitPair
                   amount={
