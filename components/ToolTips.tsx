@@ -5,7 +5,6 @@ import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
-import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { sumBy } from "lodash"
@@ -186,23 +185,19 @@ export const estimatedRewardsColumnTooltip = ({
 export const estimatedRewardsTooltip = ({
   bid,
   bidDescription,
-  bidFromNumia,
   hasVotedThisRound,
   isTokenBased,
 }: {
   bid: AugmentedBid
   bidDescription: BidDescription
-  bidFromNumia?: SanitizedBidFromNumia
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
   const { projectName } = bidDescription
 
-  const totalTributeValue =
-    bidFromNumia?.onchainTributeUsdc ??
-    (isTokenBased
-      ? (sumBy(bid.tributes, "valueInUsd") ?? 0)
-      : (sumBy(bid.tributes, "amount") ?? 0))
+  const totalTributeValue = isTokenBased
+    ? (sumBy(bid.tributes, "valueUsd") ?? 0)
+    : (sumBy(bid.tributes, "amount") ?? 0)
 
   const percentageOfTotalTributeValue =
     totalTributeValue > 0

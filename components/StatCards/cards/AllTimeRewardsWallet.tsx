@@ -12,7 +12,7 @@ export function AllTimeRewardsWallet() {
   const { isLoading, claimsHistorical, claimsOutstanding } = useBackendData()
   const allTimeUsersRewardsInUsd = sumBy(
     [...claimsHistorical, ...claimsOutstanding],
-    "amount.valueInUsd"
+    "amount.valueUsd"
   )
 
   return (
