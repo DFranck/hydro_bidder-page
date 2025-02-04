@@ -17,7 +17,7 @@ import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTableFirstColumnTooltip,
+  bidTablesFirstColumnTooltips,
   currentVoteShareTooltip,
   estimatedRewardsColumnTooltip,
   polDurationTooltip,
@@ -126,9 +126,11 @@ export default function BidsPage() {
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={bidTableFirstColumnTooltip({
-              isTokenBased,
-            })}
+            tipContents={
+              bidTablesFirstColumnTooltips.bidsTable[
+                isTokenBased ? "tokenBased" : "pointBased"
+              ]
+            }
           >
             <div className="flex items-center gap-1">
               {isTokenBased ? "Token-Based Tribute" : "Point-Based Tribute"}

@@ -5,7 +5,7 @@ import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   estimatedRewardsTooltip,
-  pointSystemTooltip,
+  pointBasedTributeAmountTooltip,
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
@@ -47,8 +47,8 @@ export function BidRewards({ bidId }: { bidId: number }) {
 
   return !isTokenBased ? (
     <Tooltip
-      tipContents={pointSystemTooltip({
-        learnMoreURL: bidDescription.pointProgramUrl,
+      tipContents={pointBasedTributeAmountTooltip({
+        pointProgramUrl: bidDescription.pointProgramUrl,
       })}
     >
       {bid.tributes.map((tribute) => (

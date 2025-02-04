@@ -18,15 +18,15 @@ export const averageAPRTooltip = (
       The average APR available to Hydro voters during the current active round.
       Hydro APR is separate and additional to your staking APR as an ATOM
       staker.
-    <StyledText
-      variant="link"
-      as={Link}
-      href="/docs/users/calculating-staking-apr"
-      target="_blank"
-    >
-      <span>Learn More</span>
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
+      <StyledText
+        variant="link"
+        as={Link}
+        href="/docs/users/calculating-staking-apr"
+        target="_blank"
+      >
+        <span>Learn More</span>
+        <Icon name="solid:arrow-up-right" />
+      </StyledText>
     </p>
   </div>
 )
@@ -59,7 +59,7 @@ export const getTributeTypeDescription = ({
   const themOrIt = isPlural ? "them" : "it"
 
   return (
-    <>
+    <p>
       The amount offered as tribute by {theseBidsOrThisBid} to incentivize Hydro
       voters to allocate liquidity to {themOrIt}.{" "}
       {isTokenBased ? (
@@ -72,61 +72,102 @@ export const getTributeTypeDescription = ({
           do not yet have a live token.
         </>
       )}
-    </>
+    </p>
   )
 }
 
-export const bidTableFirstColumnTooltip = ({
-  isTokenBased,
-}: {
-  isTokenBased: boolean
-}) => (
-  <div className="flex flex-col gap-2">
-    {/* Remove this if you don't want the type description */}
-    <p>{getTributeTypeDescription({ isTokenBased, isPlural: true })}</p>
+export const tributeTypeDescriptions = {
+  tokenBased: {
+    singleBid: (
+      <p>
+        The amount offered as tribute by this bid to incentivize Hydro voters to
+        allocate liquidity to it. This bid uses live tokens as its tribute.
+      </p>
+    ),
+    multipleBids: (
+      <p>
+        The amount offered as tribute by these bids to incentivize Hydro voters
+        to allocate liquidity to them. These bids use live tokens as their
+        tribute.
+      </p>
+    ),
+  },
+  pointBased: {
+    singleBid: (
+      <p>
+        The amount offered as tribute by this bid to incentivize Hydro voters to
+        allocate liquidity to it. This bid uses points as its tribute because it
+        does not yet have a live token.
+      </p>
+    ),
+    multipleBids: (
+      <p>
+        The amount offered as tribute by these bids to incentivize Hydro voters
+        to allocate liquidity to them. These bids use points as their tribute
+        because they do not yet have a live token.
+      </p>
+    ),
+  },
+}
 
-    <p>Custom text for bid table</p>
-  </div>
+export const bidTablesFirstColumnTooltips = {
+  bidsTable: {
+    tokenBased: (
+      <div className="flex flex-col gap-2">
+        <p>{tributeTypeDescriptions.tokenBased.multipleBids}</p>
+        <p>Text specific to this.</p>
+      </div>
+    ),
+    pointBased: (
+      <div className="flex flex-col gap-2">
+        <p>{tributeTypeDescriptions.pointBased.multipleBids}</p>
+        <p>Text specific to this.</p>
+      </div>
+    ),
+  },
+  metricsTable: {
+    tokenBased: (
+      <div className="flex flex-col gap-2">
+        <p>{tributeTypeDescriptions.tokenBased.multipleBids}</p>
+        <p>Text specific to this.</p>
+      </div>
+    ),
+    pointBased: (
+      <div className="flex flex-col gap-2">
+        <p>{tributeTypeDescriptions.pointBased.multipleBids}</p>
+        <p>Text specific to this.</p>
+      </div>
+    ),
+  },
+}
+
+export const tokenBasedTributeAmountTooltip = (
+  <>
+    {tributeTypeDescriptions.tokenBased.singleBid}
+    <p>Text specific to this.</p>
+  </>
 )
 
-export const metricsTableFirstColumnTooltip = ({
-  isTokenBased,
-}: {
-  isTokenBased: boolean
-}) => (
-  <div className="flex flex-col gap-2">
-    {/* Remove this if you don't want the type description */}
-    <p>{getTributeTypeDescription({ isTokenBased, isPlural: true })}</p>
-
-    <p>Custom text for metrics table</p>
-  </div>
-)
-
-export const tributeAmountTooltip = ({
-  isTokenBased,
+export const pointBasedTributeAmountTooltip = ({
   pointProgramUrl,
 }: {
-  isTokenBased: boolean
   pointProgramUrl?: string
 }) => (
-  <div>
-    {getTributeTypeDescription({
-      isTokenBased,
-      isPlural: false,
-    })}
-
+  <>
+    <p>{tributeTypeDescriptions.pointBased.singleBid}</p>
     {pointProgramUrl && (
-      <StyledText
-        as={Link}
-        href={pointProgramUrl}
-        variant="link"
-        className="inline-flex items-center gap-1"
-        target="_blank"
-      >
-        Learn More <Icon name="solid:arrow-up-right" />
-      </StyledText>
+      <p>
+        <StyledText
+          as={Link}
+          href={pointProgramUrl}
+          variant="link"
+          className="inline-flex items-center gap-1"
+        >
+          Learn More <Icon name="solid:arrow-up-right" />
+        </StyledText>
+      </p>
     )}
-  </div>
+  </>
 )
 
 export const currentVoteShareTooltip = (
@@ -429,26 +470,6 @@ export const currentRoundUniqueWalletsTooltip = (
   </>
 )
 
-export const pointSystemTooltip = ({
-  learnMoreURL,
-}: {
-  learnMoreURL?: string
-}) => (
-  <>
-    This bid is using a point system for tribute. Voters get points instead of
-    live tokens.{" "}
-    {learnMoreURL && (
-      <a
-        href={learnMoreURL}
-        className="inline-flex items-center gap-1 text-palette-green underline"
-        target="_blank"
-      >
-        Learn More <Icon name="solid:arrow-up-right" />
-      </a>
-    )}
-  </>
-)
-
 export const polAvailableTooltip = (
   <>
     The total ATOM available to be deployed across all bids from the Hydro
@@ -657,6 +678,22 @@ export const bidDetailsStatusTooltip = (
     The current status of the liquidity deployment, such as &lsquo;Voting
     Period&rsquo;, &lsquo;Ongoing&rsquo; for active deployments,
     &lsquo;Completed&rsquo;, or &lsquo;Rejected&rsquo; for completed ones.
+  </>
+)
+
+export const bidDetailsMaxDeploymentAmountTooltip = (
+  <>
+    The maximum liquidity this bid can receive is capped by the tribute offered,
+    based on Hydro’s tribute floor rule.{" "}
+    <StyledText
+      variant="link"
+      as={Link}
+      href="/docs/projects/bidding#minimum-tribute-floor-and-maximum-deployment-amount"
+      target="_blank"
+    >
+      <span>Learn More</span>
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
   </>
 )
 
