@@ -55,7 +55,7 @@ export const getTributeTypeDescription = ({
   isTokenBased: boolean
   isPlural?: boolean
 }) => {
-  const theseBidsOrThisBid = isPlural ? "These bids" : "This bid"
+  const theseBidsOrThisBid = isPlural ? "these bids" : "this bid"
   const useOrUses = isPlural ? "use" : "uses"
   const themOrIt = isPlural ? "them" : "it"
 
@@ -86,7 +86,7 @@ export const bidTableFirstColumnTooltip = ({
     {/* Remove this if you don't want the type description */}
     <p>{getTributeTypeDescription({ isTokenBased, isPlural: true })}</p>
 
-    <p>Custom text for bid table</p>
+    <p>These bids use a live token as their tribute to incentivize Hydro voters to vote for them.</p>
   </div>
 )
 
@@ -99,7 +99,7 @@ export const metricsTableFirstColumnTooltip = ({
     {/* Remove this if you don't want the type description */}
     <p>{getTributeTypeDescription({ isTokenBased, isPlural: true })}</p>
 
-    <p>Custom text for metrics table</p>
+    <p>These bids used a live token as tribute for their bid.</p>
   </div>
 )
 
