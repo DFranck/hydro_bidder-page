@@ -15,7 +15,7 @@ export function Banner() {
       href: "/docs#max-capacity",
       text: (
         <>
-          Round {currentRoundId + 1} caps have been reached. Continue optimizing
+          Current round caps have been reached. Continue optimizing
           your vote to maximize your rewards!{" "}
           <span className="inline-flex items-center gap-1 font-bold underline">
             Learn More <Icon name="solid:arrow-up-right" />
