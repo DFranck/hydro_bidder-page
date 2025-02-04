@@ -263,7 +263,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                       variant="label"
                       className="flex cursor-default items-center gap-1 text-palette-green"
                     >
-                      <span>PoL Size</span>
+                      <span>Amount</span>
                       <Icon name="circle-info" />
                     </StyledText>
                   </Tooltip>
