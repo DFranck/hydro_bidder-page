@@ -6,6 +6,7 @@ import { Confetti } from "@/components/Confetti"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText, StyledTextVariant } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -68,12 +69,7 @@ export function VoteButton({
     }
 
     try {
-      setToasts([
-        {
-          variant: "working",
-          message: "Processing your vote...",
-        },
-      ])
+      setToasts([toastMessages.votingInProgress])
 
       await executeWalletVote(
         getSigningCosmWasmClient,
@@ -86,24 +82,9 @@ export function VoteButton({
 
       setIsCelebrating(true)
 
-      setToasts([
-        {
-          variant: "success",
-          message: "Vote cast! Reload to see changes",
-          isDismissible: false,
-          actionButtonPrimary: {
-            label: "Reload",
-            onClick: () => window.location.reload(),
-          },
-        },
-      ])
+      setToasts([toastMessages.votingSuccess])
     } catch (err: any) {
-      setToasts([
-        {
-          variant: "error",
-          message: `Vote rejected: ${err?.message ?? "Unknown error"}`,
-        },
-      ])
+      setToasts([toastMessages.votingError(err as Error)])
     } finally {
       setOpenChangeVoteModal(false)
     }

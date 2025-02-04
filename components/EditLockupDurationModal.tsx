@@ -5,6 +5,7 @@ import { Icon } from "@/components/Icon"
 import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts/useToasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
@@ -83,12 +84,7 @@ export function EditLockupDurationModal({
     setIsLoading(true)
 
     try {
-      setToasts([
-        {
-          variant: "working",
-          message: "Saving lockup...",
-        },
-      ])
+      setToasts([toastMessages.savingLockup])
 
       await executeWalletExtendLockup({
         getSigningCosmWasmClient,
@@ -99,12 +95,7 @@ export function EditLockupDurationModal({
 
       await revalidateTag("backendData")
 
-      setToasts([
-        {
-          variant: "working",
-          message: "Lockup saved successfully! Reloading...",
-        },
-      ])
+      setToasts([toastMessages.savingLockupSuccess])
 
       setTimeout(() => {
         router.push("/lockups")
@@ -113,22 +104,11 @@ export function EditLockupDurationModal({
       }, 3000)
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
-        setToasts([
-          {
-            variant: "error",
-            message: "Request rejected",
-          },
-        ])
-
+        setToasts([toastMessages.lockupExtendRequestRejected(err as Error)])
         return
       }
 
-      setToasts([
-        {
-          variant: "error",
-          message: `Error saving lockup: ${err}`,
-        },
-      ])
+      setToasts([toastMessages.savingLockupError(err as Error)])
     } finally {
       onClose()
     }
