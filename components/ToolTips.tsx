@@ -46,36 +46,6 @@ export const averageRoundsPerUserTooltip = (
   </>
 )
 
-// All copy is put together here
-export const getTributeTypeDescription = ({
-  isTokenBased,
-  isPlural,
-}: {
-  isTokenBased: boolean
-  isPlural?: boolean
-}) => {
-  const theseBidsOrThisBid = isPlural ? "These bids" : "This bid"
-  const useOrUses = isPlural ? "use" : "uses"
-  const themOrIt = isPlural ? "them" : "it"
-
-  return (
-    <p>
-      The amount offered as tribute by {theseBidsOrThisBid} to incentivize Hydro
-      voters to allocate liquidity to {themOrIt}.{" "}
-      {isTokenBased ? (
-        <>
-          {theseBidsOrThisBid} {useOrUses} live tokens as their tribute.
-        </>
-      ) : (
-        <>
-          {theseBidsOrThisBid} {useOrUses} points as their tribute because they
-          do not yet have a live token.
-        </>
-      )}
-    </p>
-  )
-}
-
 export const tributeTypeDescriptions = {
   tokenBased: {
     singleBid: (
