@@ -46,65 +46,27 @@ export const averageRoundsPerUserTooltip = (
   </>
 )
 
-export const tributeTypeDescriptions = {
-  tokenBased: {
-    singleBid: (
-      <p>
-        The amount offered as tribute by this bid to incentivize Hydro voters to
-        allocate liquidity to it. This bid uses live tokens as its tribute.
-      </p>
-    ),
-    multipleBids: (
-      <p>
-        The amount offered as tribute by these bids to incentivize Hydro voters
-        to allocate liquidity to them. These bids use live tokens as their
-        tribute.
-      </p>
-    ),
-  },
-  pointBased: {
-    singleBid: (
-      <p>
-        The amount offered as tribute by this bid to incentivize Hydro voters to
-        allocate liquidity to it. This bid uses points as its tribute because it
-        does not yet have a live token.
-      </p>
-    ),
-    multipleBids: (
-      <p>
-        The amount offered as tribute by these bids to incentivize Hydro voters
-        to allocate liquidity to them. These bids use points as their tribute
-        because they do not yet have a live token.
-      </p>
-    ),
-  },
-}
-
 export const bidTablesFirstColumnTooltips = {
   bidsTable: {
     tokenBased: (
       <div className="flex flex-col gap-2">
-        {tributeTypeDescriptions.tokenBased.multipleBids}
         <p>These bids uses a token as their tribute to incentivize Hydro voters to vote for them.</p>
       </div>
     ),
     pointBased: (
       <div className="flex flex-col gap-2">
-        {tributeTypeDescriptions.pointBased.multipleBids}
-        <p>These bids uses a token as their tribute to incentivize Hydro voters to vote for them.</p>
+        <p>These bids uses a point system as their tribute to incentivize Hydro voters to vote for them.</p>
       </div>
     ),
   },
   metricsTable: {
     tokenBased: (
       <div className="flex flex-col gap-2">
-        {tributeTypeDescriptions.tokenBased.multipleBids}
         <p>These bids used a live token as tribute for their bid.</p>
       </div>
     ),
     pointBased: (
       <div className="flex flex-col gap-2">
-        {tributeTypeDescriptions.pointBased.multipleBids}
         <p>These bids used a points system as tribute for their bid.</p>
       </div>
     ),
@@ -113,8 +75,7 @@ export const bidTablesFirstColumnTooltips = {
 
 export const tokenBasedTributeAmountTooltip = (
   <>
-    {tributeTypeDescriptions.tokenBased.singleBid}
-    <p>This bids used a token as their tribute to incentivize Hydro voters to vote for them.</p>
+    <p>This bid used a token as their tribute to incentivize Hydro voters to vote for them.</p>
   </>
 )
 
@@ -124,9 +85,12 @@ export const pointBasedTributeAmountTooltip = ({
   pointProgramUrl?: string
 }) => (
   <>
-    {tributeTypeDescriptions.pointBased.singleBid}
+
     {pointProgramUrl && (
       <p>
+        The amount offered as tribute by this bid to incentivize Hydro voters to
+        allocate liquidity to it. This bid uses points as its tribute because it
+        does not yet have a live token.{" "}
         <StyledText
           as={Link}
           href={pointProgramUrl}
