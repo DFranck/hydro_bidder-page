@@ -224,9 +224,8 @@ async function uncachedFetchBackendDataAfterWallet({
     (lockup) => lockup.isTiedToDeployment
   )
 
-  const votingPowerSpent = sumBy(usedLockups, (l) =>
-    Number(l.currentVotingPower)
-  )
+  const votingPowerSpent =
+    sumBy(usedLockups, (l) => Number(l.currentVotingPower)) / 1e6
 
   const votingPowerTotal = votingPowerFromContract / 1e6
 
