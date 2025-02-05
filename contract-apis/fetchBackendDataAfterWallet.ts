@@ -242,7 +242,7 @@ async function uncachedFetchBackendDataAfterWallet({
 
   const votingPowerSpent = sumBy(sanitizedVotes, (v) => Number(v.power) / 1e6)
 
-  const votingPowerTotal = votingPowerFromContract / 1e6 + votingPowerSpent
+  const votingPowerAvailable = votingPowerFromContract / 1e6 - votingPowerSpent
 
   const backendDataAfterWallet: BackendDataAfterWallet = {
     ...backendData,
@@ -261,9 +261,9 @@ async function uncachedFetchBackendDataAfterWallet({
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
     votesByRoundId,
-    votingPowerAvailable: votingPowerFromContract / 1e6,
+    votingPowerAvailable,
     votingPowerSpent,
-    votingPowerTotal,
+    votingPowerTotal: votingPowerFromContract / 1e6,
   }
 
   return backendDataAfterWallet
