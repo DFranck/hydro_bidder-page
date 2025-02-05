@@ -146,14 +146,10 @@ async function uncachedFetchBackendDataAfterWallet({
   const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
 
   // filter out votes for bids whose deployment duration is up (bid.round_id + bid.deployment_duration <= currentRoundId)
-  const activeVotes = votes.map((votesForRound) =>
-    votesForRound.map((votesForTranche) =>
-      votesForTranche.filter((vote) => {
-        const bid = bids.find((bid) => bid.id === vote.prop_id)
-        return bid && bid.roundId + bid.deploymentDurationInEpochs > currentRoundId
-      })
-    )
-  )
+  const activeVotes = sanitizedVotes.filter((vote) => {
+    const bid = bids.find((b) => b.id === vote.bidId)
+    return bid && bid.roundId + bid.deploymentDurationInEpochs > currentRoundId
+  })
 
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
