@@ -221,11 +221,7 @@ async function uncachedFetchBackendDataAfterWallet({
   // get all lockups that are tied to a deployment:
   // not expired, and not tied to a deployment that has ended
   const usedLockups = sanitizedLockups.filter(
-    (lockup) =>
-      lockup.dateEnd > new Date() &&
-      lockup.metaDataByTrancheId[currentRoundId]?.nextRoundEligibleToVote &&
-      lockup.metaDataByTrancheId[currentRoundId]?.nextRoundEligibleToVote >
-        currentRoundId
+    (lockup) => lockup.isTiedToDeployment
   )
 
   const votingPowerSpent = sumBy(usedLockups, (l) =>
