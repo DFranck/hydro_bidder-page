@@ -142,8 +142,18 @@ async function uncachedFetchBackendDataAfterWallet({
       )
     )
   )
-
+  
   const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
+
+  // filter out votes for bids whose deployment duration is up (bid.round_id + bid.deployment_duration <= currentRoundId)
+  const activeVotes = votes.map((votesForRound) =>
+    votesForRound.map((votesForTranche) =>
+      votesForTranche.filter((vote) => {
+        const bid = bids.find((bid) => bid.id === vote.prop_id)
+        return bid && bid.roundId + bid.deploymentDurationInEpochs > currentRoundId
+      })
+    )
+  )
 
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
@@ -239,7 +249,7 @@ async function uncachedFetchBackendDataAfterWallet({
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
 
-  const votingPowerSpent = sumBy(sanitizedVotes, (v) => Number(v.power) / 1e6)
+  const votingPowerSpent = sumBy(activeVotes, (v) => Number(v.power) / 1e6)
 
   const votingPowerAvailable = votingPowerFromContract / 1e6 - votingPowerSpent
 
