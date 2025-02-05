@@ -22,20 +22,7 @@ export function AppWrapper({
       <QueryClientProvider>
         <ToastContextProvider>
           <LoadingState />
-          <div
-            className="
-              fixed
-              bottom-0
-              left-0
-              right-0
-              top-0
-              -z-10
-              bg-black
-              bg-[url('/images/AdobeStock_633966567.jpg')]
-              bg-cover
-              bg-no-repeat
-            "
-          />
+
           <div
             className="
               grid
