@@ -2,11 +2,9 @@
 
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
-import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
-import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -15,10 +13,6 @@ import { twMerge } from "tailwind-merge"
 export default function Navigation() {
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
-  const backendData = useBackendData()
-  const { isLoading, isWalletConnected, lockups } = backendData
-  const shouldShowLockupButton =
-    !isLoading && isWalletConnected && lockups.length === 0
 
   const navigationMenuTriggerStyle = (link: string) => {
     return twMerge(
@@ -236,18 +230,6 @@ export default function Navigation() {
         >
           Airdrops
         </Link>
-
-        {shouldShowLockupButton && (
-          <StyledText
-            as={Link}
-            variant="button.primary.small"
-            className="flex items-center gap-1"
-            href="/lock-atom"
-          >
-            <Icon name="solid:plus" />
-            Create Lockup
-          </StyledText>
-        )}
 
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>
