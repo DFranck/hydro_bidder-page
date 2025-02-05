@@ -14,7 +14,7 @@ export async function executeWalletVote(
 
   const client = await getSigningCosmWasmClient()
 
-  const sanitizedLockups = await fetchWalletLockups(address)
+  const sanitizedLockups = await fetchWalletLockups({ address })
 
   const hydroClient = new HydroBaseClient(
     client,

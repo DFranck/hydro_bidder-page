@@ -11,7 +11,10 @@ import {
   AugmentedClaim,
   fetchClaims,
 } from "@/contract-apis/fetchClaims"
-import { fetchWalletLockups } from "@/contract-apis/fetchWalletLockups"
+import {
+  fetchWalletLockups,
+  SanitizedLockup,
+} from "@/contract-apis/fetchWalletLockups"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
@@ -40,25 +43,6 @@ export interface BackendDataAfterWallet
   votingPowerAvailable: number
   votingPowerSpent: number
   votingPowerTotal: number
-}
-
-export interface SanitizedLockup {
-  id: number
-  currentVotingPower: number
-  dateEnd: Date
-  dateStart: Date
-  funds: {
-    amount: number
-    denom: string
-  }
-  multiplier: number
-  metaDataByTrancheId: Record<
-    number,
-    {
-      nextRoundEligibleToVote: number | null
-      votedOnBidId: number | null
-    }
-  >
 }
 
 export interface SanitizedVote
@@ -112,7 +96,7 @@ async function uncachedFetchBackendDataAfterWallet({
   const [{ voting_power: votingPowerFromContract }, sanitizedLockups] =
     await Promise.all([
       hydroQueryClient.userVotingPower({ address }),
-      fetchWalletLockups(address),
+      fetchWalletLockups({ address, currentRoundId }),
     ])
 
   // [0, 1, 2, ...currentRoundId]
@@ -142,7 +126,7 @@ async function uncachedFetchBackendDataAfterWallet({
       )
     )
   )
-  
+
   const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
@@ -156,10 +140,6 @@ async function uncachedFetchBackendDataAfterWallet({
   const bidsWithRewards = bids.map((bid) => {
     const description =
       bidDescriptionsByBidId[bid.id]?.description ?? bid.description
-
-    const bidFromNumia = metricsForPostHydroBids.find(
-      (bidFromNumia) => Number(bidFromNumia.id) === bid.id
-    )
 
     const usersEstimatedRewards =
       estimatedRewardForPower({
@@ -248,10 +228,12 @@ async function uncachedFetchBackendDataAfterWallet({
         currentRoundId
   )
 
-  const votingPowerSpent = sumBy(usedLockups, (l) => Number(l.currentVotingPower))
+  const votingPowerSpent = sumBy(usedLockups, (l) =>
+    Number(l.currentVotingPower)
+  )
 
   const votingPowerTotal = votingPowerFromContract / 1e6
-  
+
   const votingPowerAvailable = votingPowerTotal - votingPowerSpent
 
   const backendDataAfterWallet: BackendDataAfterWallet = {
