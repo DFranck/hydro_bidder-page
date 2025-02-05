@@ -11,7 +11,7 @@ import {
   BidDescription,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
-import { fetchBids } from "@/contract-apis/fetchBids"
+import { fetchBids as fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { SanitizedLiquidityDeployment } from "@/contract-apis/fetchLiquidityDeployments"
 import {
@@ -134,7 +134,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
 
-  const bids: AugmentedBidFromContract[] = await fetchBids({
+  const bids: AugmentedBidFromContract[] = await fetchBidsBeforeWallet({
     assetListWithPrices,
     atomPrice,
     bidDescriptionsByBidId,

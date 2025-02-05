@@ -27,10 +27,9 @@ import {
 } from "@/components/ToolTips"
 import { WordWrapper } from "@/components/WordWrapper"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
-import { SanitizedLockup } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { SanitizedLockup } from "@/contract-apis/fetchWalletLockups"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
-import { getDaysAway } from "@/lib/getDaysAway"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
 import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
@@ -119,31 +118,16 @@ export default function LockupsPage() {
   >[]
 
   const lockupsAsRows = lockups.map((lockup) => {
-    const isLocked = true // one day we might render lockups in limbo
-    const votedOnBidId =
-      Object.values(lockup.metaDataByTrancheId).find(
-        (trancheInfo) => trancheInfo.votedOnBidId !== null
-      )?.votedOnBidId ?? null
+    const {
+      daysLeft,
+      isEligibleToChangeVote,
+      isExpired,
+      isTiedToDeployment,
+      numRoundsLeftOnDeployment,
+      votedOnBidId,
+    } = lockup
+
     const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
-    const nextRoundEligibleToVote =
-      Object.values(lockup.metaDataByTrancheId).find(
-        (trancheInfo) => trancheInfo.nextRoundEligibleToVote !== null
-      )?.nextRoundEligibleToVote ?? null
-    const isExpired = new Date() > lockup.dateEnd
-    const daysLeft = getDaysAway(lockup.dateEnd)
-    const isEligibleThisRoundAtAll =
-      !isExpired &&
-      !!nextRoundEligibleToVote &&
-      nextRoundEligibleToVote <= currentRoundId
-    const isEligibleToChangeVote = isEligibleThisRoundAtAll && !!votedOnBidId
-    const isEligibleButHasNotVoted = isEligibleThisRoundAtAll && !votedOnBidId
-    const isTiedToDeployment =
-      !isExpired &&
-      !!nextRoundEligibleToVote &&
-      nextRoundEligibleToVote > currentRoundId
-    const numRoundsLeftOnDeployment = isTiedToDeployment
-      ? nextRoundEligibleToVote - currentRoundId
-      : -1
 
     const {
       editLockupButtonLabel = null,
@@ -213,7 +197,7 @@ export default function LockupsPage() {
           >
             {(
               [
-                ["locked", isLocked],
+                ["locked", true],
                 ["voted", isEligibleToChangeVote || isTiedToDeployment],
                 ["deployed", isTiedToDeployment],
               ] as const
