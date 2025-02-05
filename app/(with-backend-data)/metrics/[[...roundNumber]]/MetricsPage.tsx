@@ -122,7 +122,7 @@ export function MetricsPage({
         label: (
           <Tooltip tipContents={metricsPolSizeColumnTooltip}>
             <div className="flex items-center gap-1">
-              PoL Size
+              Amount
               <Icon name="circle-info" />
             </div>
           </Tooltip>
