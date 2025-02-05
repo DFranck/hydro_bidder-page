@@ -40,7 +40,6 @@ export interface BackendDataAfterWallet
   votingPowerAvailable: number
   votingPowerSpent: number
   votingPowerTotal: number
-  activeVotes: SanitizedVote[]
 }
 
 export interface SanitizedLockup {
@@ -246,6 +245,10 @@ async function uncachedFetchBackendDataAfterWallet({
 
   const lockedAtomTotalWallet = sumBy(sanitizedLockups, "funds.amount")
 
+  const lockedAtomPercentageWallet = Math.floor(
+    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
+  )
+
   const votingPowerSpent = sumBy(usedLockups, (l) => Number(l.currentVotingPower))
 
   const votingPowerAvailable = votingPowerFromContract / 1e6 - votingPowerSpent
@@ -270,7 +273,6 @@ async function uncachedFetchBackendDataAfterWallet({
     votingPowerAvailable,
     votingPowerSpent,
     votingPowerTotal: votingPowerFromContract / 1e6,
-    activeVotes: activeVotes,
   }
 
   return backendDataAfterWallet
