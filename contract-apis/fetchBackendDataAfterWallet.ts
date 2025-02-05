@@ -40,6 +40,7 @@ export interface BackendDataAfterWallet
   votingPowerAvailable: number
   votingPowerSpent: number
   votingPowerTotal: number
+  activeVotes: SanitizedVote[]
 }
 
 export interface SanitizedLockup {
@@ -144,15 +145,19 @@ async function uncachedFetchBackendDataAfterWallet({
   )
   
   const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
-
-  // filter out votes for bids whose deployment duration is up (bid.round_id + bid.deployment_duration <= currentRoundId)
-  const activeVotes = sanitizedVotes.filter((vote) => {
-    const bid = bids.find((b) => b.id === vote.bidId)
-    return bid && bid.roundId + bid.deploymentDurationInEpochs > currentRoundId
-  })
-
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
+
+
+    // get all lockups that are tied to a deployment:
+    // not expired, and not tied to a deployment that has ended
+  const usedLockups = sanitizedLockups.filter(
+    (lockup) =>
+      lockup.dateEnd > new Date() &&
+      lockup.metaDataByTrancheId[currentRoundId]?.nextRoundEligibleToVote &&
+      lockup.metaDataByTrancheId[currentRoundId]?.nextRoundEligibleToVote >
+        currentRoundId
+  )
 
   const votedBidId =
     bids
@@ -241,11 +246,7 @@ async function uncachedFetchBackendDataAfterWallet({
 
   const lockedAtomTotalWallet = sumBy(sanitizedLockups, "funds.amount")
 
-  const lockedAtomPercentageWallet = Math.floor(
-    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
-  )
-
-  const votingPowerSpent = sumBy(activeVotes, (v) => Number(v.power) / 1e6)
+  const votingPowerSpent = sumBy(usedLockups, (l) => Number(l.currentVotingPower))
 
   const votingPowerAvailable = votingPowerFromContract / 1e6 - votingPowerSpent
 
@@ -269,6 +270,7 @@ async function uncachedFetchBackendDataAfterWallet({
     votingPowerAvailable,
     votingPowerSpent,
     votingPowerTotal: votingPowerFromContract / 1e6,
+    activeVotes: activeVotes,
   }
 
   return backendDataAfterWallet
