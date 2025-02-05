@@ -89,7 +89,6 @@ async function uncachedFetchBackendDataAfterWallet({
     currentRoundId,
     lockedAtomMaxWallet,
     lockedAtomEpochInNanos,
-    metricsForPostHydroBids,
     tranches,
   } = backendData
 
