@@ -71,12 +71,13 @@ export function VoteButton({
     try {
       setToasts([toastMessages.votingInProgress])
 
-      await executeWalletVote(
+      await executeWalletVote({
         getSigningCosmWasmClient,
-        address!,
-        Number(bidId),
-        Number(bid.trancheId)
-      )
+        address: address!,
+        proposalId: Number(bidId),
+        trancheId: Number(bid.trancheId),
+        lockups,
+      })
 
       await revalidateTag("backendData")
 

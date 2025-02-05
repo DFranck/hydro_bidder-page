@@ -1,20 +1,25 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { fetchWalletLockups } from "./fetchWalletLockups"
+import { SanitizedLockup } from "./fetchWalletLockups"
 
-export async function executeWalletVote(
-  getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>,
-  address: string,
-  proposalId: number,
+export async function executeWalletVote({
+  getSigningCosmWasmClient,
+  address,
+  proposalId,
+  trancheId,
+  lockups,
+}: {
+  getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
+  address: string
+  proposalId: number
   trancheId: number
-) {
+  lockups: SanitizedLockup[]
+}) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
 
   const client = await getSigningCosmWasmClient()
-
-  const sanitizedLockups = await fetchWalletLockups({ address })
 
   const hydroClient = new HydroBaseClient(
     client,
@@ -24,7 +29,7 @@ export async function executeWalletVote(
 
   const { round_id: currentRoundId } = await hydroClient.currentRound()
 
-  const validLockups = sanitizedLockups.filter(
+  const validLockups = lockups.filter(
     (lockup) =>
       (lockup.metaDataByTrancheId[trancheId]?.nextRoundEligibleToVote ??
         Infinity) <= currentRoundId
