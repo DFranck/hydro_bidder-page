@@ -9,6 +9,7 @@ import { BidStatus } from "@/components/BidStatus"
 import { BidTribute } from "@/components/BidTribute"
 import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
@@ -20,6 +21,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   bidTablesFirstColumnTooltips,
   metricsDurationColumnTooltip,
+  metricsPageNoDataTooltip,
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
@@ -30,7 +32,7 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
-import { max, sumBy, uniq } from "lodash"
+import { max, range, sumBy, uniq } from "lodash"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, useCallback } from "react"
@@ -418,13 +420,11 @@ export function MetricsPage({
 
   return (
     <>
-      {process.env.CONTEXT !== "production" && (
-        <StatCards>
-          <StatCards.CurrentRoundPoLAvailable />
-          <StatCards.AllTimePoLDeployed />
-          <StatCards.AllTimePoLRevenue />
-        </StatCards>
-      )}
+      <StatCards>
+        <StatCards.CurrentRoundPoLAvailable />
+        <StatCards.AllTimePoLDeployed />
+        <StatCards.AllTimePoLRevenue />
+      </StatCards>
 
       <ContentContainer className="gap-6 py-6">
         <div
@@ -440,15 +440,16 @@ export function MetricsPage({
           </div>
 
           <div className="flex items-center backdrop-blur-sm">
-            {[PRE_HYDRO_ROUND_ID, ...postHydroRoundIdsWithBidData.sort()].map(
+            {[PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)].map(
               (roundId) => {
                 const isActive = roundId === requestedRoundId
+                const hasData = roundId <= highestRoundIdWithData
 
                 return (
                   <StyledText
                     as={Link}
                     variant={isActive ? "button.primary" : "button.secondary"}
-                    href={`/metrics/${roundId + 1}`}
+                    href={hasData ? `/metrics/${roundId + 1}` : "#"}
                     key={roundId}
                     className={twMerge(
                       "group relative -mx-px rounded-none backdrop-blur-none",
@@ -456,12 +457,22 @@ export function MetricsPage({
                       "hover:scale-100",
                       "transition-all",
                       !isActive &&
-                        "text-palette-green/50 hover:text-palette-green"
+                        "text-palette-green/50 hover:text-palette-green",
+                      !hasData && "cursor-default"
                     )}
                   >
-                    <span>
-                      {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
-                    </span>
+                    <ConditionalWrapper
+                      condition={!hasData}
+                      wrapper={(children) => (
+                        <Tooltip tipContents={metricsPageNoDataTooltip}>
+                          {children}
+                        </Tooltip>
+                      )}
+                    >
+                      <span>
+                        {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
+                      </span>
+                    </ConditionalWrapper>
                     {roundId === currentRoundId && (
                       <span
                         className={twJoin(
