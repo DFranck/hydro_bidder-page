@@ -21,7 +21,11 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { groupBy, keyBy, range, sortBy, sumBy } from "lodash"
+import groupBy from "lodash/groupBy"
+import keyBy from "lodash/keyBy"
+import range from "lodash/range"
+import sortBy from "lodash/sortBy"
+import sumBy from "lodash/sumBy"
 import { unstable_cache } from "next/cache"
 
 export interface BackendDataAfterWallet
@@ -66,10 +70,10 @@ function sanitizeVote(vote: VoteWithPower): SanitizedVote {
 
 async function uncachedFetchBackendDataAfterWallet({
   address,
-  backendData,
+  backendDataBeforeWallet,
 }: {
   address: string
-  backendData: BackendDataBeforeWallet
+  backendDataBeforeWallet: BackendDataBeforeWallet
 }): Promise<BackendDataAfterWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
@@ -90,7 +94,7 @@ async function uncachedFetchBackendDataAfterWallet({
     lockedAtomMaxWallet,
     lockedAtomEpochInNanos,
     tranches,
-  } = backendData
+  } = backendDataBeforeWallet
 
   const [{ voting_power: votingPowerFromContract }, sanitizedLockups] =
     await Promise.all([
@@ -231,7 +235,7 @@ async function uncachedFetchBackendDataAfterWallet({
   const votingPowerAvailable = votingPowerTotal - votingPowerSpent
 
   const backendDataAfterWallet: BackendDataAfterWallet = {
-    ...backendData,
+    ...backendDataBeforeWallet,
     address,
     bids: sanitizedBids,
     bidsById,

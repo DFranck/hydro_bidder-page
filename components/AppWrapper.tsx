@@ -1,3 +1,5 @@
+"use client"
+
 import LoadingState from "@/app/loading"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Footer } from "@/components/Footer"
@@ -9,19 +11,27 @@ import { WalletProvider } from "@/components/WalletProvider"
 import { BackendDataBeforeWallet } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import { ReactNode } from "react"
+import { twJoin } from "tailwind-merge"
 
 export function AppWrapper({
   children,
-  backendData,
+  backendDataBeforeWallet,
 }: {
   children: ReactNode
-  backendData?: BackendDataBeforeWallet
+  backendDataBeforeWallet?: BackendDataBeforeWallet
 }) {
   return (
     <WalletProvider>
       <QueryClientProvider>
         <ToastContextProvider>
           <LoadingState />
+
+          <div
+            className={twJoin(
+              "fixed inset-0 -z-10",
+              "bg-black bg-[url('/images/hydro-bg-quality-half.jpg')] bg-cover bg-no-repeat"
+            )}
+          />
 
           <div
             className="
@@ -31,9 +41,13 @@ export function AppWrapper({
             "
           >
             <ConditionalWrapper
-              condition={Boolean(backendData && backendData !== null)}
+              condition={Boolean(
+                backendDataBeforeWallet && backendDataBeforeWallet !== null
+              )}
               wrapper={(children) => (
-                <BackendDataContextProvider backendData={backendData!}>
+                <BackendDataContextProvider
+                  backendDataBeforeWallet={backendDataBeforeWallet!}
+                >
                   {children}
                 </BackendDataContextProvider>
               )}

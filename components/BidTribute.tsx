@@ -8,7 +8,7 @@ import {
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { groupBy } from "lodash"
+import groupBy from "lodash/groupBy"
 import { twJoin } from "tailwind-merge"
 
 export function BidTribute({

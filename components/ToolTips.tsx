@@ -7,7 +7,7 @@ import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
-import { sumBy } from "lodash"
+import sumBy from "lodash/sumBy"
 import Link from "next/link"
 
 export const VOTE_SHARE_THRESHOLD = 5
