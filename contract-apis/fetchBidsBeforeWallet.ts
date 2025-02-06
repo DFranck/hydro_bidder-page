@@ -16,7 +16,8 @@ import { fetchProposalTributes } from "@/contract-apis/fetchProposalTributes"
 import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
-import { range, sumBy } from "lodash"
+import range from "lodash/range"
+import sumBy from "lodash/sumBy"
 
 export async function fetchBids({
   assetListWithPrices,

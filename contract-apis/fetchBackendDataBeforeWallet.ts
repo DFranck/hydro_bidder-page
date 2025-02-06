@@ -24,7 +24,8 @@ import {
 } from "@/contract-apis/fetchNumiaMetricsData"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
-import { groupBy, keyBy } from "lodash"
+import groupBy from "lodash/groupBy"
+import keyBy from "lodash/keyBy"
 import { unstable_cache } from "next/dist/server/web/spec-extension/unstable-cache"
 
 export interface BidFromContract extends Proposal {}

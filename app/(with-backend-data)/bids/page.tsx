@@ -27,7 +27,7 @@ import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
-import { sumBy } from "lodash"
+import sumBy from "lodash/sumBy"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 

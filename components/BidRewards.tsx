@@ -10,7 +10,8 @@ import {
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { startCase, sumBy } from "lodash"
+import startCase from "lodash/startCase"
+import sumBy from "lodash/sumBy"
 import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
