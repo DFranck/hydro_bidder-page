@@ -8,7 +8,6 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
-import { IconString } from "@/components/Icon/types"
 import { ModalWindow } from "@/components/ModalWindow"
 import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
@@ -106,6 +105,20 @@ export default function LockupsPage() {
     {
       key: "status",
       label: "Status",
+      isSortable: true,
+      initialSortDirection: "asc",
+      customValueGetter: (row) => {
+        const { isEligibleThisRoundAtAll, isExpired, isTiedToDeployment } =
+          row._lockup
+
+        return isEligibleThisRoundAtAll
+          ? 0
+          : isExpired
+            ? 1
+            : isTiedToDeployment
+              ? 2
+              : 3
+      },
     },
     {
       key: "actions",
@@ -138,7 +151,12 @@ export default function LockupsPage() {
     } = isExpired
       ? {
           editLockupButtonLabel: "Refresh",
-          statusIcon: "solid:triangle-exclamation",
+          statusIcon: (
+            <Icon
+              name="solid:triangle-exclamation"
+              className="text-palette-red"
+            />
+          ),
           statusTopline:
             Math.abs(daysLeft) === 0
               ? "Expired today"
@@ -154,7 +172,9 @@ export default function LockupsPage() {
         }
       : isTiedToDeployment
         ? {
-            statusIcon: "solid:lock",
+            statusIcon: (
+              <Icon name="solid:lock" className="text-palette-beige" />
+            ),
             statusTopline: "Tied to bid deployment",
             statusBottomline: `${pluralize({
               count: numRoundsLeftOnDeployment,
@@ -167,7 +187,12 @@ export default function LockupsPage() {
           }
         : isEligibleToChangeVote
           ? {
-              statusIcon: "solid:circle-check",
+              statusIcon: (
+                <Icon
+                  name="solid:circle-check"
+                  className="text-palette-green"
+                />
+              ),
               statusTopline: "Voted for bid in current round",
               statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
               statusExplanation: (
@@ -178,7 +203,12 @@ export default function LockupsPage() {
               ),
             }
           : {
-              statusIcon: "solid:circle-check",
+              statusIcon: (
+                <Icon
+                  name="solid:circle-check"
+                  className="text-palette-green"
+                />
+              ),
               statusTopline: "Eligible to vote",
               statusExplanation: (
                 <span>
@@ -290,8 +320,7 @@ export default function LockupsPage() {
           classNamesForTooltip="w-80"
           tipContents={statusTooltip}
         >
-          <Icon name={statusIcon as IconString} />
-
+          {statusIcon}
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               {statusTopline}
@@ -496,7 +525,7 @@ export default function LockupsPage() {
             <StyledTable
               columns={columnDescriptors}
               rows={lockupsAsRows}
-              initialSortedColumnKey="timeLeft"
+              initialSortedColumnKey="status"
               renderRow={({ children, row, rowProps }) => {
                 const {
                   isExpired,
@@ -508,12 +537,10 @@ export default function LockupsPage() {
                   <tr
                     className={twMerge(
                       rowProps.className,
-                      isExpired && "bg-palette-red/20",
-                      isTiedToDeployment && "bg-palette-beige/20",
-                      isEligibleThisRoundAtAll && [
-                        "bg-palette-green/20",
-                        "border-2 border-palette-green",
-                      ]
+                      isExpired && "[&_td]:bg-palette-red/20",
+                      isTiedToDeployment &&
+                        "opacity-60 transition-opacity hover:opacity-100",
+                      isEligibleThisRoundAtAll && "[&_td]:bg-palette-green/20"
                     )}
                     {...rowProps}
                   >
