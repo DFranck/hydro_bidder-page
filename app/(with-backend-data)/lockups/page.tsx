@@ -176,11 +176,14 @@ export default function LockupsPage() {
               <Icon name="solid:lock" className="text-palette-beige" />
             ),
             statusTopline: "Tied to bid deployment",
-            statusBottomline: `${pluralize({
-              count: numRoundsLeftOnDeployment,
-              prefixCount: true,
-              singular: "round",
-            })} left`,
+            statusBottomline:
+              numRoundsLeftOnDeployment === 1
+                ? "Ends with this round"
+                : `${pluralize({
+                    count: numRoundsLeftOnDeployment,
+                    prefixCount: true,
+                    singular: "round",
+                  })} left`,
             statusExplanation: (
               <>This lockup is currently tied to a deployment.</>
             ),
@@ -337,6 +340,13 @@ export default function LockupsPage() {
         <StyledText
           as="button"
           variant="button.secondary"
+          className={twJoin(
+            lockup.isExpired
+              ? "border-palette-red text-palette-red"
+              : lockup.isTiedToDeployment
+                ? "border-palette-beige text-palette-beige"
+                : undefined
+          )}
           onClick={() => {
             setIsEditModalOpen(true)
             setLockupBeingEdited(lockup)
