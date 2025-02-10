@@ -6,17 +6,19 @@ import { ComponentProps, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNamesAndVariants } from "./classNamesAndVariants"
 
+export type ToastVariant = keyof (typeof classNamesAndVariants)["variants"]
+
 interface ToastProps
   extends ComponentProps<"div">,
     Omit<ToastDescriptor, "message" | "variant" | "_id"> {
   icon?: IconString
-  variant?: keyof (typeof classNamesAndVariants)["variants"]
+  variant?: ToastVariant
 }
 
 export interface ToastDescriptor {
   _id?: string
   message: ReactNode
-  variant: keyof (typeof classNamesAndVariants)["variants"]
+  variant: ToastVariant
   actionButtonPrimary?: {
     label: ReactNode
     onClick: () => void

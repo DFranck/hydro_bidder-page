@@ -14,6 +14,7 @@ import { StatCards } from "@/components/StatCards"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -28,7 +29,8 @@ import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import { keyBy, sumBy } from "lodash"
+import keyBy from "lodash/keyBy"
+import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 
@@ -94,7 +96,7 @@ export default function RewardsPage() {
         const matchingClaim =
           matchingOutstandingClaim ?? matchingHistoricalClaim
         const matchingClaimAmount = matchingClaim?.amount
-        const rewardsInUsd = matchingClaimAmount?.valueInUsd ?? 0
+        const rewardsInUsd = matchingClaimAmount?.valueUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
           "amount"
@@ -275,7 +277,7 @@ export default function RewardsPage() {
         className: "whitespace-nowrap",
       },
       isSortable: true,
-      customValueGetter: (row) => sumBy(row._bid.tributes, "valueInUsd"),
+      customValueGetter: (row) => sumBy(row._bid.tributes, "valueUsd"),
     },
     {
       key: "claimStatus",
@@ -300,12 +302,7 @@ export default function RewardsPage() {
     event.preventDefault()
 
     try {
-      setToasts([
-        {
-          variant: "working",
-          message: "Claiming rewards...",
-        },
-      ])
+      setToasts([toastMessages.claimingRewards])
 
       await executeWalletClaimRewards({
         address,
@@ -321,25 +318,10 @@ export default function RewardsPage() {
 
       setIsCelebrating(true)
 
-      setToasts([
-        {
-          variant: "success",
-          message: "Reward claimed! Reload to see changes",
-          isDismissible: false,
-          actionButtonPrimary: {
-            label: "Reload",
-            onClick: () => window.location.reload(),
-          },
-        },
-      ])
+      setToasts([toastMessages.claimingRewardsSuccess])
     } catch (error) {
       console.error(error)
-      setToasts([
-        {
-          variant: "error",
-          message: `Error claiming rewards: ${error}`,
-        },
-      ])
+      setToasts([toastMessages.claimingRewardsError(error as Error)])
     }
   }
 

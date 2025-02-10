@@ -1,6 +1,6 @@
 import { defaultMetadata, metadataByRoute } from "@/app/metadata"
 import { inter } from "@/lib/font"
-import { sortBy } from "lodash"
+import sortBy from "lodash/sortBy"
 import { headers } from "next/headers"
 import Script from "next/script"
 import "./globals.css"

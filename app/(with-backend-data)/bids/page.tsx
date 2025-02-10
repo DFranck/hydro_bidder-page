@@ -10,15 +10,14 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
-import { PopupOnMaxReached } from "@/components/PopupOnMaxReached"
-import { PopupOnWelcome } from "@/components/PopupOnWelcome"
+import { PopupController } from "@/components/PopupController"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
 import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTableFirstColumnTooltip,
+  bidTablesFirstColumnTooltips,
   currentVoteShareTooltip,
   metricsPolAprColumnTooltip,
   metricsTributeAprColumnTooltip,
@@ -31,7 +30,7 @@ import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
-import { sumBy } from "lodash"
+import sumBy from "lodash/sumBy"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 
@@ -142,9 +141,11 @@ export default function BidsPage() {
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={bidTableFirstColumnTooltip({
-              isTokenBased,
-            })}
+            tipContents={
+              bidTablesFirstColumnTooltips.bidsTable[
+                isTokenBased ? "tokenBased" : "pointBased"
+              ]
+            }
           >
             <div className="flex items-center gap-1">
               {isTokenBased ? "Token-Based Tribute" : "Point-Based Tribute"}
@@ -228,7 +229,7 @@ export default function BidsPage() {
             ? 0
             : hasVotedThisRound
               ? row._bid.usersEstimatedRewards
-              : sumBy(row._bid.tributes, "valueInUsd")
+              : sumBy(row._bid.tributes, "valueUsd")
         },
       },
       {
@@ -358,9 +359,7 @@ export default function BidsPage() {
 
   return (
     <>
-      {process.env.NODE_ENV !== "development" && <PopupOnMaxReached />}
-
-      <PopupOnWelcome />
+      <PopupController />
 
       <StatCards>
         <StatCards.CurrentRoundNumberOfBids />

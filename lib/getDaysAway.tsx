@@ -1,5 +1,3 @@
-"use client"
-
 export function getDaysAway(date: Date | string) {
   if (typeof date === "string") {
     date = new Date(date)

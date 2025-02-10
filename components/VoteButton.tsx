@@ -6,6 +6,7 @@ import { Confetti } from "@/components/Confetti"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText, StyledTextVariant } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -18,7 +19,7 @@ import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import { keyBy } from "lodash"
+import keyBy from "lodash/keyBy"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -68,42 +69,23 @@ export function VoteButton({
     }
 
     try {
-      setToasts([
-        {
-          variant: "working",
-          message: "Processing your vote...",
-        },
-      ])
+      setToasts([toastMessages.votingInProgress])
 
-      await executeWalletVote(
+      await executeWalletVote({
         getSigningCosmWasmClient,
-        address!,
-        Number(bidId),
-        Number(bid.trancheId)
-      )
+        address: address!,
+        proposalId: Number(bidId),
+        trancheId: Number(bid.trancheId),
+        lockups,
+      })
 
       await revalidateTag("backendData")
 
       setIsCelebrating(true)
 
-      setToasts([
-        {
-          variant: "success",
-          message: "Vote cast! Reload to see changes",
-          isDismissible: false,
-          actionButtonPrimary: {
-            label: "Reload",
-            onClick: () => window.location.reload(),
-          },
-        },
-      ])
+      setToasts([toastMessages.votingSuccess])
     } catch (err: any) {
-      setToasts([
-        {
-          variant: "error",
-          message: `Vote rejected: ${err?.message ?? "Unknown error"}`,
-        },
-      ])
+      setToasts([toastMessages.votingError(err as Error)])
     } finally {
       setOpenChangeVoteModal(false)
     }
