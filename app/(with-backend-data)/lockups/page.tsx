@@ -8,6 +8,7 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
+import { IconString } from "@/components/Icon/types"
 import { ModalWindow } from "@/components/ModalWindow"
 import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
@@ -48,7 +49,6 @@ export default function LockupsPage() {
   const {
     address,
     bidsById,
-    currentRoundId,
     currentRoundEndDate,
     isWalletConnected,
     lockups,
@@ -134,9 +134,11 @@ export default function LockupsPage() {
       statusTopline,
       statusBottomline = null,
       statusExplanation,
+      statusIcon,
     } = isExpired
       ? {
           editLockupButtonLabel: "Refresh",
+          statusIcon: "solid:triangle-exclamation",
           statusTopline:
             Math.abs(daysLeft) === 0
               ? "Expired today"
@@ -152,6 +154,7 @@ export default function LockupsPage() {
         }
       : isTiedToDeployment
         ? {
+            statusIcon: "solid:lock",
             statusTopline: "Tied to bid deployment",
             statusBottomline: `${pluralize({
               count: numRoundsLeftOnDeployment,
@@ -164,6 +167,7 @@ export default function LockupsPage() {
           }
         : isEligibleToChangeVote
           ? {
+              statusIcon: "solid:circle-check",
               statusTopline: "Voted for bid in current round",
               statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
               statusExplanation: (
@@ -174,6 +178,7 @@ export default function LockupsPage() {
               ),
             }
           : {
+              statusIcon: "solid:circle-check",
               statusTopline: "Eligible to vote",
               statusExplanation: (
                 <span>
@@ -270,7 +275,7 @@ export default function LockupsPage() {
 
       timeLeft:
         daysLeft <= 0 ? (
-          <Icon name="solid:triangle-exclamation" />
+          <>Expired</>
         ) : (
           pluralize({
             count: daysLeft,
@@ -281,10 +286,12 @@ export default function LockupsPage() {
 
       status: (
         <Tooltip
-          className="whitespace-nowrap"
+          className="flex gap-3 whitespace-nowrap"
           classNamesForTooltip="w-80"
           tipContents={statusTooltip}
         >
+          <Icon name={statusIcon as IconString} />
+
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               {statusTopline}
@@ -306,7 +313,7 @@ export default function LockupsPage() {
             setLockupBeingEdited(lockup)
           }}
         >
-          {editLockupButtonLabel ?? "Edit Lockup"}
+          {editLockupButtonLabel ?? "Edit"}
         </StyledText>
       ),
     }
@@ -327,12 +334,6 @@ export default function LockupsPage() {
     }
 
     setIsConfirmingUnlockExpired(false)
-
-    const pluralizedLockupText = pluralize({
-      count: expiredLockups.length,
-      prefixCount: true,
-      singular: "expired lockup",
-    })
 
     try {
       setToasts([toastMessages.unlockingExpiredLockups(expiredLockups.length)])
@@ -496,6 +497,30 @@ export default function LockupsPage() {
               columns={columnDescriptors}
               rows={lockupsAsRows}
               initialSortedColumnKey="timeLeft"
+              renderRow={({ children, row, rowProps }) => {
+                const {
+                  isExpired,
+                  isEligibleThisRoundAtAll,
+                  isTiedToDeployment,
+                } = row._lockup
+
+                return (
+                  <tr
+                    className={twMerge(
+                      rowProps.className,
+                      isExpired && "bg-palette-red/20",
+                      isTiedToDeployment && "bg-palette-beige/20",
+                      isEligibleThisRoundAtAll && [
+                        "bg-palette-green/20",
+                        "border-2 border-palette-green",
+                      ]
+                    )}
+                    {...rowProps}
+                  >
+                    {children}
+                  </tr>
+                )
+              }}
               slotAfterHeaderRow={
                 incompleteNotices.length > 0 && (
                   <tr>
