@@ -90,6 +90,21 @@ export type SanitizedPointBasedTribute = {
   valueUsd: number
 }
 
+async function measurePromiseTime<T>(
+  promise: Promise<T>,
+  label: string
+): Promise<T> {
+  const start = performance.now()
+  const result = await promise
+  const end = performance.now()
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(`${label} took ${(end - start).toFixed(2)}ms`)
+  }
+
+  return result
+}
+
 async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
@@ -114,14 +129,14 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     metrics,
     globalLockupCapacityInfo,
   ] = await Promise.all([
-    hydroQueryClient.constants(),
-    hydroQueryClient.currentRound(),
-    hydroQueryClient.tranches(),
-    fetchAssetListWithPrices(),
-    fetchNumiaBidData(),
-    fetchBidDescriptionsById(),
-    fetchNumiaMetricsData(),
-    fetchGlobalLockupCapacity(),
+    measurePromiseTime(hydroQueryClient.constants(), "constants"),
+    measurePromiseTime(hydroQueryClient.currentRound(), "currentRound"),
+    measurePromiseTime(hydroQueryClient.tranches(), "tranches"),
+    measurePromiseTime(fetchAssetListWithPrices(), "assetListWithPrices"),
+    measurePromiseTime(fetchNumiaBidData(), "numiaBidData"),
+    measurePromiseTime(fetchBidDescriptionsById(), "bidDescriptions"),
+    measurePromiseTime(fetchNumiaMetricsData(), "numiaMetrics"),
+    measurePromiseTime(fetchGlobalLockupCapacity(), "globalLockupCapacity"),
   ])
 
   const atomPrice =
