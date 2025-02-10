@@ -11,12 +11,9 @@ import {
   BidDescription,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
+import { fetchBids as fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
-import {
-  augmentLiquidityDeployment,
-  fetchLiquidityDeployments,
-  SanitizedLiquidityDeployment,
-} from "@/contract-apis/fetchLiquidityDeployments"
+import { SanitizedLiquidityDeployment } from "@/contract-apis/fetchLiquidityDeployments"
 import {
   fetchNumiaBidData,
   SanitizedBidFromNumia,
@@ -25,13 +22,10 @@ import {
   fetchNumiaMetricsData,
   SanitizedMetricsFromNumia,
 } from "@/contract-apis/fetchNumiaMetricsData"
-import { fetchProposalTributes } from "@/contract-apis/fetchProposalTributes"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
-import {
-  CamelCaseKeys,
-  keysFromSnakeToCamelCase,
-} from "@/lib/keysFromSnakeToCamelCase"
-import { groupBy, keyBy, range } from "lodash"
+import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
+import groupBy from "lodash/groupBy"
+import keyBy from "lodash/keyBy"
 import { unstable_cache } from "next/dist/server/web/spec-extension/unstable-cache"
 
 export interface BidFromContract extends Proposal {}
@@ -82,7 +76,7 @@ export type SanitizedTokenBasedTribute = Omit<
   amount: number
   bidId: number
   denom: string
-  valueInUsd: number
+  valueUsd: number
   isTokenBased: true
 }
 
@@ -93,7 +87,22 @@ export type SanitizedPointBasedTribute = {
   isTokenBased: false
   roundId: number
   trancheId: number
-  valueInUsd: number
+  valueUsd: number
+}
+
+async function measurePromiseTime<T>(
+  promise: Promise<T>,
+  label: string
+): Promise<T> {
+  const start = performance.now()
+  const result = await promise
+  const end = performance.now()
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(`${label} took ${(end - start).toFixed(2)}ms`)
+  }
+
+  return result
 }
 
 async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
@@ -120,14 +129,14 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     metrics,
     globalLockupCapacityInfo,
   ] = await Promise.all([
-    hydroQueryClient.constants(),
-    hydroQueryClient.currentRound(),
-    hydroQueryClient.tranches(),
-    fetchAssetListWithPrices(),
-    fetchNumiaBidData(),
-    fetchBidDescriptionsById(),
-    fetchNumiaMetricsData(),
-    fetchGlobalLockupCapacity(),
+    measurePromiseTime(hydroQueryClient.constants(), "constants"),
+    measurePromiseTime(hydroQueryClient.currentRound(), "currentRound"),
+    measurePromiseTime(hydroQueryClient.tranches(), "tranches"),
+    measurePromiseTime(fetchAssetListWithPrices(), "assetListWithPrices"),
+    measurePromiseTime(fetchNumiaBidData(), "numiaBidData"),
+    measurePromiseTime(fetchBidDescriptionsById(), "bidDescriptions"),
+    measurePromiseTime(fetchNumiaMetricsData(), "numiaMetrics"),
+    measurePromiseTime(fetchGlobalLockupCapacity(), "globalLockupCapacity"),
   ])
 
   const atomPrice =
@@ -141,164 +150,15 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
 
-  // [0, 1, 2, ...currentRoundId]
-  const allRoundIds = range(0, currentRoundId + 1)
-
-  const bids: AugmentedBidFromContract[] = (
-    await Promise.all(
-      allRoundIds.map((roundId) =>
-        Promise.all(
-          tranches.map(async (tranche) => {
-            const { proposals: unsanitizedBids } =
-              await hydroQueryClient.roundProposals({
-                limit: 50,
-                roundId,
-                startFrom: 0,
-                trancheId: tranche.id,
-              })
-
-            const topNProposals = await hydroQueryClient.topNProposals({
-              numberOfProposals: 50,
-              roundId,
-              trancheId: tranche.id,
-            })
-
-            const sanitizedTokenBasedTributes: SanitizedTokenBasedTribute[] = (
-              await Promise.all(
-                unsanitizedBids.map((bid) =>
-                  fetchProposalTributes(roundId, tranche.id, bid.proposal_id)
-                )
-              )
-            )
-              .flat()
-              .map(keysFromSnakeToCamelCase)
-              .map(({ funds, proposalId, tributeId, ...tribute }) => {
-                const assetListing = assetListWithPrices[funds.denom]
-                const assetPrice = assetListing?.priceUsd ?? 0
-                const decimals = assetListing?.decimals ?? 6
-                const amount = parseFloat(funds.amount) / 10 ** decimals
-
-                return {
-                  ...tribute,
-                  ...funds,
-                  id: tributeId,
-                  amount,
-                  bidId: proposalId,
-                  denom: assetListing?.symbol ?? funds.denom,
-                  isTokenBased: true as const,
-                  valueInUsd:
-                    (parseFloat(funds.amount) / 10 ** decimals) * assetPrice,
-                }
-              })
-              .filter((tribute) => tribute.amount > 1)
-
-            const sanitizedPointBasedTributes: SanitizedPointBasedTribute[] =
-              unsanitizedBids
-                .map((bid) => {
-                  const bidDescription = bidDescriptionsByBidId[bid.proposal_id]
-
-                  if (!bidDescription) {
-                    return null
-                  }
-
-                  const hasPoints =
-                    bidDescription.points &&
-                    Array.isArray(bidDescription.points)
-
-                  if (!hasPoints) {
-                    return null
-                  }
-
-                  const [amount, denom] = bidDescription.points!
-                  const assetListing = assetListWithPrices[denom]
-                  const assetPrice = assetListing?.priceUsd ?? 0
-                  const decimals = assetListing?.decimals ?? 6
-
-                  return {
-                    amount,
-                    bidId: bid.proposal_id,
-                    denom,
-                    isTokenBased: false as const,
-                    roundId,
-                    trancheId: tranche.id,
-                    valueInUsd: (amount / 10 ** decimals) * assetPrice,
-                  }
-                })
-                .filter((b) => b !== null)
-
-            const liquidityDeployments =
-              (await fetchLiquidityDeployments({
-                roundId,
-                trancheId: tranche.id,
-              })) ?? []
-
-            const augmentedLiquidityDeployments = liquidityDeployments.map(
-              (liquidityDeployment) =>
-                augmentLiquidityDeployment({
-                  assetListWithPrices,
-                  liquidityDeployment,
-                })
-            )
-
-            const totalPower = unsanitizedBids.reduce(
-              (acc, bid) => acc + Number(bid.power),
-              0
-            )
-
-            // Add tributes and liquidity deployments to every bid
-            const augmentedBids = unsanitizedBids
-              .map(keysFromSnakeToCamelCase)
-              .map(({ deploymentDuration, proposalId, ...bid }) => {
-                const matchingTopProposal = topNProposals.proposals.find(
-                  (topProposal) => topProposal.proposal_id === proposalId
-                )
-                const bidDescription = bidDescriptionsByBidId[proposalId]
-                const description =
-                  bidDescription?.description ?? bid.description
-                const title = bidDescription?.title ?? bid.title
-                const bidTributes = [
-                  ...sanitizedTokenBasedTributes,
-                  ...sanitizedPointBasedTributes,
-                ].filter((tribute) => tribute.bidId === proposalId)
-                const liquidityDeployment =
-                  augmentedLiquidityDeployments.find(
-                    (deployment) => deployment.bidId === proposalId
-                  ) ?? null
-                const bidData =
-                  postHydroBids.find(
-                    (bidFromNumia) => Number(bidFromNumia.id) === proposalId
-                  ) ?? null
-                const onchainTributeUsdc = bidData?.onchainTributeUsdc ?? 0
-                const polSize = bidData?.currentAllocationAmount ?? 0
-                const tributeApr =
-                  polSize > 0
-                    ? (onchainTributeUsdc * 12) / (polSize * atomPrice)
-                    : 0
-
-                return {
-                  ...bid,
-                  id: proposalId,
-                  deploymentDurationInEpochs: deploymentDuration,
-                  deploymentDurationInNanos:
-                    deploymentDuration * lockedAtomEpochInNanos,
-                  description,
-                  liquidityDeployment,
-                  // if totalPower is 0, percentage is 0 (avoid division by 0)
-                  percentage: totalPower > 0 ? (Number(bid.power) / totalPower) * 100 : 0,
-                  title,
-                  tributes: bidTributes,
-                  tributeApr,
-                }
-              })
-
-            return augmentedBids
-          })
-        )
-      )
-    )
-  )
-    .flat()
-    .flat()
+  const bids: AugmentedBidFromContract[] = await fetchBidsBeforeWallet({
+    assetListWithPrices,
+    atomPrice,
+    bidDescriptionsByBidId,
+    currentRoundId,
+    lockedAtomEpochInNanos,
+    postHydroBids,
+    tranches,
+  })
 
   const bidsByRoundId = groupBy(bids, "roundId")
 
@@ -320,7 +180,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: metrics,
     minTributeFactor: 0.0001, // TODO: get this from contract
-    tranches: tranches,
+    tranches,
     ...globalLockupCapacityInfo,
   }
 

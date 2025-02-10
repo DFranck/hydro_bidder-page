@@ -9,6 +9,7 @@ import { BidStatus } from "@/components/BidStatus"
 import { BidTribute } from "@/components/BidTribute"
 import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
@@ -18,11 +19,12 @@ import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
+  bidTablesFirstColumnTooltips,
   metricsDurationColumnTooltip,
+  metricsPageNoDataTooltip,
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
-  metricsTableFirstColumnTooltip,
   metricsTributeAprColumnTooltip,
   metricsTributeColumnTooltip,
   VOTE_SHARE_THRESHOLD,
@@ -30,11 +32,14 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
-import { max, sumBy, uniq } from "lodash"
+import max from "lodash/max"
+import range from "lodash/range"
+import sumBy from "lodash/sumBy"
+import uniq from "lodash/uniq"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, useCallback } from "react"
-import { twMerge } from "tailwind-merge"
+import { twJoin, twMerge } from "tailwind-merge"
 
 const PRE_HYDRO_ROUND_ID = -1
 
@@ -46,6 +51,7 @@ export function MetricsPage({
   const {
     bidsById,
     bidDescriptionsByBidId,
+    currentRoundId,
     metricsForPreHydroBids,
     metricsForPostHydroBids,
   } = useBackendData()
@@ -54,13 +60,14 @@ export function MetricsPage({
     metricsForPostHydroBids.map((bid) => Number(bid.roundId))
   )
 
-  const highestRoundId = max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
+  const highestRoundIdWithData =
+    max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
 
   const requestedRoundId =
     requestedRoundNumber === null
-      ? highestRoundId
+      ? Math.min(highestRoundIdWithData, currentRoundId - 1)
       : typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
-        ? Math.min(requestedRoundNumber - 1, highestRoundId)
+        ? Math.min(requestedRoundNumber - 1, highestRoundIdWithData)
         : PRE_HYDRO_ROUND_ID
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
@@ -102,9 +109,11 @@ export function MetricsPage({
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={metricsTableFirstColumnTooltip({
-              isTokenBased,
-            })}
+            tipContents={
+              bidTablesFirstColumnTooltips.metricsTable[
+                isTokenBased ? "tokenBased" : "pointBased"
+              ]
+            }
           >
             <div className="flex items-center gap-1">
               {isTokenBased ? "Token-Based Tribute" : "Point-Based Tribute"}
@@ -121,7 +130,7 @@ export function MetricsPage({
         label: (
           <Tooltip tipContents={metricsPolSizeColumnTooltip}>
             <div className="flex items-center gap-1">
-              PoL Size
+              Amount
               <Icon name="circle-info" />
             </div>
           </Tooltip>
@@ -417,13 +426,11 @@ export function MetricsPage({
 
   return (
     <>
-      {process.env.CONTEXT !== "production" && (
-        <StatCards>
-          <StatCards.CurrentRoundPoLAvailable />
-          <StatCards.AllTimePoLDeployed />
-          <StatCards.AllTimePoLRevenue />
-        </StatCards>
-      )}
+      <StatCards>
+        <StatCards.CurrentRoundPoLAvailable />
+        <StatCards.AllTimePoLDeployed />
+        <StatCards.AllTimePoLRevenue />
+      </StatCards>
 
       <ContentContainer className="gap-6 py-6">
         <div
@@ -439,33 +446,55 @@ export function MetricsPage({
           </div>
 
           <div className="flex items-center backdrop-blur-sm">
-            {[PRE_HYDRO_ROUND_ID, ...postHydroRoundIdsWithBidData.sort()].map(
+            {[PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)].map(
               (roundId) => {
                 const isActive = roundId === requestedRoundId
+                const hasData = roundId <= highestRoundIdWithData
 
                 return (
                   <StyledText
                     as={Link}
                     variant={isActive ? "button.primary" : "button.secondary"}
-                    href={`/metrics/${roundId + 1}`}
+                    href={hasData ? `/metrics/${roundId + 1}` : "#"}
                     key={roundId}
                     className={twMerge(
-                      `
-                        -mx-px
-                        rounded-none
-                        backdrop-blur-none
-                        first:rounded-l-full
-                        last:rounded-r-full
-                        hover:scale-100
-                      `,
+                      "group relative -mx-px rounded-none backdrop-blur-none",
+                      "first:rounded-l-full last:rounded-r-full",
+                      "hover:scale-100",
+                      "transition-all",
                       !isActive &&
-                        `
-                          text-palette-green/50
-                          hover:text-palette-green
-                        `
+                        "text-palette-green/50 hover:text-palette-green",
+                      !hasData && "cursor-default"
                     )}
                   >
-                    {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
+                    <ConditionalWrapper
+                      condition={!hasData}
+                      wrapper={(children) => (
+                        <Tooltip tipContents={metricsPageNoDataTooltip}>
+                          {children}
+                        </Tooltip>
+                      )}
+                    >
+                      <span>
+                        {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
+                      </span>
+                    </ConditionalWrapper>
+                    {roundId === currentRoundId && (
+                      <span
+                        className={twJoin(
+                          "absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/4",
+                          "rounded-full px-2 py-0.5 transition-all",
+                          "border-2 border-palette-text bg-palette-text text-xs",
+                          "before:absolute before:inset-0 before:-z-10 before:rounded-full",
+                          "group-hover:text-palette-text group-hover:before:bg-palette-beige",
+                          isActive
+                            ? "text-palette-text before:bg-palette-beige"
+                            : "text-palette-text/50 before:bg-palette-beige/60"
+                        )}
+                      >
+                        Current
+                      </span>
+                    )}
                   </StyledText>
                 )
               }

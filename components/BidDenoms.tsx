@@ -1,5 +1,6 @@
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { startCase, uniq } from "lodash"
+import startCase from "lodash/startCase"
+import uniq from "lodash/uniq"
 
 export function BidDenoms({ bid }: { bid: AugmentedBid }) {
   return uniq(

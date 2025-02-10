@@ -4,8 +4,13 @@ import { Icon } from "@/components/Icon"
 import { useIsLoadingNewRoute } from "@/lib/useIsLoadingNewRoute"
 import { twMerge } from "tailwind-merge"
 
-export default function LoadingState() {
-  const isLoading = useIsLoadingNewRoute()
+export default function LoadingState({
+  isLoading: outerIsLoading,
+}: {
+  isLoading?: boolean
+}) {
+  const isLoadingNewRoute = useIsLoadingNewRoute()
+  const isLoading = outerIsLoading ?? isLoadingNewRoute
 
   return (
     <div

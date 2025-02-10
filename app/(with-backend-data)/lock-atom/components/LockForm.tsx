@@ -2,6 +2,7 @@ import { Card } from "@/components/Card"
 import { Icon } from "@/components/Icon"
 import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { Toast, useToasts } from "@/components/Toasts"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
@@ -10,7 +11,7 @@ import { useWalletValidators } from "@/contract-apis/useWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ChainContext } from "@cosmos-kit/core"
-import { isNumber } from "lodash"
+import isNumber from "lodash/isNumber"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ChangeEvent, useEffect, useState } from "react"
@@ -91,13 +92,7 @@ export function LockForm({
       (maxAtomToBeLocked === 0 || availableAtomToBeLocked === 0)
     ) {
       setAmount((0).toFixed(6))
-      setToasts([
-        {
-          message:
-            "Oops — there's no longer any capacity to lock. Check back often!",
-          variant: "info",
-        },
-      ])
+      setToasts([toastMessages.lockupCapacityFull])
       router.push("/lockups")
     }
   }, [maxAtomToBeLocked, availableAtomToBeLocked])
