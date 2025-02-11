@@ -234,8 +234,10 @@ export function BackendDataContextProvider({
     router,
     wasWalletConnected,
   ])
+
+  window.backendData = contextValue
+
   if (process.env.CONTEXT !== "production") {
-    window.backendData = contextValue
     console.log({ backendData: contextValue })
   }
 
