@@ -1,6 +1,6 @@
 "use client"
 
-import { Banner } from "@/components/Banner"
+import { AppBanner } from "@/components/AppBanner"
 import { ContentContainer } from "@/components/ContentContainer"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Image from "next/image"
@@ -14,15 +14,16 @@ export function Header() {
   const elementRef = useRef<HTMLDivElement>(null)
   const ghostElementRef = useRef<HTMLDivElement>(null)
 
+  // Update ghost element height when NOT scrolled (at its tallest)
   useEffect(() => {
-    if (elementRef.current && ghostElementRef.current) {
+    if (!isScrolled && elementRef.current && ghostElementRef.current) {
       ghostElementRef.current.style.height = `${elementRef.current.clientHeight}px`
     }
-  }, [])
+  }, [isScrolled])
 
   return (
     <>
-      {/* Ghost element to maintain height despite shrinking on scroll */}
+      {/* Ghost element to affect layout despite being fixed */}
       <div ref={ghostElementRef} className="pointer-events-none" />
 
       <div
@@ -50,13 +51,7 @@ export function Header() {
               transition-all
               duration-300
             `,
-            isScrolled
-              ? `
-                py-1
-              `
-              : `
-                py-3
-              `
+            isScrolled ? `py-1` : `py-3`
           )}
         >
           <div
@@ -66,15 +61,7 @@ export function Header() {
                 transition-all
                 duration-300
               `,
-              isScrolled
-                ? `
-                  h-8
-                  w-40
-                `
-                : `
-                  h-12
-                  w-56
-                `
+              isScrolled ? `h-8 w-40` : `h-12 w-56`
             )}
           >
             <Link href="/">
@@ -86,7 +73,7 @@ export function Header() {
           </div>
         </ContentContainer>
 
-        <Banner />
+        <AppBanner />
       </div>
     </>
   )
