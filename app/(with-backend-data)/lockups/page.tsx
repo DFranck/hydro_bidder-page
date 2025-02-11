@@ -552,6 +552,7 @@ export default function LockupsPage() {
                         "opacity-60 transition-opacity hover:opacity-100",
                       isEligibleThisRoundAtAll && "[&_td]:bg-palette-green/20"
                     )}
+                    key={row._lockup.id}
                     {...rowProps}
                   >
                     {children}
