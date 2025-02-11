@@ -40,9 +40,9 @@ export function BidTribute({
     ),
   }
 
-  const bidDescription = bidDescriptionsByBidId[bid.id]
+  const bidDescriptionFromGithub = bidDescriptionsByBidId[bid.id]
 
-  const { pointProgramUrl } = bidDescription ?? {}
+  const { pointProgramUrl } = bidDescriptionFromGithub ?? {}
 
   const renderedTributes = Object.entries(tributesByDenom).map(
     ([denomOrType, tributes], index) => {

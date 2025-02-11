@@ -5,27 +5,32 @@ import {
 import startCase from "lodash/startCase"
 
 export interface BidFromNumia {
-  apr: number
-  comments: string
-  current_allocation_amount: number
-  description: string
-  duration_days: number
+  // Needed to link data
   id: string
+  round: string
+  tranche: number
+
+  // not used; from github
+  comments: string
+  project_about: string
+  project_logo_url: string
+  project_url: string
+  project: string
+  title: string
+  description: string
+
+  // The more of this we get from the contract, the better
+  apr: number
+  current_allocation_amount: number
+  duration_days: number // only used for pre-hydro bids
   initial_allocation_amount: number
   offchain_tribute_info: string
   offchain_tribute: string
   onchain_tribute_assets: string
   onchain_tribute_usdc: number
-  project_about: string
-  project_logo_url: string
-  project_url: string
-  project: string
   requested_allocation_amount: number
   requested_allocation_denom: string
-  round: string
   status: string
-  title: string
-  tranche: number
   voters: number
   voting_power: number
 }

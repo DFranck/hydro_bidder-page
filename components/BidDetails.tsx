@@ -53,9 +53,9 @@ export function BidDetails({ bidId }: { bidId: number }) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
 
-  const bidDescription = bidDescriptionsByBidId[bidId]
+  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
 
-  const metrics = metricsForPostHydroBids.find(
+  const bidMetricsFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
   ) ?? {
     offchainTribute: [],
@@ -64,10 +64,10 @@ export function BidDetails({ bidId }: { bidId: number }) {
     onchainTributeUsdc: 0,
   }
 
-  if (!bidDescription && process.env.NODE_ENV !== "development") {
+  if (!bidDescriptionFromGithub && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
-        The requested bid is not listed in the official{" "}
+        The requested bid is not yet listed in the official{" "}
         <StyledText
           as={Link}
           href={BID_DESCRIPTIONS_URL}
@@ -78,6 +78,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
           <code>bid-descriptions.json</code>
           <Icon name="solid:arrow-up-right-from-square" />
         </StyledText>
+        . If you got here from a link in Hydro, try again soon!
       </ErrorBox>
     )
   }
@@ -90,7 +91,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
     projectName,
     projectUrl,
     title,
-  } = bidDescription
+  } = bidDescriptionFromGithub
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
@@ -100,7 +101,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 
-  const isTokenBased = metrics?.offchainTribute.length === 0
+  const isTokenBased = bidMetricsFromNumia?.offchainTribute.length === 0
 
   return (
     <ContentContainer className="py-6">
@@ -252,7 +253,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </div>
             </div>
 
-            {Boolean(metrics.currentAllocationAmount) && (
+            {Boolean(bidMetricsFromNumia.currentAllocationAmount) && (
               <>
                 <div className="max-w-64 overflow-x-auto text-xl font-bold">
                   Round {bid.roundId + 1}
@@ -293,7 +294,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
             </div>
 
             {["ongoing", "completed"].includes(
-              metrics.status?.toLowerCase()
+              bidMetricsFromNumia.status?.toLowerCase()
             ) && (
               <>
                 <div>
@@ -362,22 +363,28 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
             {/* And if there are any point-based tribute amounts, we can't show this */}
-            {bid.roundId >= 2 && metrics.offchainTribute.length === 0 && (
-              <Tooltip tipContents={bidDetailsMaxDeploymentAmountTooltip}>
-                <StyledText
-                  as="h3"
-                  variant="label"
-                  className="flex cursor-default items-center gap-1"
-                >
-                  <span>Max Deployment Amount</span>
-                  <Icon name="circle-info" />
-                </StyledText>
-                <div className="max-w-64 overflow-x-auto text-xl font-bold">
-                  ~{formatAmount(maxDeploymentAmountInAtom * 1e6, undefined, 0)}{" "}
-                  ATOM
-                </div>
-              </Tooltip>
-            )}
+            {bid.roundId >= 2 &&
+              bidMetricsFromNumia.offchainTribute.length === 0 && (
+                <Tooltip tipContents={bidDetailsMaxDeploymentAmountTooltip}>
+                  <StyledText
+                    as="h3"
+                    variant="label"
+                    className="flex cursor-default items-center gap-1"
+                  >
+                    <span>Max Deployment Amount</span>
+                    <Icon name="circle-info" />
+                  </StyledText>
+                  <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                    ~
+                    {formatAmount(
+                      maxDeploymentAmountInAtom * 1e6,
+                      undefined,
+                      0
+                    )}{" "}
+                    ATOM
+                  </div>
+                </Tooltip>
+              )}
 
             <div>
               <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
@@ -433,9 +440,10 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
-                  bidDescription.aboutProject && "About Project",
-                  bidDescription.description && "Bid Description",
-                  bidDescription.committeeComments && "Committee Review",
+                  bidDescriptionFromGithub.aboutProject && "About Project",
+                  bidDescriptionFromGithub.description && "Bid Description",
+                  bidDescriptionFromGithub.committeeComments &&
+                    "Committee Review",
                 ]
                   .filter(Boolean)
                   .map((section, index) => (
