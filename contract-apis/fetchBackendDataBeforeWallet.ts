@@ -11,7 +11,7 @@ import {
   BidDescription,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
-import { fetchBids as fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
+import { fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { SanitizedLiquidityDeployment } from "@/contract-apis/fetchLiquidityDeployments"
 import {
