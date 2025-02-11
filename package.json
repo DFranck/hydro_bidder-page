@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "analyze-build": "ANALYZE=true npm run build",
-    "sync-all-to-develop": "git checkout main && git merge develop && git push && git checkout staging && git merge main && git push && git checkout staging-next && git merge main && git push && git checkout develop",
-    "merge-develop-into-staging": "git checkout staging && git merge develop && git push && git checkout develop"
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@chain-registry/types": "^0.50.24",
@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.1.6",
+    "@playwright/test": "^1.50.1",
     "@tailwindcss/typography": "^0.5.15",
     "@types/lodash": "^4.17.13",
     "@types/node": "^22",
