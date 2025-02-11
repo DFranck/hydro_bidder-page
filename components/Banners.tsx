@@ -9,7 +9,7 @@ const LearnMoreOrJoinTelegram = (
     and{" "}
     <a
       href={HYDRO_TELEGRAM_URL}
-      className="font-bold underline"
+      className="relative z-20 font-bold underline"
       target="_blank"
     >
       Join Telegram <Icon name="solid:arrow-up-right" />
