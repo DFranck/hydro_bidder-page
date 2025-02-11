@@ -1,27 +1,29 @@
 import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
 
 export function BidDuration({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { metricsForPostHydroBids } = backendData
+  const { bidsById, metricsForPostHydroBids } = backendData
   const bidInfoFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
   )
+  const bid = bidsById[bidId]
 
-  if (!bidInfoFromNumia) return null
+  const { isPending, isRejected } = bidInfoFromNumia ?? {}
 
-  const { durationDays, isPending, isRejected } = bidInfoFromNumia
+  const { value: durationNumber, unit: durationUnit } = getTimeUnitFromNanos(
+    bid.deploymentDurationInNanos
+  )
 
-  return isRejected ? null : isPending ? (
+  return isRejected ? null : isPending || !durationNumber ? (
     <StyledText variant="footnote">Pending</StyledText>
-  ) : !durationDays ? (
-    "Pending"
   ) : (
     pluralize({
-      count: durationDays,
+      count: durationNumber,
       prefixCount: true,
-      singular: "day",
+      singular: durationUnit,
     })
   )
 }

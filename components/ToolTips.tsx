@@ -151,16 +151,16 @@ export const estimatedRewardsColumnTooltip = ({
 
 export const estimatedRewardsTooltip = ({
   bid,
-  bidDescription,
+  bidDescriptionFromGithub,
   hasVotedThisRound,
   isTokenBased,
 }: {
   bid: AugmentedBid
-  bidDescription: BidDescription
+  bidDescriptionFromGithub: BidDescription
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
-  const { projectName } = bidDescription
+  const { projectName } = bidDescriptionFromGithub
 
   const totalTributeValue = isTokenBased
     ? (sumBy(bid.tributes, "valueUsd") ?? 0)

@@ -1,5 +1,6 @@
 "use client"
 
+import { BidDuration } from "@/components/BidDuration"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { BidRewards } from "@/components/BidRewards"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
@@ -25,8 +26,6 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
-import { pluralize } from "@/lib/pluralize"
 import { sumBy } from "lodash"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
@@ -46,8 +45,6 @@ export default function BidsPage() {
   const rows =
     bidsInRound?.map((bid) => {
       const bidURL = `/bids/${bid.id}`
-      const { value: bidDeploymentDurationToRender, unit } =
-        getTimeUnitFromNanos(bid.deploymentDurationInNanos)
 
       return {
         _bid: bid,
@@ -60,11 +57,7 @@ export default function BidsPage() {
 
         duration: (
           <InvisibleLink href={bidURL}>
-            {pluralize({
-              count: bidDeploymentDurationToRender,
-              prefixCount: true,
-              singular: unit,
-            })}
+            <BidDuration bidId={bid.id} />
           </InvisibleLink>
         ),
 
