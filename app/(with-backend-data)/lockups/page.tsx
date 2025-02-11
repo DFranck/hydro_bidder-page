@@ -48,7 +48,6 @@ export default function LockupsPage() {
   const {
     address,
     bidsById,
-    currentRoundId,
     currentRoundEndDate,
     isWalletConnected,
     lockups,
@@ -106,6 +105,20 @@ export default function LockupsPage() {
     {
       key: "status",
       label: "Status",
+      isSortable: true,
+      initialSortDirection: "asc",
+      customValueGetter: (row) => {
+        const { isEligibleThisRoundAtAll, isExpired, isTiedToDeployment } =
+          row._lockup
+
+        return isEligibleThisRoundAtAll
+          ? 0
+          : isExpired
+            ? 1
+            : isTiedToDeployment
+              ? 2
+              : 3
+      },
     },
     {
       key: "actions",
@@ -134,9 +147,16 @@ export default function LockupsPage() {
       statusTopline,
       statusBottomline = null,
       statusExplanation,
+      statusIcon,
     } = isExpired
       ? {
           editLockupButtonLabel: "Refresh",
+          statusIcon: (
+            <Icon
+              name="solid:triangle-exclamation"
+              className="text-palette-red"
+            />
+          ),
           statusTopline:
             Math.abs(daysLeft) === 0
               ? "Expired today"
@@ -152,18 +172,30 @@ export default function LockupsPage() {
         }
       : isTiedToDeployment
         ? {
+            statusIcon: (
+              <Icon name="solid:lock" className="text-palette-beige" />
+            ),
             statusTopline: "Tied to bid deployment",
-            statusBottomline: `${pluralize({
-              count: numRoundsLeftOnDeployment,
-              prefixCount: true,
-              singular: "round",
-            })} left`,
+            statusBottomline:
+              numRoundsLeftOnDeployment === 1
+                ? "Ends with this round"
+                : `${pluralize({
+                    count: numRoundsLeftOnDeployment,
+                    prefixCount: true,
+                    singular: "round",
+                  })} left`,
             statusExplanation: (
               <>This lockup is currently tied to a deployment.</>
             ),
           }
         : isEligibleToChangeVote
           ? {
+              statusIcon: (
+                <Icon
+                  name="solid:circle-check"
+                  className="text-palette-green"
+                />
+              ),
               statusTopline: "Voted for bid in current round",
               statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
               statusExplanation: (
@@ -174,6 +206,12 @@ export default function LockupsPage() {
               ),
             }
           : {
+              statusIcon: (
+                <Icon
+                  name="solid:circle-check"
+                  className="text-palette-green"
+                />
+              ),
               statusTopline: "Eligible to vote",
               statusExplanation: (
                 <span>
@@ -270,7 +308,7 @@ export default function LockupsPage() {
 
       timeLeft:
         daysLeft <= 0 ? (
-          <Icon name="solid:triangle-exclamation" />
+          <>Expired</>
         ) : (
           pluralize({
             count: daysLeft,
@@ -281,10 +319,11 @@ export default function LockupsPage() {
 
       status: (
         <Tooltip
-          className="whitespace-nowrap"
+          className="flex gap-3 whitespace-nowrap"
           classNamesForTooltip="w-80"
           tipContents={statusTooltip}
         >
+          {statusIcon}
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               {statusTopline}
@@ -301,12 +340,19 @@ export default function LockupsPage() {
         <StyledText
           as="button"
           variant="button.secondary"
+          className={twJoin(
+            lockup.isExpired
+              ? "border-palette-red text-palette-red"
+              : lockup.isTiedToDeployment
+                ? "border-palette-beige text-palette-beige"
+                : undefined
+          )}
           onClick={() => {
             setIsEditModalOpen(true)
             setLockupBeingEdited(lockup)
           }}
         >
-          {editLockupButtonLabel ?? "Edit Lockup"}
+          {editLockupButtonLabel ?? "Edit"}
         </StyledText>
       ),
     }
@@ -327,12 +373,6 @@ export default function LockupsPage() {
     }
 
     setIsConfirmingUnlockExpired(false)
-
-    const pluralizedLockupText = pluralize({
-      count: expiredLockups.length,
-      prefixCount: true,
-      singular: "expired lockup",
-    })
 
     try {
       setToasts([toastMessages.unlockingExpiredLockups(expiredLockups.length)])
@@ -495,7 +535,29 @@ export default function LockupsPage() {
             <StyledTable
               columns={columnDescriptors}
               rows={lockupsAsRows}
-              initialSortedColumnKey="timeLeft"
+              initialSortedColumnKey="status"
+              renderRow={({ children, row, rowProps }) => {
+                const {
+                  isExpired,
+                  isEligibleThisRoundAtAll,
+                  isTiedToDeployment,
+                } = row._lockup
+
+                return (
+                  <tr
+                    className={twMerge(
+                      rowProps.className,
+                      isExpired && "[&_td]:bg-palette-red/20",
+                      isTiedToDeployment &&
+                        "opacity-60 transition-opacity hover:opacity-100",
+                      isEligibleThisRoundAtAll && "[&_td]:bg-palette-green/20"
+                    )}
+                    {...rowProps}
+                  >
+                    {children}
+                  </tr>
+                )
+              }}
               slotAfterHeaderRow={
                 incompleteNotices.length > 0 && (
                   <tr>
