@@ -14,15 +14,13 @@ export function BidLogoAndTitle({ bidId }: { bidId: number }) {
     (metric) => Number(metric.id) === bidId
   )
 
-  if (!bidFromNumia) return null
-
   const bidDescriptionFromGithub =
-    bidDescriptionsByBidId[Number(bidFromNumia.id)] ?? null
+    bidDescriptionsByBidId[Number(bidFromNumia?.id)] ?? null
   const projectLogoUrl =
-    bidFromNumia.projectLogoUrl || bidDescriptionFromGithub?.projectLogoUrl
+    bidFromNumia?.projectLogoUrl || bidDescriptionFromGithub?.projectLogoUrl
   const projectName =
-    bidFromNumia.projectName || bidDescriptionFromGithub?.projectName
-  const title = bidFromNumia.title || bidDescriptionFromGithub?.title
+    bidFromNumia?.projectName || bidDescriptionFromGithub?.projectName
+  const title = bidFromNumia?.title || bidDescriptionFromGithub?.title
 
   return (
     <div className="flex items-center gap-6">
