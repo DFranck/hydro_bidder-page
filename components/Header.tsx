@@ -16,10 +16,10 @@ export function Header() {
 
   // Update ghost element height when NOT scrolled (at its tallest)
   useEffect(() => {
-    if (!isScrolled && elementRef.current && ghostElementRef.current) {
+    if (elementRef.current && ghostElementRef.current) {
       ghostElementRef.current.style.height = `${elementRef.current.clientHeight}px`
     }
-  }, [isScrolled])
+  }, [])
 
   return (
     <>
