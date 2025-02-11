@@ -18,7 +18,7 @@ import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import { range, sumBy } from "lodash"
 
-export async function fetchBids({
+export async function fetchBidsBeforeWallet({
   assetListWithPrices,
   bidDescriptionsByBidId,
   currentRoundId,
@@ -99,21 +99,22 @@ export async function fetchBids({
             const sanitizedPointBasedTributes: SanitizedPointBasedTribute[] =
               unsanitizedBids
                 .map((bid) => {
-                  const bidDescription = bidDescriptionsByBidId[bid.proposal_id]
+                  const bidDescriptionFromGithub =
+                    bidDescriptionsByBidId[bid.proposal_id]
 
-                  if (!bidDescription) {
+                  if (!bidDescriptionFromGithub) {
                     return null
                   }
 
                   const hasPoints =
-                    bidDescription.points &&
-                    Array.isArray(bidDescription.points)
+                    bidDescriptionFromGithub.points &&
+                    Array.isArray(bidDescriptionFromGithub.points)
 
                   if (!hasPoints) {
                     return null
                   }
 
-                  const [amount, denom] = bidDescription.points!
+                  const [amount, denom] = bidDescriptionFromGithub.points!
                   const assetListing = assetListWithPrices[denom]
                   const assetPrice = assetListing?.priceUsd ?? 0
                   const decimals = assetListing?.decimals ?? 6
@@ -157,10 +158,11 @@ export async function fetchBids({
                 const matchingTopProposal = topNProposals.proposals.find(
                   (topProposal) => topProposal.proposal_id === proposalId
                 )
-                const bidDescription = bidDescriptionsByBidId[proposalId]
+                const bidDescriptionFromGithub =
+                  bidDescriptionsByBidId[proposalId]
                 const description =
-                  bidDescription?.description ?? bid.description
-                const title = bidDescription?.title ?? bid.title
+                  bidDescriptionFromGithub?.description ?? bid.description
+                const title = bidDescriptionFromGithub?.title ?? bid.title
                 const bidTributes = [
                   ...sanitizedTokenBasedTributes,
                   ...sanitizedPointBasedTributes,
@@ -169,23 +171,24 @@ export async function fetchBids({
                   augmentedLiquidityDeployments.find(
                     (deployment) => deployment.bidId === proposalId
                   ) ?? null
-                const bidFromHydro =
-                  postHydroBids.find(
-                    (bidFromNumia) => Number(bidFromNumia.id) === proposalId
-                  ) ?? null
+                const bidFromNumia =
+                  postHydroBids.find((bid) => Number(bid.id) === proposalId) ??
+                  null
                 const onchainTributeUsdc = sumBy(bidTributes, "valueUsd") ?? 0
-                const polSize = bidFromHydro?.currentAllocationAmount ?? 0
+                const polSize = bidFromNumia?.currentAllocationAmount ?? 0
                 const tributeApr =
                   polSize > 0
                     ? (onchainTributeUsdc * 12) / (polSize * atomPrice)
                     : 0
+                const deploymentDurationInEpochs = deploymentDuration
+                const deploymentDurationInNanos =
+                  deploymentDurationInEpochs * lockedAtomEpochInNanos
 
                 return {
                   ...bid,
                   id: proposalId,
-                  deploymentDurationInEpochs: deploymentDuration,
-                  deploymentDurationInNanos:
-                    deploymentDuration * lockedAtomEpochInNanos,
+                  deploymentDurationInEpochs,
+                  deploymentDurationInNanos,
                   description,
                   liquidityDeployment,
                   // if totalPower is 0, percentage is 0 (avoid division by 0)

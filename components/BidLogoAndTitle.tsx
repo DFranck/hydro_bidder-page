@@ -4,14 +4,16 @@ import Image from "next/image"
 
 export function BidLogoAndTitle({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidDescriptionsByBidId, bidsById, metricsForPostHydroBids } =
-    backendData
+  const { bidDescriptionsByBidId, bidsById } = backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
 
-  const { projectLogoUrl, projectName, title } =
-    bidDescriptionsByBidId[bidId] ?? null
+  const {
+    projectLogoUrl,
+    projectName,
+    title = bid.title,
+  } = bidDescriptionsByBidId[bidId] || {}
 
   return (
     <div className="flex items-center gap-6">
