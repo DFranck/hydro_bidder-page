@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import ReactConfetti from "react-confetti"
-import ConfettiType from "react-confetti/dist/types/Confetti"
 import { createPortal } from "react-dom"
 import { useIsClient } from "usehooks-ts"
 
@@ -11,7 +10,7 @@ export function Confetti({
   onComplete,
 }: {
   trigger: boolean
-  onComplete?: (confetti?: ConfettiType) => void
+  onComplete?: (confetti?: unknown) => void
 }) {
   const isClient = useIsClient()
   const [isCelebrating, setIsCelebrating] = useState(false)

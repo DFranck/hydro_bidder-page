@@ -1,40 +1,15 @@
 "use client"
 
-import { Icon } from "@/components/Icon"
+import { Banners } from "@/components/Banners"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Link from "next/link"
 import { twMerge } from "tailwind-merge"
 
-export function Banner() {
+export function AppBanner() {
   const backendData = useBackendData()
-  const { currentRoundId, lockedAtomIsAtCapacityGlobal } = backendData
+  const { lockedAtomIsAtCapacityGlobal } = backendData
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
-  const Banners = {
-    maxCapacity: {
-      href: "/docs#max-capacity",
-      text: (
-        <>
-          Current round caps have been reached. Continue optimizing
-          your vote to maximize your rewards!{" "}
-          <span className="inline-flex items-center gap-1 font-bold underline">
-            Learn More <Icon name="solid:arrow-up-right" />
-          </span>
-        </>
-      ),
-    },
-    pilotRounds: {
-      href: "/docs#pilot-rounds",
-      text: (
-        <>
-          Hydro is currently running pilot rounds.{" "}
-          <span className="inline-flex items-center gap-1 font-bold underline">
-            Learn More <Icon name="solid:arrow-up-right" />
-          </span>
-        </>
-      ),
-    },
-  }
   const activeBannerName = lockedAtomIsAtCapacityGlobal
     ? "maxCapacity"
     : "pilotRounds"
