@@ -14,6 +14,7 @@ import { MarkdownContainer } from "@/components/MarkdownContainer"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
+  bidDetailsMaxDeploymentAmountTooltip,
   bidDetailsPolSizeTooltip,
   bidDetailsStatusTooltip,
   bidDetailsVoteReceivedTooltip,
@@ -28,7 +29,8 @@ import { VoteButton } from "@/components/VoteButton"
 import { BID_DESCRIPTIONS_URL } from "@/contract-apis/fetchBidDescriptions"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
-import { kebabCase } from "lodash"
+import kebabCase from "lodash/kebabCase"
+import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -92,7 +94,9 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
-  const totalTributeValueInAtom = metrics.onchainTributeUsdc / atomPrice
+  const tributeUsdc = sumBy(bid.tributes, "valueUsd")
+
+  const totalTributeValueInAtom = tributeUsdc / atomPrice
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 
@@ -260,7 +264,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                       variant="label"
                       className="flex cursor-default items-center gap-1 text-palette-green"
                     >
-                      <span>PoL Size</span>
+                      <span>Amount</span>
                       <Icon name="circle-info" />
                     </StyledText>
                   </Tooltip>
@@ -359,7 +363,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
             {/* And if there are any point-based tribute amounts, we can't show this */}
             {bid.roundId >= 2 && metrics.offchainTribute.length === 0 && (
-              <Tooltip tipContents={<>Explanation</>}>
+              <Tooltip tipContents={bidDetailsMaxDeploymentAmountTooltip}>
                 <StyledText
                   as="h3"
                   variant="label"

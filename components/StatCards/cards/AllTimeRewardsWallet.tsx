@@ -5,14 +5,14 @@ import { Tooltip } from "@/components/Tooltip"
 import { yourTotalRewardsAllTimeTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { sumBy } from "lodash"
+import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function AllTimeRewardsWallet() {
   const { isLoading, claimsHistorical, claimsOutstanding } = useBackendData()
   const allTimeUsersRewardsInUsd = sumBy(
     [...claimsHistorical, ...claimsOutstanding],
-    "amount.valueInUsd"
+    "amount.valueUsd"
   )
 
   return (
