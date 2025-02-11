@@ -1,20 +1,93 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
-import { SanitizedLockup } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { getDaysAway } from "@/lib/getDaysAway"
 import { getCosmWasmClient } from "./getCosmWasmClient"
 
-function sanitizeLockup(lockup: LockupWithPerTrancheInfo): SanitizedLockup {
+export interface SanitizedLockup {
+  id: number
+  currentVotingPower: number
+  dateEnd: Date
+  dateStart: Date
+  daysLeft: number
+  funds: {
+    amount: number
+    denom: string
+  }
+  isExpired: boolean
+  isEligibleThisRoundAtAll: boolean
+  isEligibleToChangeVote: boolean
+  isEligibleButHasNotVoted: boolean
+  isTiedToDeployment: boolean
+  multiplier: number
+  metaDataByTrancheId: Record<
+    number,
+    {
+      nextRoundEligibleToVote: number | null
+      votedOnBidId: number | null
+    }
+  >
+  nextRoundEligibleToVote: number | null
+  numRoundsLeftOnDeployment: number
+  votedOnBidId: number | null
+}
+
+function sanitizeLockup(
+  lockup: LockupWithPerTrancheInfo,
+  currentRoundId: number
+): SanitizedLockup {
+  const dateEnd = new Date(
+    Number(lockup.lock_with_power.lock_entry.lock_end) / 1e6
+  )
+
+  const daysLeft = getDaysAway(dateEnd)
+
+  const isExpired = new Date() > dateEnd
+
+  const votedOnBidId =
+    Object.values(lockup.per_tranche_info).find(
+      (trancheInfo) => trancheInfo.current_voted_on_proposal !== null
+    )?.current_voted_on_proposal ?? null
+
+  const nextRoundEligibleToVote =
+    Object.values(lockup.per_tranche_info).find(
+      (trancheInfo) => trancheInfo.next_round_lockup_can_vote !== null
+    )?.next_round_lockup_can_vote ?? null
+
+  const isEligibleThisRoundAtAll =
+    !isExpired &&
+    !!nextRoundEligibleToVote &&
+    nextRoundEligibleToVote <= currentRoundId
+
+  const isEligibleToChangeVote = isEligibleThisRoundAtAll && !!votedOnBidId
+
+  const isEligibleButHasNotVoted = isEligibleThisRoundAtAll && !votedOnBidId
+
+  const isTiedToDeployment =
+    !isExpired &&
+    !!nextRoundEligibleToVote &&
+    nextRoundEligibleToVote > currentRoundId
+
+  const numRoundsLeftOnDeployment = isTiedToDeployment
+    ? nextRoundEligibleToVote - currentRoundId
+    : -1
+
   return {
     id: lockup.lock_with_power.lock_entry.lock_id,
     currentVotingPower: Number(lockup.lock_with_power.current_voting_power),
-    dateEnd: new Date(Number(lockup.lock_with_power.lock_entry.lock_end) / 1e6),
+    dateEnd,
     dateStart: new Date(
       Number(lockup.lock_with_power.lock_entry.lock_start) / 1e6
     ),
+    daysLeft,
     funds: {
       amount: Number(lockup.lock_with_power.lock_entry.funds.amount) / 1e6,
       denom: lockup.lock_with_power.lock_entry.funds.denom,
     },
+    isEligibleThisRoundAtAll,
+    isEligibleToChangeVote,
+    isEligibleButHasNotVoted,
+    isExpired,
+    isTiedToDeployment,
     multiplier: Number(
       (
         Number(lockup.lock_with_power.current_voting_power) /
@@ -31,10 +104,19 @@ function sanitizeLockup(lockup: LockupWithPerTrancheInfo): SanitizedLockup {
         },
       ])
     ),
+    nextRoundEligibleToVote,
+    numRoundsLeftOnDeployment,
+    votedOnBidId,
   }
 }
 
-export async function fetchWalletLockups(address: string) {
+export async function fetchWalletLockups({
+  address,
+  currentRoundId,
+}: {
+  address: string
+  currentRoundId: number
+}) {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
   }
@@ -54,6 +136,6 @@ export async function fetchWalletLockups(address: string) {
     })
 
   return lockupsWithPerTrancheInfo.lockups_with_per_tranche_infos.map(
-    sanitizeLockup
+    (unsanitizedLockup) => sanitizeLockup(unsanitizedLockup, currentRoundId)
   )
 }

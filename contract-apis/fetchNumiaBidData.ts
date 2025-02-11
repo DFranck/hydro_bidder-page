@@ -2,7 +2,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { startCase } from "lodash"
+import startCase from "lodash/startCase"
 
 export interface BidFromNumia {
   apr: number

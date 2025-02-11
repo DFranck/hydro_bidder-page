@@ -11,14 +11,21 @@ import {
   AugmentedClaim,
   fetchClaims,
 } from "@/contract-apis/fetchClaims"
-import { fetchWalletLockups } from "@/contract-apis/fetchWalletLockups"
+import {
+  fetchWalletLockups,
+  SanitizedLockup,
+} from "@/contract-apis/fetchWalletLockups"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { groupBy, keyBy, range, sortBy, sumBy } from "lodash"
+import groupBy from "lodash/groupBy"
+import keyBy from "lodash/keyBy"
+import range from "lodash/range"
+import sortBy from "lodash/sortBy"
+import sumBy from "lodash/sumBy"
 import { unstable_cache } from "next/cache"
 
 export interface BackendDataAfterWallet
@@ -42,25 +49,6 @@ export interface BackendDataAfterWallet
   votingPowerTotal: number
 }
 
-export interface SanitizedLockup {
-  id: number
-  currentVotingPower: number
-  dateEnd: Date
-  dateStart: Date
-  funds: {
-    amount: number
-    denom: string
-  }
-  multiplier: number
-  metaDataByTrancheId: Record<
-    number,
-    {
-      nextRoundEligibleToVote: number | null
-      votedOnBidId: number | null
-    }
-  >
-}
-
 export interface SanitizedVote
   extends Omit<CamelCaseKeys<VoteWithPower>, "propId"> {
   bidId: number
@@ -82,10 +70,10 @@ function sanitizeVote(vote: VoteWithPower): SanitizedVote {
 
 async function uncachedFetchBackendDataAfterWallet({
   address,
-  backendData,
+  backendDataBeforeWallet,
 }: {
   address: string
-  backendData: BackendDataBeforeWallet
+  backendDataBeforeWallet: BackendDataBeforeWallet
 }): Promise<BackendDataAfterWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
@@ -105,14 +93,13 @@ async function uncachedFetchBackendDataAfterWallet({
     currentRoundId,
     lockedAtomMaxWallet,
     lockedAtomEpochInNanos,
-    metricsForPostHydroBids,
     tranches,
-  } = backendData
+  } = backendDataBeforeWallet
 
   const [{ voting_power: votingPowerFromContract }, sanitizedLockups] =
     await Promise.all([
       hydroQueryClient.userVotingPower({ address }),
-      fetchWalletLockups(address),
+      fetchWalletLockups({ address, currentRoundId }),
     ])
 
   // [0, 1, 2, ...currentRoundId]
@@ -144,7 +131,6 @@ async function uncachedFetchBackendDataAfterWallet({
   )
 
   const sanitizedVotes = votes.flat().flat().map(sanitizeVote)
-
   const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
 
@@ -158,14 +144,9 @@ async function uncachedFetchBackendDataAfterWallet({
     const description =
       bidDescriptionsByBidId[bid.id]?.description ?? bid.description
 
-    const bidFromNumia = metricsForPostHydroBids.find(
-      (bidFromNumia) => Number(bidFromNumia.id) === bid.id
-    )
-
     const usersEstimatedRewards =
       estimatedRewardForPower({
-        amount:
-          bidFromNumia?.onchainTributeUsdc ?? sumBy(bid.tributes, "valueInUsd"),
+        amount: sumBy(bid.tributes, "valueUsd"),
         walletVotingPower: votingPowerFromContract,
         bidPower: Number(bid.power),
       }) ?? 0
@@ -240,12 +221,21 @@ async function uncachedFetchBackendDataAfterWallet({
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
 
-  const votingPowerSpent = sumBy(sanitizedVotes, (v) => Number(v.power) / 1e6)
+  // get all lockups that are tied to a deployment:
+  // not expired, and not tied to a deployment that has ended
+  const usedLockups = sanitizedLockups.filter(
+    (lockup) => lockup.isTiedToDeployment
+  )
 
-  const votingPowerTotal = votingPowerFromContract / 1e6 + votingPowerSpent
+  const votingPowerSpent =
+    sumBy(usedLockups, (l) => Number(l.currentVotingPower)) / 1e6
+
+  const votingPowerTotal = votingPowerFromContract / 1e6
+
+  const votingPowerAvailable = votingPowerTotal - votingPowerSpent
 
   const backendDataAfterWallet: BackendDataAfterWallet = {
-    ...backendData,
+    ...backendDataBeforeWallet,
     address,
     bids: sanitizedBids,
     bidsById,
@@ -261,7 +251,7 @@ async function uncachedFetchBackendDataAfterWallet({
     lockups: sanitizedLockups,
     votes: sanitizedVotes,
     votesByRoundId,
-    votingPowerAvailable: votingPowerFromContract / 1e6,
+    votingPowerAvailable,
     votingPowerSpent,
     votingPowerTotal,
   }

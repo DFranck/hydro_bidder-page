@@ -1,6 +1,7 @@
 "use client"
 
 import { StyledTextVariant } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
@@ -46,15 +47,7 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
     ) {
       setToasts((prevToasts) => [
         ...prevToasts,
-        {
-          variant: "error",
-          message: (
-            <>
-              <strong>Wallet Connection Error</strong>
-              <p>{message}</p>
-            </>
-          ),
-        },
+        toastMessages.walletConnectionError(new Error(message)),
       ])
     } else {
       notifyConnectedCB?.(status === WalletStatus.Connected)
