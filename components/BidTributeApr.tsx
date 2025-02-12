@@ -15,7 +15,12 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
     (metric) => Number(metric.id) === bid.id
   )
 
-  if (!bidInfoFromNumia) return null
+  if (!bidInfoFromNumia)
+    return (
+      <StyledText variant="footnote" className="whitespace-nowrap">
+        No data yet
+      </StyledText>
+    )
 
   const { isPending, isRejected } = bidInfoFromNumia
 

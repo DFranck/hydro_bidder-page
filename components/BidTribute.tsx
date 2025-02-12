@@ -1,5 +1,6 @@
 import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { Icon } from "@/components/Icon"
+import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   pointBasedTributeAmountTooltip,
@@ -24,7 +25,11 @@ export function BidTribute({
   )
 
   if (!bidInfoFromNumia) {
-    return 0
+    return (
+      <StyledText variant="footnote" className="whitespace-nowrap">
+        No data yet
+      </StyledText>
+    )
   }
 
   const { onchainTributeAssets, offchainTribute } = bidInfoFromNumia
