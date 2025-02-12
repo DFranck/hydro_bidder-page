@@ -375,7 +375,7 @@ export const needsWalletConnectionTooltip = (
 
 export const networkLimitReachedTooltip = (
   <p>
-    The cap has been reached for this round. Join the{" "}
+    Lockup caps have been reached. Join the{" "}
     <StyledText
       variant="link"
       as={Link}
@@ -386,7 +386,7 @@ export const networkLimitReachedTooltip = (
       <span>Hydro Telegram Group</span>
       <Icon name="solid:arrow-up-right" />
     </StyledText>{" "}
-    to get notified when the next round starts.
+    to get notified if caps increase.
   </p>
 )
 
