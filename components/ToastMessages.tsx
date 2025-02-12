@@ -9,7 +9,7 @@ export const toastMessages = {
 
   claimingRewardsSuccess: {
     variant: "success",
-    message: "Reward claimed! Reload to see changes.",
+    message: "Reward claimed succesfully. Reload to see changes.",
     isDismissible: false,
     actionButtonPrimary: {
       label: "Reload",
