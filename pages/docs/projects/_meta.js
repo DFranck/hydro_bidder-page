@@ -1,9 +1,9 @@
 const meta = {
-  whitelisting: {
-    title: "Approval process",
+  bidderoverview: {
+    title: "Bidder overview",
   },
   bidding: {
-    title: "Bidding process",
+    title: "Bid process",
   },
    deployment: {
     title: "Deployment process",
