@@ -1,4 +1,7 @@
 const meta = {
+  "committee-members": {
+    title: "Members",
+  },
   "hydro-guidelines": {
     title: "Guidelines",
   },
