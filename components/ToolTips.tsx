@@ -4,7 +4,7 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import sumBy from "lodash/sumBy"
@@ -156,7 +156,7 @@ export const estimatedRewardsTooltip = ({
   isTokenBased,
 }: {
   bid: AugmentedBid
-  bidDescriptionFromGithub: BidDescription
+  bidDescriptionFromGithub: BidDescriptionFromGithub
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {

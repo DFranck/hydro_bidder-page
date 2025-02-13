@@ -6,7 +6,7 @@ import {
   SanitizedPointBasedTribute,
   SanitizedTokenBasedTribute,
 } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import {
   augmentLiquidityDeployment,
   fetchLiquidityDeployments,
@@ -41,7 +41,7 @@ export async function fetchBidsBeforeWallet({
   postHydroBids,
 }: {
   assetListWithPrices: Record<string, AssetListEntry>
-  bidDescriptionsByBidId: Record<string, BidDescription>
+  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
   currentRoundId: number
   tranches: Tranche[]
   lockedAtomEpochInNanos: number
@@ -200,21 +200,6 @@ export async function fetchBidsBeforeWallet({
                   principalAssets: bidPowerInAtoms * atomPrice,
                   rewardPeriodInMonths: deploymentDurationInEpochs,
                 })
-
-                if (bid.roundId === 3) {
-                  console.log({
-                    bid: bid.title,
-                    tributeValueUsd: onchainTributeUsdc,
-                    amountGained: onchainTributeUsdc,
-                    bidPower: Number(bid.power),
-                    bidPowerInAtoms,
-                    principalAssetsMin: bidPowerInAtoms * atomPrice,
-                    principalAssetsMax: (bidPowerInAtoms / 1.5) * atomPrice,
-                    rewardPeriodInMonths: deploymentDurationInEpochs,
-                    tributeAprMax,
-                    tributeAprMin,
-                  })
-                }
 
                 return {
                   ...bid,

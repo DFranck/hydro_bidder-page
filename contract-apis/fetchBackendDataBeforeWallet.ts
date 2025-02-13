@@ -8,7 +8,7 @@ import {
   fetchAssetListWithPrices,
 } from "@/contract-apis/fetchAssetListWithPrices"
 import {
-  BidDescription,
+  BidDescriptionFromGithub,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
 import { fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
@@ -49,7 +49,7 @@ export interface AugmentedBidFromContract
 export interface BackendDataBeforeWallet {
   assetListWithPrices: Record<string, AssetListEntry>
   atomPrice: number
-  bidDescriptionsByBidId: Record<string, BidDescription>
+  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
   bids: AugmentedBidFromContract[]
   bidsById: Record<number, AugmentedBidFromContract>
   bidsByRoundId: Record<number, AugmentedBidFromContract[]>
