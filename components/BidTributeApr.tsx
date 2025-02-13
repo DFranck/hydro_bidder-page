@@ -36,19 +36,19 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       tipContents={bidTableTributeAprTooltip({ bidId })}
     >
       {bid.roundId === currentRoundId ? (
-        <StyledText variant="value.positive">
+        <span className="whitespace-nowrap">
           {bid.tributeAprMin === bid.tributeAprMax
             ? [Infinity, null].includes(bid.tributeAprMin)
               ? `0%`
               : `${formattedTributeAprMin}%`
             : `${formattedTributeAprMin}%\u2009–\u2009${formattedTributeAprMax}%`}
-        </StyledText>
+        </span>
       ) : isPending ? (
         <StyledText variant="footnote">Pending</StyledText>
       ) : (
-        <StyledText variant="value.positive">
+        <span className="whitespace-nowrap">
           {(bid.tributeApr * 100).toFixed(2)}%
-        </StyledText>
+        </span>
       )}
     </Tooltip>
   )
