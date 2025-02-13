@@ -139,7 +139,7 @@ export default function RewardsPage() {
 
           totalTribute: (
             <InvisibleLink href={bidUrl}>
-              <BidTribute bid={bid} textAlign="right" />
+              <BidTribute bidId={bid.id} textAlign="right" />
             </InvisibleLink>
           ),
 

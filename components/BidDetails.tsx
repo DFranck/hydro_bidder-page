@@ -354,7 +354,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
                 {!isTokenBased ? (
-                  <BidTribute bid={bid} />
+                  <BidTribute bidId={bidId} />
                 ) : (
                   <BidTributeApr bidId={bidId} />
                 )}
