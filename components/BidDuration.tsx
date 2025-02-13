@@ -11,14 +11,14 @@ export function BidDuration({ bidId }: { bidId: number }) {
   )
   const bid = bidsById[bidId]
 
-  const { isPending, isRejected } = bidInfoFromNumia ?? {}
+  const { isRejected } = bidInfoFromNumia ?? {}
 
   const { value: durationNumber, unit: durationUnit } = getTimeUnitFromNanos(
     bid.deploymentDurationInNanos
   )
 
-  return isRejected ? null : isPending || !durationNumber ? (
-    <StyledText variant="footnote">Pending</StyledText>
+  return isRejected ? null : !durationNumber ? (
+    <StyledText variant="footnote">No data yet</StyledText>
   ) : (
     pluralize({
       count: durationNumber,
