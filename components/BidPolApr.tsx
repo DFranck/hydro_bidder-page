@@ -6,10 +6,29 @@ import { twJoin } from "tailwind-merge"
 
 export function BidPolApr({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidsById, metricsForPostHydroBids } = backendData
+  const {
+    bidsById,
+    bidDescriptionsByBidId,
+    currentRoundId,
+    metricsForPostHydroBids,
+  } = backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
+
+  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
+
+  if (
+    bid.roundId === currentRoundId &&
+    bidDescriptionFromGithub?.minMaxTargetPolApr
+  ) {
+    const [min, max] = bidDescriptionFromGithub.minMaxTargetPolApr
+    return (
+      <StyledText variant="footnote" className="whitespace-nowrap">
+        {min}%\u2009–\u2009{max}%
+      </StyledText>
+    )
+  }
 
   const bidInfoFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bid.id
