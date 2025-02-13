@@ -29,7 +29,9 @@ export function BidTributeAprRange({ bidId }: { bidId: number }) {
       classNamesForTooltip="w-fit"
     >
       {bid.tributeAprMin === bid.tributeAprMax
-        ? `${formattedTributeAprMin}%`
+        ? [Infinity, null].includes(bid.tributeAprMin)
+          ? `>100%`
+          : `${formattedTributeAprMin}%`
         : `${formattedTributeAprMin}%\u2009–\u2009${formattedTributeAprMax}%`}
     </Tooltip>
   )
