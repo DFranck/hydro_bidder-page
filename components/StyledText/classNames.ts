@@ -125,13 +125,4 @@ export const classNames = {
     "whitespace-nowrap text-sm text-white/80",
     "has-[:checked]:font-bold has-[:checked]:text-white"
   ),
-
-  "value.positive": twJoin(
-    "inline-block rounded px-2",
-    "whitespace-nowrap bg-palette-beige/10 text-palette-beige"
-  ),
-  "value.negative": twJoin(
-    "inline-block rounded-sm px-2",
-    "whitespace-nowrap bg-palette-red/10 text-palette-red"
-  ),
 }

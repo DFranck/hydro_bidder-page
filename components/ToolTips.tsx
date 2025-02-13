@@ -77,10 +77,7 @@ export const bidTableTributeAprTooltip = ({ bidId }: { bidId: number }) => (
       <BidTribute bidId={bidId} textAlign="left" />
     </div>
 
-    <p>
-      APR is estimated and the spread is based on the possible voting power in
-      the round.
-    </p>
+    <p>APR is estimated and based on the range of voting power in the round.</p>
   </div>
 )
 
