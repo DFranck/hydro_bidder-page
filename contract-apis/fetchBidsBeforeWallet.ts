@@ -19,6 +19,18 @@ import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import range from "lodash/range"
 import sumBy from "lodash/sumBy"
 
+function getAPR({
+  amountGained,
+  principalAssets,
+  rewardPeriodInMonths,
+}: {
+  amountGained: number
+  principalAssets: number
+  rewardPeriodInMonths: number
+}) {
+  return (amountGained / principalAssets) * (rewardPeriodInMonths / 12)
+}
+
 export async function fetchBidsBeforeWallet({
   assetListWithPrices,
   bidDescriptionsByBidId,
@@ -61,12 +73,6 @@ export async function fetchBidsBeforeWallet({
                 startFrom: 0,
                 trancheId: tranche.id,
               })
-
-            const topNProposals = await hydroQueryClient.topNProposals({
-              numberOfProposals: 50,
-              roundId,
-              trancheId: tranche.id,
-            })
 
             const sanitizedTokenBasedTributes: SanitizedTokenBasedTribute[] = (
               await Promise.all(
@@ -156,9 +162,6 @@ export async function fetchBidsBeforeWallet({
             const augmentedBids = unsanitizedBids
               .map(keysFromSnakeToCamelCase)
               .map(({ deploymentDuration, proposalId, ...bid }) => {
-                const matchingTopProposal = topNProposals.proposals.find(
-                  (topProposal) => topProposal.proposal_id === proposalId
-                )
                 const bidDescriptionFromGithub =
                   bidDescriptionsByBidId[proposalId]
                 const description =
@@ -184,6 +187,34 @@ export async function fetchBidsBeforeWallet({
                 const deploymentDurationInEpochs = deploymentDuration
                 const deploymentDurationInNanos =
                   deploymentDurationInEpochs * lockedAtomEpochInNanos
+                const bidPowerInAtoms = Number(bid.power) / 1e6
+
+                const tributeAprMax = getAPR({
+                  amountGained: onchainTributeUsdc,
+                  principalAssets: (bidPowerInAtoms / 1.5) * atomPrice,
+                  rewardPeriodInMonths: deploymentDurationInEpochs,
+                })
+
+                const tributeAprMin = getAPR({
+                  amountGained: onchainTributeUsdc,
+                  principalAssets: bidPowerInAtoms * atomPrice,
+                  rewardPeriodInMonths: deploymentDurationInEpochs,
+                })
+
+                if (bid.roundId === 3) {
+                  console.log({
+                    bid: bid.title,
+                    tributeValueUsd: onchainTributeUsdc,
+                    amountGained: onchainTributeUsdc,
+                    bidPower: Number(bid.power),
+                    bidPowerInAtoms,
+                    principalAssetsMin: bidPowerInAtoms * atomPrice,
+                    principalAssetsMax: (bidPowerInAtoms / 1.5) * atomPrice,
+                    rewardPeriodInMonths: deploymentDurationInEpochs,
+                    tributeAprMax,
+                    tributeAprMin,
+                  })
+                }
 
                 return {
                   ...bid,
@@ -198,6 +229,8 @@ export async function fetchBidsBeforeWallet({
                   title,
                   tributes: bidTributes,
                   tributeApr,
+                  tributeAprMax,
+                  tributeAprMin,
                 }
               })
 

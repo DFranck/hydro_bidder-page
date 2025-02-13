@@ -42,6 +42,8 @@ export interface AugmentedBidFromContract
   percentage: number
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
   tributeApr: number
+  tributeAprMax: number
+  tributeAprMin: number
 }
 
 export interface BackendDataBeforeWallet {
