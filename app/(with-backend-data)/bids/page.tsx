@@ -278,7 +278,7 @@ export default function BidsPage() {
     return (
       <Fragment key={row._bid.id}>
         {!!shouldShowVoteThresholdLine && (
-          <TR className="js-vote-threshold-line">
+          <TR className="js-vote-threshold-line [&~&]:hidden">
             <TD colSpan={99} className="!p-0">
               <div
                 className="
