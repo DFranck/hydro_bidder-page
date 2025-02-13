@@ -192,13 +192,15 @@ export async function fetchBidsBeforeWallet({
                 const tributeAprMax = getAPR({
                   amountGained: onchainTributeUsdc,
                   principalAssets: (bidPowerInAtoms / 1.5) * atomPrice,
-                  rewardPeriodInMonths: deploymentDurationInEpochs,
+                  rewardPeriodInMonths:
+                    deploymentDurationInNanos / (1e9 * 60 * 60 * 24 * 30),
                 })
 
                 const tributeAprMin = getAPR({
                   amountGained: onchainTributeUsdc,
                   principalAssets: bidPowerInAtoms * atomPrice,
-                  rewardPeriodInMonths: deploymentDurationInEpochs,
+                  rewardPeriodInMonths:
+                    deploymentDurationInNanos / (1e9 * 60 * 60 * 24 * 30),
                 })
 
                 return {

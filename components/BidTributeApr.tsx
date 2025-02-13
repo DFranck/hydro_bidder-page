@@ -45,7 +45,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         <StyledText variant="value.positive">
           {bid.tributeAprMin === bid.tributeAprMax
             ? [Infinity, null].includes(bid.tributeAprMin)
-              ? `>100%`
+              ? `0%`
               : `${formattedTributeAprMin}%`
             : `${formattedTributeAprMin}%\u2009–\u2009${formattedTributeAprMax}%`}
         </StyledText>
