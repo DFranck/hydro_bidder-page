@@ -23,9 +23,11 @@ export function CurrentRoundAprGlobal() {
   )
   const averageBidDurationInEpochs =
     sumBy(bids, "deploymentDurationInEpochs") / bids.length
+  // TODO: Calculate this properly, then use it
   const averageAPR =
     ((totalTributeValue / lockedAtomTotalGlobal / atomPrice) * 12) /
       averageBidDurationInEpochs || 0
+  const averageAprFromNumia = metricsGlobal.currentTributeApr
 
   const averageAprFromNumia = metricsGlobal.currentTributeApr
 
