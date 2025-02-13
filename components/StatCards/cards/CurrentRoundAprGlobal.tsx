@@ -29,8 +29,6 @@ export function CurrentRoundAprGlobal() {
       averageBidDurationInEpochs || 0
   const averageAprFromNumia = metricsGlobal.currentTributeApr
 
-  const averageAprFromNumia = metricsGlobal.currentTributeApr
-
   return (
     <StatCard
       isLoading={isLoading}
