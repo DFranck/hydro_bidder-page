@@ -3,7 +3,7 @@
 import { BidDuration } from "@/components/BidDuration"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { BidPolApr } from "@/components/BidPolApr"
-import { BidTributeApr } from "@/components/BidTributeApr"
+import { BidTributeAprRange } from "@/components/BidTributeAprRange"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -70,7 +70,7 @@ export default function BidsPage() {
 
         tributeApr: (
           <InvisibleLink href={bidURL}>
-            <BidTributeApr bidId={bid.id} />
+            <BidTributeAprRange bidId={bid.id} />
           </InvisibleLink>
         ),
 
