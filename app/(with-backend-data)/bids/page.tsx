@@ -28,7 +28,6 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import sumBy from "lodash/sumBy"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 
@@ -193,7 +192,6 @@ export default function BidsPage() {
         },
       },
       {
-        // TODO: REMOVE THIS COMMENT
         key: "tributeApr",
         label: (
           <Tooltip
@@ -219,9 +217,9 @@ export default function BidsPage() {
           const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
           return !isTokenBased
             ? 0
-            : hasVotedThisRound
-              ? row._bid.usersEstimatedRewards
-              : sumBy(row._bid.tributes, "valueUsd")
+            : currentRoundId === row._bid.roundId
+              ? row._bid.tributeAprMax
+              : row._bid.tributeApr
         },
       },
       {
@@ -262,19 +260,13 @@ export default function BidsPage() {
     row,
     rowIndex,
     rowProps,
+    sortDirection,
     sortedColumnKey,
     sortedRows,
   }: RowRenderProps<(typeof rows)[number], keyof (typeof rows)[number]>) {
-    const previousRow = sortedRows?.[
-      rowIndex - 1
-    ] as (typeof sortedRows)[number]
-    const nextRow = sortedRows?.[rowIndex + 1] as (typeof sortedRows)[number]
-
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&
-      previousRow &&
-      nextRow &&
-      Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
+      sortDirection === "DESC" &&
       Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
 
     const votesThisRound = votesByRoundId[currentRoundId] ?? []
