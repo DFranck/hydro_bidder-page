@@ -24,10 +24,10 @@ export function BidPolApr({ bidId }: { bidId: number }) {
   ) {
     const [min, max] = bidDescriptionFromGithub.minMaxTargetPolApr
     return (
-      <span className="whitespace-nowrap">
+      <StyledText variant="value.positive">
         {min}%{"\u2009"}–{"\u2009"}
         {max}%
-      </span>
+      </StyledText>
     )
   }
 
@@ -85,7 +85,7 @@ export function BidPolApr({ bidId }: { bidId: number }) {
       {isPendingOrOngoing ? (
         <StyledText variant="footnote">Pending</StyledText>
       ) : (
-        <span>{`${apr}%`}</span>
+        <StyledText variant="value.positive">{apr}%</StyledText>
       )}
     </Tooltip>
   )
