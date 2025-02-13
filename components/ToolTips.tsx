@@ -1,5 +1,6 @@
 "use client"
 
+import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
@@ -68,6 +69,20 @@ export const bidTablesFirstColumnTooltips = {
     ),
   },
 }
+
+export const bidTableTributeAprTooltip = ({ bidId }: { bidId: number }) => (
+  <div className="flex flex-col gap-3">
+    <div className="flex flex-col">
+      <StyledText variant="label">Tribute Size</StyledText>
+      <BidTribute bidId={bidId} textAlign="left" />
+    </div>
+
+    <p>
+      APR is estimated and the spread is based on the possible voting power in
+      the round.
+    </p>
+  </div>
+)
 
 export const tokenBasedTributeAmountTooltip = (
   <p>

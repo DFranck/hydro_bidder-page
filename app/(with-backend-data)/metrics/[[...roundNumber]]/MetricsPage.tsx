@@ -326,7 +326,7 @@ export function MetricsPage({
             {requestedPreHydro ? (
               0
             ) : !isTokenBased ? (
-              <BidTribute bid={bidFromContract} textAlign="right" />
+              <BidTribute bidId={bidFromContract.id} textAlign="right" />
             ) : (
               <BidTributeApr bidId={Number(bidFromNumia.id)} />
             )}

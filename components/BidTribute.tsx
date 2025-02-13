@@ -6,22 +6,22 @@ import {
   pointBasedTributeAmountTooltip,
   tokenBasedTributeAmountTooltip,
 } from "@/components/ToolTips"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import groupBy from "lodash/groupBy"
 import { twJoin } from "tailwind-merge"
 
 export function BidTribute({
-  bid,
+  bidId,
   textAlign = "left",
 }: {
-  bid: AugmentedBid
+  bidId: number
   textAlign?: "left" | "center" | "right"
 }) {
   const { bidDescriptionsByBidId, metricsForPostHydroBids } = useBackendData()
+
   const bidInfoFromNumia = metricsForPostHydroBids.find(
-    (metric) => Number(metric.id) === bid.id
+    (metric) => Number(metric.id) === bidId
   )
 
   if (!bidInfoFromNumia) {
@@ -45,7 +45,7 @@ export function BidTribute({
     ),
   }
 
-  const bidDescriptionFromGithub = bidDescriptionsByBidId[bid.id]
+  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
 
   const { pointProgramUrl } = bidDescriptionFromGithub ?? {}
 

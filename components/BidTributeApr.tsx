@@ -1,6 +1,6 @@
-import { BidTribute } from "@/components/BidTribute"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
+import { bidTableTributeAprTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twJoin } from "tailwind-merge"
 
@@ -29,17 +29,11 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   return isRejected ? null : (
     <Tooltip
-      tipContents={
-        <div className="flex flex-col">
-          <StyledText variant="label">Tribute Size</StyledText>
-          <BidTribute bid={bid} textAlign="left" />
-        </div>
-      }
       className={twJoin(
         "inline-flex items-center gap-1",
         "border-b-2 border-dotted border-white/50 hover:border-white"
       )}
-      classNamesForTooltip="w-fit"
+      tipContents={bidTableTributeAprTooltip({ bidId })}
     >
       {bid.roundId === currentRoundId ? (
         <StyledText variant="value.positive">
