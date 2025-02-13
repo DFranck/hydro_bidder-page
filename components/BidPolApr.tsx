@@ -24,9 +24,9 @@ export function BidPolApr({ bidId }: { bidId: number }) {
   ) {
     const [min, max] = bidDescriptionFromGithub.minMaxTargetPolApr
     return (
-      <StyledText variant="footnote" className="whitespace-nowrap">
+      <span className="whitespace-nowrap">
         {min}%\u2009–\u2009{max}%
-      </StyledText>
+      </span>
     )
   }
 
