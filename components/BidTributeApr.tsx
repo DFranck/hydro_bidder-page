@@ -6,7 +6,7 @@ import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidsById, metricsForPostHydroBids } = backendData
+  const { bidsById, currentRoundId, metricsForPostHydroBids } = backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
@@ -24,6 +24,9 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const { isPending, isRejected } = bidInfoFromNumia
 
+  const formattedTributeAprMin = (bid.tributeAprMin * 100).toFixed(0)
+  const formattedTributeAprMax = (bid.tributeAprMax * 100).toFixed(0)
+
   return isRejected ? null : (
     <Tooltip
       tipContents={
@@ -38,10 +41,20 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       )}
       classNamesForTooltip="w-fit"
     >
-      {isPending ? (
+      {bid.roundId === currentRoundId ? (
+        <StyledText variant="value.positive">
+          {bid.tributeAprMin === bid.tributeAprMax
+            ? [Infinity, null].includes(bid.tributeAprMin)
+              ? `>100%`
+              : `${formattedTributeAprMin}%`
+            : `${formattedTributeAprMin}%\u2009–\u2009${formattedTributeAprMax}%`}
+        </StyledText>
+      ) : isPending ? (
         <StyledText variant="footnote">Pending</StyledText>
       ) : (
-        <span>{(bid.tributeApr * 100).toFixed(2)}%</span>
+        <StyledText variant="value.positive">
+          {(bid.tributeApr * 100).toFixed(2)}%
+        </StyledText>
       )}
     </Tooltip>
   )
