@@ -14,6 +14,7 @@ export function CurrentRoundAprGlobal() {
     currentRoundId,
     isLoading,
     lockedAtomTotalGlobal,
+    metricsGlobal,
   } = useBackendData()
   const bids = bidsByRoundId[currentRoundId] ?? []
   const totalTributeValue = sumBy(
@@ -22,9 +23,11 @@ export function CurrentRoundAprGlobal() {
   )
   const averageBidDurationInEpochs =
     sumBy(bids, "deploymentDurationInEpochs") / bids.length
+  // TODO: Calculate this properly, then use it
   const averageAPR =
     ((totalTributeValue / lockedAtomTotalGlobal / atomPrice) * 12) /
       averageBidDurationInEpochs || 0
+  const averageAprFromNumia = metricsGlobal.currentTributeApr
 
   return (
     <StatCard
@@ -38,7 +41,7 @@ export function CurrentRoundAprGlobal() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={averageAPR.toLocaleString("en-US", {
+      value={averageAprFromNumia.toLocaleString("en-US", {
         style: "percent",
       })}
     />
