@@ -29,7 +29,7 @@ export const endpoints = {
   },
 }
 
-export const NEUTRON_DEFAULT_RPC = "https://rpc.neutron.quokkastake.io/"
+export const NEUTRON_DEFAULT_RPC = "https://neutron-rpc.polkachu.com/"
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 
