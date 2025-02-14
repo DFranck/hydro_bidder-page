@@ -125,4 +125,9 @@ export const classNames = {
     "whitespace-nowrap text-sm text-white/80",
     "has-[:checked]:font-bold has-[:checked]:text-white"
   ),
+
+  "mathSymbol.container": twJoin(
+    "inline-flex items-center gap-0.5 whitespace-nowrap"
+  ),
+  mathSymbol: twJoin("text-sm font-bold opacity-80"),
 }

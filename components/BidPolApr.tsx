@@ -1,8 +1,8 @@
-import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twJoin } from "tailwind-merge"
+import { bidPolAprTooltip } from "./ToolTips"
 
 export function BidPolApr({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
@@ -23,14 +23,22 @@ export function BidPolApr({ bidId }: { bidId: number }) {
     bidDescriptionFromGithub?.minMaxTargetPolApr
   ) {
     const [min, max] = bidDescriptionFromGithub.minMaxTargetPolApr
+    const isInfiniteOrNull = [Infinity, null].includes(min)
+    const isSameValue = min === max
+    const value = isInfiniteOrNull ? 0 : min
+
     return (
-      <span className="whitespace-nowrap">
-        {min === max
-          ? [Infinity, null].includes(min)
-            ? "0%"
-            : `${min}%`
-          : `${min}%\u2009–\u2009${max}%`}
-      </span>
+      <StyledText variant="mathSymbol.container">
+        <span>{value}</span>
+        <StyledText variant="mathSymbol">%</StyledText>
+        {!isSameValue && (
+          <>
+            <StyledText variant="mathSymbol">–</StyledText>
+            <span>{max}</span>
+            <StyledText variant="mathSymbol">%</StyledText>
+          </>
+        )}
+      </StyledText>
     )
   }
 
@@ -49,46 +57,33 @@ export function BidPolApr({ bidId }: { bidId: number }) {
     apr,
     isOngoing,
     isPending,
+    isVoting,
     isRejected,
     currentAllocationAmount,
     initialAllocationAmount,
   } = bidInfoFromNumia
 
-  const isPendingOrOngoing = isPending || (isOngoing && !apr)
+  const isPendingOrVotingOrOngoing =
+    isPending || isVoting || (isOngoing && !apr)
 
   return isRejected ? null : (
     <Tooltip
-      tipContents={
-        isPendingOrOngoing ? (
-          "This deployment is still active or has not been withdrawn. PoL APR will be updated once the deployment is fully concluded."
-        ) : (
-          <div className="flex flex-col">
-            <StyledText variant="label">PoL Rewards</StyledText>
-            {"currentAllocationAmount" in bid &&
-            "initialAllocationAmount" in bid ? (
-              <AmountAndUnitPair
-                amount={(
-                  currentAllocationAmount - initialAllocationAmount
-                ).toLocaleString(undefined, {
-                  maximumFractionDigits: 4,
-                })}
-                unit="ATOM"
-                textAlign="left"
-              />
-            ) : (
-              0
-            )}
-          </div>
-        )
-      }
+      tipContents={bidPolAprTooltip({
+        isPendingOrVotingOrOngoing,
+        currentAllocationAmount,
+        initialAllocationAmount,
+      })}
       className={twJoin(
         "border-b-2 border-dotted border-white/50 hover:border-white"
       )}
     >
-      {isPendingOrOngoing ? (
+      {isPendingOrVotingOrOngoing ? (
         <StyledText variant="footnote">Pending</StyledText>
       ) : (
-        <span className="whitespace-nowrap">{apr}%</span>
+        <StyledText variant="mathSymbol.container">
+          <span>{apr}</span>
+          <StyledText variant="mathSymbol">%</StyledText>
+        </StyledText>
       )}
     </Tooltip>
   )

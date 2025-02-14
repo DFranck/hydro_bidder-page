@@ -101,7 +101,10 @@ export default function BidsPage() {
                 </Tooltip>
               )}
             >
-              <span>{Math.round(bid.percentage)}%</span>
+              <StyledText variant="mathSymbol.container">
+                <span>{Math.round(bid.percentage)}</span>
+                <StyledText variant="mathSymbol">%</StyledText>
+              </StyledText>
             </ConditionalWrapper>
           </InvisibleLink>
         ),

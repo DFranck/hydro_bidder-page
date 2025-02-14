@@ -2,6 +2,7 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
+import { currentRoundNumLiveBidsTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
@@ -18,16 +19,10 @@ export function CurrentRoundNumberOfBids() {
       isLoading={isLoading}
       title={
         <Tooltip
-          tipContents={
-            <div className="flex flex-col items-center justify-center">
-              <div>
-                <strong>{bids.length - numPointBasedBids}</strong> token-based
-              </div>
-              <div>
-                <strong>{numPointBasedBids}</strong> point-based
-              </div>
-            </div>
-          }
+          tipContents={currentRoundNumLiveBidsTooltip({
+            numPointBasedBids,
+            numTokenBasedBids: bids.length - numPointBasedBids,
+          })}
         >
           <div className="flex items-center gap-1">
             <span>

@@ -408,7 +408,10 @@ export function BidDetails({ bidId }: { bidId: number }) {
                   not-italic
                 "
               >
-                <span>{Math.round(bid.percentage)}%</span>
+                <StyledText variant="mathSymbol.container">
+                  <span>{Math.round(bid.percentage)}</span>
+                  <StyledText variant="mathSymbol">%</StyledText>
+                </StyledText>
                 {bid.percentage < VOTE_SHARE_THRESHOLD && (
                   <Tooltip tipContents={voteThresholdTooltip}>
                     <span
