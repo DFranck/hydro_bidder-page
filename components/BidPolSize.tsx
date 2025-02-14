@@ -20,9 +20,9 @@ export function BidPolSize({ bidId }: { bidId: number }) {
       </StyledText>
     )
 
-  const { currentAllocationAmount, isPending } = bidInfoFromNumia
+  const { currentAllocationAmount, isPending, isVoting } = bidInfoFromNumia
 
-  return isPending ? (
+  return isPending || isVoting ? (
     <StyledText variant="footnote">Pending</StyledText>
   ) : !!currentAllocationAmount ? (
     <AmountAndUnitPair

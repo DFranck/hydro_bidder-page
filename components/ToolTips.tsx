@@ -1,5 +1,6 @@
 "use client"
 
+import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
@@ -44,6 +45,42 @@ export const averageRoundsPerUserTooltip = (
   <>
     The average number of Hydro rounds that each wallet has participated in.
     This metric shows how engaged users are over time.
+  </>
+)
+
+export const bidPolAprTooltip = ({
+  isPendingOrVotingOrOngoing,
+  currentAllocationAmount,
+  initialAllocationAmount,
+}: {
+  isPendingOrVotingOrOngoing: boolean
+  currentAllocationAmount: number
+  initialAllocationAmount: number
+}) => (
+  <>
+    {isPendingOrVotingOrOngoing ? (
+      <>
+        This deployment is still active or has not been withdrawn. PoL APR will
+        be updated once the deployment is fully concluded.
+      </>
+    ) : (
+      <div className="flex flex-col">
+        <StyledText variant="label">PoL Rewards</StyledText>
+        {currentAllocationAmount && initialAllocationAmount ? (
+          <AmountAndUnitPair
+            amount={(
+              currentAllocationAmount - initialAllocationAmount
+            ).toLocaleString(undefined, {
+              maximumFractionDigits: 4,
+            })}
+            unit="ATOM"
+            textAlign="left"
+          />
+        ) : (
+          0
+        )}
+      </div>
+    )}
   </>
 )
 
@@ -108,6 +145,23 @@ export const pointBasedTributeAmountTooltip = ({
       </StyledText>
     </p>
   )
+
+export const currentRoundNumLiveBidsTooltip = ({
+  numPointBasedBids,
+  numTokenBasedBids,
+}: {
+  numPointBasedBids: number
+  numTokenBasedBids: number
+}) => (
+  <div className="flex flex-col items-center justify-center">
+    <div>
+      <strong>{numTokenBasedBids}</strong> token-based
+    </div>
+    <div>
+      <strong>{numPointBasedBids}</strong> point-based
+    </div>
+  </div>
+)
 
 export const currentVoteShareTooltip = (
   <p>

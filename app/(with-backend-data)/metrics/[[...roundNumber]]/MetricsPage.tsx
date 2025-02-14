@@ -126,7 +126,7 @@ export function MetricsPage({
         customValueGetter: (row) => row._bid.title,
       },
       {
-        key: "polSize",
+        key: "amount",
         label: (
           <Tooltip tipContents={metricsPolSizeColumnTooltip}>
             <div className="flex items-center gap-1">
@@ -279,7 +279,7 @@ export function MetricsPage({
           </InvisibleLink>
         ),
 
-        polSize: (
+        amount: (
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               <AmountAndUnitPair
@@ -314,7 +314,10 @@ export function MetricsPage({
         polApr: !isTokenBased ? undefined : (
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
-              `${bidFromNumia.apr}%`
+              <StyledText variant="mathSymbol.container">
+                <span>{bidFromNumia.apr}</span>
+                <StyledText variant="mathSymbol">%</StyledText>
+              </StyledText>
             ) : (
               <BidPolApr bidId={Number(bidFromNumia.id)} />
             )}
@@ -502,7 +505,7 @@ export function MetricsPage({
             <StyledTable
               columns={tokenBasedColumns}
               rows={tokenBasedRows}
-              initialSortedColumnKey="polSize"
+              initialSortedColumnKey="amount"
               renderRow={renderRow}
               secondPassSortFunction={secondPassSortFunction}
             />
@@ -514,7 +517,7 @@ export function MetricsPage({
             <StyledTable
               columns={pointBasedColumns}
               rows={pointBasedRows}
-              initialSortedColumnKey="polSize"
+              initialSortedColumnKey="amount"
               renderRow={renderRow}
               secondPassSortFunction={secondPassSortFunction}
             />

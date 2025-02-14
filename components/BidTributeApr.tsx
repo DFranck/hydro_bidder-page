@@ -5,8 +5,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
-  const backendData = useBackendData()
-  const { bidsById, currentRoundId, metricsForPostHydroBids } = backendData
+  const { bidsById, currentRoundId, metricsForPostHydroBids } = useBackendData()
   const bid = bidsById[bidId]
 
   if (!bid) return null
@@ -15,19 +14,64 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
     (metric) => Number(metric.id) === bid.id
   )
 
-  if (!bidInfoFromNumia)
+  if (!bidInfoFromNumia) {
     return (
       <StyledText variant="footnote" className="whitespace-nowrap">
         No data yet
       </StyledText>
     )
+  }
 
-  const { isPending, isRejected } = bidInfoFromNumia
+  const { isRejected } = bidInfoFromNumia
+  if (isRejected) return null
 
   const formattedTributeAprMin = (bid.tributeAprMin * 100).toFixed(0)
   const formattedTributeAprMax = (bid.tributeAprMax * 100).toFixed(0)
 
-  return isRejected ? null : (
+  const renderAprValue = () => {
+    if (bid.roundId === currentRoundId) {
+      if (bid.tributeAprMin === bid.tributeAprMax) {
+        const value = [Infinity, null].includes(bid.tributeAprMin)
+          ? "0"
+          : formattedTributeAprMin
+        return (
+          <>
+            <span>{value}</span>
+            <StyledText variant="mathSymbol">%</StyledText>
+          </>
+        )
+      }
+
+      if (bid.tributeAprMin * 100 > 1000) {
+        return (
+          <>
+            <StyledText variant="mathSymbol">&gt;</StyledText>
+            <span>1,000</span>
+            <StyledText variant="mathSymbol">%</StyledText>
+          </>
+        )
+      }
+
+      return (
+        <>
+          <span>{formattedTributeAprMin}</span>
+          <StyledText variant="mathSymbol">%</StyledText>
+          <StyledText variant="mathSymbol">&ndash;</StyledText>
+          <span>{formattedTributeAprMax}</span>
+          <StyledText variant="mathSymbol">%</StyledText>
+        </>
+      )
+    }
+
+    return (
+      <>
+        <span>{(bid.tributeApr * 100).toFixed(2)}</span>
+        <StyledText variant="mathSymbol">%</StyledText>
+      </>
+    )
+  }
+
+  return (
     <Tooltip
       className={twJoin(
         "inline-flex items-center gap-1",
@@ -35,21 +79,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       )}
       tipContents={bidTableTributeAprTooltip({ bidId })}
     >
-      {bid.roundId === currentRoundId ? (
-        <span className="whitespace-nowrap">
-          {bid.tributeAprMin === bid.tributeAprMax
-            ? [Infinity, null].includes(bid.tributeAprMin)
-              ? `0%`
-              : `${formattedTributeAprMin}%`
-            : `${formattedTributeAprMin}%\u2009–\u2009${formattedTributeAprMax}%`}
-        </span>
-      ) : isPending ? (
-        <StyledText variant="footnote">Pending</StyledText>
-      ) : (
-        <span className="whitespace-nowrap">
-          {(bid.tributeApr * 100).toFixed(2)}%
-        </span>
-      )}
+      <StyledText variant="mathSymbol.container">{renderAprValue()}</StyledText>
     </Tooltip>
   )
 }
