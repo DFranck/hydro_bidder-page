@@ -1,5 +1,6 @@
 "use client"
 
+import { BidDuration } from "@/components/BidDuration"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidTributeApr } from "@/components/BidTributeApr"
@@ -27,9 +28,6 @@ import {
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
-import { pluralize } from "@/lib/pluralize"
-import sumBy from "lodash/sumBy"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 
@@ -53,8 +51,6 @@ export default function BidsPage() {
   const rows =
     bidsInRound?.map((bid) => {
       const bidURL = `/bids/${bid.id}`
-      const { value: bidDeploymentDurationToRender, unit } =
-        getTimeUnitFromNanos(bid.deploymentDurationInNanos)
 
       return {
         _bid: bid,
@@ -67,11 +63,7 @@ export default function BidsPage() {
 
         duration: (
           <InvisibleLink href={bidURL}>
-            {pluralize({
-              count: bidDeploymentDurationToRender,
-              prefixCount: true,
-              singular: unit,
-            })}
+            <BidDuration bidId={bid.id} />
           </InvisibleLink>
         ),
 
@@ -109,7 +101,10 @@ export default function BidsPage() {
                 </Tooltip>
               )}
             >
-              <span>{Math.round(bid.percentage)}%</span>
+              <StyledText variant="mathSymbol.container">
+                <span>{Math.round(bid.percentage)}</span>
+                <StyledText variant="mathSymbol">%</StyledText>
+              </StyledText>
             </ConditionalWrapper>
           </InvisibleLink>
         ),
@@ -200,7 +195,6 @@ export default function BidsPage() {
         },
       },
       {
-        // TODO: REMOVE THIS COMMENT
         key: "tributeApr",
         label: (
           <Tooltip
@@ -226,9 +220,9 @@ export default function BidsPage() {
           const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
           return !isTokenBased
             ? 0
-            : hasVotedThisRound
-              ? row._bid.usersEstimatedRewards
-              : sumBy(row._bid.tributes, "valueUsd")
+            : currentRoundId === row._bid.roundId
+              ? row._bid.tributeAprMax
+              : row._bid.tributeApr
         },
       },
       {
@@ -269,19 +263,13 @@ export default function BidsPage() {
     row,
     rowIndex,
     rowProps,
+    sortDirection,
     sortedColumnKey,
     sortedRows,
   }: RowRenderProps<(typeof rows)[number], keyof (typeof rows)[number]>) {
-    const previousRow = sortedRows?.[
-      rowIndex - 1
-    ] as (typeof sortedRows)[number]
-    const nextRow = sortedRows?.[rowIndex + 1] as (typeof sortedRows)[number]
-
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&
-      previousRow &&
-      nextRow &&
-      Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
+      sortDirection === "DESC" &&
       Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
 
     const votesThisRound = votesByRoundId[currentRoundId] ?? []
@@ -293,7 +281,7 @@ export default function BidsPage() {
     return (
       <Fragment key={row._bid.id}>
         {!!shouldShowVoteThresholdLine && (
-          <TR className="js-vote-threshold-line">
+          <TR className="js-vote-threshold-line [&~&]:hidden">
             <TD colSpan={99} className="!p-0">
               <div
                 className="

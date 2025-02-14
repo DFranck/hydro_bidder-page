@@ -8,10 +8,10 @@ import {
   fetchAssetListWithPrices,
 } from "@/contract-apis/fetchAssetListWithPrices"
 import {
-  BidDescription,
+  BidDescriptionFromGithub,
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
-import { fetchBids as fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
+import { fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { SanitizedLiquidityDeployment } from "@/contract-apis/fetchLiquidityDeployments"
 import {
@@ -42,12 +42,14 @@ export interface AugmentedBidFromContract
   percentage: number
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
   tributeApr: number
+  tributeAprMax: number
+  tributeAprMin: number
 }
 
 export interface BackendDataBeforeWallet {
   assetListWithPrices: Record<string, AssetListEntry>
   atomPrice: number
-  bidDescriptionsByBidId: Record<string, BidDescription>
+  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
   bids: AugmentedBidFromContract[]
   bidsById: Record<number, AugmentedBidFromContract>
   bidsByRoundId: Record<number, AugmentedBidFromContract[]>

@@ -178,12 +178,8 @@ export default function LockupsPage() {
             statusTopline: "Tied to bid deployment",
             statusBottomline:
               numRoundsLeftOnDeployment === 1
-                ? "Ends with this round"
-                : `${pluralize({
-                    count: numRoundsLeftOnDeployment,
-                    prefixCount: true,
-                    singular: "round",
-                  })} left`,
+                ? "Available to use next round"
+                : `Available to use in ${numRoundsLeftOnDeployment} rounds`,
             statusExplanation: (
               <>This lockup is currently tied to a deployment.</>
             ),

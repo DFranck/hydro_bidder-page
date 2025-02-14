@@ -38,10 +38,10 @@ export function BidRewards({ bidId }: { bidId: number }) {
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const hasVotedThisRound = votesThisRound.length > 0
   const isPositive = roundedDeltaPercentage > 0
-  const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
+  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId] ?? {}
   const computedTooltipContent = estimatedRewardsTooltip({
     bid,
-    bidDescription,
+    bidDescriptionFromGithub,
     hasVotedThisRound,
     isTokenBased,
   })
@@ -49,7 +49,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
   return !isTokenBased ? (
     <Tooltip
       tipContents={pointBasedTributeAmountTooltip({
-        pointProgramUrl: bidDescription.pointProgramUrl,
+        pointProgramUrl: bidDescriptionFromGithub.pointProgramUrl,
       })}
     >
       {bid.tributes.map((tribute) => (

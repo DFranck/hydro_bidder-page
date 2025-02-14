@@ -6,7 +6,7 @@ import {
   SanitizedPointBasedTribute,
   SanitizedTokenBasedTribute,
 } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import {
   augmentLiquidityDeployment,
   fetchLiquidityDeployments,
@@ -19,7 +19,19 @@ import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import range from "lodash/range"
 import sumBy from "lodash/sumBy"
 
-export async function fetchBids({
+function getAPR({
+  amountGained,
+  principalAssets,
+  rewardPeriodInMonths,
+}: {
+  amountGained: number
+  principalAssets: number
+  rewardPeriodInMonths: number
+}) {
+  return (amountGained / principalAssets) * (rewardPeriodInMonths / 12)
+}
+
+export async function fetchBidsBeforeWallet({
   assetListWithPrices,
   bidDescriptionsByBidId,
   currentRoundId,
@@ -29,7 +41,7 @@ export async function fetchBids({
   postHydroBids,
 }: {
   assetListWithPrices: Record<string, AssetListEntry>
-  bidDescriptionsByBidId: Record<string, BidDescription>
+  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
   currentRoundId: number
   tranches: Tranche[]
   lockedAtomEpochInNanos: number
@@ -61,12 +73,6 @@ export async function fetchBids({
                 startFrom: 0,
                 trancheId: tranche.id,
               })
-
-            const topNProposals = await hydroQueryClient.topNProposals({
-              numberOfProposals: 50,
-              roundId,
-              trancheId: tranche.id,
-            })
 
             const sanitizedTokenBasedTributes: SanitizedTokenBasedTribute[] = (
               await Promise.all(
@@ -100,21 +106,22 @@ export async function fetchBids({
             const sanitizedPointBasedTributes: SanitizedPointBasedTribute[] =
               unsanitizedBids
                 .map((bid) => {
-                  const bidDescription = bidDescriptionsByBidId[bid.proposal_id]
+                  const bidDescriptionFromGithub =
+                    bidDescriptionsByBidId[bid.proposal_id]
 
-                  if (!bidDescription) {
+                  if (!bidDescriptionFromGithub) {
                     return null
                   }
 
                   const hasPoints =
-                    bidDescription.points &&
-                    Array.isArray(bidDescription.points)
+                    bidDescriptionFromGithub.points &&
+                    Array.isArray(bidDescriptionFromGithub.points)
 
                   if (!hasPoints) {
                     return null
                   }
 
-                  const [amount, denom] = bidDescription.points!
+                  const [amount, denom] = bidDescriptionFromGithub.points!
                   const assetListing = assetListWithPrices[denom]
                   const assetPrice = assetListing?.priceUsd ?? 0
                   const decimals = assetListing?.decimals ?? 6
@@ -155,13 +162,11 @@ export async function fetchBids({
             const augmentedBids = unsanitizedBids
               .map(keysFromSnakeToCamelCase)
               .map(({ deploymentDuration, proposalId, ...bid }) => {
-                const matchingTopProposal = topNProposals.proposals.find(
-                  (topProposal) => topProposal.proposal_id === proposalId
-                )
-                const bidDescription = bidDescriptionsByBidId[proposalId]
+                const bidDescriptionFromGithub =
+                  bidDescriptionsByBidId[proposalId]
                 const description =
-                  bidDescription?.description ?? bid.description
-                const title = bidDescription?.title ?? bid.title
+                  bidDescriptionFromGithub?.description ?? bid.description
+                const title = bidDescriptionFromGithub?.title ?? bid.title
                 const bidTributes = [
                   ...sanitizedTokenBasedTributes,
                   ...sanitizedPointBasedTributes,
@@ -170,23 +175,39 @@ export async function fetchBids({
                   augmentedLiquidityDeployments.find(
                     (deployment) => deployment.bidId === proposalId
                   ) ?? null
-                const bidFromHydro =
-                  postHydroBids.find(
-                    (bidFromNumia) => Number(bidFromNumia.id) === proposalId
-                  ) ?? null
+                const bidFromNumia =
+                  postHydroBids.find((bid) => Number(bid.id) === proposalId) ??
+                  null
                 const onchainTributeUsdc = sumBy(bidTributes, "valueUsd") ?? 0
-                const polSize = bidFromHydro?.currentAllocationAmount ?? 0
+                const polSize = bidFromNumia?.currentAllocationAmount ?? 0
                 const tributeApr =
                   polSize > 0
                     ? (onchainTributeUsdc * 12) / (polSize * atomPrice)
                     : 0
+                const deploymentDurationInEpochs = deploymentDuration
+                const deploymentDurationInNanos =
+                  deploymentDurationInEpochs * lockedAtomEpochInNanos
+                const bidPowerInAtoms = Number(bid.power) / 1e6
+
+                const tributeAprMax = getAPR({
+                  amountGained: onchainTributeUsdc,
+                  principalAssets: (bidPowerInAtoms / 1.5) * atomPrice,
+                  rewardPeriodInMonths:
+                    deploymentDurationInNanos / (1e9 * 60 * 60 * 24 * 30),
+                })
+
+                const tributeAprMin = getAPR({
+                  amountGained: onchainTributeUsdc,
+                  principalAssets: bidPowerInAtoms * atomPrice,
+                  rewardPeriodInMonths:
+                    deploymentDurationInNanos / (1e9 * 60 * 60 * 24 * 30),
+                })
 
                 return {
                   ...bid,
                   id: proposalId,
-                  deploymentDurationInEpochs: deploymentDuration,
-                  deploymentDurationInNanos:
-                    deploymentDuration * lockedAtomEpochInNanos,
+                  deploymentDurationInEpochs,
+                  deploymentDurationInNanos,
                   description,
                   liquidityDeployment,
                   // if totalPower is 0, percentage is 0 (avoid division by 0)
@@ -195,6 +216,8 @@ export async function fetchBids({
                   title,
                   tributes: bidTributes,
                   tributeApr,
+                  tributeAprMax,
+                  tributeAprMin,
                 }
               })
 

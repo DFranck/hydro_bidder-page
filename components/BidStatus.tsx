@@ -1,3 +1,4 @@
+import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 
 export function BidStatus({ bidId }: { bidId: number }) {
@@ -11,7 +12,12 @@ export function BidStatus({ bidId }: { bidId: number }) {
     (metric) => Number(metric.id) === bid.id
   )
 
-  if (!bidInfoFromNumia) return "Unknown"
+  if (!bidInfoFromNumia)
+    return (
+      <StyledText variant="footnote" className="whitespace-nowrap">
+        No data yet
+      </StyledText>
+    )
 
   const { status } = bidInfoFromNumia
 

@@ -79,8 +79,8 @@ export default function RewardsPage() {
   const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
-      const bidDescription = bidDescriptionsByBidId[bid.id]
-      const { projectLogoUrl, projectName, title } = bidDescription
+      const bidDescriptionFromGithub = bidDescriptionsByBidId[bid.id]
+      const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
       const tokenBasedTributes = bid.tributes.filter(
         (tribute) => tribute.isTokenBased
       )
@@ -139,7 +139,7 @@ export default function RewardsPage() {
 
           totalTribute: (
             <InvisibleLink href={bidUrl}>
-              <BidTribute bid={bid} textAlign="right" />
+              <BidTribute bidId={bid.id} textAlign="right" />
             </InvisibleLink>
           ),
 

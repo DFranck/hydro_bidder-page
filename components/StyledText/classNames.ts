@@ -1,107 +1,45 @@
 import { twJoin, twMerge } from "tailwind-merge"
 
-const commonBaseButtonStyles = twJoin(`
-  rounded-md
-  border-2
-  text-center
-  font-semibold
-  leading-none
-  sm:w-min
-  sm:whitespace-nowrap
-`)
+const commonBaseButtonStyles = twJoin(
+  "rounded-md border-2 text-center font-semibold leading-none sm:w-min sm:whitespace-nowrap"
+)
 
-const allClickableText = twJoin(`
-  relative
-  z-10
-  inline-flex
-  grow-0
-  cursor-pointer
-  items-center
-  justify-center
-  gap-1.5
-  transition-all
-  hover:scale-105
-  disabled:pointer-events-none
-  disabled:opacity-40
-`)
+const allClickableText = twJoin(
+  "relative z-10 inline-flex grow-0 cursor-pointer items-center justify-center gap-1.5 transition-all hover:scale-105 disabled:pointer-events-none disabled:opacity-40"
+)
 
 const buttonStyles = {
   allClickableText,
   sizeVariants: {
-    small: `
-      px-4
-      py-2
-      text-xs
-    `,
-    medium: `
-      px-6
-      py-3
-      text-sm
-    `,
-    large: `
-      px-8
-      py-4
-      text-lg
-    `,
+    small: "px-4 py-2 text-xs",
+    medium: "px-6 py-3 text-sm",
+    large: "px-8 py-4 text-lg",
   },
   primaryBase: twJoin(
     commonBaseButtonStyles,
-    `
-      border-palette-green
-      bg-palette-green
-      text-palette-text
-    `
+    "border-palette-green bg-palette-green text-palette-text"
   ),
   secondaryBase: twJoin(
     commonBaseButtonStyles,
-    `
-      border-palette-green
-      text-palette-green
-      backdrop-blur-md
-    `
+    "border-palette-green text-palette-green backdrop-blur-md"
   ),
   neutralBase: twJoin(
     commonBaseButtonStyles,
-    `
-      border-white
-      bg-white
-      text-palette-text
-    `
+    "border-white bg-white text-palette-text"
   ),
   circularPrimary: twMerge(
     commonBaseButtonStyles,
-    `
-      !size-10
-      rounded-full
-      border-2
-      border-transparent
-      bg-palette-green
-      !p-0
-      text-palette-text
-      hover:bg-palette-green/80
-    `
+    "!size-10 rounded-full border-2 border-transparent bg-palette-green !p-0 text-palette-text hover:bg-palette-green/80"
   ),
   circularSecondary: twMerge(
     commonBaseButtonStyles,
-    `
-      !size-10
-      rounded-full
-      border-2
-      border-palette-green
-      !p-0
-      text-palette-green
-      hover:bg-palette-green
-      hover:text-palette-text
-    `
+    "!size-10 rounded-full border-2 border-palette-green !p-0 text-palette-green hover:bg-palette-green hover:text-palette-text"
   ),
 }
 
-const classNamesForAllHeadings = twJoin(`
-  font-display
-  text-balance
-  font-bold
-  !leading-[1.3]
-`)
+const classNamesForAllHeadings = twJoin(
+  "font-display text-balance font-bold !leading-[1.3]"
+)
 
 const generateButtonClassNames = (
   type:
@@ -128,23 +66,15 @@ const generateButtonClassNames = (
 export const classNames = {
   link: twMerge(
     allClickableText,
-    `
-      inline
-      text-palette-green
-      underline
-      underline-offset-4
-      hover:scale-100
-      hover:underline-offset-8
-    `
+    "inline text-palette-green underline underline-offset-4",
+    "hover:scale-100 hover:underline-offset-8"
   ),
+
   "link.subtle": twMerge(
     allClickableText,
-    `
-      inline
-      text-white/80
-      hover:underline
-    `
+    "inline text-white/80 hover:underline"
   ),
+
   "button.primary": generateButtonClassNames("primary"),
   "button.primary.large": generateButtonClassNames("primary", "large"),
   "button.primary.small": generateButtonClassNames("primary", "small"),
@@ -156,83 +86,48 @@ export const classNames = {
   "button.neutral.small": generateButtonClassNames("neutral", "small"),
   "button.circular.primary": generateButtonClassNames("circular-primary"),
   "button.circular.secondary": generateButtonClassNames("circular-secondary"),
-  footnote: twJoin(`
-    text-sm
-    leading-relaxed
-    text-white/60
-  `),
+
+  footnote: twJoin("text-sm leading-relaxed text-white/60"),
+
   superHeading: twMerge(
     classNamesForAllHeadings,
-    `
-      font-medium
-      uppercase
-      tracking-wide
-      text-palette-beige
-    `
+    "font-medium uppercase tracking-wide text-palette-beige"
   ),
-  h1: twMerge(
-    classNamesForAllHeadings,
-    `
-      text-6xl
-      !leading-[1.1]
-    `
+
+  h1: twMerge(classNamesForAllHeadings, "leading-[1.1]! text-6xl"),
+  h2: twMerge(classNamesForAllHeadings, "text-4xl"),
+  h3: twMerge(classNamesForAllHeadings, "text-3xl"),
+  h4: twMerge(classNamesForAllHeadings, "font-body text-lg"),
+
+  "icon.huge": twJoin("text-8xl"),
+
+  "input.text": twJoin(
+    "rounded border-2 bg-white/20 p-2 outline-none",
+    "invalid:!border-palette-red",
+    "focus:border-palette-green"
   ),
-  h2: twMerge(
-    classNamesForAllHeadings,
-    `
-      text-4xl
-    `
+
+  "input.checkbox": twJoin(
+    "size-5 appearance-none rounded border-2 outline-none",
+    "checked:border-transparent",
+    "checked:bg-palette-green",
+    `checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]`
   ),
-  h3: twMerge(
-    classNamesForAllHeadings,
-    `
-      text-3xl
-    `
+
+  "input.radio": twJoin(
+    "size-5 appearance-none rounded-full border-2 outline-none",
+    "checked:border-transparent",
+    "checked:bg-palette-green",
+    `checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]`
   ),
-  h4: twMerge(
-    classNamesForAllHeadings,
-    `
-      font-body
-      text-lg
-    `
+
+  label: twJoin(
+    "whitespace-nowrap text-sm text-white/80",
+    "has-[:checked]:font-bold has-[:checked]:text-white"
   ),
-  "icon.huge": twJoin(`
-    text-8xl
-  `),
-  "input.text": twJoin(`
-    rounded
-    border-2
-    bg-white/20
-    p-2
-    outline-none
-    invalid:!border-palette-red
-    focus:border-palette-green
-  `),
-  "input.checkbox": twJoin(`
-    size-5
-    appearance-none
-    rounded
-    border-2
-    outline-none
-    checked:border-transparent
-    checked:bg-palette-green
-    checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
-  `),
-  "input.radio": twJoin(`
-    size-5
-    appearance-none
-    rounded-full
-    border-2
-    outline-none
-    checked:border-transparent
-    checked:bg-palette-green
-    checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]
-  `),
-  label: twJoin(`
-    whitespace-nowrap
-    text-sm
-    text-white/80
-    has-[:checked]:font-bold
-    has-[:checked]:text-white
-  `),
+
+  "mathSymbol.container": twJoin(
+    "inline-flex items-center gap-0.5 whitespace-nowrap"
+  ),
+  mathSymbol: twJoin("text-sm font-bold opacity-80"),
 }

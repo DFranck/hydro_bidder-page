@@ -4,12 +4,12 @@ import { pluralize } from "@/lib/pluralize"
 export const toastMessages = {
   claimingRewards: {
     variant: "working",
-    message: "Claiming rewards...",
+    message: "Claiming rewards in progress.",
   },
 
   claimingRewardsSuccess: {
     variant: "success",
-    message: "Reward claimed! Reload to see changes",
+    message: "Reward claimed succesfully. Reload to see changes.",
     isDismissible: false,
     actionButtonPrimary: {
       label: "Reload",
@@ -26,7 +26,7 @@ export const toastMessages = {
 
   lockupCapacityFull: {
     variant: "info",
-    message: "Oops — there's no longer any capacity to lock. Check back often!",
+    message: "There's no longer capacity to create a lockup.",
   },
 
   lockupExtendRequestRejected: (error: Error) => ({
@@ -36,22 +36,22 @@ export const toastMessages = {
 
   reloadingTheWindow: {
     variant: "working",
-    message: "Reloading...",
+    message: "Reloading in progress.",
   },
 
-  savingLockup: {
+  extendingLockup: {
     variant: "working",
-    message: "Saving lockup...",
+    message: "Extending your lockup in progress.",
   },
 
-  savingLockupSuccess: {
+  extendingLockupSuccess: {
     variant: "success",
-    message: "Lockup saved successfully! Reloading...",
+    message: "Lockup extended successfully! Reloading in progress.",
   },
 
-  savingLockupError: (error: Error) => ({
+  extendingLockupError: (error: Error) => ({
     variant: "error",
-    message: `Error saving lockup: ${error}`,
+    message: `Error extending lockup: ${error}`,
   }),
 
   unlockingExpiredLockups: (count: number) => {
@@ -63,7 +63,7 @@ export const toastMessages = {
 
     return {
       variant: "working",
-      message: `Unlocking ${count} expired ${lockupOrLockups}...`,
+      message: `Unlocking ${count} expired ${lockupOrLockups} in progress.`,
     }
   },
 
@@ -76,7 +76,7 @@ export const toastMessages = {
 
     return {
       variant: "success",
-      message: `${count} ${lockupOrLockups} unlocked successfully. See next step!`,
+      message: `${count} ${lockupOrLockups} unlocked successfully. Continue to next step.`,
     }
   },
 
@@ -95,12 +95,12 @@ export const toastMessages = {
 
   votingInProgress: {
     variant: "working",
-    message: "Processing your vote...",
+    message: "Your vote is processing.",
   },
 
   votingSuccess: {
     variant: "success",
-    message: "Vote cast! Reload to see changes",
+    message: "Vote cast successfully. Reload to see changes.",
     isDismissible: false,
     actionButtonPrimary: {
       label: "Reload",
