@@ -94,6 +94,7 @@ export function WalletProvider({
         endpoints: endpointsOnClient,
         isLazy: true,
       }}
+      logLevel="NONE"
     >
       {children}
     </ChainProvider>
