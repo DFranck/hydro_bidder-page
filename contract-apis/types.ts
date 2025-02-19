@@ -1,26 +1,16 @@
 import {
   Coin,
-  Constants,
   LiquidityDeployment,
-  LockupWithPerTrancheInfo,
   Proposal,
   Tranche,
   VoteWithPower,
-} from "../app/ts_types/HydroBase.types"
-import { Tribute, TributeClaim } from "../app/ts_types/TributeBase.types"
-import { CamelCaseKeys } from "../lib/keysFromSnakeToCamelCase"
+} from "@/app/ts_types/HydroBase.types"
+import { Tribute, TributeClaim } from "@/app/ts_types/TributeBase.types"
+import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
 
-export type ArbitraryAmountWithDescription = [
-  amount: number,
-  description: string,
-]
-
-export interface AssetListEntry {
-  token: string
-  symbol: string
-  decimals: number
-  coingeckoId?: string
-  priceUsd?: number
+export interface ArbitraryAmountWithDescription {
+  amount: number
+  description: string
 }
 
 export interface AssetListWithPrices {
@@ -31,10 +21,47 @@ export interface AssetListWithPrices {
   }
 }
 
-export interface AugmentedBackendDataAfterWallet
-  extends AugmentedBackendDataBeforeWallet {
+export interface AugmentedBid extends AugmentedBidFromContract {
+  lockupsOutliveBidDeployment: boolean
+  usersEstimatedRewards: number
+  usersEstimatedRewardRelativeToCurrentPick: number
+}
+
+export interface AugmentedBidFromContract
+  extends Omit<
+    CamelCaseKeys<BidFromContract>,
+    "deploymentDuration" | "percentage" | "proposalId"
+  > {
+  id: number
+  deploymentDurationInEpochs: number
+  deploymentDurationInNanos: number
+  liquidityDeployment: SanitizedLiquidityDeployment | null
+  percentage: number
+  tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
+  tributeApr: number
+  tributeAprMax: number
+  tributeAprMin: number
+}
+
+export interface AugmentedClaim extends Omit<SanitizedClaim, "amount"> {
+  amount: AugmentedCoin
+}
+
+export interface AugmentedCoin extends Coin {
+  humanReadableDenom: string
+  printableAmount: number
+  priceUsd: number
+  valueUsd: number
+}
+
+export interface AugmentedLiquidityDeployment
+  extends Omit<SanitizedLiquidityDeployment, "fundsBeforeDeployment"> {
+  fundsBeforeDeployment: AugmentedCoin[]
+}
+
+export interface BackendDataAfterWallet extends BackendDataBeforeWallet {
   address: string
-  bidsById: Record<number, AugmentedBidAfterWallet>
+  bidsById: Record<number, AugmentedBid>
   claimsHistorical: AugmentedClaim[]
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
@@ -50,12 +77,11 @@ export interface AugmentedBackendDataAfterWallet
   votingPowerTotal: number
 }
 
-export interface AugmentedBackendDataBeforeWallet {
+export interface BackendDataBeforeWallet {
   assetListWithPrices: AssetListWithPrices
   atomPrice: number
-  bidsInfo: Record<number, BidRevampMetrics>
-  bidMetaDataById: BidMetaDataByIdSlimmed
-  bidsById: Record<number, AugmentedBidBeforeWalletSlimmed>
+  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
+  bidsById: Record<number, AugmentedBidFromContract>
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
@@ -67,118 +93,13 @@ export interface AugmentedBackendDataBeforeWallet {
   lockedAtomPercentageGlobal: number
   lockedAtomRemainingCapacityGlobal: number
   lockedAtomTotalGlobal: number
-  metricsForPostHydroBids: AugmentedBidFromNumiaSlimmed[]
-  metricsForPreHydroBids: AugmentedBidFromNumiaSlimmed[]
+  metricsForPostHydroBids: SanitizedBidFromNumia[]
+  metricsForPreHydroBids: SanitizedBidFromNumia[]
   metricsGlobal: SanitizedMetricsFromNumia
   minTributeFactor: number
 }
 
-export interface AugmentedBidAfterWallet
-  extends AugmentedBidBeforeWalletSlimmed {
-  lockupsOutliveBidDeployment: boolean
-  usersEstimatedRewards: number
-  usersEstimatedRewardRelativeToCurrentPick: number
-}
-
-export interface AugmentedBidBeforeWallet
-  extends Omit<
-    CamelCaseKeys<Proposal>,
-    "deploymentDuration" | "percentage" | "proposalId" | "liquidityDeployment"
-  > {
-  id: number
-  deploymentDurationInEpochs: number
-  deploymentDurationInNanos: number
-  liquidityDeployment: AugmentedLiquidityDeployment | null
-  percentage: number
-  tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
-  tributeApr: number
-  tributeAprMax: number
-  tributeAprMin: number
-}
-
-export type AugmentedBidBeforeWalletSlimmed = Omit<
-  AugmentedBidBeforeWallet,
-  "description"
->
-
-export type AugmentedBidFromNumia = Omit<
-  CamelCaseKeys<RawNumiaBid>,
-  | "durationDays"
-  | "offchainTribute"
-  | "onchainTributeAssets"
-  | "project"
-  | "round"
-  | "tranche"
-> & {
-  durationDays: number
-  isOngoing: boolean
-  isPending: boolean
-  isRejected: boolean
-  isVoting: boolean
-  offchainTribute: SanitizedOffchainTributeFromNumia[]
-  onchainTributeAssets: SanitizedOnchainTributeFromNumia[]
-  projectName: string
-  roundId: number | "pre-hydro"
-  tranche: number
-}
-
-export type AugmentedBidFromNumiaSlimmed = Omit<
-  AugmentedBidFromNumia,
-  "description"
->
-
-export interface AugmentedClaim
-  extends Omit<CamelCaseKeys<TributeClaim>, "amount" | "proposalId"> {
-  amount: AugmentedCoin
-  bidId: number
-}
-
-export interface AugmentedCoin extends Coin {
-  humanReadableDenom: string
-  printableAmount: number
-  priceUsd: number
-  valueUsd: number
-}
-
-export interface AugmentedLiquidityDeployment
-  extends Omit<
-    CamelCaseKeys<LiquidityDeployment>,
-    "proposalId" | "deployedFunds" | "fundsBeforeDeployment"
-  > {
-  bidId: number
-  fundsBeforeDeployment: AugmentedCoin[] | null
-  deployedFunds: AugmentedCoin[] | null
-}
-
-export type BackendDataBeforeWallet = {
-  hydroRoundsData: RawHydroRoundData[]
-  hydroData: RawHydroData
-  externalData: RawExternalData
-}
-
-export type BackendDataBeforeWalletSlimmed = {
-  hydroRoundsData: RawHydroRoundData[]
-  hydroData: RawHydroDataSlimmed
-  externalData: RawExternalDataSlimmed
-}
-
-export interface BackendDataTweak {
-  id: string
-  json: WithOverwrites<
-    BackendDataBeforeWallet & {
-      walletData: Partial<RawWalletData>
-      patchData: Partial<AugmentedBackendDataAfterWallet>
-    }
-  >
-  label: string
-  disabled?: boolean
-}
-
-export type BidMetaDataById = Record<string, BidMetaData>
-
-export type BidMetaDataByIdSlimmed = Record<string, BidMetaDataSlimmed>
-
-export interface BidMetaData {
+export interface BidDescriptionFromGithub {
   aboutProject?: string
   appendix?: string
   committeeComments?: string
@@ -193,35 +114,37 @@ export interface BidMetaData {
   minMaxTargetPolApr?: [min: number, max: number]
 }
 
-export type BidMetaDataSlimmed = Omit<
-  BidMetaData,
-  "aboutProject" | "committeeComments" | "description"
->
+export interface BidFromContract extends Proposal {}
 
-export interface GlobalLockupCapacityInfo {
-  lockedAtomIsAtCapacityGlobal: boolean
-  lockedAtomMaxGlobal: number
-  lockedAtomPercentageGlobal: number
-  lockedAtomRemainingCapacityGlobal: number
-  lockedAtomTotalGlobal: number
-}
+export interface BidFromNumia {
+  // Needed to link data
+  id: string
+  round: string
+  tranche: number
 
-export interface BidRevampMetrics {
-    id: number;
-    trancheId: number;
-    roundId: number;
-    title: string;
-    request_amount: any;
-    points: any;
-    pointProgramUrl: any;
-    tribute: [string, number][];
-    tribute_value: number;
-    duration: number;
-    vote_perc: number;
-    status: string;
-    apr_tribute: number | null;
-    apr_pol: null;
-    apr_pol_target: any;
+  // not used; from github
+  comments: string
+  project_about: string
+  project_logo_url: string
+  project_url: string
+  project: string
+  title: string
+  description: string
+
+  // The more of this we get from the contract, the better
+  apr: number
+  current_allocation_amount: number
+  duration_days: number // only used for pre-hydro bids
+  initial_allocation_amount: number
+  offchain_tribute_info: string
+  offchain_tribute: string
+  onchain_tribute_assets: string
+  onchain_tribute_usdc: number
+  requested_allocation_amount: number
+  requested_allocation_denom: string
+  status: string
+  voters: number
+  voting_power: number
 }
 
 export interface MetricsFromNumia {
@@ -257,88 +180,35 @@ export type OnchainTributeFromNumia = {
   asset?: string
 }
 
-export type ProposalSlimmed = Omit<Proposal, "description">
-
-export type RawExternalData = {
-  assetListWithPrices: AssetListWithPrices
-  bidMetaDataById: BidMetaDataById
-  numiaBids: RawNumiaBid[]
-  numiaMetrics: MetricsFromNumia
-}
-
-export type RawExternalDataSlimmed = Omit<
-  RawExternalData,
-  "bidMetaDataById" | "numiaBids"
-> & {
-  bidMetaDataById: BidMetaDataByIdSlimmed
-  numiaBids: RawNumiaBidSlimmed[]
-}
-
-export type RawHydroRoundData = {
-  round_id: number
-  round_bids:     Proposal[]
-  round_lockups:  LockupWithPerTrancheInfo[][]
-  round_tributes: Tribute[]
-}
-
-export type RawHydroData = {
-  constants: Constants
-  liquidity_deployments: LiquidityDeployment[]
-  proposals: Proposal[]
-  round_end: string
-  round_id: number
-  total_locked_tokens: number
-  tranches: Tranche[]
-  tributes: Tribute[]
-}
-
-export type RawHydroDataSlimmed = Omit<RawHydroData, "proposals"> & {
-  proposals: ProposalSlimmed[]
-}
-
-export interface RawNumiaBid {
-  // Needed to link data
-  id: string
-  round: string
-  tranche: number
-
-  // not used; from github
-  comments: string
-  description: string
-  project_about: string
-  project_logo_url: string
-  project_url: string
-  project: string
-  title: string
-
-  // The more of this we get from the contract, the better
-  apr: number
-  current_allocation_amount: number
-  duration_days: number | null // only used for pre-hydro bids
-  initial_allocation_amount: number
-  offchain_tribute_info: string
-  offchain_tribute: string
-  onchain_tribute_assets: string
-  onchain_tribute_usdc: number
-  requested_allocation_amount: number
-  requested_allocation_denom: string
-  status: string
-  voters: number
-  voting_power: number
-  yield: number
-}
-
-export type RawNumiaBidSlimmed = Omit<
-  RawNumiaBid,
-  "comments" | "description" | "project_about"
+export type SanitizedBidFromNumia = CamelCaseKeys<
+  Omit<
+    BidFromNumia,
+    | "offchain_tribute"
+    | "onchain_tribute_assets"
+    | "tranche"
+    | "project"
+    | "round"
+  > & {
+    isOngoing: boolean
+    isPending: boolean
+    isRejected: boolean
+    isVoting: boolean
+    projectName: string
+    tranche: number
+    roundId: number | "pre-hydro"
+    offchain_tribute: SanitizedOffchainTributeFromNumia[]
+    onchain_tribute_assets: SanitizedOnchainTributeFromNumia[]
+  }
 >
 
-export interface RawWalletData {
-  voting_power: number
-  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
-  historical_tribute_claims: TributeClaim[]
-  outstanding_tribute_claims: TributeClaim[]
-  votes: VoteWithPower[]
+export interface SanitizedClaim
+  extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {
+  bidId: number
+}
+
+export interface SanitizedLiquidityDeployment
+  extends Omit<CamelCaseKeys<LiquidityDeployment>, "proposalId"> {
+  bidId: number
 }
 
 export interface SanitizedLockup {
@@ -386,7 +256,6 @@ export type SanitizedPointBasedTribute = {
   amount: number
   bidId: number
   denom: string
-  denomOriginal: string
   isTokenBased: false
   roundId: number
   trancheId: number
@@ -401,7 +270,6 @@ export type SanitizedTokenBasedTribute = Omit<
   amount: number
   bidId: number
   denom: string
-  denomOriginal: string
   valueUsd: number
   isTokenBased: true
 }
@@ -410,46 +278,3 @@ export interface SanitizedVote
   extends Omit<CamelCaseKeys<VoteWithPower>, "propId"> {
   bidId: number
 }
-
-export interface TrackingItem {
-  bid_id: number
-  initial_atom_allocation: number
-  holdings: HoldingItem[]
-}
-
-export interface HoldingItem {
-  info_missing: boolean
-  protocol: string
-  venue_total: {
-    balances: BalanceItem[]
-    total_usdc: number
-    total_atom: number
-  }
-  address_holdings: {
-    balances: BalanceItem[]
-    total_usdc: number
-    total_atom: number
-  }
-  address_rewards: {
-    balances: BalanceItem[]
-    total_usdc: number
-    total_atom: number
-  }
-}
-
-export interface BalanceItem {
-  denom: string
-  amount: number
-  usd_value: number
-  display_name: string
-}
-
-type WithOverwrites<T> = T extends object
-  ? {
-      // Original keys, marked as optional, recursively applied.
-      [K in keyof T]?: WithOverwrites<T[K]>
-    } & {
-      // $-prefixed keys, also optional.
-      [K in keyof T as `$${string & K}`]?: WithOverwrites<T[K]>
-    }
-  : T

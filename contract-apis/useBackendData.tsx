@@ -2,12 +2,12 @@
 
 import { Tweak } from "@/components/BackendDataTweaker"
 import { useToasts } from "@/components/Toasts"
-import {
-  BackendDataAfterWallet,
-  fetchBackendDataAfterWallet,
-} from "@/contract-apis/fetchBackendDataAfterWallet"
-import { BackendDataBeforeWallet } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { fetchBackendDataAfterWallet } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
+import {
+  BackendDataBeforeWallet,
+  BackendDataAfterWallet,
+} from "@/contract-apis/types"
 import { useChain } from "@cosmos-kit/react"
 import merge from "lodash/merge"
 import { usePathname, useRouter } from "next/navigation"

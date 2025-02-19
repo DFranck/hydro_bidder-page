@@ -1,15 +1,15 @@
-import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
+import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import {
+  AssetListWithPrices,
   AugmentedLiquidityDeployment,
   SanitizedLiquidityDeployment,
-} from "@/contract-apis/fetchLiquidityDeployments"
-import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
+} from "@/contract-apis/types"
 
 export function augmentLiquidityDeployment({
   assetListWithPrices,
   liquidityDeployment,
 }: {
-  assetListWithPrices: Record<string, AssetListEntry>
+  assetListWithPrices: AssetListWithPrices
   liquidityDeployment: SanitizedLiquidityDeployment
 }): AugmentedLiquidityDeployment {
   const augmentedDeployedFunds = liquidityDeployment.deployedFunds.map((coin) =>

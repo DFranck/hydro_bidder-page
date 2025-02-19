@@ -3,18 +3,18 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
 import { getEndpoints } from "@/config"
-import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
-import {
-  AugmentedBidFromContract,
-  SanitizedPointBasedTribute,
-  SanitizedTokenBasedTribute,
-} from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import { fetchLiquidityDeployments } from "@/contract-apis/fetchLiquidityDeployments"
-import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { fetchProposalTributes } from "@/contract-apis/fetchProposalTributes"
 import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import {
+  AssetListWithPrices,
+  AugmentedBidFromContract,
+  BidDescriptionFromGithub,
+  SanitizedBidFromNumia,
+  SanitizedPointBasedTribute,
+  SanitizedTokenBasedTribute,
+} from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import range from "lodash/range"
 import sumBy from "lodash/sumBy"
@@ -43,7 +43,7 @@ export async function fetchBidsBeforeWallet({
   atomPrice,
   postHydroBids,
 }: {
-  assetListWithPrices: Record<string, AssetListEntry>
+  assetListWithPrices: AssetListWithPrices
   bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
   currentRoundId: number
   tranches: Tranche[]
@@ -132,15 +132,16 @@ export async function fetchBidsBeforeWallet({
                     return null
                   }
 
-                  const [amount, denom] = bidDescriptionFromGithub.points!
-                  const assetListing = assetListWithPrices[denom]
+                  const { amount, description } =
+                    bidDescriptionFromGithub.points!
+                  const assetListing = assetListWithPrices[description]
                   const assetPrice = assetListing?.priceUsd ?? 0
                   const decimals = assetListing?.decimals ?? 6
 
                   return {
                     amount,
                     bidId: bid.proposal_id,
-                    denom,
+                    denom: description,
                     isTokenBased: false as const,
                     roundId,
                     trancheId: tranche.id,

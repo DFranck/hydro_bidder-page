@@ -1,19 +1,12 @@
 import { Coin } from "@/app/ts_types/HydroBase.types"
-import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
-
-export interface AugmentedCoin extends Coin {
-  humanReadableDenom: string
-  printableAmount: number
-  priceUsd: number
-  valueUsd: number
-}
+import { AssetListWithPrices, AugmentedCoin } from "@/contract-apis/types"
 
 export function getCoinWithValueInUsd({
   coin,
   assetListWithPrices,
 }: {
   coin: Coin
-  assetListWithPrices: Record<string, AssetListEntry>
+  assetListWithPrices: AssetListWithPrices
 }): AugmentedCoin {
   const asset = assetListWithPrices[coin.denom]
   const assetPriceUsd = asset?.priceUsd ?? 0

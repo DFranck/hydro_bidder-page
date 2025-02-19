@@ -4,20 +4,13 @@ import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LiquidityDeployment } from "@/app/ts_types/HydroBase.types"
 import { getEndpoints } from "@/config"
 import {
-  CamelCaseKeys,
-  keysFromSnakeToCamelCase,
-} from "@/lib/keysFromSnakeToCamelCase"
-import { AugmentedCoin } from "./getCoinWithValueInUsd"
+  AssetListWithPrices,
+  AugmentedLiquidityDeployment,
+  SanitizedLiquidityDeployment,
+} from "@/contract-apis/types"
+import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
+import { getCoinWithValueInUsd } from "./getCoinWithValueInUsd"
 import { getCosmWasmClient } from "./getCosmWasmClient"
-export interface AugmentedLiquidityDeployment
-  extends Omit<SanitizedLiquidityDeployment, "fundsBeforeDeployment"> {
-  fundsBeforeDeployment: AugmentedCoin[]
-}
-
-export interface SanitizedLiquidityDeployment
-  extends Omit<CamelCaseKeys<LiquidityDeployment>, "proposalId"> {
-  bidId: number
-}
 
 export async function fetchLiquidityDeployments({
   roundId,
@@ -65,5 +58,33 @@ function sanitizeLiquidityDeployment({
   return {
     ...keysFromSnakeToCamelCase(liquidityDeployment),
     bidId: proposal_id,
+  }
+}
+
+export function augmentLiquidityDeployment({
+  assetListWithPrices,
+  liquidityDeployment,
+}: {
+  assetListWithPrices: AssetListWithPrices
+  liquidityDeployment: SanitizedLiquidityDeployment
+}): AugmentedLiquidityDeployment {
+  const augmentedDeployedFunds = liquidityDeployment.deployedFunds.map((coin) =>
+    getCoinWithValueInUsd({
+      coin,
+      assetListWithPrices,
+    })
+  )
+  const augmentedFundsBeforeDeployment =
+    liquidityDeployment.fundsBeforeDeployment.map((coin) =>
+      getCoinWithValueInUsd({
+        coin,
+        assetListWithPrices,
+      })
+    )
+
+  return {
+    ...liquidityDeployment,
+    deployedFunds: augmentedDeployedFunds,
+    fundsBeforeDeployment: augmentedFundsBeforeDeployment,
   }
 }
