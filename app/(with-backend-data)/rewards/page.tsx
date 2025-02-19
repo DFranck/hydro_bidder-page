@@ -19,7 +19,7 @@ import {
   rewardsYourTributeColumnTooltip,
   rewardsYourTributeTooltip,
 } from "@/components/ToolTips"
-import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { SanitizedTokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import keyBy from "lodash/keyBy"
@@ -277,9 +277,7 @@ export default function RewardsPage() {
     },
   ]
 
-  function closeClaimRewardsModal(
-    event?: MouseEvent<HTMLButtonElement>
-  ) {
+  function closeClaimRewardsModal(event?: MouseEvent<HTMLButtonElement>) {
     event?.preventDefault()
     setSelection(null)
   }
@@ -312,10 +310,7 @@ export default function RewardsPage() {
         </BlurryBackdropBox>
       </ContentContainer>
 
-      <ModalWindow
-        isOpen={!!selection}
-        onClose={closeClaimRewardsModal}
-      >
+      <ModalWindow isOpen={!!selection} onClose={closeClaimRewardsModal}>
         <ClaimRewardsStepper
           bid={selectedBid}
           tribute={selectedTribute}

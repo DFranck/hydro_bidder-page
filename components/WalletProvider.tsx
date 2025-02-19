@@ -51,8 +51,15 @@ export function WalletProvider({
 }>) {
   return (
     <ChainProvider
-      logLevel="NONE"
-      chains={[...chains, hubChain, neutronChain]}
+      chains={[
+        // chain,
+        // testnetChain,
+        // localnetChain,
+        // pionChain,
+        ...chains,
+        hubChain,
+        neutronChain,
+      ]}
       assetLists={[...assets, hubAssets, neutronAssets]}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
       walletConnectOptions={{

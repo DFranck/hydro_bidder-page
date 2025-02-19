@@ -8,10 +8,10 @@ import {
 import { Tribute, TributeClaim } from "@/app/ts_types/TributeBase.types"
 import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
 
-export interface ArbitraryAmountWithDescription {
-  amount: number
-  description: string
-}
+export type ArbitraryAmountWithDescription = [
+  amount: number,
+  description: string,
+]
 
 export interface AssetListWithPrices {
   [key: string]: {

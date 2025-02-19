@@ -27,7 +27,7 @@ import {
 } from "@/components/ToolTips"
 import { WordWrapper } from "@/components/WordWrapper"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
-import { SanitizedLockup } from "@/contract-apis/fetchWalletLockups"
+import { SanitizedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { getTimeUntilDate } from "@/lib/getTimeUntilDate"

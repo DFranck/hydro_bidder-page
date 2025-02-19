@@ -132,8 +132,7 @@ export async function fetchBidsBeforeWallet({
                     return null
                   }
 
-                  const { amount, description } =
-                    bidDescriptionFromGithub.points!
+                  const [amount, description] = bidDescriptionFromGithub.points!
                   const assetListing = assetListWithPrices[description]
                   const assetPrice = assetListing?.priceUsd ?? 0
                   const decimals = assetListing?.decimals ?? 6

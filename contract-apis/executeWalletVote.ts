@@ -1,6 +1,6 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
+import { SanitizedLockup } from "@/contract-apis/types"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { SanitizedLockup } from "./fetchWalletLockups"
 
 export async function executeWalletVote({
   getSigningCosmWasmClient,
