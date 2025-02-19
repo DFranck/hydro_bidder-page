@@ -1,5 +1,6 @@
 "use client"
 
+import { Tweak } from "@/components/BackendDataTweaker"
 import { useToasts } from "@/components/Toasts"
 import {
   BackendDataAfterWallet,
@@ -38,9 +39,7 @@ const initialBackendDataContext: BackendDataAfterWallet = {
   assetListWithPrices: {},
   atomPrice: 0,
   bidDescriptionsByBidId: {},
-  bids: [],
   bidsById: {},
-  bidsByRoundId: {},
   claimsHistorical: [],
   claimsOutstanding: [],
   currentRoundEndDate: new Date(),
@@ -121,10 +120,17 @@ export function BackendDataContextProvider({
   )
   const [backendDataAfterWallet, setBackendDataAfterWallet] =
     useState<BackendDataAfterWallet>(preMergedBackendData)
+  const [loadedTweaks, setLoadedTweaks] = useState<Tweak[]>([])
+  const mergedTweaks = useMemo(() => {
+    return loadedTweaks.reduce((acc, tweak) => {
+      return tweak.disabled ? acc : merge(acc, tweak.json)
+    }, {})
+  }, [loadedTweaks])
   const contextValue = {
     ...backendDataAfterWallet,
     isLoading,
     isWalletConnected,
+    ...mergedTweaks,
   }
 
   useEffect(() => {
@@ -132,6 +138,18 @@ export function BackendDataContextProvider({
       setBackendDataAfterWallet(preMergedBackendData)
     }
   }, [address, preMergedBackendData])
+
+  useEffect(() => {
+    function checkForTweaks() {
+      const tweaks = window.localStorage.getItem("backendDataTweaks") ?? "[]"
+      setLoadedTweaks(JSON.parse(tweaks))
+    }
+
+    checkForTweaks()
+
+    const timer = setInterval(checkForTweaks, 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     if (!process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS) return

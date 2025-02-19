@@ -24,7 +24,6 @@ import {
 } from "@/contract-apis/fetchNumiaMetricsData"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
-import groupBy from "lodash/groupBy"
 import keyBy from "lodash/keyBy"
 import { unstable_cache } from "next/dist/server/web/spec-extension/unstable-cache"
 
@@ -50,9 +49,7 @@ export interface BackendDataBeforeWallet {
   assetListWithPrices: Record<string, AssetListEntry>
   atomPrice: number
   bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
-  bids: AugmentedBidFromContract[]
   bidsById: Record<number, AugmentedBidFromContract>
-  bidsByRoundId: Record<number, AugmentedBidFromContract[]>
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
@@ -92,21 +89,6 @@ export type SanitizedPointBasedTribute = {
   valueUsd: number
 }
 
-async function measurePromiseTime<T>(
-  promise: Promise<T>,
-  label: string
-): Promise<T> {
-  const start = performance.now()
-  const result = await promise
-  const end = performance.now()
-
-  if (process.env.NODE_ENV === "development") {
-    console.log(`${label} took ${(end - start).toFixed(2)}ms`)
-  }
-
-  return result
-}
-
 async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
   if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
     throw new Error("Hydro contract address not set")
@@ -131,14 +113,14 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     metrics,
     globalLockupCapacityInfo,
   ] = await Promise.all([
-    measurePromiseTime(hydroQueryClient.constants(), "constants"),
-    measurePromiseTime(hydroQueryClient.currentRound(), "currentRound"),
-    measurePromiseTime(hydroQueryClient.tranches(), "tranches"),
-    measurePromiseTime(fetchAssetListWithPrices(), "assetListWithPrices"),
-    measurePromiseTime(fetchNumiaBidData(), "numiaBidData"),
-    measurePromiseTime(fetchBidDescriptionsById(), "bidDescriptions"),
-    measurePromiseTime(fetchNumiaMetricsData(), "numiaMetrics"),
-    measurePromiseTime(fetchGlobalLockupCapacity(), "globalLockupCapacity"),
+    hydroQueryClient.constants(),
+    hydroQueryClient.currentRound(),
+    hydroQueryClient.tranches(),
+    fetchAssetListWithPrices(),
+    fetchNumiaBidData(),
+    fetchBidDescriptionsById(),
+    fetchNumiaMetricsData(),
+    fetchGlobalLockupCapacity(),
   ])
 
   const atomPrice =
@@ -162,17 +144,13 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     tranches,
   })
 
-  const bidsByRoundId = groupBy(bids, "roundId")
-
   const bidsById = keyBy(bids, "id")
 
   const backendDataBeforeWallet: BackendDataBeforeWallet = {
     assetListWithPrices,
     atomPrice,
     bidDescriptionsByBidId,
-    bids,
     bidsById,
-    bidsByRoundId,
     currentRoundEndDate,
     currentRoundId,
     currentRoundIsPilot: true,

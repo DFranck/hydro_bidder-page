@@ -41,18 +41,17 @@ export default function RewardsPage() {
   const {
     address,
     bidDescriptionsByBidId,
-    bids,
     bidsById,
     claimsHistorical,
     claimsOutstanding,
     currentRoundId,
-    isWalletConnected,
     votes,
   } = useBackendData()
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
   )
-  const bidsToRender = bids.filter(
+  const allBids = Object.values(bidsById)
+  const bidsToRender = allBids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds

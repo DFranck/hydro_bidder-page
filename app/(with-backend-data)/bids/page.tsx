@@ -32,19 +32,11 @@ import { classNames } from "./classNames"
 export default function BidsPage() {
   const backendData = useBackendData()
 
-  const {
-    bidsByRoundId,
-    currentRoundId,
-    isLoading,
-    metricsForPostHydroBids,
-    votesByRoundId,
-  } = backendData
+  const { bidsById, currentRoundId, isLoading, votesByRoundId } = backendData
 
-  const bidsInRound = bidsByRoundId[currentRoundId] ?? []
-
-  const votesInThisRound = votesByRoundId[currentRoundId] ?? []
-
-  const hasVotedThisRound = votesInThisRound.length > 0
+  const bidsInRound = Object.values(bidsById).filter(
+    (bid) => bid.roundId === currentRoundId
+  )
 
   const rows =
     bidsInRound?.map((bid) => {
@@ -230,11 +222,9 @@ export default function BidsPage() {
   function renderRow({
     children,
     row,
-    rowIndex,
     rowProps,
     sortDirection,
     sortedColumnKey,
-    sortedRows,
   }: RowRenderProps<(typeof rows)[number], keyof (typeof rows)[number]>) {
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&

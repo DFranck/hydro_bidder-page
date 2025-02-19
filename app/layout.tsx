@@ -1,4 +1,5 @@
 import { defaultMetadata, metadataByRoute } from "@/app/metadata"
+import { BackendDataTweaker } from "@/components/BackendDataTweaker"
 import { inter } from "@/lib/font"
 import sortBy from "lodash/sortBy"
 import { headers } from "next/headers"
@@ -59,6 +60,7 @@ export default async function RootLayout({
       </head>
       <body className={`${inter.className} relative overflow-x-hidden`}>
         {children}
+        <BackendDataTweaker />
       </body>
     </html>
   )

@@ -10,19 +10,21 @@ import { StatCard } from "../StatCard"
 export function CurrentRoundAprGlobal() {
   const {
     atomPrice,
-    bidsByRoundId,
+    bidsById,
     currentRoundId,
     isLoading,
     lockedAtomTotalGlobal,
     metricsGlobal,
   } = useBackendData()
-  const bids = bidsByRoundId[currentRoundId] ?? []
+  const bidsInRound = Object.values(bidsById).filter(
+    (bid) => bid.roundId === currentRoundId
+  )
   const totalTributeValue = sumBy(
-    bids.map((bid) => bid.tributes).flat(),
+    bidsInRound.map((bid) => bid.tributes).flat(),
     "valueUsd"
   )
   const averageBidDurationInEpochs =
-    sumBy(bids, "deploymentDurationInEpochs") / bids.length
+    sumBy(bidsInRound, "deploymentDurationInEpochs") / bidsInRound.length
   // TODO: Calculate this properly, then use it
   const averageAPR =
     ((totalTributeValue / lockedAtomTotalGlobal / atomPrice) * 12) /
