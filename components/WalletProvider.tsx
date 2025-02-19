@@ -121,6 +121,7 @@ export function WalletProvider({
         endpoints,
         isLazy: true,
       }}
+      logLevel="NONE"
     >
       {children}
     </ChainProvider>
