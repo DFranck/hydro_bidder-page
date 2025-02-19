@@ -1,43 +1,26 @@
 "use client"
 
-import { twMerge } from "tailwind-merge"
-import { StatCard } from "../StatCard"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { globalTotalAtomLockedTooltip } from "@/components/ToolTips"
-import {
-  fetchGlobalLockupCapacity,
-  GlobalLockupCapacityInfo,
-} from "@/contract-apis/fetchGlobalLockupCapacity"
-import { useEffect, useState } from "react"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { twMerge } from "tailwind-merge"
+import { StatCard } from "../StatCard"
 
 export function CurrentRoundAtomLockedGlobal() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [globalCap, setGlobalCap] = useState<GlobalLockupCapacityInfo | null>(
-    null
-  )
-
-  // refresh data every 60 seconds
-  useEffect(() => {
-    const getData = async () => {
-      setIsLoading(true)
-      const globalLockupCapacityInfo = await fetchGlobalLockupCapacity()
-      setGlobalCap(globalLockupCapacityInfo)
-      setIsLoading(false)
-    }
-    getData()
-
-    // Set up interval to refresh data every 60 seconds
-    const interval = setInterval(getData, 60000)
-
-    // Clean up interval on unmount
-    return () => clearInterval(interval)
-  }, [])
+  const {
+    isLoading,
+    lockedAtomIsAtCapacityGlobal,
+    lockedAtomMaxGlobal,
+    lockedAtomPercentageGlobal,
+    lockedAtomRemainingCapacityGlobal,
+    lockedAtomTotalGlobal,
+  } = useBackendData()
 
   return (
     <StatCard
       className={twMerge(
-        globalCap?.lockedAtomIsAtCapacityGlobal &&
+        lockedAtomIsAtCapacityGlobal &&
           `
             bg-gradient-to-t
             from-palette-red/80
@@ -45,13 +28,13 @@ export function CurrentRoundAtomLockedGlobal() {
           `
       )}
       isLoading={isLoading}
-      value={Math.floor(globalCap?.lockedAtomTotalGlobal ?? 0).toLocaleString()}
+      value={Math.floor(lockedAtomTotalGlobal ?? 0).toLocaleString()}
       title={
         <Tooltip
           tipContents={
             <>
               {globalTotalAtomLockedTooltip} Available capacity:{" "}
-              {globalCap?.lockedAtomRemainingCapacityGlobal}
+              {lockedAtomRemainingCapacityGlobal}
             </>
           }
         >
@@ -63,8 +46,8 @@ export function CurrentRoundAtomLockedGlobal() {
       }
       subTitle={
         <>
-          <strong>{globalCap?.lockedAtomPercentageGlobal}%</strong> of{" "}
-          <strong>{globalCap?.lockedAtomMaxGlobal.toLocaleString()}</strong> max
+          <strong>{lockedAtomPercentageGlobal}%</strong> of{" "}
+          <strong>{lockedAtomMaxGlobal.toLocaleString()}</strong> max
         </>
       }
     />

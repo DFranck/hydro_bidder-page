@@ -33,7 +33,6 @@ export default function RewardsPage() {
 
   const {
     bidDescriptionsByBidId,
-    bids,
     bidsById,
     claimsHistorical,
     claimsOutstanding,
@@ -43,7 +42,8 @@ export default function RewardsPage() {
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
   )
-  const bidsToRender = bids.filter(
+  const allBids = Object.values(bidsById)
+  const bidsToRender = allBids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds

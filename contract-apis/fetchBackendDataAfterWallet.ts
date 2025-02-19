@@ -26,12 +26,9 @@ import sumBy from "lodash/sumBy"
 import { unstable_cache } from "next/cache"
 import { augmentClaims } from "./augmentClaims"
 
-export interface BackendDataAfterWallet
-  extends Omit<BackendDataBeforeWallet, "bids"> {
+export interface BackendDataAfterWallet extends BackendDataBeforeWallet {
   address: string
-  bids: AugmentedBid[]
   bidsById: Record<number, AugmentedBid>
-  bidsByRoundId: Record<number, AugmentedBid[]>
   claimsHistorical: AugmentedClaim[]
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
@@ -95,13 +92,15 @@ async function uncachedFetchBackendDataAfterWallet({
   const {
     assetListWithPrices,
     bidDescriptionsByBidId,
-    bids,
+    bidsById,
     currentRoundEndDate,
     currentRoundId,
     lockedAtomMaxWallet,
     lockedAtomEpochInNanos,
     tranches,
   } = backendDataBeforeWallet
+
+  const allBids = Object.values(bidsById)
 
   const [{ voting_power: votingPowerFromContract }, sanitizedLockups] =
     await Promise.all([
@@ -142,12 +141,12 @@ async function uncachedFetchBackendDataAfterWallet({
     ?.dateEnd
 
   const votedBidId =
-    bids
+    allBids
       .filter((bid) => bid.roundId === currentRoundId)
       .find((bid) => sanitizedVotes.some((vote) => vote.bidId === bid.id))
       ?.id ?? null
 
-  const bidsWithRewards = bids.map((bid) => {
+  const bidsWithRewards = allBids.map((bid) => {
     const description =
       bidDescriptionsByBidId[bid.id]?.description ?? bid.description
 
@@ -197,9 +196,7 @@ async function uncachedFetchBackendDataAfterWallet({
 
   const sanitizedBids: AugmentedBid[] = bidsWithRewardsRelativeToCurrentPick
 
-  const bidsById = keyBy(sanitizedBids, (bid) => bid.id)
-
-  const bidsByRoundId = groupBy(sanitizedBids, (bid) => bid.roundId)
+  const augmentedBidsById = keyBy(sanitizedBids, (bid) => bid.id)
 
   const votesByRoundId = groupBy(
     sanitizedVotes,
@@ -244,9 +241,7 @@ async function uncachedFetchBackendDataAfterWallet({
   const backendDataAfterWallet: BackendDataAfterWallet = {
     ...backendDataBeforeWallet,
     address,
-    bids: sanitizedBids,
-    bidsById,
-    bidsByRoundId,
+    bidsById: augmentedBidsById,
     claimsHistorical: augmentedHistoricalClaims,
     claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,

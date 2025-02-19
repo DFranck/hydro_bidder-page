@@ -31,10 +31,12 @@ import { classNames } from "./classNames"
 
 export default function BidsPage() {
   const backendData = useBackendData()
-  const { bidsByRoundId, currentRoundId, isLoading, votesByRoundId } =
-    backendData
 
-  const bidsInRound = bidsByRoundId[currentRoundId] ?? []
+  const { bidsById, currentRoundId, isLoading, votesByRoundId } = backendData
+
+  const bidsInRound = Object.values(bidsById).filter(
+    (bid) => bid.roundId === currentRoundId
+  )
 
   const rows =
     bidsInRound?.map((bid) => {

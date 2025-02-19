@@ -19,7 +19,6 @@ import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import keyBy from "lodash/keyBy"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -39,7 +38,7 @@ export function VoteButton({
   const { toasts, setToasts } = useToasts()
   const {
     address,
-    bidsByRoundId,
+    bidsById,
     currentRoundId,
     isWalletConnected,
     lockups,
@@ -50,7 +49,6 @@ export function VoteButton({
   } = useBackendData()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const bidsById = keyBy(Object.values(bidsByRoundId).flat(), "id")
   const bid = bidsById[bidId]
   const lockupsOutliveBidDeployment = bid?.lockupsOutliveBidDeployment
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
