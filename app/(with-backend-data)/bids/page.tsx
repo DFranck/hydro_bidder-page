@@ -2,7 +2,6 @@
 
 import { BidDuration } from "@/components/BidDuration"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
-import { BidPolApr } from "@/components/BidPolApr"
 import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
@@ -19,7 +18,6 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   bidTablesFirstColumnTooltips,
   currentVoteShareTooltip,
-  metricsPolAprColumnTooltip,
   metricsTributeAprColumnTooltip,
   metricsTributeColumnTooltip,
   polDurationTooltip,
@@ -70,12 +68,6 @@ export default function BidsPage() {
         tributeApr: (
           <InvisibleLink href={bidURL}>
             <BidTributeApr bidId={bid.id} />
-          </InvisibleLink>
-        ),
-
-        polApr: (
-          <InvisibleLink href={bidURL}>
-            <BidPolApr bidId={bid.id} />
           </InvisibleLink>
         ),
 
@@ -170,29 +162,6 @@ export default function BidsPage() {
           className: classNames.classNamesForCells,
         },
         customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
-      },
-      {
-        key: "polApr",
-        label: (
-          <Tooltip tipContents={metricsPolAprColumnTooltip}>
-            <div className="flex items-center gap-1">
-              PoL APR
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        textAlign: "right",
-        propsForCells: {
-          className: classNames.classNamesForCells,
-        },
-        isSortable: true,
-        initialSortDirection: "DESC",
-        customValueGetter: (row) => {
-          const bidFromNumia = metricsForPostHydroBids.find(
-            (bid) => Number(bid.id) === row._bid.id
-          )
-          return bidFromNumia?.apr ?? 0
-        },
       },
       {
         key: "tributeApr",
@@ -364,7 +333,7 @@ export default function BidsPage() {
         {!isLoading && tokenBasedBids.length > 0 && (
           <BlurryBackdropBox>
             <StyledTable
-              initialSortedColumnKey="tributeApr"
+              initialSortedColumnKey="currentVoteShare"
               columns={buildColumns({ isTokenBased: true })}
               rows={tokenBasedBids}
               renderRow={renderRow}
@@ -375,10 +344,8 @@ export default function BidsPage() {
         {!isLoading && pointBasedBids.length > 0 && (
           <BlurryBackdropBox>
             <StyledTable
-              initialSortedColumnKey="tributeApr"
-              columns={buildColumns({ isTokenBased: false }).filter(
-                (column) => column.key !== "polApr"
-              )}
+              initialSortedColumnKey="currentVoteShare"
+              columns={buildColumns({ isTokenBased: false })}
               rows={pointBasedBids}
               renderRow={renderRow}
             />
