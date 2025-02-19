@@ -1,6 +1,5 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
-import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
 import {
   AugmentedBidFromContract,
   SanitizedPointBasedTribute,
@@ -40,7 +39,7 @@ export async function fetchBidsBeforeWallet({
   atomPrice,
   postHydroBids,
 }: {
-  assetListWithPrices: Record<string, AssetListEntry>
+  assetListWithPrices: AssetListWithPrices
   bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
   currentRoundId: number
   tranches: Tranche[]

@@ -2,34 +2,7 @@ import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { getDaysAway } from "@/lib/getDaysAway"
 import { getCosmWasmClient } from "./getCosmWasmClient"
-
-export interface SanitizedLockup {
-  id: number
-  currentVotingPower: number
-  dateEnd: Date
-  dateStart: Date
-  daysLeft: number
-  funds: {
-    amount: number
-    denom: string
-  }
-  isExpired: boolean
-  isEligibleThisRoundAtAll: boolean
-  isEligibleToChangeVote: boolean
-  isEligibleButHasNotVoted: boolean
-  isTiedToDeployment: boolean
-  multiplier: number
-  metaDataByTrancheId: Record<
-    number,
-    {
-      nextRoundEligibleToVote: number | null
-      votedOnBidId: number | null
-    }
-  >
-  nextRoundEligibleToVote: number | null
-  numRoundsLeftOnDeployment: number
-  votedOnBidId: number | null
-}
+import { SanitizedLockup } from "@/contract-apis/types"
 
 function sanitizeLockup(
   lockup: LockupWithPerTrancheInfo,

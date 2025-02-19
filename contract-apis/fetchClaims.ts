@@ -1,25 +1,14 @@
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import { TributeClaim } from "@/app/ts_types/TributeBase.types"
-import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
-import {
-  AugmentedCoin,
-  getCoinWithValueInUsd,
-} from "@/contract-apis/getCoinWithValueInUsd"
+import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import {
-  CamelCaseKeys,
-  keysFromSnakeToCamelCase,
-} from "@/lib/keysFromSnakeToCamelCase"
+  AssetListWithPrices,
+  AugmentedClaim,
+  SanitizedClaim,
+} from "@/contract-apis/types"
+import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import range from "lodash/range"
-
-interface SanitizedClaim
-  extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {
-  bidId: number
-}
-
-export type AugmentedClaim = Omit<SanitizedClaim, "amount"> & {
-  amount: AugmentedCoin
-}
 
 export async function fetchClaims({
   address,
@@ -106,7 +95,7 @@ export function augmentClaims({
   assetListWithPrices,
   claims,
 }: {
-  assetListWithPrices: Record<string, AssetListEntry>
+  assetListWithPrices: AssetListWithPrices
   claims: SanitizedClaim[]
 }): AugmentedClaim[] {
   return claims.map((claim) => ({

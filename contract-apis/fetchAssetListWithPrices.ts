@@ -15,9 +15,7 @@ const symbolToCoingeckoId: Record<string, string> = {
   SWTH: "switcheo",
 }
 
-export async function fetchAssetListWithPrices(): Promise<
-  Record<string, AssetListEntry>
-> {
+export async function fetchAssetListWithPrices(): Promise<AssetListWithPrices> {
   const response = await fetch(
     "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json"
   )
