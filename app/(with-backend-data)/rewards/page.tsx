@@ -23,7 +23,7 @@ import {
   rewardsYourTributeTooltip,
 } from "@/components/ToolTips"
 import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
-import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { SanitizedTokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"

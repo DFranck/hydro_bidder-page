@@ -1,6 +1,7 @@
 "use server"
 
 import { getPriceFeedUrl } from "@/config"
+import { AssetListWithPrices } from "@/contract-apis/types"
 
 export interface AssetListEntry {
   token: string
@@ -47,5 +48,5 @@ export async function fetchAssetListWithPrices(): Promise<AssetListWithPrices> {
     })
   )
 
-  return assetMap
+  return assetMap as AssetListWithPrices
 }

@@ -1,19 +1,20 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
 import {
-  AugmentedBidFromContract,
-  SanitizedPointBasedTribute,
-  SanitizedTokenBasedTribute,
-} from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
-import {
   augmentLiquidityDeployment,
   fetchLiquidityDeployments,
 } from "@/contract-apis/fetchLiquidityDeployments"
-import { SanitizedBidFromNumia } from "@/contract-apis/fetchNumiaBidData"
 import { fetchProposalTributes } from "@/contract-apis/fetchProposalTributes"
 import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import {
+  AssetListWithPrices,
+  AugmentedBidFromContract,
+  BidDescriptionFromGithub,
+  SanitizedBidFromNumia,
+  SanitizedPointBasedTribute,
+  SanitizedTokenBasedTribute,
+} from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import range from "lodash/range"
 import sumBy from "lodash/sumBy"

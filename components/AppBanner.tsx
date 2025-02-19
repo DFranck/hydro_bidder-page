@@ -33,7 +33,8 @@ export function AppBanner() {
       href: HYDRO_TELEGRAM_URL,
       text: (
         <>
-          Hydro's current cap has been reached. {JoinOurTelegramGroupForUpdates}
+          Hydro&rsquo;s current cap has been reached.{" "}
+          {JoinOurTelegramGroupForUpdates}
         </>
       ),
     },

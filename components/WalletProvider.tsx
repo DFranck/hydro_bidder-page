@@ -59,7 +59,6 @@ export function WalletProvider({
 }>) {
   return (
     <ChainProvider
-      logLevel="NONE"
       chains={[
         // chain,
         // testnetChain,
