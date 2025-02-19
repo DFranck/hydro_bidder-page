@@ -9,6 +9,7 @@ import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
+import { pluralize } from "@/lib/pluralize"
 import sumBy from "lodash/sumBy"
 import Link from "next/link"
 
@@ -155,10 +156,19 @@ export const currentRoundNumLiveBidsTooltip = ({
 }) => (
   <div className="flex flex-col items-center justify-center">
     <div>
-      <strong>{numTokenBasedBids}</strong> token-based
-    </div>
-    <div>
-      <strong>{numPointBasedBids}</strong> point-based
+      There {numTokenBasedBids === 1 ? "is" : "are"}{" "}
+      <strong>{numTokenBasedBids}</strong> token-based{" "}
+      {pluralize({ count: numTokenBasedBids, singular: "bid" })} and{" "}
+      <strong>{numPointBasedBids}</strong> point-based{" "}
+      {pluralize({ count: numPointBasedBids, singular: "bid" })}.{" "}
+      <StyledText
+        variant="link"
+        as={Link}
+        href="/docs/users/voting-for-projects#tribute"
+        target="_blank"
+      >
+        Learn More
+      </StyledText>
     </div>
   </div>
 )
