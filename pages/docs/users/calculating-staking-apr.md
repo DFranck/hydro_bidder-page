@@ -33,7 +33,7 @@ Some bids use points rather than tradable tokens, which can influence the APR. T
 
 After the first pilot round, Hydro will start displaying historical APRs. These will likely give users a more realistic view of the expected end-of-round performance. The historical APR is calculated based on the average Hydro voter APR of the last round. The exact formula is:
 
-$\\text{Average APR} \= \\left(\\frac{\\sum\_{\\substack{i \\in \\text{last round bids}}} \\text{tribute value}\_i}{\\text{total last round locked atom}\_i}\\right) \\times 12$
+$\text{Average APR} = \left(\frac{\sum_{\substack{i \in \text{last round bids}}} \text{tribute value}_i}{\text{total last round locked atom}_i}\right) \times 12$
 
 The interface will display APRs based on the last month, the last three months, and the last year.
 
