@@ -19,7 +19,7 @@ Before starting, briefly familiarize yourself with the complete process of creat
 
 ## Requirements
 
-To participate in Hydro liquidity auctions, bidders must support CosmWasm and have Interchain Accounts (ICA) enabled as a host, or have an active IBC channel to Neutron. This ensures seamless integration with Hydro’s deployment infrastructure and enables secure, automated liquidity management. Projects without direct compatibility should establish the necessary connections before submitting a bid.
+To participate in Hydro liquidity auctions, bidders should ideally support CosmWasm, but at a minimum have Interchain Accounts (ICA) enabled as a host and have an active IBC channel to Neutron. This ensures seamless integration with Hydro’s deployment infrastructure and enables secure, automated liquidity management. Projects without direct compatibility should establish the necessary connections before submitting a bid.
 
 ## Bid template
 
