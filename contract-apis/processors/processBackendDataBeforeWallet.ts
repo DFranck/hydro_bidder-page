@@ -11,14 +11,16 @@ export async function processBackendDataBeforeWallet({
   hydroData: Awaited<ReturnType<typeof fetchHydroData>>
   externalData: Awaited<ReturnType<typeof fetchExternalData>>
 }): Promise<BackendDataBeforeWallet> {
-  const { constants, currentRound, tranches, roundEnd } = hydroData
   const {
-    assetListWithPrices,
-    numiaData,
-    bidDescriptionsByBidId,
-    metrics,
+    constants,
+    currentRound,
     globalLockupCapacityInfo,
-  } = externalData
+    tranches,
+    roundEnd,
+  } = hydroData
+
+  const { assetListWithPrices, numiaData, bidDescriptionsByBidId, metrics } =
+    externalData
 
   const atomPrice =
     assetListWithPrices[

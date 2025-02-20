@@ -188,18 +188,18 @@ export type SanitizedBidFromNumia = CamelCaseKeys<
     | "tranche"
     | "project"
     | "round"
-  > & {
-    isOngoing: boolean
-    isPending: boolean
-    isRejected: boolean
-    isVoting: boolean
-    projectName: string
-    tranche: number
-    roundId: number | "pre-hydro"
-    offchain_tribute: SanitizedOffchainTributeFromNumia[]
-    onchain_tribute_assets: SanitizedOnchainTributeFromNumia[]
-  }
->
+  >
+> & {
+  isOngoing: boolean
+  isPending: boolean
+  isRejected: boolean
+  isVoting: boolean
+  projectName: string
+  tranche: number
+  roundId: number | "pre-hydro"
+  offchainTribute: SanitizedOffchainTributeFromNumia[]
+  onchainTributeAssets: SanitizedOnchainTributeFromNumia[]
+}
 
 export interface SanitizedClaim
   extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {

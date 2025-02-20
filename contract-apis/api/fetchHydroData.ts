@@ -1,6 +1,7 @@
 "use server"
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
+import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 
 export async function fetchHydroData() {
@@ -14,11 +15,13 @@ export async function fetchHydroData() {
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
   )
 
-  const [{ constants }, currentRound, { tranches }] = await Promise.all([
-    hydroQueryClient.constants(),
-    hydroQueryClient.currentRound(),
-    hydroQueryClient.tranches(),
-  ])
+  const [{ constants }, currentRound, { tranches }, globalLockupCapacityInfo] =
+    await Promise.all([
+      hydroQueryClient.constants(),
+      hydroQueryClient.currentRound(),
+      hydroQueryClient.tranches(),
+      fetchGlobalLockupCapacity(),
+    ])
 
   const { round_end } = await hydroQueryClient.roundEnd({
     roundId: currentRound.round_id,
@@ -29,5 +32,6 @@ export async function fetchHydroData() {
     currentRound,
     tranches,
     roundEnd: round_end,
+    globalLockupCapacityInfo,
   }
 }
