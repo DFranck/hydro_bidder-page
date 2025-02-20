@@ -1,43 +1,54 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
+import { HYDRO_TELEGRAM_URL } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatOrdinals } from "@/lib/formatOrdinals"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Link from "next/link"
 import { twMerge } from "tailwind-merge"
 
-export function Banner() {
+const JoinOurTelegramGroupForUpdates = (
+  <span>
+    <a
+      href={HYDRO_TELEGRAM_URL}
+      className="relative z-20 font-bold underline"
+      target="_blank"
+    >
+      Join our Telegram group for updates <Icon name="solid:arrow-up-right" />
+    </a>
+  </span>
+)
+
+export function AppBanner() {
   const backendData = useBackendData()
   const { currentRoundId, lockedAtomIsAtCapacityGlobal } = backendData
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
+  const activeBannerName = lockedAtomIsAtCapacityGlobal
+    ? "maxCapacity"
+    : "pilotRounds"
+
   const Banners = {
     maxCapacity: {
-      href: "/docs#max-capacity",
+      href: HYDRO_TELEGRAM_URL,
       text: (
         <>
-          Current round caps have been reached. Continue optimizing
-          your vote to maximize your rewards!{" "}
-          <span className="inline-flex items-center gap-1 font-bold underline">
-            Learn More <Icon name="solid:arrow-up-right" />
-          </span>
+          Hydro's current cap has been reached. {JoinOurTelegramGroupForUpdates}
         </>
       ),
     },
     pilotRounds: {
-      href: "/docs#pilot-rounds",
+      href: HYDRO_TELEGRAM_URL,
       text: (
         <>
-          Hydro is currently running pilot rounds.{" "}
-          <span className="inline-flex items-center gap-1 font-bold underline">
-            Learn More <Icon name="solid:arrow-up-right" />
-          </span>
+          Hydro is currently running its{" "}
+          <strong>{formatOrdinals(currentRoundId + 1)}</strong> Pilot Round.{" "}
+          {JoinOurTelegramGroupForUpdates}
         </>
       ),
     },
   }
-  const activeBannerName = lockedAtomIsAtCapacityGlobal
-    ? "maxCapacity"
-    : "pilotRounds"
+
   const { href, text } = Banners[activeBannerName]
 
   return (

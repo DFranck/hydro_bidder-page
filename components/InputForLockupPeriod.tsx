@@ -5,7 +5,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
 import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 import { pluralize } from "@/lib/pluralize"
-import { isNumber } from "lodash"
+import isNumber from "lodash/isNumber"
 import { MouseEvent, useState } from "react"
 import { twMerge } from "tailwind-merge"
 

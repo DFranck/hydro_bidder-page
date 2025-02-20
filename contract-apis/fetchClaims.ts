@@ -10,7 +10,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { range } from "lodash"
+import range from "lodash/range"
 
 interface SanitizedClaim
   extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {

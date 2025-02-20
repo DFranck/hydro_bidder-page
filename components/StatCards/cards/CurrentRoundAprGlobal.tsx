@@ -4,7 +4,7 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { averageAPRTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { sumBy } from "lodash"
+import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAprGlobal() {
