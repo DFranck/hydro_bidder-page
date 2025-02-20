@@ -12,6 +12,7 @@ import {
   fetchBidDescriptionsById,
 } from "@/contract-apis/fetchBidDescriptions"
 import { fetchBidsBeforeWallet } from "@/contract-apis/fetchBidsBeforeWallet"
+import { fetchCurrentRoundId } from "@/contract-apis/fetchCurrentRoundId"
 import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { SanitizedLiquidityDeployment } from "@/contract-apis/fetchLiquidityDeployments"
 import {
@@ -123,7 +124,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     {
       constants: { lock_epoch_length: lockedAtomEpochInNanos },
     },
-    { round_id: currentRoundId },
+    currentRoundId,
     { tranches },
     assetListWithPrices,
     { preHydroBids, postHydroBids },
@@ -132,7 +133,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     globalLockupCapacityInfo,
   ] = await Promise.all([
     measurePromiseTime(hydroQueryClient.constants(), "constants"),
-    measurePromiseTime(hydroQueryClient.currentRound(), "currentRound"),
+    measurePromiseTime(fetchCurrentRoundId(), "currentRound"),
     measurePromiseTime(hydroQueryClient.tranches(), "tranches"),
     measurePromiseTime(fetchAssetListWithPrices(), "assetListWithPrices"),
     measurePromiseTime(fetchNumiaBidData(), "numiaBidData"),
