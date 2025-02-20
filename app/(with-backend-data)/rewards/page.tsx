@@ -29,7 +29,8 @@ import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import { keyBy, sumBy } from "lodash"
+import keyBy from "lodash/keyBy"
+import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 
@@ -138,7 +139,7 @@ export default function RewardsPage() {
 
           totalTribute: (
             <InvisibleLink href={bidUrl}>
-              <BidTribute bid={bid} textAlign="right" />
+              <BidTribute bidId={bid.id} textAlign="right" />
             </InvisibleLink>
           ),
 

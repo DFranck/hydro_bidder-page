@@ -6,7 +6,7 @@ import {
   SanitizedPointBasedTribute,
   SanitizedTokenBasedTribute,
 } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import {
   augmentLiquidityDeployment,
   fetchLiquidityDeployments,
@@ -16,7 +16,20 @@ import { fetchProposalTributes } from "@/contract-apis/fetchProposalTributes"
 import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
-import { range, sumBy } from "lodash"
+import range from "lodash/range"
+import sumBy from "lodash/sumBy"
+
+function getAPR({
+  amountGained,
+  principalAssets,
+  rewardPeriodInMonths,
+}: {
+  amountGained: number
+  principalAssets: number
+  rewardPeriodInMonths: number
+}) {
+  return (amountGained / principalAssets) * (rewardPeriodInMonths / 12)
+}
 
 export async function fetchBidsBeforeWallet({
   assetListWithPrices,
@@ -28,7 +41,7 @@ export async function fetchBidsBeforeWallet({
   postHydroBids,
 }: {
   assetListWithPrices: Record<string, AssetListEntry>
-  bidDescriptionsByBidId: Record<string, BidDescription>
+  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
   currentRoundId: number
   tranches: Tranche[]
   lockedAtomEpochInNanos: number
@@ -60,12 +73,6 @@ export async function fetchBidsBeforeWallet({
                 startFrom: 0,
                 trancheId: tranche.id,
               })
-
-            const topNProposals = await hydroQueryClient.topNProposals({
-              numberOfProposals: 50,
-              roundId,
-              trancheId: tranche.id,
-            })
 
             const sanitizedTokenBasedTributes: SanitizedTokenBasedTribute[] = (
               await Promise.all(
@@ -155,9 +162,6 @@ export async function fetchBidsBeforeWallet({
             const augmentedBids = unsanitizedBids
               .map(keysFromSnakeToCamelCase)
               .map(({ deploymentDuration, proposalId, ...bid }) => {
-                const matchingTopProposal = topNProposals.proposals.find(
-                  (topProposal) => topProposal.proposal_id === proposalId
-                )
                 const bidDescriptionFromGithub =
                   bidDescriptionsByBidId[proposalId]
                 const description =
@@ -183,6 +187,21 @@ export async function fetchBidsBeforeWallet({
                 const deploymentDurationInEpochs = deploymentDuration
                 const deploymentDurationInNanos =
                   deploymentDurationInEpochs * lockedAtomEpochInNanos
+                const bidPowerInAtoms = Number(bid.power) / 1e6
+
+                const tributeAprMax = getAPR({
+                  amountGained: onchainTributeUsdc,
+                  principalAssets: (bidPowerInAtoms / 1.5) * atomPrice,
+                  rewardPeriodInMonths:
+                    deploymentDurationInNanos / (1e9 * 60 * 60 * 24 * 30),
+                })
+
+                const tributeAprMin = getAPR({
+                  amountGained: onchainTributeUsdc,
+                  principalAssets: bidPowerInAtoms * atomPrice,
+                  rewardPeriodInMonths:
+                    deploymentDurationInNanos / (1e9 * 60 * 60 * 24 * 30),
+                })
 
                 return {
                   ...bid,
@@ -197,6 +216,8 @@ export async function fetchBidsBeforeWallet({
                   title,
                   tributes: bidTributes,
                   tributeApr,
+                  tributeAprMax,
+                  tributeAprMin,
                 }
               })
 

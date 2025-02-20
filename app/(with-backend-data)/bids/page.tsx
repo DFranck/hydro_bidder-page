@@ -2,7 +2,7 @@
 
 import { BidDuration } from "@/components/BidDuration"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
-import { BidRewards } from "@/components/BidRewards"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -10,7 +10,6 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
-import { PopupController } from "@/components/PopupController"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
 import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
@@ -19,22 +18,27 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   bidTablesFirstColumnTooltips,
   currentVoteShareTooltip,
-  estimatedRewardsColumnTooltip,
+  metricsTributeAprColumnTooltip,
+  metricsTributeColumnTooltip,
   polDurationTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { sumBy } from "lodash"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 
 export default function BidsPage() {
   const backendData = useBackendData()
 
-  const { bidsByRoundId, currentRoundId, isLoading, votesByRoundId } =
-    backendData
+  const {
+    bidsByRoundId,
+    currentRoundId,
+    isLoading,
+    metricsForPostHydroBids,
+    votesByRoundId,
+  } = backendData
 
   const bidsInRound = bidsByRoundId[currentRoundId] ?? []
 
@@ -61,9 +65,9 @@ export default function BidsPage() {
           </InvisibleLink>
         ),
 
-        yourEstimatedReward: (
+        tributeApr: (
           <InvisibleLink href={bidURL}>
-            <BidRewards bidId={bid.id} />
+            <BidTributeApr bidId={bid.id} />
           </InvisibleLink>
         ),
 
@@ -89,7 +93,10 @@ export default function BidsPage() {
                 </Tooltip>
               )}
             >
-              <span>{Math.round(bid.percentage)}%</span>
+              <StyledText variant="mathSymbol.container">
+                <span>{Math.round(bid.percentage)}</span>
+                <StyledText variant="mathSymbol">%</StyledText>
+              </StyledText>
             </ConditionalWrapper>
           </InvisibleLink>
         ),
@@ -108,11 +115,13 @@ export default function BidsPage() {
       }
     }) ?? []
 
+  type Row = (typeof rows)[number]
+
   function buildColumns({
     isTokenBased,
   }: {
     isTokenBased: boolean
-  }): ColumnObject<(typeof rows)[number], keyof (typeof rows)[number]>[] {
+  }): ColumnObject<Row, keyof Row>[] {
     return [
       {
         key: "logoAndTitle",
@@ -155,22 +164,17 @@ export default function BidsPage() {
         customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
       },
       {
-        key: "yourEstimatedReward",
+        key: "tributeApr",
         label: (
           <Tooltip
-            tipContents={estimatedRewardsColumnTooltip({
-              hasVotedThisRound,
-              isTokenBased,
-            })}
+            tipContents={
+              !isTokenBased
+                ? metricsTributeColumnTooltip
+                : metricsTributeAprColumnTooltip
+            }
           >
             <div className="flex items-center gap-1">
-              <span>
-                {!isTokenBased
-                  ? "Total Tribute"
-                  : hasVotedThisRound
-                    ? "Your Est. Reward"
-                    : "Total Est. Reward"}{" "}
-              </span>
+              <span>{!isTokenBased ? "Total Tribute" : "Tribute APR"}</span>
               <Icon name="circle-info" />
             </div>
           </Tooltip>
@@ -185,9 +189,9 @@ export default function BidsPage() {
           const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
           return !isTokenBased
             ? 0
-            : hasVotedThisRound
-              ? row._bid.usersEstimatedRewards
-              : sumBy(row._bid.tributes, "valueUsd")
+            : currentRoundId === row._bid.roundId
+              ? row._bid.tributeAprMax
+              : row._bid.tributeApr
         },
       },
       {
@@ -228,19 +232,13 @@ export default function BidsPage() {
     row,
     rowIndex,
     rowProps,
+    sortDirection,
     sortedColumnKey,
     sortedRows,
   }: RowRenderProps<(typeof rows)[number], keyof (typeof rows)[number]>) {
-    const previousRow = sortedRows?.[
-      rowIndex - 1
-    ] as (typeof sortedRows)[number]
-    const nextRow = sortedRows?.[rowIndex + 1] as (typeof sortedRows)[number]
-
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&
-      previousRow &&
-      nextRow &&
-      Number(previousRow._bid.percentage) >= VOTE_SHARE_THRESHOLD &&
+      sortDirection === "DESC" &&
       Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
 
     const votesThisRound = votesByRoundId[currentRoundId] ?? []
@@ -252,7 +250,7 @@ export default function BidsPage() {
     return (
       <Fragment key={row._bid.id}>
         {!!shouldShowVoteThresholdLine && (
-          <TR className="js-vote-threshold-line">
+          <TR className="js-vote-threshold-line [&~&]:hidden">
             <TD colSpan={99} className="!p-0">
               <div
                 className="
@@ -317,8 +315,6 @@ export default function BidsPage() {
 
   return (
     <>
-      <PopupController />
-
       <StatCards>
         <StatCards.CurrentRoundNumberOfBids />
         <StatCards.CurrentRoundAprGlobal />
@@ -337,7 +333,7 @@ export default function BidsPage() {
         {!isLoading && tokenBasedBids.length > 0 && (
           <BlurryBackdropBox>
             <StyledTable
-              initialSortedColumnKey="yourEstimatedReward"
+              initialSortedColumnKey="currentVoteShare"
               columns={buildColumns({ isTokenBased: true })}
               rows={tokenBasedBids}
               renderRow={renderRow}
@@ -348,7 +344,7 @@ export default function BidsPage() {
         {!isLoading && pointBasedBids.length > 0 && (
           <BlurryBackdropBox>
             <StyledTable
-              initialSortedColumnKey="yourEstimatedReward"
+              initialSortedColumnKey="currentVoteShare"
               columns={buildColumns({ isTokenBased: false })}
               rows={pointBasedBids}
               renderRow={renderRow}

@@ -1,7 +1,7 @@
 export const BID_DESCRIPTIONS_URL =
   "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
 
-export interface BidDescription {
+export interface BidDescriptionFromGithub {
   aboutProject?: string
   appendix?: string
   committeeComments?: string
@@ -13,8 +13,7 @@ export interface BidDescription {
   projectUrl: string
   requestAmount: RequestAmount[]
   title: string
-  // not available for all proposals (soft deprecated but still used)
-  projectType?: string
+  minMaxTargetPolApr?: [min: number, max: number]
 }
 
 export type RequestAmount = [amount: number, description: string]
@@ -24,5 +23,5 @@ export async function fetchBidDescriptionsById() {
     `${BID_DESCRIPTIONS_URL}?${new Date().getTime()}`
   )
 
-  return (await response.json()) as Record<string, BidDescription>
+  return (await response.json()) as Record<string, BidDescriptionFromGithub>
 }

@@ -56,18 +56,14 @@ export function EditLockupDurationModal({
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
 
-  function resetModalState() {
-    setIsLoading(false)
-    setToasts([])
-  }
-
   function onClose() {
-    resetModalState()
+    setIsLoading(false)
     outerOnClose()
   }
 
   function onCloseComplete() {
-    resetModalState()
+    setToasts([])
+    setIsLoading(false)
     outerOnCloseComplete()
   }
 
@@ -84,7 +80,7 @@ export function EditLockupDurationModal({
     setIsLoading(true)
 
     try {
-      setToasts([toastMessages.savingLockup])
+      setToasts([toastMessages.extendingLockup])
 
       await executeWalletExtendLockup({
         getSigningCosmWasmClient,
@@ -95,11 +91,11 @@ export function EditLockupDurationModal({
 
       await revalidateTag("backendData")
 
-      setToasts([toastMessages.savingLockupSuccess])
+      setToasts([toastMessages.extendingLockupSuccess])
 
       setTimeout(() => {
-        router.push("/lockups")
         router.refresh()
+        router.push("/lockups")
         onCloseComplete()
       }, 3000)
     } catch (err: any) {
@@ -108,7 +104,7 @@ export function EditLockupDurationModal({
         return
       }
 
-      setToasts([toastMessages.savingLockupError(err as Error)])
+      setToasts([toastMessages.extendingLockupError(err as Error)])
     } finally {
       onClose()
     }

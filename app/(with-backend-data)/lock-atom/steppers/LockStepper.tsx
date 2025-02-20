@@ -188,11 +188,12 @@ export const LockStepper = ({
         const { value, unit } = getTimeUnitFromNanos(lockDuration)
 
         return {
+          title: "Locking your ATOM",
           contents: (
             <div className="flex flex-col items-center gap-6">
-              <p className="text-balance text-center">
+              <p>
                 Next, you&rsquo;ll be asked to do three wallet approvals. This
-                takes a minute or two, tops.
+                takes a minute&nbsp;or&nbsp;two,&nbsp;tops.
               </p>
 
               <div className="grid grid-cols-3 items-center gap-10">
@@ -265,6 +266,7 @@ export const LockStepper = ({
         }
       case "NoHubGasError":
         return {
+          title: "Insufficient Gas",
           contents: (
             <p>
               You do not have enough gas to complete the transaction. Please
@@ -284,6 +286,7 @@ export const LockStepper = ({
       case "WaitingForNeutronGasSigning":
         return {
           isWorking: true,
+          title: "Waiting for Wallet Approval",
           contents: (
             <p>
               You do not have enough gas on Neutron (Hydro&rsquo;s host chain).
@@ -296,6 +299,7 @@ export const LockStepper = ({
       case "WaitingForNeutronGasBroadcastAndRelay":
         return {
           isWorking: true,
+          title: "Transferring to Neutron",
           contents: (
             <p>
               Transferring your ATOM to your Neutron wallet. This may take a
@@ -309,6 +313,7 @@ export const LockStepper = ({
       case "WaitingForTokenizeSigning":
         return {
           isWorking: true,
+          title: "Waiting for Wallet Approval",
           contents: (
             <p>
               Approve the transaction in your wallet to continue. This will
@@ -319,6 +324,7 @@ export const LockStepper = ({
       case "WaitingForTokenizeBroadcast":
         return {
           isWorking: true,
+          title: "Tokenizing your ATOM",
           contents: (
             <p>
               Tokenizing your staked ATOM. This should only take a few seconds
