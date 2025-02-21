@@ -75,6 +75,7 @@ export type SanitizedTokenBasedTribute = Omit<
   amount: number
   bidId: number
   denom: string
+  denomOriginal: string
   valueUsd: number
   isTokenBased: true
 }

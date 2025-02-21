@@ -635,3 +635,9 @@ export const globalTotalAtomLockedTooltip = <p>Total ATOM locked in Hydro.</p>
 export const metricsPageNoDataTooltip = (
   <p>No data available for this round yet.</p>
 )
+
+export const bidDetailsTributesListTooltip = (
+  <p>
+    Here, you can see all tributes associated with this bid, including the contributors, amounts, and token types.
+  </p>
+)

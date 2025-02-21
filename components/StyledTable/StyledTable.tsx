@@ -19,7 +19,6 @@ import {
 } from "./types"
 
 export function StyledTable<R extends BaseRowObject, K extends keyof R>({
-  className,
   columns,
   rows,
   initialSortedColumnKey,
