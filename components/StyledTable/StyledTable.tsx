@@ -19,7 +19,6 @@ import {
 import { isDeepEqual } from "@/lib/isDeepEqual"
 
 export function StyledTable<R extends BaseRowObject, K extends keyof R>({
-  className,
   columns,
   rows,
   initialSortedColumnKey,
