@@ -413,16 +413,15 @@ export const metricsStatusColumnTooltip = (
 
 export const metricsTributeColumnTooltip = (
   <p>
-    Additional yield from tribute, rewarded by the bidder to voters who
-    supported this bid in a Hydro auction. Tribute was not available Pre-Hydro.{" "}
+    Estimated annual yield from tributes in this round. Calculated as tribute divided by locked voting power, multiplied by 12. Updates as bidders adjust tributes or more users vote. {" "}
     <StyledText
       as={Link}
-      href="/docs/projects/bidding#tribute-additions"
+      href="docs/users/voting-for-projects#tribute"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
     >
-      Learn more
+      Learn more.
       <Icon name="solid:arrow-up-right" />
     </StyledText>
   </p>
@@ -430,16 +429,15 @@ export const metricsTributeColumnTooltip = (
 
 export const metricsTributeAprColumnTooltip = (
   <p>
-    Additional yield from tribute, rewarded by the bidder to voters who
-    supported this bid in a Hydro auction.{" "}
+    Final annual yield from tributes in a past round. Calculated as tribute divided by locked voting power, multiplied by 12. Use it to compare trends in bidding incentives. {" "}
     <StyledText
       as={Link}
-      href="/docs/projects/bidding#tribute-additions"
+      href="docs/users/voting-for-projects#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
     >
-      Learn more
+      Learn more.
       <Icon name="solid:arrow-up-right" />
     </StyledText>
   </p>
