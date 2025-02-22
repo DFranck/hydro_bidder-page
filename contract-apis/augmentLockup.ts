@@ -1,13 +1,10 @@
 "use server"
 
-import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
-import { getEndpoints } from "@/config"
-import { getDaysAway } from "@/lib/getDaysAway"
-import { getCosmWasmClient } from "./getCosmWasmClient"
 import { SanitizedLockup } from "@/contract-apis/types"
+import { getDaysAway } from "@/lib/getDaysAway"
 
-function sanitizeLockup(
+export function augmentLockup(
   lockup: LockupWithPerTrancheInfo,
   currentRoundId: number
 ): SanitizedLockup {
@@ -84,42 +81,4 @@ function sanitizeLockup(
     numRoundsLeftOnDeployment,
     votedOnBidId,
   }
-}
-
-export async function fetchWalletLockups({
-  address,
-  currentRoundId,
-}: {
-  address: string
-  currentRoundId: number
-}) {
-  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
-    throw new Error("Hydro contract address not set")
-  }
-
-  const neutronRpcEndpoint = getEndpoints({
-    environmentVariables: {
-      NUMIA_COSMOS_HYDRO_APP_API_KEY:
-        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-    },
-  }).neutron.rpc[0]
-
-  const client = await getCosmWasmClient({
-    endpoint: neutronRpcEndpoint,
-  })
-  const hydroQueryClient = new HydroBaseQueryClient(
-    client,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
-  )
-
-  const lockupsWithPerTrancheInfo =
-    await hydroQueryClient.allUserLockupsWithTrancheInfos({
-      address,
-      limit: 10_000,
-      startFrom: 0,
-    })
-
-  return lockupsWithPerTrancheInfo.lockups_with_per_tranche_infos.map(
-    (unsanitizedLockup) => sanitizeLockup(unsanitizedLockup, currentRoundId)
-  )
 }

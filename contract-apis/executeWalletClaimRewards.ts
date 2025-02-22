@@ -1,4 +1,4 @@
-import { TributeBaseClient } from "@/app/ts_types/TributeBase.client"
+import { getTributeSigningClient } from "@/contract-apis/getClient"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
 export async function executeWalletClaimRewards({
@@ -14,16 +14,10 @@ export async function executeWalletClaimRewards({
   tributeId: number
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
 }) {
-  if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
-    throw new Error("Tribute contract address not set")
-  }
-
-  const client = await getSigningCosmWasmClient()
-  const tributeClient = new TributeBaseClient(
-    client,
+  const tributeSigningClient = await getTributeSigningClient({
+    getSigningCosmWasmClient,
     address,
-    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
-  )
+  })
 
   const query = {
     roundId,
@@ -32,5 +26,5 @@ export async function executeWalletClaimRewards({
     voterAddress: address,
   }
 
-  return tributeClient.claimTribute(query)
+  return tributeSigningClient.claimTribute(query)
 }

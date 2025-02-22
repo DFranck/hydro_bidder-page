@@ -8,17 +8,17 @@ import { QueryClientProvider } from "@/components/QueryClientProvider"
 import { ScrollIndicator } from "@/components/ScrollIndicator"
 import { ToastContextProvider } from "@/components/Toasts"
 import { WalletProvider } from "@/components/WalletProvider"
-import { BackendDataBeforeWallet } from "@/contract-apis/types"
+import { RawBackendDataBeforeWallet } from "@/contract-apis/types"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import { ReactNode } from "react"
 import { twJoin } from "tailwind-merge"
 
 export function AppWrapper({
   children,
-  backendDataBeforeWallet,
+  rawBackendDataBeforeWallet,
 }: {
   children: ReactNode
-  backendDataBeforeWallet?: BackendDataBeforeWallet
+  rawBackendDataBeforeWallet?: RawBackendDataBeforeWallet
 }) {
   return (
     <WalletProvider>
@@ -42,11 +42,12 @@ export function AppWrapper({
           >
             <ConditionalWrapper
               condition={Boolean(
-                backendDataBeforeWallet && backendDataBeforeWallet !== null
+                rawBackendDataBeforeWallet &&
+                  rawBackendDataBeforeWallet !== null
               )}
               wrapper={(children) => (
                 <BackendDataContextProvider
-                  backendDataBeforeWallet={backendDataBeforeWallet!}
+                  rawBackendDataBeforeWallet={rawBackendDataBeforeWallet!}
                 >
                   {children}
                 </BackendDataContextProvider>

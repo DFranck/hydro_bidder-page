@@ -1,5 +1,6 @@
 import {
   Coin,
+  Constants,
   LiquidityDeployment,
   Proposal,
   Tranche,
@@ -21,21 +22,15 @@ export interface AssetListWithPrices {
   }
 }
 
-export interface AugmentedBid extends AugmentedBidFromContract {
-  lockupsOutliveBidDeployment: boolean
-  usersEstimatedRewards: number
-  usersEstimatedRewardRelativeToCurrentPick: number
-}
-
-export interface AugmentedBidFromContract
+export interface AugmentedBidBeforeWallet
   extends Omit<
     CamelCaseKeys<BidFromContract>,
-    "deploymentDuration" | "percentage" | "proposalId"
+    "deploymentDuration" | "percentage" | "proposalId" | "liquidityDeployment"
   > {
   id: number
   deploymentDurationInEpochs: number
   deploymentDurationInNanos: number
-  liquidityDeployment: SanitizedLiquidityDeployment | null
+  liquidityDeployment: AugmentedLiquidityDeployment | null
   percentage: number
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
   tributeApr: number
@@ -43,8 +38,16 @@ export interface AugmentedBidFromContract
   tributeAprMin: number
 }
 
-export interface AugmentedClaim extends Omit<SanitizedClaim, "amount"> {
+export interface AugmentedBidAfterWallet extends AugmentedBidBeforeWallet {
+  lockupsOutliveBidDeployment: boolean
+  usersEstimatedRewards: number
+  usersEstimatedRewardRelativeToCurrentPick: number
+}
+
+export interface AugmentedClaim
+  extends Omit<CamelCaseKeys<TributeClaim>, "amount" | "proposalId"> {
   amount: AugmentedCoin
+  bidId: number
 }
 
 export interface AugmentedCoin extends Coin {
@@ -55,13 +58,60 @@ export interface AugmentedCoin extends Coin {
 }
 
 export interface AugmentedLiquidityDeployment
-  extends Omit<SanitizedLiquidityDeployment, "fundsBeforeDeployment"> {
-  fundsBeforeDeployment: AugmentedCoin[]
+  extends Omit<
+    CamelCaseKeys<LiquidityDeployment>,
+    "proposalId" | "deployedFunds" | "fundsBeforeDeployment"
+  > {
+  bidId: number
+  fundsBeforeDeployment: AugmentedCoin[] | null
+  deployedFunds: AugmentedCoin[] | null
 }
 
-export interface BackendDataAfterWallet extends BackendDataBeforeWallet {
+export type RawBackendDataBeforeWallet = {
+  externalData: {
+    assetListWithPrices: AssetListWithPrices
+    bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
+    numiaBids: RawNumiaBid[]
+    numiaMetrics: MetricsFromNumia
+  }
+  hydroData: {
+    proposals: Proposal[]
+    tranches: Tranche[]
+    constants: Constants
+    round_end: string
+    round_id: number
+    total_locked_tokens: number
+    liquidity_deployments: LiquidityDeployment[]
+    tributes: Tribute[]
+  }
+}
+
+export interface AugmentedBackendDataBeforeWallet {
+  assetListWithPrices: AssetListWithPrices
+  atomPrice: number
+  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
+  bidsById: Record<number, AugmentedBidBeforeWallet>
+  currentRoundEndDate: Date
+  currentRoundId: number
+  currentRoundIsPilot: boolean
+  tranches: Tranche[]
+  lockedAtomIsAtCapacityGlobal: boolean
+  lockedAtomEpochInNanos: number
+  lockedAtomMaxGlobal: number
+  lockedAtomMaxWallet: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomRemainingCapacityGlobal: number
+  lockedAtomTotalGlobal: number
+  metricsForPostHydroBids: AugmentedBidFromNumia[]
+  metricsForPreHydroBids: AugmentedBidFromNumia[]
+  metricsGlobal: SanitizedMetricsFromNumia
+  minTributeFactor: number
+}
+
+export interface AugmentedBackendDataAfterWallet
+  extends AugmentedBackendDataBeforeWallet {
   address: string
-  bidsById: Record<number, AugmentedBid>
+  bidsById: Record<number, AugmentedBidAfterWallet>
   claimsHistorical: AugmentedClaim[]
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
@@ -75,28 +125,6 @@ export interface BackendDataAfterWallet extends BackendDataBeforeWallet {
   votingPowerAvailable: number
   votingPowerSpent: number
   votingPowerTotal: number
-}
-
-export interface BackendDataBeforeWallet {
-  assetListWithPrices: AssetListWithPrices
-  atomPrice: number
-  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
-  bidsById: Record<number, AugmentedBidFromContract>
-  currentRoundEndDate: Date
-  currentRoundId: number
-  currentRoundIsPilot: boolean
-  tranches: Tranche[]
-  lockedAtomIsAtCapacityGlobal: boolean
-  lockedAtomEpochInNanos: number
-  lockedAtomMaxGlobal: number
-  lockedAtomMaxWallet: number
-  lockedAtomPercentageGlobal: number
-  lockedAtomRemainingCapacityGlobal: number
-  lockedAtomTotalGlobal: number
-  metricsForPostHydroBids: SanitizedBidFromNumia[]
-  metricsForPreHydroBids: SanitizedBidFromNumia[]
-  metricsGlobal: SanitizedMetricsFromNumia
-  minTributeFactor: number
 }
 
 export interface BidDescriptionFromGithub {
@@ -116,7 +144,7 @@ export interface BidDescriptionFromGithub {
 
 export interface BidFromContract extends Proposal {}
 
-export interface BidFromNumia {
+export interface RawNumiaBid {
   // Needed to link data
   id: string
   round: string
@@ -147,6 +175,14 @@ export interface BidFromNumia {
   voting_power: number
 }
 
+export interface GlobalLockupCapacityInfo {
+  lockedAtomIsAtCapacityGlobal: boolean
+  lockedAtomMaxGlobal: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomRemainingCapacityGlobal: number
+  lockedAtomTotalGlobal: number
+}
+
 export interface MetricsFromNumia {
   // used
   all_time_pol_apr: number
@@ -174,15 +210,20 @@ export interface MetricsFromNumia {
   current_users_avg_tokens_locked: number
 }
 
-export type OnchainTributeFromNumia = {
-  amount: number
-  denom?: string
-  asset?: string
+export interface RawHydroData {
+  constants: Constants
+  liquidity_deployments: LiquidityDeployment[]
+  proposals: Proposal[]
+  round_end: string
+  round_id: number
+  total_locked_tokens: number
+  tranches: Tranche[]
+  tributes: Tribute[]
 }
 
-export type SanitizedBidFromNumia = CamelCaseKeys<
+export type AugmentedBidFromNumia = CamelCaseKeys<
   Omit<
-    BidFromNumia,
+    RawNumiaBid,
     | "offchain_tribute"
     | "onchain_tribute_assets"
     | "tranche"
@@ -199,16 +240,6 @@ export type SanitizedBidFromNumia = CamelCaseKeys<
   roundId: number | "pre-hydro"
   offchainTribute: SanitizedOffchainTributeFromNumia[]
   onchainTributeAssets: SanitizedOnchainTributeFromNumia[]
-}
-
-export interface SanitizedClaim
-  extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {
-  bidId: number
-}
-
-export interface SanitizedLiquidityDeployment
-  extends Omit<CamelCaseKeys<LiquidityDeployment>, "proposalId"> {
-  bidId: number
 }
 
 export interface SanitizedLockup {
@@ -241,6 +272,12 @@ export interface SanitizedLockup {
 
 export interface SanitizedMetricsFromNumia
   extends CamelCaseKeys<MetricsFromNumia> {}
+
+export type OnchainTributeFromNumia = {
+  amount: number
+  denom?: string
+  asset?: string
+}
 
 export type SanitizedOffchainTributeFromNumia = {
   amount: number

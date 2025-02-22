@@ -5,7 +5,10 @@ import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
-import { AugmentedBid, BidDescriptionFromGithub } from "@/contract-apis/types"
+import {
+  AugmentedBidAfterWallet,
+  BidDescriptionFromGithub,
+} from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
@@ -230,7 +233,7 @@ export const estimatedRewardsTooltip = ({
   hasVotedThisRound,
   isTokenBased,
 }: {
-  bid: AugmentedBid
+  bid: AugmentedBidAfterWallet
   bidDescriptionFromGithub: BidDescriptionFromGithub
   hasVotedThisRound: boolean
   isTokenBased: boolean

@@ -2,14 +2,16 @@
 
 import { Tweak } from "@/components/BackendDataTweaker"
 import { useToasts } from "@/components/Toasts"
-import { fetchBackendDataAfterWallet } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
+import { augmentBackendDataAfterWallet } from "@/contract-apis/augmentBackendDataAfterWallet"
+import { augmentBackendDataBeforeWallet } from "@/contract-apis/augmentBackendDataBeforeWallet"
+import { fetchWalletData } from "@/contract-apis/fetchWalletData"
 import {
-  BackendDataBeforeWallet,
-  BackendDataAfterWallet,
+  AugmentedBackendDataAfterWallet,
+  AugmentedBackendDataBeforeWallet,
+  RawBackendDataBeforeWallet,
 } from "@/contract-apis/types"
 import { useChain } from "@cosmos-kit/react"
-import merge from "lodash/merge"
+import { merge } from "lodash"
 import { usePathname, useRouter } from "next/navigation"
 import {
   createContext,
@@ -17,24 +19,25 @@ import {
   useContext,
   useDeferredValue,
   useEffect,
-  useMemo,
   useState,
 } from "react"
 
 // Declare backendData property on Window interface
 declare global {
   interface Window {
-    backendDataBeforeWallet?: BackendDataBeforeWallet
-    backendDataAfterWallet?: BackendDataAfterWallet
+    finalState?:
+      | AugmentedBackendDataBeforeWallet
+      | AugmentedBackendDataAfterWallet
   }
 }
 
-export interface BackendDataContextType extends BackendDataAfterWallet {
+export interface BackendDataContextType
+  extends AugmentedBackendDataAfterWallet {
   isLoading: boolean
   isWalletConnected: boolean
 }
 
-const initialBackendDataContext: BackendDataAfterWallet = {
+const initialBackendDataAfterWallet: AugmentedBackendDataAfterWallet = {
   address: "",
   assetListWithPrices: {},
   atomPrice: 0,
@@ -92,18 +95,21 @@ const initialBackendDataContext: BackendDataAfterWallet = {
   },
 }
 
-const BackendDataContext = createContext<BackendDataAfterWallet>(
-  initialBackendDataContext
+const BackendDataContext = createContext<AugmentedBackendDataAfterWallet>(
+  initialBackendDataAfterWallet
 )
 
 export function BackendDataContextProvider({
-  backendDataBeforeWallet,
+  rawBackendDataBeforeWallet,
   children,
 }: {
-  backendDataBeforeWallet: BackendDataBeforeWallet
+  rawBackendDataBeforeWallet: RawBackendDataBeforeWallet
   children: ReactNode
 }) {
-  const { addToast, dismissToastById } = useToasts()
+  const [state, setState] = useState<AugmentedBackendDataAfterWallet>(
+    initialBackendDataAfterWallet
+  )
+  const { setToasts } = useToasts()
   const {
     address,
     isWalletConnected,
@@ -114,30 +120,66 @@ export function BackendDataContextProvider({
   const pathname = usePathname()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const preMergedBackendData = useMemo(
-    () => merge({}, initialBackendDataContext, backendDataBeforeWallet),
-    [backendDataBeforeWallet]
-  )
-  const [backendDataAfterWallet, setBackendDataAfterWallet] =
-    useState<BackendDataAfterWallet>(preMergedBackendData)
   const [loadedTweaks, setLoadedTweaks] = useState<Tweak[]>([])
-  const mergedTweaks = useMemo(() => {
-    return loadedTweaks.reduce((acc, tweak) => {
-      return tweak.disabled ? acc : merge(acc, tweak.json)
-    }, {})
-  }, [loadedTweaks])
-  const contextValue = {
-    ...backendDataAfterWallet,
-    isLoading,
-    isWalletConnected,
-    ...mergedTweaks,
-  }
+
+  // Wallet connected? Fetch data!
+  useEffect(() => {
+    console.log("Fetching!")
+
+    const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(
+      rawBackendDataBeforeWallet
+    )
+
+    console.log({ augmentedBackendDataBeforeWallet })
+
+    if (!address) {
+      const finalState = merge(
+        initialBackendDataAfterWallet,
+        augmentedBackendDataBeforeWallet
+      )
+
+      if (process.env.CONTEXT !== "production") {
+        window.finalState = finalState
+        console.log({ finalState: window.finalState })
+      }
+
+      setState(finalState)
+      return
+    }
+
+    const { currentRoundId, tranches } = augmentedBackendDataBeforeWallet
+
+    ;(async () => {
+      setIsLoading(true)
+
+      const walletData = await fetchWalletData({
+        address,
+        currentRoundId,
+        tranches,
+      })
+
+      const augmentedBackendDataAfterWallet = augmentBackendDataAfterWallet({
+        address,
+        augmentedBackendDataBeforeWallet,
+        walletData,
+      })
+
+      if (process.env.CONTEXT !== "production") {
+        window.finalState = augmentedBackendDataAfterWallet
+        console.log({ finalState: window.finalState })
+      }
+
+      setState(augmentedBackendDataAfterWallet)
+
+      setIsLoading(false)
+    })()
+  }, [address, rawBackendDataBeforeWallet])
 
   useEffect(() => {
     if (!address) {
-      setBackendDataAfterWallet(preMergedBackendData)
+      setState(initialBackendDataAfterWallet)
     }
-  }, [address, preMergedBackendData])
+  }, [address])
 
   useEffect(() => {
     function checkForTweaks() {
@@ -151,85 +193,7 @@ export function BackendDataContextProvider({
     return () => clearInterval(timer)
   }, [])
 
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS) return
-
-    async function queryLockupCapacity() {
-      const workingToastId = addToast({
-        variant: "workingInBackground",
-        message: null,
-      })
-
-      try {
-        const globalLockupCapacity = await fetchGlobalLockupCapacity()
-
-        setBackendDataAfterWallet((prev) => ({
-          ...prev,
-          ...globalLockupCapacity,
-        }))
-      } catch (error) {
-        console.warn("Error fetching lockup capacity", error)
-      }
-
-      dismissToastById(workingToastId)
-    }
-
-    queryLockupCapacity()
-
-    const timer = setInterval(
-      queryLockupCapacity,
-      1000 * Number(process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS)
-    )
-
-    return () => clearInterval(timer)
-  }, [])
-
-  useEffect(() => {
-    ;(async () => {
-      if (!address) {
-        if (process.env.CONTEXT !== "production") {
-          window.backendDataBeforeWallet = backendDataBeforeWallet
-          console.log({ backendDataBeforeWallet: backendDataBeforeWallet })
-        }
-        return
-      }
-
-      setIsLoading(true)
-
-      const backendDataAfterWallet = await fetchBackendDataAfterWallet({
-        address,
-        backendDataBeforeWallet,
-      })
-
-      const augmentedBackendDataAfterWallet = {
-        ...backendDataAfterWallet,
-        currentRoundEndDate:
-          typeof backendDataAfterWallet.currentRoundEndDate === "string"
-            ? new Date(backendDataAfterWallet.currentRoundEndDate)
-            : backendDataAfterWallet.currentRoundEndDate,
-        lockups: backendDataAfterWallet.lockups.map((lockup) => ({
-          ...lockup,
-          dateEnd:
-            typeof lockup.dateEnd === "string"
-              ? new Date(lockup.dateEnd)
-              : lockup.dateEnd,
-          dateStart:
-            typeof lockup.dateStart === "string"
-              ? new Date(lockup.dateStart)
-              : lockup.dateStart,
-        })),
-      }
-
-      if (process.env.CONTEXT !== "production") {
-        window.backendDataAfterWallet = augmentedBackendDataAfterWallet
-        console.log({ backendDataAfterWallet: augmentedBackendDataAfterWallet })
-      }
-
-      setBackendDataAfterWallet(augmentedBackendDataAfterWallet)
-
-      setIsLoading(false)
-    })()
-  }, [address, backendDataBeforeWallet])
+  // TODO: Add a timer to reload the data every 30 seconds (see env variable)
 
   useEffect(() => {
     if (isWalletConnecting || isWalletDisconnected) return
@@ -266,7 +230,13 @@ export function BackendDataContextProvider({
   ])
 
   return (
-    <BackendDataContext.Provider value={contextValue}>
+    <BackendDataContext.Provider
+      value={{
+        ...state,
+        isLoading,
+        isWalletConnected,
+      }}
+    >
       {children}
     </BackendDataContext.Provider>
   )

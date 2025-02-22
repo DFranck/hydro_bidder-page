@@ -7,10 +7,10 @@ export default async function LayoutWithContext({
 }: {
   children: ReactNode
 }) {
-  const backendDataBeforeWallet = await fetchBackendDataBeforeWallet()
+  const rawBackendDataBeforeWallet = await fetchBackendDataBeforeWallet()
 
   return (
-    <AppWrapper backendDataBeforeWallet={backendDataBeforeWallet}>
+    <AppWrapper rawBackendDataBeforeWallet={rawBackendDataBeforeWallet}>
       {children}
     </AppWrapper>
   )

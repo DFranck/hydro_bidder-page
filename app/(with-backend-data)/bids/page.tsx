@@ -205,7 +205,7 @@ export default function BidsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => Number(row._bid.percentage),
+        customValueGetter: (row) => row._bid.percentage,
       },
       {
         key: "actions",
@@ -229,7 +229,7 @@ export default function BidsPage() {
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&
       sortDirection === "DESC" &&
-      Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
+      row._bid.percentage < VOTE_SHARE_THRESHOLD
 
     const votesThisRound = votesByRoundId[currentRoundId] ?? []
 

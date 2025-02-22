@@ -84,11 +84,11 @@ export function MetricsPage({
   )
 
   const tokenBasedRows = buildRows({
-    bidsFromNumia: tokenBasedBids,
+    numiaBids: tokenBasedBids,
     isTokenBased: true,
   })
   const pointBasedRows = buildRows({
-    bidsFromNumia: pointBasedBids,
+    numiaBids: pointBasedBids,
     isTokenBased: false,
   })
 
@@ -232,13 +232,13 @@ export function MetricsPage({
   }
 
   function buildRows({
-    bidsFromNumia,
+    numiaBids,
     isTokenBased,
   }: {
-    bidsFromNumia: typeof bidsToRender
+    numiaBids: typeof bidsToRender
     isTokenBased: boolean
   }) {
-    return bidsFromNumia.map((bidFromNumia) => {
+    return numiaBids.map((bidFromNumia) => {
       const bidDescriptionFromGithub =
         bidDescriptionsByBidId[Number(bidFromNumia.id)] ?? null
       const bidFromContract = bidsById[Number(bidFromNumia.id)] ?? null
