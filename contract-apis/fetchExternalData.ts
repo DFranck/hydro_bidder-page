@@ -6,18 +6,18 @@ import { fetchNumiaBidData } from "@/contract-apis/fetchNumiaBidData"
 import { fetchNumiaMetricsData } from "@/contract-apis/fetchNumiaMetricsData"
 
 export async function fetchExternalData() {
-  const [assetListWithPrices, numiaData, bidDescriptionsByBidId, metrics] =
+  const [assetListWithPrices, bidDescriptionsByBidId, numiaBids, numiaMetrics] =
     await Promise.all([
       fetchAssetListWithPrices(),
-      fetchNumiaBidData(),
       fetchBidDescriptionsById(),
+      fetchNumiaBidData(),
       fetchNumiaMetricsData(),
     ])
 
   return {
     assetListWithPrices,
-    numiaData,
     bidDescriptionsByBidId,
-    metrics,
+    numiaBids,
+    numiaMetrics,
   }
 }

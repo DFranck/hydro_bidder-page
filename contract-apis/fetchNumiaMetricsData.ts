@@ -1,10 +1,6 @@
-import {
-  MetricsFromNumia,
-  SanitizedMetricsFromNumia,
-} from "@/contract-apis/types"
-import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
+import { MetricsFromNumia } from "@/contract-apis/types"
 
-export async function fetchNumiaMetricsData(): Promise<SanitizedMetricsFromNumia> {
+export async function fetchNumiaMetricsData(): Promise<MetricsFromNumia> {
   if (!process.env.NUMIA_METRICS_ENDPOINT) {
     throw new Error("NUMIA_METRICS_ENDPOINT is not set")
   }
@@ -21,5 +17,5 @@ export async function fetchNumiaMetricsData(): Promise<SanitizedMetricsFromNumia
 
   const metrics = (await response.json()) as MetricsFromNumia[]
 
-  return metrics.map(keysFromSnakeToCamelCase)[0]
+  return metrics[0]
 }

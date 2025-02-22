@@ -12,16 +12,12 @@ export async function executeWalletExtendLockup({
   lockId: number
   lockDurationInNanos: number
 }) {
-  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
-    throw new Error("Hydro contract address not set")
-  }
-
   const client = await getSigningCosmWasmClient()
 
   const hydroClient = new HydroBaseClient(
     client,
     address,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS!
   )
   const response = await hydroClient.refreshLockDuration(
     {

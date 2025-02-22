@@ -1,9 +1,8 @@
 "use server"
 
 import { unstable_cache } from "next/cache"
-import { fetchExternalData } from "./api/fetchExternalData"
-import { fetchHydroData } from "./api/fetchHydroData"
-import { processBackendDataBeforeWallet } from "./processors/processBackendDataBeforeWallet"
+import { fetchExternalData } from "./fetchExternalData"
+import { fetchHydroData } from "./fetchHydroData"
 
 async function uncachedFetchBackendDataBeforeWallet() {
   const [hydroData, externalData] = await Promise.all([
@@ -11,10 +10,10 @@ async function uncachedFetchBackendDataBeforeWallet() {
     fetchExternalData(),
   ])
 
-  return processBackendDataBeforeWallet({
+  return {
     hydroData,
     externalData,
-  })
+  }
 }
 
 export const fetchBackendDataBeforeWallet = unstable_cache(

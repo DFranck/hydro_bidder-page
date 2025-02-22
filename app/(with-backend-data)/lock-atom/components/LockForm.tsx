@@ -4,7 +4,6 @@ import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { Toast, useToasts } from "@/components/Toasts"
-import { fetchGlobalLockupCapacity } from "@/contract-apis/fetchGlobalLockupCapacity"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useWalletValidators } from "@/contract-apis/useWalletValidators"
@@ -39,8 +38,6 @@ export function LockForm({
     lockedAtomTotalGlobal,
   } = useBackendData()
   const { setToasts } = useToasts()
-  const [availableAtomToBeLocked, setAvailableAtomToBeLocked] =
-    useState<number>(lockedAtomRemainingCapacityGlobal || 0)
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(
     lockedAtomEpochInNanos
@@ -60,42 +57,23 @@ export function LockForm({
   const maxAtomToBeLocked = Math.min(
     delegationBalance ? delegationBalance / 1e6 : Infinity, // no more than they have
     usersLimitRemainder, // no more than their limit
-    availableAtomToBeLocked // no more than the global limit
+    lockedAtomRemainingCapacityGlobal // no more than the global limit
   )
 
   const [amount, setAmount] = useState<string>("")
 
-  //  refresh data every 60 seconds
   useEffect(() => {
-    const getData = async () => {
-      setIsRefreshing(true)
-      const globalLockupCapacityInfo = await fetchGlobalLockupCapacity()
-      setAvailableAtomToBeLocked(
-        globalLockupCapacityInfo.lockedAtomRemainingCapacityGlobal || 0
-      )
-      setIsRefreshing(false)
-    }
-    getData()
-
-    // Set up interval to refresh data every 60 seconds
-    const interval = setInterval(getData, 60000)
-
-    // Clean up interval on unmount
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    if (maxAtomToBeLocked > 0 && availableAtomToBeLocked > 0) {
+    if (maxAtomToBeLocked > 0 && lockedAtomRemainingCapacityGlobal > 0) {
       setAmount(maxAtomToBeLocked.toFixed(6))
     } else if (
       lockedAtomTotalGlobal &&
-      (maxAtomToBeLocked === 0 || availableAtomToBeLocked === 0)
+      (maxAtomToBeLocked === 0 || lockedAtomRemainingCapacityGlobal === 0)
     ) {
       setAmount((0).toFixed(6))
       setToasts([toastMessages.lockupCapacityFull])
       router.push("/lockups")
     }
-  }, [maxAtomToBeLocked, availableAtomToBeLocked])
+  }, [maxAtomToBeLocked, lockedAtomRemainingCapacityGlobal])
 
   useEffect(() => {
     const numericAmount = parseFloat(amount)
@@ -307,7 +285,7 @@ export function LockForm({
                       </div>
 
                       <StyledText as="p" variant="footnote" className="text-xs">
-                        Available capacity: {availableAtomToBeLocked} ATOM
+                        Available capacity: {maxAtomToBeLocked} ATOM
                       </StyledText>
                     </div>
                   </div>

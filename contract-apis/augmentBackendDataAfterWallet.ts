@@ -1,7 +1,7 @@
-import { augmentClaims } from "@/contract-apis/fetchClaims"
+import { augmentLockup } from "@/contract-apis/augmentLockup"
 import {
-  BackendDataAfterWallet,
-  BackendDataBeforeWallet,
+  AugmentedBackendDataAfterWallet,
+  AugmentedBackendDataBeforeWallet,
   SanitizedVote,
 } from "@/contract-apis/types"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
@@ -10,18 +10,19 @@ import groupBy from "lodash/groupBy"
 import keyBy from "lodash/keyBy"
 import sortBy from "lodash/sortBy"
 import sumBy from "lodash/sumBy"
+import { augmentClaim } from "./augmentClaim"
 
-export function processBackendDataAfterWallet({
+export function augmentBackendDataAfterWallet({
   address,
-  backendDataBeforeWallet,
+  augmentedBackendDataBeforeWallet,
   walletData,
 }: {
   address: string
-  backendDataBeforeWallet: BackendDataBeforeWallet
+  augmentedBackendDataBeforeWallet: AugmentedBackendDataBeforeWallet
   walletData: Awaited<
-    ReturnType<typeof import("../api/fetchWalletData").fetchWalletData>
+    ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
-}): BackendDataAfterWallet {
+}): AugmentedBackendDataAfterWallet {
   const {
     assetListWithPrices,
     bidDescriptionsByBidId,
@@ -30,23 +31,28 @@ export function processBackendDataAfterWallet({
     currentRoundId,
     lockedAtomMaxWallet,
     lockedAtomEpochInNanos,
-    tranches,
-  } = backendDataBeforeWallet
+  } = augmentedBackendDataBeforeWallet
 
   const {
-    votingPowerFromContract,
-    sanitizedLockups,
+    historical_tribute_claims,
+    lockups_with_per_tranche_infos,
+    outstanding_tribute_claims,
     votes,
-    claims: { historicalClaims, outstandingClaims },
+    voting_power,
   } = walletData
 
   const allBids = Object.values(bidsById)
+
   const sanitizedVotes = votes.map((vote) => {
     const { propId, ...rest } = keysFromSnakeToCamelCase(vote)
     return { ...rest, bidId: propId } as SanitizedVote
   })
 
-  const furthestLockupEndDate = sortBy(sanitizedLockups, "dateEnd").reverse()[0]
+  const augmentedLockups = lockups_with_per_tranche_infos.map((o) =>
+    augmentLockup(o, currentRoundId)
+  )
+
+  const furthestLockupEndDate = sortBy(augmentedLockups, "dateEnd").reverse()[0]
     ?.dateEnd
 
   const votedBidId =
@@ -62,7 +68,7 @@ export function processBackendDataAfterWallet({
     const usersEstimatedRewards =
       estimatedRewardForPower({
         amount: sumBy(bid.tributes, "valueUsd"),
-        walletVotingPower: votingPowerFromContract,
+        walletVotingPower: voting_power,
         bidPower: Number(bid.power),
       }) ?? 0
 
@@ -113,31 +119,38 @@ export function processBackendDataAfterWallet({
     (vote) => bidsById[vote.bidId].roundId
   )
 
-  const augmentedHistoricalClaims = augmentClaims({
-    assetListWithPrices,
-    claims: historicalClaims,
-  })
+  const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>
+    augmentClaim({
+      assetListWithPrices,
+      claim: o,
+    })
+  )
 
-  const augmentedOutstandingClaims = augmentClaims({
-    assetListWithPrices,
-    claims: outstandingClaims,
-  })
+  const augmentedOutstandingClaims = outstanding_tribute_claims.map((o) =>
+    augmentClaim({
+      assetListWithPrices,
+      claim: o,
+    })
+  )
 
-  const lockedAtomTotalWallet = sumBy(sanitizedLockups, "funds.amount")
+  const lockedAtomTotalWallet = sumBy(
+    lockups_with_per_tranche_infos,
+    "funds.amount"
+  )
   const lockedAtomPercentageWallet = Math.floor(
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
 
-  const usedLockups = sanitizedLockups.filter(
+  const usedLockups = augmentedLockups.filter(
     (lockup) => lockup.isTiedToDeployment
   )
   const votingPowerSpent =
     sumBy(usedLockups, (l) => Number(l.currentVotingPower)) / 1e6
-  const votingPowerTotal = votingPowerFromContract / 1e6
+  const votingPowerTotal = voting_power / 1e6
   const votingPowerAvailable = votingPowerTotal - votingPowerSpent
 
   return {
-    ...backendDataBeforeWallet,
+    ...augmentedBackendDataBeforeWallet,
     address,
     bidsById: augmentedBidsById,
     claimsHistorical: augmentedHistoricalClaims,
@@ -148,7 +161,7 @@ export function processBackendDataAfterWallet({
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
-    lockups: sanitizedLockups,
+    lockups: augmentedLockups,
     votes: sanitizedVotes,
     votesByRoundId,
     votingPowerAvailable,
