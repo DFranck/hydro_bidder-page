@@ -18,7 +18,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   bidTablesFirstColumnTooltips,
   currentVoteShareTooltip,
-  metricsTributeAprColumnTooltip,
+  liveBidTributeAprColumnTooltip,
   metricsTributeColumnTooltip,
   polDurationTooltip,
   VOTE_SHARE_THRESHOLD,
@@ -161,7 +161,7 @@ export default function BidsPage() {
             tipContents={
               !isTokenBased
                 ? metricsTributeColumnTooltip
-                : metricsTributeAprColumnTooltip
+                : liveBidTributeAprColumnTooltip
             }
           >
             <div className="flex items-center gap-1">
