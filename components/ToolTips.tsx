@@ -413,7 +413,9 @@ export const metricsStatusColumnTooltip = (
 
 export const metricsTributeColumnTooltip = (
   <p>
-    Estimated annual yield from tributes in this round. Calculated as tribute divided by locked voting power, multiplied by 12. Updates as bidders adjust tributes or more users vote. {" "}
+    Estimated annual yield from tributes in this round. Calculated as tribute
+    divided by locked voting power, multiplied by 12. Updates as bidders adjust
+    tributes or more users vote.{" "}
     <StyledText
       as={Link}
       href="docs/users/voting-for-projects#tribute"
@@ -427,9 +429,29 @@ export const metricsTributeColumnTooltip = (
   </p>
 )
 
-export const metricsTributeAprColumnTooltip = (
+export const liveBidTributeAprColumnTooltip = (
   <p>
-    Final annual yield from tributes in a past round. Calculated as tribute divided by locked voting power, multiplied by 12. Use it to compare trends in bidding incentives. {" "}
+    Estimated annual yield from tributes in the current round. Calculated as
+    tribute divided by locked voting power, multiplied by 12. Updates as bidders
+    adjust tributes or more users vote.{" "}
+    <StyledText
+      as={Link}
+      href="docs/users/voting-for-projects#tribute"
+      variant="link"
+      className="relative z-10 inline-flex items-center gap-1"
+      target="_blank"
+    >
+      Learn more.
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
+  </p>
+)
+
+export const pastBidTributeAprColumnTooltip = (
+  <p>
+    Final annual yield from tributes in a past round. Calculated as tribute
+    divided by locked voting power, multiplied by 12. Use it to compare trends
+    in bidding incentives.{" "}
     <StyledText
       as={Link}
       href="docs/users/voting-for-projects#tribute"
