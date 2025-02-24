@@ -20,13 +20,14 @@ import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   bidTablesFirstColumnTooltips,
+  liveBidTributeAprColumnTooltip,
   metricsDurationColumnTooltip,
   metricsPageNoDataTooltip,
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
-  metricsTributeAprColumnTooltip,
   metricsTributeColumnTooltip,
+  pastBidTributeAprColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -186,7 +187,9 @@ export function MetricsPage({
             tipContents={
               !isTokenBased
                 ? metricsTributeColumnTooltip
-                : metricsTributeAprColumnTooltip
+                : requestedRoundId === currentRoundId
+                  ? liveBidTributeAprColumnTooltip
+                  : pastBidTributeAprColumnTooltip
             }
             classNamesForTooltip="-ml-12"
           >
