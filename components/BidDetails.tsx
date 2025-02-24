@@ -67,18 +67,17 @@ export function BidDetails({ bidId }: { bidId: number }) {
   if (!bidDescriptionFromGithub && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
-        The requested bid is not yet listed in the official{" "}
-        <StyledText
-          as={Link}
-          href={BID_DESCRIPTIONS_URL}
-          target="_blank"
-          variant="link"
-          className="flex items-center gap-1 whitespace-nowrap"
-        >
-          <code>bid-descriptions.json</code>
-          <Icon name="solid:arrow-up-right-from-square" />
-        </StyledText>
-        . If you got here from a link in Hydro, try again soon!
+        This bid is active on the Hydro smart sontract but has not yet been whitelisted for the front-end by the Hydro Team. Check back later or contact the Hydro Team in the {" "}
+    <StyledText
+      as={Link}
+      href="https://t.me/+xUzNOTZjUNw5Mzhk"
+      variant="link"
+      className="relative z-10 inline-flex items-center gap-1"
+      target="_blank"
+    >
+      Hydro Telegram Group.
+      <Icon name="solid:arrow-up-right" />
+      </StyledText>
       </ErrorBox>
     )
   }
