@@ -17,10 +17,11 @@ import {
   bidDetailsPolSizeTooltip,
   bidDetailsStatusTooltip,
   bidDetailsVoteReceivedTooltip,
+  liveBidTributeAprColumnTooltip,
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
-  metricsTributeAprColumnTooltip,
   metricsTributeColumnTooltip,
+  pastBidTributeAprColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -340,7 +341,9 @@ export function BidDetails({ bidId }: { bidId: number }) {
                 tipContents={
                   !isTokenBased
                     ? metricsTributeColumnTooltip
-                    : metricsTributeAprColumnTooltip
+                    : bid.roundId === currentRoundId
+                      ? liveBidTributeAprColumnTooltip
+                      : pastBidTributeAprColumnTooltip
                 }
               >
                 <StyledText
