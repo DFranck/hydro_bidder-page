@@ -10,11 +10,17 @@ import { wallets as keplr } from "@cosmos-kit/keplr"
 import { wallets as leap } from "@cosmos-kit/leap"
 import { ChainProvider } from "@cosmos-kit/react"
 import "@interchain-ui/react/styles"
-import { assets, chains } from "chain-registry"
+import assets from "chain-registry/assets"
+import chains from "chain-registry/chains"
 import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
 import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
 import { cosmwasmAminoConverters } from "interchain"
-import * as stride from "stridejs"
+import {
+  cosmosAminoConverters,
+  cosmosProtoRegistry,
+  ibcAminoConverters,
+  ibcProtoRegistry,
+} from "stridejs"
 
 function gasPrices(chain: Chain | ChainName) {
   const chainName = typeof chain === "string" ? chain : chain.chain_name
@@ -29,17 +35,14 @@ function gasPrices(chain: Chain | ChainName) {
     //     }
     case "cosmoshub":
       return {
-        registry: new Registry([
-          ...stride.cosmosProtoRegistry,
-          ...stride.ibcProtoRegistry,
-        ]),
+        registry: new Registry([...cosmosProtoRegistry, ...ibcProtoRegistry]),
         gasPrice: GasPrice.fromString("0.005uatom"),
       }
     case "neutron":
       return {
         aminoTypes: new AminoTypes({
-          ...stride.cosmosAminoConverters,
-          ...stride.ibcAminoConverters,
+          ...cosmosAminoConverters,
+          ...ibcAminoConverters,
           ...cosmwasmAminoConverters,
         }),
         gasPrice: GasPrice.fromString("0.008untrn"),
@@ -56,6 +59,7 @@ export function WalletProvider({
 }>) {
   return (
     <ChainProvider
+      logLevel="NONE"
       chains={[
         // chain,
         // testnetChain,
@@ -89,20 +93,20 @@ export function WalletProvider({
             case "cosmoshub":
               return {
                 registry: new Registry([
-                  ...stride.cosmosProtoRegistry,
-                  ...stride.ibcProtoRegistry,
+                  ...cosmosProtoRegistry,
+                  ...ibcProtoRegistry,
                 ]),
                 aminoTypes: new AminoTypes({
-                  ...stride.cosmosAminoConverters,
-                  ...stride.ibcAminoConverters,
+                  ...cosmosAminoConverters,
+                  ...ibcAminoConverters,
                 }),
                 gasPrice: GasPrice.fromString("0.005uatom"),
               }
             case "neutron":
               return {
                 aminoTypes: new AminoTypes({
-                  ...stride.cosmosAminoConverters,
-                  ...stride.ibcAminoConverters,
+                  ...cosmosAminoConverters,
+                  ...ibcAminoConverters,
                 }),
                 gasPrice: GasPrice.fromString("0.008untrn"),
               }

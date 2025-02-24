@@ -1,13 +1,16 @@
 "use client"
 
+import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
+import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
-import { sumBy } from "lodash"
+import { pluralize } from "@/lib/pluralize"
+import sumBy from "lodash/sumBy"
 import Link from "next/link"
 
 export const VOTE_SHARE_THRESHOLD = 5
@@ -46,6 +49,42 @@ export const averageRoundsPerUserTooltip = (
   </>
 )
 
+export const bidPolAprTooltip = ({
+  isPendingOrVotingOrOngoing,
+  currentAllocationAmount,
+  initialAllocationAmount,
+}: {
+  isPendingOrVotingOrOngoing: boolean
+  currentAllocationAmount: number
+  initialAllocationAmount: number
+}) => (
+  <>
+    {isPendingOrVotingOrOngoing ? (
+      <>
+        This deployment is still active or has not been withdrawn. PoL APR will
+        be updated once the deployment is fully concluded.
+      </>
+    ) : (
+      <div className="flex flex-col">
+        <StyledText variant="label">PoL Rewards</StyledText>
+        {currentAllocationAmount && initialAllocationAmount ? (
+          <AmountAndUnitPair
+            amount={(
+              currentAllocationAmount - initialAllocationAmount
+            ).toLocaleString(undefined, {
+              maximumFractionDigits: 4,
+            })}
+            unit="ATOM"
+            textAlign="left"
+          />
+        ) : (
+          0
+        )}
+      </div>
+    )}
+  </>
+)
+
 export const bidTablesFirstColumnTooltips = {
   bidsTable: {
     tokenBased: (
@@ -68,6 +107,17 @@ export const bidTablesFirstColumnTooltips = {
     ),
   },
 }
+
+export const bidTableTributeAprTooltip = ({ bidId }: { bidId: number }) => (
+  <div className="flex flex-col gap-3">
+    <div className="flex flex-col">
+      <StyledText variant="label">Tribute Size</StyledText>
+      <BidTribute bidId={bidId} textAlign="left" />
+    </div>
+
+    <p>APR is estimated and based on the range of voting power in the round.</p>
+  </div>
+)
 
 export const tokenBasedTributeAmountTooltip = (
   <p>
@@ -96,6 +146,32 @@ export const pointBasedTributeAmountTooltip = ({
       </StyledText>
     </p>
   )
+
+export const currentRoundNumLiveBidsTooltip = ({
+  numPointBasedBids,
+  numTokenBasedBids,
+}: {
+  numPointBasedBids: number
+  numTokenBasedBids: number
+}) => (
+  <div className="flex flex-col items-center justify-center">
+    <div>
+      There {numTokenBasedBids === 1 ? "is" : "are"}{" "}
+      <strong>{numTokenBasedBids}</strong> token-based{" "}
+      {pluralize({ count: numTokenBasedBids, singular: "bid" })} and{" "}
+      <strong>{numPointBasedBids}</strong> point-based{" "}
+      {pluralize({ count: numPointBasedBids, singular: "bid" })}.{" "}
+      <StyledText
+        variant="link"
+        as={Link}
+        href="/docs/users/voting-for-projects#tribute"
+        target="_blank"
+      >
+        Learn More
+      </StyledText>
+    </div>
+  </div>
+)
 
 export const currentVoteShareTooltip = (
   <p>
@@ -156,7 +232,7 @@ export const estimatedRewardsTooltip = ({
   isTokenBased,
 }: {
   bid: AugmentedBid
-  bidDescriptionFromGithub: BidDescription
+  bidDescriptionFromGithub: BidDescriptionFromGithub
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
@@ -375,7 +451,7 @@ export const needsWalletConnectionTooltip = (
 
 export const networkLimitReachedTooltip = (
   <p>
-    The cap has been reached for this round. Join the{" "}
+    Lockup caps have been reached. Join the{" "}
     <StyledText
       variant="link"
       as={Link}
@@ -386,7 +462,7 @@ export const networkLimitReachedTooltip = (
       <span>Hydro Telegram Group</span>
       <Icon name="solid:arrow-up-right" />
     </StyledText>{" "}
-    to get notified when the next round starts.
+    to get notified if caps increase.
   </p>
 )
 

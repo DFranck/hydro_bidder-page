@@ -1,5 +1,5 @@
 import { SanitizedPointBasedTribute, SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import { StyledText } from "@/components/StyledText"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
@@ -11,7 +11,7 @@ import {
 
 interface TributesListSidebarProps {
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
-  bidDescription?: BidDescription
+  bidDescription?: BidDescriptionFromGithub
 }
 
 export function TributesListSidebar({ tributes, bidDescription }: TributesListSidebarProps) {

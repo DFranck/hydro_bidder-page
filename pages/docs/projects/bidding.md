@@ -91,24 +91,38 @@ neutrond tx wasm execute $TRIBUTE_CONTRACT_ADDR "$EXECUTE" \
 
 After the transaction is successfully executed, the entire amount of the tribute will be refunded to the sender's account.
 
-## Minimum Tribute Floor and Maximum Deployment Amount
+## Tribute Floor
 
-Hydro ensures fair contributions by bidders through a minimum tribute floor of 1% of the liquidity exported by the bidder. This mechanism ensures healthy APRs for Hydro users while preventing projects from gaining liquidity without offering fair tribute.
+The tribute floor feature helps balance fair rewards for users and equitable access to liquidity for projects. The tribute floor and the tribute amount submitted by a bidder determine a maximum allocation. The formula to calculate a maximum allocation using the tribute floor is: 
 
-The maximum deployment amount for a bid is capped by the tribute offered and is calculated as:
+`Max allocation` \= `current_tribute_amount` / `tribute_floor_rate`
 
-`Max Deployment` = `current_tribute_amount` / `min_tribute_factor `
+The table below shows two examples of how the rate of the tribute floor can impact the maximum amount of liquidity a bid can receive. 
 
+| Tribute Amount | Tribute Floor | Max allocation |
+| :---: | :---: | :---: |
+| 100 ATOM | 0.01% | 100,000 ATOM |
+| 100 ATOM | 1% | 10,000 ATOM |
 
-For example, if a project offers 10 ATOM in tribute and the minimum tribute factor is 1%, the bid can receive up to 1,000 ATOM in liquidity deployment.
+As bidders increase their tribute (or ATOM price fluctuates), the maximum allocation is updated dynamically throughout a bidding round. The system will enforce it at the end of the round, before the deployment is made.
 
-This system helps balance fair rewards for users and equitable access to liquidity for projects, ensuring sustainable growth across the Hydro ecosystem.
+A healthy tribute floor rate ensures fair contributions for liquidity and healthy APRs for users.  
 
-## Bids without Tokens 
-Some projects may not have a live token with which to bid. In that case, the simple option is to bid with another token (e.g., ATOM, USDC, OSMO, etc.). No technical work is required: the project simply submits the tribute with the token it desires to pay. 
+## Bids without live tokens
 
-### Genesis Allocation
-Another option is to give Hydro voters a small share of the genesis supply of a future token. In that case, the project may submit a bid that announces how many tokens will be allocated to voters. This could be a percentage (*“0.1% of Genesis supply will be allocated to voters”*) or a fixed number (*“10000 tokens will be allocated to voters on this proposal during Genesis”*). During the round, voters must trust that the project keeps the promise of distributing the allocation. After Genesis, the project computes its balance and allocates tokens. The Hydro contract has an entry point which, given a user’s address on Neutron, round & tranche, shows which proposal the user voted on and with how much voting power. The project can query the smart contract to determine the users' voting power and allocate tokens accordingly.
+Some projects may not have a live token with which to bid. In that case, the simplest option is to upload a tribute with another token (e.g., ATOM, USDC, etc.). No technical work is required; the project simply submits the tribute using the token it wishes to pay.
 
-### Points Systems
-Some projects may have a pre-token-launch points system. In that case, they would just allocate specific points among Hydro voters. Projects that launch their token as a smart contract token, e.g., on Neutron, and are happy to launch right after the first round ends could also create a smart contract on Neutron that automatically lets Hydro voters claim the token from the smart contract. For this, the smart contract would look very similar to the standard Tribute contract we provide, except that the tokens are not escrowed (because they don’t exist yet during the round) but would get minted when voters claim their rewards.
+However, some bidders do not have a live token yet and instead wish to use points as tribute. This is acceptable as long as points-based bids are structured transparently and equitably, allowing Hydro voters to assess their value confidently. The requirements are:
+
+**APR Calculation:** The Hydro team must be provided with a straightforward method for determining the APR of the points. Since fair auction dynamics require comparability between token-based and point-based bids, the project must include in their bid:
+
+* The percentage (a % range) of the total token supply that will be allocated to points.  
+* The percentage of total points that will be used for bidding in Hydro.  
+* The expected market cap of the project  
+* A short justification for this market cap (see example below)
+
+Predicting the marketplace of a crypto project is obviously a very difficult task, so projects should just use the last private valuation or a simple comparable valuation method. 
+
+Let’s take an example with the liquid staking protocol Drop. Drop’s latest private valuation isn’t publicly available, but the Drop protocol is similar to the Stride protocol. If the STRD market cap is $20M, and the Drop-assets represent roughly 40% of Stride-assets, DROP market cap may be closer to $10M than $1M or $100M. 
+
+**Timely Distribution**: Points should be distributed promptly after each round once the Hydro team provides the list of wallets that voted for the point-based bid. Token tributes are available for claim as soon as deployments for a round are completed, so it’s unfair to voters for points distributions to significantly lag. Delayed point distributions are not permitted, as they undermine trust in Hydro’s auction process. 

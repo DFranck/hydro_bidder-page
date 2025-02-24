@@ -17,6 +17,10 @@ Before starting, briefly familiarize yourself with the complete process of creat
 | Deployment tests | The Hydro team and committee conduct deployment tests during the final week of the round to validate and troubleshoot liquidity deployment. More information can be found in the [Deployments process documentation](https://hydro.cosmos.network/docs/projects/deployment). |
 | Deployments | After the round ends, successful bids proceed to liquidity deployment, guided by Hydro’s Deployment procedures. Bidders must provide accurate deployment queries, assist the Hydro committee and team during tests and deployments, and resolve any technical issues promptly |
 
+## Requirements
+
+To participate in Hydro liquidity auctions, bidders should ideally support CosmWasm, but at a minimum have Interchain Accounts (ICA) enabled as a host and have an active IBC channel to Neutron. This ensures seamless integration with Hydro’s deployment infrastructure and enables secure, automated liquidity management. Projects without direct compatibility should establish the necessary connections before submitting a bid.
+
 ## Bid template
 
 During Pilot Rounds, participation in Hydro requires approval from the Hydro committee, and prospective bidders must fill out the [project bid template](https://docs.google.com/document/d/1t_K0PxpH4nVWrme6l_8dNQxrUiw0OceNoQ0S959Kp_0/edit?usp=sharing). The information needed in the project bid template is the following:

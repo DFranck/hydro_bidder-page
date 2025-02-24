@@ -32,7 +32,10 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
-import { max, range, sumBy, uniq } from "lodash"
+import max from "lodash/max"
+import range from "lodash/range"
+import sumBy from "lodash/sumBy"
+import uniq from "lodash/uniq"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment, useCallback } from "react"
@@ -80,9 +83,12 @@ export function MetricsPage({
     (bid) => bid.offchainTribute.length > 0
   )
 
-  const tokenBasedRows = buildRows({ bids: tokenBasedBids, isTokenBased: true })
+  const tokenBasedRows = buildRows({
+    bidsFromNumia: tokenBasedBids,
+    isTokenBased: true,
+  })
   const pointBasedRows = buildRows({
-    bids: pointBasedBids,
+    bidsFromNumia: pointBasedBids,
     isTokenBased: false,
   })
 
@@ -120,7 +126,7 @@ export function MetricsPage({
         customValueGetter: (row) => row._bid.title,
       },
       {
-        key: "polSize",
+        key: "amount",
         label: (
           <Tooltip tipContents={metricsPolSizeColumnTooltip}>
             <div className="flex items-center gap-1">
@@ -226,10 +232,10 @@ export function MetricsPage({
   }
 
   function buildRows({
-    bids: bidsFromNumia,
+    bidsFromNumia,
     isTokenBased,
   }: {
-    bids: typeof bidsToRender
+    bidsFromNumia: typeof bidsToRender
     isTokenBased: boolean
   }) {
     return bidsFromNumia.map((bidFromNumia) => {
@@ -273,7 +279,7 @@ export function MetricsPage({
           </InvisibleLink>
         ),
 
-        polSize: (
+        amount: (
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               <AmountAndUnitPair
@@ -308,7 +314,10 @@ export function MetricsPage({
         polApr: !isTokenBased ? undefined : (
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
-              `${bidFromNumia.apr}%`
+              <StyledText variant="mathSymbol.container">
+                <span>{bidFromNumia.apr}</span>
+                <StyledText variant="mathSymbol">%</StyledText>
+              </StyledText>
             ) : (
               <BidPolApr bidId={Number(bidFromNumia.id)} />
             )}
@@ -320,7 +329,7 @@ export function MetricsPage({
             {requestedPreHydro ? (
               0
             ) : !isTokenBased ? (
-              <BidTribute bid={bidFromContract} textAlign="right" />
+              <BidTribute bidId={bidFromContract.id} textAlign="right" />
             ) : (
               <BidTributeApr bidId={Number(bidFromNumia.id)} />
             )}
@@ -359,12 +368,7 @@ export function MetricsPage({
       return (
         <Fragment key={row._bid.id}>
           {!!shouldShowVoteThresholdLine && (
-            <TR
-              className="
-                js-vote-threshold-line
-                [&~&]:hidden
-              "
-            >
+            <TR className="js-vote-threshold-line [&~&]:hidden">
               <TD colSpan={99} className="!p-0">
                 <div
                   className="
@@ -501,7 +505,7 @@ export function MetricsPage({
             <StyledTable
               columns={tokenBasedColumns}
               rows={tokenBasedRows}
-              initialSortedColumnKey="polSize"
+              initialSortedColumnKey="amount"
               renderRow={renderRow}
               secondPassSortFunction={secondPassSortFunction}
             />
@@ -513,7 +517,7 @@ export function MetricsPage({
             <StyledTable
               columns={pointBasedColumns}
               rows={pointBasedRows}
-              initialSortedColumnKey="polSize"
+              initialSortedColumnKey="amount"
               renderRow={renderRow}
               secondPassSortFunction={secondPassSortFunction}
             />

@@ -2,7 +2,7 @@ import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { startCase } from "lodash"
+import startCase from "lodash/startCase"
 
 export interface BidFromNumia {
   // Needed to link data
@@ -47,6 +47,7 @@ export type SanitizedBidFromNumia = CamelCaseKeys<
     isOngoing: boolean
     isPending: boolean
     isRejected: boolean
+    isVoting: boolean
     projectName: string
     tranche: number
     roundId: number | "pre-hydro"
@@ -81,9 +82,8 @@ function sanitizeBid({
 }: BidFromNumia): SanitizedBidFromNumia {
   const { status } = bid
   const isOngoing = status.toLowerCase().includes("ongoing")
-  const isPending =
-    status.toLowerCase().includes("pending") ||
-    status.toLowerCase().includes("voting")
+  const isPending = status.toLowerCase().includes("pending")
+  const isVoting = status.toLowerCase().includes("voting")
   const isRejected = status.toLowerCase().includes("rejected")
 
   return keysFromSnakeToCamelCase({
@@ -91,6 +91,7 @@ function sanitizeBid({
     isOngoing,
     isPending,
     isRejected,
+    isVoting,
     projectName: project,
     tranche: Number(bid.tranche),
     roundId: round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(round),

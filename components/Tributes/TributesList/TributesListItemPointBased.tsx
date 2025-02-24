@@ -1,12 +1,12 @@
 import { FC } from "react"
 import Link from "next/link"
 import { SanitizedPointBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import { StyledText } from "@/components/StyledText"
 
 interface OwnProps {
   tribute: SanitizedPointBasedTribute
-  description?: BidDescription;
+  description?: BidDescriptionFromGithub;
 }
 
 const TributesListItemPointBased: FC<OwnProps> = ({ tribute, description }) => {

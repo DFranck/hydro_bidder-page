@@ -1,11 +1,11 @@
 import { SanitizedPointBasedTribute, SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import TributesListItemTokenBased from "@/components/Tributes/TributesList/TributesListItemTokenBased"
 import TributesListItemPointBased from "@/components/Tributes/TributesList/TributesListItemPointBased"
 
 interface TributesListProps {
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
-  bidDescription?: BidDescription
+  bidDescription?: BidDescriptionFromGithub
 }
 
 export function TributesList({ tributes, bidDescription }: TributesListProps) {

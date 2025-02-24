@@ -29,7 +29,8 @@ import { VoteButton } from "@/components/VoteButton"
 import { BID_DESCRIPTIONS_URL } from "@/contract-apis/fetchBidDescriptions"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
-import { kebabCase, sumBy } from "lodash"
+import kebabCase from "lodash/kebabCase"
+import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -353,7 +354,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
                 {!isTokenBased ? (
-                  <BidTribute bid={bid} />
+                  <BidTribute bidId={bidId} />
                 ) : (
                   <BidTributeApr bidId={bidId} />
                 )}
@@ -407,7 +408,10 @@ export function BidDetails({ bidId }: { bidId: number }) {
                   not-italic
                 "
               >
-                <span>{Math.round(bid.percentage)}%</span>
+                <StyledText variant="mathSymbol.container">
+                  <span>{Math.round(bid.percentage)}</span>
+                  <StyledText variant="mathSymbol">%</StyledText>
+                </StyledText>
                 {bid.percentage < VOTE_SHARE_THRESHOLD && (
                   <Tooltip tipContents={voteThresholdTooltip}>
                     <span

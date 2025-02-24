@@ -1,4 +1,4 @@
-import { camelCase } from "lodash"
+import camelCase from "lodash/camelCase"
 
 export type CamelCase<S extends string> = S extends `${infer P}_${infer Q}`
   ? `${P}${Capitalize<CamelCase<Q>>}`
