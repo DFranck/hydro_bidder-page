@@ -22,9 +22,9 @@ export const tableStateReducer: Reducer<
     case "setSortedColumnKey": {
       const { sortDirection, sortedColumnKey } = action.payload
 
-      const columnDescriptor = state.columns.find(
-        (column) => column.key === sortedColumnKey
-      )
+      const columnDescriptor =
+        state.columns.find((column) => column.key === sortedColumnKey) ??
+        state.columns[0]
 
       const sortFunction =
         columnDescriptor?.customValueGetter ??

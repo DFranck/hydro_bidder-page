@@ -4,7 +4,6 @@ import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EmptyBox } from "@/components/EmptyBox"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
-import { PopupController } from "@/components/PopupController"
 import { StyledTable } from "@/components/StyledTable"
 import { BaseRowObject } from "@/components/StyledTable/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -38,7 +37,6 @@ export default function BidsDashboardPage() {
 
   return (
     <>
-      <PopupController />
       <ContentContainer className="gap-12 py-6">
         <LoadingSpinner isLoading={isLoading} />
 

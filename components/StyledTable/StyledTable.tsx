@@ -1,7 +1,6 @@
 "use client"
 
 import { usePersistedReducer } from "@/lib/usePersistedReducer"
-import isEqual from "lodash/isEqual"
 import { useEffect, useMemo } from "react"
 import { TABLE } from "./components/TABLE"
 import { TBODY } from "./components/TBODY"
@@ -17,6 +16,7 @@ import {
   TableState,
   TableStateAction,
 } from "./types"
+import { isDeepEqual } from "@/lib/isDeepEqual"
 
 export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   columns,
@@ -57,7 +57,10 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   }, [sortedRows, secondPassSortFunction, sortDirection])
 
   useEffect(() => {
-    if (isEqual(columns, columnsInState) && isEqual(rows, rowsInState)) {
+    if (
+      isDeepEqual(columns, columnsInState) &&
+      isDeepEqual(rows, rowsInState)
+    ) {
       return
     }
 

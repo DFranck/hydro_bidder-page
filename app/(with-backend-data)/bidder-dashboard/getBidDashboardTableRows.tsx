@@ -8,14 +8,14 @@ import { Icon } from "@/components/Icon"
 import { BidRow } from "@/app/(with-backend-data)/bidder-dashboard/page"
 import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
 import { TributesList } from "@/components/Tributes/TributesList/TributesList"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 import { InvisibleButton } from "@/components/InvisibleButton"
 
 export function getBidDashboardTableRows(
   openedRows: number[],
   onToggleRow: (bidId: number) => void,
   bids?: AugmentedBid[],
-  bidDescriptions?: Record<string, BidDescription>,
+  bidDescriptions?: Record<string, BidDescriptionFromGithub>,
 ): {token: BidRow[]; point: BidRow[]} {
   if (!bids || !bids.length) return { token: [], point: [] }
 

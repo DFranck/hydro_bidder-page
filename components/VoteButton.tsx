@@ -19,7 +19,7 @@ import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import { keyBy } from "lodash"
+import keyBy from "lodash/keyBy"
 import Link from "next/link"
 import { useState } from "react"
 
