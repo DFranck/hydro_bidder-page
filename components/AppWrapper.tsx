@@ -4,14 +4,44 @@ import LoadingState from "@/app/loading"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
-import { QueryClientProvider } from "@/components/QueryClientProvider"
 import { ScrollIndicator } from "@/components/ScrollIndicator"
 import { ToastContextProvider } from "@/components/Toasts"
-import { WalletProvider } from "@/components/WalletProvider"
 import { RawBackendDataBeforeWallet } from "@/contract-apis/types"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
-import { ReactNode } from "react"
+import dynamic from "next/dynamic"
+import { ReactNode, Suspense } from "react"
 import { twJoin } from "tailwind-merge"
+
+// Dynamic imports for heavy components
+const WalletProvider = dynamic(
+  () => import("@/components/WalletProvider").then((mod) => mod.WalletProvider),
+  {
+    loading: () => <LoadingState />,
+    ssr: false,
+  }
+)
+
+const BackendDataTweaker = dynamic(
+  () =>
+    import("@/components/BackendDataTweakerLoader").then(
+      (mod) => mod.BackendDataTweaker
+    ),
+  {
+    loading: () => null,
+    ssr: false,
+  }
+)
+
+const QueryClientProvider = dynamic(
+  () =>
+    import("@/components/QueryClientProvider").then(
+      (mod) => mod.QueryClientProvider
+    ),
+  {
+    loading: () => <LoadingState />,
+    ssr: false, // Since react-query needs browser APIs
+  }
+)
 
 export function AppWrapper({
   children,
@@ -50,6 +80,9 @@ export function AppWrapper({
                   rawBackendDataBeforeWallet={rawBackendDataBeforeWallet!}
                 >
                   {children}
+                  <Suspense fallback={null}>
+                    <BackendDataTweaker />
+                  </Suspense>
                 </BackendDataContextProvider>
               )}
             >

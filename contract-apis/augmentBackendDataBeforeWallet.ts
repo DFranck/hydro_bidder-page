@@ -66,6 +66,7 @@ export function augmentBackendDataBeforeWallet(
 
   const augmentedBidsBeforeWallet = proposals.map((proposal) =>
     augmentBidBeforeWallet({
+      atomPrice,
       bid: proposal,
       rawBackendDataBeforeWallet,
       totalPowerByRoundId,

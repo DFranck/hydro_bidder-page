@@ -30,7 +30,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const renderAprValue = () => {
     if (bid.roundId === currentRoundId) {
-      if (bid.tributeAprMin === bid.tributeAprMax) {
+      if (bid.tributeAprMin.toFixed(2) === bid.tributeAprMax.toFixed(2)) {
         const value = [Infinity, null].includes(bid.tributeAprMin)
           ? "0"
           : formattedTributeAprMin

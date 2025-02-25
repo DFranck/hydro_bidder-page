@@ -29,6 +29,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 
+export const dynamic = "force-dynamic"
+
 export default function BidsPage() {
   const backendData = useBackendData()
 

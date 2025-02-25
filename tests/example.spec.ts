@@ -1,14 +1,29 @@
-import { expect, test } from "@playwright/test"
+import { BackendDataTweak } from "@/contract-apis/types"
+import { expect, Page, test } from "@playwright/test"
 
-test("has title", async ({ page }) => {
-  await page.goto("http://localhost:3000/")
+export async function setBackendTweaks(page: Page, tweaks: BackendDataTweak[]) {
+  await page.evaluate((tweaksData) => {
+    window.localStorage.setItem("backendDataTweaks", JSON.stringify(tweaksData))
+  }, tweaks)
+}
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Hydro/)
-})
+// Commonly used tweaks
+export const FAKE_WALLET_TWEAK: BackendDataTweak = {
+  id: "test-tweak",
+  json: {
+    patchData: {
+      address: "neutron1r6rv879netg009eh6ty23v57qrq29afecuehlm",
+      isWalletConnected: true,
+    },
+  },
+  label: "Fake Wallet Connected",
+}
 
-test("get started link", async ({ page }) => {
+test("page loads", async ({ page }) => {
   await page.goto("http://localhost:3000/bids")
-
-  await expect(page.getByText("Live Bids")).toBeVisible()
+  await expect(page.getByText("Connect Wallet")).toHaveCount(4)
+  await setBackendTweaks(page, [FAKE_WALLET_TWEAK])
+  await page.waitForTimeout(1000)
+  await expect(page.getByText("Connect Wallet")).toHaveCount(1)
+  await expect(page.getByText("Change Vote")).toHaveCount(3)
 })

@@ -35,6 +35,10 @@ const buttonStyles = {
     commonBaseButtonStyles,
     "!size-10 rounded-full border-2 border-palette-green !p-0 text-palette-green hover:bg-palette-green hover:text-palette-text"
   ),
+  circularIcon: twMerge(
+    commonBaseButtonStyles,
+    "!size-10 rounded-full border-0 !p-0 text-white/60 hover:bg-white/20 hover:text-white"
+  ),
 }
 
 const classNamesForAllHeadings = twJoin(
@@ -47,7 +51,8 @@ const generateButtonClassNames = (
     | "secondary"
     | "neutral"
     | "circular-primary"
-    | "circular-secondary",
+    | "circular-secondary"
+    | "circular-icon",
   size: "small" | "medium" | "large" = "medium"
 ) => {
   const baseStyles = {
@@ -56,6 +61,7 @@ const generateButtonClassNames = (
     neutral: buttonStyles.neutralBase,
     "circular-primary": buttonStyles.circularPrimary,
     "circular-secondary": buttonStyles.circularSecondary,
+    "circular-icon": buttonStyles.circularIcon,
   }
 
   const sizeStyles = buttonStyles.sizeVariants[size]
@@ -86,6 +92,7 @@ export const classNames = {
   "button.neutral.small": generateButtonClassNames("neutral", "small"),
   "button.circular.primary": generateButtonClassNames("circular-primary"),
   "button.circular.secondary": generateButtonClassNames("circular-secondary"),
+  "button.circular.icon": generateButtonClassNames("circular-icon"),
 
   footnote: twJoin("text-sm leading-relaxed text-white/60"),
 
