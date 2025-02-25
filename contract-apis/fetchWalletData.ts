@@ -1,11 +1,24 @@
 "use server"
 
-import { Tranche } from "@/app/ts_types/HydroBase.types"
+import {
+  LockupWithPerTrancheInfo,
+  Tranche,
+  VoteWithPower,
+} from "@/app/ts_types/HydroBase.types"
+import { TributeClaim } from "@/app/ts_types/TributeBase.types"
 import {
   getHydroQueryClient,
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
 import range from "lodash/range"
+
+export interface RawWalletData {
+  voting_power: number
+  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
+  historical_tribute_claims: TributeClaim[]
+  outstanding_tribute_claims: TributeClaim[]
+  votes: VoteWithPower[]
+}
 
 export async function fetchWalletData({
   address,
@@ -15,7 +28,7 @@ export async function fetchWalletData({
   address: string
   currentRoundId: number
   tranches: Tranche[]
-}) {
+}): Promise<RawWalletData> {
   const hydroQueryClient = await getHydroQueryClient()
   const tributeQueryClient = await getTributeQueryClient()
   const allRoundIds = range(0, currentRoundId + 1)
@@ -29,34 +42,44 @@ export async function fetchWalletData({
     { lockups_with_per_tranche_infos },
     { claims: historical_tribute_claims },
   ] = await Promise.all([
-    hydroQueryClient.userVotingPower({ address }),
-    hydroQueryClient.allUserLockupsWithTrancheInfos({
-      address,
-      limit: 10_000,
-      startFrom: 0,
-    }),
-    tributeQueryClient.historicalTributeClaims({
-      limit: 100,
-      startFrom: 0,
-      userAddress: address,
-    }),
+    hydroQueryClient
+      .userVotingPower({ address })
+      .catch(() => ({ voting_power: 0 })),
+    hydroQueryClient
+      .allUserLockupsWithTrancheInfos({
+        address,
+        limit: 10_000,
+        startFrom: 0,
+      })
+      .catch(() => ({ lockups_with_per_tranche_infos: [] })),
+    tributeQueryClient
+      .historicalTributeClaims({
+        limit: 100,
+        startFrom: 0,
+        userAddress: address,
+      })
+      .catch(() => ({ claims: [] })),
   ])
 
   const votesAndClaims = await Promise.all(
     allRoundTrancheIdPairs.map(async ({ roundId, trancheId }) => {
       const [{ votes }, { claims }] = await Promise.all([
-        hydroQueryClient.userVotes({
-          address,
-          roundId,
-          trancheId,
-        }),
-        tributeQueryClient.outstandingTributeClaims({
-          limit: 100,
-          roundId,
-          startFrom: 0,
-          trancheId,
-          userAddress: address,
-        }),
+        hydroQueryClient
+          .userVotes({
+            address,
+            roundId,
+            trancheId,
+          })
+          .catch(() => ({ votes: [] })),
+        tributeQueryClient
+          .outstandingTributeClaims({
+            limit: 100,
+            roundId,
+            startFrom: 0,
+            trancheId,
+            userAddress: address,
+          })
+          .catch(() => ({ claims: [] })),
       ])
       return { votes, claims }
     })

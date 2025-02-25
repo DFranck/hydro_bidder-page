@@ -133,10 +133,7 @@ export function augmentBackendDataAfterWallet({
     })
   )
 
-  const lockedAtomTotalWallet = sumBy(
-    lockups_with_per_tranche_infos,
-    "funds.amount"
-  )
+  const lockedAtomTotalWallet = sumBy(augmentedLockups, "funds.amount")
   const lockedAtomPercentageWallet = Math.floor(
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )

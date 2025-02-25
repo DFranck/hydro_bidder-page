@@ -35,7 +35,10 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const renderAprValue = () => {
     if (bid.roundId === currentRoundId) {
-      if (safeTributeAprMin * 100 > 1000) {
+      if (bid.tributeAprMin.toFixed(2) === bid.tributeAprMax.toFixed(2)) {
+        const value = [Infinity, null].includes(bid.tributeAprMin)
+          ? "0"
+          : formattedTributeAprMin
         return (
           <>
             <StyledText variant="mathSymbol">&gt;</StyledText>

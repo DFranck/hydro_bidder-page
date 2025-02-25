@@ -7,6 +7,7 @@ import {
   VoteWithPower,
 } from "@/app/ts_types/HydroBase.types"
 import { Tribute, TributeClaim } from "@/app/ts_types/TributeBase.types"
+import { fetchWalletData } from "@/contract-apis/fetchWalletData"
 import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
 
 export type ArbitraryAmountWithDescription = [
@@ -314,4 +315,16 @@ export type SanitizedTokenBasedTribute = Omit<
 export interface SanitizedVote
   extends Omit<CamelCaseKeys<VoteWithPower>, "propId"> {
   bidId: number
+}
+
+export interface BackendDataTweak {
+  id: string
+  json: Partial<
+    RawBackendDataBeforeWallet & {
+      walletData?: Awaited<ReturnType<typeof fetchWalletData>>
+      patchData?: Partial<AugmentedBackendDataAfterWallet>
+    }
+  >
+  label: string
+  disabled?: boolean
 }

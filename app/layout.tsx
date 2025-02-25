@@ -1,13 +1,11 @@
 "use server"
 
 import { defaultMetadata, metadataByRoute } from "@/app/metadata"
-import { BackendDataTweaker } from "@/components/BackendDataTweaker"
 import { inter } from "@/lib/font"
 import sortBy from "lodash/sortBy"
 import { headers } from "next/headers"
 import Script from "next/script"
 import "./globals.css"
-import "./injectServiceWorker.js"
 
 export async function generateMetadata() {
   const headersList = await headers()
@@ -46,10 +44,10 @@ export default async function RootLayout({
             />
             <Script id="google-analytics" strategy="afterInteractive">
               {`
-                  window.dataLayer = window.dataLayer || []
-                  function gtag(){dataLayer.push(arguments)}
-                  gtag('js', new Date())
-                  gtag('config', 'G-NZ1F6WL2PM')
+                window.dataLayer = window.dataLayer || []
+                function gtag(){dataLayer.push(arguments)}
+                gtag('js', new Date())
+                gtag('config', 'G-NZ1F6WL2PM')
               `}
             </Script>
             <Script
@@ -59,10 +57,14 @@ export default async function RootLayout({
             />
           </>
         )}
+        <Script
+          id="service-worker"
+          strategy="afterInteractive"
+          src="/injectServiceWorker.js"
+        />
       </head>
       <body className={`${inter.className} relative overflow-x-hidden`}>
         {children}
-        <BackendDataTweaker />
       </body>
     </html>
   )

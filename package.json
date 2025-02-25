@@ -54,6 +54,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@codemirror/lang-json": "^6.0.1",
     "@next/bundle-analyzer": "^15.1.6",
     "@playwright/test": "^1.50.1",
     "@tailwindcss/typography": "^0.5.15",
@@ -61,11 +62,19 @@
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@uiw/codemirror-theme-github": "^4.23.8",
+    "@uiw/react-codemirror": "^4.23.8",
     "eslint": "^9",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.15",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18"
   }
 }

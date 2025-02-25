@@ -430,7 +430,7 @@ export function MetricsPage({
 
       <ContentContainer className="gap-6 py-6">
         <div
-          id="metrics-page-round-navigation"
+          data-testid="metrics-page-round-navigation"
           className="flex items-center justify-between"
         >
           <h2 className="sr-only">PoL Metrics by Round</h2>

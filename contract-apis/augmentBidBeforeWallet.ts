@@ -9,10 +9,12 @@ import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import { omit, sumBy } from "lodash"
 
 export function augmentBidBeforeWallet({
+  atomPrice,
   bid,
   rawBackendDataBeforeWallet,
   totalPowerByRoundId,
 }: {
+  atomPrice: number
   bid: Proposal
   rawBackendDataBeforeWallet: RawBackendDataBeforeWallet
   totalPowerByRoundId: Record<number, number>
@@ -27,11 +29,6 @@ export function augmentBidBeforeWallet({
   } = rawBackendDataBeforeWallet
 
   const { deployment_duration, proposal_id, round_id, ...rest } = bid
-
-  const atomPrice =
-    assetListWithPrices[
-      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-    ]?.priceUsd ?? 0
 
   const augmentedTokenBasedTributes = tributes
     .filter(
