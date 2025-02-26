@@ -1,16 +1,9 @@
 "use server"
 
 import { getPriceFeedUrl } from "@/config"
-import { AssetListWithPrices } from "@/contract-apis/types"
+import { AssetListEntry, AssetListWithPrices } from "@/contract-apis/types"
 import pick from "lodash/pick"
-
-export interface AssetListEntry {
-  token: string
-  symbol: string
-  decimals: number
-  coingeckoId?: string
-  priceUsd?: number
-}
+import { fetchWithRetry } from "./utils/fetchWithRetry"
 
 const symbolToCoingeckoId: Record<string, string> = {
   BLD: "agoric",
@@ -18,12 +11,13 @@ const symbolToCoingeckoId: Record<string, string> = {
 }
 
 export async function fetchAssetListWithPrices(): Promise<AssetListWithPrices> {
-  const response = await fetch(
+  const response = await fetchWithRetry(
     "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json",
     {
-      next: {
-        revalidate: 86400, // 24 hours in seconds
+      headers: {
+        Accept: "application/json",
       },
+      next: { revalidate: 86400 }, // 24 hours
     }
   )
   const assetList: AssetListEntry[] = await response.json()
@@ -39,10 +33,11 @@ export async function fetchAssetListWithPrices(): Promise<AssetListWithPrices> {
     .filter((asset) => "coingeckoId" in asset)
     .map((asset) => asset.coingeckoId!)
 
-  const pricesResponse = await fetch(getPriceFeedUrl(coingeckoIds), {
-    next: {
-      revalidate: 86400, // 24 hours in seconds
+  const pricesResponse = await fetchWithRetry(getPriceFeedUrl(coingeckoIds), {
+    headers: {
+      Accept: "application/json",
     },
+    next: { revalidate: 86400 }, // 24 hours
   })
 
   const pricesByCoingeckoId: Record<string, { usd: number }> =

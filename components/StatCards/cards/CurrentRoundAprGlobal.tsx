@@ -25,13 +25,6 @@ export function CurrentRoundAprGlobal() {
     2 /
     bidsWithoutPointsTributes.length
 
-  console.log({
-    bidsInRound,
-    totalTributeAprMin,
-    totalTributeAprMax,
-    averageTributeApr,
-  })
-
   return (
     <StatCard
       isLoading={isLoading}

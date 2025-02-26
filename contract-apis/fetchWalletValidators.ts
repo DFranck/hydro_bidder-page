@@ -1,4 +1,5 @@
 import { ChainContext } from "@cosmos-kit/core"
+import { fetchWithRetry } from "./utils/fetchWithRetry"
 
 export type Validator = {
   operator_address: string
@@ -38,11 +39,21 @@ export async function fetchMyValidators(
   const restEndpoint = await chain.getRestEndpoint()
 
   const [validatorsResponse, delegationsResponse] = await Promise.all([
-    fetch(
-      `${restEndpoint}cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`
+    fetchWithRetry(
+      `${restEndpoint}cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`,
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
     ).then((res) => res.json()),
-    fetch(
-      `${restEndpoint}cosmos/staking/v1beta1/delegations/${delegatorAddress}`
+    fetchWithRetry(
+      `${restEndpoint}cosmos/staking/v1beta1/delegations/${delegatorAddress}`,
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
     ).then((res) => res.json()),
   ])
 

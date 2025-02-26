@@ -163,7 +163,7 @@ export interface RawNumiaBid {
   // The more of this we get from the contract, the better
   apr: number
   current_allocation_amount: number
-  duration_days: number // only used for pre-hydro bids
+  duration_days: number | null // only used for pre-hydro bids
   initial_allocation_amount: number
   offchain_tribute_info: string
   offchain_tribute: string
@@ -174,6 +174,7 @@ export interface RawNumiaBid {
   status: string
   voters: number
   voting_power: number
+  yield: number
 }
 
 export interface GlobalLockupCapacityInfo {
@@ -319,12 +320,30 @@ export interface SanitizedVote
 
 export interface BackendDataTweak {
   id: string
-  json: Partial<
+  json: WithOverwrites<
     RawBackendDataBeforeWallet & {
-      walletData?: Awaited<ReturnType<typeof fetchWalletData>>
-      patchData?: Partial<AugmentedBackendDataAfterWallet>
+      walletData: Awaited<ReturnType<typeof fetchWalletData>>
+      patchData: Partial<AugmentedBackendDataAfterWallet>
     }
   >
   label: string
   disabled?: boolean
+}
+
+type WithOverwrites<T> = T extends object
+  ? {
+      // Original keys, marked as optional, recursively applied.
+      [K in keyof T]?: WithOverwrites<T[K]>
+    } & {
+      // $-prefixed keys, also optional.
+      [K in keyof T as `$${string & K}`]?: WithOverwrites<T[K]>
+    }
+  : T
+
+export interface AssetListEntry {
+  token: string
+  symbol: string
+  decimals: number
+  coingeckoId?: string
+  priceUsd?: number
 }
