@@ -8,26 +8,14 @@ import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAprGlobal() {
-  const {
-    atomPrice,
-    bidsByRoundId,
-    currentRoundId,
-    isLoading,
-    lockedAtomTotalGlobal,
-    metricsGlobal,
-  } = useBackendData()
-  const bids = bidsByRoundId[currentRoundId] ?? []
-  const totalTributeValue = sumBy(
-    bids.map((bid) => bid.tributes).flat(),
-    "valueUsd"
+  const { bidsById, currentRoundId, isLoading } = useBackendData()
+  const bidsInRound = Object.values(bidsById).filter(
+    (bid) => bid.roundId === currentRoundId
   )
-  const averageBidDurationInEpochs =
-    sumBy(bids, "deploymentDurationInEpochs") / bids.length
-  // TODO: Calculate this properly, then use it
-  const averageAPR =
-    ((totalTributeValue / lockedAtomTotalGlobal / atomPrice) * 12) /
-      averageBidDurationInEpochs || 0
-  const averageAprFromNumia = metricsGlobal.currentTributeApr
+  const totalTributeAprMin = sumBy(bidsInRound, "tributeAprMin")
+  const totalTributeAprMax = sumBy(bidsInRound, "tributeAprMax")
+  const averageTributeApr =
+    (totalTributeAprMin + totalTributeAprMax) / 2 / bidsInRound.length
 
   return (
     <StatCard
@@ -41,7 +29,7 @@ export function CurrentRoundAprGlobal() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={averageAprFromNumia.toLocaleString("en-US", {
+      value={averageTributeApr.toLocaleString("en-US", {
         style: "percent",
       })}
     />
