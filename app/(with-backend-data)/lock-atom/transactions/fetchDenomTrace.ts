@@ -1,4 +1,5 @@
 "use client"
+import { fetchWithRetry } from "@/contract-apis/utils/fetchWithRetry"
 
 export const fetchDenomTrace = async (
   balance: { denom: string; amount: string },
@@ -6,8 +7,13 @@ export const fetchDenomTrace = async (
 ) => {
   if (balance.denom?.startsWith("ibc/")) {
     try {
-      const denomTraceResponse = await fetch(
-        `${restEndpoint}ibc/apps/transfer/v1/denom_traces/${balance.denom}`
+      const denomTraceResponse = await fetchWithRetry(
+        `${restEndpoint}ibc/apps/transfer/v1/denom_traces/${balance.denom}`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
       ).then((res) => res.json())
       const baseDenom = denomTraceResponse.denom_trace.base_denom
 

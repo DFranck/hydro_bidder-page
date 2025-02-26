@@ -7,6 +7,7 @@ import {
   AugmentedBackendDataAfterWallet,
   RawBackendDataBeforeWallet,
 } from "@/contract-apis/types"
+import { mergeWithOverwrite } from "@/lib/mergeWithOverwrite"
 import { useChain } from "@cosmos-kit/react"
 import merge from "lodash/merge"
 import { usePathname, useRouter } from "next/navigation"
@@ -167,18 +168,25 @@ export function BackendDataContextProvider({
     )
 
     const {
-      hydroData: hydroDataTweaks,
-      externalData: externalDataTweaks,
-      patchData,
-      walletData: walletDataTweaks,
+      hydroData: hydroDataTweaks = {},
+      externalData: externalDataTweaks = {},
+      patchData = {},
+      walletData: walletDataTweaks = {},
     } = enabledTweaks
 
-    const tweakedRawBackendDataBeforeWallet = merge(
+    const tweakedRawBackendDataBeforeWallet = mergeWithOverwrite(
       {},
       rawBackendDataBeforeWallet,
-      { externalData: externalDataTweaks },
-      { hydroData: hydroDataTweaks }
+      { externalData: externalDataTweaks, hydroData: hydroDataTweaks }
     )
+
+    console.log({
+      enabledTweaks,
+      rawBackendDataBeforeWallet,
+      tweakedRawBackendDataBeforeWallet,
+      externalDataTweaks,
+      hydroDataTweaks,
+    })
 
     const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(
       tweakedRawBackendDataBeforeWallet
@@ -187,7 +195,7 @@ export function BackendDataContextProvider({
     const effectiveAddress = patchData?.address ?? address
 
     if (!effectiveAddress) {
-      const finalState = merge(
+      const finalState = mergeWithOverwrite(
         {},
         initialBackendDataContext,
         augmentedBackendDataBeforeWallet,
@@ -217,7 +225,11 @@ export function BackendDataContextProvider({
         tranches,
       })
 
-      const tweakedWalletData = merge({}, walletData, walletDataTweaks)
+      const tweakedWalletData = mergeWithOverwrite(
+        {},
+        walletData,
+        walletDataTweaks
+      )
 
       const augmentedBackendDataAfterWallet = augmentBackendDataAfterWallet({
         address: effectiveAddress,
@@ -225,7 +237,7 @@ export function BackendDataContextProvider({
         walletData: tweakedWalletData,
       })
 
-      const tweakedAugmentedBackendDataAfterWallet = merge(
+      const tweakedAugmentedBackendDataAfterWallet = mergeWithOverwrite(
         {},
         augmentedBackendDataAfterWallet,
         patchData

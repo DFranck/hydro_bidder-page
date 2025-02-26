@@ -8,19 +8,40 @@ import { useToasts } from "@/components/Toasts"
 import { BackendDataTweak } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { sanitizeJSON } from "@/lib/sanitizeJSON"
+import { initialTweaks } from "@/tests/fixtures/initialTweaks"
 import { json } from "@codemirror/lang-json"
 import { githubDark } from "@uiw/codemirror-theme-github"
 import CodeMirror from "@uiw/react-codemirror"
+import sortBy from "lodash/sortBy"
 import { FormEvent, MouseEvent, useEffect, useRef, useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 import { useLocalStorage } from "usehooks-ts"
+
+const EXAMPLE_JSON = `{
+  // Prefix property names with $ to overwrite instead of merge
+
+  // Merged into \`rawBackendDataBeforeWallet.hydroData\`
+  "hydroData": {
+    "$proposals": [],
+    "tributes": []
+  },
+
+  // Merged into \`rawBackendDataBeforeWallet.externalData\`
+  "externalData": {},
+
+  // Merged into \`walletData\`
+  "walletData": {}
+
+  // Merged into \`augmentedBackendDataAfterWallet\`
+  "patchData": {},
+}`
 
 type ModalState = "closed" | "list-only" | "editing" | "creating" | "advanced"
 
 export function BackendDataTweaker() {
   const [tweaks, setTweaks] = useLocalStorage<BackendDataTweak[]>(
     "backendDataTweaks",
-    []
+    initialTweaks
   )
   const [modalState, setModalState] = useState<ModalState>("closed")
   const [editingTweakId, setEditingTweakId] = useState<string | null>(null)
@@ -45,7 +66,7 @@ export function BackendDataTweaker() {
       setLabelValue(tweak.label)
       setJsonValue(JSON.stringify(tweak.json, null, 2))
       setTimeout(() => {
-        ;(formElementRef.current?.elements[0] as HTMLInputElement).select()
+        ;(formElementRef.current?.elements[0] as HTMLInputElement)?.select?.()
       }, 100)
     }
   }, [editingTweakId, tweaks])
@@ -87,10 +108,11 @@ export function BackendDataTweaker() {
         setTweaks(parsedTweaks)
         setModalState("list-only")
       } catch (e) {
+        console.error({ error: e })
         setToasts([
           {
             variant: "error",
-            message: "Invalid JSON",
+            message: `Invalid JSON: ${e instanceof Error ? e.message : "Unknown error"}`,
           },
         ])
       }
@@ -128,10 +150,11 @@ export function BackendDataTweaker() {
 
       setModalState("list-only")
     } catch (e) {
+      console.error({ error: e })
       setToasts([
         {
           variant: "error",
-          message: "Invalid JSON",
+          message: `Invalid JSON: ${e instanceof Error ? e.message : "Unknown error"}`,
         },
       ])
     }
@@ -297,6 +320,7 @@ export function BackendDataTweaker() {
                   <CodeMirror
                     data-testid="tweak-json-field"
                     value={jsonValue}
+                    placeholder={EXAMPLE_JSON}
                     height="100%"
                     className="absolute inset-0 overflow-hidden rounded-md border border-gray-200"
                     theme={githubDark}
@@ -373,7 +397,7 @@ export function BackendDataTweaker() {
                 )}
               >
                 <div className="flex flex-col gap-1">
-                  {tweaks.map((tweak) => {
+                  {sortBy(tweaks, "label").map((tweak) => {
                     const { id, label, json, disabled } = tweak
                     const isActive = editingTweakId === id
                     return (

@@ -21,13 +21,6 @@ export function CurrentRoundAprGlobal() {
   const averageTributeApr =
     (totalTributeAprMin + totalTributeAprMax) / 2 / bidsInRound.length
 
-  console.log({
-    bidsInRound,
-    totalTributeAprMin,
-    totalTributeAprMax,
-    averageTributeApr,
-  })
-
   return (
     <StatCard
       isLoading={isLoading}

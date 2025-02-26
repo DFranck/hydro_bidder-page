@@ -1,4 +1,5 @@
 import { RawNumiaBid } from "@/contract-apis/types"
+import { fetchWithRetry } from "./utils/fetchWithRetry"
 
 export const typeToTokenMap = {
   "ibc/837E876E": "SWTH",
@@ -9,7 +10,7 @@ export async function fetchNumiaBidData(): Promise<RawNumiaBid[]> {
     throw new Error("NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT is not set")
   }
 
-  const response = await fetch(
+  const response = await fetchWithRetry(
     `${process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT}?${new Date().getTime()}`,
     {
       headers: {
@@ -21,13 +22,6 @@ export async function fetchNumiaBidData(): Promise<RawNumiaBid[]> {
     throw new Error(`Failed to fetch Numia bid data: ${error.message}`)
   })
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch Numia bid data: ${response.status} ${response.statusText}`
-    )
-  }
-
   const bids = (await response.json()) as RawNumiaBid[]
-
   return bids
 }
