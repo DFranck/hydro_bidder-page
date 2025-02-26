@@ -10,6 +10,9 @@ export async function fetchValidators(
       headers: {
         Accept: "application/json",
       },
+      next: {
+        revalidate: 60 * 5, // 5 minutes
+      },
     }
   )
     .then((res) => res.json())

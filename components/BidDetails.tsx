@@ -27,6 +27,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { BidMetaData } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import kebabCase from "lodash/kebabCase"
@@ -34,12 +35,22 @@ import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import Link from "next/link"
 
-export function BidDetails({ bidId }: { bidId: number }) {
+export function BidDetails({
+  bidId,
+  bidMetaData,
+}: {
+  bidId: number
+  bidMetaData: BidMetaData
+}) {
   const backendData = useBackendData()
+
+  if (!bidId) {
+    return <ErrorBox>The requested bid could not be found.</ErrorBox>
+  }
 
   const {
     atomPrice,
-    bidDescriptionsByBidId,
+    bidMetaDataById,
     bidsById,
     currentRoundId,
     votes,
@@ -47,13 +58,19 @@ export function BidDetails({ bidId }: { bidId: number }) {
     minTributeFactor,
   } = backendData
 
+  const {
+    aboutProject,
+    committeeComments,
+    description,
+    projectLogoUrl,
+    projectName,
+    projectUrl,
+    title,
+  } = bidMetaData
+
   const bid = bidsById[bidId]
 
-  if (!bid) {
-    return <ErrorBox>The requested bid could not be found.</ErrorBox>
-  }
-
-  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
+  const bidInfoFromGithub = bidMetaDataById[bidId]
 
   const bidMetricsFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
@@ -64,7 +81,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
     onchainTributeUsdc: 0,
   }
 
-  if (!bidDescriptionFromGithub && process.env.NODE_ENV !== "development") {
+  if (!bidInfoFromGithub && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
         This bid is active on the Hydro smart sontract but has not yet been
@@ -83,16 +100,6 @@ export function BidDetails({ bidId }: { bidId: number }) {
       </ErrorBox>
     )
   }
-
-  const {
-    committeeComments,
-    description,
-    aboutProject,
-    projectLogoUrl,
-    projectName,
-    projectUrl,
-    title,
-  } = bidDescriptionFromGithub
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
@@ -446,10 +453,9 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
-                  bidDescriptionFromGithub.aboutProject && "About Project",
-                  bidDescriptionFromGithub.description && "Bid Description",
-                  bidDescriptionFromGithub.committeeComments &&
-                    "Committee Review",
+                  aboutProject && "About Project",
+                  description && "Bid Description",
+                  committeeComments && "Committee Review",
                 ]
                   .filter(Boolean)
                   .map((section, index) => (

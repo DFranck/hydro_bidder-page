@@ -51,7 +51,7 @@ export function MetricsPage({
 }) {
   const {
     bidsById,
-    bidDescriptionsByBidId,
+    bidMetaDataById,
     currentRoundId,
     metricsForPreHydroBids,
     metricsForPostHydroBids,
@@ -242,8 +242,7 @@ export function MetricsPage({
     isTokenBased: boolean
   }) {
     return numiaBids.map((bidFromNumia) => {
-      const bidDescriptionFromGithub =
-        bidDescriptionsByBidId[Number(bidFromNumia.id)] ?? null
+      const bidInfoFromGithub = bidMetaDataById[Number(bidFromNumia.id)] ?? null
       const bidFromContract = bidsById[Number(bidFromNumia.id)] ?? null
       const percentage = bidFromContract?.percentage ?? null
       const rowURL =
@@ -251,10 +250,10 @@ export function MetricsPage({
           ? `https://www.mintscan.io/cosmos/proposals/${bidFromNumia.id.replace("#", "")}`
           : `/bids/${bidFromNumia.id}`
       const projectLogoUrl =
-        bidFromNumia.projectLogoUrl || bidDescriptionFromGithub?.projectLogoUrl
+        bidFromNumia.projectLogoUrl || bidInfoFromGithub?.projectLogoUrl
       const projectName =
-        bidFromNumia.projectName || bidDescriptionFromGithub?.projectName
-      const title = bidFromNumia.title || bidDescriptionFromGithub?.title
+        bidFromNumia.projectName || bidInfoFromGithub?.projectName
+      const title = bidFromNumia.title || bidInfoFromGithub?.title
 
       return {
         _bid: { ...bidFromNumia, percentage },

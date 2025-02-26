@@ -5,7 +5,7 @@ import { augmentBackendDataBeforeWallet } from "@/contract-apis/augmentBackendDa
 import { fetchWalletData } from "@/contract-apis/fetchWalletData"
 import {
   AugmentedBackendDataAfterWallet,
-  RawBackendDataBeforeWallet,
+  BackendDataBeforeWalletSlimmed,
 } from "@/contract-apis/types"
 import { mergeWithOverwrite } from "@/lib/mergeWithOverwrite"
 import { useChain } from "@cosmos-kit/react"
@@ -39,7 +39,7 @@ const initialBackendDataContext: BackendDataContextType = {
   address: "",
   assetListWithPrices: {},
   atomPrice: 0,
-  bidDescriptionsByBidId: {},
+  bidMetaDataById: {},
   bidsById: {},
   claimsHistorical: [],
   claimsOutstanding: [],
@@ -102,7 +102,7 @@ export function BackendDataContextProvider({
   rawBackendDataBeforeWallet,
   children,
 }: {
-  rawBackendDataBeforeWallet: RawBackendDataBeforeWallet
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
   children: ReactNode
 }) {
   const pathname = usePathname()
@@ -127,7 +127,7 @@ export function BackendDataContextProvider({
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
-  function attachDebugData(debugData: object[]) {
+  function logDebugData(debugData: object[]) {
     if (process.env.CONTEXT === "production") return
     window.debugData = debugData
 
@@ -149,12 +149,17 @@ export function BackendDataContextProvider({
       console.groupEnd()
     })
     console.groupEnd()
+
+    const { finalState } = debugData[debugData.length - 1] as {
+      finalState: AugmentedBackendDataAfterWallet
+    }
+
     console.log("💡 You have access to the `debugData` object in the console!")
     console.log(
       `🖪 Debug Data Size: ${(JSON.stringify(debugData).length / 1024 / 1024).toFixed(2)} MB`
     )
     console.log(
-      `🖪 State Size: ${(JSON.stringify(state).length / 1024 / 1024).toFixed(2)} MB`
+      `🖪 State Size: ${(JSON.stringify(finalState).length / 1024 / 1024).toFixed(2)} MB`
     )
   }
 
@@ -180,14 +185,6 @@ export function BackendDataContextProvider({
       { externalData: externalDataTweaks, hydroData: hydroDataTweaks }
     )
 
-    console.log({
-      enabledTweaks,
-      rawBackendDataBeforeWallet,
-      tweakedRawBackendDataBeforeWallet,
-      externalDataTweaks,
-      hydroDataTweaks,
-    })
-
     const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(
       tweakedRawBackendDataBeforeWallet
     )
@@ -202,7 +199,7 @@ export function BackendDataContextProvider({
         patchData
       )
 
-      attachDebugData([
+      logDebugData([
         { enabledTweaks },
         { rawBackendDataBeforeWallet },
         { tweakedRawBackendDataBeforeWallet },
@@ -243,7 +240,7 @@ export function BackendDataContextProvider({
         patchData
       )
 
-      attachDebugData([
+      logDebugData([
         { enabledTweaks },
         { rawBackendDataBeforeWallet },
         { tweakedRawBackendDataBeforeWallet },

@@ -25,7 +25,6 @@ export function augmentBackendDataAfterWallet({
 }): AugmentedBackendDataAfterWallet {
   const {
     assetListWithPrices,
-    bidDescriptionsByBidId,
     bidsById,
     currentRoundEndDate,
     currentRoundId,
@@ -62,9 +61,6 @@ export function augmentBackendDataAfterWallet({
       ?.id ?? null
 
   const bidsWithRewards = allBids.map((bid) => {
-    const description =
-      bidDescriptionsByBidId[bid.id]?.description ?? bid.description
-
     const usersEstimatedRewards =
       estimatedRewardForPower({
         amount: sumBy(bid.tributes, "valueUsd"),
@@ -91,7 +87,6 @@ export function augmentBackendDataAfterWallet({
 
     return {
       ...bid,
-      description,
       lockupsOutliveBidDeployment,
       usersEstimatedRewards,
       usersEstimatedRewardRelativeToCurrentPick: 0,

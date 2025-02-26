@@ -37,10 +37,11 @@
     "pino-pretty": "^13.0.0",
     "pocketbase": "^0.22.1",
     "protobufjs": "^7.4.0",
-    "react": "^18.3.1",
+    "react": "^18.0.0",
     "react-confetti": "^6.1.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "^18.0.0",
     "react-markdown": "^9.0.1",
+    "server-only": "^0.0.1",
     "sharp": "^0.33.5",
     "stride": "^2.1.0",
     "stridejs": "^0.11.4",
@@ -71,9 +72,9 @@
     "typescript": "^5"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
     "@types/react": "^18",
-    "@types/react-dom": "^18"
+    "@types/react-dom": "^18",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

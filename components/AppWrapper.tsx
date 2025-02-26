@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
 import { ScrollIndicator } from "@/components/ScrollIndicator"
 import { ToastContextProvider } from "@/components/Toasts"
-import { RawBackendDataBeforeWallet } from "@/contract-apis/types"
+import { BackendDataBeforeWalletSlimmed } from "@/contract-apis/types"
 import { BackendDataContextProvider } from "@/contract-apis/useBackendData"
 import dynamic from "next/dynamic"
 import { ReactNode, Suspense } from "react"
@@ -45,10 +45,10 @@ const QueryClientProvider = dynamic(
 
 export function AppWrapper({
   children,
-  rawBackendDataBeforeWallet,
+  backendDataBeforeWalletSlimmed: rawBackendDataBeforeWallet,
 }: {
   children: ReactNode
-  rawBackendDataBeforeWallet?: RawBackendDataBeforeWallet
+  backendDataBeforeWalletSlimmed?: BackendDataBeforeWalletSlimmed
 }) {
   return (
     <WalletProvider>
