@@ -28,6 +28,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { revalidateTag } from "@/lib/revalidateTag"
+import { createSkipClient, getAddress } from "@/lib/skipApi"
 import { useChain } from "@cosmos-kit/react"
 import keyBy from "lodash/keyBy"
 import sumBy from "lodash/sumBy"
@@ -35,9 +36,17 @@ import Image from "next/image"
 import { MouseEvent, useState } from "react"
 
 export default function RewardsPage() {
+  const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { setToasts } = useToasts()
-  const { getSigningCosmWasmClient } = useChain("neutron")
+  const {
+    getSigningCosmWasmClient,
+    chain: { chain_id: neutronChainId },
+  } = useChain("neutron")
+  const {
+    chain: { chain_id: cosmosHubChainId },
+  } = useChain("cosmoshub")
+
   const {
     address,
     bidDescriptionsByBidId,
@@ -45,6 +54,7 @@ export default function RewardsPage() {
     claimsHistorical,
     claimsOutstanding,
     currentRoundId,
+    atomPrice,
     votes,
   } = useBackendData()
   const votesFromPreviousRounds = votes.filter(
@@ -183,20 +193,17 @@ export default function RewardsPage() {
             <InvisibleLink href={bidUrl}>
               <div className="flex items-center justify-end gap-2">
                 {canClaim ? (
-                  <Tooltip tipContents="Claiming will be enabled soon!">
-                    <StyledText
-                      as="button"
-                      variant="button.primary.small"
-                      className="pointer-events-none opacity-50"
-                      onClick={() =>
-                        setSelection({
-                          tributeId: tribute.id,
-                        })
-                      }
-                    >
-                      Claim
-                    </StyledText>
-                  </Tooltip>
+                  <StyledText
+                    as="button"
+                    variant="button.primary.small"
+                    onClick={() =>
+                      setSelection({
+                        tributeId: tribute.id,
+                      })
+                    }
+                  >
+                    Claim
+                  </StyledText>
                 ) : isClaimed ? (
                   <div className="flex items-center gap-1">
                     Claimed <Icon name="check" />
@@ -288,17 +295,72 @@ export default function RewardsPage() {
     },
   ]
 
+  async function claimSucceeded() {
+    await revalidateTag("backendData")
+    setSelection(null)
+    setIsCelebrating(true)
+    setToasts([toastMessages.claimingRewardsSuccess])
+  }
+
+  async function convertToAtom() {
+    if (!selectedTribute || !process.env.NEXT_PUBLIC_ATOM_DENOM) return
+    const skipClient = await createSkipClient()
+
+    const route = await skipClient.route({
+      amountIn: selectedTribute.amount.toString(),
+      sourceAssetDenom: selectedTribute.denomOriginal,
+      sourceAssetChainID: neutronChainId,
+      destAssetDenom: process.env.NEXT_PUBLIC_ATOM_DENOM,
+      destAssetChainID: cosmosHubChainId,
+    })
+
+    const userAddresses = await Promise.all(
+      route.requiredChainAddresses.map(async (chainID) => ({
+        chainID,
+        address: await getAddress(chainID),
+      }))
+    )
+
+    try {
+      await skipClient.executeRoute({
+        route,
+        userAddresses,
+        onTransactionCompleted: async (chainID, txHash, status) => {
+          console.log(
+            `Route completed with tx hash: ${txHash} & status: ${status.state}`
+          )
+          await claimSucceeded()
+        },
+        onTransactionBroadcast: async ({ txHash, chainID }) => {
+          console.log(`Transaction broadcasted with tx hash: ${txHash}`)
+        },
+        onTransactionTracked: async ({ txHash, chainID }) => {
+          console.log(`Transaction tracked with tx hash: ${txHash}`)
+        },
+        onTransactionSigned: async ({ chainID }) => {
+          console.log(`Transaction signed with chain ID: ${chainID}`)
+        },
+        onValidateGasBalance: async ({ chainID, txIndex, status }) => {
+          console.log(`Validating gas balance for chain ${chainID}...`)
+        },
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   function handleClickCloseClaimRewardsModal(
     event?: MouseEvent<HTMLButtonElement>
   ) {
     event?.preventDefault()
     setSelection(null)
+    setClaimType("native")
   }
 
   async function handleClickClaimNow(event: MouseEvent<HTMLButtonElement>) {
-    if (!selectedBid || !selectedTribute || !address) return
-
     event.preventDefault()
+
+    if (!selectedBid || !selectedTribute || !address) return
 
     try {
       setToasts([toastMessages.claimingRewards])
@@ -311,13 +373,11 @@ export default function RewardsPage() {
         getSigningCosmWasmClient,
       })
 
-      await revalidateTag("backendData")
-
-      setSelection(null)
-
-      setIsCelebrating(true)
-
-      setToasts([toastMessages.claimingRewardsSuccess])
+      if (claimType == "convert") {
+        await convertToAtom()
+      } else {
+        await claimSucceeded()
+      }
     } catch (error) {
       console.error(error)
       setToasts([toastMessages.claimingRewardsError(error as Error)])
@@ -355,15 +415,14 @@ export default function RewardsPage() {
               className="flex flex-col gap-3"
               title="Claim Your Hydro Rewards"
             >
-              <StyledText variant="footnote">
-                You can claim your rewards in the native token offered as
-                tribute or convert them to ATOM before sending them to your
-                wallet.
+              <StyledText>
+                <Icon name="arrow-right" className="pr-2 opacity-60" />
+                <StyledText>Select a token</StyledText>
               </StyledText>
             </Card.Header>
 
             <Card.Body className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
+              <div className="flex gap-6 px-6">
                 <StyledText
                   as="label"
                   variant="label"
@@ -374,47 +433,39 @@ export default function RewardsPage() {
                     as="input"
                     type="radio"
                     name="claimType"
-                    value="native"
-                    defaultChecked={true}
+                    checked={claimType === "native"}
+                    onChange={() => setClaimType("native")}
                   />
-                  Claim rewards in native token
-                </StyledText>
-
-                <Tooltip tipContents="Coming soon!">
-                  <div className="flex items-center gap-1">
-                    <StyledText
-                      as="label"
-                      variant="label"
-                      className="pointer-events-none flex items-center gap-2 opacity-60"
-                    >
-                      <StyledText
-                        variant="input.radio"
-                        disabled
-                        as="input"
-                        type="radio"
-                        name="claimType"
-                        value="convert"
-                      />
-                      Convert rewards to ATOM
-                    </StyledText>
-                    <Icon name="circle-info" />
-                  </div>
-                </Tooltip>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <StyledText as="label" variant="label">
-                  Rewards to be Claimed:
-                </StyledText>
-
-                <div>
                   {selectedTribute && (
-                    <>
-                      {formatAmount(selectedTribute.amount)}
-                      &nbsp;{selectedTribute.denom}
-                    </>
+                    <StyledText>
+                      {formatAmount(selectedTribute.amount)}&nbsp;
+                      <StyledText variant="footnote">
+                        {selectedTribute.denom}
+                      </StyledText>
+                    </StyledText>
                   )}
-                </div>
+                </StyledText>
+                <StyledText
+                  as="label"
+                  variant="label"
+                  className="flex items-center gap-2"
+                >
+                  <StyledText
+                    variant="input.radio"
+                    as="input"
+                    type="radio"
+                    name="claimType"
+                    checked={claimType === "convert"}
+                    onChange={() => setClaimType("convert")}
+                    disabled={!process.env.NEXT_PUBLIC_ATOM_DENOM}
+                  />
+                  {selectedTribute && (
+                    <StyledText>
+                      {formatAmount(selectedTribute.valueUsd / atomPrice)}&nbsp;
+                      <StyledText variant="footnote">ATOM</StyledText>
+                    </StyledText>
+                  )}
+                </StyledText>
               </div>
             </Card.Body>
 
@@ -424,15 +475,16 @@ export default function RewardsPage() {
                 variant="button.primary"
                 onClick={handleClickClaimNow}
               >
-                Claim Rewards
+                {claimType === "native" ? "Claim" : "Claim + Convert to ATOM"}
               </StyledText>
 
               <StyledText
                 as="button"
                 variant="button.secondary"
+                className="bg-palette-text"
                 onClick={handleClickCloseClaimRewardsModal}
               >
-                Cancel
+                Back
               </StyledText>
             </Card.Footer>
           </Card>

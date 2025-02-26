@@ -125,7 +125,7 @@ export const classNames = {
     "size-5 appearance-none rounded-full border-2 outline-none",
     "checked:border-transparent",
     "checked:bg-palette-green",
-    `checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]`
+    `checked:shadow-[0_0_0_3px_theme('colors.palette.text')_inset]`
   ),
 
   label: twJoin(

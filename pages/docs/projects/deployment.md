@@ -1,49 +1,29 @@
-# Deployment Procedures
+# Deployments
 
-## Deployment Testing
+Tests are required to ensure the security and feasibility of liquidity deployments. 
 
-The Hydro team and Hydro committee will conduct deployment tests for all approved bids as part of the due diligence process. These tests are critical for ensuring the security and feasibility of liquidity deployments. Below are the requirements and guidelines for projects during this phase:
+The Hydro team will conduct deployment tests in the final 7 days of each auction round. This ensures any technical or operational issues can be identified and addressed before the round concludes.
 
-### Testing Timeline
+Bidders actively participate in the deployment testing process by:
 
-Deployment tests will be conducted in the final 7 days of each auction round. This ensures any technical or operational issues can be identified and addressed before the round concludes.
+* Providing technical support to assist the Hydro team and committee.  
+* Sharing queries, configurations, and troubleshooting details upon request.  
+* Ensuring availability to address any issues identified during testing.
 
-### Bidders’ Responsibilities
+Any issues identified during deployment tests must be resolved within 7 days of the round’s conclusion. If delays occur due to unresolved bidder-side issues, it may result in forfeiture of the deployment. 
 
-Bidders are required to actively participate in the deployment testing process by:
-- Providing technical support to assist the Hydro team and committee.
-- Sharing queries, configurations, and troubleshooting details upon request.
-- Ensuring availability to address any issues identified during testing.
+In some cases, the Hydro committee may be able to extend liquidity deployment for up to 30 days post-resolution, but extensions are contingent on the availability of sufficient capital reserves and are not guaranteed in future rounds.
 
-### Resolution of Issues
+## Queries
 
-Any issues identified during deployment tests must be resolved within 7 days of the round’s conclusion.
+Bidders must submit deployment queries and transaction details as part of their bid submission to ensure that the Hydro team and committee can accurately monitor deployed funds.
 
-Prompt resolution ensures the deployment remains on schedule and maintains the integrity of Hydro’s processes.
+1. An LCD query to check the current holdings of the Hydro account in the deployment venue.  
+2. A query to check the total TVL in the venue.  
+3. Output must include the principal asset(s) amounts (for example, in ATOM and stATOM for an ATOM\<\>stATOM pool).
 
-### Impact of Delays
+## Transactions 
 
-If delays occur due to unresolved bidder-side issues, the Hydro committee may extend liquidity deployment for up to 30 days post-resolution. Extensions are contingent on the availability of sufficient capital reserves and are not guaranteed in future rounds.
+Bidders must also submit transaction details as part of their bid submission to ensure that the Hydro team and committee can execute liquidity deployments efficiently.
 
-Failure to resolve issues within the specified timeline may result in forfeiture of the deployment opportunity.
-
-## Issue Resolution Deadlines
-
-To ensure smooth deployment and the security of funds, all bidders must adhere to the following guidelines regarding issue resolution:
-
-### Timeline for Resolution
-
-All deployment or withdrawal issues identified during the testing phase must be resolved within 7 days of the round’s conclusion. This deadline allows for sufficient time to conduct a final test and confirm deployment readiness.
-
-### Liquidity Deployment Extension
-
-In cases where delays occur due to bidder-side issues, the Hydro committee may provide an extension of liquidity deployment for up to 30 days post-deployment. Extensions are discretionary and depend on the availability of capital reserves.
-
-### Consequences of Non-Resolution
-
-Failure to address issues within the specified timeline may result in forfeiture of the deployment opportunity for the bidder. The Hydro team reserves the right to prioritize the security and operational integrity of its deployments over delayed bids.
-
-## Summary
-
-By adhering to these deployment procedures, bidders ensure that their liquidity deployment proceeds smoothly and securely. Active participation, prompt resolution of issues, and cooperation during testing are critical components of a successful deployment. The Hydro team and committee remain committed to working closely with bidders to achieve these goals while maintaining the integrity of the Hydro platform.
-
+An example of the transactions required to deploy liquidity to the bidder's chosen venue. This information should be provided in markdown format in a publicly accessible [HackMD](https://hackmd.io/) file. The hackMD file will be linked within the bid. A template hackMD file can be found [here](https://hackmd.io/@hydro/SJcF3MEK1x). Failure to provide these details will likely result in a rejected bid.

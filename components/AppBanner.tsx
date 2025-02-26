@@ -2,10 +2,12 @@
 
 import { Icon } from "@/components/Icon"
 import { HYDRO_TELEGRAM_URL } from "@/config"
+import { fetchCurrentRoundId } from "@/contract-apis/fetchCurrentRoundId"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatOrdinals } from "@/lib/formatOrdinals"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 const JoinOurTelegramGroupForUpdates = (
@@ -22,11 +24,23 @@ const JoinOurTelegramGroupForUpdates = (
 
 export function AppBanner() {
   const backendData = useBackendData()
-  const { currentRoundId, lockedAtomIsAtCapacityGlobal } = backendData
+  const {
+    currentRoundId: currentRoundIdFromBackend,
+    lockedAtomIsAtCapacityGlobal,
+  } = backendData
+  const [currentRoundId, setCurrentRoundId] = useState<number>(
+    currentRoundIdFromBackend
+  )
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const activeBannerName = lockedAtomIsAtCapacityGlobal
     ? "maxCapacity"
     : "pilotRounds"
+
+  useEffect(() => {
+    if (!currentRoundId) {
+      fetchCurrentRoundId().then(setCurrentRoundId)
+    }
+  }, [currentRoundId])
 
   const Banners = {
     maxCapacity: {
@@ -40,7 +54,9 @@ export function AppBanner() {
     },
     pilotRounds: {
       href: HYDRO_TELEGRAM_URL,
-      text: (
+      text: !currentRoundId ? (
+        "Loading..."
+      ) : (
         <>
           Hydro is currently running its{" "}
           <strong>{formatOrdinals(currentRoundId + 1)}</strong> Pilot Round.{" "}

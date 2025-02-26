@@ -8,14 +8,18 @@ Before starting, briefly familiarize yourself with the complete process of creat
 
 | Step | Description |
 | ----- | ----- |
-| Bid draft | Draft your bid using the \[bid template\]. Ensure it meets the \[Whitelisting Guidelines\] authored by the Hydro Committee. |
+| Bid draft | Draft your bid using the [bid template](https://hydro.cosmos.network/docs/projects/bidderoverview#bid-template). Ensure it meets the [Whitelisting Guidelines](https://hydro.cosmos.network/docs/committee/hydro-guidelines#whitelisting-guidelines) authored by the Hydro Committee. |
 | Bid review | Contact the Hydro team on Telegram or schedule a Calendly meeting to initiate a review. Meet with a Hydro team member and the Hydro Committee member responsible for Whitelist Management. |
-| Bid submission | Refine the draft per copywriting standards.  Finalize the bid and upload it to the Hydro smart contract as outlined in the \[Bid submission section of the bidding process documentation\].  |
+| Bid submission | Refine the draft per copywriting standards.  Finalize the bid and upload it to the Hydro smart contract as outlined in the [Bid submission](https://hydro.cosmos.network/docs/projects/bidding#bid-submission) section of the bid process documentation.  |
 | Bid approval | Once approved and uploaded to the smart contract, the Hydro team will approve the bid on the Hydro front-end, making it visible to users for voting and interactions. |
-| Tribute Upload | Add Tribute using the instructions in the \[Tribute additions section\]. (Points as tribute are managed by the Hydro team on the front-end.) |
+| Tribute Upload | Add Tribute using the instructions in the [Tribute additions section](https://hydro.cosmos.network/docs/projects/bidding#tribute-additions). (Points as tribute are managed by the Hydro team on the front-end.) |
 | Voting Period | Monitor the success of your bid during the voting period, ensuring that vote dynamics are going in your favor. The best ways to encourage voters to choose your bid is to offer attractive tribute (which can be increased during the round) and to get the word out about your active Hydro bid. |
-| Deployment tests | The Hydro team and committee conduct deployment tests during the final week of the round to validate and troubleshoot liquidity deployment. More information can be found in the \[Deployments process documentation\]. |
+| Deployment tests | The Hydro team and committee conduct deployment tests during the final week of the round to validate and troubleshoot liquidity deployment. More information can be found in the [Deployments process documentation](https://hydro.cosmos.network/docs/projects/deployment). |
 | Deployments | After the round ends, successful bids proceed to liquidity deployment, guided by Hydro’s Deployment procedures. Bidders must provide accurate deployment queries, assist the Hydro committee and team during tests and deployments, and resolve any technical issues promptly |
+
+## Requirements
+
+To participate in Hydro liquidity auctions, bidders should ideally support CosmWasm, but at a minimum have Interchain Accounts (ICA) enabled as a host and have an active IBC channel to Neutron. This ensures seamless integration with Hydro’s deployment infrastructure and enables secure, automated liquidity management. Projects without direct compatibility should establish the necessary connections before submitting a bid.
 
 ## Bid template
 
