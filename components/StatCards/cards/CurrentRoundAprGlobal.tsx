@@ -12,10 +12,21 @@ export function CurrentRoundAprGlobal() {
   const bidsInRound = Object.values(bidsById).filter(
     (bid) => bid.roundId === currentRoundId
   )
-  const totalTributeAprMin = sumBy(bidsInRound, "tributeAprMin")
-  const totalTributeAprMax = sumBy(bidsInRound, "tributeAprMax")
+  const totalTributeAprMin = sumBy(bidsInRound, (bid) =>
+    bid.tributeAprMin === Infinity ? 0 : bid.tributeAprMin
+  )
+  const totalTributeAprMax = sumBy(bidsInRound, (bid) =>
+    bid.tributeAprMax === Infinity ? 0 : bid.tributeAprMax
+  )
   const averageTributeApr =
     (totalTributeAprMin + totalTributeAprMax) / 2 / bidsInRound.length
+
+  console.log({
+    bidsInRound,
+    totalTributeAprMin,
+    totalTributeAprMax,
+    averageTributeApr,
+  })
 
   return (
     <StatCard
