@@ -6,23 +6,16 @@ import { bidPolAprTooltip } from "./ToolTips"
 
 export function BidPolApr({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const {
-    bidsById,
-    bidDescriptionsByBidId,
-    currentRoundId,
-    metricsForPostHydroBids,
-  } = backendData
+  const { bidsById, bidMetaDataById, currentRoundId, metricsForPostHydroBids } =
+    backendData
   const bid = bidsById[bidId]
 
   if (!bid) return null
 
-  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
+  const bidInfoFromGithub = bidMetaDataById[bidId]
 
-  if (
-    bid.roundId === currentRoundId &&
-    bidDescriptionFromGithub?.minMaxTargetPolApr
-  ) {
-    const [min, max] = bidDescriptionFromGithub.minMaxTargetPolApr
+  if (bid.roundId === currentRoundId && bidInfoFromGithub?.minMaxTargetPolApr) {
+    const [min, max] = bidInfoFromGithub.minMaxTargetPolApr
     const isInfiniteOrNull = [Infinity, null].includes(min)
     const isSameValue = min === max
     const value = isInfiniteOrNull ? 0 : min

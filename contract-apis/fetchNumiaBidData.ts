@@ -11,11 +11,14 @@ export async function fetchNumiaBidData(): Promise<RawNumiaBid[]> {
   }
 
   const response = await fetchWithRetry(
-    `${process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT}?${new Date().getTime()}`,
+    `${process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT}`,
     {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+      },
+      next: {
+        revalidate: 60 * 5, // 5 minutes
       },
     }
   ).catch((error) => {

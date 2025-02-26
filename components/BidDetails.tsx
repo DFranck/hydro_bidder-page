@@ -25,6 +25,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { BidMetaData } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import kebabCase from "lodash/kebabCase"
@@ -34,12 +35,18 @@ import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
 
-export function BidDetails({ bidId }: { bidId: number }) {
+export function BidDetails({
+  bidId,
+  bidMetaData,
+}: {
+  bidId: number
+  bidMetaData: BidMetaData
+}) {
   const backendData = useBackendData()
 
   const {
     atomPrice,
-    bidDescriptionsByBidId,
+    bidMetaDataById,
     bidsById,
     currentRoundId,
     votes,
@@ -47,17 +54,24 @@ export function BidDetails({ bidId }: { bidId: number }) {
     minTributeFactor,
   } = backendData
 
+  const {
+    aboutProject,
+    committeeComments,
+    description,
+    points = [],
+    projectLogoUrl,
+    projectName,
+    projectUrl,
+    title,
+  } = bidMetaData
+
   const bid = bidsById[bidId]
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
 
-  const bidsInRound = Object.values(bidsById).filter(
-    (otherBid) => otherBid.roundId === bid.roundId
-  )
-
-  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
+  const bidInfoFromGithub = bidMetaDataById[bidId]
 
   const bidMetricsFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
@@ -68,9 +82,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
     onchainTributeUsdc: 0,
   }
 
-  const totalPowerInRound = sumBy(bidsInRound, (bid) => Number(bid.power))
-
-  if (!bidDescriptionFromGithub && process.env.NODE_ENV !== "development") {
+  if (!bidInfoFromGithub && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
         This bid is active on the Hydro smart sontract but has not yet been
@@ -90,17 +102,6 @@ export function BidDetails({ bidId }: { bidId: number }) {
     )
   }
 
-  const {
-    committeeComments,
-    description,
-    aboutProject,
-    points = [],
-    projectLogoUrl,
-    projectName,
-    projectUrl,
-    title,
-  } = bidDescriptionFromGithub
-
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
   const tributeUsdc = sumBy(bid.tributes, "valueUsd")
@@ -111,6 +112,12 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const isTokenBased =
     points.length === 0 && bidMetricsFromNumia?.offchainTribute.length === 0
+
+  const bidsInRound = Object.values(bidsById).filter(
+    (bid) => bid.roundId === bid.roundId
+  )
+
+  const totalPowerInRound = sumBy(bidsInRound, "power")
 
   const votingStats = {
     bidPower: formatAmount(bid.power, 6, 0),
@@ -494,10 +501,9 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </StyledText>
               <div className="flex flex-col items-start gap-2">
                 {[
-                  bidDescriptionFromGithub.aboutProject && "About Project",
-                  bidDescriptionFromGithub.description && "Bid Description",
-                  bidDescriptionFromGithub.committeeComments &&
-                    "Committee Review",
+                  aboutProject && "About Project",
+                  description && "Bid Description",
+                  committeeComments && "Committee Review",
                 ]
                   .filter(Boolean)
                   .map((section, index) => (

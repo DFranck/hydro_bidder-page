@@ -32,7 +32,8 @@ export default function RewardsPage() {
   const [isCelebrating, setIsCelebrating] = useState(false)
 
   const {
-    bidDescriptionsByBidId,
+    address,
+    bidMetaDataById,
     bidsById,
     claimsHistorical,
     claimsOutstanding,
@@ -70,8 +71,8 @@ export default function RewardsPage() {
   const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
-      const bidDescriptionFromGithub = bidDescriptionsByBidId[bid.id]
-      const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
+      const bidInfoFromGithub = bidMetaDataById[bid.id]
+      const { projectLogoUrl, projectName, title } = bidInfoFromGithub
       const tokenBasedTributes = bid.tributes.filter(
         (tribute) => tribute.isTokenBased
       )

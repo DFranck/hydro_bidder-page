@@ -7,7 +7,7 @@ import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
 import {
   AugmentedBidAfterWallet,
-  BidDescriptionFromGithub,
+  BidMetaDataSlimmed,
 } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
@@ -229,16 +229,16 @@ export const estimatedRewardsColumnTooltip = ({
 
 export const estimatedRewardsTooltip = ({
   bid,
-  bidDescriptionFromGithub,
+  bidInfoFromGithub,
   hasVotedThisRound,
   isTokenBased,
 }: {
   bid: AugmentedBidAfterWallet
-  bidDescriptionFromGithub: BidDescriptionFromGithub
+  bidInfoFromGithub: BidMetaDataSlimmed
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
-  const { projectName } = bidDescriptionFromGithub
+  const { projectName } = bidInfoFromGithub
 
   const totalTributeValue = isTokenBased
     ? (sumBy(bid.tributes, "valueUsd") ?? 0)

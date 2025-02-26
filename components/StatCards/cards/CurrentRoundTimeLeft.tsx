@@ -10,8 +10,6 @@ import { StatCard } from "../StatCard"
 export function CurrentRoundTimeLeft() {
   const { currentRoundEndDate, currentRoundId, isLoading } = useBackendData()
 
-  console.log({ currentRoundEndDate, currentRoundId, isLoading })
-
   return (
     <StatCard
       isLoading={isLoading}

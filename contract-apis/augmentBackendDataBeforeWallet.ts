@@ -2,8 +2,8 @@ import { augmentBidBeforeWallet } from "@/contract-apis/augmentBidBeforeWallet"
 import { augmentNumiaBids } from "@/contract-apis/augmentNumiaBids"
 import {
   AugmentedBackendDataBeforeWallet,
+  BackendDataBeforeWalletSlimmed,
   GlobalLockupCapacityInfo,
-  RawBackendDataBeforeWallet,
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import groupBy from "lodash/groupBy"
@@ -12,7 +12,7 @@ import mapValues from "lodash/mapValues"
 import sumBy from "lodash/sumBy"
 
 export function augmentBackendDataBeforeWallet(
-  rawBackendDataBeforeWallet: RawBackendDataBeforeWallet
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
 ): AugmentedBackendDataBeforeWallet {
   const { hydroData, externalData } = rawBackendDataBeforeWallet
 
@@ -25,12 +25,8 @@ export function augmentBackendDataBeforeWallet(
     tranches,
   } = hydroData
 
-  const {
-    assetListWithPrices,
-    bidDescriptionsByBidId,
-    numiaBids,
-    numiaMetrics,
-  } = externalData
+  const { assetListWithPrices, bidMetaDataById, numiaBids, numiaMetrics } =
+    externalData
 
   const atomPrice =
     assetListWithPrices[
@@ -78,7 +74,7 @@ export function augmentBackendDataBeforeWallet(
   return {
     assetListWithPrices,
     atomPrice,
-    bidDescriptionsByBidId,
+    bidMetaDataById,
     bidsById: keyBy(augmentedBidsBeforeWallet, "id"),
     currentRoundEndDate,
     currentRoundId: round_id,

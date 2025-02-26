@@ -7,11 +7,14 @@ export async function fetchNumiaMetricsData(): Promise<MetricsFromNumia> {
   }
 
   const response = await fetchWithRetry(
-    `${process.env.NUMIA_METRICS_ENDPOINT}?${new Date().getTime()}`,
+    `${process.env.NUMIA_METRICS_ENDPOINT}`,
     {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+      },
+      next: {
+        revalidate: 60 * 5, // 5 minutes
       },
     }
   ).catch((error) => {

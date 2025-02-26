@@ -1,9 +1,9 @@
-import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { getAPR } from "@/contract-apis/getAPR"
 import { getCoinWithValueInUsd } from "@/contract-apis/getCoinWithValueInUsd"
 import {
-  AugmentedBidBeforeWallet,
-  RawBackendDataBeforeWallet,
+  AugmentedBidBeforeWalletSlimmed,
+  BackendDataBeforeWalletSlimmed,
+  ProposalSlimmed,
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import { omit, sumBy } from "lodash"
@@ -15,17 +15,17 @@ export function augmentBidBeforeWallet({
   totalPowerByRoundId,
 }: {
   atomPrice: number
-  bid: Proposal
-  rawBackendDataBeforeWallet: RawBackendDataBeforeWallet
+  bid: ProposalSlimmed
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
   totalPowerByRoundId: Record<number, number>
-}): AugmentedBidBeforeWallet {
+}): AugmentedBidBeforeWalletSlimmed {
   const {
     hydroData: {
       constants: { lock_epoch_length },
       liquidity_deployments,
       tributes,
     },
-    externalData: { assetListWithPrices, bidDescriptionsByBidId, numiaBids },
+    externalData: { assetListWithPrices, bidMetaDataById, numiaBids },
   } = rawBackendDataBeforeWallet
 
   const { deployment_duration, proposal_id, round_id, ...rest } = bid
@@ -61,20 +61,19 @@ export function augmentBidBeforeWallet({
       (numiaBid) =>
         Number(numiaBid.round) === bid.round_id &&
         Number(numiaBid.id) === bid.proposal_id &&
-        bidDescriptionsByBidId[numiaBid.id]
+        bidMetaDataById[numiaBid.id]
     )
     .map((numiaBid) => {
-      const bidDescriptionFromGithub = bidDescriptionsByBidId[numiaBid.id]
+      const bidInfoFromGithub = bidMetaDataById[numiaBid.id]
 
       const hasPoints =
-        bidDescriptionFromGithub.points &&
-        Array.isArray(bidDescriptionFromGithub.points)
+        bidInfoFromGithub.points && Array.isArray(bidInfoFromGithub.points)
 
       if (!hasPoints) {
         return null
       }
 
-      const [amount, denom] = bidDescriptionFromGithub.points!
+      const [amount, denom] = bidInfoFromGithub.points!
       const assetListing = assetListWithPrices[denom]
       const assetPrice = assetListing?.priceUsd ?? 0
       const decimals = assetListing?.decimals ?? 6
@@ -124,9 +123,8 @@ export function augmentBidBeforeWallet({
       }
     : null
 
-  const bidDescriptionFromGithub = bidDescriptionsByBidId[bid.proposal_id]
-  const description = bidDescriptionFromGithub?.description ?? bid.description
-  const title = bidDescriptionFromGithub?.title ?? bid.title
+  const bidInfoFromGithub = bidMetaDataById[bid.proposal_id]
+  const title = bidInfoFromGithub?.title ?? bid.title
   const bidTributes = [
     ...augmentedTokenBasedTributes,
     ...augmentedPointBasedTributes,
@@ -164,7 +162,6 @@ export function augmentBidBeforeWallet({
     ...keysFromSnakeToCamelCase(rest),
     id: proposal_id,
     roundId: bid.round_id,
-    description,
     title,
     deploymentDurationInEpochs: deployment_duration,
     deploymentDurationInNanos: deployment_duration * lock_epoch_length,

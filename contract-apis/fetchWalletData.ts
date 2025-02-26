@@ -1,24 +1,12 @@
 "use server"
 
-import {
-  LockupWithPerTrancheInfo,
-  Tranche,
-  VoteWithPower,
-} from "@/app/ts_types/HydroBase.types"
-import { TributeClaim } from "@/app/ts_types/TributeBase.types"
+import { Tranche } from "@/app/ts_types/HydroBase.types"
 import {
   getHydroQueryClient,
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
+import { RawWalletData } from "@/contract-apis/types"
 import range from "lodash/range"
-
-export interface RawWalletData {
-  voting_power: number
-  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
-  historical_tribute_claims: TributeClaim[]
-  outstanding_tribute_claims: TributeClaim[]
-  votes: VoteWithPower[]
-}
 
 export async function fetchWalletData({
   address,

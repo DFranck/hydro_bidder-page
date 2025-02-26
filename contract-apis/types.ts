@@ -2,18 +2,26 @@ import {
   Coin,
   Constants,
   LiquidityDeployment,
+  LockupWithPerTrancheInfo,
   Proposal,
   Tranche,
   VoteWithPower,
 } from "@/app/ts_types/HydroBase.types"
 import { Tribute, TributeClaim } from "@/app/ts_types/TributeBase.types"
-import { fetchWalletData } from "@/contract-apis/fetchWalletData"
 import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
 
 export type ArbitraryAmountWithDescription = [
   amount: number,
   description: string,
 ]
+
+export interface AssetListEntry {
+  token: string
+  symbol: string
+  decimals: number
+  coingeckoId?: string
+  priceUsd?: number
+}
 
 export interface AssetListWithPrices {
   [key: string]: {
@@ -23,9 +31,57 @@ export interface AssetListWithPrices {
   }
 }
 
+export interface AugmentedBackendDataAfterWallet
+  extends AugmentedBackendDataBeforeWallet {
+  address: string
+  bidsById: Record<number, AugmentedBidAfterWallet>
+  claimsHistorical: AugmentedClaim[]
+  claimsOutstanding: AugmentedClaim[]
+  isLoading: boolean
+  isWalletConnected: boolean
+  lockedAtomIsAtCapacityWallet: boolean
+  lockedAtomPercentageWallet: number
+  lockedAtomTotalWallet: number
+  lockups: SanitizedLockup[]
+  votes: SanitizedVote[]
+  votesByRoundId: Record<number, SanitizedVote[]>
+  votingPowerAvailable: number
+  votingPowerSpent: number
+  votingPowerTotal: number
+}
+
+export interface AugmentedBackendDataBeforeWallet {
+  assetListWithPrices: AssetListWithPrices
+  atomPrice: number
+  bidMetaDataById: BidMetaDataByIdSlimmed
+  bidsById: Record<number, AugmentedBidBeforeWalletSlimmed>
+  currentRoundEndDate: Date
+  currentRoundId: number
+  currentRoundIsPilot: boolean
+  tranches: Tranche[]
+  lockedAtomIsAtCapacityGlobal: boolean
+  lockedAtomEpochInNanos: number
+  lockedAtomMaxGlobal: number
+  lockedAtomMaxWallet: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomRemainingCapacityGlobal: number
+  lockedAtomTotalGlobal: number
+  metricsForPostHydroBids: AugmentedBidFromNumiaSlimmed[]
+  metricsForPreHydroBids: AugmentedBidFromNumiaSlimmed[]
+  metricsGlobal: SanitizedMetricsFromNumia
+  minTributeFactor: number
+}
+
+export interface AugmentedBidAfterWallet
+  extends AugmentedBidBeforeWalletSlimmed {
+  lockupsOutliveBidDeployment: boolean
+  usersEstimatedRewards: number
+  usersEstimatedRewardRelativeToCurrentPick: number
+}
+
 export interface AugmentedBidBeforeWallet
   extends Omit<
-    CamelCaseKeys<BidFromContract>,
+    CamelCaseKeys<Proposal>,
     "deploymentDuration" | "percentage" | "proposalId" | "liquidityDeployment"
   > {
   id: number
@@ -39,11 +95,36 @@ export interface AugmentedBidBeforeWallet
   tributeAprMin: number
 }
 
-export interface AugmentedBidAfterWallet extends AugmentedBidBeforeWallet {
-  lockupsOutliveBidDeployment: boolean
-  usersEstimatedRewards: number
-  usersEstimatedRewardRelativeToCurrentPick: number
+export type AugmentedBidBeforeWalletSlimmed = Omit<
+  AugmentedBidBeforeWallet,
+  "description"
+>
+
+export type AugmentedBidFromNumia = Omit<
+  CamelCaseKeys<RawNumiaBid>,
+  | "durationDays"
+  | "offchainTribute"
+  | "onchainTributeAssets"
+  | "project"
+  | "round"
+  | "tranche"
+> & {
+  durationDays: number
+  isOngoing: boolean
+  isPending: boolean
+  isRejected: boolean
+  isVoting: boolean
+  offchainTribute: SanitizedOffchainTributeFromNumia[]
+  onchainTributeAssets: SanitizedOnchainTributeFromNumia[]
+  projectName: string
+  roundId: number | "pre-hydro"
+  tranche: number
 }
+
+export type AugmentedBidFromNumiaSlimmed = Omit<
+  AugmentedBidFromNumia,
+  "description"
+>
 
 export interface AugmentedClaim
   extends Omit<CamelCaseKeys<TributeClaim>, "amount" | "proposalId"> {
@@ -68,67 +149,33 @@ export interface AugmentedLiquidityDeployment
   deployedFunds: AugmentedCoin[] | null
 }
 
-export type RawBackendDataBeforeWallet = {
-  externalData: {
-    assetListWithPrices: AssetListWithPrices
-    bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
-    numiaBids: RawNumiaBid[]
-    numiaMetrics: MetricsFromNumia
-  }
-  hydroData: {
-    proposals: Proposal[]
-    tranches: Tranche[]
-    constants: Constants
-    round_end: string
-    round_id: number
-    total_locked_tokens: number
-    liquidity_deployments: LiquidityDeployment[]
-    tributes: Tribute[]
-  }
+export type BackendDataBeforeWallet = {
+  externalData: RawExternalData
+  hydroData: RawHydroData
 }
 
-export interface AugmentedBackendDataBeforeWallet {
-  assetListWithPrices: AssetListWithPrices
-  atomPrice: number
-  bidDescriptionsByBidId: Record<string, BidDescriptionFromGithub>
-  bidsById: Record<number, AugmentedBidBeforeWallet>
-  currentRoundEndDate: Date
-  currentRoundId: number
-  currentRoundIsPilot: boolean
-  tranches: Tranche[]
-  lockedAtomIsAtCapacityGlobal: boolean
-  lockedAtomEpochInNanos: number
-  lockedAtomMaxGlobal: number
-  lockedAtomMaxWallet: number
-  lockedAtomPercentageGlobal: number
-  lockedAtomRemainingCapacityGlobal: number
-  lockedAtomTotalGlobal: number
-  metricsForPostHydroBids: AugmentedBidFromNumia[]
-  metricsForPreHydroBids: AugmentedBidFromNumia[]
-  metricsGlobal: SanitizedMetricsFromNumia
-  minTributeFactor: number
+export type BackendDataBeforeWalletSlimmed = {
+  externalData: RawExternalDataSlimmed
+  hydroData: RawHydroDataSlimmed
 }
 
-export interface AugmentedBackendDataAfterWallet
-  extends AugmentedBackendDataBeforeWallet {
-  address: string
-  bidsById: Record<number, AugmentedBidAfterWallet>
-  claimsHistorical: AugmentedClaim[]
-  claimsOutstanding: AugmentedClaim[]
-  isLoading: boolean
-  isWalletConnected: boolean
-  lockedAtomIsAtCapacityWallet: boolean
-  lockedAtomPercentageWallet: number
-  lockedAtomTotalWallet: number
-  lockups: SanitizedLockup[]
-  votes: SanitizedVote[]
-  votesByRoundId: Record<number, SanitizedVote[]>
-  votingPowerAvailable: number
-  votingPowerSpent: number
-  votingPowerTotal: number
+export interface BackendDataTweak {
+  id: string
+  json: WithOverwrites<
+    BackendDataBeforeWallet & {
+      walletData: Partial<RawWalletData>
+      patchData: Partial<AugmentedBackendDataAfterWallet>
+    }
+  >
+  label: string
+  disabled?: boolean
 }
 
-export interface BidDescriptionFromGithub {
+export type BidMetaDataById = Record<string, BidMetaData>
+
+export type BidMetaDataByIdSlimmed = Record<string, BidMetaDataSlimmed>
+
+export interface BidMetaData {
   aboutProject?: string
   appendix?: string
   committeeComments?: string
@@ -143,39 +190,10 @@ export interface BidDescriptionFromGithub {
   minMaxTargetPolApr?: [min: number, max: number]
 }
 
-export interface BidFromContract extends Proposal {}
-
-export interface RawNumiaBid {
-  // Needed to link data
-  id: string
-  round: string
-  tranche: number
-
-  // not used; from github
-  comments: string
-  project_about: string
-  project_logo_url: string
-  project_url: string
-  project: string
-  title: string
-  description: string
-
-  // The more of this we get from the contract, the better
-  apr: number
-  current_allocation_amount: number
-  duration_days: number | null // only used for pre-hydro bids
-  initial_allocation_amount: number
-  offchain_tribute_info: string
-  offchain_tribute: string
-  onchain_tribute_assets: string
-  onchain_tribute_usdc: number
-  requested_allocation_amount: number
-  requested_allocation_denom: string
-  status: string
-  voters: number
-  voting_power: number
-  yield: number
-}
+export type BidMetaDataSlimmed = Omit<
+  BidMetaData,
+  "aboutProject" | "committeeComments" | "description"
+>
 
 export interface GlobalLockupCapacityInfo {
   lockedAtomIsAtCapacityGlobal: boolean
@@ -212,6 +230,29 @@ export interface MetricsFromNumia {
   current_users_avg_tokens_locked: number
 }
 
+export type OnchainTributeFromNumia = {
+  amount: number
+  denom?: string
+  asset?: string
+}
+
+export type ProposalSlimmed = Omit<Proposal, "description">
+
+export type RawExternalData = {
+  assetListWithPrices: AssetListWithPrices
+  bidMetaDataById: BidMetaDataById
+  numiaBids: RawNumiaBid[]
+  numiaMetrics: MetricsFromNumia
+}
+
+export type RawExternalDataSlimmed = Omit<
+  RawExternalData,
+  "bidMetaDataById" | "numiaBids"
+> & {
+  bidMetaDataById: BidMetaDataByIdSlimmed
+  numiaBids: RawNumiaBidSlimmed[]
+}
+
 export interface RawHydroData {
   constants: Constants
   liquidity_deployments: LiquidityDeployment[]
@@ -223,25 +264,53 @@ export interface RawHydroData {
   tributes: Tribute[]
 }
 
-export type AugmentedBidFromNumia = CamelCaseKeys<
-  Omit<
-    RawNumiaBid,
-    | "offchain_tribute"
-    | "onchain_tribute_assets"
-    | "tranche"
-    | "project"
-    | "round"
-  >
-> & {
-  isOngoing: boolean
-  isPending: boolean
-  isRejected: boolean
-  isVoting: boolean
-  projectName: string
+export type RawHydroDataSlimmed = Omit<RawHydroData, "proposals"> & {
+  proposals: ProposalSlimmed[]
+}
+
+export interface RawNumiaBid {
+  // Needed to link data
+  id: string
+  round: string
   tranche: number
-  roundId: number | "pre-hydro"
-  offchainTribute: SanitizedOffchainTributeFromNumia[]
-  onchainTributeAssets: SanitizedOnchainTributeFromNumia[]
+
+  // not used; from github
+  comments: string
+  description: string
+  project_about: string
+  project_logo_url: string
+  project_url: string
+  project: string
+  title: string
+
+  // The more of this we get from the contract, the better
+  apr: number
+  current_allocation_amount: number
+  duration_days: number | null // only used for pre-hydro bids
+  initial_allocation_amount: number
+  offchain_tribute_info: string
+  offchain_tribute: string
+  onchain_tribute_assets: string
+  onchain_tribute_usdc: number
+  requested_allocation_amount: number
+  requested_allocation_denom: string
+  status: string
+  voters: number
+  voting_power: number
+  yield: number
+}
+
+export type RawNumiaBidSlimmed = Omit<
+  RawNumiaBid,
+  "comments" | "description" | "project_about"
+>
+
+export interface RawWalletData {
+  voting_power: number
+  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
+  historical_tribute_claims: TributeClaim[]
+  outstanding_tribute_claims: TributeClaim[]
+  votes: VoteWithPower[]
 }
 
 export interface SanitizedLockup {
@@ -274,12 +343,6 @@ export interface SanitizedLockup {
 
 export interface SanitizedMetricsFromNumia
   extends CamelCaseKeys<MetricsFromNumia> {}
-
-export type OnchainTributeFromNumia = {
-  amount: number
-  denom?: string
-  asset?: string
-}
 
 export type SanitizedOffchainTributeFromNumia = {
   amount: number
@@ -318,18 +381,6 @@ export interface SanitizedVote
   bidId: number
 }
 
-export interface BackendDataTweak {
-  id: string
-  json: WithOverwrites<
-    RawBackendDataBeforeWallet & {
-      walletData: Awaited<ReturnType<typeof fetchWalletData>>
-      patchData: Partial<AugmentedBackendDataAfterWallet>
-    }
-  >
-  label: string
-  disabled?: boolean
-}
-
 type WithOverwrites<T> = T extends object
   ? {
       // Original keys, marked as optional, recursively applied.
@@ -339,11 +390,3 @@ type WithOverwrites<T> = T extends object
       [K in keyof T as `$${string & K}`]?: WithOverwrites<T[K]>
     }
   : T
-
-export interface AssetListEntry {
-  token: string
-  symbol: string
-  decimals: number
-  coingeckoId?: string
-  priceUsd?: number
-}

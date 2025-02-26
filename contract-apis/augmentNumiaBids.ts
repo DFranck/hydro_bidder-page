@@ -1,8 +1,9 @@
 import { typeToTokenMap } from "@/contract-apis/fetchNumiaBidData"
 import {
   AugmentedBidFromNumia,
+  AugmentedBidFromNumiaSlimmed,
   OnchainTributeFromNumia,
-  RawNumiaBid,
+  RawNumiaBidSlimmed,
   SanitizedOffchainTributeFromNumia,
   SanitizedOnchainTributeFromNumia,
 } from "@/contract-apis/types"
@@ -12,36 +13,45 @@ import flow from "lodash/flow"
 import partition from "lodash/partition"
 import startCase from "lodash/startCase"
 
-export function augmentNumiaBids(rawNumiaBids: RawNumiaBid[]): {
-  preHydroBids: AugmentedBidFromNumia[]
-  postHydroBids: AugmentedBidFromNumia[]
+export function augmentNumiaBids(rawNumiaBids: RawNumiaBidSlimmed[]): {
+  preHydroBids: AugmentedBidFromNumiaSlimmed[]
+  postHydroBids: AugmentedBidFromNumiaSlimmed[]
 } {
   const augmentedNumiaBids = rawNumiaBids.map(
-    ({ project, round, ...numiaBid }) => {
-      const { status } = numiaBid
+    ({
+      duration_days,
+      offchain_tribute,
+      onchain_tribute_assets,
+      project,
+      round,
+      status,
+      tranche,
+      ...rest
+    }) => {
       const isOngoing = status.toLowerCase().includes("ongoing")
       const isPending = status.toLowerCase().includes("pending")
       const isVoting = status.toLowerCase().includes("voting")
       const isRejected = status.toLowerCase().includes("rejected")
 
-      return keysFromSnakeToCamelCase({
-        ...numiaBid,
+      return {
+        ...keysFromSnakeToCamelCase(rest),
+        durationDays: Number(duration_days),
         isOngoing,
         isPending,
         isRejected,
         isVoting,
         projectName: project,
-        tranche: Number(numiaBid.tranche),
         roundId:
           round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(round),
-        offchain_tribute: flow([
+        tranche: Number(tranche),
+        offchainTribute: flow([
           JSON.parse,
           (arr: SanitizedOffchainTributeFromNumia[]) =>
             arr
               .filter((t) => !!t.amount)
               .map((t) => ({ ...t, type: startCase(t.type) })),
-        ])(numiaBid.offchain_tribute) as SanitizedOffchainTributeFromNumia[],
-        onchain_tribute_assets: flow([
+        ])(offchain_tribute) as SanitizedOffchainTributeFromNumia[],
+        onchainTributeAssets: flow([
           JSON.parse,
           (arr: OnchainTributeFromNumia[]) =>
             arr
@@ -54,10 +64,8 @@ export function augmentNumiaBids(rawNumiaBids: RawNumiaBid[]): {
                     (_, key) => (denom ?? asset)?.startsWith(key) ?? false
                   ) ?? (denom ?? asset)?.toUpperCase(),
               })),
-        ])(
-          numiaBid.onchain_tribute_assets
-        ) as SanitizedOnchainTributeFromNumia[],
-      }) as AugmentedBidFromNumia
+        ])(onchain_tribute_assets) as SanitizedOnchainTributeFromNumia[],
+      } as AugmentedBidFromNumia
     }
   )
 

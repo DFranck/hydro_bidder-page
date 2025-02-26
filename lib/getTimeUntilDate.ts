@@ -1,8 +1,6 @@
 import { pluralize } from "@/lib/pluralize"
 
 export function getTimeUntilDate(date: Date | string) {
-  console.log(typeof date, date)
-
   if (typeof date === "string") {
     date = new Date(date)
   }
