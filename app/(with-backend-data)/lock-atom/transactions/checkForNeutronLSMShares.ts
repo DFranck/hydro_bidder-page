@@ -1,7 +1,7 @@
 "use client"
 
 import { fetchDenomTrace } from "@/app/(with-backend-data)/lock-atom/transactions/fetchDenomTrace"
-import { fetchWithRetry } from "@/contract-apis/utils/fetchWithRetry"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 

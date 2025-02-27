@@ -3,7 +3,7 @@
 import { getPriceFeedUrl } from "@/config"
 import { AssetListEntry, AssetListWithPrices } from "@/contract-apis/types"
 import pick from "lodash/pick"
-import { fetchWithRetry } from "./utils/fetchWithRetry"
+import { fetchWithRetry } from "./fetchWithRetry"
 
 const symbolToCoingeckoId: Record<string, string> = {
   BLD: "agoric",

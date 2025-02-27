@@ -1,6 +1,6 @@
 import { BidMetaData } from "@/contract-apis/types"
 import "server-only"
-import { fetchWithRetry } from "./utils/fetchWithRetry"
+import { fetchWithRetry } from "./fetchWithRetry"
 
 export const BID_DESCRIPTIONS_URL =
   "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"

@@ -1,6 +1,7 @@
 "use server"
 
 import { getEndpoints } from "@/config"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export async function fetchDenomTrace(balance: {
   denom: string
@@ -17,7 +18,7 @@ export async function fetchDenomTrace(balance: {
 
       const url = `${endpoint.url.replace(/\/$/, "")}/ibc/apps/transfer/v1/denom_traces/${balance.denom}`
 
-      const denomTraceResponse = await fetch(url, {
+      const denomTraceResponse = await fetchWithRetry(url, {
         headers: endpoint.headers,
       }).then((res) => res.json())
       const baseDenom = denomTraceResponse.denom_trace.base_denom

@@ -1,5 +1,5 @@
 import { MetricsFromNumia } from "@/contract-apis/types"
-import { fetchWithRetry } from "./utils/fetchWithRetry"
+import { fetchWithRetry } from "./fetchWithRetry"
 
 export async function fetchNumiaMetricsData(): Promise<MetricsFromNumia> {
   if (!process.env.NUMIA_METRICS_ENDPOINT) {
