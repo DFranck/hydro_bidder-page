@@ -27,8 +27,8 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const { tributeApr, tributeAprMax, tributeAprMin } = bid
 
-  const safeTributeAprMin = tributeAprMin || 0
-  const safeTributeAprMax = tributeAprMax || 0
+  const safeTributeAprMin = tributeAprMin || Infinity
+  const safeTributeAprMax = tributeAprMax || Infinity
 
   const formattedTributeAprMin = (safeTributeAprMin * 100).toFixed(0)
   const formattedTributeAprMax = (safeTributeAprMax * 100).toFixed(0)
@@ -46,9 +46,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       }
 
       if (safeTributeAprMin.toFixed(2) === safeTributeAprMax.toFixed(2)) {
-        const value = [Infinity, null].includes(safeTributeAprMin)
-          ? "0"
-          : formattedTributeAprMin
+        const value = !safeTributeAprMin ? "0" : formattedTributeAprMin
         return (
           <>
             <span>{value}</span>
