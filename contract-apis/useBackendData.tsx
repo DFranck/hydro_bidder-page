@@ -39,6 +39,7 @@ const initialBackendDataContext: BackendDataContextType = {
   address: "",
   assetListWithPrices: {},
   atomPrice: 0,
+  bidsInfo: {},
   bidMetaDataById: {},
   bidsById: {},
   claimsHistorical: [],

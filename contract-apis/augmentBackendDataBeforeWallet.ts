@@ -1,8 +1,11 @@
 import { augmentBidBeforeWallet } from "@/contract-apis/augmentBidBeforeWallet"
 import { augmentNumiaBids } from "@/contract-apis/augmentNumiaBids"
 import {
+  AssetListWithPrices,
   AugmentedBackendDataBeforeWallet,
+  BackendDataBeforeWallet,
   BackendDataBeforeWalletSlimmed,
+  BidMetaDataById,
   GlobalLockupCapacityInfo,
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
@@ -10,51 +13,39 @@ import groupBy from "lodash/groupBy"
 import keyBy from "lodash/keyBy"
 import mapValues from "lodash/mapValues"
 import sumBy from "lodash/sumBy"
+import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
-  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
+  rawBackendDataBeforeWallet: BackendDataBeforeWallet
 ): AugmentedBackendDataBeforeWallet {
-  const { hydroData, externalData } = rawBackendDataBeforeWallet
 
-  const {
-    constants,
-    proposals,
-    round_end,
-    round_id,
-    total_locked_tokens,
-    tranches,
-  } = hydroData
+  // Extract data
+  const { hydroRoundsData, hydroData, externalData } = rawBackendDataBeforeWallet
+  const { constants, proposals, round_end, round_id, total_locked_tokens, tranches, tributes } = hydroData
+  const { assetListWithPrices, bidMetaDataById, numiaBids, numiaMetrics } = externalData
 
-  const { assetListWithPrices, bidMetaDataById, numiaBids, numiaMetrics } =
-    externalData
-
-  const atomPrice =
-    assetListWithPrices[
-      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-    ]?.priceUsd ?? 0
-
+  // Aux Fields
+  const atomPrice = assetListWithPrices["ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"]?.priceUsd ?? 0
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
+  const currentRoundId = round_id
 
-  // Capacity info
-  const lockedUatomMaxGlobal = constants.max_locked_tokens
-  const lockedUatomTotalGlobal = total_locked_tokens
-  const lockedAtomMaxGlobal = lockedUatomMaxGlobal / 1e6
-  const lockedAtomTotalGlobal = lockedUatomTotalGlobal / 1e6
-  const lockedAtomRemainingCapacityGlobal = Number(
-    (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
-  )
-  const lockedAtomPercentageGlobal = Math.floor(
-    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
-  )
-  const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal === 100
+  // Hydro Capacity Info
+
+  const lockedAtomMaxGlobal               = constants.max_locked_tokens / 1e6
+  const lockedAtomTotalGlobal             = total_locked_tokens / 1e6
+  const lockedAtomRemainingCapacityGlobal = Number((lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6))
+  const lockedAtomPercentageGlobal        = Math.floor((lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100)
+  const lockedAtomIsAtCapacityGlobal      = lockedAtomPercentageGlobal === 100
+
   const globalLockupCapacityInfo: GlobalLockupCapacityInfo = {
-    lockedAtomIsAtCapacityGlobal,
     lockedAtomMaxGlobal,
-    lockedAtomPercentageGlobal,
-    lockedAtomRemainingCapacityGlobal,
     lockedAtomTotalGlobal,
+    lockedAtomRemainingCapacityGlobal,
+    lockedAtomIsAtCapacityGlobal,
+    lockedAtomPercentageGlobal,
   }
 
+  // Legacy Info
   const totalPowerByRoundId = mapValues(
     groupBy(proposals, "round_id"),
     (roundProposals) => sumBy(roundProposals, (o) => Number(o.power))
@@ -68,13 +59,19 @@ export function augmentBackendDataBeforeWallet(
       totalPowerByRoundId,
     })
   )
-
   const { postHydroBids, preHydroBids } = augmentNumiaBids(numiaBids)
+
+  // New Bids Info
+  const bidsInfo = hydroRoundsData.map(({round_id, round_bids, round_lockups, round_tributes}) => {
+    const  roundParsedBids = augmentRoundDeploymentMetrics(round_id, round_bids, round_lockups, round_tributes, assetListWithPrices, bidMetaDataById, currentRoundId)
+    return roundParsedBids
+  }).flat()
 
   return {
     assetListWithPrices,
     atomPrice,
     bidMetaDataById,
+    bidsInfo: keyBy(bidsInfo, "id"),
     bidsById: keyBy(augmentedBidsBeforeWallet, "id"),
     currentRoundEndDate,
     currentRoundId: round_id,
@@ -89,3 +86,4 @@ export function augmentBackendDataBeforeWallet(
     ...globalLockupCapacityInfo,
   }
 }
+

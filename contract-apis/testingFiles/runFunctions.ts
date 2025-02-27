@@ -1,9 +1,9 @@
-
+/*
 import { fetchRoundTributes } from "./../mergedFetchers/fetchRoundTributes";
 import * as fs from 'fs';
 import { fetchRoundLockups  } from "./../mergedFetchers/fetchRoundLockups";
 import { fetchRoundBids     } from "./../mergedFetchers/fetchRoundBids";
-import { calculateRoundDeploymentMetrics } from "./../testingFiles/calculateRoundDeploymentMetrics";
+import { augmentRoundDeploymentMetrics } from "./../testingFiles/augmentRoundDeploymentMetrics";
 import { hydroPrices        } from "./../auxFiles/hydro_prices";
 import { fetchBidDescriptionsById } from "../mergedFetchers/fetchBidDescriptions";
 import { fetchCurrentRoundId } from "./../fetchCurrentRoundId";
@@ -46,14 +46,14 @@ async function run() {
       }
       //console.log("Round bids:", roundBids)
 
-      const roundParsedBids = calculateRoundDeploymentMetrics(evaluated_round_id, roundBids, roundLockups, roundTributes, hydroPrices, bidDescriptions, current_round_id)
+      const roundParsedBids = augmentRoundDeploymentMetrics(evaluated_round_id, roundBids, roundLockups, roundTributes, hydroPrices, bidDescriptions, current_round_id)
       all_bids.push(roundParsedBids)
     }
   } catch (error) {
     console.error("Error:", error)
   }
 
-  console.log('All Bids:', all_bids);*/
+  console.log('All Bids:', all_bids);
   console.log('Fetching Hydro Data...')
   fs.writeFileSync('bids.txt', JSON.stringify(await fetchHydroData(), null, 2))
 
@@ -66,4 +66,4 @@ async function run() {
   fs.writeFileSync('bids3.txt', JSON.stringify(await fetchBidsData(), null, 2))
 }
 
-run()
+run()*/

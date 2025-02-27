@@ -10,14 +10,14 @@ export async function fetchRoundTributes(
 
   if (currentRoundId == roundId) {
 
-    /*if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
+    if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
       throw new Error("Tribute contract address not set")
-    }*/
+    }
 
     const client = await getCosmWasmClient()
     const tributeQueryClient = new TributeBaseQueryClient(
       client,
-      'neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t' //process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
+      process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS || ''
     )
 
     const query = {
@@ -32,18 +32,16 @@ export async function fetchRoundTributes(
     
   } else {
 
-    const endpoint = 'https://cosmos.numia.xyz/hydro/round_tributes'
-    const bearer = 'bearer'
-    /*if (!process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT) {
-      throw new Error("NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT is not set")
-    }*/
+    if (!process.env.NUMIA_TRIBUTES_ENDPOINT) {
+      throw new Error("NUMIA_TRIBUTES_ENDPOINT is not set")
+    }
 
     const response = await fetch(
-      `${endpoint}?round_id=${roundId}`, 
+      `${process.env.NUMIA_TRIBUTES_ENDPOINT}?round_id=${roundId}`, 
       {
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${bearer}`,
+          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
         },
       }
     )

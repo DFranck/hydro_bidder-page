@@ -6,9 +6,9 @@ import {
   Proposal,
   Tranche,
   VoteWithPower,
-} from "@/app/ts_types/HydroBase.types"
-import { Tribute, TributeClaim } from "@/app/ts_types/TributeBase.types"
-import { CamelCaseKeys } from "@/lib/keysFromSnakeToCamelCase"
+} from "../app/ts_types/HydroBase.types"
+import { Tribute, TributeClaim } from "../app/ts_types/TributeBase.types"
+import { CamelCaseKeys } from "../lib/keysFromSnakeToCamelCase"
 
 export type ArbitraryAmountWithDescription = [
   amount: number,
@@ -53,6 +53,7 @@ export interface AugmentedBackendDataAfterWallet
 export interface AugmentedBackendDataBeforeWallet {
   assetListWithPrices: AssetListWithPrices
   atomPrice: number
+  bidsInfo: Record<number, BidRevampMetrics>
   bidMetaDataById: BidMetaDataByIdSlimmed
   bidsById: Record<number, AugmentedBidBeforeWalletSlimmed>
   currentRoundEndDate: Date
@@ -150,13 +151,15 @@ export interface AugmentedLiquidityDeployment
 }
 
 export type BackendDataBeforeWallet = {
-  externalData: RawExternalData
+  hydroRoundsData: RawHydroRoundData[]
   hydroData: RawHydroData
+  externalData: RawExternalData
 }
 
 export type BackendDataBeforeWalletSlimmed = {
-  externalData: RawExternalDataSlimmed
+  hydroRoundsData: RawHydroRoundData[]
   hydroData: RawHydroDataSlimmed
+  externalData: RawExternalDataSlimmed
 }
 
 export interface BackendDataTweak {
@@ -201,6 +204,24 @@ export interface GlobalLockupCapacityInfo {
   lockedAtomPercentageGlobal: number
   lockedAtomRemainingCapacityGlobal: number
   lockedAtomTotalGlobal: number
+}
+
+export interface BidRevampMetrics {
+    id: number;
+    trancheId: number;
+    roundId: number;
+    title: string;
+    request_amount: any;
+    points: any;
+    pointProgramUrl: any;
+    tribute: [string, number][];
+    tribute_value: number;
+    duration: number;
+    vote_perc: number;
+    status: string;
+    apr_tribute: number | null;
+    apr_pol: null;
+    apr_pol_target: any;
 }
 
 export interface MetricsFromNumia {
@@ -253,7 +274,14 @@ export type RawExternalDataSlimmed = Omit<
   numiaBids: RawNumiaBidSlimmed[]
 }
 
-export interface RawHydroData {
+export type RawHydroRoundData = {
+  round_id: number
+  round_bids:     Proposal[]
+  round_lockups:  LockupWithPerTrancheInfo[][]
+  round_tributes: Tribute[]
+}
+
+export type RawHydroData = {
   constants: Constants
   liquidity_deployments: LiquidityDeployment[]
   proposals: Proposal[]
