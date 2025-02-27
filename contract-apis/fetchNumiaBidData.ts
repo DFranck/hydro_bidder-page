@@ -1,5 +1,5 @@
 import { RawNumiaBid } from "@/contract-apis/types"
-import { fetchWithRetry } from "./utils/fetchWithRetry"
+import { fetchWithRetry } from "./fetchWithRetry"
 
 export const typeToTokenMap = {
   "ibc/837E876E": "SWTH",

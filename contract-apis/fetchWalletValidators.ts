@@ -1,5 +1,5 @@
 import { ChainContext } from "@cosmos-kit/core"
-import { fetchWithRetry } from "./utils/fetchWithRetry"
+import { fetchWithRetry } from "./fetchWithRetry"
 
 export type Validator = {
   operator_address: string

@@ -1,5 +1,5 @@
 "use client"
-import { fetchWithRetry } from "@/contract-apis/utils/fetchWithRetry"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export const fetchDenomTrace = async (
   balance: { denom: string; amount: string },

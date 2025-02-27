@@ -43,6 +43,7 @@ export function augmentNumiaBids(rawNumiaBids: RawNumiaBidSlimmed[]): {
         projectName: project,
         roundId:
           round.toLowerCase() === "pre-hydro" ? "pre-hydro" : Number(round),
+        status,
         tranche: Number(tranche),
         offchainTribute: flow([
           JSON.parse,

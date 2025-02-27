@@ -1,5 +1,5 @@
 import { Validator } from "./fetchWalletValidators"
-import { fetchWithRetry } from "./utils/fetchWithRetry"
+import { fetchWithRetry } from "./fetchWithRetry"
 
 export async function fetchValidators(
   restEndpoint: string
