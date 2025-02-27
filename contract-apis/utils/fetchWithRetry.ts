@@ -17,10 +17,14 @@ export async function fetchWithRetry(
     } catch (error) {
       if (i === attempts - 1) throw error
 
+      const message = (
+        error instanceof Error ? error.message : String(error)
+      ).toLowerCase()
+
       const isThrottled =
-        error instanceof Error &&
-        (error.message.includes("Throttled") ||
-          error.message.includes("rate limit"))
+        message.includes("throttled") ||
+        message.includes("rate limit") ||
+        message.includes("too many requests")
       const waitTime = initialDelay * Math.pow(2, i) * (isThrottled ? 3 : 1)
       const jitter = Math.random() * 1000
       await delay(waitTime + jitter)
