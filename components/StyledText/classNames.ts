@@ -107,16 +107,6 @@ export const classNames = {
     "focus:border-palette-green"
   ),
 
-  "input.textarea": twJoin(`
-    rounded
-    border-2
-    bg-white/20
-    p-2
-    outline-none
-    invalid:!border-palette-red
-    focus:border-palette-green
-  `),
-
   "input.checkbox": twJoin(
     "size-5 appearance-none rounded border-2 outline-none",
     "checked:border-transparent",
@@ -130,16 +120,6 @@ export const classNames = {
     "checked:bg-palette-green",
     `checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]`
   ),
-
-  select: twJoin(`
-    rounded
-    border-2
-    bg-white/20
-    p-2
-    outline-none
-    invalid:!border-palette-red
-    focus:border-palette-green
-  `),
 
   label: twJoin(
     "whitespace-nowrap text-sm text-white/80",
