@@ -59,7 +59,7 @@ export function AddTributeModal({ bid, isOpened, onCloseAction, onCloseCompleteA
                 />
                 <StyledText
                   as="select"
-                  variant="select"
+                  variant="input.text"
                   value={denom}
                   onChange={(event) => setDenom(event.target.value)}>
                   {denomList.map((denom) => (
@@ -76,7 +76,7 @@ export function AddTributeModal({ bid, isOpened, onCloseAction, onCloseCompleteA
                 <StyledText
                   as="textarea"
                   className="w-full"
-                  variant="input.textarea"
+                  variant="input.text"
                   value={description}
                   rows={2}
                   onChange={(event) => setDescription(event.target.value)}
