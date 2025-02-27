@@ -10,14 +10,14 @@ export async function fetchRoundLockups(
 
   if (currentRoundId == roundId) {
 
-    /*if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
-      throw new Error("Tribute contract address not set")
-    }*/
+    if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+      throw new Error("Hydro contract address not set")
+    }
 
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
       client,
-      'neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp' //process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
+      process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
     )
 
     const allUserLockupsWithTrancheInfos = addresses.map(async (address) => {
@@ -36,19 +36,17 @@ export async function fetchRoundLockups(
     
   } else {
 
-    const endpoint = 'https://cosmos.numia.xyz/hydro/round_lockups'
-    const bearer = 'bearer'
-    /*if (!process.env.NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT) {
-      throw new Error("NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT is not set")
-    }*/
+    if (!process.env.NUMIA_LOCKUPS_ENDPOINT) {
+      throw new Error("NUMIA_LOCKUPS_ENDPOINT is not set")
+    }
 
     const allUserLockupsWithTrancheInfos = addresses.map(async (address) => {
       const response = await fetch(
-        `${endpoint}?round_id=${roundId}&address=${address}&`, 
+        `${process.env.NUMIA_LOCKUPS_ENDPOINT}?round_id=${roundId}&address=${address}`, 
         {
           headers: {
             Accept: "application/json",
-            Authorization: `Bearer ${bearer}`,
+            Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
           },
         }
       )
