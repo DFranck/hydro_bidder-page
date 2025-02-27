@@ -25,12 +25,17 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
   const { isRejected } = bidInfoFromNumia
   if (isRejected) return null
 
-  const formattedTributeAprMin = (bid.tributeAprMin * 100).toFixed(0)
-  const formattedTributeAprMax = (bid.tributeAprMax * 100).toFixed(0)
+  const { tributeApr, tributeAprMax, tributeAprMin } = bid
+
+  const safeTributeAprMin = tributeAprMin || 0
+  const safeTributeAprMax = tributeAprMax || 0
+
+  const formattedTributeAprMin = (safeTributeAprMin * 100).toFixed(0)
+  const formattedTributeAprMax = (safeTributeAprMax * 100).toFixed(0)
 
   const renderAprValue = () => {
     if (bid.roundId === currentRoundId) {
-      if (bid.tributeAprMin * 100 > 1000) {
+      if (safeTributeAprMin * 100 > 1000) {
         return (
           <>
             <StyledText variant="mathSymbol">&gt;</StyledText>
@@ -40,8 +45,8 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         )
       }
 
-      if (bid.tributeAprMin.toFixed(2) === bid.tributeAprMax.toFixed(2)) {
-        const value = [Infinity, null].includes(bid.tributeAprMin)
+      if (safeTributeAprMin.toFixed(2) === safeTributeAprMax.toFixed(2)) {
+        const value = [Infinity, null].includes(safeTributeAprMin)
           ? "0"
           : formattedTributeAprMin
         return (
@@ -65,7 +70,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
     return (
       <>
-        <span>{(bid.tributeApr * 100).toFixed(2)}</span>
+        <span>{(tributeApr * 100).toFixed(2)}</span>
         <StyledText variant="mathSymbol">%</StyledText>
       </>
     )
