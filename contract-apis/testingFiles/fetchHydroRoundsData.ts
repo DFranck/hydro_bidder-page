@@ -18,7 +18,7 @@ export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
   const { tranches }            = await hydroQueryClient.tranches();
 
   // Generate all possible rounds & tranches
-  const allRoundIds   = range(0, round_id)
+  const allRoundIds   = range(0, round_id + 1)
   const allTrancheIds = tranches.map(tranche => tranche.id)
 
   // Fetch all data for each round
