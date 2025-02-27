@@ -107,16 +107,6 @@ export const classNames = {
     "focus:border-palette-green"
   ),
 
-  "input.textarea": twJoin(`
-    rounded
-    border-2
-    bg-white/20
-    p-2
-    outline-none
-    invalid:!border-palette-red
-    focus:border-palette-green
-  `),
-
   "input.checkbox": twJoin(
     "size-5 appearance-none rounded border-2 outline-none",
     "checked:border-transparent",
@@ -135,16 +125,6 @@ export const classNames = {
     "whitespace-nowrap text-sm text-white/80",
     "has-[:checked]:font-bold has-[:checked]:text-white"
   ),
-
-  select: twJoin(`
-    rounded
-    border-2
-    bg-white/20
-    p-2
-    outline-none
-    invalid:!border-palette-red
-    focus:border-palette-green
-  `),
 
   "mathSymbol.container": twJoin(
     "inline-flex items-center gap-0.5 whitespace-nowrap"
