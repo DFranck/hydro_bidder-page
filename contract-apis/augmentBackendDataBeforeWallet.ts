@@ -16,7 +16,7 @@ import sumBy from "lodash/sumBy"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
-  rawBackendDataBeforeWallet: BackendDataBeforeWallet
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
 ): AugmentedBackendDataBeforeWallet {
 
   // Extract data
