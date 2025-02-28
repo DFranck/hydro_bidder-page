@@ -28,7 +28,9 @@ function getAPR({
   principalAssets: number
   rewardPeriodInMonths: number
 }) {
-  return (amountGained / principalAssets) * (rewardPeriodInMonths / 12)
+  return !principalAssets
+    ? Infinity
+    : (amountGained / principalAssets) * (rewardPeriodInMonths / 12)
 }
 
 export async function fetchBidsBeforeWallet({
