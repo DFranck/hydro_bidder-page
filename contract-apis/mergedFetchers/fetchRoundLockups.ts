@@ -2,6 +2,7 @@ import { HydroBaseQueryClient } from "../../app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "../../app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "../getCosmWasmClient"
 import { addresses } from "../auxFiles/hydro_lockers"
+import { fetchHistoricUsers } from "./fetchHistoricUsers"
 
 export async function fetchRoundLockups(
   roundId: number,
@@ -9,6 +10,8 @@ export async function fetchRoundLockups(
 ): Promise<LockupWithPerTrancheInfo[][]> {
 
   if (currentRoundId == roundId) {
+
+    const { users } = await fetchHistoricUsers()
 
     if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
       throw new Error("Hydro contract address not set")
@@ -20,7 +23,8 @@ export async function fetchRoundLockups(
       process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
     )
 
-    const allUserLockupsWithTrancheInfos = addresses.map(async (address) => {
+    const allUserLockupsWithTrancheInfos = users.map(async (address) => {
+      
       const query = {
         address,
         limit: 1000,
@@ -28,7 +32,6 @@ export async function fetchRoundLockups(
       }
 
       const { lockups_with_per_tranche_infos } = await hydroQueryClient.allUserLockupsWithTrancheInfos(query)
-
       return lockups_with_per_tranche_infos
     })
 
@@ -40,30 +43,27 @@ export async function fetchRoundLockups(
       throw new Error("NUMIA_LOCKUPS_ENDPOINT is not set")
     }
 
-    const allUserLockupsWithTrancheInfos = addresses.map(async (address) => {
-      const response = await fetch(
-        `${process.env.NUMIA_LOCKUPS_ENDPOINT}?round_id=${roundId}&address=${address}`, 
-        {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
-          },
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch numia lockups data: ${response.statusText}`)
+    const response = await fetch(
+      `${process.env.NUMIA_LOCKUPS_ENDPOINT}?round_id=${roundId}`, 
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+        },
       }
+    )
 
-      // Clean up the response
-      const responseJson = await response.json()
-      if (responseJson.length == 0) {
-        return []
-      }
-      const tributes = JSON.parse(responseJson[0].response).data.lockups_with_per_tranche_infos;
-      return tributes as LockupWithPerTrancheInfo[];
-    })
+    if (!response.ok) {
+      throw new Error(`Failed to fetch numia lockups data: ${response.statusText}`)
+    }
 
-    return Promise.all(allUserLockupsWithTrancheInfos)
+    // Clean up the response
+    const responseJson = await response.json()
+    if (responseJson.length == 0) {
+      return []
+    }
+
+    const tributes = responseJson.map((response: { response: string }) => { return JSON.parse(response.response).data.lockups_with_per_tranche_infos })
+    return tributes as LockupWithPerTrancheInfo[][];
   }
 }
