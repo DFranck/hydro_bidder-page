@@ -1,31 +1,40 @@
-import { SkipClient, SkipClientOptions } from "@skip-go/client"
+import { OfflineSigner } from "@cosmjs/proto-signing"
+import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
+import { SkipClient } from "@skip-go/client"
+import { useMemo } from "react"
 
-export async function getAddress(chainID: string): Promise<string> {
-  const key = await window.keplr?.getKey(chainID)
-  if (!key) throw new Error(`No key for chainID: ${chainID}`)
+export async function getAddress(chainId: string) {
+  const key = await window.keplr?.getKey(chainId)
+  if (!key) throw new Error(`No key for chainID: ${chainId}`)
   return key.bech32Address
 }
 
-export async function createSkipClient() {
-  const skipClientOptions: SkipClientOptions = {
-    getCosmosSigner: async function (chainID: string) {
-      const key = await window.keplr?.getKey(chainID)
-      if (!key) throw new Error("Keplr not installed or chain not added")
-
-      return key.isNanoLedger
-        ? window.keplr?.getOfflineSignerOnlyAmino(chainID)
-        : window.keplr?.getOfflineSigner(chainID)
-    },
-  }
-
-  if (process.env.NEXT_PUBLIC_SKIP_API_RPC_ENDPOINT) {
-    skipClientOptions.endpointOptions = {
-      getRpcEndpointForChain: async function (chainID: string) {
-        return Promise.resolve(process.env.NEXT_PUBLIC_SKIP_API_RPC_ENDPOINT!)
+export function useCreateSkipClientMemo(
+  getOfflineSigner: () => OfflineSigner,
+  getRpcEndpoint: () => Promise<string | ExtendedHttpEndpoint>,
+  initiatorChainId: string
+) {
+  return useMemo(() => {
+    const skipClient = new SkipClient({
+      getCosmosSigner: async function (chainID: string) {
+        if (initiatorChainId !== chainID) {
+          throw new Error("Chain is not supported")
+        }
+        return Promise.resolve(getOfflineSigner())
       },
-    }
-  }
-
-  const skipClient = new SkipClient(skipClientOptions)
-  return skipClient
+      endpointOptions: {
+        getRpcEndpointForChain: async function (chainID: string) {
+          if (initiatorChainId !== chainID) {
+            throw new Error("Chain is not supported")
+          }
+          const rpcEndpoint = await getRpcEndpoint()
+          if (typeof rpcEndpoint === "string") {
+            return rpcEndpoint
+          }
+          return rpcEndpoint.url
+        },
+      },
+    })
+    return skipClient
+  }, [getOfflineSigner, getRpcEndpoint, initiatorChainId])
 }
