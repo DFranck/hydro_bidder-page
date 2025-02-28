@@ -35,13 +35,26 @@ import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import { MouseEvent, useMemo, useState } from "react"
 import { RouteResponse } from "@skip-go/client"
-import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
-import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
+import {
+  assets as hubAssets,
+  chain as hubChain,
+} from "chain-registry/mainnet/cosmoshub"
+import {
+  assets as neutronAssets,
+  chain as neutronChain,
+} from "chain-registry/mainnet/neutron"
+
+type ConvertStatusMessage = {
+  label: string
+  value: string
+  isLink: boolean
+}
 
 export default function RewardsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [skipApiRoute, setSkipApiRoute] = useState<RouteResponse | null>(null)
-  const [convertStatusMessage, setConvertStatusMessage] = useState("")
+  const [convertStatusMessage, setConvertStatusMessage] =
+    useState<ConvertStatusMessage | null>(null)
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { setToasts } = useToasts()
@@ -115,6 +128,27 @@ export default function RewardsPage() {
     if (!atomAsset) return
     return atomAsset.logo_URIs?.svg
   }, [])
+
+  const srcAddressUrl = useMemo(() => {
+    if (!neutronChain.explorers) return
+    const srcExplorer = neutronChain.explorers.find(
+      (x) => x.kind?.toLocaleLowerCase() === "mintscan"
+    )
+    if (!srcExplorer || !srcExplorer.account_page) return
+    return srcExplorer.account_page?.replace("${accountAddress}", address)
+  }, [address])
+
+  const destAddressUrl = useMemo(() => {
+    if (!hubChain.explorers) return
+    const destExplorer = hubChain.explorers.find(
+      (x) => x.kind?.toLocaleLowerCase() === "mintscan"
+    )
+    if (!destExplorer || !destExplorer.account_page || !cosmosHubAddress) return
+    return destExplorer.account_page.replace(
+      "${accountAddress}",
+      cosmosHubAddress
+    )
+  }, [cosmosHubAddress])
 
   // Bids can have multiple tributes, so this turns each into a row
   const rows = bidsToRender
@@ -332,7 +366,7 @@ export default function RewardsPage() {
     setSelection(null)
     setIsCelebrating(true)
     setSkipApiRoute(null)
-    setConvertStatusMessage("")
+    setConvertStatusMessage(null)
     setToasts([toastMessages.claimingRewardsSuccess])
   }
 
@@ -355,21 +389,33 @@ export default function RewardsPage() {
         route: skipApiRoute,
         userAddresses,
         onTransactionCompleted: async () => {
-          const message = "Route completed"
-          setConvertStatusMessage(message)
+          setConvertStatusMessage({
+            label: "Transaction completed",
+            value: "",
+            isLink: false,
+          })
           await claimSucceeded()
         },
-        onTransactionTracked: async ({ txHash }) => {
-          const message = `Transaction can be tracked with tx hash: ${txHash}...`
-          setConvertStatusMessage(message)
+        onTransactionTracked: async ({ explorerLink }) => {
+          setConvertStatusMessage({
+            label: "Transaction can be tracked via:",
+            value: explorerLink,
+            isLink: true,
+          })
         },
         onTransactionSigned: async ({ chainID }) => {
-          const message = `Transaction signed with chain ID: ${chainID}...`
-          setConvertStatusMessage(message)
+          setConvertStatusMessage({
+            label: "Transaction signed with chain ID:",
+            value: chainID,
+            isLink: false,
+          })
         },
         onValidateGasBalance: async ({ status }) => {
-          const message = `Validating gas balance, status: ${status}...`
-          setConvertStatusMessage(message)
+          setConvertStatusMessage({
+            label: "Validating gas balance, status:",
+            value: status,
+            isLink: false,
+          })
         },
       })
 
@@ -379,7 +425,7 @@ export default function RewardsPage() {
       setIsLoading(false)
       setSelection(null)
       setSkipApiRoute(null)
-      setConvertStatusMessage("")
+      setConvertStatusMessage(null)
       setClaimType("native")
     }
   }
@@ -390,7 +436,7 @@ export default function RewardsPage() {
     event?.preventDefault()
     setSelection(null)
     setSkipApiRoute(null)
-    setConvertStatusMessage("")
+    setConvertStatusMessage(null)
     setClaimType("native")
   }
 
@@ -494,7 +540,14 @@ export default function RewardsPage() {
                       )}
                       <StyledText>
                         on {neutronChainName}&nbsp;
-                        <StyledText variant="footnote">{address}</StyledText>
+                        <StyledText
+                          as="a"
+                          href={srcAddressUrl}
+                          target="_blank"
+                          variant="footnote"
+                        >
+                          {address}
+                        </StyledText>
                       </StyledText>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -504,14 +557,34 @@ export default function RewardsPage() {
                       </StyledText>
                       <StyledText>
                         on {cosmosChainName}&nbsp;
-                        <StyledText variant="footnote">
+                        <StyledText
+                          as="a"
+                          variant="footnote"
+                          href={destAddressUrl}
+                          target="_blank"
+                        >
                           {cosmosHubAddress}
                         </StyledText>
                       </StyledText>
                     </div>
                   </div>
                 </div>
-                <StyledText>{convertStatusMessage}</StyledText>
+                {convertStatusMessage && (
+                  <div className="flex flex-col">
+                    <StyledText>{convertStatusMessage.label}</StyledText>
+                    {convertStatusMessage.isLink ? (
+                      <StyledText
+                        as="a"
+                        href={convertStatusMessage.value}
+                        target="_blank"
+                      >
+                        {convertStatusMessage.value}
+                      </StyledText>
+                    ) : (
+                      <StyledText>{convertStatusMessage.value}</StyledText>
+                    )}
+                  </div>
+                )}
               </Card.Body>
 
               <Card.Footer>
