@@ -544,7 +544,7 @@ export default function RewardsPage() {
                           as="a"
                           href={srcAddressUrl}
                           target="_blank"
-                          variant="footnote"
+                          variant="link"
                         >
                           {address}
                         </StyledText>
@@ -559,7 +559,7 @@ export default function RewardsPage() {
                         on {cosmosChainName}&nbsp;
                         <StyledText
                           as="a"
-                          variant="footnote"
+                          variant="link"
                           href={destAddressUrl}
                           target="_blank"
                         >
@@ -570,20 +570,21 @@ export default function RewardsPage() {
                   </div>
                 </div>
                 {convertStatusMessage && (
-                  <div className="flex flex-col">
-                    <StyledText>{convertStatusMessage.label}</StyledText>
+                  <StyledText>
+                    {convertStatusMessage.label}&nbsp;
                     {convertStatusMessage.isLink ? (
                       <StyledText
                         as="a"
                         href={convertStatusMessage.value}
+                        variant="link"
                         target="_blank"
                       >
-                        {convertStatusMessage.value}
+                        here
                       </StyledText>
                     ) : (
                       <StyledText>{convertStatusMessage.value}</StyledText>
                     )}
-                  </div>
+                  </StyledText>
                 )}
               </Card.Body>
 
