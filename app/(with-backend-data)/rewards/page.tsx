@@ -398,7 +398,7 @@ export default function RewardsPage() {
         },
         onTransactionTracked: async ({ explorerLink }) => {
           setConvertStatusMessage({
-            label: "Transaction can be tracked via:",
+            label: "Transaction can be tracked",
             value: explorerLink,
             isLink: true,
           })
