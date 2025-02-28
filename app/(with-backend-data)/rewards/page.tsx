@@ -27,20 +27,40 @@ import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBefo
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
-import { createSkipClient, getAddress } from "@/lib/skipApi"
+import { useCreateSkipClientMemo, getAddress } from "@/lib/skipApi"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import keyBy from "lodash/keyBy"
 import sumBy from "lodash/sumBy"
 import Image from "next/image"
-import { MouseEvent, useState } from "react"
+import { MouseEvent, useMemo, useState } from "react"
+import { RouteResponse } from "@skip-go/client"
+import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
+import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
 
 export default function RewardsPage() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [skipApiRoute, setSkipApiRoute] = useState<RouteResponse | null>(null)
+  const [convertStatusMessage, setConvertStatusMessage] = useState("")
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { setToasts } = useToasts()
-  const { getSigningCosmWasmClient, chain: { chain_id: neutronChainId }} = useChain("neutron")
-  const { chain: { chain_id: cosmosHubChainId } } = useChain("cosmoshub")
+  const {
+    getOfflineSigner,
+    getRpcEndpoint,
+    getSigningCosmWasmClient,
+    chain: { chain_id: neutronChainId, pretty_name: neutronChainName },
+  } = useChain("neutron")
+  const {
+    chain: { chain_id: cosmosHubChainId, pretty_name: cosmosChainName },
+    address: cosmosHubAddress,
+  } = useChain("cosmoshub")
+
+  const skipClient = useCreateSkipClientMemo(
+    getOfflineSigner,
+    getRpcEndpoint,
+    neutronChainId
+  )
 
   const {
     address,
@@ -50,7 +70,6 @@ export default function RewardsPage() {
     claimsHistorical,
     claimsOutstanding,
     currentRoundId,
-    isWalletConnected,
     atomPrice,
     votes,
   } = useBackendData()
@@ -79,6 +98,23 @@ export default function RewardsPage() {
     selection && selectedTribute
       ? bidsById[tributesById[selection.tributeId].bidId]
       : null
+
+  const srcTokenImgUrl = useMemo(() => {
+    if (!selectedTribute) return
+    const tributeAsset = neutronAssets.assets.find(
+      (x) => x.base === selectedTribute.denomOriginal
+    )
+    if (!tributeAsset) return
+    return tributeAsset.logo_URIs?.svg
+  }, [selectedTribute])
+
+  const destTokenImgUrl = useMemo(() => {
+    const atomAsset = hubAssets.assets.find(
+      (x) => x.base === process.env.NEXT_PUBLIC_ATOM_DENOM
+    )
+    if (!atomAsset) return
+    return atomAsset.logo_URIs?.svg
+  }, [])
 
   // Bids can have multiple tributes, so this turns each into a row
   const rows = bidsToRender
@@ -295,23 +331,20 @@ export default function RewardsPage() {
     await revalidateTag("backendData")
     setSelection(null)
     setIsCelebrating(true)
+    setSkipApiRoute(null)
+    setConvertStatusMessage("")
     setToasts([toastMessages.claimingRewardsSuccess])
   }
 
-  async function convertToAtom() {
-    if (!selectedTribute || !process.env.NEXT_PUBLIC_ATOM_DENOM) return
-    const skipClient = await createSkipClient()
+  async function handleClickConvertToAtom(
+    event?: MouseEvent<HTMLButtonElement>
+  ) {
+    event?.preventDefault()
+    if (!skipApiRoute) return
 
-    const route = await skipClient.route({
-      amountIn: selectedTribute.amount.toString(),
-      sourceAssetDenom: selectedTribute.denomOriginal,
-      sourceAssetChainID: neutronChainId,
-      destAssetDenom: process.env.NEXT_PUBLIC_ATOM_DENOM,
-      destAssetChainID: cosmosHubChainId,
-    })
-
+    setIsLoading(true)
     const userAddresses = await Promise.all(
-      route.requiredChainAddresses.map(async (chainID) => ({
+      skipApiRoute.requiredChainAddresses.map(async (chainID) => ({
         chainID,
         address: await getAddress(chainID),
       }))
@@ -319,30 +352,36 @@ export default function RewardsPage() {
 
     try {
       await skipClient.executeRoute({
-        route,
+        route: skipApiRoute,
         userAddresses,
-        onTransactionCompleted: async (chainID, txHash, status) => {
-          console.log(
-            `Route completed with tx hash: ${txHash} & status: ${status.state}`
-          )
+        onTransactionCompleted: async () => {
+          const message = "Route completed"
+          setConvertStatusMessage(message)
           await claimSucceeded()
         },
-        onTransactionBroadcast: async ({ txHash, chainID }) => {
-          console.log(`Transaction broadcasted with tx hash: ${txHash}`)
-        },
-        onTransactionTracked: async ({ txHash, chainID }) => {
-          console.log(`Transaction tracked with tx hash: ${txHash}`)
+        onTransactionTracked: async ({ txHash }) => {
+          const message = `Transaction can be tracked with tx hash: ${txHash}...`
+          setConvertStatusMessage(message)
         },
         onTransactionSigned: async ({ chainID }) => {
-          console.log(`Transaction signed with chain ID: ${chainID}`)
+          const message = `Transaction signed with chain ID: ${chainID}...`
+          setConvertStatusMessage(message)
         },
-        onValidateGasBalance: async ({ chainID, txIndex, status }) => {
-          console.log(`Validating gas balance for chain ${chainID}...`)
+        onValidateGasBalance: async ({ status }) => {
+          const message = `Validating gas balance, status: ${status}...`
+          setConvertStatusMessage(message)
         },
       })
+
+      setIsLoading(false)
     } catch (error) {
       console.error(error)
-    } 
+      setIsLoading(false)
+      setSelection(null)
+      setSkipApiRoute(null)
+      setConvertStatusMessage("")
+      setClaimType("native")
+    }
   }
 
   function handleClickCloseClaimRewardsModal(
@@ -350,6 +389,8 @@ export default function RewardsPage() {
   ) {
     event?.preventDefault()
     setSelection(null)
+    setSkipApiRoute(null)
+    setConvertStatusMessage("")
     setClaimType("native")
   }
 
@@ -359,6 +400,7 @@ export default function RewardsPage() {
     if (!selectedBid || !selectedTribute || !address) return
 
     try {
+      setIsLoading(true)
       setToasts([toastMessages.claimingRewards])
 
       await executeWalletClaimRewards({
@@ -370,14 +412,26 @@ export default function RewardsPage() {
       })
 
       if (claimType == "convert") {
-        await convertToAtom()
+        if (!process.env.NEXT_PUBLIC_ATOM_DENOM) return
+
+        const route = await skipClient.route({
+          amountIn: selectedTribute.amount.toString(),
+          sourceAssetDenom: selectedTribute.denomOriginal,
+          sourceAssetChainID: neutronChainId,
+          destAssetDenom: process.env.NEXT_PUBLIC_ATOM_DENOM,
+          destAssetChainID: cosmosHubChainId,
+        })
+
+        setSkipApiRoute(route)
       } else {
         await claimSucceeded()
       }
 
+      setIsLoading(false)
     } catch (error) {
       console.error(error)
       setToasts([toastMessages.claimingRewardsError(error as Error)])
+      setIsLoading(false)
     }
   }
 
@@ -406,86 +460,171 @@ export default function RewardsPage() {
         isOpen={!!selection}
         onClose={handleClickCloseClaimRewardsModal}
       >
-        <form>
-          <Card>
-            <Card.Header
-              className="flex flex-col gap-3"
-              title="Claim Your Hydro Rewards"
-            >
-              <StyledText>
-                <Icon name="arrow-right" className="pr-2 opacity-60" />
-                <StyledText>Select a token</StyledText>
-              </StyledText>
-            </Card.Header>
-
-            <Card.Body className="flex flex-col gap-6">
-              <div className="flex gap-6 px-6">
-                <StyledText
-                  as="label"
-                  variant="label"
-                  className="flex items-center gap-2"
-                >
-                  <StyledText
-                    variant="input.radio"
-                    as="input"
-                    type="radio"
-                    name="claimType"
-                    checked={claimType === "native"}
-                    onChange={() => setClaimType("native")}
-                  />
-                  {selectedTribute && (
-                    <StyledText>
-                      {formatAmount(selectedTribute.amount)}&nbsp;
-                      <StyledText variant="footnote">
-                        {selectedTribute.denom}
+        {skipApiRoute ? (
+          <form>
+            <Card>
+              <Card.Header
+                className="flex flex-col gap-3"
+                title="Convert to ATOM"
+              />
+              <Card.Body className="flex flex-col gap-6">
+                <div className="flex flex-row gap-6">
+                  <div className="flex flex-col items-center justify-between gap-3">
+                    <StyledText
+                      as="img"
+                      src={srcTokenImgUrl}
+                      className="h-12 w-12"
+                    />
+                    <Icon name="arrow-down-long" />
+                    <StyledText
+                      as="img"
+                      src={destTokenImgUrl}
+                      className="h-12 w-12"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-between gap-6">
+                    <div className="flex flex-col gap-1">
+                      {selectedTribute && (
+                        <StyledText>
+                          {formatAmount(skipApiRoute.amountIn)}&nbsp;
+                          <StyledText variant="footnote">
+                            {selectedTribute.denom}
+                          </StyledText>
+                        </StyledText>
+                      )}
+                      <StyledText>
+                        on {neutronChainName}&nbsp;
+                        <StyledText variant="footnote">{address}</StyledText>
                       </StyledText>
-                    </StyledText>
-                  )}
-                </StyledText>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <StyledText>
+                        {formatAmount(skipApiRoute.amountOut)}&nbsp;
+                        <StyledText variant="footnote">ATOM</StyledText>
+                      </StyledText>
+                      <StyledText>
+                        on {cosmosChainName}&nbsp;
+                        <StyledText variant="footnote">
+                          {cosmosHubAddress}
+                        </StyledText>
+                      </StyledText>
+                    </div>
+                  </div>
+                </div>
+                <StyledText>{convertStatusMessage}</StyledText>
+              </Card.Body>
+
+              <Card.Footer>
                 <StyledText
-                  as="label"
-                  variant="label"
-                  className="flex items-center gap-2"
+                  as="button"
+                  variant="button.primary"
+                  onClick={handleClickConvertToAtom}
+                  disabled={!!convertStatusMessage || isLoading}
                 >
-                  <StyledText
-                    variant="input.radio"
-                    as="input"
-                    type="radio"
-                    name="claimType"
-                    checked={claimType === "convert"}
-                    onChange={() => setClaimType("convert")}
-                    disabled={!process.env.NEXT_PUBLIC_ATOM_DENOM}
-                  />
-                  {selectedTribute && (
-                    <StyledText>
-                      {formatAmount(selectedTribute.valueUsd / atomPrice)}&nbsp;
-                      <StyledText variant="footnote">ATOM</StyledText>
-                    </StyledText>
+                  {isLoading ? (
+                    <div className="animate-spin text-lg">
+                      <Icon name="solid:loader" />
+                    </div>
+                  ) : (
+                    "Convert"
                   )}
                 </StyledText>
-              </div>
-            </Card.Body>
-
-            <Card.Footer>
-              <StyledText
-                as="button"
-                variant="button.primary"
-                onClick={handleClickClaimNow}
+              </Card.Footer>
+            </Card>
+          </form>
+        ) : (
+          <form>
+            <Card>
+              <Card.Header
+                className="flex flex-col gap-3"
+                title="Claim Your Hydro Rewards"
               >
-                {claimType === "native" ? "Claim" : "Claim + Convert to ATOM"}
-              </StyledText>
+                <StyledText>
+                  <Icon name="arrow-right" className="pr-2 opacity-60" />
+                  <StyledText>Select a token</StyledText>
+                </StyledText>
+              </Card.Header>
 
-              <StyledText
-                as="button"
-                variant="button.secondary"
-                className="bg-palette-text"
-                onClick={handleClickCloseClaimRewardsModal}
-              >
-                Back
-              </StyledText>
-            </Card.Footer>
-          </Card>
-        </form>
+              <Card.Body className="flex flex-col gap-6">
+                <div className="flex gap-6 px-6">
+                  <StyledText
+                    as="label"
+                    variant="label"
+                    className="flex items-center gap-2"
+                  >
+                    <StyledText
+                      variant="input.radio"
+                      as="input"
+                      type="radio"
+                      name="claimType"
+                      checked={claimType === "native"}
+                      onChange={() => setClaimType("native")}
+                    />
+                    {selectedTribute && (
+                      <StyledText>
+                        {formatAmount(selectedTribute.amount)}&nbsp;
+                        <StyledText variant="footnote">
+                          {selectedTribute.denom}
+                        </StyledText>
+                      </StyledText>
+                    )}
+                  </StyledText>
+                  <StyledText
+                    as="label"
+                    variant="label"
+                    className="flex items-center gap-2"
+                  >
+                    <StyledText
+                      variant="input.radio"
+                      as="input"
+                      type="radio"
+                      name="claimType"
+                      checked={claimType === "convert"}
+                      onChange={() => setClaimType("convert")}
+                      disabled={!process.env.NEXT_PUBLIC_ATOM_DENOM}
+                    />
+                    {selectedTribute && (
+                      <StyledText>
+                        {formatAmount(selectedTribute.valueUsd / atomPrice)}
+                        &nbsp;
+                        <StyledText variant="footnote">ATOM</StyledText>
+                      </StyledText>
+                    )}
+                  </StyledText>
+                </div>
+              </Card.Body>
+
+              <Card.Footer>
+                <StyledText
+                  as="button"
+                  variant="button.primary"
+                  onClick={handleClickClaimNow}
+                  disabled={isLoading}
+                >
+                  {}
+                  {isLoading ? (
+                    <div className="animate-spin text-lg">
+                      <Icon name="solid:loader" />
+                    </div>
+                  ) : claimType === "native" ? (
+                    "Claim"
+                  ) : (
+                    "Claim + Convert to ATOM"
+                  )}
+                </StyledText>
+
+                <StyledText
+                  as="button"
+                  variant="button.secondary"
+                  className="bg-palette-text"
+                  onClick={handleClickCloseClaimRewardsModal}
+                >
+                  Back
+                </StyledText>
+              </Card.Footer>
+            </Card>
+          </form>
+        )}
       </ModalWindow>
 
       <Confetti
