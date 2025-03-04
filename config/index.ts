@@ -16,7 +16,7 @@ export const endpointsOnClient = {
     rest: ["https://rest.cosmos.directory/neutron/"],
   },
   cosmoshub: {
-    rpc: ["https://rpc.cosmos.directory/cosmoshub"],
+    rpc: ["https://cosmos-rpc.publicnode.com/"],
     rest: ["https://cosmos-rest.publicnode.com/"],
   },
 }
