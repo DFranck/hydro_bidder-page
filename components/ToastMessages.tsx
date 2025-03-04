@@ -117,6 +117,56 @@ export const toastMessages = {
     variant: "error",
     message: `Error connecting wallet: ${error}`,
   }),
+
+  transactionCompleted: {
+    variant: "success",
+    message: "Transaction completed.",
+  },
+
+  searchingConvertRoute: {
+    variant: "working",
+    message: "Searching for route to convert.",
+  },
+
+  convertingToAtom: {
+    variant: "working",
+    message: "Converting to ATOM.",
+  },
+
+  transactionSigned: (chainID: string) => {
+    return {
+      variant: "working",
+      message: `Transaction signed with chain ID: ${chainID}`,
+    }
+  },
+
+  validatingGas: (status: string) => {
+    return {
+      variant: "working",
+      message: `Validating gas balance, status: ${status}`,
+    }
+  },
+
+  transactionTracked: (explorerLink: string) => {
+    return {
+      variant: "info",
+      message: "You can track this transaction",
+      isDismissible: false,
+      actionButtonPrimary: {
+        label: "Track",
+        onClick: () => {
+          window.open(explorerLink, "_blank")
+        },
+      },
+    }
+  },
+
+  transactionError: (error: Error) => {
+    return {
+      variant: "error",
+      message: `Error during transaction: ${error}`,
+    }
+  },
 } satisfies Record<
   string,
   DismissibleToastDescriptor | ((...args: any[]) => DismissibleToastDescriptor)
