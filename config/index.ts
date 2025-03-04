@@ -20,7 +20,7 @@ export const endpoints = {
   //     rest: ["https://rest-palvus.pion-1.ntrn.tech"],
   // },
   neutron: {
-    rpc: ["https://neutron-rpc.polkachu.com"],
+    rpc: ["https://rpc.cosmos.directory/neutron"],
     rest: ["https://neutron-api.polkachu.com/"],
   },
   cosmoshub: {
@@ -29,7 +29,7 @@ export const endpoints = {
   },
 }
 
-export const NEUTRON_DEFAULT_RPC = "https://neutron-rpc.polkachu.com/"
+export const NEUTRON_DEFAULT_RPC = "https://rpc.cosmos.directory/neutron"
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 

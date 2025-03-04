@@ -5,9 +5,9 @@ import {
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
 import { RawHydroData } from "@/contract-apis/types"
-import { range } from "lodash";
-import { fetchRoundBids } from "./mergedFetchers/fetchRoundBids";
-import { fetchRoundTributes } from "./mergedFetchers/fetchRoundTributes";
+import { range } from "lodash"
+import { fetchRoundBids } from "./mergedFetchers/fetchRoundBids"
+import { fetchRoundTributes } from "./mergedFetchers/fetchRoundTributes"
 
 export async function fetchHydroData(): Promise<RawHydroData> {
   const hydroQueryClient = await getHydroQueryClient()
@@ -25,54 +25,55 @@ export async function fetchHydroData(): Promise<RawHydroData> {
     hydroQueryClient.totalLockedTokens(),
   ])
 
-    const currentRoundId = round_id
-    const allRoundIds = range(0, currentRoundId + 1)
-  
-    const everyRoundAndTranchePair = allRoundIds.flatMap((roundId) =>
-      tranches.map((tranche) => ({
-        roundId,
-        trancheId: tranche.id,
-      }))
-    )
-  
-    const proposalsAndLiquidityDeployments = await Promise.all(
-      everyRoundAndTranchePair.map(async ({ roundId, trancheId }) => {
-        const [proposals, { liquidity_deployments }] = await Promise.all([
-          fetchRoundBids(roundId, trancheId, currentRoundId),
-          hydroQueryClient.roundTrancheLiquidityDeployments({
-            roundId,
-            trancheId,
-            startFrom: 0,
-            limit: 1000,
-          }),
-        ])
-        return { proposals, liquidity_deployments }
+  const currentRoundId = round_id
+  const allRoundIds = range(0, currentRoundId + 1)
+
+  const everyRoundAndTranchePair = allRoundIds.flatMap((roundId) =>
+    tranches.map((tranche) => ({
+      roundId,
+      trancheId: tranche.id,
+    }))
+  )
+
+  const proposalsAndLiquidityDeployments = await Promise.all(
+    everyRoundAndTranchePair.map(async ({ roundId, trancheId }) => {
+      const [proposals, { liquidity_deployments }] = await Promise.all([
+        fetchRoundBids(roundId, trancheId, currentRoundId),
+        hydroQueryClient.roundTrancheLiquidityDeployments({
+          roundId,
+          trancheId,
+          startFrom: 0,
+          limit: 1000,
+        }),
+      ])
+      return { proposals, liquidity_deployments }
+    })
+  )
+
+  const proposals = proposalsAndLiquidityDeployments
+    .flatMap((o) => o.proposals)
+    .sort((a, b) => a.proposal_id - b.proposal_id)
+  const liquidity_deployments = proposalsAndLiquidityDeployments.flatMap(
+    (o) => o.liquidity_deployments
+  )
+
+  const tributes = (
+    await Promise.all(
+      allRoundIds.map(async (roundId) => {
+        const tributes = await fetchRoundTributes(roundId, currentRoundId)
+        return tributes
       })
     )
-  
-    const proposals = proposalsAndLiquidityDeployments.flatMap((o) => o.proposals).sort((a, b) => a.proposal_id - b.proposal_id)
-    const liquidity_deployments = proposalsAndLiquidityDeployments.flatMap(
-      (o) => o.liquidity_deployments
-    )
-  
-    const tributes = (
-      await Promise.all(
-        allRoundIds.map(async (roundId) => {
-          const tributes = await fetchRoundTributes(roundId, currentRoundId)
-          return tributes
-        })
-      )
-    ).flat()
-  
-    return {
-      constants,
-      liquidity_deployments,
-      proposals,
-      round_end,
-      round_id,
-      total_locked_tokens,
-      tranches,
-      tributes,
-    }
+  ).flat()
+
+  return {
+    constants,
+    liquidity_deployments,
+    proposals,
+    round_end,
+    round_id,
+    total_locked_tokens,
+    tranches,
+    tributes,
   }
-  
+}

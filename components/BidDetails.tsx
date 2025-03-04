@@ -44,6 +44,8 @@ export function BidDetails({
 }) {
   const backendData = useBackendData()
 
+  console.log( backendData)
+
   if (!bidId) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
