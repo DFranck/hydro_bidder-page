@@ -2,7 +2,7 @@
 
 import { BidDuration } from "@/components/BidDuration"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
-import { BidTributeApr } from "@/components/BidTributeApr"
+import { BidTributeAprOrPoints } from "@/components/BidTributeAprOrPoints"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -32,19 +32,10 @@ import { classNames } from "./classNames"
 export default function BidsPage() {
   const backendData = useBackendData()
 
-  const {
-    bidsByRoundId,
-    currentRoundId,
-    isLoading,
-    metricsForPostHydroBids,
-    votesByRoundId,
-  } = backendData
+  const { bidsByRoundId, currentRoundId, isLoading, votesByRoundId } =
+    backendData
 
   const bidsInRound = bidsByRoundId[currentRoundId] ?? []
-
-  const votesInThisRound = votesByRoundId[currentRoundId] ?? []
-
-  const hasVotedThisRound = votesInThisRound.length > 0
 
   const rows =
     bidsInRound?.map((bid) => {
@@ -67,7 +58,7 @@ export default function BidsPage() {
 
         tributeApr: (
           <InvisibleLink href={bidURL}>
-            <BidTributeApr bidId={bid.id} />
+            <BidTributeAprOrPoints bidId={bid.id} />
           </InvisibleLink>
         ),
 
@@ -230,11 +221,9 @@ export default function BidsPage() {
   function renderRow({
     children,
     row,
-    rowIndex,
     rowProps,
     sortDirection,
     sortedColumnKey,
-    sortedRows,
   }: RowRenderProps<(typeof rows)[number], keyof (typeof rows)[number]>) {
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&
