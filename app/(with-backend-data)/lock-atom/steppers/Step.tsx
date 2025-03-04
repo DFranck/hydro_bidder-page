@@ -23,6 +23,7 @@ export function Step({
     label: ReactNode
     onClick?: () => void
     className?: string
+    disabled?: boolean
   }[]
   isWorking?: boolean
   revalidateCache?: boolean
@@ -84,6 +85,7 @@ export function Step({
               className={button.className}
               variant={index === 0 ? "button.primary" : "button.secondary"}
               onClick={button.onClick}
+              disabled={button.disabled}
             >
               {button.label}
             </StyledText>
