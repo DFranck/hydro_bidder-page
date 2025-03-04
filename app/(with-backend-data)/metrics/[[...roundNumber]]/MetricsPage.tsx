@@ -6,8 +6,7 @@ import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
-import { BidTribute } from "@/components/BidTribute"
-import { BidTributeApr } from "@/components/BidTributeApr"
+import { BidTributeAprOrPoints } from "@/components/BidTributeAprOrPoints"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -328,10 +327,8 @@ export function MetricsPage({
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               0
-            ) : !isTokenBased ? (
-              <BidTribute bidId={bidFromContract.id} textAlign="right" />
             ) : (
-              <BidTributeApr bidId={Number(bidFromNumia.id)} />
+              <BidTributeAprOrPoints bidId={bidFromContract.id} />
             )}
           </InvisibleLink>
         ),

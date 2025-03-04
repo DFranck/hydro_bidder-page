@@ -20,11 +20,15 @@ export function BidTribute({
 }) {
   const { bidDescriptionsByBidId, metricsForPostHydroBids } = useBackendData()
 
+  const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
+
+  const { points = [] } = bidDescription
+
   const bidInfoFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
   )
 
-  if (!bidInfoFromNumia) {
+  if (!bidInfoFromNumia && points.length === 0) {
     return (
       <StyledText variant="footnote" className="whitespace-nowrap">
         No data yet
@@ -32,7 +36,19 @@ export function BidTribute({
     )
   }
 
-  const { onchainTributeAssets, offchainTribute } = bidInfoFromNumia
+  const { onchainTributeAssets = [], offchainTribute = [] } =
+    bidInfoFromNumia ?? {}
+
+  let offchainTributeWithPoints = offchainTribute
+
+  if (points.length && !onchainTributeAssets.length) {
+    offchainTributeWithPoints = [
+      {
+        amount: points[0],
+        type: points[1],
+      },
+    ]
+  }
 
   const tributesByDenom = {
     ...groupBy(
@@ -40,7 +56,7 @@ export function BidTribute({
       "denom"
     ),
     ...groupBy(
-      offchainTribute.map((v) => ({ ...v, tributeType: "points" })),
+      offchainTributeWithPoints.map((v) => ({ ...v, tributeType: "points" })),
       "type"
     ),
   }

@@ -4,8 +4,7 @@ import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
-import { BidTribute } from "@/components/BidTribute"
-import { BidTributeApr } from "@/components/BidTributeApr"
+import { BidTributeAprOrPoints } from "@/components/BidTributeAprOrPoints"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { ErrorBox } from "@/components/ErrorBox"
@@ -26,7 +25,6 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { BID_DESCRIPTIONS_URL } from "@/contract-apis/fetchBidDescriptions"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import kebabCase from "lodash/kebabCase"
@@ -67,17 +65,19 @@ export function BidDetails({ bidId }: { bidId: number }) {
   if (!bidDescriptionFromGithub && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
-        This bid is active on the Hydro smart sontract but has not yet been whitelisted for the front-end by the Hydro Team. Check back later or contact the Hydro Team in the {" "}
-    <StyledText
-      as={Link}
-      href="https://t.me/+xUzNOTZjUNw5Mzhk"
-      variant="link"
-      className="relative z-10 inline-flex items-center gap-1"
-      target="_blank"
-    >
-      Hydro Telegram Group.
-      <Icon name="solid:arrow-up-right" />
-      </StyledText>
+        This bid is active on the Hydro smart sontract but has not yet been
+        whitelisted for the front-end by the Hydro Team. Check back later or
+        contact the Hydro Team in the{" "}
+        <StyledText
+          as={Link}
+          href="https://t.me/+xUzNOTZjUNw5Mzhk"
+          variant="link"
+          className="relative z-10 inline-flex items-center gap-1"
+          target="_blank"
+        >
+          Hydro Telegram Group.
+          <Icon name="solid:arrow-up-right" />
+        </StyledText>
       </ErrorBox>
     )
   }
@@ -86,6 +86,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
     committeeComments,
     description,
     aboutProject,
+    points = [],
     projectLogoUrl,
     projectName,
     projectUrl,
@@ -100,7 +101,8 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 
-  const isTokenBased = bidMetricsFromNumia?.offchainTribute.length === 0
+  const isTokenBased =
+    points.length === 0 && bidMetricsFromNumia?.offchainTribute.length === 0
 
   return (
     <ContentContainer className="py-6">
@@ -352,11 +354,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </Tooltip>
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
-                {!isTokenBased ? (
-                  <BidTribute bidId={bidId} />
-                ) : (
-                  <BidTributeApr bidId={bidId} />
-                )}
+                <BidTributeAprOrPoints bidId={bidId} />
               </div>
             </div>
 
