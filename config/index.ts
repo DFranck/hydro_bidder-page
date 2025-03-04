@@ -20,11 +20,11 @@ export const endpoints = {
   //     rest: ["https://rest-palvus.pion-1.ntrn.tech"],
   // },
   neutron: {
-    rpc: ["https://neutron-rpc.polkachu.com"],
-    rest: ["https://neutron-api.polkachu.com/"],
+    rpc: ["https://rpc.cosmos.directory/neutron"],
+    rest: ["https://rest.cosmos.directory/neutron"],
   },
   cosmoshub: {
-    rpc: ["https://cosmos-rpc.publicnode.com/"],
+    rpc: ["https://rpc.cosmos.directory/cosmoshub"],
     rest: ["https://cosmos-rest.publicnode.com/"],
   },
 }
