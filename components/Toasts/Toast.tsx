@@ -2,6 +2,7 @@
 
 import { Icon } from "@/components/Icon"
 import { IconString } from "@/components/Icon/types"
+import { useToasts } from "@/components/Toasts/useToasts"
 import { ComponentProps, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 import { classNamesAndVariants } from "./classNamesAndVariants"
@@ -10,7 +11,7 @@ export type ToastVariant = keyof (typeof classNamesAndVariants)["variants"]
 
 interface ToastProps
   extends ComponentProps<"div">,
-    Omit<ToastDescriptor, "message" | "variant" | "_id"> {
+    Omit<ToastDescriptor, "message" | "variant"> {
   icon?: IconString
   variant?: ToastVariant
 }
@@ -30,7 +31,7 @@ export interface ToastDescriptor {
 }
 
 export function Toast({
-  id,
+  _id,
   children,
   className,
   actionButtonPrimary,
@@ -38,11 +39,16 @@ export function Toast({
   icon,
   variant = "info",
 }: ToastProps) {
+  const { dismissToastById } = useToasts()
+
   return (
     <div
+      id={`toast-${_id}`}
       className={twMerge(
         "js-toast",
-        classNamesAndVariants.toastContainer,
+        "grid grid-rows-2 items-center",
+        "grid-cols-[min-content,auto,min-content]",
+        "rounded-md text-xs text-white backdrop-blur-md",
         classNamesAndVariants.variants[variant].container,
         className
       )}
@@ -60,7 +66,10 @@ export function Toast({
       )}
 
       {(actionButtonPrimary || actionButtonSecondary) && (
-        <div className={classNamesAndVariants.actionButtonsContainer}>
+        <div
+          className={classNamesAndVariants.actionButtonsContainer}
+          onClick={dismissToastById.bind(null, _id!)}
+        >
           {actionButtonPrimary && (
             <button
               className={classNamesAndVariants.actionButton}

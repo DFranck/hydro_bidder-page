@@ -31,7 +31,6 @@ import { classNames } from "./classNames"
 
 export default function BidsPage() {
   const backendData = useBackendData()
-
   const { bidsByRoundId, currentRoundId, isLoading, votesByRoundId } =
     backendData
 

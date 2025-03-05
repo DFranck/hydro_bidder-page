@@ -1,5 +1,6 @@
 "use client"
 
+import { useToasts } from "@/components/Toasts"
 import {
   BackendDataAfterWallet,
   fetchBackendDataAfterWallet,
@@ -103,6 +104,7 @@ export function BackendDataContextProvider({
   backendDataBeforeWallet: BackendDataBeforeWallet
   children: ReactNode
 }) {
+  const { addToast, dismissToastById } = useToasts()
   const {
     address,
     isWalletConnected,
@@ -135,6 +137,11 @@ export function BackendDataContextProvider({
     if (!process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS) return
 
     async function queryLockupCapacity() {
+      const workingToastId = addToast({
+        variant: "workingInBackground",
+        message: null,
+      })
+
       try {
         const globalLockupCapacity = await fetchGlobalLockupCapacity()
 
@@ -145,6 +152,8 @@ export function BackendDataContextProvider({
       } catch (error) {
         console.warn("Error fetching lockup capacity", error)
       }
+
+      dismissToastById(workingToastId)
     }
 
     queryLockupCapacity()
