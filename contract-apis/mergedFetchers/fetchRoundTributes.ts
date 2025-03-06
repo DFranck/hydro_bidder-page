@@ -1,12 +1,15 @@
-import { TributeBaseQueryClient } from "../../app/ts_types/TributeBase.client"
-import { Tribute } from "../../app/ts_types/TributeBase.types"
-import { getCosmWasmClient } from "../getCosmWasmClient"
+"use server"
+
+import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
+import { Tribute } from "@/app/ts_types/TributeBase.types"
+import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import "server-only"
 
 export async function fetchRoundTributes(
   roundId: number,
   currentRoundId: number
 ): Promise<Tribute[]> {
-  if (currentRoundId == roundId) {
+  if (currentRoundId === roundId) {
     if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
       throw new Error("Tribute contract address not set")
     }
@@ -36,7 +39,7 @@ export async function fetchRoundTributes(
       {
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
         },
       }
     )

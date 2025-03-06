@@ -7,6 +7,7 @@ import {
 } from "@/contract-apis/getClient"
 import { RawWalletData } from "@/contract-apis/types"
 import range from "lodash/range"
+import "server-only"
 
 export async function fetchWalletData({
   address,
