@@ -18,7 +18,7 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  networkLimitReachedTooltip as lockupLimitReachedByNetworkTooltip,
+  lockupLimitReachedByNetworkTooltip,
   lockupLimitReachedByUserTooltip,
   lockupLimitTooltip,
   lockupsTableTimeLeftColumnTooltip,

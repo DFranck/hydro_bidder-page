@@ -3,8 +3,8 @@ import { BidTributeApr } from "@/components/BidTributeApr"
 import { useBackendData } from "@/contract-apis/useBackendData"
 
 export function BidTributeAprOrPoints({ bidId }: { bidId: number }) {
-  const { bidDescriptionsByBidId } = useBackendData()
-  const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
+  const { bidMetaDataById } = useBackendData()
+  const bidDescription = bidMetaDataById[bidId] ?? {}
   const { points = [] } = bidDescription
 
   return points.length > 0 ? (

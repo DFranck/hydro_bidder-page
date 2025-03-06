@@ -1,7 +1,7 @@
-import { HydroBaseQueryClient } from "../../app/ts_types/HydroBase.client"
-import { LockupWithPerTrancheInfo } from "../../app/ts_types/HydroBase.types"
-import { getCosmWasmClient } from "../getCosmWasmClient"
-import { fetchHistoricUsers } from "./fetchHistoricUsers"
+import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
+import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
+import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import { fetchHistoricUsers } from "@/contract-apis/mergedFetchers/fetchHistoricUsers"
 
 export async function fetchRoundLockups(
   roundId: number,
