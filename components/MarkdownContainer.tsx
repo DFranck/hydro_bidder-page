@@ -1,4 +1,5 @@
 import Markdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 import { twMerge } from "tailwind-merge"
 
 export function MarkdownContainer({
@@ -28,7 +29,7 @@ export function MarkdownContainer({
         className
       )}
     >
-      <Markdown>
+      <Markdown remarkPlugins={[remarkGfm]}>
         {content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
       </Markdown>
     </div>
