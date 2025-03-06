@@ -1,4 +1,5 @@
 import Markdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 import { twMerge } from "tailwind-merge"
 
 export function MarkdownContainer({
@@ -23,12 +24,23 @@ export function MarkdownContainer({
           prose-code:text-palette-beige
           prose-ol:text-white
           prose-li:text-white
+          prose-table:border-collapse
+          prose-table:overflow-hidden
+          prose-table:rounded-md
+          prose-table:border
+          prose-thead:bg-palette-beige/10
+          prose-th:border
+          prose-th:px-3
+          prose-th:py-1
+          prose-td:border
+          prose-td:px-3
+          prose-td:py-1
           [&_a:hover]:text-palette-green
         `,
         className
       )}
     >
-      <Markdown>
+      <Markdown remarkPlugins={[remarkGfm]}>
         {content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
       </Markdown>
     </div>
