@@ -106,9 +106,6 @@ export function BackendDataContextProvider({
   rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
   children: ReactNode
 }) {
-<<<<<<< HEAD
-  const { addToast, dismissToastById } = useToasts()
-=======
   const pathname = usePathname()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -116,7 +113,6 @@ export function BackendDataContextProvider({
   const [state, setState] = useState<AugmentedBackendDataAfterWallet>(
     initialBackendDataContext
   )
->>>>>>> aaronmw/playwright-and-refactor
   const {
     address,
     isWalletConnected,
@@ -170,47 +166,11 @@ export function BackendDataContextProvider({
 
   // [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
-<<<<<<< HEAD
-    if (!address) {
-      setBackendDataAfterWallet(preMergedBackendData)
-    }
-  }, [address, preMergedBackendData])
-
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS) return
-
-    async function queryLockupCapacity() {
-      const workingToastId = addToast({
-        variant: "workingInBackground",
-        message: null,
-      })
-
-      try {
-        const globalLockupCapacity = await fetchGlobalLockupCapacity()
-
-        setBackendDataAfterWallet((prev) => ({
-          ...prev,
-          ...globalLockupCapacity,
-        }))
-      } catch (error) {
-        console.warn("Error fetching lockup capacity", error)
-      }
-
-      dismissToastById(workingToastId)
-    }
-
-    queryLockupCapacity()
-
-    const timer = setInterval(
-      queryLockupCapacity,
-      1000 * Number(process.env.NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS)
-=======
     const enabledTweaks: BackendDataTweak["json"] = merge(
       {},
       ...loadedTweaks
         .filter((tweak) => !tweak.disabled)
         .map((tweak) => tweak.json)
->>>>>>> aaronmw/playwright-and-refactor
     )
 
     const {
