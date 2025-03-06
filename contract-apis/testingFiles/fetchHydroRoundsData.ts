@@ -1,11 +1,12 @@
 "use server"
 
+import { getHydroQueryClient } from "@/contract-apis/getClient"
+import { fetchRoundBids } from "@/contract-apis/mergedFetchers/fetchRoundBids"
+import { fetchRoundLockups } from "@/contract-apis/mergedFetchers/fetchRoundLockups"
+import { fetchRoundTributes } from "@/contract-apis/mergedFetchers/fetchRoundTributes"
+import { RawHydroRoundData } from "@/contract-apis/types"
 import { range } from "lodash"
-import { getHydroQueryClient } from "../../contract-apis/getClient"
-import { RawHydroRoundData } from "../../contract-apis/types"
-import { fetchRoundBids } from "./../mergedFetchers/fetchRoundBids"
-import { fetchRoundLockups } from "./../mergedFetchers/fetchRoundLockups"
-import { fetchRoundTributes } from "./../mergedFetchers/fetchRoundTributes"
+import "server-only"
 
 export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
   const hydroQueryClient = await getHydroQueryClient()

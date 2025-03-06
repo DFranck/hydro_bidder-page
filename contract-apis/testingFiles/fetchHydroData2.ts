@@ -1,13 +1,13 @@
 "use server"
 
-import { range } from "lodash"
 import {
   getHydroQueryClient,
   getTributeQueryClient,
-} from "../../contract-apis/getClient"
-import { RawHydroData } from "../../contract-apis/types"
-import { fetchRoundBids } from "./../mergedFetchers/fetchRoundBids"
-import { fetchRoundTributes } from "./../mergedFetchers/fetchRoundTributes"
+} from "@/contract-apis/getClient"
+import { fetchRoundBids } from "@/contract-apis/mergedFetchers/fetchRoundBids"
+import { fetchRoundTributes } from "@/contract-apis/mergedFetchers/fetchRoundTributes"
+import { RawHydroData } from "@/contract-apis/types"
+import { range } from "lodash"
 
 export async function fetchHydroData2(): Promise<RawHydroData> {
   console.log("Fetching Hydro data...")

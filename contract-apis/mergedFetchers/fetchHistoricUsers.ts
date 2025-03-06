@@ -1,3 +1,7 @@
+"use server"
+
+import "server-only"
+
 export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
   if (!process.env.NUMIA_USERS_ENDPOINT) {
     throw new Error("NUMIA_USERS_ENDPOINT not set")
@@ -6,7 +10,7 @@ export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
   const response = await fetch(`${process.env.NUMIA_USERS_ENDPOINT}`, {
     headers: {
       Accept: "application/json",
-      Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
     },
   })
 

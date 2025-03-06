@@ -1,6 +1,7 @@
+import { AssetList, Chain } from "@chain-registry/types"
+
 export const CHAIN_NAME = "localchain"
 export const CHAIN_NAME_STORAGE_KEY = "selected-chain"
-import { AssetList, Chain } from "@chain-registry/types"
 
 export enum AllowedLockupPeriodInEpochs {
   ONE_EPOCH = 1,
@@ -17,19 +18,11 @@ export const endpoints = {
         url: "https://neutron-rpc.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
         },
       },
     ],
-    rest: [
-      {
-        url: "https://neutron-lcd.numia.xyz",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
-        },
-      },
-    ],
+    rest: ["https://neutron-api.polkachu.com/"],
   },
   cosmoshub: {
     rpc: [
@@ -37,21 +30,13 @@ export const endpoints = {
         url: "https://cosmos-rpc.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
         },
       },
     ],
-    rest: [
-      {
-        url: "https://cosmos-lcd.numia.xyz",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
-        },
-      },
-    ],
+    rest: ["https://cosmos-rest.publicnode.com/"],
   },
-}
+} as const
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 

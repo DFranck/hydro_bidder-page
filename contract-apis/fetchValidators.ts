@@ -1,11 +1,23 @@
 import { Validator } from "./fetchWalletValidators"
 import { fetchWithRetry } from "./fetchWithRetry"
 
-export async function fetchValidators(restEndpoint: {
-  url: string
-  headers?: HeadersInit
-}): Promise<Validator[]> {
-  const { url, headers } = restEndpoint
+export async function fetchValidators(
+  restEndpoint:
+    | `${string}/`
+    | {
+        url: `${string}/`
+        headers?: HeadersInit
+      }
+): Promise<Validator[]> {
+  let url: string
+  let headers: HeadersInit = {}
+
+  if (typeof restEndpoint === "string") {
+    url = restEndpoint
+  } else {
+    url = restEndpoint.url
+    headers = restEndpoint.headers ?? headers
+  }
 
   const response = await fetchWithRetry(
     `${url}cosmos/staking/v1beta1/validators?pagination.limit=500`,

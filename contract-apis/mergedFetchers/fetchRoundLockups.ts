@@ -1,7 +1,10 @@
+"use server"
+
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { fetchHistoricUsers } from "@/contract-apis/mergedFetchers/fetchHistoricUsers"
+import "server-only"
 
 export async function fetchRoundLockups(
   roundId: number,
@@ -45,7 +48,7 @@ export async function fetchRoundLockups(
       {
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
         },
       }
     )
