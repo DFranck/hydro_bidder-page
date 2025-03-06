@@ -45,3 +45,7 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Local Netlify folder
+.netlify
+public/data

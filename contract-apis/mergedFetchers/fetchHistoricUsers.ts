@@ -1,7 +1,5 @@
 "use server"
 
-import "server-only"
-
 export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
   if (!process.env.NUMIA_USERS_ENDPOINT) {
     throw new Error("NUMIA_USERS_ENDPOINT not set")
