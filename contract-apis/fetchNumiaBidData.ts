@@ -25,6 +25,7 @@ export async function fetchNumiaBidData(): Promise<RawNumiaBid[]> {
     throw new Error(`Failed to fetch Numia bid data: ${error.message}`)
   })
 
-  const bids = (await response.json()) as RawNumiaBid[]
-  return bids
+  const numiaBids = (await response.json()) as RawNumiaBid[]
+
+  return numiaBids
 }

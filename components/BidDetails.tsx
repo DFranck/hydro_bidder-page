@@ -43,12 +43,6 @@ export function BidDetails({
 }) {
   const backendData = useBackendData()
 
-  console.log(backendData)
-
-  if (!bidId) {
-    return <ErrorBox>The requested bid could not be found.</ErrorBox>
-  }
-
   const {
     atomPrice,
     bidMetaDataById,
@@ -71,6 +65,10 @@ export function BidDetails({
   } = bidMetaData
 
   const bid = bidsById[bidId]
+
+  if (!bid) {
+    return <ErrorBox>The requested bid could not be found.</ErrorBox>
+  }
 
   const bidInfoFromGithub = bidMetaDataById[bidId]
 
