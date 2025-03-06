@@ -1,13 +1,9 @@
+import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { Validator } from "./fetchWalletValidators"
 import { fetchWithRetry } from "./fetchWithRetry"
 
 export async function fetchValidators(
-  restEndpoint:
-    | `${string}/`
-    | {
-        url: `${string}/`
-        headers?: HeadersInit
-      }
+  restEndpoint: string | ExtendedHttpEndpoint
 ): Promise<Validator[]> {
   let url: string
   let headers: HeadersInit = {}

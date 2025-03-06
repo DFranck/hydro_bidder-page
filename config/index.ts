@@ -1,4 +1,5 @@
 import { AssetList, Chain } from "@chain-registry/types"
+import { Endpoints } from "@cosmos-kit/core"
 
 export const CHAIN_NAME = "localchain"
 export const CHAIN_NAME_STORAGE_KEY = "selected-chain"
@@ -36,7 +37,7 @@ export const endpoints = {
     ],
     rest: ["https://cosmos-rest.publicnode.com/"],
   },
-} as const
+} satisfies Record<string, Endpoints>
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 
