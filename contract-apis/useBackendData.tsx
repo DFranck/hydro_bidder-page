@@ -128,42 +128,6 @@ export function BackendDataContextProvider({
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
-  function logDebugData(debugData: object[]) {
-    if (process.env.CONTEXT === "production") return
-    window.debugData = debugData
-
-    console.groupCollapsed(`[ 🐜 Debug Data ]`)
-    debugData.forEach((data) => {
-      const [[key, value]] = Object.entries(data)
-      console.groupCollapsed(key)
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          console.log(item)
-        })
-      } else if (typeof value === "object" && value !== null) {
-        Object.entries(value).forEach(([key, value]) => {
-          console.log(`${key}:`, value)
-        })
-      } else {
-        console.log(value)
-      }
-      console.groupEnd()
-    })
-    console.groupEnd()
-
-    const { finalState } = debugData[debugData.length - 1] as {
-      finalState: AugmentedBackendDataAfterWallet
-    }
-
-    console.log("💡 You have access to the `debugData` object in the console!")
-    console.log(
-      `🖪 Debug Data Size: ${(JSON.stringify(debugData).length / 1024 / 1024).toFixed(2)} MB`
-    )
-    console.log(
-      `🖪 State Size: ${(JSON.stringify(finalState).length / 1024 / 1024).toFixed(2)} MB`
-    )
-  }
-
   // [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
     const enabledTweaks: BackendDataTweak["json"] = merge(
@@ -174,11 +138,11 @@ export function BackendDataContextProvider({
     )
 
     const {
+      externalData: externalDataTweaks = {},
       hydroRoundsData: hydroRoundsDataTweaks = [],
       hydroData: hydroDataTweaks = {},
-      externalData: externalDataTweaks = {},
-      patchData = {},
       walletData: walletDataTweaks = {},
+      patchData = {},
     } = enabledTweaks
 
     const tweakedRawBackendDataBeforeWallet = mergeWithOverwrite(
@@ -265,7 +229,7 @@ export function BackendDataContextProvider({
   }, [address, loadedTweaks, rawBackendDataBeforeWallet])
 
   useEffect(() => {
-    loadBackendDataTweaks()
+    refetchBackendData()
   }, [])
 
   // TODO: Add a timer to reload the data every 30 seconds (see env variable)
@@ -309,13 +273,45 @@ export function BackendDataContextProvider({
     wasWalletConnected,
   ])
 
-  function loadBackendDataTweaks() {
+  function refetchBackendData() {
     const tweaks = window.localStorage.getItem("backendDataTweaks") ?? "[]"
     setLoadedTweaks(JSON.parse(tweaks))
   }
 
-  function refetchBackendData() {
-    loadBackendDataTweaks()
+  function logDebugData(debugData: object[]) {
+    if (process.env.CONTEXT === "production") return
+    window.debugData = debugData
+
+    console.groupCollapsed(`[ 🐜 Debug Data ]`)
+    debugData.forEach((data) => {
+      const [[key, value]] = Object.entries(data)
+      console.groupCollapsed(key)
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          console.log(item)
+        })
+      } else if (typeof value === "object" && value !== null) {
+        Object.entries(value).forEach(([key, value]) => {
+          console.log(`${key}:`, value)
+        })
+      } else {
+        console.log(value)
+      }
+      console.groupEnd()
+    })
+    console.groupEnd()
+
+    const { finalState } = debugData[debugData.length - 1] as {
+      finalState: AugmentedBackendDataAfterWallet
+    }
+
+    console.log("💡 You have access to the `debugData` object in the console!")
+    console.log(
+      `🖪 Debug Data Size: ${(JSON.stringify(debugData).length / 1024 / 1024).toFixed(2)} MB`
+    )
+    console.log(
+      `🖪 State Size: ${(JSON.stringify(finalState).length / 1024 / 1024).toFixed(2)} MB`
+    )
   }
 
   return (
