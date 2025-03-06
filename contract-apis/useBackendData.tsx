@@ -39,6 +39,7 @@ const initialBackendDataContext: BackendDataContextType = {
   address: "",
   assetListWithPrices: {},
   atomPrice: 0,
+  bidsInfo: {},
   bidMetaDataById: {},
   bidsById: {},
   claimsHistorical: [],
@@ -173,6 +174,7 @@ export function BackendDataContextProvider({
     )
 
     const {
+      hydroRoundsData: hydroRoundsDataTweaks = [],
       hydroData: hydroDataTweaks = {},
       externalData: externalDataTweaks = {},
       patchData = {},
@@ -182,7 +184,11 @@ export function BackendDataContextProvider({
     const tweakedRawBackendDataBeforeWallet = mergeWithOverwrite(
       {},
       rawBackendDataBeforeWallet,
-      { externalData: externalDataTweaks, hydroData: hydroDataTweaks }
+      {
+        externalData: externalDataTweaks,
+        hydroData: hydroDataTweaks,
+        hydroRoundsData: hydroRoundsDataTweaks,
+      }
     )
 
     const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(

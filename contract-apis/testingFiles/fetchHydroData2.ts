@@ -3,15 +3,21 @@
 import {
   getHydroQueryClient,
   getTributeQueryClient,
-} from "@/contract-apis/getClient"
-import { RawHydroData } from "@/contract-apis/types"
-import { range } from "lodash"
-import { fetchRoundBids } from "./mergedFetchers/fetchRoundBids"
-import { fetchRoundTributes } from "./mergedFetchers/fetchRoundTributes"
+} from "../../contract-apis/getClient"
+import { RawHydroData } from "../../contract-apis/types"
+import { range } from "lodash";
+import { fetchRoundTributes } from "./../mergedFetchers/fetchRoundTributes";
+import { fetchRoundBids } from "./../mergedFetchers/fetchRoundBids";
 
-export async function fetchHydroData(): Promise<RawHydroData> {
+export async function fetchHydroData2(): Promise<RawHydroData> {
+  console.log("Fetching Hydro data...")
   const hydroQueryClient = await getHydroQueryClient()
   const tributeQueryClient = await getTributeQueryClient()
+  console.log("Clients fetched")
+
+  const a = await Promise.all([
+    hydroQueryClient.constants(),])
+    console.log("Clients fetched")
 
   const [
     { constants },
@@ -50,9 +56,7 @@ export async function fetchHydroData(): Promise<RawHydroData> {
     })
   )
 
-  const proposals = proposalsAndLiquidityDeployments
-    .flatMap((o) => o.proposals)
-    .sort((a, b) => a.proposal_id - b.proposal_id)
+  const proposals = proposalsAndLiquidityDeployments.flatMap((o) => o.proposals).sort((a, b) => a.proposal_id - b.proposal_id)
   const liquidity_deployments = proposalsAndLiquidityDeployments.flatMap(
     (o) => o.liquidity_deployments
   )
