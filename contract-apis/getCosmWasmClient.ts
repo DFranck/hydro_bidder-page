@@ -21,8 +21,10 @@ async function connectWithRetry(
       // If the error contains "Throttled", wait longer
       const isThrottled =
         error instanceof Error &&
-        (error.message.includes("Throttled") ||
-          error.message.includes("rate limit"))
+        (error.message.toLowerCase().includes("throttled") ||
+          error.message.toLowerCase().includes("rate limit") ||
+          error.message.toLowerCase().includes("too many"))
+
       const waitTime = initialDelay * Math.pow(2, i) * (isThrottled ? 3 : 1)
 
       // Add some jitter to prevent thundering herd

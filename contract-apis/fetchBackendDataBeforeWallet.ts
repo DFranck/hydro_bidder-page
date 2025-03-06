@@ -6,12 +6,30 @@ import { fetchExternalData } from "./fetchExternalData"
 import { fetchHydroData } from "./fetchHydroData"
 import { fetchHydroRoundsData } from "./testingFiles/fetchHydroRoundsData"
 
+const requiredEnvVariables = [
+  "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS",
+  "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS",
+  "NUMIA_BIDS_ENDPOINT",
+  "NUMIA_COSMOS_HYDRO_APP_API_KEY",
+  "NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT",
+  "NUMIA_LOCKUPS_ENDPOINT",
+  "NUMIA_METRICS_ENDPOINT",
+  "NUMIA_TRIBUTES_ENDPOINT",
+  "NUMIA_USERS_ENDPOINT",
+]
+
 async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
-  const [hydroRoundsData, hydroData, externalData] = await Promise.all([
-    fetchHydroRoundsData(),
-    fetchHydroData(),
-    fetchExternalData(),
-  ])
+  requiredEnvVariables.forEach((envVariableName) => {
+    if (!(envVariableName in process.env)) {
+      throw new Error(
+        `Missing env variable: ${envVariableName}. ${JSON.stringify(process.env, null, 2)}`
+      )
+    }
+  })
+
+  const hydroRoundsData = await fetchHydroRoundsData()
+  const hydroData = await fetchHydroData()
+  const externalData = await fetchExternalData()
 
   return {
     hydroRoundsData,

@@ -20,7 +20,7 @@ export function BidTribute({
 }) {
   const { bidMetaDataById, metricsForPostHydroBids } = useBackendData()
 
-  const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
+  const bidDescription = bidMetaDataById[bidId] ?? {}
 
   const { points = [] } = bidDescription
 

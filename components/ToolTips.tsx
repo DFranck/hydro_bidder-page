@@ -471,7 +471,7 @@ export const needsWalletConnectionTooltip = (
   <p>Connect your wallet to access this feature.</p>
 )
 
-export const networkLimitReachedTooltip = (
+export const lockupLimitReachedByNetworkTooltip = (
   <p>
     Lockup caps have been reached. Join the{" "}
     <StyledText

@@ -12,7 +12,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   extendLockupsToVoteTooltip,
   lockAtomToVoteTooltip,
-  networkLimitReachedTooltip,
+  lockupLimitReachedByNetworkTooltip,
 } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeWalletVote } from "@/contract-apis/executeWalletVote"
@@ -115,7 +115,7 @@ export function VoteButton({
       <ConditionalWrapper
         condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}
         wrapper={(children) => (
-          <Tooltip tipContents={networkLimitReachedTooltip}>
+          <Tooltip tipContents={lockupLimitReachedByNetworkTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>
           </Tooltip>
         )}
