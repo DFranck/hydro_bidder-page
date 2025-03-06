@@ -1,37 +1,8 @@
-import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
+import { SanitizedLockup } from "@/contract-apis/types"
 import { getDaysAway } from "@/lib/getDaysAway"
-import { getCosmWasmClient } from "./getCosmWasmClient"
 
-export interface SanitizedLockup {
-  id: number
-  currentVotingPower: number
-  dateEnd: Date
-  dateStart: Date
-  daysLeft: number
-  funds: {
-    amount: number
-    denom: string
-  }
-  isExpired: boolean
-  isEligibleThisRoundAtAll: boolean
-  isEligibleToChangeVote: boolean
-  isEligibleButHasNotVoted: boolean
-  isTiedToDeployment: boolean
-  multiplier: number
-  metaDataByTrancheId: Record<
-    number,
-    {
-      nextRoundEligibleToVote: number | null
-      votedOnBidId: number | null
-    }
-  >
-  nextRoundEligibleToVote: number | null
-  numRoundsLeftOnDeployment: number
-  votedOnBidId: number | null
-}
-
-function sanitizeLockup(
+export function augmentLockup(
   lockup: LockupWithPerTrancheInfo,
   currentRoundId: number
 ): SanitizedLockup {
@@ -108,34 +79,4 @@ function sanitizeLockup(
     numRoundsLeftOnDeployment,
     votedOnBidId,
   }
-}
-
-export async function fetchWalletLockups({
-  address,
-  currentRoundId,
-}: {
-  address: string
-  currentRoundId: number
-}) {
-  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
-    throw new Error("Hydro contract address not set")
-  }
-
-  const client = await getCosmWasmClient()
-
-  const hydroQueryClient = new HydroBaseQueryClient(
-    client,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
-  )
-
-  const lockupsWithPerTrancheInfo =
-    await hydroQueryClient.allUserLockupsWithTrancheInfos({
-      address,
-      limit: 10_000,
-      startFrom: 0,
-    })
-
-  return lockupsWithPerTrancheInfo.lockups_with_per_tranche_infos.map(
-    (unsanitizedLockup) => sanitizeLockup(unsanitizedLockup, currentRoundId)
-  )
 }

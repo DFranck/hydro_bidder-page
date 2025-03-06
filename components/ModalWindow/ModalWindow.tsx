@@ -113,7 +113,7 @@ export function ModalWindow<T extends ElementType = "section">({
                 fixed
                 left-1/2
                 top-1/2
-                z-50
+                z-40
                 -translate-x-1/2
                 -translate-y-1/2
                 transition-all
@@ -151,7 +151,7 @@ ModalWindow.Backdrop = function Backdrop({
         `
           fixed
           inset-0
-          z-40
+          z-30
           backdrop-blur-md
         `,
         className

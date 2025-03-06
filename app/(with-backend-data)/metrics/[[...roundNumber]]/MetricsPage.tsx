@@ -50,7 +50,7 @@ export function MetricsPage({
 }) {
   const {
     bidsById,
-    bidDescriptionsByBidId,
+    bidMetaDataById,
     currentRoundId,
     metricsForPreHydroBids,
     metricsForPostHydroBids,
@@ -84,11 +84,11 @@ export function MetricsPage({
   )
 
   const tokenBasedRows = buildRows({
-    bidsFromNumia: tokenBasedBids,
+    numiaBids: tokenBasedBids,
     isTokenBased: true,
   })
   const pointBasedRows = buildRows({
-    bidsFromNumia: pointBasedBids,
+    numiaBids: pointBasedBids,
     isTokenBased: false,
   })
 
@@ -234,15 +234,14 @@ export function MetricsPage({
   }
 
   function buildRows({
-    bidsFromNumia,
+    numiaBids,
     isTokenBased,
   }: {
-    bidsFromNumia: typeof bidsToRender
+    numiaBids: typeof bidsToRender
     isTokenBased: boolean
   }) {
-    return bidsFromNumia.map((bidFromNumia) => {
-      const bidDescriptionFromGithub =
-        bidDescriptionsByBidId[Number(bidFromNumia.id)] ?? null
+    return numiaBids.map((bidFromNumia) => {
+      const bidInfoFromGithub = bidMetaDataById[Number(bidFromNumia.id)] ?? null
       const bidFromContract = bidsById[Number(bidFromNumia.id)] ?? null
       const percentage = bidFromContract?.percentage ?? null
       const rowURL =
@@ -250,10 +249,10 @@ export function MetricsPage({
           ? `https://www.mintscan.io/cosmos/proposals/${bidFromNumia.id.replace("#", "")}`
           : `/bids/${bidFromNumia.id}`
       const projectLogoUrl =
-        bidFromNumia.projectLogoUrl || bidDescriptionFromGithub?.projectLogoUrl
+        bidFromNumia.projectLogoUrl || bidInfoFromGithub?.projectLogoUrl
       const projectName =
-        bidFromNumia.projectName || bidDescriptionFromGithub?.projectName
-      const title = bidFromNumia.title || bidDescriptionFromGithub?.title
+        bidFromNumia.projectName || bidInfoFromGithub?.projectName
+      const title = bidFromNumia.title || bidInfoFromGithub?.title
 
       return {
         _bid: { ...bidFromNumia, percentage },
@@ -432,7 +431,7 @@ export function MetricsPage({
 
       <ContentContainer className="gap-6 py-6">
         <div
-          id="metrics-page-round-navigation"
+          data-testid="metrics-page-round-navigation"
           className="flex items-center justify-between"
         >
           <h2 className="sr-only">PoL Metrics by Round</h2>

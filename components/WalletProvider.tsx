@@ -59,7 +59,6 @@ export function WalletProvider({
 }>) {
   return (
     <ChainProvider
-      logLevel="NONE"
       chains={[
         // chain,
         // testnetChain,
@@ -122,6 +121,7 @@ export function WalletProvider({
         endpoints,
         isLazy: true,
       }}
+      logLevel="NONE"
     >
       {children}
     </ChainProvider>

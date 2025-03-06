@@ -29,12 +29,16 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 
+export const dynamic = "force-dynamic"
+
 export default function BidsPage() {
   const backendData = useBackendData()
-  const { bidsByRoundId, currentRoundId, isLoading, votesByRoundId } =
-    backendData
 
-  const bidsInRound = bidsByRoundId[currentRoundId] ?? []
+  const { bidsById, currentRoundId, isLoading, votesByRoundId } = backendData
+
+  const bidsInRound = Object.values(bidsById).filter(
+    (bid) => bid.roundId === currentRoundId
+  )
 
   const rows =
     bidsInRound?.map((bid) => {
@@ -203,7 +207,7 @@ export default function BidsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => Number(row._bid.percentage),
+        customValueGetter: (row) => row._bid.percentage,
       },
       {
         key: "actions",
@@ -227,7 +231,7 @@ export default function BidsPage() {
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&
       sortDirection === "DESC" &&
-      Number(row._bid.percentage) < VOTE_SHARE_THRESHOLD
+      row._bid.percentage < VOTE_SHARE_THRESHOLD
 
     const votesThisRound = votesByRoundId[currentRoundId] ?? []
 

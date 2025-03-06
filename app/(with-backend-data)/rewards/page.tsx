@@ -23,12 +23,12 @@ import {
   rewardsYourTributeTooltip,
 } from "@/components/ToolTips"
 import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
-import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { SanitizedTokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
-import { createSkipClient, getAddress } from "@/lib/skipApi"
 import { revalidateTag } from "@/lib/revalidateTag"
+import { createSkipClient, getAddress } from "@/lib/skipApi"
 import { useChain } from "@cosmos-kit/react"
 import keyBy from "lodash/keyBy"
 import sumBy from "lodash/sumBy"
@@ -39,25 +39,29 @@ export default function RewardsPage() {
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [isCelebrating, setIsCelebrating] = useState(false)
   const { setToasts } = useToasts()
-  const { getSigningCosmWasmClient, chain: { chain_id: neutronChainId }} = useChain("neutron")
-  const { chain: { chain_id: cosmosHubChainId } } = useChain("cosmoshub")
+  const {
+    getSigningCosmWasmClient,
+    chain: { chain_id: neutronChainId },
+  } = useChain("neutron")
+  const {
+    chain: { chain_id: cosmosHubChainId },
+  } = useChain("cosmoshub")
 
   const {
     address,
-    bidDescriptionsByBidId,
-    bids,
+    bidMetaDataById,
     bidsById,
     claimsHistorical,
     claimsOutstanding,
     currentRoundId,
-    isWalletConnected,
     atomPrice,
     votes,
   } = useBackendData()
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
   )
-  const bidsToRender = bids.filter(
+  const allBids = Object.values(bidsById)
+  const bidsToRender = allBids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
@@ -84,8 +88,8 @@ export default function RewardsPage() {
   const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
-      const bidDescriptionFromGithub = bidDescriptionsByBidId[bid.id]
-      const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
+      const bidInfoFromGithub = bidMetaDataById[bid.id]
+      const { projectLogoUrl, projectName, title } = bidInfoFromGithub
       const tokenBasedTributes = bid.tributes.filter(
         (tribute) => tribute.isTokenBased
       )
@@ -342,7 +346,7 @@ export default function RewardsPage() {
       })
     } catch (error) {
       console.error(error)
-    } 
+    }
   }
 
   function handleClickCloseClaimRewardsModal(
@@ -374,7 +378,6 @@ export default function RewardsPage() {
       } else {
         await claimSucceeded()
       }
-
     } catch (error) {
       console.error(error)
       setToasts([toastMessages.claimingRewardsError(error as Error)])

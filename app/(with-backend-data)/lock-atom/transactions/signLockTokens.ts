@@ -18,14 +18,10 @@ export async function signLockTokens(
     throw new Error("Neutron chain address not set")
   }
 
-  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
-    throw new Error("Hydro contract address not set")
-  }
-
   const hydroClient = new HydroBaseClient(
     client,
     neutronChain.address,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS!
   )
 
   // pepare message for simulating gas

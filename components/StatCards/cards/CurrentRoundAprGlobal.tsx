@@ -14,12 +14,16 @@ export function CurrentRoundAprGlobal() {
   )
 
   // get the bids that have a points-based tribute and filter those out for the average
-  const bidsWithoutPointsTributes = bidsInRound.filter((bid) => bid.tributes.some((tribute) => tribute.isTokenBased))
+  const bidsWithoutPointsTributes = bidsInRound.filter((bid) =>
+    bid.tributes.some((tribute) => tribute.isTokenBased)
+  )
 
   const totalTributeAprMin = sumBy(bidsWithoutPointsTributes, "tributeAprMin")
   const totalTributeAprMax = sumBy(bidsWithoutPointsTributes, "tributeAprMax")
   const averageTributeApr =
-    (totalTributeAprMin + totalTributeAprMax) / 2 / bidsWithoutPointsTributes.length
+    (totalTributeAprMin + totalTributeAprMax) /
+    2 /
+    bidsWithoutPointsTributes.length
 
   return (
     <StatCard

@@ -8,9 +8,11 @@ import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundNumberOfBids() {
-  const { bidsByRoundId, isLoading, currentRoundId } = useBackendData()
-  const bids = bidsByRoundId[currentRoundId] ?? []
-  const numPointBasedBids = bids.filter(
+  const { bidsById, isLoading, currentRoundId } = useBackendData()
+  const bidsInRound = Object.values(bidsById).filter(
+    (bid) => bid.roundId === currentRoundId
+  )
+  const numPointBasedBids = bidsInRound.filter(
     (bid) => false === bid.tributes.every((t) => t.isTokenBased)
   ).length
 
@@ -21,14 +23,14 @@ export function CurrentRoundNumberOfBids() {
         <Tooltip
           tipContents={currentRoundNumLiveBidsTooltip({
             numPointBasedBids,
-            numTokenBasedBids: bids.length - numPointBasedBids,
+            numTokenBasedBids: bidsInRound.length - numPointBasedBids,
           })}
         >
           <div className="flex items-center gap-1">
             <span>
               Live{" "}
               {pluralize({
-                count: bids.length,
+                count: bidsInRound.length,
                 singular: "Bid",
               })}
             </span>
@@ -37,7 +39,7 @@ export function CurrentRoundNumberOfBids() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={bids.length}
+      value={bidsInRound.length}
     />
   )
 }

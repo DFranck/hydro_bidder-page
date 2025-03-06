@@ -5,8 +5,10 @@ import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
+import {
+  AugmentedBidAfterWallet,
+  BidMetaDataSlimmed,
+} from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
@@ -227,16 +229,16 @@ export const estimatedRewardsColumnTooltip = ({
 
 export const estimatedRewardsTooltip = ({
   bid,
-  bidDescriptionFromGithub,
+  bidInfoFromGithub,
   hasVotedThisRound,
   isTokenBased,
 }: {
-  bid: AugmentedBid
-  bidDescriptionFromGithub: BidDescriptionFromGithub
+  bid: AugmentedBidAfterWallet
+  bidInfoFromGithub: BidMetaDataSlimmed
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
-  const { projectName } = bidDescriptionFromGithub
+  const { projectName } = bidInfoFromGithub
 
   const totalTributeValue = isTokenBased
     ? (sumBy(bid.tributes, "valueUsd") ?? 0)

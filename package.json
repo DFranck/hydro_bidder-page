@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "analyze-build": "ANALYZE=true npm run build",
-    "sync-all-to-develop": "git checkout main && git merge develop && git push && git checkout staging && git merge main && git push && git checkout staging-next && git merge main && git push && git checkout develop",
-    "merge-develop-into-staging": "git checkout staging && git merge develop && git push && git checkout develop"
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
   },
   "dependencies": {
     "@chain-registry/types": "^0.50.24",
@@ -37,10 +37,11 @@
     "pino-pretty": "^13.0.0",
     "pocketbase": "^0.22.1",
     "protobufjs": "^7.4.0",
-    "react": "^18.3.1",
+    "react": "^18.0.0",
     "react-confetti": "^6.1.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "^18.0.0",
     "react-markdown": "^9.0.1",
+    "server-only": "^0.0.1",
     "remark-gfm": "^4.0.1",
     "sharp": "^0.33.5",
     "stride": "^2.1.0",
@@ -54,17 +55,27 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@codemirror/lang-json": "^6.0.1",
     "@next/bundle-analyzer": "^15.1.6",
+    "@playwright/test": "^1.50.1",
     "@tailwindcss/typography": "^0.5.15",
     "@types/lodash": "^4.17.13",
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@uiw/codemirror-theme-github": "^4.23.8",
+    "@uiw/react-codemirror": "^4.23.8",
     "eslint": "^9",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.15",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

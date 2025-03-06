@@ -23,6 +23,11 @@ const nextConfig = withNextra({
       },
     ],
   },
+  modularizeImports: {
+    lodash: {
+      transform: "lodash/{{member}}",
+    },
+  },
 })
 
 export default nextConfig
