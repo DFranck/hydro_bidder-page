@@ -18,7 +18,7 @@ export const endpoints = {
         url: "https://neutron-rpc.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
         },
       },
     ],
@@ -30,7 +30,7 @@ export const endpoints = {
         url: "https://cosmos-rpc.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
         },
       },
     ],
