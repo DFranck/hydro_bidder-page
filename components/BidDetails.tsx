@@ -16,7 +16,6 @@ import {
   bidDetailsMaxDeploymentAmountTooltip,
   bidDetailsPolSizeTooltip,
   bidDetailsStatusTooltip,
-  bidDetailsVoteReceivedTooltip,
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
   metricsTributeAprColumnTooltip,
@@ -31,6 +30,8 @@ import kebabCase from "lodash/kebabCase"
 import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import Link from "next/link"
+import { Fragment } from "react"
+import { twJoin } from "tailwind-merge"
 
 export function BidDetails({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
@@ -51,6 +52,10 @@ export function BidDetails({ bidId }: { bidId: number }) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
 
+  const bidsInRound = Object.values(bidsById).filter(
+    (otherBid) => otherBid.roundId === bid.roundId
+  )
+
   const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
 
   const bidMetricsFromNumia = metricsForPostHydroBids.find(
@@ -61,6 +66,8 @@ export function BidDetails({ bidId }: { bidId: number }) {
     currentAllocationAmount: 0,
     onchainTributeUsdc: 0,
   }
+
+  const totalPowerInRound = sumBy(bidsInRound, (bid) => Number(bid.power))
 
   if (!bidDescriptionFromGithub && process.env.NODE_ENV !== "development") {
     return (
@@ -103,6 +110,12 @@ export function BidDetails({ bidId }: { bidId: number }) {
 
   const isTokenBased =
     points.length === 0 && bidMetricsFromNumia?.offchainTribute.length === 0
+
+  const votingStats = {
+    bidPower: formatAmount(bid.power, 6, 0),
+    totalPower: formatAmount(totalPowerInRound, 6, 0),
+    percentage: formatAmount(bid.percentage, 0, 2),
+  }
 
   return (
     <ContentContainer className="py-6">
@@ -384,16 +397,56 @@ export function BidDetails({ bidId }: { bidId: number }) {
               )}
 
             <div>
-              <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
-                <StyledText
-                  as="h3"
-                  variant="label"
-                  className="flex cursor-default items-center gap-1"
+              <div>
+                <Tooltip
+                  tipContents={
+                    <div className="flex max-w-xs flex-col gap-2">
+                      <div
+                        className={twJoin(
+                          "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
+                          "whitespace-nowrap border-b border-white/20 pb-2"
+                        )}
+                      >
+                        {[
+                          ["Voting Power on this Bid", votingStats.bidPower],
+                          ["Total Voting Power", votingStats.totalPower],
+                          [
+                            <strong key="percentage">Share of this Bid</strong>,
+                            <strong key="percentage-value">
+                              {votingStats.percentage}%
+                            </strong>,
+                          ],
+                        ].map(([label, value], index) => (
+                          <Fragment key={index}>
+                            <div>{label}</div>
+                            <div className="text-right tabular-nums">
+                              {value}
+                            </div>
+                          </Fragment>
+                        ))}
+                      </div>
+                      <p className="text-sm">
+                        This bid has received{" "}
+                        <strong>{votingStats.bidPower}</strong> voting power out
+                        of <strong>{votingStats.totalPower}</strong> total
+                        voting power that participated in this round,
+                        representing <strong>{votingStats.percentage}%</strong>.
+                      </p>
+                    </div>
+                  }
+                  classNamesForTooltip="w-80"
                 >
-                  <span>% Vote Received</span>
-                  <Icon name="circle-info" />
-                </StyledText>
-              </Tooltip>
+                  <StyledText
+                    as="h3"
+                    variant="label"
+                    className="flex cursor-default items-center gap-1"
+                  >
+                    <span>% Vote Received</span>
+                    <Icon name="circle-info" />
+                  </StyledText>
+                </Tooltip>
+                {/* Rest of the voting percentage display code... */}
+              </div>
               <div
                 className="
                   flex

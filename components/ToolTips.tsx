@@ -698,12 +698,6 @@ export const bidDetailsMaxDeploymentAmountTooltip = (
   </p>
 )
 
-export const bidDetailsVoteReceivedTooltip = (
-  <p>
-    The percentage of votes that this bid received during the specified round.
-  </p>
-)
-
 export const globalTotalAtomLockedTooltip = <p>Total ATOM locked in Hydro.</p>
 
 export const metricsPageNoDataTooltip = (
