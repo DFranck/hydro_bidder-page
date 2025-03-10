@@ -1,23 +1,26 @@
-"use server"
-
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
-import "server-only"
+import "@netlify/functions"
 
-export async function fetchRoundTributes(
-  roundId: number,
+export async function fetchRoundTributes({
+  roundId,
+  currentRoundId,
+  numiaTributesEndpoint,
+  numiaCosmosHydroAppApiKey,
+  tributeContractAddress,
+}: {
+  roundId: number
   currentRoundId: number
-): Promise<Tribute[]> {
+  numiaTributesEndpoint: string
+  numiaCosmosHydroAppApiKey: string
+  tributeContractAddress: string
+}): Promise<Tribute[]> {
   if (currentRoundId === roundId) {
-    if (!process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS) {
-      throw new Error("Tribute contract address not set")
-    }
-
-    const client = await getCosmWasmClient()
+    const client = await getCosmWasmClient({ numiaCosmosHydroAppApiKey })
     const tributeQueryClient = new TributeBaseQueryClient(
       client,
-      process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS || ""
+      tributeContractAddress
     )
 
     const query = {
@@ -30,16 +33,12 @@ export async function fetchRoundTributes(
 
     return tributes
   } else {
-    if (!process.env.NUMIA_TRIBUTES_ENDPOINT) {
-      throw new Error("NUMIA_TRIBUTES_ENDPOINT is not set")
-    }
-
     const response = await fetch(
-      `${process.env.NUMIA_TRIBUTES_ENDPOINT}?round_id=${roundId}`,
+      `${numiaTributesEndpoint}?round_id=${roundId}`,
       {
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
         },
       }
     )

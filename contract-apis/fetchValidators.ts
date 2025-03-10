@@ -1,3 +1,5 @@
+"use server"
+
 import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { Validator } from "./fetchWalletValidators"
 import { fetchWithRetry } from "./fetchWithRetry"

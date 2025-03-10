@@ -2,7 +2,6 @@
 
 import { BidDetails } from "@/components/BidDetails"
 import { getBidDetails } from "@/contract-apis/getBidDetails"
-import "server-only"
 
 export default async function BidDetailsPage({
   params,

@@ -1,19 +1,26 @@
 // convenience func that allows doing contract queries on both server and client
 
-import { endpoints } from "@/config"
+import { getEndpoints } from "@/config"
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
 let clientInstance: CosmWasmClient | null = null
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function connectWithRetry(
+async function connectWithRetry({
   attempts = 5,
-  initialDelay = 2000
-): Promise<CosmWasmClient> {
+  initialDelay = 2000,
+  numiaCosmosHydroAppApiKey,
+}: {
+  attempts?: number
+  initialDelay?: number
+  numiaCosmosHydroAppApiKey: string
+}): Promise<CosmWasmClient> {
   for (let i = 0; i < attempts; i++) {
     try {
-      return await CosmWasmClient.connect(endpoints.neutron.rpc[0])
+      return await CosmWasmClient.connect(
+        getEndpoints({ numiaCosmosHydroAppApiKey }).neutron.rpc[0]
+      )
     } catch (error) {
       if (i === attempts - 1) throw error // Last attempt, throw the error
 
@@ -35,9 +42,15 @@ async function connectWithRetry(
 }
 
 // without the need to wait for the client side to finish executing useChain()
-export async function getCosmWasmClient(): Promise<CosmWasmClient> {
+export async function getCosmWasmClient({
+  numiaCosmosHydroAppApiKey,
+}: {
+  numiaCosmosHydroAppApiKey: string
+}): Promise<CosmWasmClient> {
   if (!clientInstance) {
-    clientInstance = await connectWithRetry()
+    clientInstance = await connectWithRetry({
+      numiaCosmosHydroAppApiKey,
+    })
   }
   return clientInstance
 }

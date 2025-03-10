@@ -12,32 +12,37 @@ export enum AllowedLockupPeriodInEpochs {
 
 export const HYDRO_TELEGRAM_URL = "https://t.me/+xUzNOTZjUNw5Mzhk"
 
-export const endpoints = {
-  neutron: {
-    rpc: [
-      {
-        url: "https://neutron-rpc.numia.xyz/",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+export const getEndpoints = ({
+  numiaCosmosHydroAppApiKey,
+}: {
+  numiaCosmosHydroAppApiKey: string
+}) =>
+  ({
+    neutron: {
+      rpc: [
+        {
+          url: "https://neutron-rpc.numia.xyz/",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
+          },
         },
-      },
-    ],
-    rest: ["https://neutron-api.polkachu.com/"],
-  },
-  cosmoshub: {
-    rpc: [
-      {
-        url: "https://cosmos-rpc.numia.xyz/",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+      ],
+      rest: ["https://neutron-api.polkachu.com/"],
+    },
+    cosmoshub: {
+      rpc: [
+        {
+          url: "https://cosmos-rpc.numia.xyz/",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
+          },
         },
-      },
-    ],
-    rest: ["https://cosmos-rest.publicnode.com/"],
-  },
-} satisfies Record<string, Endpoints>
+      ],
+      rest: ["https://cosmos-rest.publicnode.com/"],
+    },
+  }) satisfies Record<string, Endpoints>
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 

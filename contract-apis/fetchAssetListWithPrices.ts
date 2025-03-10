@@ -2,12 +2,26 @@
 
 import { getPriceFeedUrl } from "@/config"
 import { AssetListEntry, AssetListWithPrices } from "@/contract-apis/types"
-import pick from "lodash/pick"
 import { fetchWithRetry } from "./fetchWithRetry"
 
 const symbolToCoingeckoId: Record<string, string> = {
   BLD: "agoric",
   SWTH: "switcheo",
+}
+
+function pick<T extends object, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> {
+  return keys.reduce(
+    (acc, key) => {
+      if (key in obj) {
+        acc[key] = obj[key]
+      }
+      return acc
+    },
+    {} as Pick<T, K>
+  )
 }
 
 export async function fetchAssetListWithPrices(): Promise<AssetListWithPrices> {

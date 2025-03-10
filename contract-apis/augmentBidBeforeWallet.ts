@@ -20,13 +20,15 @@ export function augmentBidBeforeWallet({
   totalPowerByRoundId: Record<number, number>
 }): AugmentedBidBeforeWalletSlimmed {
   const {
-    hydroData: {
+    hydroMetaData: {
       constants: { lock_epoch_length },
       liquidity_deployments,
-      tributes,
     },
+    hydroRoundData,
     externalData: { assetListWithPrices, bidMetaDataById, numiaBids },
   } = rawBackendDataBeforeWallet
+
+  const tributes = hydroRoundData.flatMap((round) => round.round_tributes)
 
   const { deployment_duration, proposal_id, round_id, ...rest } = bid
 

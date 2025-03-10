@@ -17,6 +17,7 @@ export async function executeWalletClaimRewards({
   const tributeSigningClient = await getTributeSigningClient({
     getSigningCosmWasmClient,
     address,
+    tributeContractAddress: process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS!,
   })
 
   const query = {

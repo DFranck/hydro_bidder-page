@@ -2,8 +2,5 @@
 directory = "functions"
 node_bundler = "esbuild"
 
-[functions.aggregate-user-data]
-schedule = "*/5 * * * *" # Run every 5 minutes
-
 [build.environment]
 NODE_VERSION = "18"

@@ -16,20 +16,18 @@ export function augmentBackendDataBeforeWallet(
   rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
 ): AugmentedBackendDataBeforeWallet {
   // Extract data
-  const { hydroRoundsData, hydroData, externalData } =
+  const { hydroMetaData, hydroRoundData, externalData } =
     rawBackendDataBeforeWallet
 
-  const {
-    constants,
-    proposals,
-    round_end,
-    round_id,
-    total_locked_tokens,
-    tranches,
-    tributes,
-  } = hydroData
+  const { constants, round_end, round_id, total_locked_tokens, tranches } =
+    hydroMetaData
+
   const { assetListWithPrices, bidMetaDataById, numiaBids, numiaMetrics } =
     externalData
+
+  const hydroRoundsData = hydroRoundData
+
+  const proposals = hydroRoundsData.flatMap((round) => round.round_bids)
 
   // Aux Fields
   const atomPrice =

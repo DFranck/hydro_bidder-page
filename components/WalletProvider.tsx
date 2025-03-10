@@ -1,6 +1,6 @@
 "use client"
 
-import { endpoints, hubChain, neutronChain } from "@/config"
+import { getEndpoints, hubChain, neutronChain } from "@/config"
 import { Chain } from "@chain-registry/types"
 import { Registry } from "@cosmjs/proto-signing"
 import { AminoTypes, GasPrice } from "@cosmjs/stargate"
@@ -118,7 +118,10 @@ export function WalletProvider({
         },
       }}
       endpointOptions={{
-        endpoints,
+        endpoints: getEndpoints({
+          numiaCosmosHydroAppApiKey:
+            process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
+        }),
         isLazy: true,
       }}
       logLevel="NONE"

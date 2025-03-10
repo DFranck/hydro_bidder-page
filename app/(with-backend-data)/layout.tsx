@@ -4,7 +4,6 @@ import { AppWrapper } from "@/components/AppWrapper"
 import { fetchBackendDataBeforeWallet } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import omit from "lodash/omit"
 import { ReactNode } from "react"
-import "server-only"
 
 export default async function LayoutWithContext({
   children,
@@ -29,12 +28,6 @@ export default async function LayoutWithContext({
             "description",
           ]),
         ])
-      ),
-    },
-    hydroData: {
-      ...rawBackendDataBeforeWallet.hydroData,
-      proposals: rawBackendDataBeforeWallet.hydroData.proposals.map(
-        (proposal) => omit(proposal, ["description"])
       ),
     },
   }
