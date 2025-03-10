@@ -1,7 +1,3 @@
-"use server"
-
-import "server-only"
-
 export const BID_DESCRIPTIONS_URL =
   "https://raw.githubusercontent.com/informalsystems/hydro-bid-descriptions/refs/heads/main/bid-descriptions.json"
 

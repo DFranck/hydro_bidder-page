@@ -1,13 +1,10 @@
-import {
-  LockupWithPerTrancheInfo,
-  Proposal,
-} from "@/app/ts_types/HydroBase.types"
+import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { AssetListWithPrices } from "../types"
+import { AssetListWithPrices, ProposalSlimmed } from "../types"
 
 export function augmentRoundDeploymentMetrics(
   roundId: number,
-  roundBids: Proposal[],
+  roundBids: ProposalSlimmed[],
   roundLockups: LockupWithPerTrancheInfo[][],
   roundTributes: Tribute[],
   roundPrices: AssetListWithPrices, //{[key: string] : { token_symbol: string, decimals: number, priceUsd: number }},

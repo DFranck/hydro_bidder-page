@@ -7,7 +7,6 @@ import {
 } from "@/contract-apis/getClient"
 import { RawWalletData } from "@/contract-apis/types"
 import range from "lodash/range"
-import "server-only"
 
 export async function fetchWalletData({
   address,
@@ -18,8 +17,29 @@ export async function fetchWalletData({
   currentRoundId: number
   tranches: Tranche[]
 }): Promise<RawWalletData> {
-  const hydroQueryClient = await getHydroQueryClient()
-  const tributeQueryClient = await getTributeQueryClient()
+  const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS!
+  const tributeContractAddress =
+    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS!
+  const numiaCosmosHydroAppApiKey = process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!
+
+  if (!hydroContractAddress) {
+    throw new Error("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set")
+  }
+  if (!tributeContractAddress) {
+    throw new Error("NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set")
+  }
+  if (!numiaCosmosHydroAppApiKey) {
+    throw new Error("NUMIA_COSMOS_HYDRO_APP_API_KEY is not set")
+  }
+
+  const hydroQueryClient = await getHydroQueryClient({
+    hydroContractAddress,
+    numiaCosmosHydroAppApiKey,
+  })
+  const tributeQueryClient = await getTributeQueryClient({
+    tributeContractAddress,
+    numiaCosmosHydroAppApiKey,
+  })
   const allRoundIds = range(0, currentRoundId + 1)
   const trancheIds = tranches.map((tranche) => tranche.id)
   const allRoundTrancheIdPairs = allRoundIds.flatMap((roundId) =>

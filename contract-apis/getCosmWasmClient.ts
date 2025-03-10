@@ -7,11 +7,15 @@ let clientInstance: CosmWasmClient | null = null
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function connectWithRetry(
-  endpoint: ExtendedHttpEndpoint,
+async function connectWithRetry({
   attempts = 5,
-  initialDelay = 2000
-): Promise<CosmWasmClient> {
+  endpoint,
+  initialDelay = 2000,
+}: {
+  attempts?: number
+  endpoint: ExtendedHttpEndpoint
+  initialDelay?: number
+}): Promise<CosmWasmClient> {
   for (let i = 0; i < attempts; i++) {
     try {
       return await CosmWasmClient.connect(endpoint)
@@ -42,7 +46,7 @@ export async function getCosmWasmClient({
   endpoint: ExtendedHttpEndpoint
 }): Promise<CosmWasmClient> {
   if (!clientInstance) {
-    clientInstance = await connectWithRetry(endpoint)
+    clientInstance = await connectWithRetry({ endpoint })
   }
   return clientInstance
 }

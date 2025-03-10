@@ -1,10 +1,10 @@
 "use server"
 
-import { fetchExternalData } from "@/contract-apis/fetchExternalData"
-import { fetchHydroData } from "@/contract-apis/fetchHydroData"
 import { BackendDataBeforeWallet } from "@/contract-apis/types"
 import { unstable_cache } from "next/cache"
-import "server-only"
+import rawExternalDataJson from "../public/data/raw-external-data.json"
+import rawHydroMetaDataJson from "../public/data/raw-hydro-meta-data.json"
+import rawHydroRoundDataJson from "../public/data/raw-hydro-round-data.json"
 
 const requiredEnvVariables = [
   "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS",
@@ -27,18 +27,16 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     }
   })
 
-  const [hydroRoundsData, hydroData, externalData] = await Promise.all([
-    // fetchHydroRoundsData(),
-    [],
-    fetchHydroData(),
-    fetchExternalData(),
-  ])
-
-  return {
-    hydroRoundsData: [],
-    hydroData,
-    externalData,
-  }
+  return Object.fromEntries(
+    [
+      ["hydroRoundData", rawHydroRoundDataJson],
+      ["hydroMetaData", rawHydroMetaDataJson],
+      ["externalData", rawExternalDataJson],
+    ].map(([key, value]) => {
+      console.log(key, value, typeof value)
+      return [key, value[key as keyof typeof value]]
+    })
+  )
 }
 
 export const fetchBackendDataBeforeWallet = unstable_cache(

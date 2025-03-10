@@ -146,37 +146,33 @@ export interface AugmentedLiquidityDeployment
     "proposalId" | "deployedFunds" | "fundsBeforeDeployment"
   > {
   bidId: number
-  fundsBeforeDeployment: AugmentedCoin[] | null
   deployedFunds: AugmentedCoin[] | null
+  fundsBeforeDeployment: AugmentedCoin[] | null
 }
 
 export type BackendDataBeforeWallet = {
-  hydroRoundsData: RawHydroRoundData[]
-  hydroData: RawHydroData
   externalData: RawExternalData
+  hydroMetaData: RawHydroMetaData
+  hydroRoundData: RawHydroRoundData[]
 }
 
 export type BackendDataBeforeWalletSlimmed = {
-  hydroRoundsData: RawHydroRoundData[]
-  hydroData: RawHydroDataSlimmed
   externalData: RawExternalDataSlimmed
+  hydroMetaData: RawHydroMetaData
+  hydroRoundData: RawHydroRoundDataSlimmed[]
 }
 
 export interface BackendDataTweak {
+  disabled?: boolean
   id: string
+  label: string
   json: WithOverwrites<
     BackendDataBeforeWallet & {
       walletData: Partial<RawWalletData>
       patchData: Partial<AugmentedBackendDataAfterWallet>
     }
   >
-  label: string
-  disabled?: boolean
 }
-
-export type BidMetaDataById = Record<string, BidMetaData>
-
-export type BidMetaDataByIdSlimmed = Record<string, BidMetaDataSlimmed>
 
 export interface BidMetaData {
   aboutProject?: string
@@ -193,10 +189,32 @@ export interface BidMetaData {
   minMaxTargetPolApr?: [min: number, max: number]
 }
 
+export type BidMetaDataById = Record<string, BidMetaData>
+
+export type BidMetaDataByIdSlimmed = Record<string, BidMetaDataSlimmed>
+
 export type BidMetaDataSlimmed = Omit<
   BidMetaData,
   "aboutProject" | "committeeComments" | "description"
 >
+
+export interface BidRevampMetrics {
+  apr_pol_target: any
+  apr_pol: null
+  apr_tribute: number | null
+  duration: number
+  id: number
+  pointProgramUrl: any
+  points: any
+  request_amount: any
+  roundId: number
+  status: string
+  title: string
+  trancheId: number
+  tribute_value: number
+  tribute: [string, number][]
+  vote_perc: number
+}
 
 export interface GlobalLockupCapacityInfo {
   lockedAtomIsAtCapacityGlobal: boolean
@@ -204,24 +222,6 @@ export interface GlobalLockupCapacityInfo {
   lockedAtomPercentageGlobal: number
   lockedAtomRemainingCapacityGlobal: number
   lockedAtomTotalGlobal: number
-}
-
-export interface BidRevampMetrics {
-    id: number;
-    trancheId: number;
-    roundId: number;
-    title: string;
-    request_amount: any;
-    points: any;
-    pointProgramUrl: any;
-    tribute: [string, number][];
-    tribute_value: number;
-    duration: number;
-    vote_perc: number;
-    status: string;
-    apr_tribute: number | null;
-    apr_pol: null;
-    apr_pol_target: any;
 }
 
 export interface MetricsFromNumia {
@@ -274,26 +274,24 @@ export type RawExternalDataSlimmed = Omit<
   numiaBids: RawNumiaBidSlimmed[]
 }
 
-export type RawHydroRoundData = {
-  round_id: number
-  round_bids:     Proposal[]
-  round_lockups:  LockupWithPerTrancheInfo[][]
-  round_tributes: Tribute[]
-}
-
-export type RawHydroData = {
+export type RawHydroMetaData = {
   constants: Constants
   liquidity_deployments: LiquidityDeployment[]
-  proposals: Proposal[]
   round_end: string
   round_id: number
   total_locked_tokens: number
   tranches: Tranche[]
-  tributes: Tribute[]
 }
 
-export type RawHydroDataSlimmed = Omit<RawHydroData, "proposals"> & {
-  proposals: ProposalSlimmed[]
+export type RawHydroRoundData = {
+  round_id: number
+  round_bids: Proposal[]
+  round_lockups: LockupWithPerTrancheInfo[][]
+  round_tributes: Tribute[]
+}
+
+export type RawHydroRoundDataSlimmed = Omit<RawHydroRoundData, "round_bids"> & {
+  round_bids: ProposalSlimmed[]
 }
 
 export interface RawNumiaBid {
@@ -332,6 +330,35 @@ export type RawNumiaBidSlimmed = Omit<
   RawNumiaBid,
   "comments" | "description" | "project_about"
 >
+
+export interface RawStaticExternalData {
+  timestamp: number
+  externalData: RawExternalData
+}
+
+export type RawStaticExternalDataSlimmed = Omit<
+  RawStaticExternalData,
+  "externalData"
+> & {
+  externalData: RawExternalDataSlimmed
+}
+
+export interface RawStaticHydroMetaData {
+  timestamp: number
+  hydroMetaData: RawHydroMetaData
+}
+
+export interface RawStaticHydroRoundData {
+  timestamp: number
+  hydroRoundData: RawHydroRoundData[]
+}
+
+export type RawStaticHydroRoundDataSlimmed = Omit<
+  RawStaticHydroRoundData,
+  "rawHydroRoundData"
+> & {
+  rawHydroRoundData: RawHydroRoundDataSlimmed[]
+}
 
 export interface RawWalletData {
   voting_power: number

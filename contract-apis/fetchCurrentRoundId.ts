@@ -5,8 +5,14 @@ import { getEndpoints } from "@/config"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 
 export async function fetchCurrentRoundId(): Promise<number> {
-  if (!process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS) {
+  const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
+  const numiaCosmosHydroAppApiKey = process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY
+
+  if (!hydroContractAddress) {
     throw new Error("Hydro contract address not set")
+  }
+  if (!numiaCosmosHydroAppApiKey) {
+    throw new Error("Numia Cosmos Hydro App API key not set")
   }
 
   const neutronRpcEndpoint = getEndpoints({
@@ -21,7 +27,7 @@ export async function fetchCurrentRoundId(): Promise<number> {
   })
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
+    hydroContractAddress
   )
 
   const { round_id } = await hydroQueryClient.currentRound()

@@ -1,5 +1,4 @@
 import { BidMetaData } from "@/contract-apis/types"
-import "server-only"
 import { fetchWithRetry } from "./fetchWithRetry"
 
 export const BID_DESCRIPTIONS_URL =
