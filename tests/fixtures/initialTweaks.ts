@@ -4,7 +4,7 @@ export const initialTweaks: BackendDataTweak[] = [
   {
     id: "2",
     json: {
-      hydroData: {
+      hydroMetaData: {
         tranches: [
           {
             id: 2,
@@ -20,7 +20,7 @@ export const initialTweaks: BackendDataTweak[] = [
   {
     id: "1",
     json: {
-      hydroData: {
+      hydroMetaData: {
         constants: {
           max_locked_tokens: 100000000000,
         },
@@ -73,7 +73,7 @@ export const initialTweaks: BackendDataTweak[] = [
   {
     id: "7d6f3c6f-2ac3-41fb-8228-a9fb05a7826b",
     json: {
-      hydroData: {
+      hydroMetaData: {
         round_id: 3,
         tranches: [
           {

@@ -32,10 +32,7 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
       ["hydroRoundData", rawHydroRoundDataJson],
       ["hydroMetaData", rawHydroMetaDataJson],
       ["externalData", rawExternalDataJson],
-    ].map(([key, value]) => {
-      console.log(key, value, typeof value)
-      return [key, value[key as keyof typeof value]]
-    })
+    ].map(([key, value]) => [key, value[key as keyof typeof value]])
   )
 }
 
