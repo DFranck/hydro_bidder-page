@@ -21,7 +21,7 @@ export const endpoints = {
   // },
   neutron: {
     rpc: ["https://rpc.cosmos.directory/neutron"],
-    rest: ["https://neutron-api.polkachu.com/"],
+    rest: ["https://rest.cosmos.directory/neutron"],
   },
   cosmoshub: {
     rpc: ["https://cosmos-rpc.publicnode.com/"],
