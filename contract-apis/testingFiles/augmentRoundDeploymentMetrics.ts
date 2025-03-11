@@ -160,6 +160,7 @@ export function augmentRoundDeploymentMetrics(
       //wasm_power      : bid.power,
       //vote_power      : vote_power,
       //vote_atom       : vote_atom,
+      power: Number(bid.power),
       vote_perc: vote_perc,
       // Status
       status: status,

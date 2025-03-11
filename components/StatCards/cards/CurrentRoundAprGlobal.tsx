@@ -37,7 +37,7 @@ export function CurrentRoundAprGlobal() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={averageTributeApr.toLocaleString("en-US", {
+      value={(averageTributeApr || 0).toLocaleString("en-US", {
         style: "percent",
       })}
     />

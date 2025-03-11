@@ -14,6 +14,8 @@ import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
 import sumBy from "lodash/sumBy"
 import Link from "next/link"
+import { Fragment } from "react"
+import { twJoin } from "tailwind-merge"
 
 export const VOTE_SHARE_THRESHOLD = 5
 
@@ -722,10 +724,38 @@ export const bidDetailsMaxDeploymentAmountTooltip = (
   </p>
 )
 
-export const bidDetailsVoteReceivedTooltip = (
-  <p>
-    The percentage of votes that this bid received during the specified round.
-  </p>
+export const bidDetailsVoteReceivedTooltip = ({
+  bidPower = "0",
+  totalPower = "0",
+  percentage = "0",
+}) => (
+  <div className="flex max-w-xs flex-col gap-2">
+    <div
+      className={twJoin(
+        "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
+        "whitespace-nowrap border-b border-white/20 pb-2"
+      )}
+    >
+      {[
+        ["Voting Power on this Bid", bidPower],
+        ["Total Voting Power", totalPower],
+        [
+          <strong key="percentage">Share of this Bid</strong>,
+          <strong key="percentage-value">{percentage}%</strong>,
+        ],
+      ].map(([label, value], index) => (
+        <Fragment key={index}>
+          <div>{label}</div>
+          <div className="text-right tabular-nums">{value}</div>
+        </Fragment>
+      ))}
+    </div>
+    <p className="text-sm">
+      This bid has received <strong>{bidPower}</strong> voting power out of{" "}
+      <strong>{totalPower}</strong> total voting power that participated in this
+      round, representing <strong>{percentage}%</strong>.
+    </p>
+  </div>
 )
 
 export const globalTotalAtomLockedTooltip = <p>Total ATOM locked in Hydro.</p>

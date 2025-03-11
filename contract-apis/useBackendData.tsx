@@ -138,6 +138,7 @@ export function BackendDataContextProvider({
     )
 
     const {
+      hydroMetaData: hydroMetaDataTweaks = {},
       hydroRoundData: hydroRoundDataTweaks = [],
       externalData: externalDataTweaks = {},
       walletData: walletDataTweaks = {},
@@ -148,6 +149,7 @@ export function BackendDataContextProvider({
       {},
       rawBackendDataBeforeWallet,
       {
+        hydroMetaData: hydroMetaDataTweaks,
         hydroRoundData: hydroRoundDataTweaks,
         externalData: externalDataTweaks,
       }

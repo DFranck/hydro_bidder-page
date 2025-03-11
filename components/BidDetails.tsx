@@ -46,6 +46,7 @@ export function BidDetails({
   const {
     atomPrice,
     bidMetaDataById,
+    bidsInfo,
     bidsById,
     currentRoundId,
     votes,
@@ -111,6 +112,18 @@ export function BidDetails({
 
   const isTokenBased =
     points.length === 0 && bidMetricsFromNumia?.offchainTribute.length === 0
+
+  const bidsInRound = Object.values(bidsInfo).filter(
+    (bid) => bid.roundId === bid.roundId
+  )
+
+  const totalPowerInRound = sumBy(bidsInRound, "power")
+
+  const votingStats = {
+    bidPower: formatAmount(bid.power, 6, 0),
+    totalPower: formatAmount(totalPowerInRound, 6, 0),
+    percentage: formatAmount(bid.percentage, 0, 2),
+  }
 
   return (
     <ContentContainer className="py-6">
@@ -394,7 +407,7 @@ export function BidDetails({
               )}
 
             <div>
-              <Tooltip tipContents={bidDetailsVoteReceivedTooltip}>
+              <Tooltip tipContents={bidDetailsVoteReceivedTooltip(votingStats)}>
                 <StyledText
                   as="h3"
                   variant="label"
