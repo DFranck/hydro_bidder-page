@@ -206,6 +206,7 @@ export interface BidRevampMetrics {
   id: number
   pointProgramUrl: any
   points: any
+  power: number
   request_amount: any
   roundId: number
   status: string

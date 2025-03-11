@@ -16,6 +16,7 @@ import {
   bidDetailsMaxDeploymentAmountTooltip,
   bidDetailsPolSizeTooltip,
   bidDetailsStatusTooltip,
+  bidDetailsVoteReceivedTooltip,
   liveBidTributeAprColumnTooltip,
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
@@ -32,8 +33,6 @@ import kebabCase from "lodash/kebabCase"
 import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import Link from "next/link"
-import { Fragment } from "react"
-import { twJoin } from "tailwind-merge"
 
 export function BidDetails({
   bidId,
@@ -47,6 +46,7 @@ export function BidDetails({
   const {
     atomPrice,
     bidMetaDataById,
+    bidsInfo,
     bidsById,
     currentRoundId,
     votes,
@@ -113,7 +113,7 @@ export function BidDetails({
   const isTokenBased =
     points.length === 0 && bidMetricsFromNumia?.offchainTribute.length === 0
 
-  const bidsInRound = Object.values(bidsById).filter(
+  const bidsInRound = Object.values(bidsInfo).filter(
     (bid) => bid.roundId === bid.roundId
   )
 
@@ -405,56 +405,16 @@ export function BidDetails({
               )}
 
             <div>
-              <div>
-                <Tooltip
-                  tipContents={
-                    <div className="flex max-w-xs flex-col gap-2">
-                      <div
-                        className={twJoin(
-                          "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
-                          "whitespace-nowrap border-b border-white/20 pb-2"
-                        )}
-                      >
-                        {[
-                          ["Voting Power on this Bid", votingStats.bidPower],
-                          ["Total Voting Power", votingStats.totalPower],
-                          [
-                            <strong key="percentage">Share of this Bid</strong>,
-                            <strong key="percentage-value">
-                              {votingStats.percentage}%
-                            </strong>,
-                          ],
-                        ].map(([label, value], index) => (
-                          <Fragment key={index}>
-                            <div>{label}</div>
-                            <div className="text-right tabular-nums">
-                              {value}
-                            </div>
-                          </Fragment>
-                        ))}
-                      </div>
-                      <p className="text-sm">
-                        This bid has received{" "}
-                        <strong>{votingStats.bidPower}</strong> voting power out
-                        of <strong>{votingStats.totalPower}</strong> total
-                        voting power that participated in this round,
-                        representing <strong>{votingStats.percentage}%</strong>.
-                      </p>
-                    </div>
-                  }
-                  classNamesForTooltip="w-80"
+              <Tooltip tipContents={bidDetailsVoteReceivedTooltip(votingStats)}>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1"
                 >
-                  <StyledText
-                    as="h3"
-                    variant="label"
-                    className="flex cursor-default items-center gap-1"
-                  >
-                    <span>% Vote Received</span>
-                    <Icon name="circle-info" />
-                  </StyledText>
-                </Tooltip>
-                {/* Rest of the voting percentage display code... */}
-              </div>
+                  <span>% Vote Received</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+              </Tooltip>
               <div
                 className="
                   flex

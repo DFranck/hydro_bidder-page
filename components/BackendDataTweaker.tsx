@@ -20,21 +20,17 @@ import { useLocalStorage } from "usehooks-ts"
 const EXAMPLE_JSON = `{
   // Prefix property names with $ to overwrite instead of merge
 
-  // Merged into \`rawBackendDataBeforeWallet.hydroConstants\`
-  hydroConstants: {
-    tributes: []
-  },
+  // Merged into \`rawBackendDataBeforeWallet.hydroMetaData\`
+  hydroMetaData: {},
 
-  // Merged into \`rawBackendDataBeforeWallet.backendData\`
-  backendData: {
-    rawBackendData: []
+  // Merged into \`rawBackendDataBeforeWallet.hydroRoundData\`
+  hydroRoundData: [],
 
-  },
+  // Merged into \`rawBackendDataBeforeWallet.externalData\`
+  externalData: {},
 
-  externalData: {}
-
-  // Merged into \`walletData\`
-  walletData: {}
+  // Merged into \`augmentedBackendDataBeforeWallet\`
+  walletData: {},
 
   // Merged into \`augmentedBackendDataAfterWallet\`
   patchData: {},
