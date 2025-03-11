@@ -13,7 +13,6 @@ export default async function LayoutWithContext({
   const rawBackendDataBeforeWallet = await fetchBackendDataBeforeWallet()
 
   const backendDataBeforeWalletSlimmed = {
-    ...rawBackendDataBeforeWallet,
     externalData: {
       ...rawBackendDataBeforeWallet.externalData,
       bidMetaDataById: Object.fromEntries(
@@ -30,6 +29,13 @@ export default async function LayoutWithContext({
         ])
       ),
     },
+    hydroMetaData: rawBackendDataBeforeWallet.hydroMetaData,
+    hydroRoundData: rawBackendDataBeforeWallet.hydroRoundData.map(
+      ({ round_bids, ...roundData }) => ({
+        ...roundData,
+        round_bids: round_bids.map((bid) => omit(bid, "description")),
+      })
+    ),
   }
 
   return (

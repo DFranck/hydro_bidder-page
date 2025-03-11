@@ -1,5 +1,6 @@
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
+import { VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
 import { AssetListWithPrices, ProposalSlimmed } from "../types"
 
 export function augmentRoundDeploymentMetrics(
@@ -133,7 +134,7 @@ export function augmentRoundDeploymentMetrics(
     const status =
       bid.round_id === currentRoundId
         ? "Voting Period"
-        : vote_perc < 0.05
+        : vote_perc * 100 < VOTE_SHARE_THRESHOLD
           ? "Rejected"
           : bid.round_id + bid.deployment_duration < currentRoundId
             ? "Completed"
