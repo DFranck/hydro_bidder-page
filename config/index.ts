@@ -21,7 +21,7 @@ export const endpoints = {
   // },
   neutron: {
     rpc: ["https://rpc.cosmos.directory/neutron"],
-    rest: ["https://rest.cosmos.directory/neutron"],
+    rest: ["https://rest.lavenderfive.com:443/neutron"],
   },
   cosmoshub: {
     rpc: ["https://cosmos-rpc.publicnode.com/"],
