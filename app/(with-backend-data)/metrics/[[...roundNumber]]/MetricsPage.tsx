@@ -30,11 +30,14 @@ import {
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
+import {
+  AugmentedBidFromNumiaSlimmed,
+  BidRevampMetrics,
+} from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { pluralize } from "@/lib/pluralize"
 import max from "lodash/max"
 import range from "lodash/range"
-import sumBy from "lodash/sumBy"
 import uniq from "lodash/uniq"
 import Image from "next/image"
 import Link from "next/link"
@@ -48,17 +51,12 @@ export function MetricsPage({
 }: {
   requestedRoundNumber: number | null
 }) {
-  const {
-    bidsById,
-    bidMetaDataById,
-    currentRoundId,
-    metricsForPreHydroBids,
-    metricsForPostHydroBids,
-  } = useBackendData()
+  const { bidsInfo, bidMetaDataById, currentRoundId, metricsForPreHydroBids } =
+    useBackendData()
 
-  const postHydroRoundIdsWithBidData = uniq(
-    metricsForPostHydroBids.map((bid) => Number(bid.roundId))
-  )
+  const bids = Object.values(bidsInfo)
+
+  const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
 
   const highestRoundIdWithData =
     max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
@@ -74,14 +72,18 @@ export function MetricsPage({
 
   const bidsToRender = requestedPreHydro
     ? metricsForPreHydroBids
-    : metricsForPostHydroBids.filter((bid) => bid.roundId === requestedRoundId)
+    : bids.filter((bid) => bid.roundId === requestedRoundId)
 
-  const tokenBasedBids = bidsToRender.filter(
-    (bid) => bid.offchainTribute.length === 0
-  )
-  const pointBasedBids = bidsToRender.filter(
-    (bid) => bid.offchainTribute.length > 0
-  )
+  const tokenBasedBids = requestedPreHydro
+    ? bidsToRender
+    : (bidsToRender as BidRevampMetrics[]).filter(
+        (bid) => !bid.points || bid.points?.length === 0
+      )
+  const pointBasedBids = requestedPreHydro
+    ? []
+    : (bidsToRender as BidRevampMetrics[]).filter(
+        (bid) => bid.points?.length > 0
+      )
 
   const tokenBasedRows = buildRows({
     numiaBids: tokenBasedBids,
@@ -139,7 +141,12 @@ export function MetricsPage({
         },
         isSortable: true,
         initialSortDirection: "DESC",
-        customValueGetter: (row) => row._bid.initialAllocationAmount,
+        customValueGetter: (row) => {
+          return requestedPreHydro
+            ? (row._bid as AugmentedBidFromNumiaSlimmed)
+                .requestedAllocationAmount
+            : (row._bid as BidRevampMetrics).request_amount
+        },
       },
       {
         key: "duration",
@@ -157,7 +164,7 @@ export function MetricsPage({
         },
         isSortable: true,
         initialSortDirection: "ASC",
-        customValueGetter: (row) => row._bid.durationDays,
+        customValueGetter: (row) => row._bidFromContract.duration,
       },
       {
         key: "polApr",
@@ -175,7 +182,7 @@ export function MetricsPage({
         },
         isSortable: true,
         initialSortDirection: "DESC",
-        customValueGetter: (row) => row._bid.apr,
+        customValueGetter: (row) => row._bidFromContract.apr_pol ?? 0,
       },
       {
         key: "tributeApr",
@@ -199,11 +206,8 @@ export function MetricsPage({
         textAlign: "right",
         isSortable: true,
         initialSortDirection: "DESC",
-        customValueGetter: (row) => {
-          const bidFromContract = bidsById[Number(row._bid.id)]
-          return !isTokenBased
-            ? sumBy(row._bid.offchainTribute, "amount")
-            : (bidFromContract?.tributeApr ?? 0)
+        customValueGetter: ({ _bidFromContract }) => {
+          return _bidFromContract.apr_tribute ?? 0
         },
       },
       {
@@ -239,21 +243,31 @@ export function MetricsPage({
     isTokenBased: boolean
   }) {
     return numiaBids.map((bidFromNumia) => {
-      const bidInfoFromGithub = bidMetaDataById[Number(bidFromNumia.id)] ?? null
-      const bidFromContract = bidsById[Number(bidFromNumia.id)] ?? null
-      const percentage = bidFromContract?.percentage ?? null
-      const rowURL =
-        requestedRoundId === PRE_HYDRO_ROUND_ID
-          ? `https://www.mintscan.io/cosmos/proposals/${bidFromNumia.id.replace("#", "")}`
-          : `/bids/${bidFromNumia.id}`
-      const projectLogoUrl =
-        bidFromNumia.projectLogoUrl || bidInfoFromGithub?.projectLogoUrl
-      const projectName =
-        bidFromNumia.projectName || bidInfoFromGithub?.projectName
-      const title = bidFromNumia.title || bidInfoFromGithub?.title
+      const bidMetaData = bidMetaDataById[Number(bidFromNumia.id)] ?? null
+      const bidFromContract = bidsInfo[Number(bidFromNumia.id)] ?? null
+
+      let rowURL: string,
+        projectLogoUrl: string,
+        projectName: string,
+        title: string
+
+      if (requestedPreHydro) {
+        const bid = bidFromNumia as AugmentedBidFromNumiaSlimmed
+        rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
+        projectLogoUrl = bid.projectLogoUrl
+        projectName = bid.projectName
+        title = bid.title
+      } else {
+        rowURL = `/bids/${bidFromNumia.id}`
+        projectLogoUrl = bidMetaData?.projectLogoUrl ?? ""
+        projectName = bidMetaData?.projectName ?? ""
+        title = bidMetaData?.title ?? ""
+      }
 
       return {
-        _bid: { ...bidFromNumia, percentage },
+        _bid: bidFromNumia,
+        _bidFromContract: bidFromContract,
+        _bidMetaData: bidMetaData,
 
         logoAndTitle: (
           <InvisibleLink href={rowURL}>
@@ -282,12 +296,11 @@ export function MetricsPage({
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               <AmountAndUnitPair
-                amount={bidFromNumia.initialAllocationAmount.toLocaleString(
-                  undefined,
-                  {
-                    maximumFractionDigits: 4,
-                  }
-                )}
+                amount={(
+                  bidFromNumia as AugmentedBidFromNumiaSlimmed
+                ).requestedAllocationAmount.toLocaleString(undefined, {
+                  maximumFractionDigits: 4,
+                })}
                 unit="ATOM"
               />
             ) : (
@@ -300,7 +313,8 @@ export function MetricsPage({
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               pluralize({
-                count: bidFromNumia.durationDays,
+                count: (bidFromNumia as AugmentedBidFromNumiaSlimmed)
+                  .durationDays,
                 prefixCount: true,
                 singular: "day",
               })
@@ -314,7 +328,9 @@ export function MetricsPage({
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               <StyledText variant="mathSymbol.container">
-                <span>{bidFromNumia.apr}</span>
+                <span>
+                  {(bidFromNumia as AugmentedBidFromNumiaSlimmed).apr}
+                </span>
                 <StyledText variant="mathSymbol">%</StyledText>
               </StyledText>
             ) : (
@@ -348,10 +364,15 @@ export function MetricsPage({
 
   function secondPassSortFunction(sortedRows: Row[]) {
     return [...sortedRows].sort((a, b) => {
+      if (requestedPreHydro) {
+        return 0
+      }
       const aExceedsThreshold =
-        a._bid.percentage && a._bid.percentage >= VOTE_SHARE_THRESHOLD
+        a._bidFromContract.vote_perc &&
+        a._bidFromContract.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
       const bExceedsThreshold =
-        b._bid.percentage && b._bid.percentage >= VOTE_SHARE_THRESHOLD
+        b._bidFromContract.vote_perc &&
+        b._bidFromContract.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
       return Number(bExceedsThreshold) - Number(aExceedsThreshold)
     })
   }
@@ -359,8 +380,9 @@ export function MetricsPage({
   const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
     ({ children, row, rowProps }) => {
       const shouldShowVoteThresholdLine =
-        row._bid.percentage !== null &&
-        row._bid.percentage < VOTE_SHARE_THRESHOLD
+        !requestedPreHydro &&
+        row._bidFromContract.vote_perc !== null &&
+        row._bidFromContract.vote_perc * 100 < VOTE_SHARE_THRESHOLD
 
       return (
         <Fragment key={row._bid.id}>
