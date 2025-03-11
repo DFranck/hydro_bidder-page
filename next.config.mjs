@@ -23,6 +23,23 @@ const nextConfig = withNextra({
       },
     ],
   },
+<<<<<<< HEAD
+=======
+  modularizeImports: {
+    lodash: {
+      transform: "lodash/{{member}}",
+    },
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/holdings",
+        destination:
+          "https://hydro-deployment-tracking-2fitd.ondigitalocean.app/holdings/",
+      },
+    ]
+  },
+>>>>>>> cbde222 (Implemented initial tracking page)
 })
 
 export default nextConfig

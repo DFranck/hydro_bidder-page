@@ -8,11 +8,19 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { StyledTable } from "@/components/StyledTable"
 import { BaseRowObject, ColumnObject } from "@/components/StyledTable/types"
+<<<<<<< HEAD
 import { fetchTracking } from "@/contract-apis/fetchTracking"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { ReactNode, useEffect, useState } from "react"
 import { classNames } from "./classNames"
 import { BidRevampMetrics, TrackingItem } from "@/contract-apis/types"
+=======
+import { fetchTracking, TrackingItem } from "@/contract-apis/fetchTracking"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { ReactNode, useEffect, useState } from "react"
+import { classNames } from "./classNames"
+import { BidRevampMetrics } from "@/contract-apis/types"
+>>>>>>> cbde222 (Implemented initial tracking page)
 
 export interface TrackingRow extends BaseRowObject {
   _bid: BidRevampMetrics
