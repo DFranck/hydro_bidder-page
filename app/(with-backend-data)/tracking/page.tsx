@@ -8,22 +8,15 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { StyledTable } from "@/components/StyledTable"
 import { BaseRowObject, ColumnObject } from "@/components/StyledTable/types"
-<<<<<<< HEAD
+import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { fetchTracking } from "@/contract-apis/fetchTracking"
+import { TrackingItem } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { ReactNode, useEffect, useState } from "react"
 import { classNames } from "./classNames"
-import { BidRevampMetrics, TrackingItem } from "@/contract-apis/types"
-=======
-import { fetchTracking, TrackingItem } from "@/contract-apis/fetchTracking"
-import { useBackendData } from "@/contract-apis/useBackendData"
-import { ReactNode, useEffect, useState } from "react"
-import { classNames } from "./classNames"
-import { BidRevampMetrics } from "@/contract-apis/types"
->>>>>>> cbde222 (Implemented initial tracking page)
 
 export interface TrackingRow extends BaseRowObject {
-  _bid: BidRevampMetrics
+  _bid: AugmentedBid
   _tracking: TrackingItem
   roundId: ReactNode
   logoAndTitle: ReactNode
@@ -37,8 +30,8 @@ export default function TrackingPage() {
   const [isLoadingTracking, setIsLoadingTracking] = useState(false)
   const [trackingItems, setTrackingItems] = useState<TrackingItem[]>([])
   const [openedRows, setOpenedRows] = useState<number[]>([])
-  const { isLoading, bidsInfo } = useBackendData()
-  const bids = Object.values(bidsInfo)
+  const { isLoading, bidsById } = useBackendData()
+  const bids = Object.values(bidsById)
 
   const toggleRow = (bidId: number) => {
     setOpenedRows((prev) =>
