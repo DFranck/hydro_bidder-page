@@ -1,33 +1,22 @@
+import { classNames } from "@/app/(with-backend-data)/bidder-dashboard/classNames"
+import { BidRow } from "@/app/(with-backend-data)/bidder-dashboard/page"
+import { Icon } from "@/components/Icon"
+import { ColumnObject } from "@/components/StyledTable/types"
 import {
-  bidTablesFirstColumnTooltips, currentVoteShareTooltip,
+  currentVoteShareTooltip,
   estimatedRewardsColumnTooltip,
 } from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
-import { Icon } from "@/components/Icon"
-import { classNames } from "@/app/(with-backend-data)/bidder-dashboard/classNames"
-import { BidRow } from "@/app/(with-backend-data)/bidder-dashboard/page"
 import { sumBy } from "lodash"
-import { ColumnObject } from "@/components/StyledTable/types"
 
 export function getBidDashboardTableColumns(
   isTokenBased: boolean,
-  hasVotedThisRound: boolean,
+  hasVotedThisRound: boolean
 ): ColumnObject<BidRow, keyof BidRow>[] {
   return [
     {
       key: "logoAndTitle",
-      label: (
-        <Tooltip
-          tipContents={
-            bidTablesFirstColumnTooltips.bidsTable[
-              isTokenBased ? "tokenBased" : "pointBased"
-              ]
-          }
-        >
-          <div className="flex items-center gap-1">
-          </div>
-        </Tooltip>
-      ),
+      label: "Bid Title",
       isSortable: true,
       propsForCells: {
         className: classNames.classNamesForCells,
@@ -44,7 +33,7 @@ export function getBidDashboardTableColumns(
           })}
         >
           <div className="flex items-center gap-1">
-              <span className="text-nowrap">Total Tribute</span>
+            <span className="text-nowrap">Total Tribute</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
