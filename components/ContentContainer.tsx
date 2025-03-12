@@ -13,6 +13,8 @@ export function ContentContainer({
           mx-auto
           flex
           flex-col
+          px-3
+          md:px-6
         `,
         className
       )}

@@ -19,14 +19,16 @@ import {
   bidTablesFirstColumnTooltips,
   currentVoteShareTooltip,
   liveBidTributeAprColumnTooltip,
-  metricsTributeColumnTooltip,
   polDurationTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { Fragment } from "react"
+import groupBy from "lodash/groupBy"
+import mapValues from "lodash/mapValues"
+import { Fragment, useMemo } from "react"
+import { twJoin } from "tailwind-merge"
 import { classNames } from "./classNames"
 
 export const dynamic = "force-dynamic"
@@ -34,101 +36,115 @@ export const dynamic = "force-dynamic"
 export default function BidsPage() {
   const backendData = useBackendData()
 
-  const { bidsById, currentRoundId, isLoading, votesByRoundId } = backendData
+  const {
+    bidsInfo,
+    bidMetaDataById,
+    currentRoundId,
+    isLoading,
+    tranches,
+    votesByRoundId,
+  } = backendData
 
-  const bidsInRound = Object.values(bidsById).filter(
+  const bidsInRound = Object.values(bidsInfo).filter(
     (bid) => bid.roundId === currentRoundId
   )
 
-  const rows =
-    bidsInRound?.map((bid) => {
-      const bidURL = `/bids/${bid.id}`
+  const bidsByTrancheId = useMemo(
+    () => groupBy(bidsInRound, "trancheId"),
+    [bidsInRound]
+  )
 
-      return {
-        _bid: bid,
+  const rowsByTrancheId = useMemo(
+    () =>
+      mapValues(
+        bidsByTrancheId,
+        (bidsInTranche) =>
+          bidsInTranche?.map((bid) => {
+            const bidURL = `/bids/${bid.id}`
 
-        logoAndTitle: (
-          <InvisibleLink href={bidURL}>
-            <BidLogoAndTitle bidId={bid.id} />
-          </InvisibleLink>
-        ),
+            return {
+              _bid: bid,
 
-        duration: (
-          <InvisibleLink href={bidURL}>
-            <BidDuration bidId={bid.id} />
-          </InvisibleLink>
-        ),
+              logoAndTitle: (
+                <InvisibleLink href={bidURL}>
+                  <BidLogoAndTitle bidId={bid.id} />
+                </InvisibleLink>
+              ),
 
-        tributeApr: (
-          <InvisibleLink href={bidURL}>
-            <BidTributeAprOrPoints bidId={bid.id} />
-          </InvisibleLink>
-        ),
+              duration: (
+                <InvisibleLink href={bidURL}>
+                  <BidDuration bidId={bid.id} />
+                </InvisibleLink>
+              ),
 
-        currentVoteShare: (
-          <InvisibleLink
-            href={bidURL}
-            className="flex flex-row-reverse items-center gap-1"
-          >
-            <ConditionalWrapper
-              condition={bid.percentage < VOTE_SHARE_THRESHOLD}
-              wrapper={(children) => (
-                <Tooltip
-                  tipContents={voteThresholdTooltip}
-                  classNamesForTooltip="-ml-24"
+              tributeApr: (
+                <InvisibleLink href={bidURL}>
+                  <BidTributeAprOrPoints bidId={bid.id} />
+                </InvisibleLink>
+              ),
+
+              currentVoteShare: (
+                <InvisibleLink
+                  href={bidURL}
+                  className="flex flex-row-reverse items-center gap-1"
                 >
-                  <div className="flex items-center gap-1">
-                    {children}
-                    <Icon
-                      name="circle-info"
-                      className="text-xs text-palette-beige"
-                    />
+                  <ConditionalWrapper
+                    condition={bid.vote_perc < VOTE_SHARE_THRESHOLD}
+                    wrapper={(children) => (
+                      <Tooltip
+                        tipContents={voteThresholdTooltip}
+                        classNamesForTooltip="-ml-24"
+                      >
+                        <div className="flex items-center gap-1">
+                          {children}
+                          <Icon
+                            name="circle-info"
+                            className="text-xs text-palette-beige"
+                          />
+                        </div>
+                      </Tooltip>
+                    )}
+                  >
+                    <StyledText variant="mathSymbol.container">
+                      <span>{Math.round(bid.vote_perc)}</span>
+                      <StyledText variant="mathSymbol">%</StyledText>
+                    </StyledText>
+                  </ConditionalWrapper>
+                </InvisibleLink>
+              ),
+
+              actions: (
+                <InvisibleLink href={bidURL}>
+                  <div className="flex items-center justify-end gap-3">
+                    <VoteButton bidId={bid.id} size="small" />
+                    <StyledText
+                      variant="link"
+                      className={classNames.bidDetailsLink}
+                    >
+                      <span className="sr-only">Bid Details</span>{" "}
+                      <Icon name="chevron-right" />
+                    </StyledText>
                   </div>
-                </Tooltip>
-              )}
-            >
-              <StyledText variant="mathSymbol.container">
-                <span>{Math.round(bid.percentage)}</span>
-                <StyledText variant="mathSymbol">%</StyledText>
-              </StyledText>
-            </ConditionalWrapper>
-          </InvisibleLink>
-        ),
+                </InvisibleLink>
+              ),
+            }
+          }) ?? []
+      ),
+    [bidsByTrancheId]
+  )
 
-        actions: (
-          <InvisibleLink href={bidURL}>
-            <div className="flex items-center justify-end gap-3">
-              <VoteButton bidId={bid.id} size="small" />
-              <StyledText variant="link" className={classNames.bidDetailsLink}>
-                <span className="sr-only">Bid Details</span>{" "}
-                <Icon name="chevron-right" />
-              </StyledText>
-            </div>
-          </InvisibleLink>
-        ),
-      }
-    }) ?? []
+  type Row = (typeof rowsByTrancheId)[number][number]
 
-  type Row = (typeof rows)[number]
-
-  function buildColumns({
-    isTokenBased,
-  }: {
-    isTokenBased: boolean
-  }): ColumnObject<Row, keyof Row>[] {
+  const columns = useMemo((): ColumnObject<Row, keyof Row>[] => {
     return [
       {
         key: "logoAndTitle",
         label: (
           <Tooltip
-            tipContents={
-              bidTablesFirstColumnTooltips.bidsTable[
-                isTokenBased ? "tokenBased" : "pointBased"
-              ]
-            }
+            tipContents={bidTablesFirstColumnTooltips.bidsTable.tokenBased}
           >
             <div className="flex items-center gap-1">
-              {isTokenBased ? "Token-Based Tribute" : "Point-Based Tribute"}
+              Title
               <Icon name="circle-info" />
             </div>
           </Tooltip>
@@ -155,20 +171,14 @@ export default function BidsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
+        customValueGetter: (row) => row._bid.duration,
       },
       {
         key: "tributeApr",
         label: (
-          <Tooltip
-            tipContents={
-              !isTokenBased
-                ? metricsTributeColumnTooltip
-                : liveBidTributeAprColumnTooltip
-            }
-          >
+          <Tooltip tipContents={liveBidTributeAprColumnTooltip}>
             <div className="flex items-center gap-1">
-              <span>{!isTokenBased ? "Total Tribute" : "Tribute APR"}</span>
+              <span>Tribute APR</span>
               <Icon name="circle-info" />
             </div>
           </Tooltip>
@@ -180,12 +190,7 @@ export default function BidsPage() {
           className: classNames.classNamesForCells,
         },
         customValueGetter: (row) => {
-          const isTokenBased = row._bid.tributes.every((t) => t.isTokenBased)
-          return !isTokenBased
-            ? 0
-            : currentRoundId === row._bid.roundId
-              ? row._bid.tributeAprMax
-              : row._bid.tributeApr
+          return row._bid.apr_tribute ?? 0
         },
       },
       {
@@ -207,7 +212,7 @@ export default function BidsPage() {
         propsForCells: {
           className: classNames.classNamesForCells,
         },
-        customValueGetter: (row) => row._bid.percentage,
+        customValueGetter: (row) => row._bid.vote_perc,
       },
       {
         key: "actions",
@@ -219,7 +224,7 @@ export default function BidsPage() {
         },
       },
     ]
-  }
+  }, [bidsInfo, bidMetaDataById, currentRoundId, votesByRoundId])
 
   function renderRow({
     children,
@@ -227,11 +232,11 @@ export default function BidsPage() {
     rowProps,
     sortDirection,
     sortedColumnKey,
-  }: RowRenderProps<(typeof rows)[number], keyof (typeof rows)[number]>) {
+  }: RowRenderProps<Row, keyof Row>) {
     const shouldShowVoteThresholdLine =
       sortedColumnKey === "currentVoteShare" &&
       sortDirection === "DESC" &&
-      row._bid.percentage < VOTE_SHARE_THRESHOLD
+      row._bid.vote_perc < VOTE_SHARE_THRESHOLD
 
     const votesThisRound = votesByRoundId[currentRoundId] ?? []
 
@@ -298,13 +303,6 @@ export default function BidsPage() {
     )
   }
 
-  const tokenBasedBids = rows.filter((row) =>
-    row._bid.tributes.every((t) => t.isTokenBased)
-  )
-  const pointBasedBids = rows.filter(
-    (row) => false === row._bid.tributes.every((t) => t.isTokenBased)
-  )
-
   return (
     <>
       <StatCards>
@@ -313,36 +311,55 @@ export default function BidsPage() {
         <StatCards.CurrentRoundTimeLeft />
       </StatCards>
 
-      <ContentContainer className="gap-12 py-6">
+      <ContentContainer className="gap-12 py-6 outline">
         <LoadingSpinner isLoading={isLoading} />
 
-        {!isLoading && tokenBasedBids.length === 0 && (
+        {!isLoading && bidsInRound.length === 0 && (
           <BlurryBackdropBox>
             <EmptyBox>There are no bids available at this moment.</EmptyBox>
           </BlurryBackdropBox>
         )}
 
-        {!isLoading && tokenBasedBids.length > 0 && (
-          <BlurryBackdropBox>
-            <StyledTable
-              initialSortedColumnKey="currentVoteShare"
-              columns={buildColumns({ isTokenBased: true })}
-              rows={tokenBasedBids}
-              renderRow={renderRow}
-            />
-          </BlurryBackdropBox>
-        )}
+        {!isLoading &&
+          bidsInRound.length > 0 &&
+          Object.entries(rowsByTrancheId).map(([trancheId, rowsInTranche]) => {
+            const tranche = tranches.find((t) => t.id === Number(trancheId))
+            return (
+              <BlurryBackdropBox
+                key={trancheId}
+                className="flex flex-col gap-3"
+              >
+                <div
+                  className={twJoin(
+                    "flex items-center justify-between",
+                    "rounded-t-md bg-palette-beige/20",
+                    "-mx-2 -my-1 px-6 py-3"
+                  )}
+                >
+                  <StyledText variant="h4">
+                    {tranche?.name ?? <em>(Unnamed Tranche)</em>}
+                  </StyledText>
 
-        {!isLoading && pointBasedBids.length > 0 && (
-          <BlurryBackdropBox>
-            <StyledTable
-              initialSortedColumnKey="currentVoteShare"
-              columns={buildColumns({ isTokenBased: false })}
-              rows={pointBasedBids}
-              renderRow={renderRow}
-            />
-          </BlurryBackdropBox>
-        )}
+                  {/* <div
+                    className={twJoin(
+                      "flex items-center justify-end gap-1",
+                      "text-xs text-palette-beige"
+                    )}
+                  >
+                    <Icon name="triangle-exclamation" />
+                    <span>Connect your wallet to vote</span>
+                  </div> */}
+                </div>
+
+                <StyledTable
+                  initialSortedColumnKey="currentVoteShare"
+                  columns={columns}
+                  rows={rowsInTranche}
+                  renderRow={renderRow}
+                />
+              </BlurryBackdropBox>
+            )
+          })}
       </ContentContainer>
     </>
   )

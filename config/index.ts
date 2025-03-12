@@ -19,27 +19,11 @@ export const getEndpoints = ({
 }) =>
   ({
     neutron: {
-      rpc: [
-        {
-          url: "https://neutron-rpc.numia.xyz/",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
-          },
-        },
-      ],
-      rest: ["https://neutron-api.polkachu.com/"],
+      rpc: ["https://rpc.cosmos.directory/neutron"],
+      rest: ["https://rest.cosmos.directory/neutron/"],
     },
     cosmoshub: {
-      rpc: [
-        {
-          url: "https://cosmos-rpc.numia.xyz/",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
-          },
-        },
-      ],
+      rpc: ["https://cosmos-rpc.publicnode.com/"],
       rest: ["https://cosmos-rest.publicnode.com/"],
     },
   }) satisfies Record<string, Endpoints>

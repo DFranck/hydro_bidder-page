@@ -5,6 +5,7 @@ import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
+import { Tooltip } from "@/components/Tooltip"
 import { BackendDataTweak } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { sanitizeJSON } from "@/lib/sanitizeJSON"
@@ -36,7 +37,7 @@ const EXAMPLE_JSON = `{
   patchData: {},
 }`
 
-type ModalState = "closed" | "list-only" | "editing" | "creating" | "advanced"
+type ModalState = "closed" | "listing" | "editing" | "creating" | "editing-all"
 
 export function BackendDataTweaker() {
   const [tweaks, setTweaks] = useLocalStorage<BackendDataTweak[]>(
@@ -83,7 +84,7 @@ export function BackendDataTweaker() {
   }, [modalState])
 
   useEffect(() => {
-    if (modalState === "advanced") {
+    if (modalState === "editing-all") {
       setJsonValue(JSON.stringify(tweaks, null, 2))
       setLabelValue("")
     }
@@ -92,7 +93,7 @@ export function BackendDataTweaker() {
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
 
-    if (modalState === "advanced") {
+    if (modalState === "editing-all") {
       try {
         const sanitizedJSON = sanitizeJSON(jsonValue)
         const parsedTweaks = JSON.parse(sanitizedJSON)
@@ -106,7 +107,7 @@ export function BackendDataTweaker() {
           return
         }
         setTweaks(parsedTweaks)
-        setModalState("list-only")
+        setModalState("listing")
       } catch (e) {
         console.error({ error: e })
         setToasts([
@@ -148,7 +149,7 @@ export function BackendDataTweaker() {
         ])
       }
 
-      setModalState("list-only")
+      setModalState("listing")
     } catch (e) {
       console.error({ error: e })
       setToasts([
@@ -180,28 +181,39 @@ export function BackendDataTweaker() {
 
   function handleClickCancelEdit(event: MouseEvent) {
     event.stopPropagation()
-    setModalState("list-only")
+    setModalState("listing")
   }
 
   function handleClickDelete(id: string, event: MouseEvent) {
     event.stopPropagation()
     if (!confirm("Are you sure you want to delete this tweak?")) return
     setTweaks((prev) => prev.filter((t) => t.id !== id))
-    setModalState("list-only")
+    setModalState("listing")
   }
 
   function handleClickDeleteAll(event: MouseEvent) {
     event.stopPropagation()
     if (!confirm("Are you sure you want to clear all tweaks?")) return
     setTweaks([])
-    setModalState("list-only")
+    setModalState("listing")
   }
 
-  function handleClickAdvanced(event: MouseEvent) {
+  function handleClickEditAll(event: MouseEvent) {
     event.stopPropagation()
     setModalState((currentState) =>
-      currentState === "advanced" ? "list-only" : "advanced"
+      currentState === "editing-all" ? "listing" : "editing-all"
     )
+  }
+
+  function handleClickResetAll(event: MouseEvent) {
+    event.stopPropagation()
+    setTweaks(initialTweaks)
+    setToasts([
+      {
+        variant: "success",
+        message: "All tweaks have been reset to the initial state 👍",
+      },
+    ])
   }
 
   return (
@@ -212,7 +224,7 @@ export function BackendDataTweaker() {
           as="button"
           type="button"
           variant="button.circular.primary"
-          onClick={() => setModalState("list-only")}
+          onClick={() => setModalState("listing")}
           className="fixed bottom-4 right-4"
         >
           <Icon name="solid:gear" />
@@ -225,7 +237,7 @@ export function BackendDataTweaker() {
         isOpen={modalState !== "closed"}
         className={twJoin(
           "shadow-2xl",
-          modalState === "list-only" &&
+          modalState === "listing" &&
             "bottom-6 left-auto right-6 top-auto translate-x-0 translate-y-0"
         )}
         propsForBackdrop={{
@@ -242,8 +254,8 @@ export function BackendDataTweaker() {
             className={twMerge(
               "grid grid-rows-[min-content_auto] gap-6",
               "transition-all",
-              modalState === "list-only" && "max-h-[80vh] w-96",
-              ["editing", "creating", "advanced"].includes(modalState) &&
+              modalState === "listing" && "max-h-[80vh] w-96",
+              ["editing", "creating", "editing-all"].includes(modalState) &&
                 "h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]"
             )}
           >
@@ -256,32 +268,46 @@ export function BackendDataTweaker() {
                 Backend Data Tweaks
               </StyledText>
 
-              <div className="flex flex-row-reverse items-center gap-1">
+              <div className="flex flex-row-reverse items-center gap-3">
                 <StyledText
                   variant="link"
                   onClick={() =>
                     setModalState((currentState) =>
-                      currentState === "list-only" ? "closed" : "list-only"
+                      currentState === "listing" ? "closed" : "listing"
                     )
                   }
                 >
                   <Icon
-                    name={modalState === "list-only" ? "xmark" : "square-minus"}
+                    name={modalState === "listing" ? "xmark" : "square-minus"}
                   />
                   <span className="sr-only">Dismiss</span>
                 </StyledText>
 
-                <StyledText variant="link" onClick={handleClickAdvanced}>
-                  <Icon name="solid:wrench" />
-                  <span className="sr-only">Advanced Edit</span>
-                </StyledText>
+                {modalState === "listing" && (
+                  <>
+                    <Tooltip tipContents="Edit all tweaks at once">
+                      <StyledText variant="link" onClick={handleClickEditAll}>
+                        <Icon name="solid:wrench" />
+                        <span className="sr-only">Edit All</span>
+                      </StyledText>
+                    </Tooltip>
+
+                    <Tooltip tipContents="Reset all tweaks to the initial state">
+                      <StyledText variant="link" onClick={handleClickResetAll}>
+                        <Icon name="solid:power-off" />
+                        <span className="sr-only">Reset All</span>
+                      </StyledText>
+                    </Tooltip>
+                  </>
+                )}
               </div>
             </div>
 
             <Card.Body
               className={twMerge(
                 "grid gap-6",
-                ["list-only", "advanced"].includes(modalState) && "grid-cols-1",
+                ["listing", "editing-all"].includes(modalState) &&
+                  "grid-cols-1",
                 ["editing", "creating"].includes(modalState) &&
                   "grid-cols-[300px_auto]"
               )}
@@ -289,8 +315,8 @@ export function BackendDataTweaker() {
               <div
                 className={twMerge(
                   "grid gap-3",
-                  ["list-only"].includes(modalState) && "hidden",
-                  ["advanced"].includes(modalState) && [
+                  ["listing"].includes(modalState) && "hidden",
+                  ["editing-all"].includes(modalState) && [
                     "grid-rows-[auto_min-content]",
                     "h-full",
                   ],
@@ -370,7 +396,7 @@ export function BackendDataTweaker() {
                           : "Save All Tweaks"}
                     </StyledText>
 
-                    {["editing", "creating", "advanced"].includes(
+                    {["editing", "creating", "editing-all"].includes(
                       modalState
                     ) && (
                       <StyledText
@@ -393,7 +419,7 @@ export function BackendDataTweaker() {
                   "col-start-1 col-end-2 row-start-1",
                   "flex flex-col gap-6",
                   modalState === "editing" ? "col-end-2" : "col-span-full",
-                  modalState === "advanced" && "hidden"
+                  modalState === "editing-all" && "hidden"
                 )}
               >
                 <div className="flex flex-col gap-1">
@@ -416,7 +442,7 @@ export function BackendDataTweaker() {
                         <div
                           className={twMerge(
                             "opacity-50 transition-opacity",
-                            (isActive || modalState === "list-only") &&
+                            (isActive || modalState === "listing") &&
                               "opacity-100"
                           )}
                         >
@@ -446,7 +472,7 @@ export function BackendDataTweaker() {
                   })}
                 </div>
 
-                {modalState === "list-only" && (
+                {modalState === "listing" && (
                   <div>
                     <StyledText
                       variant="button.primary.small"

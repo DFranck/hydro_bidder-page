@@ -137,21 +137,27 @@ export function BackendDataContextProvider({
         .map((tweak) => tweak.json)
     )
 
+    const { patchData = {} } = enabledTweaks
     const {
-      hydroMetaData: hydroMetaDataTweaks = {},
-      hydroRoundData: hydroRoundDataTweaks = [],
-      externalData: externalDataTweaks = {},
-      walletData: walletDataTweaks = {},
-      patchData = {},
+      hydroMetaData,
+      hydroRoundData,
+      externalData,
+      walletData: walletDataTweaks,
+      $hydroMetaData,
+      $hydroRoundData,
+      $externalData,
+      $walletData,
     } = enabledTweaks
-
     const tweakedRawBackendDataBeforeWallet = mergeWithOverwrite(
       {},
       rawBackendDataBeforeWallet,
       {
-        hydroMetaData: hydroMetaDataTweaks,
-        hydroRoundData: hydroRoundDataTweaks,
-        externalData: externalDataTweaks,
+        ...(hydroMetaData !== undefined && { hydroMetaData }),
+        ...(hydroRoundData !== undefined && { hydroRoundData }),
+        ...(externalData !== undefined && { externalData }),
+        ...($hydroMetaData !== undefined && { $hydroMetaData }),
+        ...($hydroRoundData !== undefined && { $hydroRoundData }),
+        ...($externalData !== undefined && { $externalData }),
       }
     )
 
@@ -192,11 +198,10 @@ export function BackendDataContextProvider({
         tranches,
       })
 
-      const tweakedWalletData = mergeWithOverwrite(
-        {},
-        walletData,
-        walletDataTweaks
-      )
+      const tweakedWalletData = mergeWithOverwrite({}, walletData, {
+        ...(walletDataTweaks !== undefined && { walletData: walletDataTweaks }),
+        ...($walletData !== undefined && { $walletData }),
+      })
 
       const augmentedBackendDataAfterWallet = augmentBackendDataAfterWallet({
         address: effectiveAddress,
