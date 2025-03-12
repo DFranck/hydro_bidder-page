@@ -103,7 +103,7 @@ export async function fetchBidsBeforeWallet({
                   valueUsd: fundsWithPrice.valueUsd,
                 }
               })
-              .filter((tribute) => tribute.amount > 1)
+              .filter((tribute) => tribute.amount > 0)
 
             const sanitizedPointBasedTributes: SanitizedPointBasedTribute[] =
               unsanitizedBids

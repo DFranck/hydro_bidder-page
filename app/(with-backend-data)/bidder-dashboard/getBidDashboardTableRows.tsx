@@ -1,0 +1,86 @@
+import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
+import { BidRewards } from "@/components/BidRewards"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { VOTE_SHARE_THRESHOLD, voteThresholdTooltip } from "@/components/ToolTips"
+import { Tooltip } from "@/components/Tooltip"
+import { Icon } from "@/components/Icon"
+import { BidRow } from "@/app/(with-backend-data)/bidder-dashboard/page"
+import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
+import { TributesList } from "@/components/Tributes/TributesList/TributesList"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
+import { InvisibleButton } from "@/components/InvisibleButton"
+
+export function getBidDashboardTableRows(
+  openedRows: number[],
+  onToggleRow: (bidId: number) => void,
+  bids?: AugmentedBid[],
+  bidDescriptions?: Record<string, BidDescriptionFromGithub>,
+): {token: BidRow[]; point: BidRow[]} {
+  if (!bids || !bids.length) return { token: [], point: [] }
+
+  const rows = bids.map((bid) => {
+    const isOpened = openedRows.includes(bid.id)
+    return {
+      _bid: bid,
+
+      logoAndTitle: (
+        <InvisibleButton onClick={() => onToggleRow(bid.id)} >
+          <BidLogoAndTitle bidId={bid.id} />
+        </InvisibleButton>
+      ),
+
+      yourEstimatedReward: (
+        <InvisibleButton onClick={() => onToggleRow(bid.id)} >
+          <BidRewards bidId={bid.id} />
+        </InvisibleButton>
+      ),
+
+      currentVoteShare: (
+        <InvisibleButton onClick={() => onToggleRow(bid.id)} >
+          <ConditionalWrapper
+            condition={bid.percentage < VOTE_SHARE_THRESHOLD}
+            wrapper={(children) => (
+              <Tooltip
+                tipContents={voteThresholdTooltip}
+                classNamesForTooltip="-ml-24"
+              >
+                <div className="flex items-center gap-1">
+                  {children}
+                  <Icon
+                    name="circle-info"
+                    className="text-xs text-palette-beige"
+                  />
+                </div>
+              </Tooltip>
+            )}
+          >
+            <span>{Math.round(bid.percentage)}%</span>
+          </ConditionalWrapper>
+        </InvisibleButton>
+      ),
+
+      actions: (
+          <div className="flex items-center justify-end gap-3">
+            <AddTributeButton bidId={bid.id} size="small" />
+            <InvisibleButton onClick={() => onToggleRow(bid.id)}>
+              <span className="sr-only">Tributes Details</span>{" "}
+              <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} />
+            </InvisibleButton>
+          </div>
+      ),
+
+      additional: isOpened &&
+        <TributesList tributes={bid.tributes} bidDescription={bidDescriptions?.[bid.id]} />,
+    }
+  })
+
+  const tokenBasedBids = rows.filter(
+    (row) => row._bid.tributes.every((t) => t.isTokenBased)
+  )
+  const pointBasedBids = rows.filter(
+    (row) => !row._bid.tributes.every((t) => t.isTokenBased)
+  )
+
+  return { token: tokenBasedBids, point: pointBasedBids }
+}
