@@ -1,15 +1,20 @@
 "use server"
 
-import { defaultMetadata, metadataByRoute } from "@/app/metadata"
-import { inter } from "@/lib/font"
+import { getDefaultMetadata, getMetadataByRoute } from "@/app/metadata"
 import sortBy from "lodash/sortBy"
+import { Inter } from "next/font/google"
 import { headers } from "next/headers"
 import Script from "next/script"
 import "./globals.css"
 
+const InterFont = Inter({ subsets: ["latin"], preload: true })
+
 export async function generateMetadata() {
   const headersList = await headers()
   const requestedPathname = new URL(headersList.get("x-url") || "").pathname
+
+  const metadataByRoute = await getMetadataByRoute()
+  const defaultMetadata = await getDefaultMetadata()
 
   const sortedMetadataByRoute = sortBy(
     Object.entries(metadataByRoute),
@@ -32,6 +37,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-pt-32">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <Script
           crossOrigin="anonymous"
           src="https://kit.fontawesome.com/401fb1e734.js"
@@ -63,7 +69,7 @@ export default async function RootLayout({
           src="/injectServiceWorker.js"
         />
       </head>
-      <body className={`${inter.className} relative overflow-x-hidden`}>
+      <body className={`${InterFont.className} relative overflow-x-hidden`}>
         {children}
       </body>
     </html>
