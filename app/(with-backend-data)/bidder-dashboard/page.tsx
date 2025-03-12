@@ -24,7 +24,7 @@ export interface BidRow extends BaseRowObject {
 
 export default function BidsDashboardPage() {
   const [openedRows, setOpenedRows] = useState<number[]>([])
-  console.log("Rendering BidsDashboardPage")
+
   const {
     bidsByRoundId,
     currentRoundId,

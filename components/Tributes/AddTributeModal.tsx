@@ -3,27 +3,37 @@
 import { Card } from "@/components/Card"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
+import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useMemo, useState } from "react"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 
-interface AddTributeButtonProps {
+export function AddTributeModal({
+  bid,
+  isOpened,
+  onCloseAction,
+  onCloseCompleteAction,
+}: {
   bid: AugmentedBid
   isOpened: boolean
   onCloseAction: () => void
-  onCloseCompleteAction: (amount: string, denom: string, description: string) => void
-}
-
-export function AddTributeModal({ bid, isOpened, onCloseAction, onCloseCompleteAction }: AddTributeButtonProps) {
+  onCloseCompleteAction: (
+    amount: string,
+    denom: string,
+    description: string
+  ) => void
+}) {
   const [amount, setAmount] = useState<string>("")
   const [denom, setDenom] = useState<string>("untrn")
   const [description, setDescription] = useState<string>("")
   const { assetListWithPrices } = useBackendData()
 
   const denomList = useMemo(
-    () => Object.entries(assetListWithPrices)
-      .map((asset) => ({ name: asset[1].symbol.replace(".", " "), value: asset[0] })),
-    [assetListWithPrices],
+    () =>
+      Object.entries(assetListWithPrices).map((asset) => ({
+        name: asset[1].symbol.replace(".", " "),
+        value: asset[0],
+      })),
+    [assetListWithPrices]
   )
 
   const submit = () => {
@@ -61,7 +71,8 @@ export function AddTributeModal({ bid, isOpened, onCloseAction, onCloseCompleteA
                   as="select"
                   variant="input.text"
                   value={denom}
-                  onChange={(event) => setDenom(event.target.value)}>
+                  onChange={(event) => setDenom(event.target.value)}
+                >
                   {denomList.map((denom) => (
                     <option key={denom.value} value={denom.value}>
                       {denom.name}
