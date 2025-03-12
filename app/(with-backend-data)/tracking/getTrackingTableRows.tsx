@@ -1,22 +1,16 @@
+import { TrackingRow } from "@/app/(with-backend-data)/tracking/page"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { Icon } from "@/components/Icon"
-import { TrackingRow } from "@/app/(with-backend-data)/tracking/page"
 import { StyledText } from "@/components/StyledText"
-<<<<<<< HEAD
-import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
+import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { BalanceItem, TrackingItem } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import { BalanceItem, BidRevampMetrics, TrackingItem } from "@/contract-apis/types"
-=======
-import { BalanceItem, TrackingItem } from "@/contract-apis/fetchTracking"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import { amountToUSDString } from "@/lib/amountToUSDString"
-import { BidRevampMetrics } from "@/contract-apis/types"
->>>>>>> cbde222 (Implemented initial tracking page)
 
 export function getTrackingTableRows(
   openedRows: number[],
   onToggleRow: (bidId: number) => void,
-  bids?: BidRevampMetrics[],
+  bids?: AugmentedBid[],
   trackings?: TrackingItem[]
 ): TrackingRow[] {
   if (!bids || !bids.length || !trackings || !trackings.length) return []
