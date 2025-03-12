@@ -1,20 +1,24 @@
-import { FC } from "react"
-import Link from "next/link"
-import { SanitizedPointBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
 import { StyledText } from "@/components/StyledText"
+import { SanitizedPointBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
+import Link from "next/link"
 
-interface OwnProps {
+export function TributesListItemPointBased({
+  tribute,
+  description,
+}: {
   tribute: SanitizedPointBasedTribute
-  description?: BidDescription;
-}
-
-const TributesListItemPointBased: FC<OwnProps> = ({ tribute, description }) => {
+  description?: BidDescriptionFromGithub
+}) {
   return (
     <div className="flex flex-col">
       {description && (
         <div className="flex flex-row items-end gap-2 not-italic">
-          <StyledText variant="link" href={description.pointProgramUrl!} as={Link}>
+          <StyledText
+            variant="link"
+            href={description.pointProgramUrl!}
+            as={Link}
+          >
             {description.projectName}
           </StyledText>
           <StyledText>- {description.title}</StyledText>
@@ -28,5 +32,3 @@ const TributesListItemPointBased: FC<OwnProps> = ({ tribute, description }) => {
     </div>
   )
 }
-
-export default TributesListItemPointBased

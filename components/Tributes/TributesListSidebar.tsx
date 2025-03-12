@@ -1,20 +1,24 @@
-import { SanitizedPointBasedTribute, SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescription } from "@/contract-apis/fetchBidDescriptions"
-import { StyledText } from "@/components/StyledText"
 import { Icon } from "@/components/Icon"
+import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   bidDetailsTributesListTooltip,
   pointBasedTributeAmountTooltip,
   tokenBasedTributeAmountTooltip,
 } from "@/components/ToolTips"
+import {
+  SanitizedPointBasedTribute,
+  SanitizedTokenBasedTribute,
+} from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
 
-interface TributesListSidebarProps {
+export function TributesListSidebar({
+  tributes,
+  bidDescription,
+}: {
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
-  bidDescription?: BidDescription
-}
-
-export function TributesListSidebar({ tributes, bidDescription }: TributesListSidebarProps) {
+  bidDescription?: BidDescriptionFromGithub
+}) {
   return (
     <div>
       <Tooltip tipContents={bidDetailsTributesListTooltip}>
@@ -29,16 +33,24 @@ export function TributesListSidebar({ tributes, bidDescription }: TributesListSi
       </Tooltip>
       <div className="flex flex-col gap-2">
         {tributes.map((tribute, index) => (
-          <Tooltip key={index} tipContents={
-            tribute.isTokenBased
-              ? tokenBasedTributeAmountTooltip
-              : pointBasedTributeAmountTooltip({
-                pointProgramUrl: bidDescription?.pointProgramUrl,
-              })
-          }>
-            <StyledText className="text-xl font-bold text-nowrap">
-              <span>{tribute.amount} {tribute.denom}</span>
-              <span className="text-xs text-nowrap mb-1"> (${tribute.valueUsd.toFixed(2)})</span>
+          <Tooltip
+            key={index}
+            tipContents={
+              tribute.isTokenBased
+                ? tokenBasedTributeAmountTooltip
+                : pointBasedTributeAmountTooltip({
+                    pointProgramUrl: bidDescription?.pointProgramUrl,
+                  })
+            }
+          >
+            <StyledText className="text-nowrap text-xl font-bold">
+              <span>
+                {tribute.amount} {tribute.denom}
+              </span>
+              <span className="mb-1 text-nowrap text-xs">
+                {" "}
+                (${tribute.valueUsd.toFixed(2)})
+              </span>
             </StyledText>
           </Tooltip>
         ))}
