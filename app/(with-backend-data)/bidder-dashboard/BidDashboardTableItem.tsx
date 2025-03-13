@@ -15,7 +15,10 @@ export function BidDashboardTableItem({
     <>
       <TR
         key={row._bid.id}
-        className={twMerge(row.additional && classNames.openedRow)}
+        className={twMerge(
+          rowProps.className,
+          row.additional && classNames.openedRow
+        )}
         {...rowProps}
       >
         {children}
@@ -25,22 +28,17 @@ export function BidDashboardTableItem({
           key={`${row._bid.id}-additional`}
           className={classNames.additionalRow}
         >
-          <TD
-            className={classNames.additionalCell}
-            colSpan={Object.keys(row).length - 2}
-          >
-            {row.additional}
-          </TD>
+          <TD colSpan={99}>{row.additional}</TD>
         </tr>
       ) : (
         <tr>
-          <td className="h-0" colSpan={Object.keys(row).length - 2}>
+          <td className="h-0" colSpan={99}>
             {" "}
           </td>
         </tr>
       )}
       <tr>
-        <td className="h-1" colSpan={Object.keys(row).length - 2}>
+        <td className="h-1" colSpan={99}>
           {" "}
         </td>
       </tr>

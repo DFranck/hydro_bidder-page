@@ -24,7 +24,7 @@ export function getBidDashboardTableColumns(
       customValueGetter: (row) => row._bid.title,
     },
     {
-      key: "yourEstimatedReward",
+      key: "tribute",
       label: (
         <Tooltip
           tipContents={estimatedRewardsColumnTooltip({

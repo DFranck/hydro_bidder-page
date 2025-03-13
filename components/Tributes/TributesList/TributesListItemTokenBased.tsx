@@ -2,34 +2,48 @@ import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
+import { twJoin, twMerge } from "tailwind-merge"
 
 export function TributesListItemTokenBased({
   tribute,
+  className,
 }: {
   tribute: SanitizedTokenBasedTribute
+  className?: string
 }) {
   return (
-    <div className="flex flex-wrap items-center">
-      <StyledText className="mr-4">
+    <div
+      className={twMerge(
+        "col-span-3 grid grid-cols-subgrid items-center gap-6",
+        "px-6 py-3",
+        "rounded-sm",
+        className
+      )}
+    >
+      <StyledText variant="label">
         {getFormatedDateFromNanos(tribute.creationTime)}
       </StyledText>
+
+      <code className="break-all">{tribute.depositor}</code>
+
       <StyledText
-        as="div"
-        className="max-w-[calc(100vw-10rem)] flex-grow overflow-hidden truncate whitespace-nowrap text-start md:max-w-full"
+        variant="h4"
+        className={twJoin("flex items-center gap-1", "text-palette-green")}
       >
-        {tribute.depositor}
-      </StyledText>
-      <div className="flex flex-row items-end gap-2 text-lg font-bold text-palette-green">
         <span>{tribute.amount}</span>
+
         <Tooltip
           tipContents={
             <div className="break-words">{tribute.denomOriginal}</div>
           }
         >
-          <span>{tribute.denom}</span>
+          <span className="border-b-2 border-dotted border-palette-green">
+            {tribute.denom}
+          </span>
         </Tooltip>
+
         <span>(${tribute.valueUsd.toFixed(2)})</span>
-      </div>
+      </StyledText>
     </div>
   )
 }

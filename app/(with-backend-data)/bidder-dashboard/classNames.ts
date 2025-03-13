@@ -6,26 +6,18 @@ export const classNames = {
     group-hover/table-row:text-palette-green
   `),
   openedRow: twJoin(`
-    !border-0
-    !bg-palette-green/5
-    max-sm:!rounded-bl-none
-    max-sm:!rounded-br-none
-    [&>td]:!rounded-bl-none
-    [&>td]:!rounded-br-none
-    [&>td]:!border-0
-    [&>td]:sm:!bg-palette-green/5
+    !rounded-b-none
+    !bg-transparent
+    [&>td]:!rounded-b-none
+    [&>td]:!bg-palette-green/10
   `),
   additionalRow: twJoin(`
     -mt-1
-    !bg-palette-green/5
-    max-sm:!rounded-tl-none
-    max-sm:!rounded-tr-none
-  `),
-  additionalCell: twJoin(`
-    !rounded-tl-none
-    !rounded-tr-none
-    !border-0
-    p-6
-    sm:!bg-palette-green/5
+    rounded-b-md
+    !bg-transparent
+    max-sm:block
+    [&>td]:!rounded-t-none
+    [&>td]:!bg-palette-green/10
+    [&>td]:!p-6
   `),
 }
