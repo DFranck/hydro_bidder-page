@@ -45,56 +45,58 @@ export function AddTributeModal({
   return (
     <ModalWindow
       isOpen={isOpened}
+      className="w-96"
       onClose={onCloseAction}
       onCloseComplete={submit}
-      className="w-[40rem]"
     >
       <Card>
         <Card.Header title={`Add Tribute to '${bid.title}'`} />
         <Card.Body>
           <form className="flex flex-col gap-6">
-            <div>
+            <div className="flex flex-col gap-1">
               <StyledText as="label" variant="label">
                 Amount:
               </StyledText>
-              <div className="flex items-center gap-2">
-                <StyledText
-                  as="input"
-                  placeholder="0.0"
-                  className="w-full"
-                  type="number"
-                  variant="input.text"
-                  value={amount}
-                  onChange={(event) => setAmount(event.target.value)}
-                />
-                <StyledText
-                  as="select"
-                  variant="input.text"
-                  value={denom}
-                  onChange={(event) => setDenom(event.target.value)}
-                >
-                  {denomList.map((denom) => (
-                    <option key={denom.value} value={denom.value}>
-                      {denom.name}
-                    </option>
-                  ))}
-                </StyledText>
-              </div>
+              <StyledText
+                as="input"
+                placeholder="0.0"
+                className="w-full"
+                type="number"
+                variant="input.text"
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <StyledText as="label" variant="label">
+                Token:
+              </StyledText>
+              <StyledText
+                as="select"
+                variant="input.text"
+                value={denom}
+                onChange={(event) => setDenom(event.target.value)}
+              >
+                {denomList.map((denom) => (
+                  <option key={denom.value} value={denom.value}>
+                    {denom.name}
+                  </option>
+                ))}
+              </StyledText>
+            </div>
+            <div className="flex flex-col gap-1">
               <StyledText as="label" variant="label">
                 Description:
               </StyledText>
-              <div className="flex items-center">
-                <StyledText
-                  as="textarea"
-                  className="w-full"
-                  variant="input.text"
-                  value={description}
-                  rows={2}
-                  onChange={(event) => setDescription(event.target.value)}
-                />
-              </div>
+              <StyledText
+                as="textarea"
+                className="w-full"
+                variant="input.text"
+                value={description}
+                rows={2}
+                onChange={(event) => setDescription(event.target.value)}
+              />
             </div>
-
             <div className="flex flex-row-reverse gap-2">
               <StyledText
                 as="button"

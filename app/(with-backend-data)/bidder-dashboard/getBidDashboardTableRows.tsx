@@ -33,7 +33,7 @@ export function getBidDashboardTableRows(
         </InvisibleButton>
       ),
 
-      yourEstimatedReward: (
+      tribute: (
         <InvisibleButton onClick={() => onToggleRow(bid.id)}>
           <BidRewards bidId={bid.id} />
         </InvisibleButton>
@@ -85,6 +85,7 @@ export function getBidDashboardTableRows(
   const tokenBasedBids = rows.filter((row) =>
     row._bid.tributes.every((t) => t.isTokenBased)
   )
+
   const pointBasedBids = rows.filter(
     (row) => !row._bid.tributes.every((t) => t.isTokenBased)
   )

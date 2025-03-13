@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { SanitizedPointBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
@@ -11,24 +12,28 @@ export function TributesListItemPointBased({
   description?: BidDescriptionFromGithub
 }) {
   return (
-    <div className="flex flex-col">
-      {description && (
-        <div className="flex flex-row items-end gap-2 not-italic">
-          <StyledText
-            variant="link"
-            href={description.pointProgramUrl!}
-            as={Link}
-          >
-            {description.projectName}
-          </StyledText>
-          <StyledText>- {description.title}</StyledText>
-        </div>
-      )}
-      <div className="flex flex-row items-end gap-2 text-xl font-bold text-palette-green">
-        <span>{tribute.amount}</span>
-        <span>{tribute.denom}</span>
+    <div className="grid grid-cols-subgrid">
+      <div>
+        <StyledText variant="h4" className="flex gap-1 text-palette-green">
+          <span>{tribute.amount}</span>
+          <span>{tribute.denom}</span>
+        </StyledText>
+
         {tribute.valueUsd > 0 && <span>(${tribute.valueUsd.toFixed(2)})</span>}
       </div>
+
+      {description && description.pointProgramUrl && (
+        <StyledText
+          variant="link"
+          href={description.pointProgramUrl}
+          as={Link}
+          target="_blank"
+          className="flex items-center gap-1"
+        >
+          <span>Learn More</span>
+          <Icon name="arrow-up-right-from-square" />
+        </StyledText>
+      )}
     </div>
   )
 }
