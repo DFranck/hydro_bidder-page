@@ -32,7 +32,6 @@ export default function RewardsPage() {
   const [isCelebrating, setIsCelebrating] = useState(false)
 
   const {
-    address,
     bidMetaDataById,
     bidsById,
     claimsHistorical,
@@ -40,11 +39,11 @@ export default function RewardsPage() {
     currentRoundId,
     votes,
   } = useBackendData()
+  const bids = Object.values(bidsById)
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
   )
-  const allBids = Object.values(bidsById)
-  const bidsToRender = allBids.filter(
+  const bidsToRender = bids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
@@ -71,8 +70,8 @@ export default function RewardsPage() {
   const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
-      const bidInfoFromGithub = bidMetaDataById[bid.id]
-      const { projectLogoUrl, projectName, title } = bidInfoFromGithub
+      const bidDescriptionFromGithub = bidMetaDataById[bid.id]
+      const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
       const tokenBasedTributes = bid.tributes.filter(
         (tribute) => tribute.isTokenBased
       )

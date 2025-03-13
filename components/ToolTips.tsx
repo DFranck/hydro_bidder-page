@@ -724,8 +724,6 @@ export const bidDetailsMaxDeploymentAmountTooltip = (
   </p>
 )
 
-<<<<<<< HEAD
-=======
 export const bidDetailsVoteReceivedTooltip = ({
   bidPower = "0",
   totalPower = "0",
@@ -760,7 +758,6 @@ export const bidDetailsVoteReceivedTooltip = ({
   </div>
 )
 
->>>>>>> b567e753 (Fix tweaker data)
 export const globalTotalAtomLockedTooltip = <p>Total ATOM locked in Hydro.</p>
 
 export const metricsPageNoDataTooltip = (
@@ -769,6 +766,7 @@ export const metricsPageNoDataTooltip = (
 
 export const bidDetailsTributesListTooltip = (
   <p>
-    Here, you can see all tributes associated with this bid, including the contributors, amounts, and token types.
+    Here, you can see all tributes associated with this bid, including the
+    contributors, amounts, and token types.
   </p>
 )

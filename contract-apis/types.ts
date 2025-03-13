@@ -414,6 +414,7 @@ export type SanitizedPointBasedTribute = {
   amount: number
   bidId: number
   denom: string
+  denomOriginal: string
   isTokenBased: false
   roundId: number
   trancheId: number
@@ -428,6 +429,7 @@ export type SanitizedTokenBasedTribute = Omit<
   amount: number
   bidId: number
   denom: string
+  denomOriginal: string
   valueUsd: number
   isTokenBased: true
 }
