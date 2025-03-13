@@ -24,7 +24,8 @@ export async function checkForNeutronLSMShares(
     denom: string
     baseDenom: string
   } | null>[] = response.balances.map(
-    (balance: { denom: string; amount: string }) => fetchDenomTrace(balance)
+    (balance: { denom: string; amount: string }) =>
+      fetchDenomTrace(balance, String(restEndpoint))
   )
   const lsmSharesResults = await Promise.all(lsmSharesPromises)
   const lsmShares = lsmSharesResults.filter((share) => share !== null)
