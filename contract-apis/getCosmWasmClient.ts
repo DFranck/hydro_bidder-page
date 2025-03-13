@@ -1,19 +1,20 @@
 // convenience func that allows doing contract queries on both server and client
 
-import { NEUTRON_DEFAULT_RPC } from "@/config"
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 
 let clientInstance: CosmWasmClient | null = null
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 async function connectWithRetry(
+  endpoint: ExtendedHttpEndpoint,
   attempts = 5,
   initialDelay = 2000
 ): Promise<CosmWasmClient> {
   for (let i = 0; i < attempts; i++) {
     try {
-      return await CosmWasmClient.connect(NEUTRON_DEFAULT_RPC)
+      return await CosmWasmClient.connect(endpoint)
     } catch (error) {
       if (i === attempts - 1) throw error // Last attempt, throw the error
 
@@ -33,9 +34,13 @@ async function connectWithRetry(
 }
 
 // without the need to wait for the client side to finish executing useChain()
-export async function getCosmWasmClient(): Promise<CosmWasmClient> {
+export async function getCosmWasmClient({
+  endpoint,
+}: {
+  endpoint: ExtendedHttpEndpoint
+}): Promise<CosmWasmClient> {
   if (!clientInstance) {
-    clientInstance = await connectWithRetry()
+    clientInstance = await connectWithRetry(endpoint)
   }
   return clientInstance
 }
