@@ -1,4 +1,5 @@
 "use client"
+
 import { fetchDenomTrace } from "@/app/(with-backend-data)/lock-atom/transactions/fetchDenomTrace"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -23,8 +24,7 @@ export async function checkForNeutronLSMShares(
     denom: string
     baseDenom: string
   } | null>[] = response.balances.map(
-    (balance: { denom: string; amount: string }) =>
-      fetchDenomTrace(balance, restEndpoint as string)
+    (balance: { denom: string; amount: string }) => fetchDenomTrace(balance)
   )
   const lsmSharesResults = await Promise.all(lsmSharesPromises)
   const lsmShares = lsmSharesResults.filter((share) => share !== null)

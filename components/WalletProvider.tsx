@@ -1,6 +1,6 @@
 "use client"
 
-import { endpoints, hubChain, neutronChain } from "@/config"
+import { endpointsOnClient, hubChain, neutronChain } from "@/config"
 import { Chain } from "@chain-registry/types"
 import { Registry } from "@cosmjs/proto-signing"
 import { AminoTypes, GasPrice } from "@cosmjs/stargate"
@@ -25,14 +25,6 @@ import {
 function gasPrices(chain: Chain | ChainName) {
   const chainName = typeof chain === "string" ? chain : chain.chain_name
   switch (chainName) {
-    // case "neutrontestnet":
-    //     return {
-    //         gasPrice: GasPrice.fromString("0.008untrn"),
-    //     }
-    // case "cosmoshubtestnet":
-    //     return {
-    //         gasPrice: GasPrice.fromString("0.005uatom"),
-    //     }
     case "cosmoshub":
       return {
         registry: new Registry([...cosmosProtoRegistry, ...ibcProtoRegistry]),
@@ -60,15 +52,7 @@ export function WalletProvider({
   return (
     <ChainProvider
       logLevel="NONE"
-      chains={[
-        // chain,
-        // testnetChain,
-        // localnetChain,
-        // pionChain,
-        ...chains,
-        hubChain,
-        neutronChain,
-      ]}
+      chains={[...chains, hubChain, neutronChain]}
       assetLists={[...assets, hubAssets, neutronAssets]}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
       walletConnectOptions={{
@@ -78,18 +62,6 @@ export function WalletProvider({
         signingStargate: (chain: any) => {
           const chainName = typeof chain === "string" ? chain : chain.chain_name
           switch (chainName) {
-            // case "neutrontestnet":
-            //     return {
-            //         gasPrice: GasPrice.fromString("0.008untrn"),
-            //     }
-            // case "cosmoshubtestnet":
-            //     return {
-            //         registry: new Registry([
-            //             ...stride.cosmosProtoRegistry,
-            //             ...stride.ibcProtoRegistry,
-            //         ]),
-            //         gasPrice: GasPrice.fromString("0.005uatom"),
-            //     }
             case "cosmoshub":
               return {
                 registry: new Registry([
@@ -119,7 +91,7 @@ export function WalletProvider({
         },
       }}
       endpointOptions={{
-        endpoints,
+        endpoints: endpointsOnClient,
         isLazy: true,
       }}
     >

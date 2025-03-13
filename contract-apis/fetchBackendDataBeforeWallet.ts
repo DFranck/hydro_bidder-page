@@ -3,6 +3,7 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Proposal, Tranche } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
+import { getEndpoints } from "@/config"
 import {
   AssetListEntry,
   fetchAssetListWithPrices,
@@ -114,7 +115,16 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     throw new Error("Hydro contract address not set")
   }
 
-  const client = await getCosmWasmClient()
+  const neutronRpcEndpoint = getEndpoints({
+    environmentVariables: {
+      NUMIA_COSMOS_HYDRO_APP_API_KEY:
+        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
+    },
+  }).neutron.rpc[0]
+
+  const client = await getCosmWasmClient({
+    endpoint: neutronRpcEndpoint,
+  })
 
   const hydroQueryClient = new HydroBaseQueryClient(
     client,

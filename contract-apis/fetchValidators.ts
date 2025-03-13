@@ -1,10 +1,15 @@
+"use server"
+
+import { ExtendedHttpEndpoint } from "@cosmos-kit/core"
 import { Validator } from "./fetchWalletValidators"
 
 export async function fetchValidators(
-  restEndpoint: string
+  restEndpoint: ExtendedHttpEndpoint
 ): Promise<Validator[]> {
+  const { url, headers } = restEndpoint
   const response = await fetch(
-    `${restEndpoint}cosmos/staking/v1beta1/validators?pagination.limit=500`
+    `${url.replace(/\/$/, "")}/cosmos/staking/v1beta1/validators?pagination.limit=500`,
+    { headers }
   )
     .then((res) => res.json())
     .then((data) => data.validators)
