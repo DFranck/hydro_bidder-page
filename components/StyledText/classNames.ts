@@ -129,5 +129,6 @@ export const classNames = {
   "mathSymbol.container": twJoin(
     "inline-flex items-center gap-0.5 whitespace-nowrap"
   ),
+
   mathSymbol: twJoin("text-sm font-bold opacity-80"),
 }
