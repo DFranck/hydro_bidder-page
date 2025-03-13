@@ -95,9 +95,7 @@ export function MetricsPage({
   type Row = (typeof tokenBasedRows)[number]
 
   const tokenBasedColumns = buildColumns({ isTokenBased: true })
-  const pointBasedColumns = buildColumns({ isTokenBased: false }).filter(
-    (column) => column.key !== "polApr"
-  )
+  const pointBasedColumns = buildColumns({ isTokenBased: false })
 
   function buildColumns({
     isTokenBased,
@@ -313,7 +311,7 @@ export function MetricsPage({
           </InvisibleLink>
         ),
 
-        polApr: !isTokenBased ? undefined : (
+        polApr: (
           <InvisibleLink href={rowURL}>
             {requestedPreHydro ? (
               <StyledText variant="mathSymbol.container">
