@@ -167,6 +167,19 @@ export const toastMessages = {
       message: `Error during transaction: ${error}`,
     }
   },
+  // AddTribute
+  addingTributeInProgress: {
+    variant: "working",
+    message: "Processing your tribute...",
+  },
+  addingTributeSuccess: {
+    variant: "success",
+    message: "Tribute added successfully! Reloading...",
+  },
+  addingTributeError: (error: Error) => ({
+    variant: "error",
+    message: `Error adding tribute: ${error}`,
+  }),
 } satisfies Record<
   string,
   DismissibleToastDescriptor | ((...args: any[]) => DismissibleToastDescriptor)
