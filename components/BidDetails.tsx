@@ -268,27 +268,25 @@ export function BidDetails({ bidId }: { bidId: number }) {
               </div>
             </div>
 
+            <div className="max-w-64 overflow-x-auto text-xl font-bold">
+              Round {bid.roundId + 1}
+            </div>
             {Boolean(bidMetricsFromNumia.currentAllocationAmount) && (
-              <>
-                <div className="max-w-64 overflow-x-auto text-xl font-bold">
-                  Round {bid.roundId + 1}
+              <div>
+                <Tooltip tipContents={bidDetailsPolSizeTooltip}>
+                  <StyledText
+                    as="h3"
+                    variant="label"
+                    className="flex cursor-default items-center gap-1 text-palette-green"
+                  >
+                    <span>Amount</span>
+                    <Icon name="circle-info" />
+                  </StyledText>
+                </Tooltip>
+                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                  <BidPolSize bidId={bidId} />
                 </div>
-                <div>
-                  <Tooltip tipContents={bidDetailsPolSizeTooltip}>
-                    <StyledText
-                      as="h3"
-                      variant="label"
-                      className="flex cursor-default items-center gap-1 text-palette-green"
-                    >
-                      <span>Amount</span>
-                      <Icon name="circle-info" />
-                    </StyledText>
-                  </Tooltip>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
-                    <BidPolSize bidId={bidId} />
-                  </div>
-                </div>
-              </>
+              </div>
             )}
 
             <div>
