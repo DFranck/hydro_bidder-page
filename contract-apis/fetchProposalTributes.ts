@@ -1,5 +1,8 @@
+"use server"
+
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
+import { getEndpoints } from "@/config"
 import { getCosmWasmClient } from "./getCosmWasmClient"
 
 export async function fetchProposalTributes(
@@ -11,7 +14,16 @@ export async function fetchProposalTributes(
     throw new Error("Tribute contract address not set")
   }
 
-  const client = await getCosmWasmClient()
+  const neutronRpcEndpoint = getEndpoints({
+    environmentVariables: {
+      NUMIA_COSMOS_HYDRO_APP_API_KEY:
+        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
+    },
+  }).neutron.rpc[0]
+
+  const client = await getCosmWasmClient({
+    endpoint: neutronRpcEndpoint,
+  })
   const tributeQueryClient = new TributeBaseQueryClient(
     client,
     process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS

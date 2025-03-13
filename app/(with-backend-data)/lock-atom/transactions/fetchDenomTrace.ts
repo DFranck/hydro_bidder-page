@@ -1,14 +1,25 @@
-"use client"
+"use server"
 
-export const fetchDenomTrace = async (
-  balance: { denom: string; amount: string },
-  restEndpoint: string
-) => {
+import { getEndpoints } from "@/config"
+
+export async function fetchDenomTrace(balance: {
+  denom: string
+  amount: string
+}) {
   if (balance.denom?.startsWith("ibc/")) {
     try {
-      const denomTraceResponse = await fetch(
-        `${restEndpoint}ibc/apps/transfer/v1/denom_traces/${balance.denom}`
-      ).then((res) => res.json())
+      const endpoint = getEndpoints({
+        environmentVariables: {
+          NUMIA_COSMOS_HYDRO_APP_API_KEY:
+            process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
+        },
+      }).neutron.rpc[0]
+
+      const url = `${endpoint.url.replace(/\/$/, "")}/ibc/apps/transfer/v1/denom_traces/${balance.denom}`
+
+      const denomTraceResponse = await fetch(url, {
+        headers: endpoint.headers,
+      }).then((res) => res.json())
       const baseDenom = denomTraceResponse.denom_trace.base_denom
 
       if (baseDenom?.startsWith("cosmosvaloper")) {

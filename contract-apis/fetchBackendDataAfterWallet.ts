@@ -2,15 +2,12 @@
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
+import { getEndpoints } from "@/config"
 import {
   AugmentedBidFromContract,
   BackendDataBeforeWallet,
 } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import {
-  augmentClaims,
-  AugmentedClaim,
-  fetchClaims,
-} from "@/contract-apis/fetchClaims"
+import { AugmentedClaim, fetchClaims } from "@/contract-apis/fetchClaims"
 import {
   fetchWalletLockups,
   SanitizedLockup,
@@ -27,6 +24,7 @@ import range from "lodash/range"
 import sortBy from "lodash/sortBy"
 import sumBy from "lodash/sumBy"
 import { unstable_cache } from "next/cache"
+import { augmentClaims } from "./augmentClaims"
 
 export interface BackendDataAfterWallet
   extends Omit<BackendDataBeforeWallet, "bids"> {
@@ -79,7 +77,16 @@ async function uncachedFetchBackendDataAfterWallet({
     throw new Error("Hydro contract address not set")
   }
 
-  const cosmWasmClient = await getCosmWasmClient()
+  const neutronRpcEndpoint = getEndpoints({
+    environmentVariables: {
+      NUMIA_COSMOS_HYDRO_APP_API_KEY:
+        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
+    },
+  }).neutron.rpc[0]
+
+  const cosmWasmClient = await getCosmWasmClient({
+    endpoint: neutronRpcEndpoint,
+  })
   const hydroQueryClient = new HydroBaseQueryClient(
     cosmWasmClient,
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
