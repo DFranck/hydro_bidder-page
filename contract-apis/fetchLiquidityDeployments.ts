@@ -1,13 +1,14 @@
+"use server"
+
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LiquidityDeployment } from "@/app/ts_types/HydroBase.types"
+import { getEndpoints } from "@/config"
 import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
-import { AssetListEntry } from "./fetchAssetListWithPrices"
-import { AugmentedCoin, getCoinWithValueInUsd } from "./getCoinWithValueInUsd"
+import { AugmentedCoin } from "./getCoinWithValueInUsd"
 import { getCosmWasmClient } from "./getCosmWasmClient"
-
 export interface AugmentedLiquidityDeployment
   extends Omit<SanitizedLiquidityDeployment, "fundsBeforeDeployment"> {
   fundsBeforeDeployment: AugmentedCoin[]
@@ -29,7 +30,16 @@ export async function fetchLiquidityDeployments({
     throw new Error("Hydro contract address not set")
   }
 
-  const client = await getCosmWasmClient()
+  const neutronRpcEndpoint = getEndpoints({
+    environmentVariables: {
+      NUMIA_COSMOS_HYDRO_APP_API_KEY:
+        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
+    },
+  }).neutron.rpc[0]
+
+  const client = await getCosmWasmClient({
+    endpoint: neutronRpcEndpoint,
+  })
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
     process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
@@ -55,33 +65,5 @@ function sanitizeLiquidityDeployment({
   return {
     ...keysFromSnakeToCamelCase(liquidityDeployment),
     bidId: proposal_id,
-  }
-}
-
-export function augmentLiquidityDeployment({
-  assetListWithPrices,
-  liquidityDeployment,
-}: {
-  assetListWithPrices: Record<string, AssetListEntry>
-  liquidityDeployment: SanitizedLiquidityDeployment
-}): AugmentedLiquidityDeployment {
-  const augmentedDeployedFunds = liquidityDeployment.deployedFunds.map((coin) =>
-    getCoinWithValueInUsd({
-      coin,
-      assetListWithPrices,
-    })
-  )
-  const augmentedFundsBeforeDeployment =
-    liquidityDeployment.fundsBeforeDeployment.map((coin) =>
-      getCoinWithValueInUsd({
-        coin,
-        assetListWithPrices,
-      })
-    )
-
-  return {
-    ...liquidityDeployment,
-    deployedFunds: augmentedDeployedFunds,
-    fundsBeforeDeployment: augmentedFundsBeforeDeployment,
   }
 }

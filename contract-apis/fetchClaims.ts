@@ -1,10 +1,9 @@
+"use server"
+
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import { TributeClaim } from "@/app/ts_types/TributeBase.types"
-import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
-import {
-  AugmentedCoin,
-  getCoinWithValueInUsd,
-} from "@/contract-apis/getCoinWithValueInUsd"
+import { getEndpoints } from "@/config"
+import { AugmentedCoin } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import {
   CamelCaseKeys,
@@ -12,7 +11,7 @@ import {
 } from "@/lib/keysFromSnakeToCamelCase"
 import range from "lodash/range"
 
-interface SanitizedClaim
+export interface SanitizedClaim
   extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {
   bidId: number
 }
@@ -37,7 +36,16 @@ export async function fetchClaims({
     throw new Error("Tribute contract address not set")
   }
 
-  const client = await getCosmWasmClient()
+  const neutronRpcEndpoint = getEndpoints({
+    environmentVariables: {
+      NUMIA_COSMOS_HYDRO_APP_API_KEY:
+        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
+    },
+  }).neutron.rpc[0]
+
+  const client = await getCosmWasmClient({
+    endpoint: neutronRpcEndpoint,
+  })
   const tributeQueryClient = new TributeBaseQueryClient(
     client,
     process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
@@ -100,20 +108,4 @@ function sanitizeClaims(claims: TributeClaim[]): SanitizedClaim[] {
       bidId: proposal_id,
     })
   )
-}
-
-export function augmentClaims({
-  assetListWithPrices,
-  claims,
-}: {
-  assetListWithPrices: Record<string, AssetListEntry>
-  claims: SanitizedClaim[]
-}): AugmentedClaim[] {
-  return claims.map((claim) => ({
-    ...claim,
-    amount: getCoinWithValueInUsd({
-      coin: claim.amount,
-      assetListWithPrices,
-    }),
-  }))
 }

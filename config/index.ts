@@ -10,15 +10,7 @@ export enum AllowedLockupPeriodInEpochs {
 
 export const HYDRO_TELEGRAM_URL = "https://t.me/+xUzNOTZjUNw5Mzhk"
 
-export const endpoints = {
-  // cosmoshubtestnet: {
-  //     rpc: ["https://rpc.sentry-01.theta-testnet.polypore.xyz"],
-  //     rest: ["https://rest.sentry-01.theta-testnet.polypore.xyz"],
-  // },
-  // neutrontestnet: {
-  //     rpc: ["https://rpc-palvus.pion-1.ntrn.tech"],
-  //     rest: ["https://rest-palvus.pion-1.ntrn.tech"],
-  // },
+export const endpointsOnClient = {
   neutron: {
     rpc: ["https://rpc.cosmos.directory/neutron"],
     rest: ["https://rest.cosmos.directory/neutron/"],
@@ -29,7 +21,54 @@ export const endpoints = {
   },
 }
 
-export const NEUTRON_DEFAULT_RPC = "https://rpc.cosmos.directory/neutron"
+export const getEndpoints = ({
+  environmentVariables,
+}: {
+  environmentVariables: {
+    NUMIA_COSMOS_HYDRO_APP_API_KEY: string
+  }
+}) => ({
+  neutron: {
+    rpc: [
+      {
+        url: "https://neutron-rpc.numia.xyz/",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+        },
+      },
+    ],
+    rest: [
+      {
+        url: "https://neutron-lcd.numia.xyz/",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+        },
+      },
+    ],
+  },
+  cosmoshub: {
+    rpc: [
+      {
+        url: "https://cosmos-rpc.numia.xyz/",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+        },
+      },
+    ],
+    rest: [
+      {
+        url: "https://cosmos-lcd.numia.xyz/",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+        },
+      },
+    ],
+  },
+})
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 

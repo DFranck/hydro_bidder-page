@@ -1,3 +1,5 @@
+"use server"
+
 import { defaultMetadata, metadataByRoute } from "@/app/metadata"
 import { inter } from "@/lib/font"
 import sortBy from "lodash/sortBy"
