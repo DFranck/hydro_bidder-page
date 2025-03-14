@@ -131,7 +131,7 @@ export async function fetchNumiaBidData(): Promise<{
     {
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TEMP_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
       },
     }
   )

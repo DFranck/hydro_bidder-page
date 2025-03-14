@@ -1,6 +1,6 @@
 "use server"
 
-import { getEndpoints } from "@/config"
+import { endpointsShared } from "@/config"
 
 export async function fetchDenomTrace(balance: {
   denom: string
@@ -8,12 +8,7 @@ export async function fetchDenomTrace(balance: {
 }) {
   if (balance.denom?.startsWith("ibc/")) {
     try {
-      const endpoint = getEndpoints({
-        environmentVariables: {
-          NUMIA_COSMOS_HYDRO_APP_API_KEY:
-            process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-        },
-      }).neutron.rpc[0]
+      const endpoint = endpointsShared.neutron.rpc[0]
 
       const url = `${endpoint.url.replace(/\/$/, "")}/ibc/apps/transfer/v1/denom_traces/${balance.denom}`
 
