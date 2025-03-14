@@ -1,6 +1,6 @@
 "use server"
 
-import { getEndpoints } from "@/config"
+import { endpointsOnServer } from "@/config"
 import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export async function fetchDenomTrace(balance: {
@@ -9,18 +9,14 @@ export async function fetchDenomTrace(balance: {
 }) {
   if (balance.denom?.startsWith("ibc/")) {
     try {
-      const endpoint = getEndpoints({
-        environmentVariables: {
-          NUMIA_COSMOS_HYDRO_APP_API_KEY:
-            process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-        },
-      }).neutron.rpc[0]
+      const endpoint = endpointsOnServer.neutron.rpc[0]
 
       const url = `${endpoint.url.replace(/\/$/, "")}/ibc/apps/transfer/v1/denom_traces/${balance.denom}`
 
       const denomTraceResponse = await fetchWithRetry(url, {
         headers: endpoint.headers,
       }).then((res) => res.json())
+
       const baseDenom = denomTraceResponse.denom_trace.base_denom
 
       if (baseDenom?.startsWith("cosmosvaloper")) {

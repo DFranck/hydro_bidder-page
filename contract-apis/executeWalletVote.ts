@@ -1,4 +1,5 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { SanitizedLockup } from "@/contract-apis/types"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
@@ -20,7 +21,7 @@ export async function executeWalletVote({
   const hydroClient = new HydroBaseClient(
     client,
     address,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS!
+    getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
   )
 
   const { round_id: currentRoundId } = await hydroClient.currentRound()

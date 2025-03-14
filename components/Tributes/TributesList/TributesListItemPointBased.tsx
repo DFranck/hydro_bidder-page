@@ -1,7 +1,9 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { SanitizedPointBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
+import {
+  BidMetaDataSlimmed,
+  SanitizedPointBasedTribute,
+} from "@/contract-apis/types"
 import Link from "next/link"
 
 export function TributesListItemPointBased({
@@ -9,7 +11,7 @@ export function TributesListItemPointBased({
   description,
 }: {
   tribute: SanitizedPointBasedTribute
-  description?: BidDescriptionFromGithub
+  description?: BidMetaDataSlimmed
 }) {
   return (
     <div className="grid grid-cols-subgrid">

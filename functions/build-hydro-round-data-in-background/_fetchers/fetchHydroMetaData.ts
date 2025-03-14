@@ -3,17 +3,8 @@
 import { getHydroQueryClient } from "@/contract-apis/getClient"
 import { RawHydroMetaData } from "@/contract-apis/types"
 
-export async function fetchHydroMetaData({
-  hydroContractAddress,
-  numiaCosmosHydroAppApiKey,
-}: {
-  hydroContractAddress: string
-  numiaCosmosHydroAppApiKey: string
-}): Promise<RawHydroMetaData> {
-  const hydroQueryClient = await getHydroQueryClient({
-    hydroContractAddress,
-    numiaCosmosHydroAppApiKey,
-  })
+export async function fetchHydroMetaData(): Promise<RawHydroMetaData> {
+  const hydroQueryClient = await getHydroQueryClient()
 
   const [
     { constants },

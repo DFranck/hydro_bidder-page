@@ -1,16 +1,19 @@
-import { TrackingRow } from "@/app/(with-backend-data)/tracking/page"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { BalanceItem, TrackingItem } from "@/contract-apis/types"
+import {
+  BalanceItem,
+  BidRevampMetrics,
+  TrackingItem,
+  TrackingRow,
+} from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 
 export function getTrackingTableRows(
   openedRows: number[],
   onToggleRow: (bidId: number) => void,
-  bids?: AugmentedBid[],
+  bids?: BidRevampMetrics[],
   trackings?: TrackingItem[]
 ): TrackingRow[] {
   if (!bids || !bids.length || !trackings || !trackings.length) return []

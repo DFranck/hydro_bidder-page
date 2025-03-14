@@ -311,7 +311,7 @@ export default function BidsPage() {
         <StatCards.CurrentRoundTimeLeft />
       </StatCards>
 
-      <ContentContainer className="gap-12 py-6 outline">
+      <ContentContainer className="gap-12 py-6">
         <LoadingSpinner isLoading={isLoading} />
 
         {!isLoading && bidsInRound.length === 0 && (

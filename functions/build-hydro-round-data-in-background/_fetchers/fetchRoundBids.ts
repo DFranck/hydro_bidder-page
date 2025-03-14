@@ -1,24 +1,29 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Proposal } from "@/app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 
 export async function fetchRoundBids({
   roundId,
   trancheId,
   currentRoundId,
-  hydroContractAddress,
-  numiaBidsEndpoint,
-  numiaCosmosHydroAppApiKey,
 }: {
   roundId: number
   trancheId: number
   currentRoundId: number
-  hydroContractAddress: string
-  numiaBidsEndpoint: string
-  numiaCosmosHydroAppApiKey: string
 }): Promise<Proposal[]> {
+  const numiaBidsEndpoint = getEnvironmentVariable(
+    "NEXT_PUBLIC_NUMIA_BIDS_ENDPOINT"
+  )
+  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
+    "NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY"
+  )
+  const hydroContractAddress = getEnvironmentVariable(
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"
+  )
+
   if (currentRoundId === roundId) {
-    const client = await getCosmWasmClient({ numiaCosmosHydroAppApiKey })
+    const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
       client,
       hydroContractAddress

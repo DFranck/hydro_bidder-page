@@ -1,23 +1,28 @@
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import "@netlify/functions"
 
 export async function fetchRoundTributes({
   roundId,
   currentRoundId,
-  numiaTributesEndpoint,
-  numiaCosmosHydroAppApiKey,
-  tributeContractAddress,
 }: {
   roundId: number
   currentRoundId: number
-  numiaTributesEndpoint: string
-  numiaCosmosHydroAppApiKey: string
-  tributeContractAddress: string
 }): Promise<Tribute[]> {
+  const numiaTributesEndpoint = getEnvironmentVariable(
+    "NEXT_PUBLIC_NUMIA_TRIBUTES_ENDPOINT"
+  )
+  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
+    "NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY"
+  )
+  const tributeContractAddress = getEnvironmentVariable(
+    "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS"
+  )
+
   if (currentRoundId === roundId) {
-    const client = await getCosmWasmClient({ numiaCosmosHydroAppApiKey })
+    const client = await getCosmWasmClient()
     const tributeQueryClient = new TributeBaseQueryClient(
       client,
       tributeContractAddress

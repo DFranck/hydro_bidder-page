@@ -1,5 +1,3 @@
-"use server"
-
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { SanitizedLockup } from "@/contract-apis/types"
 import { getDaysAway } from "@/lib/getDaysAway"

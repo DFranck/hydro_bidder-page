@@ -1,16 +1,11 @@
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import "@netlify/functions"
 
 export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
-  const numiaUsersEndpoint = Netlify.env.get("NUMIA_USERS_ENDPOINT")
-  const numiaCosmosHydroAppApiKey = Netlify.env.get(
+  const numiaUsersEndpoint = getEnvironmentVariable("NUMIA_USERS_ENDPOINT")
+  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
     "NUMIA_COSMOS_HYDRO_APP_API_KEY"
   )
-  if (!numiaUsersEndpoint) {
-    throw new Error("NUMIA_USERS_ENDPOINT not set")
-  }
-  if (!numiaCosmosHydroAppApiKey) {
-    throw new Error("NUMIA_COSMOS_HYDRO_APP_API_KEY not set")
-  }
 
   const response = await fetch(`${numiaUsersEndpoint}`, {
     headers: {

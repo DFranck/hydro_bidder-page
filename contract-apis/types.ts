@@ -1,3 +1,5 @@
+import { BaseRowObject } from "@/components/StyledTable/types"
+import { ReactNode } from "react"
 import {
   Coin,
   Constants,
@@ -127,10 +129,8 @@ export type AugmentedBidFromNumiaSlimmed = Omit<
   "description"
 >
 
-export interface AugmentedClaim
-  extends Omit<CamelCaseKeys<TributeClaim>, "amount" | "proposalId"> {
+export type AugmentedClaim = Omit<SanitizedClaim, "amount"> & {
   amount: AugmentedCoin
-  bidId: number
 }
 
 export interface AugmentedCoin extends Coin {
@@ -215,6 +215,17 @@ export interface BidRevampMetrics {
   tribute_value: number
   tribute: [string, number][]
   vote_perc: number
+}
+
+export interface EnvironmentVariables {
+  NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS: string
+  NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS: string
+  NUMIA_BIDS_ENDPOINT: string
+  NUMIA_COSMOS_HYDRO_APP_API_KEY: string
+  NUMIA_LOCKUPS_ENDPOINT: string
+  NUMIA_TRIBUTES_ENDPOINT: string
+  NUMIA_USERS_ENDPOINT: string
+  URL: string
 }
 
 export interface GlobalLockupCapacityInfo {
@@ -437,6 +448,55 @@ export type SanitizedTokenBasedTribute = Omit<
 export interface SanitizedVote
   extends Omit<CamelCaseKeys<VoteWithPower>, "propId"> {
   bidId: number
+}
+
+export interface SanitizedClaim
+  extends Omit<CamelCaseKeys<TributeClaim>, "proposalId"> {
+  bidId: number
+}
+
+export interface TrackingItem {
+  bid_id: number
+  initial_atom_allocation: number
+  holdings: HoldingItem[]
+}
+
+export interface TrackingRow extends BaseRowObject {
+  _bid: BidRevampMetrics
+  _tracking: TrackingItem
+  roundId: ReactNode
+  logoAndTitle: ReactNode
+  venueTvl: ReactNode
+  committeeHolding: ReactNode
+  actions: ReactNode
+  additional?: ReactNode
+}
+
+export interface HoldingItem {
+  info_missing: boolean
+  protocol: string
+  venue_total: {
+    balances: BalanceItem[]
+    total_usdc: number
+    total_atom: number
+  }
+  address_holdings: {
+    balances: BalanceItem[]
+    total_usdc: number
+    total_atom: number
+  }
+  address_rewards: {
+    balances: BalanceItem[]
+    total_usdc: number
+    total_atom: number
+  }
+}
+
+export interface BalanceItem {
+  denom: string
+  amount: number
+  usd_value: number
+  display_name: string
 }
 
 type WithOverwrites<T> = T extends object

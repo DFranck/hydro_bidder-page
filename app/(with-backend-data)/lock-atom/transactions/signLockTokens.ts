@@ -1,5 +1,6 @@
 "use client"
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { StdFee } from "@cosmjs/amino"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -21,12 +22,12 @@ export async function signLockTokens(
   const hydroClient = new HydroBaseClient(
     client,
     neutronChain.address,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS!
+    getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
   )
 
   // pepare message for simulating gas
   const simulateMsg = MsgExecuteContract.fromPartial({
-    contract: process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS,
+    contract: getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"),
     sender: neutronChain.address,
     msg: new TextEncoder().encode(
       JSON.stringify({

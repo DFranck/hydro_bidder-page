@@ -11,14 +11,16 @@ import {
 import { Tooltip } from "@/components/Tooltip"
 import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
 import { TributesList } from "@/components/Tributes/TributesList/TributesList"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
+import {
+  AugmentedBidAfterWallet,
+  BidMetaDataByIdSlimmed,
+} from "@/contract-apis/types"
 
 export function getBidDashboardTableRows(
   openedRows: number[],
   onToggleRow: (bidId: number) => void,
-  bids?: AugmentedBid[],
-  bidDescriptions?: Record<string, BidDescriptionFromGithub>
+  bids?: AugmentedBidAfterWallet[],
+  bidDescriptions?: BidMetaDataByIdSlimmed
 ): { token: BidRow[]; point: BidRow[] } {
   if (!bids || !bids.length) return { token: [], point: [] }
 

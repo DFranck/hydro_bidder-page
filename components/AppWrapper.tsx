@@ -12,7 +12,6 @@ import dynamic from "next/dynamic"
 import { ReactNode, Suspense } from "react"
 import { twJoin } from "tailwind-merge"
 
-// Dynamic imports for heavy components
 const WalletProvider = dynamic(
   () => import("@/components/WalletProvider").then((mod) => mod.WalletProvider),
   {
@@ -21,16 +20,18 @@ const WalletProvider = dynamic(
   }
 )
 
-const BackendDataTweaker = dynamic(
-  () =>
-    import("@/components/BackendDataTweakerLoader").then(
-      (mod) => mod.BackendDataTweaker
-    ),
-  {
-    loading: () => null,
-    ssr: false,
-  }
-)
+import { BackendDataTweaker } from "@/components/BackendDataTweaker"
+
+// const BackendDataTweaker = dynamic(
+//   () =>
+//     import("@/components/BackendDataTweakerLoader").then(
+//       (mod) => mod.BackendDataTweaker
+//     ),
+//   {
+//     loading: () => null,
+//     ssr: false,
+//   }
+// )
 
 const QueryClientProvider = dynamic(
   () =>
@@ -80,7 +81,13 @@ export function AppWrapper({
                   rawBackendDataBeforeWallet={rawBackendDataBeforeWallet!}
                 >
                   {children}
-                  <Suspense fallback={null}>
+                  <Suspense
+                    fallback={
+                      <div className="fixed inset-12 z-50 bg-red-500">
+                        Tweaker failed to load
+                      </div>
+                    }
+                  >
                     <BackendDataTweaker />
                   </Suspense>
                 </BackendDataContextProvider>

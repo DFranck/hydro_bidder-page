@@ -1,6 +1,6 @@
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { SanitizedTokenBasedTribute } from "@/contract-apis/types"
 import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
 import { twJoin, twMerge } from "tailwind-merge"
 

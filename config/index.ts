@@ -1,3 +1,4 @@
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { AssetList, Chain } from "@chain-registry/types"
 
 export const CHAIN_NAME = "localchain"
@@ -22,20 +23,14 @@ export const endpointsOnClient = {
   },
 }
 
-export const getEndpoints = ({
-  environmentVariables,
-}: {
-  environmentVariables: {
-    NUMIA_COSMOS_HYDRO_APP_API_KEY: string
-  }
-}) => ({
+export const endpointsOnServer = {
   neutron: {
     rpc: [
       {
         url: "https://neutron-rpc.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
         },
       },
     ],
@@ -44,7 +39,7 @@ export const getEndpoints = ({
         url: "https://neutron-lcd.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
         },
       },
     ],
@@ -55,7 +50,7 @@ export const getEndpoints = ({
         url: "https://cosmos-rpc.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
         },
       },
     ],
@@ -64,12 +59,12 @@ export const getEndpoints = ({
         url: "https://cosmos-lcd.numia.xyz/",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${environmentVariables.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
         },
       },
     ],
   },
-})
+}
 
 export const DEFAULT_EPOCH_LENGTH = 2628000000000000
 
@@ -85,7 +80,9 @@ export const ATOM_PRICE_URL =
 
 export const EPOCH_LENGTH = 2628000000000000
 
-export const DEFAULT_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN || "localchain"
+export const DEFAULT_CHAIN =
+  getEnvironmentVariable("NEXT_PUBLIC_USE_CHAIN", { allowNull: true }) ||
+  "localchain"
 
 export const testnetChain: Chain = {
   $schema: "../../chain.schema.json",

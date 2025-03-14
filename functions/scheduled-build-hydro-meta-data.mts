@@ -8,14 +8,7 @@ import { fetchHydroMetaData } from "./build-hydro-round-data-in-background/_fetc
 export default async function () {
   console.log("Building hydro meta data...")
 
-  const hydroMetaData = await fetchHydroMetaData({
-    hydroContractAddress: Netlify.env.get(
-      "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"
-    )!,
-    numiaCosmosHydroAppApiKey: Netlify.env.get(
-      "NUMIA_COSMOS_HYDRO_APP_API_KEY"
-    )!,
-  })
+  const hydroMetaData = await fetchHydroMetaData()
 
   const rawStaticHydroMetaData: RawStaticHydroMetaData = {
     timestamp: Date.now(),

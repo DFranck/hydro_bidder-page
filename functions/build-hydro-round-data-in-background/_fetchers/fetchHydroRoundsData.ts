@@ -4,25 +4,8 @@ import { fetchRoundBids } from "@/functions/build-hydro-round-data-in-background
 import { fetchRoundLockups } from "@/functions/build-hydro-round-data-in-background/_fetchers/fetchRoundLockups"
 import { fetchRoundTributes } from "@/functions/build-hydro-round-data-in-background/_fetchers/fetchRoundTributes"
 
-export async function fetchHydroRoundsData({
-  hydroContractAddress,
-  numiaCosmosHydroAppApiKey,
-  numiaBidsEndpoint,
-  numiaTributesEndpoint,
-  numiaLockupsEndpoint,
-  tributeContractAddress,
-}: {
-  hydroContractAddress: string
-  numiaCosmosHydroAppApiKey: string
-  numiaBidsEndpoint: string
-  numiaTributesEndpoint: string
-  numiaLockupsEndpoint: string
-  tributeContractAddress: string
-}): Promise<RawHydroRoundData[]> {
-  const hydroQueryClient = await getHydroQueryClient({
-    hydroContractAddress,
-    numiaCosmosHydroAppApiKey,
-  })
+export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
+  const hydroQueryClient = await getHydroQueryClient()
 
   // Fetch Rounds & Tranches data to iterate over
   const { round_end, round_id } = await hydroQueryClient.currentRound()
@@ -40,16 +23,10 @@ export async function fetchHydroRoundsData({
       const roundTributes = await fetchRoundTributes({
         roundId: evaluatedRoundId,
         currentRoundId: round_id,
-        numiaTributesEndpoint,
-        numiaCosmosHydroAppApiKey,
-        tributeContractAddress,
       })
       const roundLockups = await fetchRoundLockups({
         roundId: evaluatedRoundId,
         currentRoundId: round_id,
-        numiaCosmosHydroAppApiKey,
-        numiaLockupsEndpoint,
-        hydroContractAddress,
       })
 
       // Fetch bids for each tranche in the evaluated round
@@ -60,9 +37,6 @@ export async function fetchHydroRoundsData({
               roundId: evaluatedRoundId,
               trancheId: tranche_id,
               currentRoundId: round_id,
-              hydroContractAddress,
-              numiaBidsEndpoint,
-              numiaCosmosHydroAppApiKey,
             })
           })
         )

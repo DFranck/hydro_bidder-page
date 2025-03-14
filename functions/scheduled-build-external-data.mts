@@ -15,20 +15,8 @@ export default async function () {
     await Promise.all([
       fetchAssetListWithPrices(),
       fetchBidMetaDataById(),
-      fetchNumiaBidData({
-        numiaCosmosHydroAppApiKey: Netlify.env.get(
-          "NUMIA_COSMOS_HYDRO_APP_API_KEY"
-        )!,
-        numiaDeploymentsOverviewEndpoint: Netlify.env.get(
-          "NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT"
-        )!,
-      }),
-      fetchNumiaMetricsData({
-        numiaCosmosHydroAppApiKey: Netlify.env.get(
-          "NUMIA_COSMOS_HYDRO_APP_API_KEY"
-        )!,
-        numiaMetricsEndpoint: Netlify.env.get("NUMIA_METRICS_ENDPOINT")!,
-      }),
+      fetchNumiaBidData(),
+      fetchNumiaMetricsData(),
     ])
 
   const rawStaticExternalData: RawStaticExternalData = {

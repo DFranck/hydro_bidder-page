@@ -1,4 +1,5 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
 export async function executeWalletUnlockExpired({
@@ -15,7 +16,7 @@ export async function executeWalletUnlockExpired({
   const hydroClient = new HydroBaseClient(
     client,
     address,
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS!
+    getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
   )
 
   const response = await hydroClient.unlockTokens({ lockIds })

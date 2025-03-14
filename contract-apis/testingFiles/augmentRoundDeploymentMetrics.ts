@@ -1,7 +1,11 @@
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
-import { AssetListWithPrices, ProposalSlimmed } from "../types"
+import {
+  AssetListWithPrices,
+  BidRevampMetrics,
+  ProposalSlimmed,
+} from "../types"
 
 export function augmentRoundDeploymentMetrics(
   roundId: number,
@@ -11,7 +15,7 @@ export function augmentRoundDeploymentMetrics(
   roundPrices: AssetListWithPrices, //{[key: string] : { token_symbol: string, decimals: number, priceUsd: number }},
   bidDescriptions: Record<string, any>,
   currentRoundId: number
-) {
+): BidRevampMetrics[] {
   const proposalsTributes: Record<string, Record<string, number>> = {}
   const proposalsVotes: Record<string, any> = {}
 

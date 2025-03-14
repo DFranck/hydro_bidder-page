@@ -4,12 +4,16 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
-import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
+import {
+  AugmentedBidAfterWallet,
+  SanitizedTokenBasedTribute,
+} from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { getAddress, useCreateSkipClientMemo } from "@/lib/skipApi"
 import { useChain } from "@cosmos-kit/react"
-import { ReactNode, useEffect, useState } from "react"
 import { RouteResponse } from "@skip-go/client"
 import {
   assets as hubAssets,
@@ -19,9 +23,8 @@ import {
   assets as neutronAssets,
   chain as neutronChain,
 } from "chain-registry/mainnet/neutron"
+import { ReactNode, useEffect, useState } from "react"
 import { Step } from "../lock-atom/steppers/Step"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
 
 type ClaimRewardsStep = "Init" | "ConvertToAtom"
 
@@ -31,7 +34,7 @@ export default function ClaimRewardsStepper({
   onExit,
 }: {
   tribute: SanitizedTokenBasedTribute | null
-  bid: AugmentedBid | null
+  bid: AugmentedBidAfterWallet | null
   onExit: (success?: boolean) => void
 }) {
   const [isLoading, setIsLoading] = useState(false)
@@ -93,14 +96,14 @@ export default function ClaimRewardsStepper({
       })
 
       if (convertToAtom) {
-        if (!process.env.NEXT_PUBLIC_ATOM_DENOM) return
+        if (!getEnvironmentVariable("NEXT_PUBLIC_ATOM_DENOM")) return
         setToasts([toastMessages.searchingConvertRoute])
 
         const route = await skipClient.route({
           amountIn: tribute.amount.toString(),
           sourceAssetDenom: tribute.denomOriginal,
           sourceAssetChainID: neutronChainId,
-          destAssetDenom: process.env.NEXT_PUBLIC_ATOM_DENOM,
+          destAssetDenom: getEnvironmentVariable("NEXT_PUBLIC_ATOM_DENOM"),
           destAssetChainID: cosmosHubChainId,
         })
         setToasts([])
@@ -213,7 +216,7 @@ export default function ClaimRewardsStepper({
                     name="claimType"
                     checked={claimType === "convert"}
                     onChange={() => setClaimType("convert")}
-                    disabled={!process.env.NEXT_PUBLIC_ATOM_DENOM}
+                    disabled={!getEnvironmentVariable("NEXT_PUBLIC_ATOM_DENOM")}
                   />
                   <StyledText>
                     {formatAmount(tribute!.valueUsd / atomPrice)}
@@ -232,7 +235,7 @@ export default function ClaimRewardsStepper({
                 claimRewards(claimType === "convert")
               },
               className: "bg-palette-green",
-              disabled: isLoading
+              disabled: isLoading,
             },
             {
               label: "Cancel",
@@ -257,7 +260,7 @@ export default function ClaimRewardsStepper({
         const srcTokenImgUrl = tributeAsset?.logo_URIs?.svg
 
         const atomAsset = hubAssets.assets.find(
-          (x) => x.base === process.env.NEXT_PUBLIC_ATOM_DENOM
+          (x) => x.base === getEnvironmentVariable("NEXT_PUBLIC_ATOM_DENOM")
         )
         const destTokenImgUrl = atomAsset?.logo_URIs?.svg
 
@@ -339,7 +342,7 @@ export default function ClaimRewardsStepper({
               label: "Convert",
               onClick: convertToAtom,
               className: "bg-palette-green",
-              disabled: isLoading
+              disabled: isLoading,
             },
           ],
         }

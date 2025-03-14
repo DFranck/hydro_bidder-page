@@ -26,6 +26,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { BidMetaData } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -82,7 +83,10 @@ export function BidDetails({
     onchainTributeUsdc: 0,
   }
 
-  if (!bidInfoFromGithub && process.env.NODE_ENV !== "development") {
+  if (
+    !bidInfoFromGithub &&
+    getEnvironmentVariable("NODE_ENV") !== "development"
+  ) {
     return (
       <ErrorBox>
         This bid is active on the Hydro smart sontract but has not yet been

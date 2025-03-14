@@ -4,52 +4,39 @@ import {
   TributeBaseQueryClient,
 } from "@/app/ts_types/TributeBase.client"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
-export async function getHydroQueryClient({
-  hydroContractAddress,
-  numiaCosmosHydroAppApiKey,
-}: {
-  hydroContractAddress: string
-  numiaCosmosHydroAppApiKey: string
-}) {
-  const client = await getCosmWasmClient({ numiaCosmosHydroAppApiKey })
+export async function getHydroQueryClient() {
+  const client = await getCosmWasmClient()
   const hydroQueryClient = new HydroBaseQueryClient(
     client,
-    hydroContractAddress
+    getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
   )
   return hydroQueryClient
 }
 
-export async function getTributeQueryClient({
-  tributeContractAddress,
-  numiaCosmosHydroAppApiKey,
-}: {
-  tributeContractAddress: string
-  numiaCosmosHydroAppApiKey: string
-}) {
-  const client = await getCosmWasmClient({ numiaCosmosHydroAppApiKey })
+export async function getTributeQueryClient() {
+  const client = await getCosmWasmClient()
   const tributeQueryClient = new TributeBaseQueryClient(
     client,
-    tributeContractAddress
+    getEnvironmentVariable("NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS")
   )
   return tributeQueryClient
 }
 
 export async function getTributeSigningClient({
   address,
-  tributeContractAddress,
   getSigningCosmWasmClient,
 }: {
   address: string
-  tributeContractAddress: string
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
 }) {
   const client = await getSigningCosmWasmClient()
   const tributeClient = new TributeBaseClient(
     client,
     address,
-    tributeContractAddress
+    getEnvironmentVariable("NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS")
   )
   return tributeClient
 }

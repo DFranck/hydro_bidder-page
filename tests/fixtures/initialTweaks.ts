@@ -1,7 +1,7 @@
 import { BackendDataTweak, BidMetaDataById } from "@/contract-apis/types"
 import hydroStateSnapshot from "./hydro-state-snapshot.json"
 
-const roundId = 99
+const dummyBidRoundId = 5
 const originalBidsInRoundId3 = hydroStateSnapshot.hydroRoundData[3].round_bids
 const originalBidsInRoundId1 = hydroStateSnapshot.hydroRoundData[1].round_bids
 const originalNumiaBidsForBoth =
@@ -17,21 +17,24 @@ const originalBidMetadataForBoth = Object.fromEntries(
 
 const bidsInTrancheOne = originalBidsInRoundId3.map((bid) => ({
   ...bid,
-  round_id: roundId,
+  round_id: dummyBidRoundId,
   tranche_id: 1,
   title: `[1] ${bid.title}`,
 }))
+
 const bidsInTrancheTwo = originalBidsInRoundId1.map((bid) => ({
   ...bid,
-  round_id: roundId,
+  round_id: dummyBidRoundId,
   tranche_id: 2,
   title: `[2] ${bid.title}`,
 }))
+
 const numiaBids = originalNumiaBidsForBoth.map((numiaBid) => ({
   ...numiaBid,
-  round: roundId.toString(),
+  round: dummyBidRoundId.toString(),
   tranche: numiaBid.tranche === "1" ? 1 : 2,
 }))
+
 const bidMetaDataById = Object.fromEntries(
   Object.entries(originalBidMetadataForBoth).map(([bidId, bidMetadata]) => [
     bidId,
@@ -55,12 +58,12 @@ export const initialTweaks: BackendDataTweak[] = [
             metadata: "A bucket of USDC to deploy as PoL",
           },
         ],
-        round_id: roundId,
+        round_id: dummyBidRoundId,
       },
       hydroRoundData: [
         {
           round_bids: [...bidsInTrancheOne, ...bidsInTrancheTwo],
-          round_id: roundId,
+          round_id: dummyBidRoundId,
           round_lockups: [],
           round_tributes: [],
         },

@@ -1,17 +1,19 @@
 import { RawNumiaBid } from "@/contract-apis/types"
 import { fetchWithRetry } from "./fetchWithRetry"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 
 export const typeToTokenMap = {
   "ibc/837E876E": "SWTH",
 }
 
-export async function fetchNumiaBidData({
-  numiaCosmosHydroAppApiKey,
-  numiaDeploymentsOverviewEndpoint,
-}: {
-  numiaCosmosHydroAppApiKey: string
-  numiaDeploymentsOverviewEndpoint: string
-}): Promise<RawNumiaBid[]> {
+export async function fetchNumiaBidData(): Promise<RawNumiaBid[]> {
+  const numiaDeploymentsOverviewEndpoint = getEnvironmentVariable(
+    "NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT"
+  )
+  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
+  )
+
   const response = await fetchWithRetry(`${numiaDeploymentsOverviewEndpoint}`, {
     headers: {
       Accept: "application/json",

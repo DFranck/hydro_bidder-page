@@ -1,26 +1,31 @@
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import "@netlify/functions"
 import { fetchHistoricUsers } from "./fetchHistoricUsers"
 
 export async function fetchRoundLockups({
   roundId,
   currentRoundId,
-  numiaCosmosHydroAppApiKey,
-  numiaLockupsEndpoint,
-  hydroContractAddress,
 }: {
   roundId: number
   currentRoundId: number
-  numiaCosmosHydroAppApiKey: string
-  numiaLockupsEndpoint: string
-  hydroContractAddress: string
 }): Promise<LockupWithPerTrancheInfo[][]> {
+  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
+    "NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY"
+  )
+  const numiaLockupsEndpoint = getEnvironmentVariable(
+    "NEXT_PUBLIC_NUMIA_LOCKUPS_ENDPOINT"
+  )
+  const hydroContractAddress = getEnvironmentVariable(
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"
+  )
+
   if (currentRoundId == roundId) {
     const { users } = await fetchHistoricUsers()
 
-    const client = await getCosmWasmClient({ numiaCosmosHydroAppApiKey })
+    const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
       client,
       hydroContractAddress

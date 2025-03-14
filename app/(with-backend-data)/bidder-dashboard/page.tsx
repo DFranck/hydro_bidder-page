@@ -11,13 +11,13 @@ import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { StyledTable } from "@/components/StyledTable"
 import { BaseRowObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import xor from "lodash/xor"
 import { ReactNode, useMemo, useState } from "react"
 
 export interface BidRow extends BaseRowObject {
-  _bid: AugmentedBid
+  _bid: AugmentedBidAfterWallet
   logoAndTitle: ReactNode
   tribute: ReactNode
   currentVoteShare: ReactNode
@@ -29,7 +29,7 @@ export default function BidsDashboardPage() {
   const [openedRows, setOpenedRows] = useState<number[]>([])
 
   const {
-    bidDescriptionsByBidId,
+    bidMetaDataById,
     bidsById,
     currentRoundId,
     isLoading,
@@ -47,9 +47,9 @@ export default function BidsDashboardPage() {
       openedRows,
       toggleRow,
       Object.values(bidsById).filter((bid) => bid.roundId === currentRoundId),
-      bidDescriptionsByBidId
+      bidMetaDataById
     )
-  }, [bidDescriptionsByBidId, bidsById, currentRoundId, openedRows])
+  }, [bidMetaDataById, bidsById, currentRoundId, openedRows])
 
   return (
     <>

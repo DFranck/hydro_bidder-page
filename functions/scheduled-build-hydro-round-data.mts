@@ -1,8 +1,9 @@
 import "@netlify/functions"
 import { Config } from "@netlify/functions"
+import { getEnvironmentVariable } from "../contract-apis/getEnvironmentVariable"
 
 export default async function () {
-  const URL = Netlify.env.get("URL")
+  const URL = getEnvironmentVariable("URL")
 
   console.log("Triggering background hydro round data build...")
 

@@ -1,8 +1,8 @@
+import { classNames } from "@/app/(with-backend-data)/tracking/classNames"
 import { TD, TR } from "@/components/StyledTable"
 import { RowRenderProps } from "@/components/StyledTable/types"
-import { TrackingRow } from "@/app/(with-backend-data)/tracking/page"
+import { TrackingRow } from "@/contract-apis/types"
 import { twMerge } from "tailwind-merge"
-import { classNames } from "@/app/(with-backend-data)/tracking/classNames"
 
 type TrackingTableItemProps = RowRenderProps<TrackingRow, keyof TrackingRow>
 
