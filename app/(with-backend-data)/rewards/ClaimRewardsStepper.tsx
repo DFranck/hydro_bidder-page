@@ -255,17 +255,18 @@ export default function ClaimRewardsStepper({
         }
 
         const tributeAsset = neutronAssets.assets.find(
-          (x) => x.base === tribute!.denomOriginal
+          (x: { base: string }) => x.base === tribute!.denomOriginal
         )
         const srcTokenImgUrl = tributeAsset?.logo_URIs?.svg
 
         const atomAsset = hubAssets.assets.find(
-          (x) => x.base === getEnvironmentVariable("NEXT_PUBLIC_ATOM_DENOM")
+          (x: { base: string }) =>
+            x.base === getEnvironmentVariable("NEXT_PUBLIC_ATOM_DENOM")
         )
         const destTokenImgUrl = atomAsset?.logo_URIs?.svg
 
         const srcExplorer = neutronChain?.explorers?.find(
-          (x) => x.kind?.toLocaleLowerCase() === "mintscan"
+          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan"
         )
         const srcAddressUrl = srcExplorer?.account_page?.replace(
           "${accountAddress}",
@@ -273,7 +274,7 @@ export default function ClaimRewardsStepper({
         )
 
         const destExplorer = hubChain?.explorers?.find(
-          (x) => x.kind?.toLocaleLowerCase() === "mintscan"
+          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan"
         )
         const destAddressUrl = cosmosHubAddress
           ? destExplorer?.account_page?.replace(
