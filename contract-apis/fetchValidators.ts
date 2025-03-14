@@ -6,11 +6,14 @@ import { Validator } from "./fetchWalletValidators"
 export async function fetchValidators(
   restEndpoint: ExtendedHttpEndpoint
 ): Promise<Validator[]> {
-  const { url, headers } = restEndpoint
-  const response = await fetch(
-    `${url.replace(/\/$/, "")}/cosmos/staking/v1beta1/validators?pagination.limit=500`,
-    { headers }
+  const { url: endpointUrl, headers } = restEndpoint
+
+  const urlToFetch = new URL(
+    `/cosmos/staking/v1beta1/validators?pagination.limit=500`,
+    endpointUrl
   )
+
+  const response = await fetch(urlToFetch, { headers })
     .then((res) => res.json())
     .then((data) => data.validators)
 

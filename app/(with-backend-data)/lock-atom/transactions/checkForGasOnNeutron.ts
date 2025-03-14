@@ -9,6 +9,16 @@ export async function checkForGasOnNeutron(neutronChain: ChainContext) {
 
   const restEndpoint = await neutronChain.getRestEndpoint()
 
+  const [restEndpointUrl, headers] =
+    typeof restEndpoint === "string"
+      ? [restEndpoint, {}]
+      : [restEndpoint.url, restEndpoint.headers]
+
+  const url = new URL(
+    `/cosmos/bank/v1beta1/balances/${neutronChain.address}`,
+    restEndpointUrl
+  )
+
   const response: {
     balances: {
       denom: string
@@ -18,9 +28,7 @@ export async function checkForGasOnNeutron(neutronChain: ChainContext) {
       next_key: string | null
       total: string
     }
-  } = await fetch(
-    `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`
-  ).then((res) => res.json())
+  } = await fetch(url, { headers }).then((res) => res.json())
 
   const balances = response.balances
   const untrnBalance = balances.find((b) => b.denom === "untrn")
