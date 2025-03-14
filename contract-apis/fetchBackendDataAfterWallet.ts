@@ -2,7 +2,6 @@
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { VoteWithPower } from "@/app/ts_types/HydroBase.types"
-import { getEndpoints } from "@/config"
 import {
   AugmentedBidFromContract,
   BackendDataBeforeWallet,
@@ -25,6 +24,7 @@ import sortBy from "lodash/sortBy"
 import sumBy from "lodash/sumBy"
 import { unstable_cache } from "next/cache"
 import { augmentClaims } from "./augmentClaims"
+import { endpointsShared } from "@/config"
 
 export interface BackendDataAfterWallet
   extends Omit<BackendDataBeforeWallet, "bids"> {
@@ -77,12 +77,7 @@ async function uncachedFetchBackendDataAfterWallet({
     throw new Error("Hydro contract address not set")
   }
 
-  const neutronRpcEndpoint = getEndpoints({
-    environmentVariables: {
-      NUMIA_COSMOS_HYDRO_APP_API_KEY:
-        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-    },
-  }).neutron.rpc[0]
+  const neutronRpcEndpoint = endpointsShared.neutron.rpc[0]
 
   const cosmWasmClient = await getCosmWasmClient({
     endpoint: neutronRpcEndpoint,

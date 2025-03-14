@@ -1,6 +1,6 @@
 "use client"
 
-import { endpointsOnClient, hubChain, neutronChain } from "@/config"
+import { endpointsShared, hubChain, neutronChain } from "@/config"
 import { Chain } from "@chain-registry/types"
 import { Registry } from "@cosmjs/proto-signing"
 import { AminoTypes, GasPrice } from "@cosmjs/stargate"
@@ -91,7 +91,7 @@ export function WalletProvider({
         },
       }}
       endpointOptions={{
-        endpoints: endpointsOnClient,
+        endpoints: endpointsShared,
         isLazy: true,
       }}
     >

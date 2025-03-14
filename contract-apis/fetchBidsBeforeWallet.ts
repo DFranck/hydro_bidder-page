@@ -2,7 +2,6 @@
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
-import { getEndpoints } from "@/config"
 import { AssetListEntry } from "@/contract-apis/fetchAssetListWithPrices"
 import {
   AugmentedBidFromContract,
@@ -19,6 +18,7 @@ import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import range from "lodash/range"
 import sumBy from "lodash/sumBy"
 import { augmentLiquidityDeployment } from "./augmentLiquidityDeployment"
+import { endpointsShared } from "@/config"
 
 function getAPR({
   amountGained,
@@ -55,12 +55,7 @@ export async function fetchBidsBeforeWallet({
     throw new Error("Hydro contract address not set")
   }
 
-  const neutronRpcEndpoint = getEndpoints({
-    environmentVariables: {
-      NUMIA_COSMOS_HYDRO_APP_API_KEY:
-        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-    },
-  }).neutron.rpc[0]
+  const neutronRpcEndpoint = endpointsShared.neutron.rpc[0]
 
   const client = await getCosmWasmClient({
     endpoint: neutronRpcEndpoint,

@@ -1,7 +1,7 @@
 "use server"
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import { getEndpoints } from "@/config"
+import { endpointsShared } from "@/config"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 
 export async function fetchCurrentRoundId(): Promise<number> {
@@ -9,12 +9,7 @@ export async function fetchCurrentRoundId(): Promise<number> {
     throw new Error("Hydro contract address not set")
   }
 
-  const neutronRpcEndpoint = getEndpoints({
-    environmentVariables: {
-      NUMIA_COSMOS_HYDRO_APP_API_KEY:
-        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-    },
-  }).neutron.rpc[0]
+  const neutronRpcEndpoint = endpointsShared.neutron.rpc[0]
 
   const client = await getCosmWasmClient({
     endpoint: neutronRpcEndpoint,

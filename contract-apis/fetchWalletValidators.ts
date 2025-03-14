@@ -37,13 +37,24 @@ export async function fetchMyValidators(
 ): Promise<ValidatorDelegation[]> {
   const restEndpoint = await chain.getRestEndpoint()
 
+  const [restEndpointUrl, headers] =
+    typeof restEndpoint === "string"
+      ? [restEndpoint, {}]
+      : [restEndpoint.url, restEndpoint.headers]
+
+  const validatorsUrl = new URL(
+    `/cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`,
+    restEndpointUrl
+  )
+
+  const delegationsUrl = new URL(
+    `/cosmos/staking/v1beta1/delegations/${delegatorAddress}`,
+    restEndpointUrl
+  )
+
   const [validatorsResponse, delegationsResponse] = await Promise.all([
-    fetch(
-      `${restEndpoint}cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`
-    ).then((res) => res.json()),
-    fetch(
-      `${restEndpoint}cosmos/staking/v1beta1/delegations/${delegatorAddress}`
-    ).then((res) => res.json()),
+    fetch(validatorsUrl, { headers }).then((res) => res.json()),
+    fetch(delegationsUrl, { headers }).then((res) => res.json()),
   ])
 
   if (!validatorsResponse.validators) {
