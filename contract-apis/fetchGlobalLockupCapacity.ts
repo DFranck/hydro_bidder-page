@@ -1,8 +1,8 @@
 "use server"
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import { getEndpoints } from "@/config"
 import { getCosmWasmClient } from "./getCosmWasmClient"
+import { endpointsShared } from "@/config"
 
 export interface GlobalLockupCapacityInfo {
   lockedAtomIsAtCapacityGlobal: boolean
@@ -17,12 +17,7 @@ export async function fetchGlobalLockupCapacity(): Promise<GlobalLockupCapacityI
     throw new Error("Hydro contract address not set")
   }
 
-  const neutronRpcEndpoint = getEndpoints({
-    environmentVariables: {
-      NUMIA_COSMOS_HYDRO_APP_API_KEY:
-        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-    },
-  }).neutron.rpc[0]
+  const neutronRpcEndpoint = endpointsShared.neutron.rpc[0]
 
   const client = await getCosmWasmClient({
     endpoint: neutronRpcEndpoint,

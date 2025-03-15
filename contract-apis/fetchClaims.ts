@@ -2,7 +2,7 @@
 
 import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
 import { TributeClaim } from "@/app/ts_types/TributeBase.types"
-import { getEndpoints } from "@/config"
+import { endpointsShared } from "@/config"
 import { AugmentedCoin } from "@/contract-apis/getCoinWithValueInUsd"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import {
@@ -36,12 +36,7 @@ export async function fetchClaims({
     throw new Error("Tribute contract address not set")
   }
 
-  const neutronRpcEndpoint = getEndpoints({
-    environmentVariables: {
-      NUMIA_COSMOS_HYDRO_APP_API_KEY:
-        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-    },
-  }).neutron.rpc[0]
+  const neutronRpcEndpoint = endpointsShared.neutron.rpc[0]
 
   const client = await getCosmWasmClient({
     endpoint: neutronRpcEndpoint,

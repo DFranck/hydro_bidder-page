@@ -2,13 +2,13 @@
 
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import { LiquidityDeployment } from "@/app/ts_types/HydroBase.types"
-import { getEndpoints } from "@/config"
 import {
   CamelCaseKeys,
   keysFromSnakeToCamelCase,
 } from "@/lib/keysFromSnakeToCamelCase"
 import { AugmentedCoin } from "./getCoinWithValueInUsd"
 import { getCosmWasmClient } from "./getCosmWasmClient"
+import { endpointsShared } from "@/config"
 export interface AugmentedLiquidityDeployment
   extends Omit<SanitizedLiquidityDeployment, "fundsBeforeDeployment"> {
   fundsBeforeDeployment: AugmentedCoin[]
@@ -30,12 +30,7 @@ export async function fetchLiquidityDeployments({
     throw new Error("Hydro contract address not set")
   }
 
-  const neutronRpcEndpoint = getEndpoints({
-    environmentVariables: {
-      NUMIA_COSMOS_HYDRO_APP_API_KEY:
-        process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY!,
-    },
-  }).neutron.rpc[0]
+  const neutronRpcEndpoint = endpointsShared.neutron.rpc[0]
 
   const client = await getCosmWasmClient({
     endpoint: neutronRpcEndpoint,

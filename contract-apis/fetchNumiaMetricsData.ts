@@ -38,15 +38,16 @@ export async function fetchNumiaMetricsData(): Promise<SanitizedMetricsFromNumia
     throw new Error("NUMIA_METRICS_ENDPOINT is not set")
   }
 
-  const response = await fetch(
-    `${process.env.NUMIA_METRICS_ENDPOINT}?${new Date().getTime()}`,
-    {
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
-      },
-    }
-  )
+  const url = new URL(process.env.NUMIA_METRICS_ENDPOINT)
+
+  url.searchParams.append("timestamp", new Date().getTime().toString())
+
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_TEMP_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
+    },
+  })
 
   const metrics = (await response.json()) as MetricsFromNumia[]
 

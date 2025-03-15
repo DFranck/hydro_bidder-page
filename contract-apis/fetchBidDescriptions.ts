@@ -19,9 +19,11 @@ export interface BidDescriptionFromGithub {
 export type RequestAmount = [amount: number, description: string]
 
 export async function fetchBidDescriptionsById() {
-  const response = await fetch(
-    `${BID_DESCRIPTIONS_URL}?${new Date().getTime()}`
-  )
+  const url = new URL(BID_DESCRIPTIONS_URL)
+
+  url.searchParams.append("timestamp", new Date().getTime().toString())
+
+  const response = await fetch(url)
 
   return (await response.json()) as Record<string, BidDescriptionFromGithub>
 }

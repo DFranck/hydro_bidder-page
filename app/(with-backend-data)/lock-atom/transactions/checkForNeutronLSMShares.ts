@@ -14,9 +14,17 @@ export async function checkForNeutronLSMShares(
 
   const restEndpoint = await neutronChain.getRestEndpoint()
 
-  const response = await fetch(
-    `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`
-  ).then((res) => res.json())
+  const [restEndpointUrl, headers] =
+    typeof restEndpoint === "string"
+      ? [restEndpoint, {}]
+      : [restEndpoint.url, restEndpoint.headers]
+
+  const url = new URL(
+    `/cosmos/bank/v1beta1/balances/${neutronChain.address}`,
+    restEndpointUrl
+  )
+
+  const response = await fetch(url, { headers }).then((res) => res.json())
 
   const lsmSharesPromises: Promise<{
     validator: string
