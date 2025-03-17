@@ -22,16 +22,19 @@ import {
 import { Step } from "../lock-atom/steppers/Step"
 import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
 import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
+import { AugmentedCoin } from "@/contract-apis/getCoinWithValueInUsd"
 
 type ClaimRewardsStep = "Init" | "ConvertToAtom"
 
 export default function ClaimRewardsStepper({
   tribute,
   bid,
+  claimAmount,
   onExit,
 }: {
   tribute: SanitizedTokenBasedTribute | null
   bid: AugmentedBid | null
+  claimAmount: AugmentedCoin | undefined | null
   onExit: (success?: boolean) => void
 }) {
   const [isLoading, setIsLoading] = useState(false)
@@ -41,7 +44,6 @@ export default function ClaimRewardsStepper({
   const { address, atomPrice } = useBackendData()
   const {
     getOfflineSigner,
-    getRpcEndpoint,
     getSigningCosmWasmClient,
     chain: { chain_id: neutronChainId, pretty_name: neutronChainName },
   } = useChain("neutron")
@@ -52,12 +54,7 @@ export default function ClaimRewardsStepper({
   } = useChain("cosmoshub")
 
   const { setToasts } = useToasts()
-
-  const skipClient = useCreateSkipClientMemo(
-    getOfflineSigner,
-    getRpcEndpoint,
-    neutronChainId
-  )
+  const skipClient = useCreateSkipClientMemo(getOfflineSigner, neutronChainId)
 
   function resetStepper() {
     setClaimType("native")
@@ -66,12 +63,12 @@ export default function ClaimRewardsStepper({
   }
 
   useEffect(() => {
-    if (!bid || !tribute) {
+    if (!bid || !tribute || !claimAmount) {
       resetStepper()
     }
   }, [bid, tribute, resetStepper])
 
-  if (!bid || !tribute) {
+  if (!bid || !tribute || !claimAmount) {
     return <></>
   }
 
@@ -97,8 +94,8 @@ export default function ClaimRewardsStepper({
         setToasts([toastMessages.searchingConvertRoute])
 
         const route = await skipClient.route({
-          amountIn: tribute.amount.toString(),
-          sourceAssetDenom: tribute.denomOriginal,
+          amountIn: claimAmount.amount,
+          sourceAssetDenom: claimAmount.denom || tribute.denomOriginal,
           sourceAssetChainID: neutronChainId,
           destAssetDenom: process.env.NEXT_PUBLIC_ATOM_DENOM,
           destAssetChainID: cosmosHubChainId,
@@ -197,8 +194,15 @@ export default function ClaimRewardsStepper({
                     onChange={() => setClaimType("native")}
                   />
                   <StyledText>
-                    {formatAmount(tribute!.amount)}&nbsp;
-                    <StyledText variant="footnote">{tribute!.denom}</StyledText>
+                    {claimAmount?.printableAmount.toLocaleString("en-US", {
+                      maximumFractionDigits: 4,
+                      trailingZeroDisplay: "stripIfInteger",
+                    })}
+                    &nbsp;
+                    <StyledText variant="footnote">
+                      {claimAmount?.humanReadableDenom?.slice(0, 12) ??
+                        tribute!.denom?.slice(0, 12)}
+                    </StyledText>
                   </StyledText>
                 </StyledText>
                 <StyledText
@@ -216,7 +220,13 @@ export default function ClaimRewardsStepper({
                     disabled={!process.env.NEXT_PUBLIC_ATOM_DENOM}
                   />
                   <StyledText>
-                    {formatAmount(tribute!.valueUsd / atomPrice)}
+                    {((claimAmount?.valueUsd || 0) / atomPrice).toLocaleString(
+                      "en-US",
+                      {
+                        maximumFractionDigits: 4,
+                        trailingZeroDisplay: "stripIfInteger",
+                      }
+                    )}
                     &nbsp;
                     <StyledText variant="footnote">ATOM</StyledText>
                   </StyledText>
@@ -232,7 +242,7 @@ export default function ClaimRewardsStepper({
                 claimRewards(claimType === "convert")
               },
               className: "bg-palette-green",
-              disabled: isLoading
+              disabled: isLoading,
             },
             {
               label: "Cancel",
@@ -284,17 +294,29 @@ export default function ClaimRewardsStepper({
           contents: (
             <div className="flex flex-row gap-6">
               <div className="flex flex-col items-center justify-between gap-3">
-                <StyledText
-                  as="img"
-                  src={srcTokenImgUrl}
-                  className="h-12 w-12"
-                />
+                {srcTokenImgUrl ? (
+                  <StyledText
+                    as="img"
+                    src={srcTokenImgUrl}
+                    className="h-12 w-12"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <Icon name="circle-question" className="text-4xl" />
+                  </div>
+                )}
                 <Icon name="arrow-down-long" />
-                <StyledText
-                  as="img"
-                  src={destTokenImgUrl}
-                  className="h-12 w-12"
-                />
+                {destTokenImgUrl ? (
+                  <StyledText
+                    as="img"
+                    src={destTokenImgUrl}
+                    className="h-12 w-12"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <Icon name="circle-question" className="text-4xl" />
+                  </div>
+                )}
               </div>
               <div className="flex flex-col justify-between gap-6">
                 <div className="flex flex-col gap-1">
@@ -339,7 +361,7 @@ export default function ClaimRewardsStepper({
               label: "Convert",
               onClick: convertToAtom,
               className: "bg-palette-green",
-              disabled: isLoading
+              disabled: isLoading,
             },
           ],
         }
