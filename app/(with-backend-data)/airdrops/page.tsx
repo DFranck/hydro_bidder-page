@@ -11,7 +11,10 @@ import { StyledText } from "@/components/StyledText"
 import { Toast } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import { HYDRO_TELEGRAM_URL } from "@/config"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { range } from "lodash"
 import Link from "next/link"
+import { useState } from "react"
 import { twJoin } from "tailwind-merge"
 import { CellContentRenderer } from "./CellContentRenderer"
 import { upcomingAirdrops } from "./upcomingAirdrops"
@@ -152,6 +155,33 @@ export default function AirdropsPage() {
     (row) => row._airdropDescriptor[2] !== "Confirmed"
   )
 
+  const { currentRoundId } = useBackendData()
+  const [selectedRound, setSelectedRound] = useState(currentRoundId - 1)
+  const [isDownloading, setIsDownloading] = useState(false)
+
+  const handleDownloadSnapshot = async () => {
+    try {
+      setIsDownloading(true)
+      // Add 1 to selectedRound because it's zero-based but the API expects 1-based round numbering
+      const roundId = selectedRound + 1
+
+      // Create a download link that points to our API endpoint
+      const downloadUrl = `/api/round-snapshot?round_id=${roundId}`
+
+      // Create a temporary link to trigger the download
+      const link = document.createElement("a")
+      link.href = downloadUrl
+      link.setAttribute("download", `hydro-round-${roundId}-snapshot.csv`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error("Failed to download snapshot:", error)
+    } finally {
+      setIsDownloading(false)
+    }
+  }
+
   return (
     <>
       <StatCards>
@@ -178,24 +208,84 @@ export default function AirdropsPage() {
               </p>
             </div>
 
-            <Toast
-              className="my-0 w-full"
-              icon="solid:parachute-box"
-              variant="info"
-            >
-              Are you a project planning an airdrop? We&rsquo;re here to help.{" "}
-              <StyledText
-                className="inline-flex items-center gap-1"
-                as={Link}
-                variant="link"
-                href="https://calendly.com/actional/hydro"
-                target="_blank"
+            <div className="flex flex-col gap-6">
+              <Toast
+                className="my-0 w-full"
+                icon="solid:parachute-box"
+                variant="info"
               >
-                <span>Get in Touch</span>
-                <Icon name="arrow-up-right-from-square" />
-              </StyledText>
-              .
-            </Toast>
+                Are you a project planning an airdrop? We&rsquo;re here to help.{" "}
+                <StyledText
+                  className="inline-flex items-center gap-1"
+                  as={Link}
+                  variant="link"
+                  href="https://calendly.com/actional/hydro"
+                  target="_blank"
+                >
+                  <span>Get in Touch</span>
+                  <Icon name="arrow-up-right-from-square" />
+                </StyledText>
+                .
+              </Toast>
+
+              <div className="flex flex-col gap-2">
+                <StyledText as="span" variant="h4">
+                  Airdrop Snapshots
+                </StyledText>
+
+                <div className="rounded-md border border-palette-beige border-opacity-20 bg-palette-beige bg-opacity-10 p-4">
+                  <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
+                    <div className="flex items-center gap-2">
+                      <StyledText
+                        as="span"
+                        variant="label"
+                        className="whitespace-nowrap"
+                      >
+                        Round #:
+                      </StyledText>
+                      <div className="min-w-[80px] rounded-md bg-palette-beige px-3 py-1.5">
+                        <select
+                          className="w-full bg-transparent text-center text-palette-text"
+                          value={selectedRound}
+                          onChange={(e) =>
+                            setSelectedRound(Number(e.target.value))
+                          }
+                          aria-label="Select airdrop round"
+                        >
+                          {/* round should go from 1 to current_round-1 */}
+                          {range(currentRoundId).map((roundId) => (
+                            <option key={roundId} value={roundId}>
+                              {roundId + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <StyledText
+                      as="button"
+                      variant="button.primary"
+                      onClick={handleDownloadSnapshot}
+                      disabled={isDownloading}
+                      className="flex w-full items-center justify-center gap-2 px-4 py-1.5 sm:w-auto"
+                    >
+                      {isDownloading ? (
+                        <>
+                          <Icon name="spinner" className="animate-spin" />
+                          <span>Downloading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icon name="download" />
+                          <span>
+                            Download Snapshot for Round {selectedRound + 1}
+                          </span>
+                        </>
+                      )}
+                    </StyledText>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <StyledTable
