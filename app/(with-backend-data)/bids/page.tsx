@@ -14,6 +14,7 @@ import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
 import { ColumnObject, RowRenderProps } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
+import { useToasts } from "@/components/Toasts/useToasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
   bidTablesFirstColumnTooltips,
@@ -27,14 +28,25 @@ import { VoteButton } from "@/components/VoteButton"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import groupBy from "lodash/groupBy"
 import mapValues from "lodash/mapValues"
-import { Fragment, useMemo } from "react"
+import { Fragment, useEffect, useMemo } from "react"
 import { twJoin } from "tailwind-merge"
 import { classNames } from "./classNames"
-
 export const dynamic = "force-dynamic"
 
 export default function BidsPage() {
   const backendData = useBackendData()
+  const { setToasts } = useToasts()
+
+  useEffect(() => {
+    setTimeout(() => {
+      setToasts([
+        {
+          message: "This is a test toast",
+          variant: "info",
+        },
+      ])
+    }, 1000)
+  }, [])
 
   const {
     bidsInfo,

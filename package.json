@@ -20,7 +20,6 @@
     "@cosmos-kit/keplr": "^2.14.7",
     "@cosmos-kit/leap": "^2.14.7",
     "@cosmos-kit/react": "^2.21.7",
-    "@headlessui/react": "^2.2.0",
     "@interchain-ui/react": "^1.26.2",
     "@netlify/functions": "^3.0.1",
     "@skip-go/client": "^0.16.17",
