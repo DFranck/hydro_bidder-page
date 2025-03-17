@@ -27,6 +27,7 @@ import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 import ClaimRewardsStepper from "./ClaimRewardsStepper"
+import { AugmentedClaim } from "@/contract-apis/fetchClaims"
 
 export default function RewardsPage() {
   const [isCelebrating, setIsCelebrating] = useState(false)
@@ -65,6 +66,24 @@ export default function RewardsPage() {
     selection && selectedTribute
       ? bidsById[tributesById[selection.tributeId].bidId]
       : null
+
+  const findClaimAmountForTribute = (
+    claimsArray: AugmentedClaim[],
+    tribute: SanitizedTokenBasedTribute
+  ) => {
+    return claimsArray.find(
+      (claim) =>
+        claim.bidId === tribute.bidId &&
+        claim.tributeId === tribute.id &&
+        claim.roundId === tribute.roundId &&
+        claim.trancheId === tribute.trancheId
+    )?.amount
+  }
+
+  const claimAmount = selectedTribute
+    ? (findClaimAmountForTribute(claimsOutstanding, selectedTribute) ??
+      findClaimAmountForTribute(claimsHistorical, selectedTribute))
+    : null
 
   // Bids can have multiple tributes, so this turns each into a row
   const rows = bidsToRender
@@ -277,9 +296,7 @@ export default function RewardsPage() {
     },
   ]
 
-  function closeClaimRewardsModal(
-    event?: MouseEvent<HTMLButtonElement>
-  ) {
+  function closeClaimRewardsModal(event?: MouseEvent<HTMLButtonElement>) {
     event?.preventDefault()
     setSelection(null)
   }
@@ -312,13 +329,11 @@ export default function RewardsPage() {
         </BlurryBackdropBox>
       </ContentContainer>
 
-      <ModalWindow
-        isOpen={!!selection}
-        onClose={closeClaimRewardsModal}
-      >
+      <ModalWindow isOpen={!!selection} onClose={closeClaimRewardsModal}>
         <ClaimRewardsStepper
           bid={selectedBid}
           tribute={selectedTribute}
+          claimAmount={claimAmount}
           onExit={claimRewardsFinished}
         />
       </ModalWindow>
