@@ -1,6 +1,6 @@
 // convenience func that allows doing contract queries on both server and client
 
-import { endpointsOnServer } from "@/config"
+import { sharedEndpoints } from "@/config"
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
 let clientInstance: CosmWasmClient | null = null
@@ -16,7 +16,7 @@ async function connectWithRetry({
 } = {}): Promise<CosmWasmClient> {
   for (let i = 0; i < attempts; i++) {
     try {
-      return await CosmWasmClient.connect(endpointsOnServer.neutron.rpc[0])
+      return await CosmWasmClient.connect(sharedEndpoints.neutron.rpc[0])
     } catch (error) {
       if (i === attempts - 1) throw error // Last attempt, throw the error
 

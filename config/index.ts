@@ -12,57 +12,14 @@ export enum AllowedLockupPeriodInEpochs {
 
 export const HYDRO_TELEGRAM_URL = "https://t.me/+xUzNOTZjUNw5Mzhk"
 
-export const endpointsOnClient = {
+export const sharedEndpoints = {
   neutron: {
-    rpc: ["https://rpc.cosmos.directory/neutron"],
-    rest: ["https://rest.cosmos.directory/neutron/"],
+    rpc: ["https://hydro-neutron-rpc.citadel.one/"],
+    rest: ["https://hydro-neutron-api.citadel.one/"],
   },
   cosmoshub: {
-    rpc: ["https://cosmos-rpc.publicnode.com/"],
-    rest: ["https://cosmos-rest.publicnode.com/"],
-  },
-}
-
-export const endpointsOnServer = {
-  neutron: {
-    rpc: [
-      {
-        url: "https://neutron-rpc.numia.xyz/",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
-        },
-      },
-    ],
-    rest: [
-      {
-        url: "https://neutron-lcd.numia.xyz/",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
-        },
-      },
-    ],
-  },
-  cosmoshub: {
-    rpc: [
-      {
-        url: "https://cosmos-rpc.numia.xyz/",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
-        },
-      },
-    ],
-    rest: [
-      {
-        url: "https://cosmos-lcd.numia.xyz/",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${getEnvironmentVariable("NUMIA_COSMOS_HYDRO_APP_API_KEY")}`,
-        },
-      },
-    ],
+    rpc: ["https://hydro-cosmoshub-rpc.citadel.one/"],
+    rest: ["https://hydro-cosmoshub-api.citadel.one/"],
   },
 }
 

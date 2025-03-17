@@ -1,6 +1,6 @@
 "use server"
 
-import { endpointsOnServer } from "@/config"
+import { sharedEndpoints } from "@/config"
 import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export async function fetchDenomTrace(balance: {
@@ -9,13 +9,16 @@ export async function fetchDenomTrace(balance: {
 }) {
   if (balance.denom?.startsWith("ibc/")) {
     try {
-      const endpoint = endpointsOnServer.neutron.rpc[0]
+      const endpoint = sharedEndpoints.neutron.rpc[0]
 
-      const url = `${endpoint.url.replace(/\/$/, "")}/ibc/apps/transfer/v1/denom_traces/${balance.denom}`
+      const url = new URL(
+        `/ibc/apps/transfer/v1/denom_traces/${balance.denom}`,
+        endpoint
+      ).toString()
 
-      const denomTraceResponse = await fetchWithRetry(url, {
-        headers: endpoint.headers,
-      }).then((res) => res.json())
+      const denomTraceResponse = await fetchWithRetry(url).then((res) =>
+        res.json()
+      )
 
       const baseDenom = denomTraceResponse.denom_trace.base_denom
 
