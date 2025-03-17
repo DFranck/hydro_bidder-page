@@ -9,7 +9,7 @@ export async function fetchDenomTrace(balance: {
 }) {
   if (balance.denom?.startsWith("ibc/")) {
     try {
-      const endpoint = sharedEndpoints.neutron.rpc[0]
+      const endpoint = sharedEndpoints.neutron.rest[0]
 
       const url = new URL(
         `/ibc/apps/transfer/v1/denom_traces/${balance.denom}`,
