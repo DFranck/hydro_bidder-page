@@ -33,6 +33,16 @@ export interface AssetListWithPrices {
   }
 }
 
+export interface PriceDetails {
+  token_symbol: string;
+  token_exponent: number;
+  token_price: number;
+}
+
+export interface RoundPrices {
+  [key: string]: PriceDetails;
+}
+
 export interface AugmentedBackendDataAfterWallet
   extends AugmentedBackendDataBeforeWallet {
   address: string
@@ -224,6 +234,7 @@ export interface EnvironmentVariables {
   NUMIA_COSMOS_HYDRO_APP_API_KEY: string
   NUMIA_LOCKUPS_ENDPOINT: string
   NUMIA_TRIBUTES_ENDPOINT: string
+  NUMIA_PRICES_ENDPOINT: string
   NUMIA_USERS_ENDPOINT: string
   URL: string
 }
@@ -300,6 +311,7 @@ export type RawHydroRoundData = {
   round_bids: Proposal[]
   round_lockups: LockupWithPerTrancheInfo[][]
   round_tributes: Tribute[]
+  round_prices: RoundPrices
 }
 
 export type RawHydroRoundDataSlimmed = Omit<RawHydroRoundData, "round_bids"> & {

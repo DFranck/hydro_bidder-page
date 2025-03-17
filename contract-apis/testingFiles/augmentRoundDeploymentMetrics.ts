@@ -2,7 +2,7 @@ import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
 import {
-  AssetListWithPrices,
+  RoundPrices,
   BidRevampMetrics,
   ProposalSlimmed,
 } from "../types"
@@ -12,7 +12,7 @@ export function augmentRoundDeploymentMetrics(
   roundBids: ProposalSlimmed[],
   roundLockups: LockupWithPerTrancheInfo[][],
   roundTributes: Tribute[],
-  roundPrices: AssetListWithPrices, //{[key: string] : { token_symbol: string, decimals: number, priceUsd: number }},
+  roundPrices: RoundPrices, //{[key: string] : { token_symbol: string, decimals: number, priceUsd: number }},
   bidDescriptions: Record<string, any>,
   currentRoundId: number
 ): BidRevampMetrics[] {
@@ -25,9 +25,9 @@ export function augmentRoundDeploymentMetrics(
     const denom = tribute.funds.denom
     const amount = parseInt(tribute.funds.amount, 0)
 
-    const symbol = roundPrices[denom] ? roundPrices[denom].symbol : denom
-    const decimals = roundPrices[denom] ? roundPrices[denom].decimals : 0
-    const priceUsd = roundPrices[denom] ? roundPrices[denom].priceUsd : 0
+    const symbol   = roundPrices[denom] ? roundPrices[denom].token_symbol   : denom
+    const decimals = roundPrices[denom] ? roundPrices[denom].token_exponent : 0
+    const priceUsd = roundPrices[denom] ? roundPrices[denom].token_price    : 0
 
     if (!proposalsTributes[proposalId]) {
       proposalsTributes[proposalId] = { value_in_atom: 0, value_in_usdc: 0 }
@@ -44,7 +44,7 @@ export function augmentRoundDeploymentMetrics(
       ((amount / Math.pow(10, decimals)) * priceUsd) /
       roundPrices[
         "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-      ].priceUsd
+      ].token_price
   }
   //console.log(proposalsTributes);
 

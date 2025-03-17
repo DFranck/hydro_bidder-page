@@ -3,6 +3,7 @@ import { RawHydroRoundData } from "@/contract-apis/types"
 import { fetchRoundBids } from "@/functions/build-hydro-round-data-in-background/_fetchers/fetchRoundBids"
 import { fetchRoundLockups } from "@/functions/build-hydro-round-data-in-background/_fetchers/fetchRoundLockups"
 import { fetchRoundTributes } from "@/functions/build-hydro-round-data-in-background/_fetchers/fetchRoundTributes"
+import { fetchRoundPrices } from "@/functions/build-hydro-round-data-in-background/_fetchers/fetchRoundPrices"
 
 export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
   const hydroQueryClient = await getHydroQueryClient()
@@ -28,6 +29,9 @@ export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
         roundId: evaluatedRoundId,
         currentRoundId: round_id,
       })
+      const roundPrices = await fetchRoundPrices({
+        roundId: evaluatedRoundId
+      })
 
       // Fetch bids for each tranche in the evaluated round
       const roundBids = (
@@ -47,6 +51,7 @@ export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
         round_bids: roundBids,
         round_lockups: roundLockups,
         round_tributes: roundTributes,
+        round_prices: roundPrices
       }
     })
   )
