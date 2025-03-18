@@ -8,7 +8,6 @@ import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import groupBy from "lodash/groupBy"
 import keyBy from "lodash/keyBy"
-import sortBy from "lodash/sortBy"
 import sumBy from "lodash/sumBy"
 import { augmentClaim } from "./augmentClaim"
 
@@ -51,9 +50,6 @@ export function augmentBackendDataAfterWallet({
     augmentLockup(o, currentRoundId)
   )
 
-  const furthestLockupEndDate = sortBy(augmentedLockups, "dateEnd").reverse()[0]
-    ?.dateEnd
-
   const votedBidId =
     allBids
       .filter((bid) => bid.roundId === currentRoundId)
@@ -68,26 +64,18 @@ export function augmentBackendDataAfterWallet({
         bidPower: Number(bid.power),
       }) ?? 0
 
-    const deploymentDurationMinusAnEpochInMilliseconds =
-      ((bid.deploymentDurationInEpochs - 1) * lockedAtomEpochInNanos) / 1e6
-
-    const currentRoundEndDateForSure =
-      typeof currentRoundEndDate === "string"
-        ? new Date(currentRoundEndDate)
-        : currentRoundEndDate
-
-    const lockupsOutliveBidDeployment =
-      furthestLockupEndDate && currentRoundEndDate
-        ? furthestLockupEndDate >
-          new Date(
-            currentRoundEndDateForSure.getTime() +
-              deploymentDurationMinusAnEpochInMilliseconds
-          )
-        : false
+    const userIsEligibleToVote = augmentedLockups.some(
+      (lockup) =>
+        !lockup.isExpired &&
+        Object.values(lockup.metaDataByTrancheId).some(
+          (trancheInfo) =>
+            Number(trancheInfo.nextRoundEligibleToVote) >= currentRoundId
+        )
+    )
 
     return {
       ...bid,
-      lockupsOutliveBidDeployment,
+      userIsEligibleToVote,
       usersEstimatedRewards,
       usersEstimatedRewardRelativeToCurrentPick: 0,
     }
@@ -133,8 +121,10 @@ export function augmentBackendDataAfterWallet({
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
 
-  const usedLockups = augmentedLockups.filter(
-    (lockup) => lockup.isTiedToDeployment
+  const usedLockups = augmentedLockups.filter((lockup) =>
+    Object.values(lockup.metaDataByTrancheId).some(
+      (metaData) => metaData.isTiedToDeployment
+    )
   )
   const votingPowerSpent =
     sumBy(usedLockups, (l) => Number(l.currentVotingPower)) / 1e6

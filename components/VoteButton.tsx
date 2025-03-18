@@ -38,7 +38,7 @@ export function VoteButton({
   const { toasts, setToasts } = useToasts()
   const {
     address,
-    bidsById,
+    bidsInfo,
     currentRoundId,
     isWalletConnected,
     lockups,
@@ -49,8 +49,14 @@ export function VoteButton({
   } = useBackendData()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const bid = bidsById[bidId]
-  const lockupsOutliveBidDeployment = bid?.lockupsOutliveBidDeployment
+  const bid = bidsInfo[bidId]
+  const hasLockupThatCanVoteInThisTranche = lockups.some(
+    (lockup) =>
+      !lockup.isExpired &&
+      Number(
+        lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote
+      ) <= currentRoundId
+  )
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const hasVotedForAnyThisRound = votesThisRound.length > 0
   const hasVotedForThisBid = votesThisRound.some((vote) => vote.bidId === bidId)
@@ -131,7 +137,7 @@ export function VoteButton({
         </StyledText>
       </ConditionalWrapper>
     )
-  } else if (!lockupsOutliveBidDeployment) {
+  } else if (!hasLockupThatCanVoteInThisTranche) {
     Button = (
       <Tooltip tipContents={extendLockupsToVoteTooltip}>
         <StyledText

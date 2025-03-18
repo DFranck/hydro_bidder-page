@@ -8,10 +8,11 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
+import { LockupStatus } from "@/components/LockupStatus"
 import { ModalWindow } from "@/components/ModalWindow"
 import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
-import { StyledTable } from "@/components/StyledTable"
+import { StyledTable, TD, TR } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
@@ -25,18 +26,16 @@ import {
   lockupsTableVotingAndMultiplierColumnTooltip,
   needsWalletConnectionTooltip,
 } from "@/components/ToolTips"
-import { WordWrapper } from "@/components/WordWrapper"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
-import { SanitizedLockup } from "@/contract-apis/types"
+import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
-import { getTimeUntilDate } from "@/lib/getTimeUntilDate"
 import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
 export default function LockupsPage() {
@@ -47,23 +46,44 @@ export default function LockupsPage() {
   const [isShowingNextStep, setIsShowingNextStep] = useState(false)
   const {
     address,
-    bidsById,
-    currentRoundEndDate,
     isWalletConnected,
     lockups,
     lockedAtomMaxWallet,
     lockedAtomPercentageGlobal,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
+    tranches,
   } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const { setToasts } = useToasts()
+  const { setToasts, addToast } = useToasts()
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
   const [lockupBeingEdited, setLockupBeingEdited] =
-    useState<SanitizedLockup | null>(null)
+    useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+
+  const statusColumnDescriptors = tranches.map(({ id, name }) => ({
+    key: `trancheStatus${id}` as const,
+    label: `Status in ${name}`,
+    isSortable: true,
+    initialSortDirection: "asc",
+    propsForCells: {
+      className: "border-x-2 border-palette-beige/50",
+    },
+    propsForHeaderCell: {
+      className: [
+        "py-3",
+        "border-x-2 border-t-2 border-palette-beige/50",
+        "bg-palette-beige text-palette-text font-bold",
+        "hover:bg-palette-beige/90",
+      ],
+    },
+    customValueGetter: (row: (typeof lockupsAsRows)[number]) => {
+      const { isExpired, isEligibleToVote } = row._lockup
+      return isExpired ? 0 : isEligibleToVote ? 1 : 2
+    },
+  }))
 
   const columnDescriptors = [
     {
@@ -102,24 +122,7 @@ export default function LockupsPage() {
         return row._lockup.daysLeft ?? 0
       },
     },
-    {
-      key: "status",
-      label: "Status",
-      isSortable: true,
-      initialSortDirection: "asc",
-      customValueGetter: (row) => {
-        const { isEligibleThisRoundAtAll, isExpired, isTiedToDeployment } =
-          row._lockup
-
-        return isEligibleThisRoundAtAll
-          ? 0
-          : isExpired
-            ? 1
-            : isTiedToDeployment
-              ? 2
-              : 3
-      },
-    },
+    ...statusColumnDescriptors,
     {
       key: "actions",
       label: "Actions",
@@ -131,157 +134,22 @@ export default function LockupsPage() {
   >[]
 
   const lockupsAsRows = lockups.map((lockup) => {
-    const {
-      daysLeft,
-      isEligibleToChangeVote,
-      isExpired,
-      isTiedToDeployment,
-      numRoundsLeftOnDeployment,
-      votedOnBidId,
-    } = lockup
+    const { daysLeft } = lockup
 
-    const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
-
-    const {
-      editLockupButtonLabel = null,
-      statusTopline,
-      statusBottomline = null,
-      statusExplanation,
-      statusIcon,
-    } = isExpired
-      ? {
-          editLockupButtonLabel: "Refresh",
-          statusIcon: (
-            <Icon
-              name="solid:triangle-exclamation"
-              className="text-palette-red"
-            />
-          ),
-          statusTopline:
-            Math.abs(daysLeft) === 0
-              ? "Expired today"
-              : `Expired ${pluralize({
-                  count: Math.abs(daysLeft),
-                  prefixCount: true,
-                  singular: "day",
-                })} ago`,
-          statusBottomline: <>You can refresh this lockup, or unlock it</>,
-          statusExplanation: (
-            <>This lockup has expired and is no longer eligible to vote.</>
-          ),
-        }
-      : isTiedToDeployment
-        ? {
-            statusIcon: (
-              <Icon name="solid:lock" className="text-palette-beige" />
-            ),
-            statusTopline: "Tied to bid deployment",
-            statusBottomline:
-              numRoundsLeftOnDeployment === 1
-                ? "Available to use next round"
-                : `Available to use in ${numRoundsLeftOnDeployment} rounds`,
-            statusExplanation: (
-              <>This lockup is currently tied to a deployment.</>
-            ),
-          }
-        : isEligibleToChangeVote
-          ? {
-              statusIcon: (
-                <Icon
-                  name="solid:circle-check"
-                  className="text-palette-green"
-                />
-              ),
-              statusTopline: "Voted for bid in current round",
-              statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
-              statusExplanation: (
-                <>
-                  This lockup is currently tied to the bid above in the current
-                  round, but you can still change your vote.
-                </>
-              ),
-            }
-          : {
-              statusIcon: (
-                <Icon
-                  name="solid:circle-check"
-                  className="text-palette-green"
-                />
-              ),
-              statusTopline: "Eligible to vote",
-              statusExplanation: (
-                <span>
-                  This lockup is eligible to vote in the current round.{" "}
-                  <StyledText variant="link" href="/bids" as={Link}>
-                    Browse Bids
-                  </StyledText>
-                </span>
-              ),
-            }
-
-    const statusTooltip = (
-      <div className="flex flex-col gap-2">
-        {!isExpired && (
-          <div
-            className={twJoin(
-              "grid grid-cols-3",
-              "-mx-4 -mt-2", // negate padding from Tooltip
-              "bg-palette-green/5"
-            )}
-          >
-            {(
-              [
-                ["locked", true],
-                ["voted", isEligibleToChangeVote || isTiedToDeployment],
-                ["deployed", isTiedToDeployment],
-              ] as const
-            ).map(([status, isActive]) => (
-              <div
-                key={status}
-                className={twMerge(
-                  "flex items-center justify-center gap-1",
-                  "px-3 py-2",
-                  "text-xs font-bold uppercase",
-                  isActive
-                    ? "bg-palette-green/10 text-palette-green"
-                    : "text-white/30"
-                )}
-              >
-                <Icon name={isActive ? "solid:check" : "solid:circle-dashed"} />
-                {status}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {votedOnBid && (
-          <div className="flex flex-col">
-            <StyledText variant="label">Voted for bid:</StyledText>
-            <StyledText
-              as="a"
-              variant="link"
-              href={`/bids/${votedOnBidId}`}
-              target="_blank"
-            >
-              <WordWrapper
-                words={votedOnBid.title}
-                sliceStart={-2}
-                wrapper={(words) => (
-                  <span className="whitespace-nowrap">
-                    {words}
-                    <Icon name="arrow-up-right-from-square" />
-                  </span>
-                )}
-              />
-            </StyledText>
-          </div>
-        )}
-
-        {statusExplanation}
-      </div>
+    const statusCells = Object.fromEntries(
+      tranches.map(({ id }) => {
+        return [
+          `trancheStatus${id}` as const,
+          <LockupStatus
+            key={`trancheStatus${id}`}
+            lockupId={lockup.id}
+            trancheId={id}
+          />,
+        ]
+      })
     )
 
-    return {
+    const cells = {
       _lockup: { ...lockup, daysLeft },
 
       amount: (
@@ -313,45 +181,26 @@ export default function LockupsPage() {
           })
         ),
 
-      status: (
-        <Tooltip
-          className="flex gap-3 whitespace-nowrap"
-          classNamesForTooltip="w-80"
-          tipContents={statusTooltip}
-        >
-          {statusIcon}
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1">
-              {statusTopline}
-              <Icon name="circle-info" />
-            </div>
-            {statusBottomline && (
-              <StyledText variant="footnote">{statusBottomline}</StyledText>
-            )}
-          </div>
-        </Tooltip>
-      ),
+      ...statusCells,
 
       actions: (
         <StyledText
           as="button"
           variant="button.secondary"
           className={twJoin(
-            lockup.isExpired
-              ? "border-palette-red text-palette-red"
-              : lockup.isTiedToDeployment
-                ? "border-palette-beige text-palette-beige"
-                : undefined
+            lockup.isExpired ? "border-palette-red text-palette-red" : undefined
           )}
           onClick={() => {
             setIsEditModalOpen(true)
             setLockupBeingEdited(lockup)
           }}
         >
-          {editLockupButtonLabel ?? "Edit"}
+          {lockup.isExpired ? "Refresh" : "Edit"}
         </StyledText>
       ),
     }
+
+    return cells
   })
 
   async function handleClickToNextUnlockingStep() {
@@ -397,6 +246,33 @@ export default function LockupsPage() {
   function handleModalWindowClose() {
     setIsConfirmingUnlockExpired(false)
   }
+
+  useEffect(() => {
+    if (!incompleteNotices.length) {
+      return
+    }
+
+    addToast({
+      variant: "warning",
+      message: (
+        <>
+          You have <strong>{incompleteNotices.length}</strong> incomplete{" "}
+          {pluralize({
+            count: incompleteNotices.length,
+            singular: "lockup",
+          })}
+          .
+        </>
+      ),
+      isDismissible: true,
+      actionButtonPrimary: {
+        label: "Continue",
+        onClick: () => {
+          router.push("/lock-atom")
+        },
+      },
+    })
+  }, [incompleteNotices])
 
   return (
     <>
@@ -529,68 +405,61 @@ export default function LockupsPage() {
             </EmptyBox>
           ) : (
             <StyledTable
+              className="border-collapse"
               columns={columnDescriptors}
               rows={lockupsAsRows}
-              initialSortedColumnKey="status"
+              initialSortedColumnKey="timeLeft"
+              renderCells={
+                {
+                  trancheStatus1: ({ cell, cellProps, row }: any) => {
+                    const { isExpired } = row._lockup
+                    return (
+                      <TD
+                        {...cellProps}
+                        className={twMerge(
+                          cellProps.className,
+                          isExpired && "border-x-0"
+                        )}
+                        colSpan={isExpired ? tranches.length : undefined}
+                        key={cellProps.key}
+                      >
+                        {cell}
+                      </TD>
+                    )
+                  },
+                  trancheStatus2: ({ cell, cellProps, row }: any) => {
+                    const { isExpired } = row._lockup
+                    console.log({ isExpired })
+                    return isExpired ? (
+                      <></>
+                    ) : (
+                      <TD key={cellProps.key} {...cellProps}>
+                        {cell}
+                      </TD>
+                    )
+                  },
+                } as any
+              }
               renderRow={({ children, row, rowProps }) => {
-                const {
-                  isExpired,
-                  isEligibleThisRoundAtAll,
-                  isTiedToDeployment,
-                } = row._lockup
+                const { isExpired, isEligibleToVote } = row._lockup
 
                 return (
-                  <tr
+                  <TR
                     className={twMerge(
                       rowProps.className,
-                      isExpired && "[&_td]:bg-palette-red/20",
-                      isTiedToDeployment &&
-                        "opacity-60 transition-opacity hover:opacity-100",
-                      isEligibleThisRoundAtAll && "[&_td]:bg-palette-green/20"
+                      isExpired
+                        ? "[&_td]:bg-palette-red/20"
+                        : !isEligibleToVote
+                          ? "opacity-60 transition-opacity hover:opacity-100"
+                          : ""
                     )}
                     key={row._lockup.id}
                     {...rowProps}
                   >
                     {children}
-                  </tr>
+                  </TR>
                 )
               }}
-              slotAfterHeaderRow={
-                incompleteNotices.length > 0 && (
-                  <tr>
-                    <td colSpan={99}>
-                      <div
-                        className={twJoin(
-                          "flex items-center justify-center gap-1",
-                          "rounded px-3 py-2",
-                          "text-palette-white bg-palette-red",
-                          "text-xs"
-                        )}
-                      >
-                        <Icon name="solid:triangle-exclamation" />
-                        <span>
-                          You have <strong>{incompleteNotices.length}</strong>{" "}
-                          incomplete{" "}
-                          {pluralize({
-                            count: incompleteNotices.length,
-                            singular: "lockup",
-                          })}
-                          .
-                        </span>
-                        <StyledText
-                          as={Link}
-                          variant="link"
-                          className="text-palette-white"
-                          href="/lock-atom"
-                        >
-                          Continue Locking{" "}
-                          <Icon name="solid:arrow-right-long" />
-                        </StyledText>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              }
             />
           )}
         </BlurryBackdropBox>
