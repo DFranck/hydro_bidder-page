@@ -23,7 +23,6 @@ import {
   lockupLimitReachedByUserTooltip,
   lockupLimitTooltip,
   lockupsTableTimeLeftColumnTooltip,
-  lockupsTableVotingAndMultiplierColumnTooltip,
   needsWalletConnectionTooltip,
 } from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
@@ -65,11 +64,11 @@ export default function LockupsPage() {
 
   const statusColumnDescriptors = tranches.map(({ id, name }) => ({
     key: `trancheStatus${id}` as const,
-    label: `Status in ${name}`,
+    label: name,
     isSortable: true,
     initialSortDirection: "asc",
     propsForCells: {
-      className: "border-x-2 border-palette-beige/50",
+      className: "w-1/4 border-x-2 border-palette-beige/50",
     },
     propsForHeaderCell: {
       className: [
@@ -90,20 +89,6 @@ export default function LockupsPage() {
       key: "amount",
       label: "Amount",
       isSortable: true,
-    },
-    {
-      key: "votingPower",
-      label: (
-        <Tooltip
-          tipContents={lockupsTableVotingAndMultiplierColumnTooltip}
-          className="flex items-center gap-1"
-        >
-          <span>Voting Power / Multiplier</span>
-          <Icon name="circle-info" />
-        </Tooltip>
-      ),
-      isSortable: true,
-      textAlign: "center",
     },
     {
       key: "timeLeft",
@@ -157,17 +142,6 @@ export default function LockupsPage() {
           {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
           <StyledText variant="footnote">ATOM</StyledText>
         </>
-      ),
-
-      votingPower: (
-        <div>
-          <div>{formatAmount(lockup.currentVotingPower)}</div>
-          {!!lockup.multiplier && (
-            <StyledText variant="footnote">
-              {lockup.multiplier}&times;
-            </StyledText>
-          )}
-        </div>
       ),
 
       timeLeft:
