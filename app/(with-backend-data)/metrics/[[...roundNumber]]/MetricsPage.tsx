@@ -1,58 +1,61 @@
 "use client"
 
-import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
-import { BidDuration } from "@/components/BidDuration"
-import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
-import { BidPolApr } from "@/components/BidPolApr"
-import { BidPolSize } from "@/components/BidPolSize"
-import { BidStatus } from "@/components/BidStatus"
-import { BidTributeAprOrPoints } from "@/components/BidTributeAprOrPoints"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
-import { InvisibleLink } from "@/components/InvisibleLink"
 import { StatCards } from "@/components/StatCards"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
-import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
+import { RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  bidTablesFirstColumnTooltips,
-  liveBidTributeAprColumnTooltip,
-  metricsDurationColumnTooltip,
   metricsPageNoDataTooltip,
-  metricsPolRewardsColumnTooltip,
-  metricsPolSizeColumnTooltip,
-  metricsStatusColumnTooltip,
-  metricsTributeColumnTooltip,
-  pastBidTributeAprColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import {
   AugmentedBidFromNumiaSlimmed,
+  BidMetaDataSlimmed,
   BidRevampMetrics,
 } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { pluralize } from "@/lib/pluralize"
 import max from "lodash/max"
 import range from "lodash/range"
 import uniq from "lodash/uniq"
-import Image from "next/image"
 import Link from "next/link"
-import { Fragment, useCallback } from "react"
+import { Fragment, ReactNode, useCallback, useMemo } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
+import { getMetricsTableColumns } from "./getMetricsTableColumns"
+import { getMetricsTableRows } from "./getMetricsTableRows"
+import { groupBy, mapValues } from "lodash"
 
 const PRE_HYDRO_ROUND_ID = -1
+
+export interface MetricsRow {
+  _bid: BidRevampMetrics | AugmentedBidFromNumiaSlimmed
+  _bidFromContract: BidRevampMetrics
+  _bidMetaData: BidMetaDataSlimmed
+  logoAndTitle: ReactNode
+  amount: ReactNode
+  duration: ReactNode
+  polApr: ReactNode
+  tributeApr: ReactNode
+  status: ReactNode
+}
 
 export function MetricsPage({
   requestedRoundNumber,
 }: {
   requestedRoundNumber: number | null
 }) {
-  const { bidsInfo, bidMetaDataById, currentRoundId, metricsForPreHydroBids } =
-    useBackendData()
+  const {
+    bidsInfo,
+    bidMetaDataById,
+    currentRoundId,
+    metricsForPreHydroBids,
+    tranches,
+  } = useBackendData()
 
   const bids = Object.values(bidsInfo)
 
@@ -74,295 +77,33 @@ export function MetricsPage({
     ? metricsForPreHydroBids
     : bids.filter((bid) => bid.roundId === requestedRoundId)
 
-  const tokenBasedBids = requestedPreHydro
-    ? bidsToRender
-    : (bidsToRender as BidRevampMetrics[]).filter(
-        (bid) => !bid.points || bid.points?.length === 0
-      )
-  const pointBasedBids = requestedPreHydro
-    ? []
-    : (bidsToRender as BidRevampMetrics[]).filter(
-        (bid) => bid.points?.length > 0
-      )
+  const bidsByTrancheId = useMemo(
+    () => groupBy(bidsToRender, "trancheId"),
+    [bidsToRender]
+  )
 
-  const tokenBasedRows = buildRows({
-    numiaBids: tokenBasedBids,
-    isTokenBased: true,
-  })
-  const pointBasedRows = buildRows({
-    numiaBids: pointBasedBids,
-    isTokenBased: false,
-  })
+  const metricTableColumns = getMetricsTableColumns(
+    requestedPreHydro,
+    currentRoundId,
+    requestedRoundId
+  )
 
-  type Row = (typeof tokenBasedRows)[number]
+  const metricRowsByTrancheId = useMemo(
+    () =>
+      mapValues(bidsByTrancheId, (bidsInTranche) =>
+        getMetricsTableRows(
+          (bidsInTranche as
+            | AugmentedBidFromNumiaSlimmed[]
+            | BidRevampMetrics[]) || [],
+          bidsInfo,
+          bidMetaDataById,
+          requestedPreHydro
+        )
+      ),
+    [bidsByTrancheId]
+  )
 
-  const tokenBasedColumns = buildColumns({ isTokenBased: true })
-  const pointBasedColumns = buildColumns({ isTokenBased: false })
-
-  function buildColumns({
-    isTokenBased,
-  }: {
-    isTokenBased: boolean
-  }): ColumnObject<Row, keyof Row>[] {
-    return [
-      {
-        key: "logoAndTitle",
-        label: (
-          <Tooltip
-            tipContents={
-              bidTablesFirstColumnTooltips.metricsTable[
-                isTokenBased ? "tokenBased" : "pointBased"
-              ]
-            }
-          >
-            <div className="flex items-center gap-1">
-              {isTokenBased ? "Token-Based Tribute" : "Point-Based Tribute"}
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        isSortable: true,
-        initialSortDirection: "ASC",
-        customValueGetter: (row) => row._bid.title,
-      },
-      {
-        key: "amount",
-        label: (
-          <Tooltip tipContents={metricsPolSizeColumnTooltip}>
-            <div className="flex items-center gap-1">
-              Amount
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        textAlign: "right",
-        propsForCells: {
-          className: "text-balance",
-        },
-        isSortable: true,
-        initialSortDirection: "DESC",
-        customValueGetter: (row) => {
-          return requestedPreHydro
-            ? (row._bid as AugmentedBidFromNumiaSlimmed)
-                .requestedAllocationAmount
-            : (row._bid as BidRevampMetrics).request_amount
-        },
-      },
-      {
-        key: "duration",
-        label: (
-          <Tooltip tipContents={metricsDurationColumnTooltip}>
-            <div className="flex items-center gap-1">
-              Duration
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        textAlign: "right",
-        propsForCells: {
-          className: "whitespace-nowrap",
-        },
-        isSortable: true,
-        initialSortDirection: "ASC",
-        customValueGetter: (row) => row._bidFromContract.duration,
-      },
-      {
-        key: "polApr",
-        label: (
-          <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
-            <div className="flex items-center gap-1">
-              PoL APR
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        textAlign: "right",
-        propsForCells: {
-          className: "whitespace-nowrap",
-        },
-        isSortable: true,
-        initialSortDirection: "DESC",
-        customValueGetter: (row) => row._bidFromContract.apr_pol ?? 0,
-      },
-      {
-        key: "tributeApr",
-        label: (
-          <Tooltip
-            tipContents={
-              !isTokenBased
-                ? metricsTributeColumnTooltip
-                : requestedRoundId === currentRoundId
-                  ? liveBidTributeAprColumnTooltip
-                  : pastBidTributeAprColumnTooltip
-            }
-            classNamesForTooltip="-ml-12"
-          >
-            <div className="flex items-center gap-1">
-              {!isTokenBased ? "Tribute" : "Tribute APR"}
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        textAlign: "right",
-        isSortable: true,
-        initialSortDirection: "DESC",
-        customValueGetter: ({ _bidFromContract }) => {
-          return _bidFromContract.apr_tribute ?? 0
-        },
-      },
-      {
-        key: "status",
-        label: (
-          <Tooltip
-            tipContents={metricsStatusColumnTooltip}
-            classNamesForTooltip="-ml-12"
-          >
-            <div className="flex items-center gap-1">
-              Status
-              <Icon name="circle-info" />
-            </div>
-          </Tooltip>
-        ),
-        textAlign: "right",
-        propsForCells: {
-          className: "text-balance",
-        },
-        isSortable: true,
-        initialSortDirection: "ASC",
-        customValueGetter: (row) =>
-          "status" in row._bid ? row._bid.status : "",
-      },
-    ]
-  }
-
-  function buildRows({
-    numiaBids,
-    isTokenBased,
-  }: {
-    numiaBids: typeof bidsToRender
-    isTokenBased: boolean
-  }) {
-    return numiaBids.map((bidFromNumia) => {
-      const bidMetaData = bidMetaDataById[Number(bidFromNumia.id)] ?? null
-      const bidFromContract = bidsInfo[Number(bidFromNumia.id)] ?? null
-
-      let rowURL: string,
-        projectLogoUrl: string,
-        projectName: string,
-        title: string
-
-      if (requestedPreHydro) {
-        const bid = bidFromNumia as AugmentedBidFromNumiaSlimmed
-        rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
-        projectLogoUrl = bid.projectLogoUrl
-        projectName = bid.projectName
-        title = bid.title
-      } else {
-        rowURL = `/bids/${bidFromNumia.id}`
-        projectLogoUrl = bidMetaData?.projectLogoUrl ?? ""
-        projectName = bidMetaData?.projectName ?? ""
-        title = bidMetaData?.title ?? ""
-      }
-
-      return {
-        _bid: bidFromNumia,
-        _bidFromContract: bidFromContract,
-        _bidMetaData: bidMetaData,
-
-        logoAndTitle: (
-          <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? (
-              <div className="flex items-center gap-6">
-                <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-                  {projectLogoUrl ? (
-                    <Image
-                      className="object-contain"
-                      src={projectLogoUrl}
-                      alt={projectName}
-                      fill={true}
-                    />
-                  ) : null}
-                </div>
-
-                <StyledText variant="h4">{title}</StyledText>
-              </div>
-            ) : (
-              <BidLogoAndTitle bidId={Number(bidFromNumia.id)} />
-            )}
-          </InvisibleLink>
-        ),
-
-        amount: (
-          <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? (
-              <AmountAndUnitPair
-                amount={(
-                  bidFromNumia as AugmentedBidFromNumiaSlimmed
-                ).requestedAllocationAmount.toLocaleString(undefined, {
-                  maximumFractionDigits: 4,
-                })}
-                unit="ATOM"
-              />
-            ) : (
-              <BidPolSize bidId={Number(bidFromNumia.id)} />
-            )}
-          </InvisibleLink>
-        ),
-
-        duration: (
-          <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? (
-              pluralize({
-                count: (bidFromNumia as AugmentedBidFromNumiaSlimmed)
-                  .durationDays,
-                prefixCount: true,
-                singular: "day",
-              })
-            ) : (
-              <BidDuration bidId={Number(bidFromNumia.id)} />
-            )}
-          </InvisibleLink>
-        ),
-
-        polApr: (
-          <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? (
-              <StyledText variant="mathSymbol.container">
-                <span>
-                  {(bidFromNumia as AugmentedBidFromNumiaSlimmed).apr}
-                </span>
-                <StyledText variant="mathSymbol">%</StyledText>
-              </StyledText>
-            ) : (
-              <BidPolApr bidId={Number(bidFromNumia.id)} />
-            )}
-          </InvisibleLink>
-        ),
-
-        tributeApr: (
-          <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? (
-              0
-            ) : (
-              <BidTributeAprOrPoints bidId={bidFromContract.id} />
-            )}
-          </InvisibleLink>
-        ),
-
-        status: (
-          <InvisibleLink href={rowURL}>
-            {requestedPreHydro ? (
-              bidFromNumia.status
-            ) : (
-              <BidStatus bidId={Number(bidFromNumia.id)} />
-            )}
-          </InvisibleLink>
-        ),
-      }
-    })
-  }
-
-  function secondPassSortFunction(sortedRows: Row[]) {
+  function secondPassSortFunction(sortedRows: MetricsRow[]) {
     return [...sortedRows].sort((a, b) => {
       if (requestedPreHydro) {
         return 0
@@ -377,7 +118,9 @@ export function MetricsPage({
     })
   }
 
-  const renderRow = useCallback<RowRenderFunction<Row, keyof Row>>(
+  const renderRow = useCallback<
+    RowRenderFunction<MetricsRow, keyof MetricsRow>
+  >(
     ({ children, row, rowProps }) => {
       const shouldShowVoteThresholdLine =
         !requestedPreHydro &&
@@ -518,29 +261,38 @@ export function MetricsPage({
             )}
           </div>
         </div>
+        {Object.entries(metricRowsByTrancheId).map(
+          ([trancheId, metricRowsInTranche]) => {
+            const tranche = tranches.find((t) => t.id === Number(trancheId))
+            return (
+              <BlurryBackdropBox
+                key={trancheId}
+                className="flex flex-col gap-3"
+              >
+                {tranche?.name && (
+                  <div
+                    className={twJoin(
+                      "flex items-center justify-between",
+                      "rounded-t-md bg-palette-beige/20",
+                      "-mx-2 -my-1 px-6 py-3"
+                    )}
+                  >
+                    {tranche?.name && (
+                      <StyledText variant="h4">{tranche.name}</StyledText>
+                    )}
+                  </div>
+                )}
 
-        {tokenBasedRows.length > 0 && (
-          <BlurryBackdropBox>
-            <StyledTable
-              columns={tokenBasedColumns}
-              rows={tokenBasedRows}
-              initialSortedColumnKey="amount"
-              renderRow={renderRow}
-              secondPassSortFunction={secondPassSortFunction}
-            />
-          </BlurryBackdropBox>
-        )}
-
-        {pointBasedRows.length > 0 && (
-          <BlurryBackdropBox>
-            <StyledTable
-              columns={pointBasedColumns}
-              rows={pointBasedRows}
-              initialSortedColumnKey="amount"
-              renderRow={renderRow}
-              secondPassSortFunction={secondPassSortFunction}
-            />
-          </BlurryBackdropBox>
+                <StyledTable
+                  initialSortedColumnKey="amount"
+                  columns={metricTableColumns}
+                  rows={metricRowsInTranche}
+                  renderRow={renderRow}
+                  secondPassSortFunction={secondPassSortFunction}
+                />
+              </BlurryBackdropBox>
+            )
+          }
         )}
       </ContentContainer>
     </>
