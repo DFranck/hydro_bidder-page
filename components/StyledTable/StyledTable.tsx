@@ -1,5 +1,6 @@
 "use client"
 
+import { isDeepEqual } from "@/lib/isDeepEqual"
 import { usePersistedReducer } from "@/lib/usePersistedReducer"
 import { useEffect, useMemo } from "react"
 import { TABLE } from "./components/TABLE"
@@ -16,12 +17,12 @@ import {
   TableState,
   TableStateAction,
 } from "./types"
-import { isDeepEqual } from "@/lib/isDeepEqual"
 
 export function StyledTable<R extends BaseRowObject, K extends keyof R>({
   columns,
   rows,
   initialSortedColumnKey,
+  renderCells,
   renderRow,
   slotBeforeHeaderRow = null,
   slotAfterHeaderRow = null,
@@ -110,19 +111,32 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
       secondSortedRows.map((row, rowIndex) => {
         const rowProps = row.propsForRow ?? {}
 
-        const renderedCells = columnsInState.map((column) => (
-          <TD
-            key={String(column.key)}
-            label={column.key !== "selectorInput" ? column.label : undefined}
-            textAlign={column.textAlign}
-            {...(column.propsForCells ?? {})}
-          >
-            {row[column.key]}
-          </TD>
-        ))
+        const renderedCells = columnsInState.map(
+          (column) =>
+            renderCells?.[column.key]?.({
+              cell: row[column.key],
+              row,
+              rowIndex,
+              sortDirection,
+              sortedColumnKey: sortedColumnKey as K,
+              sortedRows,
+              cellProps: column.propsForCells ?? {},
+            }) ?? (
+              <TD
+                key={String(column.key)}
+                label={
+                  column.key !== "selectorInput" ? column.label : undefined
+                }
+                textAlign={column.textAlign}
+                {...(column.propsForCells ?? {})}
+              >
+                {row[column.key]}
+              </TD>
+            )
+        )
 
-        return renderRow ? (
-          renderRow({
+        return (
+          renderRow?.({
             children: renderedCells,
             row,
             rowIndex,
@@ -130,11 +144,11 @@ export function StyledTable<R extends BaseRowObject, K extends keyof R>({
             sortDirection,
             sortedColumnKey: sortedColumnKey as K,
             sortedRows,
-          })
-        ) : (
-          <TR key={rowIndex} variant="tbody" {...rowProps}>
-            {renderedCells}
-          </TR>
+          }) ?? (
+            <TR key={rowIndex} variant="tbody" {...rowProps}>
+              {renderedCells}
+            </TR>
+          )
         )
       }),
     [
