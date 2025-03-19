@@ -20,7 +20,7 @@ import {
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
   metricsTributeColumnTooltip,
-  pastBidTributeAprColumnTooltip,
+  pastBidTributeAprBidsPageColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -354,7 +354,7 @@ export function BidDetails({ bidId }: { bidId: number }) {
                     ? metricsTributeColumnTooltip
                     : bid.roundId === currentRoundId
                       ? liveBidTributeAprColumnTooltip
-                      : pastBidTributeAprColumnTooltip
+                      : pastBidTributeAprBidsPageColumnTooltip
                 }
               >
                 <StyledText
