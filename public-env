@@ -16,6 +16,7 @@ NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT='https://cosmos.numia.xyz/hydro/deployments_
 
 NUMIA_BIDS_ENDPOINT ='https://cosmos.numia.xyz/hydro/round_bids'
 NUMIA_TRIBUTES_ENDPOINT='https://cosmos.numia.xyz/hydro/round_tributes'
+NUMIA_PRICES_ENDPOINT='https://cosmos.numia.xyz/hydro/round_prices'
 NUMIA_LOCKUPS_ENDPOINT ='https://cosmos.numia.xyz/hydro/round_lockups'
 NUMIA_USERS_ENDPOINT ='https://cosmos.numia.xyz/hydro/historic_users'
 
