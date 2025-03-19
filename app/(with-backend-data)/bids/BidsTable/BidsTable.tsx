@@ -11,13 +11,7 @@ import { RowComponent } from "./RowComponent"
 export function BidsTable({ trancheId }: { trancheId: number }) {
   const tableId = `bids-table-${trancheId}`
 
-  const {
-    tranches,
-    bidsInfo,
-    bidMetaDataById,
-    currentRoundId,
-    votesByRoundId,
-  } = useBackendData()
+  const { tranches, bidsInfo, currentRoundId } = useBackendData()
 
   const bidsInRound = Object.values(bidsInfo).filter(
     (bid) => bid.roundId === currentRoundId
@@ -35,7 +29,7 @@ export function BidsTable({ trancheId }: { trancheId: number }) {
 
   const columns = useMemo(() => {
     return buildColumns<Row>()
-  }, [bidsInfo, bidMetaDataById, currentRoundId, votesByRoundId])
+  }, [])
 
   return (
     <CollapsibleTable
