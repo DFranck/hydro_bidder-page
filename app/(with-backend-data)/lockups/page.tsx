@@ -25,7 +25,7 @@ import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { LockupsTable } from "./LockupsTable"
+import { LockupsTables } from "./LockupsTables"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -190,8 +190,8 @@ export default function LockupsPage() {
           </div>
         </div>
 
-        <BlurryBackdropBox className="flex flex-col gap-6">
-          {lockups.length === 0 ? (
+        {lockups.length === 0 ? (
+          <BlurryBackdropBox className="flex flex-col gap-6">
             <EmptyBox className="flex flex-col gap-1">
               {!isWalletConnected ? (
                 <>
@@ -218,15 +218,15 @@ export default function LockupsPage() {
                 </StyledText>
               </div>
             </EmptyBox>
-          ) : (
-            <LockupsTable
-              onClickEdit={({ lockup }) => {
-                setIsEditModalOpen(true)
-                setLockupBeingEdited(lockup)
-              }}
-            />
-          )}
-        </BlurryBackdropBox>
+          </BlurryBackdropBox>
+        ) : (
+          <LockupsTables
+            onClickEdit={({ lockup }) => {
+              setIsEditModalOpen(true)
+              setLockupBeingEdited(lockup)
+            }}
+          />
+        )}
       </ContentContainer>
 
       <EditLockupDurationModal

@@ -4,9 +4,8 @@ import { StyledText } from "@/components/StyledText"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
-import { twJoin } from "tailwind-merge"
 
-export function buildRow({
+export function buildActiveRow({
   lockup,
   tranches,
   onClickEdit,
@@ -40,16 +39,11 @@ export function buildRow({
       </>
     ),
 
-    timeLeft:
-      daysLeft <= 0 ? (
-        <>Expired</>
-      ) : (
-        pluralize({
-          count: daysLeft,
-          prefixCount: true,
-          singular: "day",
-        })
-      ),
+    timeLeft: pluralize({
+      count: daysLeft,
+      prefixCount: true,
+      singular: "day",
+    }),
 
     ...statusCells,
 
@@ -57,12 +51,9 @@ export function buildRow({
       <StyledText
         as="button"
         variant="button.secondary"
-        className={twJoin(
-          lockup.isExpired ? "border-palette-red text-palette-red" : undefined
-        )}
         onClick={onClickEdit.bind(null, { lockup })}
       >
-        {lockup.isExpired ? "Refresh" : "Edit"}
+        Refresh
       </StyledText>
     ),
   }

@@ -5,7 +5,7 @@ import { Tooltip } from "@/components/Tooltip"
 import { lockupsTableTimeLeftColumnTooltip } from "@/components/ToolTips"
 import { AugmentedLockup } from "@/contract-apis/types"
 
-export function buildColumns<
+export function buildActiveColumns<
   Row extends BaseRowObject & {
     _lockup: AugmentedLockup
   },
@@ -24,6 +24,7 @@ export function buildColumns<
         "border-x-2 border-t-2 border-palette-beige/50",
         "bg-palette-beige text-palette-text font-bold",
         "hover:bg-palette-beige/90",
+        "border-palette-text",
       ],
     },
     customValueGetter: (row: Row) => {
@@ -38,6 +39,7 @@ export function buildColumns<
       label: "Amount",
       isSortable: true,
     },
+
     {
       key: "timeLeft",
       label: (
@@ -55,7 +57,9 @@ export function buildColumns<
         return row._lockup.daysLeft ?? 0
       },
     },
+
     ...statusColumnDescriptors,
+
     {
       key: "actions",
       label: "Actions",
