@@ -1,6 +1,5 @@
 "use client"
 
-import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
@@ -29,6 +28,7 @@ import { twJoin, twMerge } from "tailwind-merge"
 import { getMetricsTableColumns } from "./getMetricsTableColumns"
 import { getMetricsTableRows } from "./getMetricsTableRows"
 import { groupBy, mapValues } from "lodash"
+import { CollapsibleTable } from "@/components/CollapsibleTable"
 
 const PRE_HYDRO_ROUND_ID = -1
 
@@ -264,25 +264,14 @@ export function MetricsPage({
         {Object.entries(metricRowsByTrancheId).map(
           ([trancheId, metricRowsInTranche]) => {
             const tranche = tranches.find((t) => t.id === Number(trancheId))
+            const tableId = `metrics-table-${trancheId}`
             return (
-              <BlurryBackdropBox
-                key={trancheId}
-                className="flex flex-col gap-3"
+              <CollapsibleTable
+                key={tableId}
+                id={tableId}
+                title={tranche?.name ?? <em>(Unnamed Tranche)</em>}
+                numRows={metricRowsInTranche.length}
               >
-                {tranche?.name && (
-                  <div
-                    className={twJoin(
-                      "flex items-center justify-between",
-                      "rounded-t-md bg-palette-beige/20",
-                      "-mx-2 -my-1 px-6 py-3"
-                    )}
-                  >
-                    {tranche?.name && (
-                      <StyledText variant="h4">{tranche.name}</StyledText>
-                    )}
-                  </div>
-                )}
-
                 <StyledTable
                   initialSortedColumnKey="amount"
                   columns={metricTableColumns}
@@ -290,7 +279,7 @@ export function MetricsPage({
                   renderRow={renderRow}
                   secondPassSortFunction={secondPassSortFunction}
                 />
-              </BlurryBackdropBox>
+              </CollapsibleTable>
             )
           }
         )}
