@@ -33,12 +33,13 @@ export function TH({
           group/table-cell
           flex-grow
           cursor-default
-          px-5
           py-1
           text-sm
           font-normal
           text-neutral-200
           max-sm:block
+          sm:px-3
+          xl:px-5
         `,
         isSortable &&
           `

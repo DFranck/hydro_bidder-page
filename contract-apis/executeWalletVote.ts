@@ -1,6 +1,6 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
 import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
-import { SanitizedLockup } from "@/contract-apis/types"
+import { AugmentedLockup } from "@/contract-apis/types"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
 export async function executeWalletVote({
@@ -14,7 +14,7 @@ export async function executeWalletVote({
   address: string
   proposalId: number
   trancheId: number
-  lockups: SanitizedLockup[]
+  lockups: AugmentedLockup[]
 }) {
   const client = await getSigningCosmWasmClient()
 

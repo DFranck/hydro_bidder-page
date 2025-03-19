@@ -128,7 +128,7 @@ export function BackendDataContextProvider({
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
-  // [address, loadedTweaks, rawBackendDataBeforeWallet]
+  // Dependencies: [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
     const enabledTweaks: BackendDataTweak["json"] = merge(
       {},
@@ -198,10 +198,11 @@ export function BackendDataContextProvider({
         tranches,
       })
 
-      const tweakedWalletData = mergeWithOverwrite({}, walletData, {
-        ...(walletDataTweaks !== undefined && { walletData: walletDataTweaks }),
-        ...($walletData !== undefined && { $walletData }),
-      })
+      const tweakedWalletData = mergeWithOverwrite(
+        {},
+        walletData,
+        walletDataTweaks ?? {}
+      )
 
       const augmentedBackendDataAfterWallet = augmentBackendDataAfterWallet({
         address: effectiveAddress,

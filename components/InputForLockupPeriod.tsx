@@ -63,14 +63,14 @@ export function InputForLockupPeriod({
       ) : (
         <>
           <div className={twMerge("flex w-min", className)}>
-            {lockupPeriodOptions.map(({ label, duration }) => {
+            {lockupPeriodOptions.map(({ label, duration }, index) => {
               const isSelected = innerSelectedDuration === duration
 
               return (
                 <StyledText
                   variant={isSelected ? "button.primary" : "button.secondary"}
                   as="button"
-                  key={duration}
+                  key={duration + index}
                   onClick={handleClick.bind(null, duration)}
                   className={twMerge(
                     `!scale-100`,

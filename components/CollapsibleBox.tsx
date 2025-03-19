@@ -70,9 +70,11 @@ export function CollapsibleBox<T extends ElementType = "div">({
       className={twMerge(
         boxId,
         "grid grid-rows-[0fr] transition-all",
-        !isCollapsed && "grid-rows-[1fr]",
+        "[&[data-expanded]]:grid-rows-[1fr]",
         className
       )}
+      data-collapsed={isCollapsed ? "true" : undefined}
+      data-expanded={isCollapsed ? undefined : "true"}
       onTransitionEnd={handleTransition}
       onTransitionStart={handleTransitionStart}
       {...otherProps}

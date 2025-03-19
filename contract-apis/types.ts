@@ -54,7 +54,7 @@ export interface AugmentedBackendDataAfterWallet
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
   lockedAtomTotalWallet: number
-  lockups: SanitizedLockup[]
+  lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
   votingPowerAvailable: number
@@ -87,7 +87,7 @@ export interface AugmentedBackendDataBeforeWallet {
 
 export interface AugmentedBidAfterWallet
   extends AugmentedBidBeforeWalletSlimmed {
-  lockupsOutliveBidDeployment: boolean
+  userIsEligibleToVote: boolean
   usersEstimatedRewards: number
   usersEstimatedRewardRelativeToCurrentPick: number
 }
@@ -158,6 +158,33 @@ export interface AugmentedLiquidityDeployment
   bidId: number
   deployedFunds: AugmentedCoin[] | null
   fundsBeforeDeployment: AugmentedCoin[] | null
+}
+
+export interface AugmentedLockup {
+  id: number
+  currentVotingPower: number
+  dateEnd: Date
+  dateStart: Date
+  daysLeft: number
+  funds: {
+    amount: number
+    denom: string
+  }
+  isEligibleToVote: boolean
+  isExpired: boolean
+  multiplier: number
+  metaDataByTrancheId: Record<
+    number,
+    {
+      isEligibleToVote: boolean
+      isEligibleToChangeVote: boolean
+      isEligibleButHasNotVoted: boolean
+      isTiedToDeployment: boolean
+      nextRoundEligibleToVote: number | null
+      numRoundsLeftOnDeployment: number | null
+      votedOnBidId: number | null
+    }
+  >
 }
 
 export type BackendDataBeforeWallet = {
@@ -390,34 +417,6 @@ export interface RawWalletData {
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]
-}
-
-export interface SanitizedLockup {
-  id: number
-  currentVotingPower: number
-  dateEnd: Date
-  dateStart: Date
-  daysLeft: number
-  funds: {
-    amount: number
-    denom: string
-  }
-  isExpired: boolean
-  isEligibleThisRoundAtAll: boolean
-  isEligibleToChangeVote: boolean
-  isEligibleButHasNotVoted: boolean
-  isTiedToDeployment: boolean
-  multiplier: number
-  metaDataByTrancheId: Record<
-    number,
-    {
-      nextRoundEligibleToVote: number | null
-      votedOnBidId: number | null
-    }
-  >
-  nextRoundEligibleToVote: number | null
-  numRoundsLeftOnDeployment: number
-  votedOnBidId: number | null
 }
 
 export interface SanitizedMetricsFromNumia

@@ -4,7 +4,7 @@ import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
-import { BidTributeAprOrPoints } from "@/components/BidTributeAprOrPoints"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { ErrorBox } from "@/components/ErrorBox"
@@ -20,7 +20,6 @@ import {
   liveBidTributeAprColumnTooltip,
   metricsDurationColumnTooltip,
   metricsPolAprColumnTooltip,
-  metricsTributeColumnTooltip,
   pastBidTributeAprColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
@@ -361,11 +360,9 @@ export function BidDetails({
             <div>
               <Tooltip
                 tipContents={
-                  !isTokenBased
-                    ? metricsTributeColumnTooltip
-                    : bid.roundId === currentRoundId
-                      ? liveBidTributeAprColumnTooltip
-                      : pastBidTributeAprColumnTooltip
+                  bid.roundId === currentRoundId
+                    ? liveBidTributeAprColumnTooltip
+                    : pastBidTributeAprColumnTooltip
                 }
               >
                 <StyledText
@@ -373,13 +370,13 @@ export function BidDetails({
                   variant="label"
                   className="flex cursor-default items-center gap-1"
                 >
-                  <span>{!isTokenBased ? "Tribute" : "Tribute APR"}</span>
+                  <span>Tribute APR</span>
                   <Icon name="circle-info" />
                 </StyledText>
               </Tooltip>
 
               <div className="flex max-w-64 flex-col overflow-x-auto text-xl font-bold">
-                <BidTributeAprOrPoints bidId={bidId} />
+                <BidTributeApr bidId={bidId} />
               </div>
             </div>
 
