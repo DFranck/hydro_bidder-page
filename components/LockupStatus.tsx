@@ -181,9 +181,9 @@ export function LockupStatus({
       {statusIcon}
 
       <div className="flex flex-col">
-        <div className="border-b-2 border-dotted border-white/50 hover:border-white">
+        <span className="w-fit border-b-2 border-dotted border-white/50 hover:border-white">
           {statusTopline}
-        </div>
+        </span>
         {statusBottomline && (
           <StyledText variant="footnote">{statusBottomline}</StyledText>
         )}
