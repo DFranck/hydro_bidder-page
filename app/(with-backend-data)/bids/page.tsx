@@ -1,12 +1,12 @@
 "use client"
 
-import { BidsTable } from "@/components/BidsTable/BidsTable"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EmptyBox } from "@/components/EmptyBox"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { StatCards } from "@/components/StatCards"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { BidsTable } from "./BidsTable"
 
 export default function BidsPage() {
   const backendData = useBackendData()

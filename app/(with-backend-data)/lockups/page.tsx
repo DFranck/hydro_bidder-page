@@ -1,41 +1,31 @@
 "use client"
 
 import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
+import { NewLockupButton } from "@/app/(with-backend-data)/lockups/NewLockupButton"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
-import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EditLockupDurationModal } from "@/components/EditLockupDurationModal"
 import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
-import { LockupStatus } from "@/components/LockupStatus"
 import { ModalWindow } from "@/components/ModalWindow"
 import { ProgressBar } from "@/components/ProgressBar"
 import { StatCards } from "@/components/StatCards"
-import { StyledTable, TD, TR } from "@/components/StyledTable"
-import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  lockupLimitReachedByNetworkTooltip,
-  lockupLimitReachedByUserTooltip,
-  lockupLimitTooltip,
-  lockupsTableTimeLeftColumnTooltip,
-  needsWalletConnectionTooltip,
-} from "@/components/ToolTips"
+import { lockupLimitTooltip } from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { LockupsTable } from "./LockupsTable"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -48,10 +38,8 @@ export default function LockupsPage() {
     isWalletConnected,
     lockups,
     lockedAtomMaxWallet,
-    lockedAtomPercentageGlobal,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
-    tranches,
   } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
@@ -61,121 +49,6 @@ export default function LockupsPage() {
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-
-  const statusColumnDescriptors = tranches.map(({ id, name }) => ({
-    key: `trancheStatus${id}` as const,
-    label: name,
-    isSortable: true,
-    initialSortDirection: "asc",
-    propsForCells: {
-      className: "w-1/4 border-x-2 border-palette-beige/50",
-    },
-    propsForHeaderCell: {
-      className: [
-        "py-3",
-        "border-x-2 border-t-2 border-palette-beige/50",
-        "bg-palette-beige text-palette-text font-bold",
-        "hover:bg-palette-beige/90",
-      ],
-    },
-    customValueGetter: (row: (typeof lockupsAsRows)[number]) => {
-      const { isExpired, isEligibleToVote } = row._lockup
-      return isExpired ? 0 : isEligibleToVote ? 1 : 2
-    },
-  }))
-
-  const columnDescriptors = [
-    {
-      key: "amount",
-      label: "Amount",
-      isSortable: true,
-    },
-    {
-      key: "timeLeft",
-      label: (
-        <Tooltip
-          tipContents={lockupsTableTimeLeftColumnTooltip}
-          className="flex items-center gap-1"
-        >
-          <span>Time Left</span>
-          <Icon name="circle-info" />
-        </Tooltip>
-      ),
-      isSortable: true,
-      textAlign: "center",
-      customValueGetter: (row) => {
-        return row._lockup.daysLeft ?? 0
-      },
-    },
-    ...statusColumnDescriptors,
-    {
-      key: "actions",
-      label: "Actions",
-      textAlign: "right",
-    },
-  ] as ColumnObject<
-    (typeof lockupsAsRows)[number],
-    keyof (typeof lockupsAsRows)[number]
-  >[]
-
-  const lockupsAsRows = lockups.map((lockup) => {
-    const { daysLeft } = lockup
-
-    const statusCells = Object.fromEntries(
-      tranches.map(({ id }) => {
-        return [
-          `trancheStatus${id}` as const,
-          <LockupStatus
-            key={`trancheStatus${id}`}
-            lockupId={lockup.id}
-            trancheId={id}
-          />,
-        ]
-      })
-    )
-
-    const cells = {
-      _lockup: { ...lockup, daysLeft },
-
-      amount: (
-        <>
-          {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
-          <StyledText variant="footnote">ATOM</StyledText>
-        </>
-      ),
-
-      timeLeft:
-        daysLeft <= 0 ? (
-          <>Expired</>
-        ) : (
-          pluralize({
-            count: daysLeft,
-            prefixCount: true,
-            singular: "day",
-          })
-        ),
-
-      ...statusCells,
-
-      actions: (
-        <StyledText
-          as="button"
-          variant="button.secondary"
-          className={twJoin(
-            lockup.isExpired ? "border-palette-red text-palette-red" : undefined
-          )}
-          onClick={() => {
-            setIsEditModalOpen(true)
-            setLockupBeingEdited(lockup)
-          }}
-        >
-          {lockup.isExpired ? "Refresh" : "Edit"}
-        </StyledText>
-      ),
-    }
-
-    return cells
-  })
 
   async function handleClickToNextUnlockingStep() {
     router.push("/lock-atom")
@@ -313,39 +186,7 @@ export default function LockupsPage() {
               </StyledText>
             )}
 
-            <ConditionalWrapper
-              condition={
-                !isWalletConnected ||
-                lockedAtomPercentageWallet === 100 ||
-                lockedAtomPercentageGlobal === 100
-              }
-              wrapper={(children) => (
-                <Tooltip
-                  classNamesForTooltip="-ml-12"
-                  tipContents={
-                    !isWalletConnected
-                      ? needsWalletConnectionTooltip
-                      : lockedAtomPercentageWallet === 100
-                        ? lockupLimitReachedByUserTooltip
-                        : lockupLimitReachedByNetworkTooltip
-                  }
-                >
-                  <div
-                    className="
-                      pointer-events-none
-                      cursor-not-allowed
-                      opacity-50
-                    "
-                  >
-                    {children}
-                  </div>
-                </Tooltip>
-              )}
-            >
-              <StyledText as={Link} variant="button.primary" href="/lock-atom">
-                New Lockup
-              </StyledText>
-            </ConditionalWrapper>
+            <NewLockupButton />
           </div>
         </div>
 
@@ -378,61 +219,10 @@ export default function LockupsPage() {
               </div>
             </EmptyBox>
           ) : (
-            <StyledTable
-              className="border-collapse"
-              columns={columnDescriptors}
-              rows={lockupsAsRows}
-              initialSortedColumnKey="timeLeft"
-              renderCells={
-                {
-                  trancheStatus1: ({ cell, cellProps, row }: any) => {
-                    const { isExpired } = row._lockup
-                    return (
-                      <TD
-                        {...cellProps}
-                        className={twMerge(
-                          cellProps.className,
-                          isExpired && "border-x-0"
-                        )}
-                        colSpan={isExpired ? tranches.length : undefined}
-                        key={cellProps.key}
-                      >
-                        {cell}
-                      </TD>
-                    )
-                  },
-                  trancheStatus2: ({ cell, cellProps, row }: any) => {
-                    const { isExpired } = row._lockup
-                    console.log({ isExpired })
-                    return isExpired ? (
-                      <></>
-                    ) : (
-                      <TD key={cellProps.key} {...cellProps}>
-                        {cell}
-                      </TD>
-                    )
-                  },
-                } as any
-              }
-              renderRow={({ children, row, rowProps }) => {
-                const { isExpired, isEligibleToVote } = row._lockup
-
-                return (
-                  <TR
-                    className={twMerge(
-                      rowProps.className,
-                      isExpired
-                        ? "[&_td]:bg-palette-red/20"
-                        : !isEligibleToVote
-                          ? "opacity-60 transition-opacity hover:opacity-100"
-                          : ""
-                    )}
-                    key={row._lockup.id}
-                    {...rowProps}
-                  >
-                    {children}
-                  </TR>
-                )
+            <LockupsTable
+              onClickEdit={({ lockup }) => {
+                setIsEditModalOpen(true)
+                setLockupBeingEdited(lockup)
               }}
             />
           )}

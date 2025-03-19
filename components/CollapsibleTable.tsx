@@ -88,7 +88,7 @@ export function CollapsibleTable({
           </StyledText>{" "}
           {pluralize({
             count: numRows,
-            singular: "Row",
+            singular: "Bid",
             prefixCount: true,
           })}
         </StyledText>

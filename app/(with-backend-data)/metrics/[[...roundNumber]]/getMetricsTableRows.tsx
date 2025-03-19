@@ -4,7 +4,7 @@ import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
-import { BidTributeAprOrPoints } from "@/components/BidTributeAprOrPoints"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { StyledText } from "@/components/StyledText"
 import {
@@ -118,11 +118,7 @@ export function getMetricsTableRows(
 
       tributeApr: (
         <InvisibleLink href={rowURL}>
-          {requestedPreHydro ? (
-            0
-          ) : (
-            <BidTributeAprOrPoints bidId={bidFromContract.id} />
-          )}
+          {requestedPreHydro ? 0 : <BidTributeApr bidId={bidFromContract.id} />}
         </InvisibleLink>
       ),
 

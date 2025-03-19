@@ -1,6 +1,6 @@
 import { BidDuration } from "@/components/BidDuration"
 import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
-import { BidTributeAprOrPoints } from "@/components/BidTributeAprOrPoints"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
@@ -14,7 +14,7 @@ import { VoteButton } from "@/components/VoteButton"
 import { BidRevampMetrics } from "@/contract-apis/types"
 import { classNames } from "./classNames"
 
-export function buildRow(bid: BidRevampMetrics) {
+export function buildRow({ bid }: { bid: BidRevampMetrics }) {
   const bidURL = `/bids/${bid.id}`
 
   return {
@@ -34,7 +34,7 @@ export function buildRow(bid: BidRevampMetrics) {
 
     tributeApr: (
       <InvisibleLink href={bidURL}>
-        <BidTributeAprOrPoints bidId={bid.id} />
+        <BidTributeApr bidId={bid.id} />
       </InvisibleLink>
     ),
 

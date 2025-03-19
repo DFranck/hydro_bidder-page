@@ -28,30 +28,6 @@ export function LockupStatus({
 
   const { isExpired, daysLeft, metaDataByTrancheId } = lockup
 
-  if (isExpired) {
-    return (
-      <div className="flex gap-3 whitespace-nowrap">
-        <Icon name="solid:triangle-exclamation" className="text-palette-red" />
-
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1">
-            {Math.abs(daysLeft) === 0
-              ? "Expired today"
-              : `Expired ${pluralize({
-                  count: Math.abs(daysLeft),
-                  prefixCount: true,
-                  singular: "day",
-                })} ago`}
-            <Icon name="circle-info" />
-          </div>
-          <StyledText variant="footnote">
-            You can refresh this lockup, or unlock it
-          </StyledText>
-        </div>
-      </div>
-    )
-  }
-
   const metadata = metaDataByTrancheId[trancheId]
 
   const {
@@ -63,69 +39,73 @@ export function LockupStatus({
 
   const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
 
-  if (isTiedToDeployment) {
-    return (
-      <div className="flex gap-3 whitespace-nowrap">
-        <Icon name="solid:lock" className="text-palette-beige" />
-
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1">
-            <span>Tied to Bid Deployment</span>
-            <Icon name="circle-info" />
-          </div>
-          <StyledText variant="footnote">
-            {numRoundsLeftOnDeployment === 1
-              ? "Available to use next round"
-              : `Available to use in ${numRoundsLeftOnDeployment} rounds`}
-          </StyledText>
-        </div>
-      </div>
-    )
-  }
-
   const {
     statusTopline,
     statusBottomline = null,
     statusExplanation,
     statusIcon,
-  } = isTiedToDeployment
+  } = isExpired
     ? {
-        statusIcon: <Icon name="solid:lock" className="text-palette-beige" />,
-        statusTopline: "Tied to bid deployment",
-        statusBottomline:
-          numRoundsLeftOnDeployment === 1
-            ? "Available to use next round"
-            : `Available to use in ${numRoundsLeftOnDeployment} rounds`,
-        statusExplanation: <>This lockup is currently tied to a deployment.</>,
+        statusIcon: (
+          <Icon
+            name="solid:triangle-exclamation"
+            className="text-palette-red"
+          />
+        ),
+        statusTopline:
+          Math.abs(daysLeft) === 0
+            ? "Expired today"
+            : `Expired ${pluralize({
+                count: Math.abs(daysLeft),
+                prefixCount: true,
+                singular: "day",
+              })} ago`,
+        statusBottomline: "This lockup is expired.",
+        statusExplanation: <>You can refresh this lockup, or unlock it</>,
       }
-    : isEligibleToChangeVote
+    : isTiedToDeployment
       ? {
-          statusIcon: (
-            <Icon name="solid:circle-check" className="text-palette-green" />
-          ),
-          statusTopline: "Voted for bid",
-          statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
+          statusIcon: <Icon name="solid:lock" className="text-palette-beige" />,
+          statusTopline: "Tied to bid deployment",
+          statusBottomline:
+            numRoundsLeftOnDeployment === 1
+              ? "Available to use next round"
+              : `Available to use in ${numRoundsLeftOnDeployment} rounds`,
           statusExplanation: (
-            <>
-              This lockup is currently tied to the bid above in the current
-              round, but you can still change your vote.
-            </>
+            <>This lockup is currently tied to a deployment.</>
           ),
         }
-      : {
-          statusIcon: (
-            <Icon name="regular:circle-dashed" className="text-palette-green" />
-          ),
-          statusTopline: "Eligible to vote",
-          statusExplanation: (
-            <span>
-              This lockup is eligible to vote in the current round.{" "}
-              <StyledText variant="link" href="/bids" as={Link}>
-                Browse Bids
-              </StyledText>
-            </span>
-          ),
-        }
+      : isEligibleToChangeVote
+        ? {
+            statusIcon: (
+              <Icon name="solid:circle-check" className="text-palette-green" />
+            ),
+            statusTopline: "Voted for bid",
+            statusBottomline: `${getTimeUntilDate(currentRoundEndDate)} left in round`,
+            statusExplanation: (
+              <>
+                This lockup is currently tied to the bid above in the current
+                round, but you can still change your vote.
+              </>
+            ),
+          }
+        : {
+            statusIcon: (
+              <Icon
+                name="regular:circle-dashed"
+                className="text-palette-green"
+              />
+            ),
+            statusTopline: "Eligible to vote",
+            statusExplanation: (
+              <span>
+                This lockup is eligible to vote in the current round.{" "}
+                <StyledText variant="link" href="/bids" as={Link}>
+                  Browse Bids
+                </StyledText>
+              </span>
+            ),
+          }
 
   const statusTooltip = (
     <div className="flex flex-col gap-2">
