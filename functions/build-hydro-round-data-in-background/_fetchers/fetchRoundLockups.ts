@@ -13,11 +13,9 @@ export async function fetchRoundLockups({
   currentRoundId: number
 }): Promise<LockupWithPerTrancheInfo[][]> {
   const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
-    "NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
   )
-  const numiaLockupsEndpoint = getEnvironmentVariable(
-    "NEXT_PUBLIC_NUMIA_LOCKUPS_ENDPOINT"
-  )
+  const numiaLockupsEndpoint = getEnvironmentVariable("NUMIA_LOCKUPS_ENDPOINT")
   const hydroContractAddress = getEnvironmentVariable(
     "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"
   )

@@ -12,10 +12,10 @@ export async function fetchRoundTributes({
   currentRoundId: number
 }): Promise<Tribute[]> {
   const numiaTributesEndpoint = getEnvironmentVariable(
-    "NEXT_PUBLIC_NUMIA_TRIBUTES_ENDPOINT"
+    "NUMIA_TRIBUTES_ENDPOINT"
   )
   const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
-    "NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
   )
   const tributeContractAddress = getEnvironmentVariable(
     "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS"

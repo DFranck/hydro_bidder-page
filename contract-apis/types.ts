@@ -33,16 +33,6 @@ export interface AssetListWithPrices {
   }
 }
 
-export interface PriceDetails {
-  token_symbol: string;
-  token_exponent: number;
-  token_price: number;
-}
-
-export interface RoundPrices {
-  [key: string]: PriceDetails;
-}
-
 export interface AugmentedBackendDataAfterWallet
   extends AugmentedBackendDataBeforeWallet {
   address: string
@@ -307,6 +297,12 @@ export type OnchainTributeFromNumia = {
   asset?: string
 }
 
+export interface PriceDetails {
+  token_symbol: string
+  token_exponent: number
+  token_price: number
+}
+
 export type ProposalSlimmed = Omit<Proposal, "description">
 
 export type RawExternalData = {
@@ -417,6 +413,10 @@ export interface RawWalletData {
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]
+}
+
+export interface RoundPrices {
+  [key: string]: PriceDetails
 }
 
 export interface SanitizedMetricsFromNumia

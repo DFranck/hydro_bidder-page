@@ -9010,6 +9010,753 @@
           "creation_round": 0
         }
       ],
+      "round_prices": {
+        "ibc/0F90CE86020EBE434E27ED3804CABB67D1DA9AE0B818D8E9607188C1C58180B7": {
+          "token_exponent": 6,
+          "token_symbol": "WIHA",
+          "token_price": 0.026419816708593807
+        },
+        "ibc/1FDF5F63F29379882D5F0A2F740A89FEB53FBBFA2D019E6CB626E3403BBA1944": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0002944117208004
+        },
+        "ibc/3307AC2A0415D33A463DBC954087539A4B2AB01DAC7C77155C072A2DD3073A94": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0001808882198997
+        },
+        "ibc/740C72B9127CEA71AEB81687BB055106F502DA4647AA975BF64E3DC61D334ED9": {
+          "token_exponent": 6,
+          "token_symbol": "CDT",
+          "token_price": 0.9539831048992232
+        },
+        "ibc/D77A4E010C2063E4F2C4E7C84AFACB087464326DE20FF23A3D8357685E5BDC57": {
+          "token_exponent": 6,
+          "token_symbol": "SNEAKY",
+          "token_price": 2.1366985622854124
+        },
+        "ibc/DDC3C60EE82BF544F1A0C6A983FF500EF1C14DE20071A5E1E7C0FB470E36E920": {
+          "token_exponent": 14,
+          "token_symbol": "SAT",
+          "token_price": 98838.92820936312
+        },
+        "ibc/94504DAB689EC82B71FC9AE8CACC2A8030642C041EEFC165BEB5589223888B7E": {
+          "token_exponent": 14,
+          "token_symbol": "nBTC",
+          "token_price": 98838.92820936312
+        },
+        "ibc/00230C58F1540708067850B3362C8A67A273FC52F0C7305B802D7255495C86FD": {
+          "token_exponent": 18,
+          "token_symbol": "ARCH",
+          "token_price": 0.03692033639078915
+        },
+        "ibc/69BEAFC2FDF0C6F0124520B0A06E432AD8490732DFC309337FA6C307124FDABC": {
+          "token_exponent": 18,
+          "token_symbol": "INJ",
+          "token_price": 33.676833884258876
+        },
+        "ibc/0802557E8E5C9243A3F513CFC74469C5FBEAC0FC5C126E7F0505FA784347769D": {
+          "token_exponent": 6,
+          "token_symbol": "USK",
+          "token_price": 0.993765020281953
+        },
+        "ibc/5CB2E12B07D0B6D8EC24A68BA6B6E6E8D5BF85B7D22091D3A480DCDD61C6AC84": {
+          "token_exponent": 18,
+          "token_symbol": "WBNB",
+          "token_price": 719.9319086638961
+        },
+        "ibc/7F85C8BE811E6EDDDB8DD538B34D854055B361A87A72B3FDC254DF1E1E7F0B60": {
+          "token_exponent": 6,
+          "token_symbol": "BERNESE",
+          "token_price": 0.0008372039456186842
+        },
+        "ibc/54A5A873A546559DAF6AB5A8573CD448F8BB494998DE48A3E5B2C038DF9C1FE0": {
+          "token_exponent": 6,
+          "token_symbol": "stSOMM",
+          "token_price": 0.029425377576302775
+        },
+        "ibc/BAA1D21893B1D36865C6CA44D18F4ACF08BAD70CB6863C4722E0A61703808F77": {
+          "token_exponent": 18,
+          "token_symbol": "stDYDX",
+          "token_price": 2.1621492543402887
+        },
+        "ibc/6C9E6701AC217C0FC7D74B0F7A6265B9B4E3C3CDA6E80AADE5F950A8F52F9972": {
+          "token_exponent": 6,
+          "token_symbol": "NLS",
+          "token_price": 0.013386441503466536
+        },
+        "ibc/ED738CF5832C5399B1DADEADDD6A65A42EDA09707EF15D743A233B40D2D69613": {
+          "token_exponent": 6,
+          "token_symbol": "stUMEE",
+          "token_price": 0.001749829661780892
+        },
+        "factory/neutron1ndu2wvkrxtane8se2tr48gv7nsm46y5gcqjhux/MARS": {
+          "token_exponent": 6,
+          "token_symbol": "MARS",
+          "token_price": 0.034984092228058705
+        },
+        "ibc/A191599BC4F13604198F50378F9E97EBE06740AA267ED74D17A41D383437B8D3": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 0.9987553687858318
+        },
+        "ibc/8F93A962F1ACCC0C55B45358ACCEA4557206AE71A8BC73A2044525EE43EF5D31": {
+          "token_exponent": 18,
+          "token_symbol": "RAI",
+          "token_price": 3.0471727092490206
+        },
+        "ibc/74B554DD3FF10F5D60E30175ADFB47E59F77F7C57024A8104A4F78CDC2EAD125": {
+          "token_exponent": 6,
+          "token_symbol": "SAGA",
+          "token_price": 2.7130589183436316
+        },
+        "ibc/A0A081FFC6A13B8F502079F3A8420F5B4FC3007D9AA696E371B9A7B39B90EADF": {
+          "token_exponent": 18,
+          "token_symbol": "USDY",
+          "token_price": 1.0520540059545809
+        },
+        "ibc/A9FDC3F1C168CC2196CF00A09504AD42D4D8E0BF1C7FBBB4B3531FA16F633F6E": {
+          "token_exponent": 6,
+          "token_symbol": "KAVA",
+          "token_price": 0.7235557907853079
+        },
+        "ibc/1F4D25F42EE82D89CA2DF6F2CAEE58A6E5D7C49A2E575B3562316F59BB9846F8": {
+          "token_exponent": 18,
+          "token_symbol": "sfrxETH",
+          "token_price": 4856.87116920003
+        },
+        "ibc/469B116E923A713A3DFA8CC24CB3134E3E488661B90F76CB9F6B2A161A630841": {
+          "token_exponent": 12,
+          "token_symbol": "KSM",
+          "token_price": 47.841224751262146
+        },
+        "ibc/B6086D35F7E7BCC4754A786946ACC9EBEB572B1495EF646FBCC16B72EAF7ED9F": {
+          "token_exponent": 6,
+          "token_symbol": "SHITMOS",
+          "token_price": 0.0293093294581879
+        },
+        "ibc/CB1418F937623A593214D369158366AE9E8B6E0B51923DDAF6751C4071E1F068": {
+          "token_exponent": 6,
+          "token_symbol": "WOOF",
+          "token_price": 0.2611750608907515
+        },
+        "ibc/3EF75051529C80A757CD8572C1F1437949AAC8553D4084F73FDBF9C1615053F7": {
+          "token_exponent": 9,
+          "token_symbol": "fMAD",
+          "token_price": 398.0922830859899
+        },
+        "ibc/C1F4520E07B9190EA08FBAA5E1D68109B9738B5B717904C62F0EE9CA89471EC0": {
+          "token_exponent": 6,
+          "token_symbol": "LAB",
+          "token_price": 46.75936748937696
+        },
+        "ibc/71BA048E21A9AEAC5E23FB7D91BE0E8730D50AB8993A01307616AA0C7EA618E3": {
+          "token_exponent": 18,
+          "token_symbol": "BUSD",
+          "token_price": 0.993308062418017
+        },
+        "ibc/5926313955E5701055CC9F562842937C293F29C05AB0A84ADCC7B879DE0F983B": {
+          "token_exponent": 6,
+          "token_symbol": "GLTO",
+          "token_price": 0.0004606348541176831
+        },
+        "ibc/6A1E478F1A7FF2EE7174B9221B4B7627F9639F13F9FAF3196EE3DE662ADEC6A5": {
+          "token_exponent": 6,
+          "token_symbol": "sqTIA",
+          "token_price": 3.232805121526315
+        },
+        "ibc/BEF5C9D724E1EBB04FEE237CB5F602B22B0FFE8065F540FD8BC6F9E1A4B8573D": {
+          "token_exponent": 6,
+          "token_symbol": "HUAHUA",
+          "token_price": 0.00010388667892113192
+        },
+        "ibc/970FC7201AEC13274DFE2434ECD133E72AA02E854734EB53C9ACB5F8891E84C2": {
+          "token_exponent": 12,
+          "token_symbol": "LINK",
+          "token_price": 24.3907549637623
+        },
+        "ibc/746873995B97269C0C6B6EA12C87C027054988827245ACC908BEE7B1A4E8FC07": {
+          "token_exponent": 6,
+          "token_symbol": "BOMU",
+          "token_price": 0.0004528883287690231
+        },
+        "factory/neutron170v88vrtnedesyfytuku257cggxc79rd7lwt7q/ucircus": {
+          "token_exponent": 6,
+          "token_symbol": "CIRCUS",
+          "token_price": 5.251173690782913
+        },
+        "ibc/F7F291D697E486E99D9AA1FAAB955F6E653B07855C51318BF6DF6D4E2B869616": {
+          "token_exponent": 6,
+          "token_symbol": "MNTA",
+          "token_price": 0.1963369461815956
+        },
+        "ibc/AB73A0D964FCE74EA9D7695553A1EA4B3D8E332571B049E8CC0ADEBFB4931503": {
+          "token_exponent": 6,
+          "token_symbol": "JUNO",
+          "token_price": 0.2738250576206264
+        },
+        "ibc/BF7BDD572D446678B527325A712AF2B5B68B49A4D8159FDF14D7389DB5269C67": {
+          "token_exponent": 9,
+          "token_symbol": "SOL",
+          "token_price": 236.31327840257757
+        },
+        "ibc/793A20B5D4E40585144132BB56334A14AFBA9C0BE72ED9A1FB90BBF8BBF7EF3A": {
+          "token_exponent": 9,
+          "token_symbol": "fBAD",
+          "token_price": 1990.2738433688571
+        },
+        "ibc/CCD676A501897583884E68318499E079C47CD336B48E168BB6DAD84831B10E36": {
+          "token_exponent": 6,
+          "token_symbol": "HAVA",
+          "token_price": 5.503187377092859e-9
+        },
+        "ibc/57503D7852EF4E1899FE6D71C5E81D7C839F76580F86F21E39348FC2BC9D7CE2": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 0.99918931306353
+        },
+        "ibc/E74CD453F834EE007B02F1298EFFF4DCD9C97FB58DF7F6080FF935145B73C6A6": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 10.72920031784781
+        },
+        "ibc/D2F678F792820452B17F087EC4FB02882A40BDA0C05B33100AF8EC7F441192EA": {
+          "token_exponent": 6,
+          "token_symbol": "BWH",
+          "token_price": 0.0005214163019189108
+        },
+        "ibc/B074BCF31E5892A522FD48DDD5DD80C3953D4B43D59A6E4FD0DC6759685FD36C": {
+          "token_exponent": 6,
+          "token_symbol": "BLD",
+          "token_price": 0.10823573071367223
+        },
+        "ibc/F073D44CC51154C8342C47C09D7EE1BD13ED54AFFDD4F350CF4BE7A67A31941B": {
+          "token_exponent": 6,
+          "token_symbol": "LVN",
+          "token_price": 0.03557372375187088
+        },
+        "ibc/14767887A69DBEFF3B99AA3E5B176C7989B1DAD2395A1E843F48EE981AC4F83F": {
+          "token_exponent": 18,
+          "token_symbol": "WMATIC",
+          "token_price": 0.6865366673862219
+        },
+        "ibc/2E61B6679222BA9909F7840EE40F1B0B7F7C7149BBD2AC132D53714C153652A7": {
+          "token_exponent": 6,
+          "token_symbol": "CAC",
+          "token_price": 0.011812129730150374
+        },
+        "ibc/939F500767327C6A5BE955DD81DCDE02ABA6A7231801AE748C21C2A0A598DB12": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 6.640534320378968
+        },
+        "ibc/9598CDEB7C6DB7FC21E746C8E0250B30CD5154F39CA111A9D4948A4362F638BD": {
+          "token_exponent": 6,
+          "token_symbol": "MARS.old",
+          "token_price": 0.03542361168942487
+        },
+        "ibc/08138B541387A196FD5E79E58396E87FA29243F0B5D4A82E38FA2E777B56053F": {
+          "token_exponent": 6,
+          "token_symbol": "COCA",
+          "token_price": 0.000576965668852333
+        },
+        "ibc/7E09670B1CC767DAD0C887DD97675BAB698E50E35673DB5806C0D2664F65C182": {
+          "token_exponent": 6,
+          "token_symbol": "MBRN",
+          "token_price": 0.028647584155248863
+        },
+        "factory/neutron1ug740qrkquxzrk2hh29qrlx3sktkfml3je7juusc2te7xmvsscns0n2wry/wstETH": {
+          "token_exponent": 18,
+          "token_symbol": "wstETH",
+          "token_price": 4586.920833623957
+        },
+        "ibc/2B9D089E73AC096934CD6BBBC71A1CD5DD2A4F8E94CC37CE7F861AC674044002": {
+          "token_exponent": 18,
+          "token_symbol": "stINJ",
+          "token_price": 45.03617312384203
+        },
+        "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349": {
+          "token_exponent": 6,
+          "token_symbol": "axlUSDC",
+          "token_price": 1
+        },
+        "ibc/4E39DA6487C8AA17276FAD2730C1DC84E0F716179962DA508FDAAC5FD598C323": {
+          "token_exponent": 6,
+          "token_symbol": "IST",
+          "token_price": 1.0030355306031389
+        },
+        "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM",
+          "token_price": 9.805489735358416
+        },
+        "ibc/E92CD020751E93DF431B5B1ED8950F7BFF07646D33C49CEA96D991FB6C322403": {
+          "token_exponent": 6,
+          "token_symbol": "stIBCX",
+          "token_price": 80.00537678698447
+        },
+        "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom": {
+          "token_exponent": 6,
+          "token_symbol": "dATOM",
+          "token_price": 9.88493526175341
+        },
+        "ibc/8D43B08EEF9D9688BEA6E54A8F0E50FCFC79A7567BCEDB56E3784F6591C331B9": {
+          "token_exponent": 18,
+          "token_symbol": "sFRAX",
+          "token_price": 1.0374900795185276
+        },
+        "ibc/1CF1239A3068964DAF55F7300D7BE016E4E184F58EEB59096B138F6D72628BAA": {
+          "token_exponent": 12,
+          "token_symbol": "PICA",
+          "token_price": 0.0007196221930493814
+        },
+        "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO",
+          "token_price": 0.7857522408117108
+        },
+        "ibc/ECB6654E6AA0B29C991C509B75445FCA70E4C46522B48B69544633808E176A49": {
+          "token_exponent": 12,
+          "token_symbol": "TNKR",
+          "token_price": 0.06187358969540378
+        },
+        "ibc/4EAAAE537853E9C0DDF458F0710C37BB3DE7C6A675AB75DB5731ACE93D6CC57B": {
+          "token_exponent": 6,
+          "token_symbol": "stSAGA",
+          "token_price": 2.76047678790702
+        },
+        "ibc/DF8722298D192AAB85D86D0462E8166234A6A9A572DD4A2EA7996029DF4DB363": {
+          "token_exponent": 8,
+          "token_symbol": "axlWBTC",
+          "token_price": 98110.85399042464
+        },
+        "ibc/A6C04435B5AEF75446592860D05358A05CEA74AAE2EEEFBA4B9FE702AA9917B5": {
+          "token_exponent": 12,
+          "token_symbol": "OP",
+          "token_price": 2.604134861195099
+        },
+        "ibc/D90C69603588018DD7183BBD315B65FBE3631FC98D447769B822F44D06602BD1": {
+          "token_exponent": 6,
+          "token_symbol": "stkOSMO",
+          "token_price": 0.8368574243375829
+        },
+        "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C": {
+          "token_exponent": 6,
+          "token_symbol": "stATOM",
+          "token_price": 14.006693844726405
+        },
+        "ibc/8D0C1AC5A72FB7EC187632D01BACBB68EF743CA1AF16A15C00ACBB9CF49A0070": {
+          "token_exponent": 18,
+          "token_symbol": "stDYM",
+          "token_price": 2.6682393530063577
+        },
+        "ibc/4A9DF0B17F6F90FB739C2731E4E2057BE64D39D0C7B9083B7706C0C9B53DEE0E": {
+          "token_exponent": 6,
+          "token_symbol": "stJUNO",
+          "token_price": 0.4302859572944761
+        },
+        "ibc/8D749C5FB0213DF002E8FDCCB5B01E35DA241397EF825048C530C7EAE43BCE80": {
+          "token_exponent": 6,
+          "token_symbol": "stSTARS",
+          "token_price": 0.01436632341875227
+        },
+        "ibc/9F8417FBA11E5E01F7F85DDD48C400EB746E95084C11706041663845B4A700A8": {
+          "token_exponent": 6,
+          "token_symbol": "BADKID",
+          "token_price": 0.000010662562127999798
+        },
+        "ibc/E8DB20806FC170C3454D93C7FD2CDA17A439F1C53559C87F3F38055E56A1C480": {
+          "token_exponent": 6,
+          "token_symbol": "TURD",
+          "token_price": 0.0024572371659759623
+        },
+        "ibc/765F6EF29011637675D247EB7D779D71269E562503CCEAA0C1A831B78EA5BA70": {
+          "token_exponent": 9,
+          "token_symbol": "wSOL",
+          "token_price": 130.8769173755413
+        },
+        "ibc/5C613C94127D0A91D215D0BF247A0ED00E5F001B0C276C5690005939C3740246": {
+          "token_exponent": 8,
+          "token_symbol": "BTC",
+          "token_price": 97931.01898103944
+        },
+        "ibc/C4D1E3EBE5C4666C39889BF59F7496D263389DEE1C8A3AB6A479B0A0FF224599": {
+          "token_exponent": 6,
+          "token_symbol": "sqATOM",
+          "token_price": 0.33201106816213216
+        },
+        "untrn": {
+          "token_exponent": 6,
+          "token_symbol": "NTRN",
+          "token_price": 0.6349786942936604
+        },
+        "ibc/986EDEE721977B7EE548A21E28781362E11C97600C3B2764DF16441D372C18D8": {
+          "token_exponent": 18,
+          "token_symbol": "stISLM",
+          "token_price": 0.07044819299553351
+        },
+        "ibc/2CB87BCE0937B1D1DFCEE79BE4501AAF3C265E923509AEAC410AD85D27F35130": {
+          "token_exponent": 18,
+          "token_symbol": "DYDX",
+          "token_price": 2.2850263336899395
+        },
+        "ibc/7A276F6A8091CE27CCA2EBCF24896B787686A2B7D123007B4ACB876D654E910D": {
+          "token_exponent": 9,
+          "token_symbol": "TON",
+          "token_price": 7.026260158776201
+        },
+        "ibc/EAE09760B34FE09BF2AA0CCEFBC99470254A86D1629F88AAE74031741EB366CB": {
+          "token_exponent": 6,
+          "token_symbol": "stBAND",
+          "token_price": 2.1490191519758346
+        },
+        "ibc/A585C2D15DCD3B010849B453A2CFCB5E213208A5AB665691792684C26274304D": {
+          "token_exponent": 18,
+          "token_symbol": "WETH",
+          "token_price": 3868.555014447424
+        },
+        "ibc/7DA39F5140741177846FCF3CFAB14450EE7F57B7794E5A94BEF73825D3741958": {
+          "token_exponent": 6,
+          "token_symbol": "WOSMO",
+          "token_price": 0.000037737152241833535
+        },
+        "ibc/1053E271314D36FECBC915B51474F8B3962597CE88FF3E4A74795B0E3F367A8B": {
+          "token_exponent": 6,
+          "token_symbol": "KUJI",
+          "token_price": 0.7379196663140154
+        },
+        "ibc/273E4C3B307F3BD56F08652B1DA009A705F078811716DF53F7829A76ED769A8D": {
+          "token_exponent": 6,
+          "token_symbol": "EURe",
+          "token_price": 1.064374886219402
+        },
+        "ibc/773B4D0A3CD667B2275D5A4A7A2F0909C0BA0F4059C0B9181E680DDF4965DCC7": {
+          "token_exponent": 6,
+          "token_symbol": "TIA",
+          "token_price": 8.700967770285763
+        },
+        "ibc/EC48B401A76C33CD2C8101F8F7E3C2A2FFAE68A8599E354BA66DE1C7AE1D2272": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 3868.555014447424
+        },
+        "ibc/17E2B6610FC9DF24D3AD8F1CBA03308B9FD284AB8123E5E485902E54369E985A": {
+          "token_exponent": 6,
+          "token_symbol": "FRNZ",
+          "token_price": 747.4734587796298
+        },
+        "factory/neutron13lkh47msw28yynspc5rnmty3yktk43wc3dsv0l/ATOM1KLFG": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM1KLFG",
+          "token_price": 0.014381442396477796
+        },
+        "ibc/656B94724075CBA8D09D31549DB97BC25663B0A228DA6C30AA23696C5949A308": {
+          "token_exponent": 12,
+          "token_symbol": "SHIB",
+          "token_price": 0.00003181333200499555
+        },
+        "ibc/7B6FFC996FC2984AA98DBA4CEBFBF790E55F4D7E65360DD614F2BE2D08F4D324": {
+          "token_exponent": 18,
+          "token_symbol": "WAVAX",
+          "token_price": 52.360922279737544
+        },
+        "ibc/322C86EB54A505E28AFE380CED1721FA61E9580A7548A16B9DCF6E7C8CEE43D5": {
+          "token_exponent": 6,
+          "token_symbol": "LUNA",
+          "token_price": 0.7432839415552116
+        },
+        "ibc/73787F5E206D9092C3F36F4483DBBDF75B30E84A544EFDC4829645A739D940B1": {
+          "token_exponent": 18,
+          "token_symbol": "YieldETH",
+          "token_price": 4238.535407556754
+        },
+        "ibc/8BD3EB6ABBD8DC8B1BA1F2E58CDFBAACFF8CF55DB8C475E9D6D97B9A56B052F0": {
+          "token_exponent": 6,
+          "token_symbol": "TORO",
+          "token_price": 0.000003994872634194023
+        },
+        "factory/neutron143wp6g8paqasnuuey6zyapucknwy9rhnld8hkr/bad": {
+          "token_exponent": 6,
+          "token_symbol": "BAD",
+          "token_price": 0.00003569832971767169
+        },
+        "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81": {
+          "token_exponent": 6,
+          "token_symbol": "USDC",
+          "token_price": 0.99875644072822
+        },
+        "ibc/E39239AE88D45746100FA4A9B3E1E29008CADF8AC2CAD4132A7609655AE323EB": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 3881.2125105263194
+        },
+        "ibc/39E4C8433680C4D40AD47748750690A816F205F26614EEE03860C1773D606B3B": {
+          "token_exponent": 6,
+          "token_symbol": "SHERPA",
+          "token_price": 0.014897193598997887
+        },
+        "ibc/6569E05DEE32B339D9286A52BE33DFCEFC97267F23EF9CFDE0C055140967A9A5": {
+          "token_exponent": 6,
+          "token_symbol": "stTIA",
+          "token_price": 9.235734065640704
+        },
+        "ibc/D6C031FCFA42DCC0E731E25E652774F72A9140F1EFDEDC7BFCE5D30B5999FB56": {
+          "token_exponent": 6,
+          "token_symbol": "XRP",
+          "token_price": 2.3204795077673963
+        },
+        "factory/neutron133xakkrfksq39wxy575unve2nyehg5npx75nph/WEIRD": {
+          "token_exponent": 6,
+          "token_symbol": "WEIRD",
+          "token_price": 0.037491346657641936
+        },
+        "ibc/41646AADED0E33983922676F54BF2B8FD31DE06BB02C72949FD4F34081A41073": {
+          "token_exponent": 6,
+          "token_symbol": "SEI",
+          "token_price": 0.6890189765618017
+        },
+        "ibc/55DB49C9B44555B813C1F98748794F81F4015DAFB43C9A1B8160C2ACBA6314CD": {
+          "token_exponent": 6,
+          "token_symbol": "COOK",
+          "token_price": 0.0005055821700567623
+        },
+        "ibc/601307DA970BD7D236E7D31A9526CE14BFCC2116DD48DF0D3E3E8AAC92D3BDFC": {
+          "token_exponent": 6,
+          "token_symbol": "CRAZYHORSE",
+          "token_price": 0.00045030943213323824
+        },
+        "ibc/A139C0E0B5E87CBA8EAEEB12B9BEE13AC7C814CFBBFA87BBCADD67E31003466C": {
+          "token_exponent": 6,
+          "token_symbol": "STARS",
+          "token_price": 0.009139678243081192
+        },
+        "ibc/78F7404035221CD1010518C7BC3DD99B90E59C2BA37ABFC3CE56B0CFB7E8901B": {
+          "token_exponent": 8,
+          "token_symbol": "WBTC",
+          "token_price": 98772.32046173826
+        },
+        "ibc/1002FD510616D2AD1664388D0CA79921452955E6D3BD11C5D85D5550C8480D6A": {
+          "token_exponent": 6,
+          "token_symbol": "UWU",
+          "token_price": 0.00025352766812320186
+        },
+        "ibc/C16FC80FEBC9C9C2325BD93ABF1B8A72CA5AF8AD3E2286438699AB5562B9AD06": {
+          "token_exponent": 6,
+          "token_symbol": "DGL",
+          "token_price": 0.0003028399542789405
+        },
+        "ibc/C641E5B7C19625CE8807BCCF1EAAB2B5B045ED4DD4AC5C3A71B611830948C141": {
+          "token_exponent": 6,
+          "token_symbol": "TRX",
+          "token_price": 0.32550406096114637
+        },
+        "ibc/C0E66D1C81D8AAF0E6896E05190FDFBC222367148F86AC3EA679C28327A763CD": {
+          "token_exponent": 6,
+          "token_symbol": "AXL",
+          "token_price": 1.0638088273761233
+        },
+        "ibc/9E6AC71FE9E94A2FDA9A353E286D72772BA0F7CFF7E02669637749278CBAA62F": {
+          "token_exponent": 18,
+          "token_symbol": "FXS",
+          "token_price": 5.637184281655074
+        },
+        "ibc/1B072CD5B6AB3C9D2B00C51B251CB5A5C7AF74C4C180E3E42BEB53211D694A15": {
+          "token_exponent": 12,
+          "token_symbol": "UNI",
+          "token_price": 10.983997304777116
+        },
+        "ibc/73D01D9D032390E81CBC20B7E0507B84DF54F3CE5302BFF52776E7D8930F2A6C": {
+          "token_exponent": 18,
+          "token_symbol": "LINK",
+          "token_price": 24.348408128260985
+        },
+        "ibc/B3881052DCC62E68955C71A49C5306717CFDE5B6526D39C89D1278DAE3284432": {
+          "token_exponent": 6,
+          "token_symbol": "XPRT",
+          "token_price": 0.1918961222740882
+        },
+        "ibc/8F7025E5B6D0F46746A114DAFAF6BD8833DA995983DBCD2489B5DF2D8B1EB699": {
+          "token_exponent": 6,
+          "token_symbol": "NINJA",
+          "token_price": 0.01189274204324786
+        },
+        "ibc/A96863E0BDFA3F2D96625FD5A649AF53F62F97521EF78FBBFE5B4199C3E23ABD": {
+          "token_exponent": 18,
+          "token_symbol": "WFTM",
+          "token_price": 1.2767718770310297
+        },
+        "ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93": {
+          "token_exponent": 6,
+          "token_symbol": "stOSMO",
+          "token_price": 1.0187891227441257
+        },
+        "ibc/2D9538CD39C19EC92906F91E724647C72DA3C4451EAB5958D9AF572507A6C6A0": {
+          "token_exponent": 6,
+          "token_symbol": "bOSMO",
+          "token_price": 0.8160030172899885
+        },
+        "ibc/FD842803B4D8DCB2229828F0D034803C5BA852BAF3469D0E3D1175CD646E700A": {
+          "token_exponent": 6,
+          "token_symbol": "ampOSMO",
+          "token_price": 0.8919839919241551
+        },
+        "ibc/BE0B6569E21562DA7E129F407AED4EA6625B7CB403E072C8C5E1B7F8D79DCC78": {
+          "token_exponent": 18,
+          "token_symbol": "PEPE",
+          "token_price": 0.00002186790225054693
+        },
+        "ibc/069C7EBFE330A82230D6059886E4BA62D903D7ACB7C17B57E31EE2A368CC3F66": {
+          "token_exponent": 6,
+          "token_symbol": "WHINE",
+          "token_price": 0.00017677070327292528
+        },
+        "ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445": {
+          "token_exponent": 6,
+          "token_symbol": "stkATOM",
+          "token_price": 13.775634474307685
+        },
+        "ibc/C73CE7576F1A6534150451F91E38117E3A5247B70BFC6346AE04562CD7B7C60A": {
+          "token_exponent": 12,
+          "token_symbol": "PEPE",
+          "token_price": 0.000021674443403091787
+        },
+        "ibc/2ECB3D2ADFE9F1CA85258C6330FA666120549349BC526D56B098A2A782D75455": {
+          "token_exponent": 6,
+          "token_symbol": "DGN",
+          "token_price": 0.0098199282372695
+        },
+        "ibc/3552CECB7BCE1891DB6070D37EC6E954C972B1400141308FCD85FD148BD06DE5": {
+          "token_exponent": 6,
+          "token_symbol": "STRD",
+          "token_price": 0.8195309583684809
+        },
+        "ibc/F69DEB50C318E0B5E19B6F422AEE3FA516801AB2EDFD9778D4BB0DF2FAB5A792": {
+          "token_exponent": 6,
+          "token_symbol": "SWP",
+          "token_price": 0.005588022614094333
+        },
+        "ibc/C9307595A4EE92AED106F32D68A51DCB04F6BE22E0F981F1176C8E8FBFDAE475": {
+          "token_exponent": 6,
+          "token_symbol": "wLIBRA",
+          "token_price": 0.00023977812129538157
+        },
+        "ibc/06A057955355B0E3B72F96603179CE06ABBD7D17E03CE6245CE29D54E530E051": {
+          "token_exponent": 9,
+          "token_symbol": "fSLOTH",
+          "token_price": 5482.947683442768
+        },
+        "ibc/D206EEE8D9C76A9F5EFCBDCF5FEEFB3A97094EC83F5517D75F0B42179AC5B351": {
+          "token_exponent": 6,
+          "token_symbol": "BAG",
+          "token_price": 0.006809637308383532
+        },
+        "ibc/B6362CC949149B6E1FBA1D112BD1D3135CB9214A90368AF2C68D056622291586": {
+          "token_exponent": 6,
+          "token_symbol": "sqOSMO",
+          "token_price": 1.0845660316938985e-7
+        },
+        "ibc/94D85D1AB75CB0BF9B6818EE317E86A83FA9C5D4140D06E71778B97C1FCAC79C": {
+          "token_exponent": 6,
+          "token_symbol": "SILK",
+          "token_price": 1.2615880065306324
+        },
+        "ibc/4A6A46D4263F2ED3DCE9CF866FE15E6903FB5E12D87EB8BDC1B6B1A1E2D397B4": {
+          "token_exponent": 18,
+          "token_symbol": "DYM",
+          "token_price": 2.591145664931936
+        },
+        "ibc/FD7804E039C049785704F6B6BDC42EBEE3B29E277E573DBF2601E268D46A4332": {
+          "token_exponent": 12,
+          "token_symbol": "ARB",
+          "token_price": 1.1423969095242112
+        },
+        "factory/neutron154gg0wtm2v4h9ur8xg32ep64e8ef0g5twlsgvfeajqwghdryvyqsqhgk8e/APOLLO": {
+          "token_exponent": 6,
+          "token_symbol": "APOLLO",
+          "token_price": 0.18529533261860667
+        },
+        "ibc/837E876EAB64260D5174BE8171B2889113757A8724258A855D6F8D92EDF41E9A": {
+          "token_exponent": 8,
+          "token_symbol": "SWTH",
+          "token_price": 0.0024642126065105782
+        },
+        "ibc/CB59A3CF572D31B5B531C305A0386A262FEFF2ADCC44551654E1344C3C236507": {
+          "token_exponent": 6,
+          "token_symbol": "milkTIA",
+          "token_price": 9.435911993255548
+        },
+        "ibc/D03F341CAA5D24B43ABE27C11A214EA3589DDEA125A2E6A76C7C37F2F3C59692": {
+          "token_exponent": 6,
+          "token_symbol": "NOIS",
+          "token_price": 0.054422543081638
+        },
+        "ibc/F4D5E72968365ED382E80B801E48352C0A3D42C66D97897857FD515CCDD77759": {
+          "token_exponent": 6,
+          "token_symbol": "STRDST",
+          "token_price": 0.04090121107656706
+        },
+        "ibc/15EA36C3AB87E3E5E41A61717B7A20F03CC2363840C1A837A487B8BFE176328E": {
+          "token_exponent": 6,
+          "token_symbol": "SCRT",
+          "token_price": 0.6770831299624098
+        },
+        "ibc/48823A50F321EFFA9B68E835C85E17A14EDD8FAB420837E17350A9B5725B49B0": {
+          "token_exponent": 6,
+          "token_symbol": "PBB",
+          "token_price": 0.030471407933156298
+        },
+        "ibc/A0D3A4A443E253817F949EBE4BB3FC2B4DADDF103766397A85B7CF84E67B4F4B": {
+          "token_exponent": 6,
+          "token_symbol": "SPICE",
+          "token_price": 0.029887326131071177
+        },
+        "ibc/626DBDAD47E2867EE930907A2C97B9F61043523C40FB9C4FEEC980933D1F6790": {
+          "token_exponent": 18,
+          "token_symbol": "DAI",
+          "token_price": 1.0023670156189168
+        },
+        "ibc/0BA1FA7A554B4347A87BD37AFF331683298730F9F8FCECB4896D58BED4B31F00": {
+          "token_exponent": 18,
+          "token_symbol": "stEVMOS",
+          "token_price": 0.06090758290861379
+        },
+        "ibc/B02AA07D282BF43527072539B8F63A4FF2588665A339BC09392036623430E3B9": {
+          "token_exponent": 18,
+          "token_symbol": "ARB",
+          "token_price": 1.15105226519784
+        },
+        "factory/neutron1p8d89wvxyjcnawmgw72klknr3lg9gwwl6ypxda/newt": {
+          "token_exponent": 6,
+          "token_symbol": "NEWT",
+          "token_price": 0.04125138664428113
+        },
+        "ibc/AB71A1158A893A668F5D4AC2340827DC46BCA905900D9B8735312EA12F92ED27": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO-YIELD-LP",
+          "token_price": 3.192463211481753
+        },
+        "ibc/3CF3F3207C8B14498128C312048ECE091B51B34C7552FAB07549141484C672C7": {
+          "token_exponent": 8,
+          "token_symbol": "DOGE",
+          "token_price": 0.4318730512723616
+        },
+        "ibc/A5A581F046BEC74197F864455B97E3FF37BD409B129F1460B58B5804FDB84692": {
+          "token_exponent": 9,
+          "token_symbol": "jitoSOL",
+          "token_price": 368.00915593816194
+        },
+        "ibc/B6643B477C69060B125279D9FF69EC20189E4D15DC24CF0457E0BAA9DD1A26AE": {
+          "token_exponent": 8,
+          "token_symbol": "SHD",
+          "token_price": 2.952421748981819
+        },
+        "ibc/0433997003A2CFE10E483B93743BEC37F2F13B89854FD69599482E6DB8E6CE22": {
+          "token_exponent": 6,
+          "token_symbol": "ION",
+          "token_price": 537.6909920777775
+        }
+      },
       "round_bids": [
         {
           "round_id": 0,
@@ -18357,6 +19104,753 @@
           "creation_round": 1
         }
       ],
+      "round_prices": {
+        "ibc/1B072CD5B6AB3C9D2B00C51B251CB5A5C7AF74C4C180E3E42BEB53211D694A15": {
+          "token_exponent": 12,
+          "token_symbol": "UNI",
+          "token_price": 11.011832785473487
+        },
+        "ibc/8F7025E5B6D0F46746A114DAFAF6BD8833DA995983DBCD2489B5DF2D8B1EB699": {
+          "token_exponent": 6,
+          "token_symbol": "NINJA",
+          "token_price": 0.00615146114720708
+        },
+        "ibc/71BA048E21A9AEAC5E23FB7D91BE0E8730D50AB8993A01307616AA0C7EA618E3": {
+          "token_exponent": 18,
+          "token_symbol": "BUSD",
+          "token_price": 0.942956696519833
+        },
+        "ibc/6A1E478F1A7FF2EE7174B9221B4B7627F9639F13F9FAF3196EE3DE662ADEC6A5": {
+          "token_exponent": 6,
+          "token_symbol": "sqTIA",
+          "token_price": 3.232805121526315
+        },
+        "ibc/4EAAAE537853E9C0DDF458F0710C37BB3DE7C6A675AB75DB5731ACE93D6CC57B": {
+          "token_exponent": 6,
+          "token_symbol": "stSAGA",
+          "token_price": 1.6934093353372546
+        },
+        "ibc/765F6EF29011637675D247EB7D779D71269E562503CCEAA0C1A831B78EA5BA70": {
+          "token_exponent": 9,
+          "token_symbol": "wSOL",
+          "token_price": 130.876834813668
+        },
+        "ibc/A6C04435B5AEF75446592860D05358A05CEA74AAE2EEEFBA4B9FE702AA9917B5": {
+          "token_exponent": 12,
+          "token_symbol": "OP",
+          "token_price": 2.070468786695725
+        },
+        "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C": {
+          "token_exponent": 6,
+          "token_symbol": "stATOM",
+          "token_price": 10.864234140076416
+        },
+        "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM",
+          "token_price": 7.30546176899993
+        },
+        "ibc/2CB87BCE0937B1D1DFCEE79BE4501AAF3C265E923509AEAC410AD85D27F35130": {
+          "token_exponent": 18,
+          "token_symbol": "DYDX",
+          "token_price": 1.574981993080807
+        },
+        "ibc/626DBDAD47E2867EE930907A2C97B9F61043523C40FB9C4FEEC980933D1F6790": {
+          "token_exponent": 18,
+          "token_symbol": "DAI",
+          "token_price": 1.0003056960965857
+        },
+        "ibc/322C86EB54A505E28AFE380CED1721FA61E9580A7548A16B9DCF6E7C8CEE43D5": {
+          "token_exponent": 6,
+          "token_symbol": "LUNA",
+          "token_price": 0.5148490007781404
+        },
+        "ibc/C641E5B7C19625CE8807BCCF1EAAB2B5B045ED4DD4AC5C3A71B611830948C141": {
+          "token_exponent": 6,
+          "token_symbol": "TRX",
+          "token_price": 0.31326937803647786
+        },
+        "ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93": {
+          "token_exponent": 6,
+          "token_symbol": "stOSMO",
+          "token_price": 0.6510616028797439
+        },
+        "ibc/15EA36C3AB87E3E5E41A61717B7A20F03CC2363840C1A837A487B8BFE176328E": {
+          "token_exponent": 6,
+          "token_symbol": "SCRT",
+          "token_price": 0.5324611731013255
+        },
+        "ibc/FD842803B4D8DCB2229828F0D034803C5BA852BAF3469D0E3D1175CD646E700A": {
+          "token_exponent": 6,
+          "token_symbol": "ampOSMO",
+          "token_price": 0.5685595676627142
+        },
+        "ibc/A5A581F046BEC74197F864455B97E3FF37BD409B129F1460B58B5804FDB84692": {
+          "token_exponent": 9,
+          "token_symbol": "jitoSOL",
+          "token_price": 245.16387459881548
+        },
+        "ibc/1FDF5F63F29379882D5F0A2F740A89FEB53FBBFA2D019E6CB626E3403BBA1944": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0005943279632017
+        },
+        "factory/neutron170v88vrtnedesyfytuku257cggxc79rd7lwt7q/ucircus": {
+          "token_exponent": 6,
+          "token_symbol": "CIRCUS",
+          "token_price": 2.521161268717659
+        },
+        "ibc/AB73A0D964FCE74EA9D7695553A1EA4B3D8E332571B049E8CC0ADEBFB4931503": {
+          "token_exponent": 6,
+          "token_symbol": "JUNO",
+          "token_price": 0.2129148850167475
+        },
+        "ibc/1053E271314D36FECBC915B51474F8B3962597CE88FF3E4A74795B0E3F367A8B": {
+          "token_exponent": 6,
+          "token_symbol": "KUJI",
+          "token_price": 0.6544611710541095
+        },
+        "ibc/1F4D25F42EE82D89CA2DF6F2CAEE58A6E5D7C49A2E575B3562316F59BB9846F8": {
+          "token_exponent": 18,
+          "token_symbol": "sfrxETH",
+          "token_price": 2995.8959219287003
+        },
+        "ibc/CB59A3CF572D31B5B531C305A0386A262FEFF2ADCC44551654E1344C3C236507": {
+          "token_exponent": 6,
+          "token_symbol": "milkTIA",
+          "token_price": 6.086119557409513
+        },
+        "ibc/0433997003A2CFE10E483B93743BEC37F2F13B89854FD69599482E6DB8E6CE22": {
+          "token_exponent": 6,
+          "token_symbol": "ION",
+          "token_price": 307.21758328668915
+        },
+        "ibc/14767887A69DBEFF3B99AA3E5B176C7989B1DAD2395A1E843F48EE981AC4F83F": {
+          "token_exponent": 18,
+          "token_symbol": "WMATIC",
+          "token_price": 0.5137718015168191
+        },
+        "ibc/7E09670B1CC767DAD0C887DD97675BAB698E50E35673DB5806C0D2664F65C182": {
+          "token_exponent": 6,
+          "token_symbol": "MBRN",
+          "token_price": 0.01449678230081107
+        },
+        "ibc/656B94724075CBA8D09D31549DB97BC25663B0A228DA6C30AA23696C5949A308": {
+          "token_exponent": 12,
+          "token_symbol": "SHIB",
+          "token_price": 0.00002430727039109421
+        },
+        "ibc/55DB49C9B44555B813C1F98748794F81F4015DAFB43C9A1B8160C2ACBA6314CD": {
+          "token_exponent": 6,
+          "token_symbol": "COOK",
+          "token_price": 0.00048003709936574767
+        },
+        "ibc/7C0E3F16B819DE35A7785827D2E93DB8BB67FD7D7CFF7D9F562090505F3A8D16": {
+          "token_exponent": 8,
+          "token_symbol": "ICP",
+          "token_price": 12.406321014988784
+        },
+        "ibc/D03F341CAA5D24B43ABE27C11A214EA3589DDEA125A2E6A76C7C37F2F3C59692": {
+          "token_exponent": 6,
+          "token_symbol": "NOIS",
+          "token_price": 0.054422543081638
+        },
+        "ibc/E8DB20806FC170C3454D93C7FD2CDA17A439F1C53559C87F3F38055E56A1C480": {
+          "token_exponent": 6,
+          "token_symbol": "TURD",
+          "token_price": 0.0015936062514341927
+        },
+        "ibc/DF8722298D192AAB85D86D0462E8166234A6A9A572DD4A2EA7996029DF4DB363": {
+          "token_exponent": 8,
+          "token_symbol": "axlWBTC",
+          "token_price": 97813.93519563816
+        },
+        "ibc/7A276F6A8091CE27CCA2EBCF24896B787686A2B7D123007B4ACB876D654E910D": {
+          "token_exponent": 9,
+          "token_symbol": "TON",
+          "token_price": 5.724530265387286
+        },
+        "ibc/E39239AE88D45746100FA4A9B3E1E29008CADF8AC2CAD4132A7609655AE323EB": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 3638.565180894744
+        },
+        "ibc/69BEAFC2FDF0C6F0124520B0A06E432AD8490732DFC309337FA6C307124FDABC": {
+          "token_exponent": 18,
+          "token_symbol": "INJ",
+          "token_price": 23.61170261131106
+        },
+        "ibc/793A20B5D4E40585144132BB56334A14AFBA9C0BE72ED9A1FB90BBF8BBF7EF3A": {
+          "token_exponent": 9,
+          "token_symbol": "fBAD",
+          "token_price": 1463.5210976312603
+        },
+        "ibc/C73CE7576F1A6534150451F91E38117E3A5247B70BFC6346AE04562CD7B7C60A": {
+          "token_exponent": 12,
+          "token_symbol": "PEPE",
+          "token_price": 0.000020677943033381265
+        },
+        "ibc/73D01D9D032390E81CBC20B7E0507B84DF54F3CE5302BFF52776E7D8930F2A6C": {
+          "token_exponent": 18,
+          "token_symbol": "LINK",
+          "token_price": 23.48957182852637
+        },
+        "ibc/ED738CF5832C5399B1DADEADDD6A65A42EDA09707EF15D743A233B40D2D69613": {
+          "token_exponent": 6,
+          "token_symbol": "stUMEE",
+          "token_price": 0.0007080670633150927
+        },
+        "ibc/73787F5E206D9092C3F36F4483DBBDF75B30E84A544EFDC4829645A739D940B1": {
+          "token_exponent": 18,
+          "token_symbol": "YieldETH",
+          "token_price": 3952.455209758059
+        },
+        "ibc/8BD3EB6ABBD8DC8B1BA1F2E58CDFBAACFF8CF55DB8C475E9D6D97B9A56B052F0": {
+          "token_exponent": 6,
+          "token_symbol": "TORO",
+          "token_price": 0.00000494391233791055
+        },
+        "ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445": {
+          "token_exponent": 6,
+          "token_symbol": "stkATOM",
+          "token_price": 10.263370184650311
+        },
+        "ibc/2E61B6679222BA9909F7840EE40F1B0B7F7C7149BBD2AC132D53714C153652A7": {
+          "token_exponent": 6,
+          "token_symbol": "CAC",
+          "token_price": 0.009772893227304872
+        },
+        "ibc/BAA1D21893B1D36865C6CA44D18F4ACF08BAD70CB6863C4722E0A61703808F77": {
+          "token_exponent": 18,
+          "token_symbol": "stDYDX",
+          "token_price": 1.642058881842013
+        },
+        "factory/neutron1ug740qrkquxzrk2hh29qrlx3sktkfml3je7juusc2te7xmvsscns0n2wry/wstETH": {
+          "token_exponent": 18,
+          "token_symbol": "wstETH",
+          "token_price": 4321.042492553548
+        },
+        "ibc/57503D7852EF4E1899FE6D71C5E81D7C839F76580F86F21E39348FC2BC9D7CE2": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.001921106260894
+        },
+        "ibc/08138B541387A196FD5E79E58396E87FA29243F0B5D4A82E38FA2E777B56053F": {
+          "token_exponent": 6,
+          "token_symbol": "COCA",
+          "token_price": 0.00032095217813915577
+        },
+        "ibc/9F8417FBA11E5E01F7F85DDD48C400EB746E95084C11706041663845B4A700A8": {
+          "token_exponent": 6,
+          "token_symbol": "BADKID",
+          "token_price": 0.000006706483004862077
+        },
+        "ibc/D90C69603588018DD7183BBD315B65FBE3631FC98D447769B822F44D06602BD1": {
+          "token_exponent": 6,
+          "token_symbol": "stkOSMO",
+          "token_price": 0.525154055014761
+        },
+        "ibc/41646AADED0E33983922676F54BF2B8FD31DE06BB02C72949FD4F34081A41073": {
+          "token_exponent": 6,
+          "token_symbol": "SEI",
+          "token_price": 0.45579525967258033
+        },
+        "ibc/5C613C94127D0A91D215D0BF247A0ED00E5F001B0C276C5690005939C3740246": {
+          "token_exponent": 8,
+          "token_symbol": "BTC",
+          "token_price": 97816.44765217233
+        },
+        "ibc/B3881052DCC62E68955C71A49C5306717CFDE5B6526D39C89D1278DAE3284432": {
+          "token_exponent": 6,
+          "token_symbol": "XPRT",
+          "token_price": 0.12051540461728928
+        },
+        "ibc/A585C2D15DCD3B010849B453A2CFCB5E213208A5AB665691792684C26274304D": {
+          "token_exponent": 18,
+          "token_symbol": "WETH",
+          "token_price": 3641.832737340754
+        },
+        "ibc/1CF1239A3068964DAF55F7300D7BE016E4E184F58EEB59096B138F6D72628BAA": {
+          "token_exponent": 12,
+          "token_symbol": "PICA",
+          "token_price": 0.0003979067988331468
+        },
+        "ibc/F4D5E72968365ED382E80B801E48352C0A3D42C66D97897857FD515CCDD77759": {
+          "token_exponent": 6,
+          "token_symbol": "STRDST",
+          "token_price": 0.04090121107656706
+        },
+        "ibc/C0E66D1C81D8AAF0E6896E05190FDFBC222367148F86AC3EA679C28327A763CD": {
+          "token_exponent": 6,
+          "token_symbol": "AXL",
+          "token_price": 0.7342316676229492
+        },
+        "ibc/A0A081FFC6A13B8F502079F3A8420F5B4FC3007D9AA696E371B9A7B39B90EADF": {
+          "token_exponent": 18,
+          "token_symbol": "USDY",
+          "token_price": 1.0592204706855983
+        },
+        "ibc/746873995B97269C0C6B6EA12C87C027054988827245ACC908BEE7B1A4E8FC07": {
+          "token_exponent": 6,
+          "token_symbol": "BOMU",
+          "token_price": 0.0002815947359365941
+        },
+        "ibc/601307DA970BD7D236E7D31A9526CE14BFCC2116DD48DF0D3E3E8AAC92D3BDFC": {
+          "token_exponent": 6,
+          "token_symbol": "CRAZYHORSE",
+          "token_price": 0.0002867632564812239
+        },
+        "ibc/A0D3A4A443E253817F949EBE4BB3FC2B4DADDF103766397A85B7CF84E67B4F4B": {
+          "token_exponent": 6,
+          "token_symbol": "SPICE",
+          "token_price": 0.014055826054334192
+        },
+        "ibc/469B116E923A713A3DFA8CC24CB3134E3E488661B90F76CB9F6B2A161A630841": {
+          "token_exponent": 12,
+          "token_symbol": "KSM",
+          "token_price": 36.52662652826806
+        },
+        "ibc/4A6A46D4263F2ED3DCE9CF866FE15E6903FB5E12D87EB8BDC1B6B1A1E2D397B4": {
+          "token_exponent": 18,
+          "token_symbol": "DYM",
+          "token_price": 1.4930305555419965
+        },
+        "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81": {
+          "token_exponent": 6,
+          "token_symbol": "USDC",
+          "token_price": 1.0011474019034745
+        },
+        "ibc/4A9DF0B17F6F90FB739C2731E4E2057BE64D39D0C7B9083B7706C0C9B53DEE0E": {
+          "token_exponent": 6,
+          "token_symbol": "stJUNO",
+          "token_price": 0.3403316688061699
+        },
+        "ibc/2D9538CD39C19EC92906F91E724647C72DA3C4451EAB5958D9AF572507A6C6A0": {
+          "token_exponent": 6,
+          "token_symbol": "bOSMO",
+          "token_price": 0.5281659086362105
+        },
+        "ibc/A4529CCE13E2FEB812574AD69DFDC300B760E429D61430B0225EA25EB7D499BD": {
+          "token_exponent": 12,
+          "token_symbol": "FIL",
+          "token_price": 6.018075268328882
+        },
+        "ibc/48823A50F321EFFA9B68E835C85E17A14EDD8FAB420837E17350A9B5725B49B0": {
+          "token_exponent": 6,
+          "token_symbol": "PBB",
+          "token_price": 0.01847242839591384
+        },
+        "ibc/7B6FFC996FC2984AA98DBA4CEBFBF790E55F4D7E65360DD614F2BE2D08F4D324": {
+          "token_exponent": 18,
+          "token_symbol": "WAVAX",
+          "token_price": 42.45140990353825
+        },
+        "ibc/17E2B6610FC9DF24D3AD8F1CBA03308B9FD284AB8123E5E485902E54369E985A": {
+          "token_exponent": 6,
+          "token_symbol": "FRNZ",
+          "token_price": 778.3406368294739
+        },
+        "ibc/4E39DA6487C8AA17276FAD2730C1DC84E0F716179962DA508FDAAC5FD598C323": {
+          "token_exponent": 6,
+          "token_symbol": "IST",
+          "token_price": 0.996217051569288
+        },
+        "ibc/FD7804E039C049785704F6B6BDC42EBEE3B29E277E573DBF2601E268D46A4332": {
+          "token_exponent": 12,
+          "token_symbol": "ARB",
+          "token_price": 0.8977801017141286
+        },
+        "ibc/9598CDEB7C6DB7FC21E746C8E0250B30CD5154F39CA111A9D4948A4362F638BD": {
+          "token_exponent": 6,
+          "token_symbol": "MARS.old",
+          "token_price": 0.028429516687298977
+        },
+        "factory/neutron133xakkrfksq39wxy575unve2nyehg5npx75nph/WEIRD": {
+          "token_exponent": 6,
+          "token_symbol": "WEIRD",
+          "token_price": 0.026513310195699503
+        },
+        "factory/neutron13lkh47msw28yynspc5rnmty3yktk43wc3dsv0l/ATOM1KLFG": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM1KLFG",
+          "token_price": 0.007403146511146488
+        },
+        "ibc/CB1418F937623A593214D369158366AE9E8B6E0B51923DDAF6751C4071E1F068": {
+          "token_exponent": 6,
+          "token_symbol": "WOOF",
+          "token_price": 0.2611750608907515
+        },
+        "ibc/E74CD453F834EE007B02F1298EFFF4DCD9C97FB58DF7F6080FF935145B73C6A6": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 7.6483541512012625
+        },
+        "ibc/A191599BC4F13604198F50378F9E97EBE06740AA267ED74D17A41D383437B8D3": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 0.9970604915467924
+        },
+        "ibc/DDC3C60EE82BF544F1A0C6A983FF500EF1C14DE20071A5E1E7C0FB470E36E920": {
+          "token_exponent": 14,
+          "token_symbol": "SAT",
+          "token_price": 98280.6728938312
+        },
+        "ibc/94504DAB689EC82B71FC9AE8CACC2A8030642C041EEFC165BEB5589223888B7E": {
+          "token_exponent": 14,
+          "token_symbol": "nBTC",
+          "token_price": 98280.6728938312
+        },
+        "ibc/78F7404035221CD1010518C7BC3DD99B90E59C2BA37ABFC3CE56B0CFB7E8901B": {
+          "token_exponent": 8,
+          "token_symbol": "WBTC",
+          "token_price": 100966.8626719026
+        },
+        "ibc/837E876EAB64260D5174BE8171B2889113757A8724258A855D6F8D92EDF41E9A": {
+          "token_exponent": 8,
+          "token_symbol": "SWTH",
+          "token_price": 0.002004500660315362
+        },
+        "ibc/BEF5C9D724E1EBB04FEE237CB5F602B22B0FFE8065F540FD8BC6F9E1A4B8573D": {
+          "token_exponent": 6,
+          "token_symbol": "HUAHUA",
+          "token_price": 0.00005283032544323513
+        },
+        "ibc/2ECB3D2ADFE9F1CA85258C6330FA666120549349BC526D56B098A2A782D75455": {
+          "token_exponent": 6,
+          "token_symbol": "DGN",
+          "token_price": 0.005645670013739612
+        },
+        "ibc/6C9E6701AC217C0FC7D74B0F7A6265B9B4E3C3CDA6E80AADE5F950A8F52F9972": {
+          "token_exponent": 6,
+          "token_symbol": "NLS",
+          "token_price": 0.011261958115990447
+        },
+        "ibc/A96863E0BDFA3F2D96625FD5A649AF53F62F97521EF78FBBFE5B4199C3E23ABD": {
+          "token_exponent": 18,
+          "token_symbol": "WFTM",
+          "token_price": 0.8234613578932133
+        },
+        "ibc/273E4C3B307F3BD56F08652B1DA009A705F078811716DF53F7829A76ED769A8D": {
+          "token_exponent": 6,
+          "token_symbol": "EURe",
+          "token_price": 1.055297420371931
+        },
+        "ibc/ECB6654E6AA0B29C991C509B75445FCA70E4C46522B48B69544633808E176A49": {
+          "token_exponent": 12,
+          "token_symbol": "TNKR",
+          "token_price": 0.06187358969540378
+        },
+        "ibc/C4D1E3EBE5C4666C39889BF59F7496D263389DEE1C8A3AB6A479B0A0FF224599": {
+          "token_exponent": 6,
+          "token_symbol": "sqATOM",
+          "token_price": 0.33201106816213216
+        },
+        "ibc/B074BCF31E5892A522FD48DDD5DD80C3953D4B43D59A6E4FD0DC6759685FD36C": {
+          "token_exponent": 6,
+          "token_symbol": "BLD",
+          "token_price": 0.06824547983115253
+        },
+        "ibc/BE0B6569E21562DA7E129F407AED4EA6625B7CB403E072C8C5E1B7F8D79DCC78": {
+          "token_exponent": 18,
+          "token_symbol": "PEPE",
+          "token_price": 0.000020679116064570772
+        },
+        "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349": {
+          "token_exponent": 6,
+          "token_symbol": "axlUSDC",
+          "token_price": 1
+        },
+        "ibc/1002FD510616D2AD1664388D0CA79921452955E6D3BD11C5D85D5550C8480D6A": {
+          "token_exponent": 6,
+          "token_symbol": "UWU",
+          "token_price": 0.00026121130778876487
+        },
+        "ibc/A139C0E0B5E87CBA8EAEEB12B9BEE13AC7C814CFBBFA87BBCADD67E31003466C": {
+          "token_exponent": 6,
+          "token_symbol": "STARS",
+          "token_price": 0.005995244550748683
+        },
+        "ibc/0F90CE86020EBE434E27ED3804CABB67D1DA9AE0B818D8E9607188C1C58180B7": {
+          "token_exponent": 6,
+          "token_symbol": "WIHA",
+          "token_price": 0.022186351172978756
+        },
+        "ibc/B6643B477C69060B125279D9FF69EC20189E4D15DC24CF0457E0BAA9DD1A26AE": {
+          "token_exponent": 8,
+          "token_symbol": "SHD",
+          "token_price": 2.127458296314081
+        },
+        "ibc/3552CECB7BCE1891DB6070D37EC6E954C972B1400141308FCD85FD148BD06DE5": {
+          "token_exponent": 6,
+          "token_symbol": "STRD",
+          "token_price": 0.5900133022266567
+        },
+        "ibc/B6086D35F7E7BCC4754A786946ACC9EBEB572B1495EF646FBCC16B72EAF7ED9F": {
+          "token_exponent": 6,
+          "token_symbol": "SHITMOS",
+          "token_price": 0.02401821694422139
+        },
+        "ibc/5926313955E5701055CC9F562842937C293F29C05AB0A84ADCC7B879DE0F983B": {
+          "token_exponent": 6,
+          "token_symbol": "GLTO",
+          "token_price": 0.0002426161816984134
+        },
+        "ibc/8D749C5FB0213DF002E8FDCCB5B01E35DA241397EF825048C530C7EAE43BCE80": {
+          "token_exponent": 6,
+          "token_symbol": "stSTARS",
+          "token_price": 0.009674305345549429
+        },
+        "ibc/069C7EBFE330A82230D6059886E4BA62D903D7ACB7C17B57E31EE2A368CC3F66": {
+          "token_exponent": 6,
+          "token_symbol": "WHINE",
+          "token_price": 0.000124774529832626
+        },
+        "ibc/00230C58F1540708067850B3362C8A67A273FC52F0C7305B802D7255495C86FD": {
+          "token_exponent": 18,
+          "token_symbol": "ARCH",
+          "token_price": 0.025637509637875703
+        },
+        "ibc/7DA39F5140741177846FCF3CFAB14450EE7F57B7794E5A94BEF73825D3741958": {
+          "token_exponent": 6,
+          "token_symbol": "WOSMO",
+          "token_price": 0.000019998586312381004
+        },
+        "ibc/39E4C8433680C4D40AD47748750690A816F205F26614EEE03860C1773D606B3B": {
+          "token_exponent": 6,
+          "token_symbol": "SHERPA",
+          "token_price": 0.005779607417939802
+        },
+        "ibc/939F500767327C6A5BE955DD81DCDE02ABA6A7231801AE748C21C2A0A598DB12": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 6.640534320378968
+        },
+        "ibc/D6C031FCFA42DCC0E731E25E652774F72A9140F1EFDEDC7BFCE5D30B5999FB56": {
+          "token_exponent": 6,
+          "token_symbol": "XRP",
+          "token_price": 2.3952870534860815
+        },
+        "ibc/E92CD020751E93DF431B5B1ED8950F7BFF07646D33C49CEA96D991FB6C322403": {
+          "token_exponent": 6,
+          "token_symbol": "stIBCX",
+          "token_price": 56.172691842300274
+        },
+        "ibc/C16FC80FEBC9C9C2325BD93ABF1B8A72CA5AF8AD3E2286438699AB5562B9AD06": {
+          "token_exponent": 6,
+          "token_symbol": "DGL",
+          "token_price": 0.0003028399542789405
+        },
+        "ibc/7F85C8BE811E6EDDDB8DD538B34D854055B361A87A72B3FDC254DF1E1E7F0B60": {
+          "token_exponent": 6,
+          "token_symbol": "BERNESE",
+          "token_price": 0.002602493702282177
+        },
+        "ibc/EC48B401A76C33CD2C8101F8F7E3C2A2FFAE68A8599E354BA66DE1C7AE1D2272": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 3641.832737340754
+        },
+        "ibc/0802557E8E5C9243A3F513CFC74469C5FBEAC0FC5C126E7F0505FA784347769D": {
+          "token_exponent": 6,
+          "token_symbol": "USK",
+          "token_price": 0.993765020281953
+        },
+        "ibc/9E6AC71FE9E94A2FDA9A353E286D72772BA0F7CFF7E02669637749278CBAA62F": {
+          "token_exponent": 18,
+          "token_symbol": "FXS",
+          "token_price": 3.5121754819485647
+        },
+        "ibc/773B4D0A3CD667B2275D5A4A7A2F0909C0BA0F4059C0B9181E680DDF4965DCC7": {
+          "token_exponent": 6,
+          "token_symbol": "TIA",
+          "token_price": 5.511362245237037
+        },
+        "ibc/0BA1FA7A554B4347A87BD37AFF331683298730F9F8FCECB4896D58BED4B31F00": {
+          "token_exponent": 18,
+          "token_symbol": "stEVMOS",
+          "token_price": 0.03725075469036908
+        },
+        "ibc/C1F4520E07B9190EA08FBAA5E1D68109B9738B5B717904C62F0EE9CA89471EC0": {
+          "token_exponent": 6,
+          "token_symbol": "LAB",
+          "token_price": 45.22468346185489
+        },
+        "ibc/AB71A1158A893A668F5D4AC2340827DC46BCA905900D9B8735312EA12F92ED27": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO-YIELD-LP",
+          "token_price": 1.9091477912229529
+        },
+        "ibc/D77A4E010C2063E4F2C4E7C84AFACB087464326DE20FF23A3D8357685E5BDC57": {
+          "token_exponent": 6,
+          "token_symbol": "SNEAKY",
+          "token_price": 1.5045665702935722
+        },
+        "ibc/D2F678F792820452B17F087EC4FB02882A40BDA0C05B33100AF8EC7F441192EA": {
+          "token_exponent": 6,
+          "token_symbol": "BWH",
+          "token_price": 0.000326077583620778
+        },
+        "ibc/94D85D1AB75CB0BF9B6818EE317E86A83FA9C5D4140D06E71778B97C1FCAC79C": {
+          "token_exponent": 6,
+          "token_symbol": "SILK",
+          "token_price": 1.2414525220808796
+        },
+        "ibc/74B554DD3FF10F5D60E30175ADFB47E59F77F7C57024A8104A4F78CDC2EAD125": {
+          "token_exponent": 6,
+          "token_symbol": "SAGA",
+          "token_price": 1.6121175449134255
+        },
+        "ibc/8F93A962F1ACCC0C55B45358ACCEA4557206AE71A8BC73A2044525EE43EF5D31": {
+          "token_exponent": 18,
+          "token_symbol": "RAI",
+          "token_price": 3.060057631846529
+        },
+        "factory/neutron143wp6g8paqasnuuey6zyapucknwy9rhnld8hkr/bad": {
+          "token_exponent": 6,
+          "token_symbol": "BAD",
+          "token_price": 0.00002538873299600545
+        },
+        "ibc/D206EEE8D9C76A9F5EFCBDCF5FEEFB3A97094EC83F5517D75F0B42179AC5B351": {
+          "token_exponent": 6,
+          "token_symbol": "BAG",
+          "token_price": 0.002662829527461086
+        },
+        "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO",
+          "token_price": 0.492876001327562
+        },
+        "factory/neutron1ndu2wvkrxtane8se2tr48gv7nsm46y5gcqjhux/MARS": {
+          "token_exponent": 6,
+          "token_symbol": "MARS",
+          "token_price": 0.028423520580429424
+        },
+        "ibc/3CF3F3207C8B14498128C312048ECE091B51B34C7552FAB07549141484C672C7": {
+          "token_exponent": 8,
+          "token_symbol": "DOGE",
+          "token_price": 0.38335724943382304
+        },
+        "ibc/3EF75051529C80A757CD8572C1F1437949AAC8553D4084F73FDBF9C1615053F7": {
+          "token_exponent": 9,
+          "token_symbol": "fMAD",
+          "token_price": 359.32519073462424
+        },
+        "factory/neutron154gg0wtm2v4h9ur8xg32ep64e8ef0g5twlsgvfeajqwghdryvyqsqhgk8e/APOLLO": {
+          "token_exponent": 6,
+          "token_symbol": "APOLLO",
+          "token_price": 0.18529533261860667
+        },
+        "ibc/F073D44CC51154C8342C47C09D7EE1BD13ED54AFFDD4F350CF4BE7A67A31941B": {
+          "token_exponent": 6,
+          "token_symbol": "LVN",
+          "token_price": 0.013013840526631303
+        },
+        "ibc/8D0C1AC5A72FB7EC187632D01BACBB68EF743CA1AF16A15C00ACBB9CF49A0070": {
+          "token_exponent": 18,
+          "token_symbol": "stDYM",
+          "token_price": 1.5427177699770762
+        },
+        "ibc/8D43B08EEF9D9688BEA6E54A8F0E50FCFC79A7567BCEDB56E3784F6591C331B9": {
+          "token_exponent": 18,
+          "token_symbol": "sFRAX",
+          "token_price": 1.0360905659985558
+        },
+        "untrn": {
+          "token_exponent": 6,
+          "token_symbol": "NTRN",
+          "token_price": 0.40343937914314915
+        },
+        "ibc/BF7BDD572D446678B527325A712AF2B5B68B49A4D8159FDF14D7389DB5269C67": {
+          "token_exponent": 9,
+          "token_symbol": "SOL",
+          "token_price": 213.71273640175963
+        },
+        "ibc/6569E05DEE32B339D9286A52BE33DFCEFC97267F23EF9CFDE0C055140967A9A5": {
+          "token_exponent": 6,
+          "token_symbol": "stTIA",
+          "token_price": 5.929327911508261
+        },
+        "factory/neutron1p8d89wvxyjcnawmgw72klknr3lg9gwwl6ypxda/newt": {
+          "token_exponent": 6,
+          "token_symbol": "NEWT",
+          "token_price": 0.01408142264852984
+        },
+        "ibc/B6362CC949149B6E1FBA1D112BD1D3135CB9214A90368AF2C68D056622291586": {
+          "token_exponent": 6,
+          "token_symbol": "sqOSMO",
+          "token_price": 0.000014149332814189264
+        },
+        "ibc/A9FDC3F1C168CC2196CF00A09504AD42D4D8E0BF1C7FBBB4B3531FA16F633F6E": {
+          "token_exponent": 6,
+          "token_symbol": "KAVA",
+          "token_price": 0.555291791955846
+        },
+        "ibc/54A5A873A546559DAF6AB5A8573CD448F8BB494998DE48A3E5B2C038DF9C1FE0": {
+          "token_exponent": 6,
+          "token_symbol": "stSOMM",
+          "token_price": 0.014295402980126073
+        },
+        "ibc/CCD676A501897583884E68318499E079C47CD336B48E168BB6DAD84831B10E36": {
+          "token_exponent": 6,
+          "token_symbol": "HAVA",
+          "token_price": 2.3280427912176628e-9
+        },
+        "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom": {
+          "token_exponent": 6,
+          "token_symbol": "dATOM",
+          "token_price": 7.748439999596212
+        },
+        "ibc/970FC7201AEC13274DFE2434ECD133E72AA02E854734EB53C9ACB5F8891E84C2": {
+          "token_exponent": 12,
+          "token_symbol": "LINK",
+          "token_price": 23.469551422757572
+        },
+        "ibc/B02AA07D282BF43527072539B8F63A4FF2588665A339BC09392036623430E3B9": {
+          "token_exponent": 18,
+          "token_symbol": "ARB",
+          "token_price": 0.9027000616694724
+        },
+        "ibc/740C72B9127CEA71AEB81687BB055106F502DA4647AA975BF64E3DC61D334ED9": {
+          "token_exponent": 6,
+          "token_symbol": "CDT",
+          "token_price": 0.9850495930200162
+        },
+        "ibc/EAE09760B34FE09BF2AA0CCEFBC99470254A86D1629F88AAE74031741EB366CB": {
+          "token_exponent": 6,
+          "token_symbol": "stBAND",
+          "token_price": 1.612369353187593
+        },
+        "ibc/5CB2E12B07D0B6D8EC24A68BA6B6E6E8D5BF85B7D22091D3A480DCDD61C6AC84": {
+          "token_exponent": 18,
+          "token_symbol": "WBNB",
+          "token_price": 705.5118256248653
+        },
+        "ibc/C9307595A4EE92AED106F32D68A51DCB04F6BE22E0F981F1176C8E8FBFDAE475": {
+          "token_exponent": 6,
+          "token_symbol": "wLIBRA",
+          "token_price": 0.00018019927102482552
+        },
+        "ibc/2B9D089E73AC096934CD6BBBC71A1CD5DD2A4F8E94CC37CE7F861AC674044002": {
+          "token_exponent": 18,
+          "token_symbol": "stINJ",
+          "token_price": 31.81157811314155
+        },
+        "ibc/986EDEE721977B7EE548A21E28781362E11C97600C3B2764DF16441D372C18D8": {
+          "token_exponent": 18,
+          "token_symbol": "stISLM",
+          "token_price": 0.050777830462914834
+        },
+        "ibc/F7F291D697E486E99D9AA1FAAB955F6E653B07855C51318BF6DF6D4E2B869616": {
+          "token_exponent": 6,
+          "token_symbol": "MNTA",
+          "token_price": 0.16300165509618852
+        },
+        "ibc/3307AC2A0415D33A463DBC954087539A4B2AB01DAC7C77155C072A2DD3073A94": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 0.9995991577959998
+        }
+      },
       "round_bids": [
         {
           "round_id": 1,
@@ -29462,6 +30956,743 @@
           "creation_round": 2
         }
       ],
+      "round_prices": {
+        "ibc/939F500767327C6A5BE955DD81DCDE02ABA6A7231801AE748C21C2A0A598DB12": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 6.640534320378968
+        },
+        "ibc/A5A581F046BEC74197F864455B97E3FF37BD409B129F1460B58B5804FDB84692": {
+          "token_exponent": 9,
+          "token_symbol": "jitoSOL",
+          "token_price": 187.849496627501
+        },
+        "ibc/DDC3C60EE82BF544F1A0C6A983FF500EF1C14DE20071A5E1E7C0FB470E36E920": {
+          "token_exponent": 14,
+          "token_symbol": "SAT",
+          "token_price": 97755.48855632926
+        },
+        "ibc/94504DAB689EC82B71FC9AE8CACC2A8030642C041EEFC165BEB5589223888B7E": {
+          "token_exponent": 14,
+          "token_symbol": "nBTC",
+          "token_price": 97755.48855632926
+        },
+        "ibc/7E09670B1CC767DAD0C887DD97675BAB698E50E35673DB5806C0D2664F65C182": {
+          "token_exponent": 6,
+          "token_symbol": "MBRN",
+          "token_price": 0.010741274740481956
+        },
+        "ibc/17E2B6610FC9DF24D3AD8F1CBA03308B9FD284AB8123E5E485902E54369E985A": {
+          "token_exponent": 6,
+          "token_symbol": "FRNZ",
+          "token_price": 822.8185212454713
+        },
+        "ibc/15EA36C3AB87E3E5E41A61717B7A20F03CC2363840C1A837A487B8BFE176328E": {
+          "token_exponent": 6,
+          "token_symbol": "SCRT",
+          "token_price": 0.2516919380389642
+        },
+        "ibc/7A276F6A8091CE27CCA2EBCF24896B787686A2B7D123007B4ACB876D654E910D": {
+          "token_exponent": 9,
+          "token_symbol": "TON",
+          "token_price": 3.823145141585047
+        },
+        "factory/neutron1ndu2wvkrxtane8se2tr48gv7nsm46y5gcqjhux/MARS": {
+          "token_exponent": 6,
+          "token_symbol": "MARS",
+          "token_price": 0.019128135680084785
+        },
+        "factory/neutron1ug740qrkquxzrk2hh29qrlx3sktkfml3je7juusc2te7xmvsscns0n2wry/wstETH": {
+          "token_exponent": 18,
+          "token_symbol": "wstETH",
+          "token_price": 3306.4993764366527
+        },
+        "ibc/A191599BC4F13604198F50378F9E97EBE06740AA267ED74D17A41D383437B8D3": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 0.9996427480582948
+        },
+        "ibc/C73CE7576F1A6534150451F91E38117E3A5247B70BFC6346AE04562CD7B7C60A": {
+          "token_exponent": 12,
+          "token_symbol": "PEPE",
+          "token_price": 0.00001034040475032746
+        },
+        "ibc/C0E66D1C81D8AAF0E6896E05190FDFBC222367148F86AC3EA679C28327A763CD": {
+          "token_exponent": 6,
+          "token_symbol": "AXL",
+          "token_price": 0.42238649085020863
+        },
+        "ibc/AB71A1158A893A668F5D4AC2340827DC46BCA905900D9B8735312EA12F92ED27": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO-YIELD-LP",
+          "token_price": 1.187403914202638
+        },
+        "ibc/469B116E923A713A3DFA8CC24CB3134E3E488661B90F76CB9F6B2A161A630841": {
+          "token_exponent": 12,
+          "token_symbol": "KSM",
+          "token_price": 19.264674010440103
+        },
+        "ibc/7DA39F5140741177846FCF3CFAB14450EE7F57B7794E5A94BEF73825D3741958": {
+          "token_exponent": 6,
+          "token_symbol": "WOSMO",
+          "token_price": 0.000009644407616237895
+        },
+        "ibc/73787F5E206D9092C3F36F4483DBBDF75B30E84A544EFDC4829645A739D940B1": {
+          "token_exponent": 18,
+          "token_symbol": "YieldETH",
+          "token_price": 3001.3455543996556
+        },
+        "ibc/5C613C94127D0A91D215D0BF247A0ED00E5F001B0C276C5690005939C3740246": {
+          "token_exponent": 8,
+          "token_symbol": "BTC",
+          "token_price": 98218.6637866303
+        },
+        "ibc/57503D7852EF4E1899FE6D71C5E81D7C839F76580F86F21E39348FC2BC9D7CE2": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0016166117326546
+        },
+        "ibc/B3881052DCC62E68955C71A49C5306717CFDE5B6526D39C89D1278DAE3284432": {
+          "token_exponent": 6,
+          "token_symbol": "XPRT",
+          "token_price": 0.11689821679163714
+        },
+        "ibc/9F8417FBA11E5E01F7F85DDD48C400EB746E95084C11706041663845B4A700A8": {
+          "token_exponent": 6,
+          "token_symbol": "BADKID",
+          "token_price": 0.00004580249746431816
+        },
+        "ibc/8D0C1AC5A72FB7EC187632D01BACBB68EF743CA1AF16A15C00ACBB9CF49A0070": {
+          "token_exponent": 18,
+          "token_symbol": "stDYM",
+          "token_price": 0.6499148054946163
+        },
+        "ibc/0802557E8E5C9243A3F513CFC74469C5FBEAC0FC5C126E7F0505FA784347769D": {
+          "token_exponent": 6,
+          "token_symbol": "USK",
+          "token_price": 0.993765020281953
+        },
+        "ibc/7F85C8BE811E6EDDDB8DD538B34D854055B361A87A72B3FDC254DF1E1E7F0B60": {
+          "token_exponent": 6,
+          "token_symbol": "BERNESE",
+          "token_price": 0.001689641643118112
+        },
+        "ibc/94D85D1AB75CB0BF9B6818EE317E86A83FA9C5D4140D06E71778B97C1FCAC79C": {
+          "token_exponent": 6,
+          "token_symbol": "SILK",
+          "token_price": 1.2158636769431377
+        },
+        "ibc/C9307595A4EE92AED106F32D68A51DCB04F6BE22E0F981F1176C8E8FBFDAE475": {
+          "token_exponent": 6,
+          "token_symbol": "wLIBRA",
+          "token_price": 0.00010404169543269768
+        },
+        "factory/neutron1ut4c6pv4u6vyu97yw48y8g7mle0cat54848v6m97k977022lzxtsaqsgmq/udtia": {
+          "token_exponent": 6,
+          "token_symbol": "dTIA",
+          "token_price": 3.2670420038637698
+        },
+        "ibc/740C72B9127CEA71AEB81687BB055106F502DA4647AA975BF64E3DC61D334ED9": {
+          "token_exponent": 6,
+          "token_symbol": "CDT",
+          "token_price": 0.939140220456772
+        },
+        "ibc/AB73A0D964FCE74EA9D7695553A1EA4B3D8E332571B049E8CC0ADEBFB4931503": {
+          "token_exponent": 6,
+          "token_symbol": "JUNO",
+          "token_price": 0.17052124854240588
+        },
+        "ibc/00230C58F1540708067850B3362C8A67A273FC52F0C7305B802D7255495C86FD": {
+          "token_exponent": 18,
+          "token_symbol": "ARCH",
+          "token_price": 0.016526648049197637
+        },
+        "ibc/48823A50F321EFFA9B68E835C85E17A14EDD8FAB420837E17350A9B5725B49B0": {
+          "token_exponent": 6,
+          "token_symbol": "PBB",
+          "token_price": 0.006620974705421015
+        },
+        "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349": {
+          "token_exponent": 6,
+          "token_symbol": "axlUSDC",
+          "token_price": 1
+        },
+        "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO",
+          "token_price": 0.305959906927457
+        },
+        "ibc/970FC7201AEC13274DFE2434ECD133E72AA02E854734EB53C9ACB5F8891E84C2": {
+          "token_exponent": 12,
+          "token_symbol": "LINK",
+          "token_price": 20.22412761999996
+        },
+        "ibc/74B554DD3FF10F5D60E30175ADFB47E59F77F7C57024A8104A4F78CDC2EAD125": {
+          "token_exponent": 6,
+          "token_symbol": "SAGA",
+          "token_price": 0.7787856274033925
+        },
+        "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C": {
+          "token_exponent": 6,
+          "token_symbol": "stATOM",
+          "token_price": 7.049689538833719
+        },
+        "ibc/B6643B477C69060B125279D9FF69EC20189E4D15DC24CF0457E0BAA9DD1A26AE": {
+          "token_exponent": 8,
+          "token_symbol": "SHD",
+          "token_price": 4.042315616257068
+        },
+        "ibc/5926313955E5701055CC9F562842937C293F29C05AB0A84ADCC7B879DE0F983B": {
+          "token_exponent": 6,
+          "token_symbol": "GLTO",
+          "token_price": 0.00022951414603371976
+        },
+        "ibc/54A5A873A546559DAF6AB5A8573CD448F8BB494998DE48A3E5B2C038DF9C1FE0": {
+          "token_exponent": 6,
+          "token_symbol": "stSOMM",
+          "token_price": 0.008754834539671338
+        },
+        "ibc/4A9DF0B17F6F90FB739C2731E4E2057BE64D39D0C7B9083B7706C0C9B53DEE0E": {
+          "token_exponent": 6,
+          "token_symbol": "stJUNO",
+          "token_price": 0.2763296832629687
+        },
+        "ibc/E74CD453F834EE007B02F1298EFFF4DCD9C97FB58DF7F6080FF935145B73C6A6": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 4.532310475730351
+        },
+        "ibc/41646AADED0E33983922676F54BF2B8FD31DE06BB02C72949FD4F34081A41073": {
+          "token_exponent": 6,
+          "token_symbol": "SEI",
+          "token_price": 0.24273482739986568
+        },
+        "ibc/2ECB3D2ADFE9F1CA85258C6330FA666120549349BC526D56B098A2A782D75455": {
+          "token_exponent": 6,
+          "token_symbol": "DGN",
+          "token_price": 0.003301336223821798
+        },
+        "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81": {
+          "token_exponent": 6,
+          "token_symbol": "USDC",
+          "token_price": 0.9999903399672406
+        },
+        "ibc/D2F678F792820452B17F087EC4FB02882A40BDA0C05B33100AF8EC7F441192EA": {
+          "token_exponent": 6,
+          "token_symbol": "BWH",
+          "token_price": 0.0002026358419263078
+        },
+        "ibc/069C7EBFE330A82230D6059886E4BA62D903D7ACB7C17B57E31EE2A368CC3F66": {
+          "token_exponent": 6,
+          "token_symbol": "WHINE",
+          "token_price": 0.00008038708046403097
+        },
+        "ibc/ED738CF5832C5399B1DADEADDD6A65A42EDA09707EF15D743A233B40D2D69613": {
+          "token_exponent": 6,
+          "token_symbol": "stUMEE",
+          "token_price": 0.0005366685407070761
+        },
+        "ibc/765F6EF29011637675D247EB7D779D71269E562503CCEAA0C1A831B78EA5BA70": {
+          "token_exponent": 9,
+          "token_symbol": "wSOL",
+          "token_price": 130.87692939759796
+        },
+        "ibc/08138B541387A196FD5E79E58396E87FA29243F0B5D4A82E38FA2E777B56053F": {
+          "token_exponent": 6,
+          "token_symbol": "COCA",
+          "token_price": 0.00045082418340186147
+        },
+        "ibc/39E4C8433680C4D40AD47748750690A816F205F26614EEE03860C1773D606B3B": {
+          "token_exponent": 6,
+          "token_symbol": "SHERPA",
+          "token_price": 0.014333440305802005
+        },
+        "ibc/CB1418F937623A593214D369158366AE9E8B6E0B51923DDAF6751C4071E1F068": {
+          "token_exponent": 6,
+          "token_symbol": "WOOF",
+          "token_price": 0.2611750608907515
+        },
+        "ibc/EC48B401A76C33CD2C8101F8F7E3C2A2FFAE68A8599E354BA66DE1C7AE1D2272": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 2775.155004611598
+        },
+        "ibc/B02AA07D282BF43527072539B8F63A4FF2588665A339BC09392036623430E3B9": {
+          "token_exponent": 18,
+          "token_symbol": "ARB",
+          "token_price": 0.4867075360398124
+        },
+        "ibc/B6086D35F7E7BCC4754A786946ACC9EBEB572B1495EF646FBCC16B72EAF7ED9F": {
+          "token_exponent": 6,
+          "token_symbol": "SHITMOS",
+          "token_price": 0.004991379014496014
+        },
+        "ibc/E8DB20806FC170C3454D93C7FD2CDA17A439F1C53559C87F3F38055E56A1C480": {
+          "token_exponent": 6,
+          "token_symbol": "TURD",
+          "token_price": 0.0006486071739087618
+        },
+        "ibc/F7F291D697E486E99D9AA1FAAB955F6E653B07855C51318BF6DF6D4E2B869616": {
+          "token_exponent": 6,
+          "token_symbol": "MNTA",
+          "token_price": 0.11233573332312978
+        },
+        "ibc/2D9538CD39C19EC92906F91E724647C72DA3C4451EAB5958D9AF572507A6C6A0": {
+          "token_exponent": 6,
+          "token_symbol": "bOSMO",
+          "token_price": 0.3304030711206566
+        },
+        "ibc/626DBDAD47E2867EE930907A2C97B9F61043523C40FB9C4FEEC980933D1F6790": {
+          "token_exponent": 18,
+          "token_symbol": "DAI",
+          "token_price": 0.9983005168157024
+        },
+        "ibc/6C9E6701AC217C0FC7D74B0F7A6265B9B4E3C3CDA6E80AADE5F950A8F52F9972": {
+          "token_exponent": 6,
+          "token_symbol": "NLS",
+          "token_price": 0.009514741104788496
+        },
+        "ibc/3EF75051529C80A757CD8572C1F1437949AAC8553D4084F73FDBF9C1615053F7": {
+          "token_exponent": 9,
+          "token_symbol": "fMAD",
+          "token_price": 262.7501796778355
+        },
+        "ibc/1F4D25F42EE82D89CA2DF6F2CAEE58A6E5D7C49A2E575B3562316F59BB9846F8": {
+          "token_exponent": 18,
+          "token_symbol": "sfrxETH",
+          "token_price": 2086.080430214187
+        },
+        "ibc/A6C04435B5AEF75446592860D05358A05CEA74AAE2EEEFBA4B9FE702AA9917B5": {
+          "token_exponent": 12,
+          "token_symbol": "OP",
+          "token_price": 1.1233595526847615
+        },
+        "ibc/1FDF5F63F29379882D5F0A2F740A89FEB53FBBFA2D019E6CB626E3403BBA1944": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0015544965609509
+        },
+        "ibc/BF7BDD572D446678B527325A712AF2B5B68B49A4D8159FDF14D7389DB5269C67": {
+          "token_exponent": 9,
+          "token_symbol": "SOL",
+          "token_price": 205.95737926608393
+        },
+        "ibc/8F93A962F1ACCC0C55B45358ACCEA4557206AE71A8BC73A2044525EE43EF5D31": {
+          "token_exponent": 18,
+          "token_symbol": "RAI",
+          "token_price": 3.00023161514994
+        },
+        "ibc/0433997003A2CFE10E483B93743BEC37F2F13B89854FD69599482E6DB8E6CE22": {
+          "token_exponent": 6,
+          "token_symbol": "ION",
+          "token_price": 165.60100920415303
+        },
+        "ibc/0BA1FA7A554B4347A87BD37AFF331683298730F9F8FCECB4896D58BED4B31F00": {
+          "token_exponent": 18,
+          "token_symbol": "stEVMOS",
+          "token_price": 0.019297489127310864
+        },
+        "ibc/273E4C3B307F3BD56F08652B1DA009A705F078811716DF53F7829A76ED769A8D": {
+          "token_exponent": 6,
+          "token_symbol": "EURe",
+          "token_price": 1.0328304035718794
+        },
+        "ibc/1CF1239A3068964DAF55F7300D7BE016E4E184F58EEB59096B138F6D72628BAA": {
+          "token_exponent": 12,
+          "token_symbol": "PICA",
+          "token_price": 0.0001768013270800094
+        },
+        "ibc/55DB49C9B44555B813C1F98748794F81F4015DAFB43C9A1B8160C2ACBA6314CD": {
+          "token_exponent": 6,
+          "token_symbol": "COOK",
+          "token_price": 0.00039166338680807103
+        },
+        "ibc/CCD676A501897583884E68318499E079C47CD336B48E168BB6DAD84831B10E36": {
+          "token_exponent": 6,
+          "token_symbol": "HAVA",
+          "token_price": 1.3136657801538532e-9
+        },
+        "ibc/8D43B08EEF9D9688BEA6E54A8F0E50FCFC79A7567BCEDB56E3784F6591C331B9": {
+          "token_exponent": 18,
+          "token_symbol": "sFRAX",
+          "token_price": 1.0317616971710328
+        },
+        "ibc/EAE09760B34FE09BF2AA0CCEFBC99470254A86D1629F88AAE74031741EB366CB": {
+          "token_exponent": 6,
+          "token_symbol": "stBAND",
+          "token_price": 0.9576670488023268
+        },
+        "ibc/C4D1E3EBE5C4666C39889BF59F7496D263389DEE1C8A3AB6A479B0A0FF224599": {
+          "token_exponent": 6,
+          "token_symbol": "sqATOM",
+          "token_price": 0.33201106816213216
+        },
+        "ibc/BEF5C9D724E1EBB04FEE237CB5F602B22B0FFE8065F540FD8BC6F9E1A4B8573D": {
+          "token_exponent": 6,
+          "token_symbol": "HUAHUA",
+          "token_price": 0.00003093577043895335
+        },
+        "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM",
+          "token_price": 4.720753471247874
+        },
+        "ibc/B6362CC949149B6E1FBA1D112BD1D3135CB9214A90368AF2C68D056622291586": {
+          "token_exponent": 6,
+          "token_symbol": "sqOSMO",
+          "token_price": 0.000014149332814189264
+        },
+        "ibc/8BD3EB6ABBD8DC8B1BA1F2E58CDFBAACFF8CF55DB8C475E9D6D97B9A56B052F0": {
+          "token_exponent": 6,
+          "token_symbol": "TORO",
+          "token_price": 0.00000494391233791055
+        },
+        "ibc/793A20B5D4E40585144132BB56334A14AFBA9C0BE72ED9A1FB90BBF8BBF7EF3A": {
+          "token_exponent": 9,
+          "token_symbol": "fBAD",
+          "token_price": 783.4239998359145
+        },
+        "ibc/7B6FFC996FC2984AA98DBA4CEBFBF790E55F4D7E65360DD614F2BE2D08F4D324": {
+          "token_exponent": 18,
+          "token_symbol": "WAVAX",
+          "token_price": 27.050928075242787
+        },
+        "ibc/A96863E0BDFA3F2D96625FD5A649AF53F62F97521EF78FBBFE5B4199C3E23ABD": {
+          "token_exponent": 18,
+          "token_symbol": "WFTM",
+          "token_price": 0.447005979553871
+        },
+        "ibc/D90C69603588018DD7183BBD315B65FBE3631FC98D447769B822F44D06602BD1": {
+          "token_exponent": 6,
+          "token_symbol": "stkOSMO",
+          "token_price": 0.32599917463696226
+        },
+        "ibc/6569E05DEE32B339D9286A52BE33DFCEFC97267F23EF9CFDE0C055140967A9A5": {
+          "token_exponent": 6,
+          "token_symbol": "stTIA",
+          "token_price": 3.537181267592565
+        },
+        "ibc/D03F341CAA5D24B43ABE27C11A214EA3589DDEA125A2E6A76C7C37F2F3C59692": {
+          "token_exponent": 6,
+          "token_symbol": "NOIS",
+          "token_price": 0.054422543081638
+        },
+        "ibc/DF8722298D192AAB85D86D0462E8166234A6A9A572DD4A2EA7996029DF4DB363": {
+          "token_exponent": 8,
+          "token_symbol": "axlWBTC",
+          "token_price": 98326.98697144234
+        },
+        "ibc/ECB6654E6AA0B29C991C509B75445FCA70E4C46522B48B69544633808E176A49": {
+          "token_exponent": 12,
+          "token_symbol": "TNKR",
+          "token_price": 0.06187358969540378
+        },
+        "ibc/A9FDC3F1C168CC2196CF00A09504AD42D4D8E0BF1C7FBBB4B3531FA16F633F6E": {
+          "token_exponent": 6,
+          "token_symbol": "KAVA",
+          "token_price": 0.4872799811356997
+        },
+        "ibc/8D749C5FB0213DF002E8FDCCB5B01E35DA241397EF825048C530C7EAE43BCE80": {
+          "token_exponent": 6,
+          "token_symbol": "stSTARS",
+          "token_price": 0.004889626891930672
+        },
+        "ibc/CB59A3CF572D31B5B531C305A0386A262FEFF2ADCC44551654E1344C3C236507": {
+          "token_exponent": 6,
+          "token_symbol": "milkTIA",
+          "token_price": 3.610074141421416
+        },
+        "ibc/71BA048E21A9AEAC5E23FB7D91BE0E8730D50AB8993A01307616AA0C7EA618E3": {
+          "token_exponent": 18,
+          "token_symbol": "BUSD",
+          "token_price": 0.9139360810991778
+        },
+        "ibc/A0D3A4A443E253817F949EBE4BB3FC2B4DADDF103766397A85B7CF84E67B4F4B": {
+          "token_exponent": 6,
+          "token_symbol": "SPICE",
+          "token_price": 0.00474655757824358
+        },
+        "ibc/1053E271314D36FECBC915B51474F8B3962597CE88FF3E4A74795B0E3F367A8B": {
+          "token_exponent": 6,
+          "token_symbol": "KUJI",
+          "token_price": 0.30654532975609616
+        },
+        "ibc/0F90CE86020EBE434E27ED3804CABB67D1DA9AE0B818D8E9607188C1C58180B7": {
+          "token_exponent": 6,
+          "token_symbol": "WIHA",
+          "token_price": 0.016662269035739422
+        },
+        "ibc/BE0B6569E21562DA7E129F407AED4EA6625B7CB403E072C8C5E1B7F8D79DCC78": {
+          "token_exponent": 18,
+          "token_symbol": "PEPE",
+          "token_price": 0.00001019762057972523
+        },
+        "ibc/F073D44CC51154C8342C47C09D7EE1BD13ED54AFFDD4F350CF4BE7A67A31941B": {
+          "token_exponent": 6,
+          "token_symbol": "LVN",
+          "token_price": 0.00626822396119218
+        },
+        "ibc/73D01D9D032390E81CBC20B7E0507B84DF54F3CE5302BFF52776E7D8930F2A6C": {
+          "token_exponent": 18,
+          "token_symbol": "LINK",
+          "token_price": 20.162205185778284
+        },
+        "ibc/773B4D0A3CD667B2275D5A4A7A2F0909C0BA0F4059C0B9181E680DDF4965DCC7": {
+          "token_exponent": 6,
+          "token_symbol": "TIA",
+          "token_price": 3.2669518212790196
+        },
+        "factory/neutron133xakkrfksq39wxy575unve2nyehg5npx75nph/WEIRD": {
+          "token_exponent": 6,
+          "token_symbol": "WEIRD",
+          "token_price": 0.019480413052626513
+        },
+        "factory/neutron143wp6g8paqasnuuey6zyapucknwy9rhnld8hkr/bad": {
+          "token_exponent": 6,
+          "token_symbol": "BAD",
+          "token_price": 0.000010468357925324155
+        },
+        "ibc/E39239AE88D45746100FA4A9B3E1E29008CADF8AC2CAD4132A7609655AE323EB": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 2773.47517192142
+        },
+        "ibc/322C86EB54A505E28AFE380CED1721FA61E9580A7548A16B9DCF6E7C8CEE43D5": {
+          "token_exponent": 6,
+          "token_symbol": "LUNA",
+          "token_price": 0.245435128868618
+        },
+        "ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445": {
+          "token_exponent": 6,
+          "token_symbol": "stkATOM",
+          "token_price": 6.632139344221425
+        },
+        "ibc/69BEAFC2FDF0C6F0124520B0A06E432AD8490732DFC309337FA6C307124FDABC": {
+          "token_exponent": 18,
+          "token_symbol": "INJ",
+          "token_price": 14.68074851012703
+        },
+        "ibc/B074BCF31E5892A522FD48DDD5DD80C3953D4B43D59A6E4FD0DC6759685FD36C": {
+          "token_exponent": 6,
+          "token_symbol": "BLD",
+          "token_price": 0.0381952891467547
+        },
+        "ibc/3CF3F3207C8B14498128C312048ECE091B51B34C7552FAB07549141484C672C7": {
+          "token_exponent": 8,
+          "token_symbol": "DOGE",
+          "token_price": 0.26605766808311915
+        },
+        "ibc/C16FC80FEBC9C9C2325BD93ABF1B8A72CA5AF8AD3E2286438699AB5562B9AD06": {
+          "token_exponent": 6,
+          "token_symbol": "DGL",
+          "token_price": 0.0003028399542789405
+        },
+        "ibc/3552CECB7BCE1891DB6070D37EC6E954C972B1400141308FCD85FD148BD06DE5": {
+          "token_exponent": 6,
+          "token_symbol": "STRD",
+          "token_price": 0.3217856882279659
+        },
+        "ibc/4EAAAE537853E9C0DDF458F0710C37BB3DE7C6A675AB75DB5731ACE93D6CC57B": {
+          "token_exponent": 6,
+          "token_symbol": "stSAGA",
+          "token_price": 0.8136758277573634
+        },
+        "ibc/D77A4E010C2063E4F2C4E7C84AFACB087464326DE20FF23A3D8357685E5BDC57": {
+          "token_exponent": 6,
+          "token_symbol": "SNEAKY",
+          "token_price": 0.96069561287441
+        },
+        "factory/neutron170v88vrtnedesyfytuku257cggxc79rd7lwt7q/ucircus": {
+          "token_exponent": 6,
+          "token_symbol": "CIRCUS",
+          "token_price": 1.5226044830926533
+        },
+        "ibc/78F7404035221CD1010518C7BC3DD99B90E59C2BA37ABFC3CE56B0CFB7E8901B": {
+          "token_exponent": 8,
+          "token_symbol": "WBTC",
+          "token_price": 95897.45377707506
+        },
+        "ibc/837E876EAB64260D5174BE8171B2889113757A8724258A855D6F8D92EDF41E9A": {
+          "token_exponent": 8,
+          "token_symbol": "SWTH",
+          "token_price": 0.001453412019869802
+        },
+        "ibc/A139C0E0B5E87CBA8EAEEB12B9BEE13AC7C814CFBBFA87BBCADD67E31003466C": {
+          "token_exponent": 6,
+          "token_symbol": "STARS",
+          "token_price": 0.0030198984174194584
+        },
+        "factory/neutron1p8d89wvxyjcnawmgw72klknr3lg9gwwl6ypxda/newt": {
+          "token_exponent": 6,
+          "token_symbol": "NEWT",
+          "token_price": 0.05714546542936724
+        },
+        "ibc/656B94724075CBA8D09D31549DB97BC25663B0A228DA6C30AA23696C5949A308": {
+          "token_exponent": 12,
+          "token_symbol": "SHIB",
+          "token_price": 0.000015756580786671444
+        },
+        "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom": {
+          "token_exponent": 6,
+          "token_symbol": "dATOM",
+          "token_price": 5.0312140851586165
+        },
+        "ibc/BAA1D21893B1D36865C6CA44D18F4ACF08BAD70CB6863C4722E0A61703808F77": {
+          "token_exponent": 18,
+          "token_symbol": "stDYDX",
+          "token_price": 0.8548948141592198
+        },
+        "ibc/8F7025E5B6D0F46746A114DAFAF6BD8833DA995983DBCD2489B5DF2D8B1EB699": {
+          "token_exponent": 6,
+          "token_symbol": "NINJA",
+          "token_price": 0.0029245551699241925
+        },
+        "ibc/E92CD020751E93DF431B5B1ED8950F7BFF07646D33C49CEA96D991FB6C322403": {
+          "token_exponent": 6,
+          "token_symbol": "stIBCX",
+          "token_price": 34.74238208982487
+        },
+        "ibc/4A6A46D4263F2ED3DCE9CF866FE15E6903FB5E12D87EB8BDC1B6B1A1E2D397B4": {
+          "token_exponent": 18,
+          "token_symbol": "DYM",
+          "token_price": 0.6305320544854747
+        },
+        "ibc/986EDEE721977B7EE548A21E28781362E11C97600C3B2764DF16441D372C18D8": {
+          "token_exponent": 18,
+          "token_symbol": "stISLM",
+          "token_price": 0.02359089260250693
+        },
+        "ibc/9E6AC71FE9E94A2FDA9A353E286D72772BA0F7CFF7E02669637749278CBAA62F": {
+          "token_exponent": 18,
+          "token_symbol": "FXS",
+          "token_price": 2.1822104388700483
+        },
+        "factory/neutron154gg0wtm2v4h9ur8xg32ep64e8ef0g5twlsgvfeajqwghdryvyqsqhgk8e/APOLLO": {
+          "token_exponent": 6,
+          "token_symbol": "APOLLO",
+          "token_price": 0.18529533261860667
+        },
+        "ibc/A0A081FFC6A13B8F502079F3A8420F5B4FC3007D9AA696E371B9A7B39B90EADF": {
+          "token_exponent": 18,
+          "token_symbol": "USDY",
+          "token_price": 1.0577332144459284
+        },
+        "ibc/7C0E3F16B819DE35A7785827D2E93DB8BB67FD7D7CFF7D9F562090505F3A8D16": {
+          "token_exponent": 8,
+          "token_symbol": "ICP",
+          "token_price": 6.977381902879567
+        },
+        "ibc/14767887A69DBEFF3B99AA3E5B176C7989B1DAD2395A1E843F48EE981AC4F83F": {
+          "token_exponent": 18,
+          "token_symbol": "WMATIC",
+          "token_price": 0.32087334129774636
+        },
+        "ibc/FD7804E039C049785704F6B6BDC42EBEE3B29E277E573DBF2601E268D46A4332": {
+          "token_exponent": 12,
+          "token_symbol": "ARB",
+          "token_price": 0.4859362987643305
+        },
+        "ibc/746873995B97269C0C6B6EA12C87C027054988827245ACC908BEE7B1A4E8FC07": {
+          "token_exponent": 6,
+          "token_symbol": "BOMU",
+          "token_price": 0.0001658744363539087
+        },
+        "ibc/C1F4520E07B9190EA08FBAA5E1D68109B9738B5B717904C62F0EE9CA89471EC0": {
+          "token_exponent": 6,
+          "token_symbol": "LAB",
+          "token_price": 30.71922003537347
+        },
+        "ibc/601307DA970BD7D236E7D31A9526CE14BFCC2116DD48DF0D3E3E8AAC92D3BDFC": {
+          "token_exponent": 6,
+          "token_symbol": "CRAZYHORSE",
+          "token_price": 0.00017852211511125218
+        },
+        "ibc/D206EEE8D9C76A9F5EFCBDCF5FEEFB3A97094EC83F5517D75F0B42179AC5B351": {
+          "token_exponent": 6,
+          "token_symbol": "BAG",
+          "token_price": 0.0008839526399509168
+        },
+        "ibc/3307AC2A0415D33A463DBC954087539A4B2AB01DAC7C77155C072A2DD3073A94": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0009673761985505
+        },
+        "ibc/4E39DA6487C8AA17276FAD2730C1DC84E0F716179962DA508FDAAC5FD598C323": {
+          "token_exponent": 6,
+          "token_symbol": "IST",
+          "token_price": 0.9993615985432032
+        },
+        "ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93": {
+          "token_exponent": 6,
+          "token_symbol": "stOSMO",
+          "token_price": 0.4054839145589677
+        },
+        "ibc/A585C2D15DCD3B010849B453A2CFCB5E213208A5AB665691792684C26274304D": {
+          "token_exponent": 18,
+          "token_symbol": "WETH",
+          "token_price": 2775.155004611598
+        },
+        "factory/neutron13lkh47msw28yynspc5rnmty3yktk43wc3dsv0l/ATOM1KLFG": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM1KLFG",
+          "token_price": 0.0029975083712111797
+        },
+        "ibc/2B9D089E73AC096934CD6BBBC71A1CD5DD2A4F8E94CC37CE7F861AC674044002": {
+          "token_exponent": 18,
+          "token_symbol": "stINJ",
+          "token_price": 20.04151724844817
+        },
+        "ibc/2CB87BCE0937B1D1DFCEE79BE4501AAF3C265E923509AEAC410AD85D27F35130": {
+          "token_exponent": 18,
+          "token_symbol": "DYDX",
+          "token_price": 0.7762696769624194
+        },
+        "ibc/5CB2E12B07D0B6D8EC24A68BA6B6E6E8D5BF85B7D22091D3A480DCDD61C6AC84": {
+          "token_exponent": 18,
+          "token_symbol": "WBNB",
+          "token_price": 580.1277499246968
+        },
+        "ibc/F4D5E72968365ED382E80B801E48352C0A3D42C66D97897857FD515CCDD77759": {
+          "token_exponent": 6,
+          "token_symbol": "STRDST",
+          "token_price": 0.04090121107656706
+        },
+        "ibc/1002FD510616D2AD1664388D0CA79921452955E6D3BD11C5D85D5550C8480D6A": {
+          "token_exponent": 6,
+          "token_symbol": "UWU",
+          "token_price": 0.00020734510583192577
+        },
+        "ibc/6A1E478F1A7FF2EE7174B9221B4B7627F9639F13F9FAF3196EE3DE662ADEC6A5": {
+          "token_exponent": 6,
+          "token_symbol": "sqTIA",
+          "token_price": 3.232805121526315
+        },
+        "ibc/2E61B6679222BA9909F7840EE40F1B0B7F7C7149BBD2AC132D53714C153652A7": {
+          "token_exponent": 6,
+          "token_symbol": "CAC",
+          "token_price": 0.005959302189967407
+        },
+        "ibc/D6C031FCFA42DCC0E731E25E652774F72A9140F1EFDEDC7BFCE5D30B5999FB56": {
+          "token_exponent": 6,
+          "token_symbol": "XRP",
+          "token_price": 2.5477747805526483
+        },
+        "ibc/FD842803B4D8DCB2229828F0D034803C5BA852BAF3469D0E3D1175CD646E700A": {
+          "token_exponent": 6,
+          "token_symbol": "ampOSMO",
+          "token_price": 0.35414848815350214
+        },
+        "ibc/9598CDEB7C6DB7FC21E746C8E0250B30CD5154F39CA111A9D4948A4362F638BD": {
+          "token_exponent": 6,
+          "token_symbol": "MARS.old",
+          "token_price": 0.019111332806498973
+        },
+        "untrn": {
+          "token_exponent": 6,
+          "token_symbol": "NTRN",
+          "token_price": 0.20041247799313971
+        }
+      },
       "round_bids": [
         {
           "round_id": 2,
@@ -43063,6 +45294,763 @@
           "creation_round": 3
         }
       ],
+      "round_prices": {
+        "ibc/8D0C1AC5A72FB7EC187632D01BACBB68EF743CA1AF16A15C00ACBB9CF49A0070": {
+          "token_exponent": 18,
+          "token_symbol": "stDYM",
+          "token_price": 0.3743544975268543
+        },
+        "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO",
+          "token_price": 0.2909881901149182
+        },
+        "ibc/B6362CC949149B6E1FBA1D112BD1D3135CB9214A90368AF2C68D056622291586": {
+          "token_exponent": 6,
+          "token_symbol": "sqOSMO",
+          "token_price": 0.000014149332814189264
+        },
+        "ibc/D77A4E010C2063E4F2C4E7C84AFACB087464326DE20FF23A3D8357685E5BDC57": {
+          "token_exponent": 6,
+          "token_symbol": "SNEAKY",
+          "token_price": 0.938342787860791
+        },
+        "ibc/E92CD020751E93DF431B5B1ED8950F7BFF07646D33C49CEA96D991FB6C322403": {
+          "token_exponent": 6,
+          "token_symbol": "stIBCX",
+          "token_price": 30.51354357714976
+        },
+        "ibc/8F93A962F1ACCC0C55B45358ACCEA4557206AE71A8BC73A2044525EE43EF5D31": {
+          "token_exponent": 18,
+          "token_symbol": "RAI",
+          "token_price": 3.050894215911462
+        },
+        "ibc/78F7404035221CD1010518C7BC3DD99B90E59C2BA37ABFC3CE56B0CFB7E8901B": {
+          "token_exponent": 8,
+          "token_symbol": "WBTC",
+          "token_price": 89897.93607947738
+        },
+        "ibc/AB71A1158A893A668F5D4AC2340827DC46BCA905900D9B8735312EA12F92ED27": {
+          "token_exponent": 6,
+          "token_symbol": "OSMO-YIELD-LP",
+          "token_price": 1.1920785125800064
+        },
+        "ibc/C4D1E3EBE5C4666C39889BF59F7496D263389DEE1C8A3AB6A479B0A0FF224599": {
+          "token_exponent": 6,
+          "token_symbol": "sqATOM",
+          "token_price": 0.33201106816213216
+        },
+        "ibc/5C613C94127D0A91D215D0BF247A0ED00E5F001B0C276C5690005939C3740246": {
+          "token_exponent": 8,
+          "token_symbol": "BTC",
+          "token_price": 88649.17044710538
+        },
+        "ibc/A191599BC4F13604198F50378F9E97EBE06740AA267ED74D17A41D383437B8D3": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0002040731745163
+        },
+        "ibc/7A276F6A8091CE27CCA2EBCF24896B787686A2B7D123007B4ACB876D654E910D": {
+          "token_exponent": 9,
+          "token_symbol": "TON",
+          "token_price": 3.1037667535343583
+        },
+        "ibc/69BEAFC2FDF0C6F0124520B0A06E432AD8490732DFC309337FA6C307124FDABC": {
+          "token_exponent": 18,
+          "token_symbol": "INJ",
+          "token_price": 11.989269259009502
+        },
+        "ibc/B02AA07D282BF43527072539B8F63A4FF2588665A339BC09392036623430E3B9": {
+          "token_exponent": 18,
+          "token_symbol": "ARB",
+          "token_price": 0.4114720521129364
+        },
+        "ibc/74B554DD3FF10F5D60E30175ADFB47E59F77F7C57024A8104A4F78CDC2EAD125": {
+          "token_exponent": 6,
+          "token_symbol": "SAGA",
+          "token_price": 0.4284213172858614
+        },
+        "factory/neutron170v88vrtnedesyfytuku257cggxc79rd7lwt7q/ucircus": {
+          "token_exponent": 6,
+          "token_symbol": "CIRCUS",
+          "token_price": 1.3704556473164309
+        },
+        "ibc/EC48B401A76C33CD2C8101F8F7E3C2A2FFAE68A8599E354BA66DE1C7AE1D2272": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 2238.857758661558
+        },
+        "ibc/3552CECB7BCE1891DB6070D37EC6E954C972B1400141308FCD85FD148BD06DE5": {
+          "token_exponent": 6,
+          "token_symbol": "STRD",
+          "token_price": 0.22898830680972856
+        },
+        "ibc/ED738CF5832C5399B1DADEADDD6A65A42EDA09707EF15D743A233B40D2D69613": {
+          "token_exponent": 6,
+          "token_symbol": "stUMEE",
+          "token_price": 0.0005816665186919103
+        },
+        "ibc/765F6EF29011637675D247EB7D779D71269E562503CCEAA0C1A831B78EA5BA70": {
+          "token_exponent": 9,
+          "token_symbol": "wSOL",
+          "token_price": 130.87692939759796
+        },
+        "ibc/D6C031FCFA42DCC0E731E25E652774F72A9140F1EFDEDC7BFCE5D30B5999FB56": {
+          "token_exponent": 6,
+          "token_symbol": "XRP",
+          "token_price": 2.539989973955064
+        },
+        "ibc/CB1418F937623A593214D369158366AE9E8B6E0B51923DDAF6751C4071E1F068": {
+          "token_exponent": 6,
+          "token_symbol": "WOOF",
+          "token_price": 0.2611750608907515
+        },
+        "ibc/17E2B6610FC9DF24D3AD8F1CBA03308B9FD284AB8123E5E485902E54369E985A": {
+          "token_exponent": 6,
+          "token_symbol": "FRNZ",
+          "token_price": 2044.9290508000352
+        },
+        "ibc/DDC3C60EE82BF544F1A0C6A983FF500EF1C14DE20071A5E1E7C0FB470E36E920": {
+          "token_exponent": 14,
+          "token_symbol": "SAT",
+          "token_price": 88773.88567839119
+        },
+        "ibc/94504DAB689EC82B71FC9AE8CACC2A8030642C041EEFC165BEB5589223888B7E": {
+          "token_exponent": 14,
+          "token_symbol": "nBTC",
+          "token_price": 88773.88567839119
+        },
+        "ibc/DF8722298D192AAB85D86D0462E8166234A6A9A572DD4A2EA7996029DF4DB363": {
+          "token_exponent": 8,
+          "token_symbol": "axlWBTC",
+          "token_price": 88796.78615603384
+        },
+        "ibc/3649CE0C8A2C79048D8C6F31FF18FA69C9BC7EB193512E0BD03B733011290445": {
+          "token_exponent": 6,
+          "token_symbol": "stkATOM",
+          "token_price": 6.251978844243779
+        },
+        "ibc/AB73A0D964FCE74EA9D7695553A1EA4B3D8E332571B049E8CC0ADEBFB4931503": {
+          "token_exponent": 6,
+          "token_symbol": "JUNO",
+          "token_price": 0.11930565274713896
+        },
+        "ibc/B6086D35F7E7BCC4754A786946ACC9EBEB572B1495EF646FBCC16B72EAF7ED9F": {
+          "token_exponent": 6,
+          "token_symbol": "SHITMOS",
+          "token_price": 0.00439467349797412
+        },
+        "ibc/6569E05DEE32B339D9286A52BE33DFCEFC97267F23EF9CFDE0C055140967A9A5": {
+          "token_exponent": 6,
+          "token_symbol": "stTIA",
+          "token_price": 3.562439755847765
+        },
+        "ibc/C9307595A4EE92AED106F32D68A51DCB04F6BE22E0F981F1176C8E8FBFDAE475": {
+          "token_exponent": 6,
+          "token_symbol": "wLIBRA",
+          "token_price": 0.0001075271459097292
+        },
+        "ibc/273E4C3B307F3BD56F08652B1DA009A705F078811716DF53F7829A76ED769A8D": {
+          "token_exponent": 6,
+          "token_symbol": "EURe",
+          "token_price": 1.086466699188138
+        },
+        "ibc/7E09670B1CC767DAD0C887DD97675BAB698E50E35673DB5806C0D2664F65C182": {
+          "token_exponent": 6,
+          "token_symbol": "MBRN",
+          "token_price": 0.01124461245089992
+        },
+        "ibc/A585C2D15DCD3B010849B453A2CFCB5E213208A5AB665691792684C26274304D": {
+          "token_exponent": 18,
+          "token_symbol": "WETH",
+          "token_price": 2215.673628663505
+        },
+        "ibc/73D01D9D032390E81CBC20B7E0507B84DF54F3CE5302BFF52776E7D8930F2A6C": {
+          "token_exponent": 18,
+          "token_symbol": "LINK",
+          "token_price": 17.272129892000994
+        },
+        "ibc/9F8417FBA11E5E01F7F85DDD48C400EB746E95084C11706041663845B4A700A8": {
+          "token_exponent": 6,
+          "token_symbol": "BADKID",
+          "token_price": 0.00004580249746431816
+        },
+        "ibc/E8DB20806FC170C3454D93C7FD2CDA17A439F1C53559C87F3F38055E56A1C480": {
+          "token_exponent": 6,
+          "token_symbol": "TURD",
+          "token_price": 0.0003716978469213499
+        },
+        "ibc/740C72B9127CEA71AEB81687BB055106F502DA4647AA975BF64E3DC61D334ED9": {
+          "token_exponent": 6,
+          "token_symbol": "CDT",
+          "token_price": 0.986105205346588
+        },
+        "ibc/4A6A46D4263F2ED3DCE9CF866FE15E6903FB5E12D87EB8BDC1B6B1A1E2D397B4": {
+          "token_exponent": 18,
+          "token_symbol": "DYM",
+          "token_price": 0.3599895260404283
+        },
+        "ibc/A4529CCE13E2FEB812574AD69DFDC300B760E429D61430B0225EA25EB7D499BD": {
+          "token_exponent": 12,
+          "token_symbol": "FIL",
+          "token_price": 2.968958250297227
+        },
+        "factory/neutron1p8d89wvxyjcnawmgw72klknr3lg9gwwl6ypxda/newt": {
+          "token_exponent": 6,
+          "token_symbol": "NEWT",
+          "token_price": 0.05714546542936724
+        },
+        "ibc/3307AC2A0415D33A463DBC954087539A4B2AB01DAC7C77155C072A2DD3073A94": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0012545724298725
+        },
+        "ibc/F4D5E72968365ED382E80B801E48352C0A3D42C66D97897857FD515CCDD77759": {
+          "token_exponent": 6,
+          "token_symbol": "STRDST",
+          "token_price": 0.04090121107656706
+        },
+        "factory/neutron154gg0wtm2v4h9ur8xg32ep64e8ef0g5twlsgvfeajqwghdryvyqsqhgk8e/APOLLO": {
+          "token_exponent": 6,
+          "token_symbol": "APOLLO",
+          "token_price": 0.18529533261860667
+        },
+        "ibc/0433997003A2CFE10E483B93743BEC37F2F13B89854FD69599482E6DB8E6CE22": {
+          "token_exponent": 6,
+          "token_symbol": "ION",
+          "token_price": 136.07847486644508
+        },
+        "ibc/00230C58F1540708067850B3362C8A67A273FC52F0C7305B802D7255495C86FD": {
+          "token_exponent": 18,
+          "token_symbol": "ARCH",
+          "token_price": 0.016517943977617487
+        },
+        "ibc/837E876EAB64260D5174BE8171B2889113757A8724258A855D6F8D92EDF41E9A": {
+          "token_exponent": 8,
+          "token_symbol": "SWTH",
+          "token_price": 0.0012358661221601435
+        },
+        "ibc/1CF1239A3068964DAF55F7300D7BE016E4E184F58EEB59096B138F6D72628BAA": {
+          "token_exponent": 12,
+          "token_symbol": "PICA",
+          "token_price": 0.00009649674799161508
+        },
+        "ibc/C0E66D1C81D8AAF0E6896E05190FDFBC222367148F86AC3EA679C28327A763CD": {
+          "token_exponent": 6,
+          "token_symbol": "AXL",
+          "token_price": 0.4120910416499068
+        },
+        "ibc/48823A50F321EFFA9B68E835C85E17A14EDD8FAB420837E17350A9B5725B49B0": {
+          "token_exponent": 6,
+          "token_symbol": "PBB",
+          "token_price": 0.005296567918947706
+        },
+        "factory/neutron1ut4c6pv4u6vyu97yw48y8g7mle0cat54848v6m97k977022lzxtsaqsgmq/udtia": {
+          "token_exponent": 6,
+          "token_symbol": "dTIA",
+          "token_price": 3.255210939666789
+        },
+        "ibc/1002FD510616D2AD1664388D0CA79921452955E6D3BD11C5D85D5550C8480D6A": {
+          "token_exponent": 6,
+          "token_symbol": "UWU",
+          "token_price": 0.00012048797568082144
+        },
+        "ibc/B6643B477C69060B125279D9FF69EC20189E4D15DC24CF0457E0BAA9DD1A26AE": {
+          "token_exponent": 8,
+          "token_symbol": "SHD",
+          "token_price": 4.042315616257068
+        },
+        "ibc/57503D7852EF4E1899FE6D71C5E81D7C839F76580F86F21E39348FC2BC9D7CE2": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0018399228536587
+        },
+        "ibc/7F85C8BE811E6EDDDB8DD538B34D854055B361A87A72B3FDC254DF1E1E7F0B60": {
+          "token_exponent": 6,
+          "token_symbol": "BERNESE",
+          "token_price": 0.001455837089946863
+        },
+        "ibc/656B94724075CBA8D09D31549DB97BC25663B0A228DA6C30AA23696C5949A308": {
+          "token_exponent": 12,
+          "token_symbol": "SHIB",
+          "token_price": 0.00001371285118357653
+        },
+        "ibc/626DBDAD47E2867EE930907A2C97B9F61043523C40FB9C4FEEC980933D1F6790": {
+          "token_exponent": 18,
+          "token_symbol": "DAI",
+          "token_price": 1.0035043440323723
+        },
+        "ibc/2E61B6679222BA9909F7840EE40F1B0B7F7C7149BBD2AC132D53714C153652A7": {
+          "token_exponent": 6,
+          "token_symbol": "CAC",
+          "token_price": 0.001662182244080508
+        },
+        "ibc/4A9DF0B17F6F90FB739C2731E4E2057BE64D39D0C7B9083B7706C0C9B53DEE0E": {
+          "token_exponent": 6,
+          "token_symbol": "stJUNO",
+          "token_price": 0.19112142600117665
+        },
+        "ibc/0F90CE86020EBE434E27ED3804CABB67D1DA9AE0B818D8E9607188C1C58180B7": {
+          "token_exponent": 6,
+          "token_symbol": "WIHA",
+          "token_price": 0.015057194056607512
+        },
+        "factory/neutron1ndu2wvkrxtane8se2tr48gv7nsm46y5gcqjhux/MARS": {
+          "token_exponent": 6,
+          "token_symbol": "MARS",
+          "token_price": 0.016828554145070146
+        },
+        "ibc/14767887A69DBEFF3B99AA3E5B176C7989B1DAD2395A1E843F48EE981AC4F83F": {
+          "token_exponent": 18,
+          "token_symbol": "WMATIC",
+          "token_price": 0.2492795411627062
+        },
+        "ibc/ECB6654E6AA0B29C991C509B75445FCA70E4C46522B48B69544633808E176A49": {
+          "token_exponent": 12,
+          "token_symbol": "TNKR",
+          "token_price": 0.06187358969540378
+        },
+        "ibc/08138B541387A196FD5E79E58396E87FA29243F0B5D4A82E38FA2E777B56053F": {
+          "token_exponent": 6,
+          "token_symbol": "COCA",
+          "token_price": 0.00027469371695712145
+        },
+        "ibc/15EA36C3AB87E3E5E41A61717B7A20F03CC2363840C1A837A487B8BFE176328E": {
+          "token_exponent": 6,
+          "token_symbol": "SCRT",
+          "token_price": 0.20669687473682535
+        },
+        "ibc/4E39DA6487C8AA17276FAD2730C1DC84E0F716179962DA508FDAAC5FD598C323": {
+          "token_exponent": 6,
+          "token_symbol": "IST",
+          "token_price": 1.0033555409690085
+        },
+        "ibc/3EF75051529C80A757CD8572C1F1437949AAC8553D4084F73FDBF9C1615053F7": {
+          "token_exponent": 9,
+          "token_symbol": "fMAD",
+          "token_price": 223.7300410021301
+        },
+        "ibc/2B9D089E73AC096934CD6BBBC71A1CD5DD2A4F8E94CC37CE7F861AC674044002": {
+          "token_exponent": 18,
+          "token_symbol": "stINJ",
+          "token_price": 16.519359253949244
+        },
+        "ibc/773B4D0A3CD667B2275D5A4A7A2F0909C0BA0F4059C0B9181E680DDF4965DCC7": {
+          "token_exponent": 6,
+          "token_symbol": "TIA",
+          "token_price": 3.245085452331573
+        },
+        "ibc/CB59A3CF572D31B5B531C305A0386A262FEFF2ADCC44551654E1344C3C236507": {
+          "token_exponent": 6,
+          "token_symbol": "milkTIA",
+          "token_price": 3.544173261414483
+        },
+        "ibc/7B6FFC996FC2984AA98DBA4CEBFBF790E55F4D7E65360DD614F2BE2D08F4D324": {
+          "token_exponent": 18,
+          "token_symbol": "WAVAX",
+          "token_price": 20.732140901744877
+        },
+        "ibc/BF7BDD572D446678B527325A712AF2B5B68B49A4D8159FDF14D7389DB5269C67": {
+          "token_exponent": 9,
+          "token_symbol": "SOL",
+          "token_price": 145.62532376238178
+        },
+        "ibc/8D43B08EEF9D9688BEA6E54A8F0E50FCFC79A7567BCEDB56E3784F6591C331B9": {
+          "token_exponent": 18,
+          "token_symbol": "sFRAX",
+          "token_price": 1.0331446757001308
+        },
+        "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C": {
+          "token_exponent": 6,
+          "token_symbol": "stATOM",
+          "token_price": 6.659835581324059
+        },
+        "ibc/71BA048E21A9AEAC5E23FB7D91BE0E8730D50AB8993A01307616AA0C7EA618E3": {
+          "token_exponent": 18,
+          "token_symbol": "BUSD",
+          "token_price": 0.9544835835373434
+        },
+        "ibc/FD7804E039C049785704F6B6BDC42EBEE3B29E277E573DBF2601E268D46A4332": {
+          "token_exponent": 12,
+          "token_symbol": "ARB",
+          "token_price": 0.41583142212737695
+        },
+        "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM",
+          "token_price": 4.383221361890856
+        },
+        "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349": {
+          "token_exponent": 6,
+          "token_symbol": "axlUSDC",
+          "token_price": 1
+        },
+        "ibc/7DA39F5140741177846FCF3CFAB14450EE7F57B7794E5A94BEF73825D3741958": {
+          "token_exponent": 6,
+          "token_symbol": "WOSMO",
+          "token_price": 0.000008510672992197869
+        },
+        "ibc/0802557E8E5C9243A3F513CFC74469C5FBEAC0FC5C126E7F0505FA784347769D": {
+          "token_exponent": 6,
+          "token_symbol": "USK",
+          "token_price": 0.993765020281953
+        },
+        "ibc/793A20B5D4E40585144132BB56334A14AFBA9C0BE72ED9A1FB90BBF8BBF7EF3A": {
+          "token_exponent": 9,
+          "token_symbol": "fBAD",
+          "token_price": 1024.642798754904
+        },
+        "ibc/2CB87BCE0937B1D1DFCEE79BE4501AAF3C265E923509AEAC410AD85D27F35130": {
+          "token_exponent": 18,
+          "token_symbol": "DYDX",
+          "token_price": 0.669186306663908
+        },
+        "ibc/A27B171ADF592DDD39E7EE82A7349A04211B8ED8EF6F9D1731768CCA9CF407FA": {
+          "token_exponent": 8,
+          "token_symbol": "APT",
+          "token_price": 6.223693258730144
+        },
+        "ibc/94D85D1AB75CB0BF9B6818EE317E86A83FA9C5D4140D06E71778B97C1FCAC79C": {
+          "token_exponent": 6,
+          "token_symbol": "SILK",
+          "token_price": 1.2936500943431055
+        },
+        "ibc/C73CE7576F1A6534150451F91E38117E3A5247B70BFC6346AE04562CD7B7C60A": {
+          "token_exponent": 12,
+          "token_symbol": "PEPE",
+          "token_price": 0.000007317445136124828
+        },
+        "ibc/BE0B6569E21562DA7E129F407AED4EA6625B7CB403E072C8C5E1B7F8D79DCC78": {
+          "token_exponent": 18,
+          "token_symbol": "PEPE",
+          "token_price": 0.000008044237091213149
+        },
+        "ibc/2D9538CD39C19EC92906F91E724647C72DA3C4451EAB5958D9AF572507A6C6A0": {
+          "token_exponent": 6,
+          "token_symbol": "bOSMO",
+          "token_price": 0.3182287668543461
+        },
+        "ibc/A0A081FFC6A13B8F502079F3A8420F5B4FC3007D9AA696E371B9A7B39B90EADF": {
+          "token_exponent": 18,
+          "token_symbol": "USDY",
+          "token_price": 1.080978358734554
+        },
+        "ibc/FD842803B4D8DCB2229828F0D034803C5BA852BAF3469D0E3D1175CD646E700A": {
+          "token_exponent": 6,
+          "token_symbol": "ampOSMO",
+          "token_price": 0.3401708503577118
+        },
+        "ibc/D03F341CAA5D24B43ABE27C11A214EA3589DDEA125A2E6A76C7C37F2F3C59692": {
+          "token_exponent": 6,
+          "token_symbol": "NOIS",
+          "token_price": 0.054422543081638
+        },
+        "ibc/6A1E478F1A7FF2EE7174B9221B4B7627F9639F13F9FAF3196EE3DE662ADEC6A5": {
+          "token_exponent": 6,
+          "token_symbol": "sqTIA",
+          "token_price": 3.232805121526315
+        },
+        "ibc/3502A650BAD05F478815675C41B5B9C45E302CDD27A2C5A7FC2FBE9D336BAC3A": {
+          "token_exponent": 8,
+          "token_symbol": "SUI",
+          "token_price": 2.813769262384576
+        },
+        "ibc/3CF3F3207C8B14498128C312048ECE091B51B34C7552FAB07549141484C672C7": {
+          "token_exponent": 8,
+          "token_symbol": "DOGE",
+          "token_price": 0.20529590965213615
+        },
+        "ibc/8F7025E5B6D0F46746A114DAFAF6BD8833DA995983DBCD2489B5DF2D8B1EB699": {
+          "token_exponent": 6,
+          "token_symbol": "NINJA",
+          "token_price": 0.002695005017000602
+        },
+        "ibc/A96863E0BDFA3F2D96625FD5A649AF53F62F97521EF78FBBFE5B4199C3E23ABD": {
+          "token_exponent": 18,
+          "token_symbol": "WFTM",
+          "token_price": 0.5413013888067026
+        },
+        "ibc/1FDF5F63F29379882D5F0A2F740A89FEB53FBBFA2D019E6CB626E3403BBA1944": {
+          "token_exponent": 6,
+          "token_symbol": "USDT",
+          "token_price": 1.0166699186066024
+        },
+        "ibc/A0D3A4A443E253817F949EBE4BB3FC2B4DADDF103766397A85B7CF84E67B4F4B": {
+          "token_exponent": 6,
+          "token_symbol": "SPICE",
+          "token_price": 0.0029023599457781183
+        },
+        "ibc/A6C04435B5AEF75446592860D05358A05CEA74AAE2EEEFBA4B9FE702AA9917B5": {
+          "token_exponent": 12,
+          "token_symbol": "OP",
+          "token_price": 0.9951757731772564
+        },
+        "ibc/469B116E923A713A3DFA8CC24CB3134E3E488661B90F76CB9F6B2A161A630841": {
+          "token_exponent": 12,
+          "token_symbol": "KSM",
+          "token_price": 18.842612887387393
+        },
+        "ibc/6C9E6701AC217C0FC7D74B0F7A6265B9B4E3C3CDA6E80AADE5F950A8F52F9972": {
+          "token_exponent": 6,
+          "token_symbol": "NLS",
+          "token_price": 0.00658544817701112
+        },
+        "factory/neutron1ug740qrkquxzrk2hh29qrlx3sktkfml3je7juusc2te7xmvsscns0n2wry/wstETH": {
+          "token_exponent": 18,
+          "token_symbol": "wstETH",
+          "token_price": 2637.4181685896897
+        },
+        "ibc/E39239AE88D45746100FA4A9B3E1E29008CADF8AC2CAD4132A7609655AE323EB": {
+          "token_exponent": 18,
+          "token_symbol": "ETH",
+          "token_price": 2212.108386655483
+        },
+        "ibc/73787F5E206D9092C3F36F4483DBBDF75B30E84A544EFDC4829645A739D940B1": {
+          "token_exponent": 18,
+          "token_symbol": "YieldETH",
+          "token_price": 2401.1585296936432
+        },
+        "ibc/CCD676A501897583884E68318499E079C47CD336B48E168BB6DAD84831B10E36": {
+          "token_exponent": 6,
+          "token_symbol": "HAVA",
+          "token_price": 8.386159052176305e-10
+        },
+        "ibc/4EAAAE537853E9C0DDF458F0710C37BB3DE7C6A675AB75DB5731ACE93D6CC57B": {
+          "token_exponent": 6,
+          "token_symbol": "stSAGA",
+          "token_price": 0.4508884446687464
+        },
+        "ibc/A9FDC3F1C168CC2196CF00A09504AD42D4D8E0BF1C7FBBB4B3531FA16F633F6E": {
+          "token_exponent": 6,
+          "token_symbol": "KAVA",
+          "token_price": 0.4338647924799016
+        },
+        "ibc/322C86EB54A505E28AFE380CED1721FA61E9580A7548A16B9DCF6E7C8CEE43D5": {
+          "token_exponent": 6,
+          "token_symbol": "LUNA",
+          "token_price": 0.2098356282373204
+        },
+        "ibc/EAE09760B34FE09BF2AA0CCEFBC99470254A86D1629F88AAE74031741EB366CB": {
+          "token_exponent": 6,
+          "token_symbol": "stBAND",
+          "token_price": 0.9702547269498748
+        },
+        "ibc/D206EEE8D9C76A9F5EFCBDCF5FEEFB3A97094EC83F5517D75F0B42179AC5B351": {
+          "token_exponent": 6,
+          "token_symbol": "BAG",
+          "token_price": 0.0008240188250834294
+        },
+        "ibc/B3881052DCC62E68955C71A49C5306717CFDE5B6526D39C89D1278DAE3284432": {
+          "token_exponent": 6,
+          "token_symbol": "XPRT",
+          "token_price": 0.10567260650235204
+        },
+        "ibc/5CB2E12B07D0B6D8EC24A68BA6B6E6E8D5BF85B7D22091D3A480DCDD61C6AC84": {
+          "token_exponent": 18,
+          "token_symbol": "WBNB",
+          "token_price": 606.1944828662625
+        },
+        "ibc/F7F291D697E486E99D9AA1FAAB955F6E653B07855C51318BF6DF6D4E2B869616": {
+          "token_exponent": 6,
+          "token_symbol": "MNTA",
+          "token_price": 0.09902562584528028
+        },
+        "ibc/069C7EBFE330A82230D6059886E4BA62D903D7ACB7C17B57E31EE2A368CC3F66": {
+          "token_exponent": 6,
+          "token_symbol": "WHINE",
+          "token_price": 0.00004689829703807285
+        },
+        "ibc/939F500767327C6A5BE955DD81DCDE02ABA6A7231801AE748C21C2A0A598DB12": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 6.640534320378968
+        },
+        "ibc/F073D44CC51154C8342C47C09D7EE1BD13ED54AFFDD4F350CF4BE7A67A31941B": {
+          "token_exponent": 6,
+          "token_symbol": "LVN",
+          "token_price": 0.005010527701559756
+        },
+        "ibc/1053E271314D36FECBC915B51474F8B3962597CE88FF3E4A74795B0E3F367A8B": {
+          "token_exponent": 6,
+          "token_symbol": "KUJI",
+          "token_price": 0.3190154422854606
+        },
+        "ibc/E74CD453F834EE007B02F1298EFFF4DCD9C97FB58DF7F6080FF935145B73C6A6": {
+          "token_exponent": 10,
+          "token_symbol": "DOT",
+          "token_price": 4.426762035656721
+        },
+        "ibc/8BD3EB6ABBD8DC8B1BA1F2E58CDFBAACFF8CF55DB8C475E9D6D97B9A56B052F0": {
+          "token_exponent": 6,
+          "token_symbol": "TORO",
+          "token_price": 0.00000494391233791055
+        },
+        "ibc/D90C69603588018DD7183BBD315B65FBE3631FC98D447769B822F44D06602BD1": {
+          "token_exponent": 6,
+          "token_symbol": "stkOSMO",
+          "token_price": 0.3100472438667261
+        },
+        "ibc/C16FC80FEBC9C9C2325BD93ABF1B8A72CA5AF8AD3E2286438699AB5562B9AD06": {
+          "token_exponent": 6,
+          "token_symbol": "DGL",
+          "token_price": 0.0003028399542789405
+        },
+        "ibc/8D749C5FB0213DF002E8FDCCB5B01E35DA241397EF825048C530C7EAE43BCE80": {
+          "token_exponent": 6,
+          "token_symbol": "stSTARS",
+          "token_price": 0.004440749935406051
+        },
+        "ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93": {
+          "token_exponent": 6,
+          "token_symbol": "stOSMO",
+          "token_price": 0.3908865803663196
+        },
+        "ibc/1F4D25F42EE82D89CA2DF6F2CAEE58A6E5D7C49A2E575B3562316F59BB9846F8": {
+          "token_exponent": 18,
+          "token_symbol": "sfrxETH",
+          "token_price": 1634.3339374103025
+        },
+        "ibc/A139C0E0B5E87CBA8EAEEB12B9BEE13AC7C814CFBBFA87BBCADD67E31003466C": {
+          "token_exponent": 6,
+          "token_symbol": "STARS",
+          "token_price": 0.0027576366806135303
+        },
+        "ibc/970FC7201AEC13274DFE2434ECD133E72AA02E854734EB53C9ACB5F8891E84C2": {
+          "token_exponent": 12,
+          "token_symbol": "LINK",
+          "token_price": 17.37806298051712
+        },
+        "ibc/BEF5C9D724E1EBB04FEE237CB5F602B22B0FFE8065F540FD8BC6F9E1A4B8573D": {
+          "token_exponent": 6,
+          "token_symbol": "HUAHUA",
+          "token_price": 0.000021777698927699067
+        },
+        "ibc/7C0E3F16B819DE35A7785827D2E93DB8BB67FD7D7CFF7D9F562090505F3A8D16": {
+          "token_exponent": 8,
+          "token_symbol": "ICP",
+          "token_price": 5.864031846443952
+        },
+        "ibc/7CC56953DE45CCE2CD57E43C4D567BA38E0A1766C0A87C9F0D6FA869B1C3A1F1": {
+          "token_exponent": 12,
+          "token_symbol": "BNB",
+          "token_price": 609.4012975398223
+        },
+        "ibc/A5A581F046BEC74197F864455B97E3FF37BD409B129F1460B58B5804FDB84692": {
+          "token_exponent": 9,
+          "token_symbol": "jitoSOL",
+          "token_price": 150.96112003184356
+        },
+        "ibc/39E4C8433680C4D40AD47748750690A816F205F26614EEE03860C1773D606B3B": {
+          "token_exponent": 6,
+          "token_symbol": "SHERPA",
+          "token_price": 0.014333440305802005
+        },
+        "ibc/601307DA970BD7D236E7D31A9526CE14BFCC2116DD48DF0D3E3E8AAC92D3BDFC": {
+          "token_exponent": 6,
+          "token_symbol": "CRAZYHORSE",
+          "token_price": 0.00016973955282958283
+        },
+        "ibc/986EDEE721977B7EE548A21E28781362E11C97600C3B2764DF16441D372C18D8": {
+          "token_exponent": 18,
+          "token_symbol": "stISLM",
+          "token_price": 0.042962848758025675
+        },
+        "factory/neutron13lkh47msw28yynspc5rnmty3yktk43wc3dsv0l/ATOM1KLFG": {
+          "token_exponent": 6,
+          "token_symbol": "ATOM1KLFG",
+          "token_price": 0.0024384515865259497
+        },
+        "ibc/55DB49C9B44555B813C1F98748794F81F4015DAFB43C9A1B8160C2ACBA6314CD": {
+          "token_exponent": 6,
+          "token_symbol": "COOK",
+          "token_price": 0.00024211236014635325
+        },
+        "ibc/5926313955E5701055CC9F562842937C293F29C05AB0A84ADCC7B879DE0F983B": {
+          "token_exponent": 6,
+          "token_symbol": "GLTO",
+          "token_price": 0.0004890406444712577
+        },
+        "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81": {
+          "token_exponent": 6,
+          "token_symbol": "USDC",
+          "token_price": 1.0015855524893462
+        },
+        "untrn": {
+          "token_exponent": 6,
+          "token_symbol": "NTRN",
+          "token_price": 0.1569608932114073
+        },
+        "ibc/2ECB3D2ADFE9F1CA85258C6330FA666120549349BC526D56B098A2A782D75455": {
+          "token_exponent": 6,
+          "token_symbol": "DGN",
+          "token_price": 0.005231261560391057
+        },
+        "ibc/41646AADED0E33983922676F54BF2B8FD31DE06BB02C72949FD4F34081A41073": {
+          "token_exponent": 6,
+          "token_symbol": "SEI",
+          "token_price": 0.22993266436292964
+        },
+        "ibc/9598CDEB7C6DB7FC21E746C8E0250B30CD5154F39CA111A9D4948A4362F638BD": {
+          "token_exponent": 6,
+          "token_symbol": "MARS.old",
+          "token_price": 0.009969413822742768
+        },
+        "ibc/746873995B97269C0C6B6EA12C87C027054988827245ACC908BEE7B1A4E8FC07": {
+          "token_exponent": 6,
+          "token_symbol": "BOMU",
+          "token_price": 0.0001579915835840584
+        },
+        "ibc/B074BCF31E5892A522FD48DDD5DD80C3953D4B43D59A6E4FD0DC6759685FD36C": {
+          "token_exponent": 6,
+          "token_symbol": "BLD",
+          "token_price": 0.03704259320521744
+        },
+        "ibc/D2F678F792820452B17F087EC4FB02882A40BDA0C05B33100AF8EC7F441192EA": {
+          "token_exponent": 6,
+          "token_symbol": "BWH",
+          "token_price": 0.0001927062150435254
+        },
+        "factory/neutron143wp6g8paqasnuuey6zyapucknwy9rhnld8hkr/bad": {
+          "token_exponent": 6,
+          "token_symbol": "BAD",
+          "token_price": 0.00001047296004052774
+        },
+        "factory/neutron133xakkrfksq39wxy575unve2nyehg5npx75nph/WEIRD": {
+          "token_exponent": 6,
+          "token_symbol": "WEIRD",
+          "token_price": 0.018273507960990396
+        },
+        "ibc/C1F4520E07B9190EA08FBAA5E1D68109B9738B5B717904C62F0EE9CA89471EC0": {
+          "token_exponent": 6,
+          "token_symbol": "LAB",
+          "token_price": 30.16885716261792
+        },
+        "ibc/54A5A873A546559DAF6AB5A8573CD448F8BB494998DE48A3E5B2C038DF9C1FE0": {
+          "token_exponent": 6,
+          "token_symbol": "stSOMM",
+          "token_price": 0.005147316882215472
+        },
+        "ibc/0BA1FA7A554B4347A87BD37AFF331683298730F9F8FCECB4896D58BED4B31F00": {
+          "token_exponent": 18,
+          "token_symbol": "stEVMOS",
+          "token_price": 0.016569659443312058
+        },
+        "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom": {
+          "token_exponent": 6,
+          "token_symbol": "dATOM",
+          "token_price": 4.745148479282085
+        },
+        "ibc/BAA1D21893B1D36865C6CA44D18F4ACF08BAD70CB6863C4722E0A61703808F77": {
+          "token_exponent": 18,
+          "token_symbol": "stDYDX",
+          "token_price": 0.7388059765289863
+        },
+        "ibc/9E6AC71FE9E94A2FDA9A353E286D72772BA0F7CFF7E02669637749278CBAA62F": {
+          "token_exponent": 18,
+          "token_symbol": "FXS",
+          "token_price": 2.0754270467445086
+        }
+      },
       "round_bids": [
         {
           "round_id": 3,

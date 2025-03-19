@@ -1,11 +1,7 @@
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
-import {
-  RoundPrices,
-  BidRevampMetrics,
-  ProposalSlimmed,
-} from "../types"
+import { BidRevampMetrics, ProposalSlimmed, RoundPrices } from "../types"
 
 export function augmentRoundDeploymentMetrics(
   roundId: number,
@@ -25,9 +21,9 @@ export function augmentRoundDeploymentMetrics(
     const denom = tribute.funds.denom
     const amount = parseInt(tribute.funds.amount, 0)
 
-    const symbol   = roundPrices[denom] ? roundPrices[denom].token_symbol   : denom
+    const symbol = roundPrices[denom] ? roundPrices[denom].token_symbol : denom
     const decimals = roundPrices[denom] ? roundPrices[denom].token_exponent : 0
-    const priceUsd = roundPrices[denom] ? roundPrices[denom].token_price    : 0
+    const priceUsd = roundPrices[denom] ? roundPrices[denom].token_price : 0
 
     if (!proposalsTributes[proposalId]) {
       proposalsTributes[proposalId] = { value_in_atom: 0, value_in_usdc: 0 }

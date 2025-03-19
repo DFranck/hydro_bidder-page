@@ -16,6 +16,8 @@ export function CurrentRoundVotingPowerWallet() {
     votingPowerAvailable,
     votingPowerSpent,
     votingPowerTotal,
+    tranches,
+    lockups,
   } = useBackendData()
 
   const hasVotingPowerOfAnyKind = votingPowerTotal > 0
@@ -30,6 +32,10 @@ export function CurrentRoundVotingPowerWallet() {
 
   const hasVotingPowerAvailableButNotAll =
     hasVotingPowerAvailable && !hasAllVotingPowerAvailable
+
+  const votingEligibilityByTrancheId = lockups.map(
+    (lockup) => lockup.isEligibleToVote
+  )
 
   const yourVotingPowerTooltipRevised = (
     <div className="flex flex-col gap-2">

@@ -4,7 +4,7 @@ import random from "lodash/random"
 import hydroStateSnapshot from "./hydro-state-snapshot.json"
 import walletDataSnapshot from "./wallet-data-snapshot.json"
 
-const dummyBidRoundId = 5
+const dummyBidRoundId = 4
 const originalBidsInRoundId3 = hydroStateSnapshot.hydroRoundData[3].round_bids
 const originalBidsInRoundId1 = hydroStateSnapshot.hydroRoundData[1].round_bids
 const originalNumiaBidsForBoth =
@@ -56,7 +56,7 @@ const dummyLockups = walletDataSnapshot.lockups_with_per_tranche_infos.map(
     newLockup.per_tranche_info.push({
       tranche_id: 2,
       current_voted_on_proposal: null,
-      next_round_lockup_can_vote: 7,
+      next_round_lockup_can_vote: dummyBidRoundId,
     })
 
     return newLockup

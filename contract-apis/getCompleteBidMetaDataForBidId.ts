@@ -3,7 +3,7 @@
 import { fetchBackendDataBeforeWallet } from "@/contract-apis/fetchBackendDataBeforeWallet"
 import { BidMetaData } from "@/contract-apis/types"
 
-export async function getBidDetails({
+export async function getCompleteBidMetaDataForBidId({
   bidId,
 }: {
   bidId: number

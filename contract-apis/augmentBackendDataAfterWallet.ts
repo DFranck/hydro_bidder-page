@@ -22,14 +22,8 @@ export function augmentBackendDataAfterWallet({
     ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
 }): AugmentedBackendDataAfterWallet {
-  const {
-    assetListWithPrices,
-    bidsById,
-    currentRoundEndDate,
-    currentRoundId,
-    lockedAtomMaxWallet,
-    lockedAtomEpochInNanos,
-  } = augmentedBackendDataBeforeWallet
+  const { assetListWithPrices, bidsById, currentRoundId, lockedAtomMaxWallet } =
+    augmentedBackendDataBeforeWallet
 
   const {
     historical_tribute_claims,

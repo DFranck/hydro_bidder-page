@@ -12,11 +12,9 @@ export async function fetchRoundBids({
   trancheId: number
   currentRoundId: number
 }): Promise<Proposal[]> {
-  const numiaBidsEndpoint = getEnvironmentVariable(
-    "NEXT_PUBLIC_NUMIA_BIDS_ENDPOINT"
-  )
+  const numiaBidsEndpoint = getEnvironmentVariable("NUMIA_BIDS_ENDPOINT")
   const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
-    "NEXT_PUBLIC_NUMIA_COSMOS_HYDRO_APP_API_KEY"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
   )
   const hydroContractAddress = getEnvironmentVariable(
     "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"
