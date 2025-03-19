@@ -66,13 +66,15 @@ export function LockupStatus({
     : isTiedToDeployment
       ? {
           statusIcon: <Icon name="solid:lock" className="text-palette-beige" />,
-          statusTopline: "Tied to bid deployment",
+          statusTopline: "Tied to bid",
           statusBottomline:
             numRoundsLeftOnDeployment === 1
               ? "Available to use next round"
               : `Available to use in ${numRoundsLeftOnDeployment} rounds`,
           statusExplanation: (
-            <>This lockup is currently tied to a deployment.</>
+            <>
+              This lockup is currently tied to a bid with an active deployment.
+            </>
           ),
         }
       : isEligibleToChangeVote
