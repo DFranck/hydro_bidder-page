@@ -168,6 +168,17 @@ export default function Navigation() {
         onClick={blurActiveElement}
       >
         <Link
+          href="https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals"
+          target="_blank"
+          className={twMerge(
+            navigationMenuTriggerStyle("/governance"),
+            `flex items-center gap-1`
+          )}
+        >
+          Governance <Icon name="solid:arrow-up-right" />
+        </Link>
+
+        <Link
           href="/docs"
           target="_blank"
           className={twMerge(
@@ -233,17 +244,6 @@ export default function Navigation() {
           className={navigationMenuTriggerStyle("/airdrops")}
         >
           Airdrops
-        </Link>
-
-        <Link
-          href="https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals"
-          target="_blank"
-          className={twMerge(
-            navigationMenuTriggerStyle("/governance"),
-            `flex items-center gap-1`
-          )}
-        >
-          Governance <Icon name="solid:arrow-up-right" />
         </Link>
 
         <Wallet notifyConnectedCB={setIsConnected} />
