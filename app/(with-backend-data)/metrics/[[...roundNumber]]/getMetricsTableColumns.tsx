@@ -7,7 +7,7 @@ import {
   metricsPolRewardsColumnTooltip,
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
-  pastBidTributeAprColumnTooltip,
+  pastBidTributeAprMetricsPageColumnTooltip,
 } from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -103,7 +103,7 @@ export function getMetricsTableColumns(
           tipContents={
             requestedRoundId === currentRoundId
               ? liveBidTributeAprColumnTooltip
-              : pastBidTributeAprColumnTooltip
+              : pastBidTributeAprMetricsPageColumnTooltip
           }
           classNamesForTooltip="-ml-12"
         >

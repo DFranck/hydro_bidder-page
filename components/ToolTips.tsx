@@ -451,11 +451,10 @@ export const liveBidTributeAprColumnTooltip = (
   </p>
 )
 
-export const pastBidTributeAprColumnTooltip = (
+export const pastBidTributeAprMetricsPageColumnTooltip = (
   <p>
-    Final annual yield from tributes in a past round. Calculated as tribute
-    divided by locked voting power, multiplied by 12. Use it to compare trends
-    in bidding incentives.{" "}
+    This is the APR of the tributes distributed to voters for each of the bids,
+    at the end of the round.{" "}
     <StyledText
       as={Link}
       href="docs/users/voting-for-projects#tribute"
