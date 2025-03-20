@@ -3,6 +3,7 @@
 import { augmentBackendDataAfterWallet } from "@/contract-apis/augmentBackendDataAfterWallet"
 import { augmentBackendDataBeforeWallet } from "@/contract-apis/augmentBackendDataBeforeWallet"
 import { fetchWalletData } from "@/contract-apis/fetchWalletData"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import {
   AugmentedBackendDataAfterWallet,
   BackendDataBeforeWalletSlimmed,
@@ -285,7 +286,9 @@ export function BackendDataContextProvider({
   }
 
   function logDebugData(debugData: object[]) {
-    if (process.env.CONTEXT === "production") return
+    if (getEnvironmentVariable("NEXT_PUBLIC_USE_FIXTURE_DATA") !== "true")
+      return
+
     window.debugData = debugData
 
     console.groupCollapsed(`[ 🐜 Debug Data ]`)
