@@ -45,5 +45,5 @@ export default async function () {
 }
 
 export const config: Config = {
-  schedule: "0 * * * *", // every hour
+  schedule: "* * * * *", // every minute
 }
