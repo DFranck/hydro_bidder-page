@@ -20,18 +20,7 @@ const WalletProvider = dynamic(
   }
 )
 
-import { BackendDataTweaker } from "@/components/BackendDataTweaker"
-
-// const BackendDataTweaker = dynamic(
-//   () =>
-//     import("@/components/BackendDataTweakerLoader").then(
-//       (mod) => mod.BackendDataTweaker
-//     ),
-//   {
-//     loading: () => null,
-//     ssr: false,
-//   }
-// )
+import { BackendDataTweaker } from "@/components/BackendDataTweakerLoader"
 
 const QueryClientProvider = dynamic(
   () =>

@@ -3,9 +3,8 @@
 import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import dynamic from "next/dynamic"
 
-const BackendDataTweaker = dynamic(
+export const BackendDataTweaker = dynamic(
   () =>
-    process.env.NODE_ENV === "development" &&
     getEnvironmentVariable("NEXT_PUBLIC_USE_FIXTURE_DATA") === "true"
       ? import("@/components/BackendDataTweaker").then(
           (mod) => mod.BackendDataTweaker
@@ -13,5 +12,3 @@ const BackendDataTweaker = dynamic(
       : Promise.resolve(() => null),
   { ssr: false }
 )
-
-export { BackendDataTweaker }
