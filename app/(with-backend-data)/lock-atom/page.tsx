@@ -1,11 +1,11 @@
 "use server"
 
+import { sharedEndpoints } from "@/config"
 import { fetchValidators } from "@/contract-apis/fetchValidators"
 import { LsmInteraction } from "./components/LsmInteraction"
-import { endpointsShared } from "@/config"
 
 export default async function LockPage() {
-  const endpoint = endpointsShared.cosmoshub.rest[0]
+  const endpoint = sharedEndpoints.cosmoshub.rest[0]
   const validators = await fetchValidators(endpoint)
   const validatorMap = new Map(
     validators.map((validator) => [validator.operator_address, validator])

@@ -40,46 +40,6 @@ export const classNamesAndVariants = {
       ),
     },
   },
-  toastsContainer: twJoin(`
-    group/toasts-container
-    fixed
-    bottom-6
-    right-6
-    top-6
-    z-50
-    flex
-    w-96
-    flex-col-reverse
-    items-end
-    gap-3
-    transition-opacity
-    [&:not(:has(.js-toast))]:pointer-events-none
-    [&:not(:has(.js-toast))]:opacity-0
-    [&_.js-toast-container]:w-full
-  `),
-  toastContainer: twJoin(`
-    grid
-    grid-cols-[min-content,auto,min-content]
-    grid-rows-2
-    items-center
-    rounded-md
-    text-xs
-    text-white
-    backdrop-blur-md
-  `),
-  gradientOverlay: twJoin(`
-    pointer-events-none
-    absolute
-    -bottom-6
-    -right-6
-    -z-10
-    h-1/3
-    w-screen
-    bg-gradient-to-tl
-    from-palette-text
-    via-transparent
-    to-transparent
-  `),
   iconContainer: twJoin(`
     row-span-2
     flex

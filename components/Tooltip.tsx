@@ -26,9 +26,10 @@ export function Tooltip({
   mouseLeaveDelay?: number
 }) {
   const isClient = useIsClient()
+  const [shouldRender, setShouldRender] = useState(false)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const [isOpen, setIsOpen] = useState(false)
-  const timer = useRef<NodeJS.Timeout | null>(null)
+  const timers = useRef<NodeJS.Timeout[]>([])
 
   if (!isClient) return null
 
@@ -44,30 +45,50 @@ export function Tooltip({
   }
 
   function handleMouseEnter(event: MouseEvent<HTMLDivElement>) {
-    if (timer.current) clearTimeout(timer.current)
+    clearTimers()
+    setShouldRender(true)
     updateCoords(event.currentTarget)
-    timer.current = setTimeout(() => {
-      setIsOpen(true)
-    }, mouseEnterDelay)
+    timers.current.push(
+      setTimeout(() => {
+        setIsOpen(true)
+      }, mouseEnterDelay)
+    )
   }
 
   function handleMouseLeave() {
-    if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(() => {
-      setIsOpen(false)
-    }, mouseLeaveDelay)
+    clearTimers()
+    timers.current.push(
+      setTimeout(() => {
+        setIsOpen(false)
+        setTimeout(() => {
+          setShouldRender(false)
+        }, 300)
+      }, mouseLeaveDelay)
+    )
   }
 
   function handleFocus(event: FocusEvent<HTMLDivElement>) {
-    if (timer.current) clearTimeout(timer.current)
+    clearTimers()
     updateCoords(event.currentTarget)
     setIsOpen(true)
+    setShouldRender(true)
   }
 
   function handleBlur() {
-    timer.current = setTimeout(() => {
-      setIsOpen(false)
-    }, 200)
+    clearTimers()
+    timers.current.push(
+      setTimeout(() => {
+        setIsOpen(false)
+        setTimeout(() => {
+          setShouldRender(false)
+        }, 300)
+      }, 200)
+    )
+  }
+
+  function clearTimers() {
+    timers.current.forEach((timer) => clearTimeout(timer))
+    timers.current = []
   }
 
   return (
@@ -84,48 +105,50 @@ export function Tooltip({
     >
       {children}
 
-      {createPortal(
-        <div
-          className={twMerge(
-            `
-              pointer-events-none
-              absolute
-              left-1/2
-              z-50
-              mt-1
-              w-56
-              -translate-x-1/2
-              whitespace-normal
-              rounded-sm
-              border
-              border-palette-beige
-              bg-palette-text
-              px-4
-              py-2
-              text-left
-              text-sm
-              font-normal
-              text-white
-              opacity-0
-              transition-opacity
-            `,
-            isOpen &&
+      {shouldRender &&
+        createPortal(
+          <div
+            className={twMerge(
               `
-                pointer-events-auto
-                translate-y-0
-                opacity-100
+                pointer-events-none
+                absolute
+                left-1/2
+                z-50
+                mt-1
+                w-56
+                -translate-x-1/2
+                whitespace-normal
+                rounded-sm
+                border
+                border-palette-beige
+                bg-palette-text
+                px-4
+                py-2
+                text-left
+                text-sm
+                font-normal
+                text-white
+                opacity-0
+                transition-opacity
+                duration-300
               `,
-            classNamesForTooltip
-          )}
-          style={{
-            top: coords.y,
-            left: coords.x,
-          }}
-        >
-          {tipContents}
-        </div>,
-        document.body
-      )}
+              isOpen &&
+                `
+                  pointer-events-auto
+                  translate-y-0
+                  opacity-100
+                `,
+              classNamesForTooltip
+            )}
+            style={{
+              top: coords.y,
+              left: coords.x,
+            }}
+          >
+            {tipContents}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

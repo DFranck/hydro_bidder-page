@@ -1,6 +1,6 @@
 "use client"
 
-import { endpointsShared, hubChain, neutronChain } from "@/config"
+import { hubChain, neutronChain, sharedEndpoints } from "@/config"
 import { Chain } from "@chain-registry/types"
 import { Registry } from "@cosmjs/proto-signing"
 import { AminoTypes, GasPrice } from "@cosmjs/stargate"
@@ -51,7 +51,6 @@ export function WalletProvider({
 }>) {
   return (
     <ChainProvider
-      logLevel="NONE"
       chains={[...chains, hubChain, neutronChain]}
       assetLists={[...assets, hubAssets, neutronAssets]}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
@@ -91,9 +90,10 @@ export function WalletProvider({
         },
       }}
       endpointOptions={{
-        endpoints: endpointsShared,
+        endpoints: sharedEndpoints,
         isLazy: true,
       }}
+      logLevel="NONE"
     >
       {children}
     </ChainProvider>

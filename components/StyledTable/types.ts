@@ -53,8 +53,8 @@ export interface TableProps<R extends BaseRowObject, K extends keyof R>
   slotBeforeFirstRow?: ReactNode
   slotAfterLastRow?: ReactNode
   slotForFooterRow?: ReactNode
-  renderCells?: Record<K, CellRenderFunction<R, K>>
-  renderHeaderCells?: Record<K, HeaderCellRenderFunction<R, K>>
+  renderCells?: Partial<Record<K, CellRenderFunction<R, K>>>
+  renderHeaderCells?: Partial<Record<K, HeaderCellRenderFunction<R, K>>>
   renderRow?: RowRenderFunction<R, K>
   secondPassSortFunction?: (
     sortedRows: R[],
@@ -66,21 +66,38 @@ export interface CellRenderFunction<
   R extends BaseRowObject,
   K extends keyof R,
 > {
-  (renderProps: {}): ReactNode
+  (renderProps: CellRenderProps<R, K>): ReactNode
+}
+
+export interface CellRenderProps<R extends BaseRowObject, K extends keyof R> {
+  cell: R[K]
+  cellProps: ComponentPropsWithRef<"td">
+  row: R
+  rowIndex: number
+  sortDirection: SortDirection | null
+  sortedColumnKey: K
+  sortedRows: R[]
 }
 
 export interface HeaderCellRenderFunction<
   R extends BaseRowObject,
   K extends keyof R,
 > {
-  (renderProps: {}): ReactNode
+  (renderProps: {
+    cell: R[K]
+    cellProps: ComponentPropsWithRef<"th">
+  }): ReactNode
 }
 
 export interface HeaderRowRenderFunction<
   R extends BaseRowObject,
   K extends keyof R,
 > {
-  (renderProps: { children: ReactNode }): ReactNode
+  (renderProps: {
+    children: ReactNode
+    cell: R[K]
+    cellProps: ComponentPropsWithRef<"th">
+  }): ReactNode
 }
 
 export interface RowRenderProps<R extends BaseRowObject, K extends keyof R> {

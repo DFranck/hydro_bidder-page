@@ -3,7 +3,7 @@
 import { Card } from "@/components/Card"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useMemo, useState } from "react"
 
@@ -13,7 +13,7 @@ export function AddTributeModal({
   onCloseAction,
   onCloseCompleteAction,
 }: {
-  bid: AugmentedBid
+  bid: AugmentedBidAfterWallet
   isOpened: boolean
   onCloseAction: () => void
   onCloseCompleteAction: (

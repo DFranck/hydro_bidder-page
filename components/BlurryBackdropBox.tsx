@@ -1,10 +1,11 @@
-import { ReactNode } from "react"
+import { ComponentProps, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function BlurryBackdropBox({
   children,
   className,
-}: {
+  ...otherProps
+}: ComponentProps<"div"> & {
   children: ReactNode
   className?: string
 }) {
@@ -22,6 +23,7 @@ export function BlurryBackdropBox({
         `,
         className
       )}
+      {...otherProps}
     >
       {children}
     </div>

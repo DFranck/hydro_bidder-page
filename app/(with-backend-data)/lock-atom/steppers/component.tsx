@@ -1,14 +1,8 @@
 "use client"
 
 import React from "react"
-import { ContinueFromHubStepper } from "./ContinueFromHubStepper"
-import { ContinueFromNeutronStepper } from "./ContinueFromNeutronStepper"
-import { LockStepper } from "./LockStepper"
-import { RevertFromHubStepper } from "./RevertFromHubStepper"
-import { RevertFromNeutronStepper } from "./RevertFromNeutronStepper"
 
 import { Validator } from "@/contract-apis/fetchWalletValidators"
-import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 
 // Mock chain contexts and onExit function for demonstration
@@ -62,99 +56,6 @@ function StepperSection({
           />
         </div>
       ))}
-    </div>
-  )
-}
-
-export const StepperOverview: React.FC = () => {
-  return (
-    <div className="flex flex-wrap justify-around p-4">
-      <StepperSection
-        title="Lock"
-        states={[
-          "Init",
-          "WaitingForTokenizeSigning",
-          "WaitingForTokenizeBroadcast",
-          "Error",
-          "WaitingForIBCSigning",
-          "WaitingForIBCBroadcastAndRelay",
-          "WaitingForLockingSigning",
-          "WaitingForLockingBroadcast",
-          "Success",
-        ]}
-        StepperComponent={LockStepper}
-        additionalProps={{
-          lockDuration: 180 * 86400000000000, // 14 days in seconds
-          hubSigner: {} as SigningStargateClient, // Mock signer
-          neutronSigner: {} as SigningStargateClient, // Mock signer
-        }}
-      />
-      <StepperSection
-        title="RevertFromHub"
-        states={[
-          "Init",
-          "WaitingForRedeemSigning",
-          "WaitingForRedeemBroadcast",
-          "Success",
-          "Error",
-        ]}
-        StepperComponent={RevertFromHubStepper}
-        additionalProps={{
-          denom: "uatom",
-          deleteIncompleteNotice: mockOnExit,
-        }}
-      />
-      <StepperSection
-        title="RevertFromNeutron"
-        states={[
-          "Init",
-          "WaitingForIBCSigning",
-          "WaitingForIBCBroadcast",
-          "WaitingForRedeemSigning",
-          "WaitingForRedeemBroadcast",
-          "Success",
-          "Error",
-        ]}
-        StepperComponent={RevertFromNeutronStepper}
-        additionalProps={{
-          denom: "uatom",
-          baseDenom: "uatom",
-          deleteIncompleteNotice: mockOnExit,
-        }}
-      />
-      <StepperSection
-        title="ContinueFromNeutron"
-        states={[
-          "Init",
-          "WaitingForLockingSigning",
-          "WaitingForLockingBroadcast",
-          "Success",
-          "Error",
-        ]}
-        StepperComponent={ContinueFromNeutronStepper}
-        additionalProps={{
-          denom: "uatom",
-          baseDenom: "uatom",
-          deleteIncompleteNotice: mockOnExit,
-        }}
-      />
-      <StepperSection
-        title="ContinueFromHub"
-        states={[
-          "Init",
-          "WaitingForIBCSigning",
-          "WaitingForIBCBroadcastAndRelay",
-          "WaitingForLockingSigning",
-          "WaitingForLockingBroadcast",
-          "Success",
-          "Error",
-        ]}
-        StepperComponent={ContinueFromHubStepper}
-        additionalProps={{
-          denom: "uatom",
-          deleteIncompleteNotice: mockOnExit,
-        }}
-      />
     </div>
   )
 }

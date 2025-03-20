@@ -1,6 +1,8 @@
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
+import { AssetList, Chain } from "@chain-registry/types"
+
 export const CHAIN_NAME = "localchain"
 export const CHAIN_NAME_STORAGE_KEY = "selected-chain"
-import { AssetList, Chain } from "@chain-registry/types"
 
 export enum AllowedLockupPeriodInEpochs {
   ONE_EPOCH = 1,
@@ -10,39 +12,14 @@ export enum AllowedLockupPeriodInEpochs {
 
 export const HYDRO_TELEGRAM_URL = "https://t.me/+xUzNOTZjUNw5Mzhk"
 
-const numiaAuthHeaders = {
-  Accept: "application/json",
-  Authorization: `Bearer ${process.env.NEXT_PUBLIC_TEMP_NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
-}
-
-export const endpointsShared = {
+export const sharedEndpoints = {
   neutron: {
-    rpc: [
-      {
-        url: "https://neutron-rpc.numia.xyz/",
-        headers: numiaAuthHeaders,
-      },
-    ],
-    rest: [
-      {
-        url: "https://neutron-lcd.numia.xyz/",
-        headers: numiaAuthHeaders,
-      },
-    ],
+    rpc: ["https://hydro-neutron-rpc.citadel.one/"],
+    rest: ["https://hydro-neutron-api.citadel.one/"],
   },
   cosmoshub: {
-    rpc: [
-      {
-        url: "https://cosmos-rpc.numia.xyz/",
-        headers: numiaAuthHeaders,
-      },
-    ],
-    rest: [
-      {
-        url: "https://cosmos-lcd.numia.xyz/",
-        headers: numiaAuthHeaders,
-      },
-    ],
+    rpc: ["https://hydro-cosmoshub-rpc.citadel.one/"],
+    rest: ["https://hydro-cosmoshub-api.citadel.one/"],
   },
 }
 
@@ -60,7 +37,9 @@ export const ATOM_PRICE_URL =
 
 export const EPOCH_LENGTH = 2628000000000000
 
-export const DEFAULT_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN || "localchain"
+export const DEFAULT_CHAIN =
+  getEnvironmentVariable("NEXT_PUBLIC_USE_CHAIN", { allowNull: true }) ||
+  "localchain"
 
 export const testnetChain: Chain = {
   $schema: "../../chain.schema.json",

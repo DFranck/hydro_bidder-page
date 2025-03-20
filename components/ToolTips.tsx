@@ -5,13 +5,17 @@ import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
-import { AugmentedBid } from "@/contract-apis/fetchBackendDataAfterWallet"
-import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
+import {
+  AugmentedBidAfterWallet,
+  BidMetaDataSlimmed,
+} from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
 import sumBy from "lodash/sumBy"
 import Link from "next/link"
+import { Fragment } from "react"
+import { twJoin } from "tailwind-merge"
 
 export const VOTE_SHARE_THRESHOLD = 5
 
@@ -227,16 +231,16 @@ export const estimatedRewardsColumnTooltip = ({
 
 export const estimatedRewardsTooltip = ({
   bid,
-  bidDescriptionFromGithub,
+  bidInfoFromGithub,
   hasVotedThisRound,
   isTokenBased,
 }: {
-  bid: AugmentedBid
-  bidDescriptionFromGithub: BidDescriptionFromGithub
+  bid: AugmentedBidAfterWallet
+  bidInfoFromGithub: BidMetaDataSlimmed
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
-  const { projectName } = bidDescriptionFromGithub
+  const { projectName } = bidInfoFromGithub
 
   const totalTributeValue = isTokenBased
     ? (sumBy(bid.tributes, "valueUsd") ?? 0)
@@ -464,28 +468,11 @@ export const pastBidTributeAprBidsPageColumnTooltip = (
   </p>
 )
 
-export const pastBidTributeAprMetricsPageColumnTooltip = (
-  <p>
-    This is the APR of the tributes distributed to voters for each of the bids,
-    at the end of the round.{" "}
-    <StyledText
-      as={Link}
-      href="docs/users/voting-for-projects#tribute"
-      variant="link"
-      className="relative z-10 inline-flex items-center gap-1"
-      target="_blank"
-    >
-      Learn more.
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
-  </p>
-)
-
 export const needsWalletConnectionTooltip = (
   <p>Connect your wallet to access this feature.</p>
 )
 
-export const networkLimitReachedTooltip = (
+export const lockupLimitReachedByNetworkTooltip = (
   <p>
     Lockup caps have been reached. Join the{" "}
     <StyledText
@@ -688,12 +675,134 @@ export const yourTotalRewardsAllTimeTooltip = (
   </p>
 )
 
-export const yourVotingPowerTooltip = (
-  <p>
-    Your Hydro voting power. The more power you have, the larger share of
-    tributes you will receive
-  </p>
-)
+export const yourVotingPowerTooltip = ({
+  canVoteInAllTranches,
+  canVoteInSomeTranches,
+  hasAllVotingPowerAvailable,
+  hasVotedInEveryTrancheThisRound,
+  hasVotingPowerAvailableButNotAll,
+  hasVotingPowerButNoneAvailable,
+  hasVotingPowerOfAnyKind,
+  votingPowerAvailable,
+  votingPowerSpent,
+  votingPowerTotal,
+}: {
+  canVoteInAllTranches: boolean
+  canVoteInSomeTranches: boolean
+  hasAllVotingPowerAvailable: boolean
+  hasVotedInEveryTrancheThisRound: boolean
+  hasVotingPowerAvailableButNotAll: boolean
+  hasVotingPowerButNoneAvailable: boolean
+  hasVotingPowerOfAnyKind: boolean
+  votingPowerAvailable: number
+  votingPowerSpent: number
+  votingPowerTotal: number
+}) => {
+  const trancheMessage = canVoteInAllTranches ? (
+    <p>You can vote in each of the current&nbsp;tranches</p>
+  ) : canVoteInSomeTranches ? (
+    <p>You can still vote in at least one&nbsp;tranche</p>
+  ) : hasVotedInEveryTrancheThisRound ? (
+    <p>You&rsquo;ve voted in every tranche this round&nbsp;—&nbsp;bravo!</p>
+  ) : null
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div
+        className={twJoin(
+          "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
+          "whitespace-nowrap border-b pb-2"
+        )}
+      >
+        <StyledText variant="label" className="col-span-2">
+          Voting Power Breakdown
+        </StyledText>
+
+        {[
+          ["Spent Voting Power", formatAmount(votingPowerSpent, 0, 4)],
+          [
+            "Available Voting Power",
+            <span className="text-palette-green" key="available-voting-power">
+              {formatAmount(votingPowerAvailable, 0, 4)}
+            </span>,
+          ],
+          [
+            <strong key="total-voting-power">Total Voting Power</strong>,
+            formatAmount(votingPowerTotal, 0, 4),
+          ],
+        ].map(([label, value], index) => (
+          <Fragment key={index}>
+            <div>{label}</div>
+            <div className="text-right">
+              <strong>{value}</strong>
+            </div>
+          </Fragment>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        {!hasVotingPowerOfAnyKind && (
+          <p>
+            <StyledText variant="link" as={Link} href="/lock-atom">
+              Create a lockup
+            </StyledText>{" "}
+            to start&nbsp;voting.
+          </p>
+        )}
+
+        {hasAllVotingPowerAvailable && (
+          <p>
+            <strong className="text-palette-green">All</strong> of your voting
+            power is&nbsp;available.
+          </p>
+        )}
+
+        {hasVotingPowerButNoneAvailable && (
+          <p>
+            <strong className="text-palette-red">None</strong> of your voting
+            power is available because it is currently tied to one or more bids.{" "}
+            <StyledText variant="link" as={Link} href="/lock-atom">
+              Create a new lockup
+            </StyledText>{" "}
+            to&nbsp;vote.
+          </p>
+        )}
+
+        {hasVotingPowerAvailableButNotAll && (
+          <>
+            <p>
+              <strong className="text-palette-green">
+                {formatAmount(votingPowerAvailable, 0, 4)}
+              </strong>{" "}
+              of <strong>{formatAmount(votingPowerTotal, 0, 4)} total</strong>{" "}
+              voting power is&nbsp;available.
+            </p>
+
+            <p>
+              The rest of your voting power is tied to one or more active
+              deployments.{" "}
+              <StyledText variant="link" as={Link} href="/lock-atom">
+                Create a new lockup
+              </StyledText>{" "}
+              for more voting&nbsp;power.
+            </p>
+          </>
+        )}
+      </div>
+
+      {trancheMessage !== null && (
+        <div
+          className={twJoin(
+            "-mx-4 -mb-2 px-4 py-2",
+            "bg-palette-green text-center font-bold text-palette-text"
+          )}
+        >
+          {trancheMessage}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const bidDetailsPolSizeTooltip = (
   <p>
@@ -734,6 +843,40 @@ export const bidDetailsMaxDeploymentAmountTooltip = (
       <Icon name="solid:arrow-up-right" />
     </StyledText>
   </p>
+)
+
+export const bidDetailsVoteReceivedTooltip = ({
+  bidPower = "0",
+  totalPower = "0",
+  percentage = "0",
+}) => (
+  <div className="flex max-w-xs flex-col gap-2">
+    <div
+      className={twJoin(
+        "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
+        "whitespace-nowrap border-b border-white/20 pb-2"
+      )}
+    >
+      {[
+        ["Voting Power on this Bid", bidPower],
+        ["Total Voting Power", totalPower],
+        [
+          <strong key="percentage">Share of this Bid</strong>,
+          <strong key="percentage-value">{percentage}%</strong>,
+        ],
+      ].map(([label, value], index) => (
+        <Fragment key={index}>
+          <div>{label}</div>
+          <div className="text-right tabular-nums">{value}</div>
+        </Fragment>
+      ))}
+    </div>
+    <p className="text-sm">
+      This bid has received <strong>{bidPower}</strong> voting power out of{" "}
+      <strong>{totalPower}</strong> total voting power that participated in this
+      round, representing <strong>{percentage}%</strong>.
+    </p>
+  </div>
 )
 
 export const globalTotalAtomLockedTooltip = <p>Total ATOM locked in Hydro.</p>

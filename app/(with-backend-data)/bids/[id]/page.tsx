@@ -1,4 +1,7 @@
-import { BidDetails } from "@/components/BidDetails"
+"use server"
+
+import { BidDetails } from "@/app/(with-backend-data)/bids/[id]/BidDetails"
+import { getCompleteBidMetaDataForBidId } from "@/contract-apis/getCompleteBidMetaDataForBidId"
 
 export default async function BidDetailsPage({
   params,
@@ -6,5 +9,12 @@ export default async function BidDetailsPage({
   params: Promise<{ id: string }>
 }) {
   const idParam = (await params).id
-  return <BidDetails bidId={Number(idParam)} />
+
+  const requestedBidId = Number(idParam)
+
+  const bidMetaData = await getCompleteBidMetaDataForBidId({
+    bidId: requestedBidId,
+  })
+
+  return <BidDetails bidId={requestedBidId} bidMetaData={bidMetaData} />
 }

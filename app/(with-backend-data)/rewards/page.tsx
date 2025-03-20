@@ -19,7 +19,10 @@ import {
   rewardsYourTributeColumnTooltip,
   rewardsYourTributeTooltip,
 } from "@/components/ToolTips"
-import { SanitizedTokenBasedTribute } from "@/contract-apis/fetchBackendDataBeforeWallet"
+import {
+  AugmentedClaim,
+  SanitizedTokenBasedTribute,
+} from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import keyBy from "lodash/keyBy"
@@ -27,20 +30,19 @@ import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 import ClaimRewardsStepper from "./ClaimRewardsStepper"
-import { AugmentedClaim } from "@/contract-apis/fetchClaims"
 
 export default function RewardsPage() {
   const [isCelebrating, setIsCelebrating] = useState(false)
 
   const {
-    bidDescriptionsByBidId,
-    bids,
+    bidMetaDataById,
     bidsById,
     claimsHistorical,
     claimsOutstanding,
     currentRoundId,
     votes,
   } = useBackendData()
+  const bids = Object.values(bidsById)
   const votesFromPreviousRounds = votes.filter(
     (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
   )
@@ -89,7 +91,7 @@ export default function RewardsPage() {
   const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
-      const bidDescriptionFromGithub = bidDescriptionsByBidId[bid.id]
+      const bidDescriptionFromGithub = bidMetaDataById[bid.id]
       const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
       const tokenBasedTributes = bid.tributes.filter(
         (tribute) => tribute.isTokenBased

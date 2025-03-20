@@ -1,10 +1,10 @@
 import { EmptyBox } from "@/components/EmptyBox"
 import { StyledText } from "@/components/StyledText"
 import {
+  BidMetaDataSlimmed,
   SanitizedPointBasedTribute,
   SanitizedTokenBasedTribute,
-} from "@/contract-apis/fetchBackendDataBeforeWallet"
-import { BidDescriptionFromGithub } from "@/contract-apis/fetchBidDescriptions"
+} from "@/contract-apis/types"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
 import { TributesListItemPointBased } from "./TributesListItemPointBased"
@@ -12,7 +12,7 @@ import { TributesListItemTokenBased } from "./TributesListItemTokenBased"
 
 interface TributesListProps {
   tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
-  bidDescription?: BidDescriptionFromGithub
+  bidDescription?: BidMetaDataSlimmed
 }
 
 export function TributesList({ tributes, bidDescription }: TributesListProps) {

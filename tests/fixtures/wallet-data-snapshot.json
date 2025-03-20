@@ -1,0 +1,337 @@
+{
+  "voting_power": 317543,
+  "lockups_with_per_tranche_infos": [
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 0,
+          "funds": {
+            "denom": "ibc/DBE1FBD2E492B4FB3B34365F2E8D534D54D320505FCB8D6723882A54A8EB6A6F",
+            "amount": "1000"
+          },
+          "lock_start": "1728930813767091401",
+          "lock_end": "1746138605589235953"
+        },
+        "current_voting_power": "1000"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 5,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 1,
+          "funds": {
+            "denom": "ibc/5FE949EB715D25ABF01C64F855F8C857D32372BC0F621676B03E020960F5F607",
+            "amount": "50004"
+          },
+          "lock_start": "1728931222120674924",
+          "lock_end": "1750284731977969438"
+        },
+        "current_voting_power": "74991"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 1,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 9,
+          "funds": {
+            "denom": "ibc/B3AE6EF342E0796C1D7D1E4CE3D760400941FB8ADD4A3C3EA23B9E01B31ACE14",
+            "amount": "1000"
+          },
+          "lock_start": "1729006131245705816",
+          "lock_end": "1742066829783967753"
+        },
+        "current_voting_power": "0"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 4,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 10,
+          "funds": {
+            "denom": "ibc/03F51C2E14D93C689F14BB98B98D61BF1159B88592E4393C5B68633662D4AA85",
+            "amount": "10001"
+          },
+          "lock_start": "1729006256306989682",
+          "lock_end": "1746138584049744908"
+        },
+        "current_voting_power": "9999"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 5,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 13,
+          "funds": {
+            "denom": "ibc/5916CED4D6C48B05E5C1236A5B388F258CC3DB35CA351AD0A62C81478E0E4104",
+            "amount": "56"
+          },
+          "lock_start": "1729096914903325220",
+          "lock_end": "1744678245985400922"
+        },
+        "current_voting_power": "56"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 1,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 412,
+          "funds": {
+            "denom": "ibc/7EC67A749401BFD3D2B6EEA37976080B8FDCF8AE9F88DAD7F8881874D75F053B",
+            "amount": "999"
+          },
+          "lock_start": "1733868718554397496",
+          "lock_end": "1749840811269973960"
+        },
+        "current_voting_power": "1498"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 4,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 420,
+          "funds": {
+            "denom": "ibc/F9D986653BF5F055F51DB6ABC9BD65A81E39401870DA0A536A3E36CF495FAC5F",
+            "amount": "10000"
+          },
+          "lock_start": "1734370037558886535",
+          "lock_end": "1749840961946370357"
+        },
+        "current_voting_power": "15000"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 4,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 421,
+          "funds": {
+            "denom": "ibc/DA60511E7E673CB723B5F80CDB23E923C9C6F4CD2C4F8C40732685ED50F806C7",
+            "amount": "60005"
+          },
+          "lock_start": "1734370249869079803",
+          "lock_end": "1748920860133724829"
+        },
+        "current_voting_power": "74999"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 4,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 567,
+          "funds": {
+            "denom": "ibc/9E3DD410FB6F6EE59B3B34D9BDE5B16AACA8314F8912160CD6FA455E64EA342A",
+            "amount": "100010"
+          },
+          "lock_start": "1741191132301890128",
+          "lock_end": "1749075132301890128"
+        },
+        "current_voting_power": "125000"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 4,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 588,
+          "funds": {
+            "denom": "ibc/C01D5E680FA02EB6439B13EB716DDC7A6A36351457D989C0029D75522DBDED49",
+            "amount": "100010"
+          },
+          "lock_start": "1741192343309910341",
+          "lock_end": "1743820343309910341"
+        },
+        "current_voting_power": "0"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 4,
+          "current_voted_on_proposal": null
+        }
+      ]
+    },
+    {
+      "lock_with_power": {
+        "lock_entry": {
+          "lock_id": 652,
+          "funds": {
+            "denom": "ibc/43D4375B795C1453150AA76DFCA0B8A7E3E3906B4B200DB88E1605754D9B1A83",
+            "amount": "10002"
+          },
+          "lock_start": "1741699996164597247",
+          "lock_end": "1749583996164597247"
+        },
+        "current_voting_power": "15000"
+      },
+      "per_tranche_info": [
+        {
+          "tranche_id": 1,
+          "next_round_lockup_can_vote": 4,
+          "current_voted_on_proposal": null
+        }
+      ]
+    }
+  ],
+  "votes": [
+    {
+      "prop_id": 7,
+      "power": "67550.993482763165442808"
+    },
+    {
+      "prop_id": 15,
+      "power": "2997.700415881484983742"
+    },
+    {
+      "prop_id": 23,
+      "power": "16497.99996086284532479"
+    },
+    {
+      "prop_id": 26,
+      "power": "239997.9981613354073764"
+    }
+  ],
+  "outstanding_tribute_claims": [],
+  "historical_tribute_claims": [
+    {
+      "round_id": 0,
+      "tranche_id": 1,
+      "proposal_id": 7,
+      "tribute_id": 9,
+      "amount": {
+        "denom": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+        "amount": "212"
+      }
+    },
+    {
+      "round_id": 0,
+      "tranche_id": 1,
+      "proposal_id": 7,
+      "tribute_id": 10,
+      "amount": {
+        "denom": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+        "amount": "4028"
+      }
+    },
+    {
+      "round_id": 0,
+      "tranche_id": 1,
+      "proposal_id": 7,
+      "tribute_id": 11,
+      "amount": {
+        "denom": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+        "amount": "4240"
+      }
+    },
+    {
+      "round_id": 1,
+      "tranche_id": 1,
+      "proposal_id": 15,
+      "tribute_id": 17,
+      "amount": {
+        "denom": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+        "amount": "5"
+      }
+    },
+    {
+      "round_id": 1,
+      "tranche_id": 1,
+      "proposal_id": 15,
+      "tribute_id": 19,
+      "amount": {
+        "denom": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+        "amount": "245"
+      }
+    },
+    {
+      "round_id": 1,
+      "tranche_id": 1,
+      "proposal_id": 15,
+      "tribute_id": 28,
+      "amount": {
+        "denom": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+        "amount": "250"
+      }
+    },
+    {
+      "round_id": 1,
+      "tranche_id": 1,
+      "proposal_id": 15,
+      "tribute_id": 29,
+      "amount": {
+        "denom": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+        "amount": "250"
+      }
+    },
+    {
+      "round_id": 2,
+      "tranche_id": 1,
+      "proposal_id": 23,
+      "tribute_id": 32,
+      "amount": {
+        "denom": "ibc/6C9E6701AC217C0FC7D74B0F7A6265B9B4E3C3CDA6E80AADE5F950A8F52F9972",
+        "amount": "336684"
+      }
+    }
+  ]
+}

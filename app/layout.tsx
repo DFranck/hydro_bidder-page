@@ -1,16 +1,21 @@
 "use server"
 
-import { defaultMetadata, metadataByRoute } from "@/app/metadata"
-import { inter } from "@/lib/font"
+import { getDefaultMetadata, getMetadataByRoute } from "@/app/metadata"
+import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import sortBy from "lodash/sortBy"
+import { Inter } from "next/font/google"
 import { headers } from "next/headers"
 import Script from "next/script"
 import "./globals.css"
-import "./injectServiceWorker.js"
+
+const InterFont = Inter({ subsets: ["latin"], preload: true })
 
 export async function generateMetadata() {
   const headersList = await headers()
   const requestedPathname = new URL(headersList.get("x-url") || "").pathname
+
+  const metadataByRoute = await getMetadataByRoute()
+  const defaultMetadata = await getDefaultMetadata()
 
   const sortedMetadataByRoute = sortBy(
     Object.entries(metadataByRoute),
@@ -33,11 +38,13 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-pt-32">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <Script
           crossOrigin="anonymous"
           src="https://kit.fontawesome.com/401fb1e734.js"
         />
-        {process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" && (
+        {getEnvironmentVariable("NEXT_PUBLIC_SHOW_HIDDEN_FEATURES") !==
+          "true" && (
           <>
             <Script
               async
@@ -45,10 +52,10 @@ export default async function RootLayout({
             />
             <Script id="google-analytics" strategy="afterInteractive">
               {`
-                  window.dataLayer = window.dataLayer || []
-                  function gtag(){dataLayer.push(arguments)}
-                  gtag('js', new Date())
-                  gtag('config', 'G-NZ1F6WL2PM')
+                window.dataLayer = window.dataLayer || []
+                function gtag(){dataLayer.push(arguments)}
+                gtag('js', new Date())
+                gtag('config', 'G-NZ1F6WL2PM')
               `}
             </Script>
             <Script
@@ -58,8 +65,13 @@ export default async function RootLayout({
             />
           </>
         )}
+        <Script
+          id="service-worker"
+          strategy="afterInteractive"
+          src="/injectServiceWorker.js"
+        />
       </head>
-      <body className={`${inter.className} relative overflow-x-hidden`}>
+      <body className={`${InterFont.className} relative overflow-x-hidden`}>
         {children}
       </body>
     </html>

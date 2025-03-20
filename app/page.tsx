@@ -88,29 +88,13 @@ type TilesType = {
 export default function Home() {
   const renderTiles = (data: TilesType) => {
     return (
-      <div
-        className={`
-          z-10
-          my-12
-          grid
-          gap-16
-          md:grid-cols-3
-        `}
-      >
+      <div className={`z-10 my-12 grid gap-16 md:grid-cols-3`}>
         {data.tiles.map((tile, index) => {
           return (
             <div
               key={index}
               className={twMerge(
-                `
-                  flex
-                  shrink-0
-                  flex-col
-                  items-center
-                  gap-4
-                  rounded-[10px]
-                  text-center
-                `
+                `flex shrink-0 flex-col items-center gap-4 rounded-[10px] text-center`
               )}
             >
               <Image
@@ -124,12 +108,7 @@ export default function Home() {
                 {tile.title}
               </StyledText>
               <p
-                className="
-                  text-balance
-                  text-base
-                  font-normal
-                  leading-[30px]
-                "
+                className={`text-balance text-base font-normal leading-[30px]`}
               >
                 {tile.description.replace(
                   /[ ]([^ ]+?)$/gm,
@@ -145,22 +124,12 @@ export default function Home() {
 
   const renderBenefits = () => {
     return (
-      <div
-        className="
-                "
-      >
+      <div>
         {benefitsCheckList.map((item, index) => {
           return (
             <div
               key={index}
-              className="
-                flex
-                shrink-0
-                flex-row
-                items-center
-                gap-4
-                rounded-[10px]
-              "
+              className={`flex shrink-0 flex-row items-center gap-4 rounded-[10px]`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -176,14 +145,7 @@ export default function Home() {
                   />
                 </g>
               </svg>
-              <p
-                className="
-                  text-lg
-                  font-normal
-                "
-              >
-                {item}
-              </p>
+              <p className={`text-lg font-normal`}>{item}</p>
             </div>
           )
         })}
@@ -193,49 +155,19 @@ export default function Home() {
 
   return (
     <AppWrapper>
-      <main
-        className="
-          flex
-          min-h-screen
-          w-full
-          flex-col
-          overflow-hidden
-        "
-      >
+      <main className={`flex min-h-screen w-full flex-col overflow-hidden`}>
         <div
-          className="
-            bg-gradient-to-t
-            from-palette-text
-            via-transparent
-            to-transparent
-          "
+          className={`bg-gradient-to-t from-palette-text via-transparent to-transparent`}
         >
           <ContentContainer
-            className="
-              relative
-              z-10
-              min-h-[70vh]
-              justify-center
-              gap-6
-            "
+            className={`relative z-10 min-h-[70vh] justify-center gap-6`}
           >
-            <div
-              className="
-                max-w-[64ch]
-                space-y-6
-              "
-            >
+            <div className={`max-w-[64ch] space-y-6`}>
               <StyledText as="h1" variant="h1">
                 Get More From{" "}
                 <span className="sm:whitespace-nowrap">Your ATOM</span>
               </StyledText>
-              <p
-                className="
-                  text-balance
-                  text-xl
-                  font-normal
-                "
-              >
+              <p className={`text-balance text-xl font-normal`}>
                 An opportunity for Cosmos Hub stakers to earn yield on top of
                 their staking rewards. Lock your staked ATOM, vote, and allocate
                 liquidity across{" "}
@@ -257,14 +189,7 @@ export default function Home() {
           <HorizontalDivider />
 
           <ContentContainer
-            className="
-              z-10
-              items-center
-              gap-12
-              py-20
-              text-center
-              lg:py-40
-            "
+            className={`z-10 items-center gap-12 py-20 text-center lg:py-40`}
           >
             <StyledText as="h2" variant="h2">
               How Hydro Works
@@ -282,15 +207,7 @@ export default function Home() {
 
           <ContentContainer>
             <div
-              className="
-                grid
-                items-center
-                gap-6
-                py-20
-                text-left
-                lg:grid-cols-2
-                lg:py-40
-              "
+              className={`grid items-center gap-6 py-20 text-left lg:grid-cols-2 lg:py-40`}
             >
               <div className="space-y-6">
                 <div className="space-y-2">
@@ -302,12 +219,7 @@ export default function Home() {
                     <span className="sm:whitespace-nowrap">Staking APR</span>
                   </StyledText>
                 </div>
-                <div
-                  className="
-                    text-balance
-                    text-lg
-                  "
-                >
+                <div className={`text-balance text-lg`}>
                   Hydro gives ATOM stakers the opportunity to allocate the
                   Hub&rsquo;s liquidity by voting on bids submitted by projects,
                   and receive tributes for{" "}
@@ -346,21 +258,8 @@ export default function Home() {
           <HorizontalDivider />
         </div>
 
-        <div
-          className="
-            bg-gradient-to-b
-            from-palette-text
-            to-[#0B1C45]
-          "
-        >
-          <ContentContainer
-            className="
-              items-center
-              space-y-6
-              py-20
-              lg:py-40
-            "
-          >
+        <div className={`bg-gradient-to-b from-palette-text to-[#0B1C45]`}>
+          <ContentContainer className={`items-center space-y-6 py-20 lg:py-40`}>
             <div className="space-y-2 text-center">
               <StyledText as="div" variant="superHeading">
                 for projects
@@ -370,15 +269,7 @@ export default function Home() {
               </StyledText>
             </div>
             <p
-              className="
-                max-w-[64ch]
-                text-balance
-                text-center
-                text-xl
-                font-normal
-                leading-[30px]
-                text-white
-              "
+              className={`max-w-[64ch] text-balance text-center text-xl font-normal leading-[30px] text-white`}
             >
               Hydro allocates liquidity through sequential rounds in which
               projects attract user votes through the distribution of tributes.{" "}
@@ -401,12 +292,7 @@ export default function Home() {
               })}
             </div>
 
-            <div
-              className="
-                flex
-                gap-6
-              "
-            >
+            <div className={`flex gap-6`}>
               <StyledText
                 as="a"
                 variant="button.primary.large"

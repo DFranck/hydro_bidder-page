@@ -18,9 +18,9 @@ export function BidTribute({
   bidId: number
   textAlign?: "left" | "center" | "right"
 }) {
-  const { bidDescriptionsByBidId, metricsForPostHydroBids } = useBackendData()
+  const { bidMetaDataById, metricsForPostHydroBids } = useBackendData()
 
-  const bidDescription = bidDescriptionsByBidId[bidId] ?? {}
+  const bidDescription = bidMetaDataById[bidId] ?? {}
 
   const { points = [] } = bidDescription
 
@@ -61,9 +61,9 @@ export function BidTribute({
     ),
   }
 
-  const bidDescriptionFromGithub = bidDescriptionsByBidId[bidId]
+  const bidInfoFromGithub = bidMetaDataById[bidId]
 
-  const { pointProgramUrl } = bidDescriptionFromGithub ?? {}
+  const { pointProgramUrl } = bidInfoFromGithub ?? {}
 
   const renderedTributes = Object.entries(tributesByDenom).map(
     ([denomOrType, tributes], index) => {

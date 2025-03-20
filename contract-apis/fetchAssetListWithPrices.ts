@@ -1,25 +1,38 @@
 "use server"
 
 import { getPriceFeedUrl } from "@/config"
-
-export interface AssetListEntry {
-  token: string
-  symbol: string
-  decimals: number
-  coingeckoId?: string
-  priceUsd?: number
-}
+import { AssetListEntry, AssetListWithPrices } from "@/contract-apis/types"
+import { fetchWithRetry } from "./fetchWithRetry"
 
 const symbolToCoingeckoId: Record<string, string> = {
   BLD: "agoric",
   SWTH: "switcheo",
 }
 
-export async function fetchAssetListWithPrices(): Promise<
-  Record<string, AssetListEntry>
-> {
-  const response = await fetch(
-    "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json"
+function pick<T extends object, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> {
+  return keys.reduce(
+    (acc, key) => {
+      if (key in obj) {
+        acc[key] = obj[key]
+      }
+      return acc
+    },
+    {} as Pick<T, K>
+  )
+}
+
+export async function fetchAssetListWithPrices(): Promise<AssetListWithPrices> {
+  const response = await fetchWithRetry(
+    "https://raw.githubusercontent.com/astroport-fi/astroport-token-lists/refs/heads/main/tokenLists/neutron.json",
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      next: { revalidate: 86400 }, // 24 hours
+    }
   )
   const assetList: AssetListEntry[] = await response.json()
 
@@ -34,20 +47,35 @@ export async function fetchAssetListWithPrices(): Promise<
     .filter((asset) => "coingeckoId" in asset)
     .map((asset) => asset.coingeckoId!)
 
-  const pricesResponse = await fetch(getPriceFeedUrl(coingeckoIds))
+  const pricesResponse = await fetchWithRetry(getPriceFeedUrl(coingeckoIds), {
+    headers: {
+      Accept: "application/json",
+    },
+    next: { revalidate: 86400 }, // 24 hours
+  })
 
   const pricesByCoingeckoId: Record<string, { usd: number }> =
     await pricesResponse.json()
 
   const assetMap = Object.fromEntries(
-    patchedAssetList.map((asset) => {
-      const assetWithPriceMaybe =
-        asset.coingeckoId && pricesByCoingeckoId[asset.coingeckoId]
-          ? { ...asset, priceUsd: pricesByCoingeckoId[asset.coingeckoId].usd }
-          : asset
-      return [asset.token, assetWithPriceMaybe]
-    })
+    patchedAssetList
+      .filter((asset) => "coingeckoId" in asset)
+      .map((asset) => {
+        const assetWithPriceMaybe =
+          asset.coingeckoId && pricesByCoingeckoId[asset.coingeckoId]
+            ? { ...asset, priceUsd: pricesByCoingeckoId[asset.coingeckoId].usd }
+            : asset
+        return [
+          asset.token,
+          pick(assetWithPriceMaybe, [
+            "symbol",
+            "decimals",
+            "coingeckoId",
+            "priceUsd",
+          ]),
+        ]
+      })
   )
 
-  return assetMap
+  return assetMap as AssetListWithPrices
 }

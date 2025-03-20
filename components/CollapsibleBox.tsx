@@ -1,42 +1,87 @@
 "use client"
 
-import { Transition } from "@headlessui/react"
-import { ComponentProps, ReactNode } from "react"
+import {
+  ComponentProps,
+  ElementType,
+  TransitionEvent,
+  useId,
+  useState,
+} from "react"
 import { twMerge } from "tailwind-merge"
 
-type CollapsibleBoxProps = ComponentProps<"div"> & {
-  children: ReactNode
+type CollapsibleBoxProps<T extends ElementType = "div"> = ComponentProps<T> & {
+  as?: T
+  classNamesForInnerWrapper?: string
   isCollapsed?: boolean
+  onExpandStart?: () => void
+  onExpandEnd?: () => void
+  onCollapseStart?: () => void
   onCollapseEnd?: () => void
 }
 
-export function CollapsibleBox({
-  className,
+export function CollapsibleBox<T extends ElementType = "div">({
+  as,
   children,
+  className,
+  classNamesForInnerWrapper,
   isCollapsed,
+  onExpandStart,
+  onExpandEnd,
+  onCollapseStart,
   onCollapseEnd,
   ...otherProps
-}: CollapsibleBoxProps) {
+}: CollapsibleBoxProps<T>) {
+  const [shouldRenderChildren, setShouldRenderChildren] = useState(!isCollapsed)
+  const id = useId()
+  const boxId = `js-collapsible-box-${id}`
+  const Component = String(as || "div") as ElementType
+
+  const handleTransition = (event: TransitionEvent<HTMLDivElement>) => {
+    if (event.currentTarget !== event.target) return
+    const { propertyName } = event.nativeEvent
+    if (propertyName !== "grid-template-rows") return
+    if (event.type === "transitionend") {
+      if (isCollapsed) {
+        setShouldRenderChildren(false)
+        onCollapseEnd?.()
+      } else {
+        setShouldRenderChildren(true)
+        onExpandEnd?.()
+      }
+    } else {
+      setShouldRenderChildren(true)
+    }
+  }
+
+  const handleTransitionStart = (event: TransitionEvent<HTMLDivElement>) => {
+    if (event.currentTarget !== event.target) return
+    const { propertyName } = event.nativeEvent
+    if (propertyName !== "grid-template-rows") return
+    if (isCollapsed) {
+      onCollapseStart?.()
+    } else {
+      onExpandStart?.()
+    }
+    setShouldRenderChildren(true)
+  }
+
   return (
-    <Transition appear={true} show={!isCollapsed} afterLeave={onCollapseEnd}>
-      <div
-        className={twMerge(
-          `
-            grid
-            w-full
-            grid-rows-[1fr]
-            transition-all
-            duration-500
-            ease-in-out
-            data-[closed]:grid-rows-[0fr]
-            data-[closed]:opacity-0
-          `,
-          className
-        )}
-        {...otherProps}
-      >
-        <div className="overflow-hidden">{children}</div>
+    <Component
+      className={twMerge(
+        boxId,
+        "grid grid-rows-[0fr] transition-all",
+        "[&[data-expanded]]:grid-rows-[1fr]",
+        className
+      )}
+      data-collapsed={isCollapsed ? "true" : undefined}
+      data-expanded={isCollapsed ? undefined : "true"}
+      onTransitionEnd={handleTransition}
+      onTransitionStart={handleTransitionStart}
+      {...otherProps}
+    >
+      <div className={twMerge("overflow-hidden", classNamesForInnerWrapper)}>
+        {shouldRenderChildren && children}
       </div>
-    </Transition>
+    </Component>
   )
 }

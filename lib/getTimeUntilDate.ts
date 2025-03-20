@@ -1,3 +1,4 @@
+import { calculateDurationAndUnit } from "@/lib/calculateDurationAndUnit"
 import { pluralize } from "@/lib/pluralize"
 
 export function getTimeUntilDate(date: Date | string) {
@@ -7,31 +8,7 @@ export function getTimeUntilDate(date: Date | string) {
 
   const now = new Date()
   const diff = date.getTime() - now.getTime()
-  const seconds = diff / 1000
-  const minutes = seconds / 60
-  const hours = minutes / 60
-  const days = hours / 24
-  const months = days / 30
-
-  let duration = 0,
-    unit = ""
-
-  if (Math.abs(months) >= 1) {
-    duration = months
-    unit = "month"
-  } else if (Math.abs(days) >= 1) {
-    duration = days
-    unit = "day"
-  } else if (Math.abs(hours) >= 1) {
-    duration = hours
-    unit = "hour"
-  } else if (Math.abs(minutes) >= 1) {
-    duration = minutes
-    unit = "min"
-  } else {
-    duration = seconds
-    unit = "sec"
-  }
+  const { duration, unit } = calculateDurationAndUnit(diff)
 
   if (duration <= 0) {
     return "Time's Up"

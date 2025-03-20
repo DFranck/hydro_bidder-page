@@ -12,14 +12,13 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   extendLockupsToVoteTooltip,
   lockAtomToVoteTooltip,
-  networkLimitReachedTooltip,
+  lockupLimitReachedByNetworkTooltip,
 } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
-import keyBy from "lodash/keyBy"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -39,7 +38,7 @@ export function VoteButton({
   const { toasts, setToasts } = useToasts()
   const {
     address,
-    bidsByRoundId,
+    bidsInfo,
     currentRoundId,
     isWalletConnected,
     lockups,
@@ -50,12 +49,22 @@ export function VoteButton({
   } = useBackendData()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const bidsById = keyBy(Object.values(bidsByRoundId).flat(), "id")
-  const bid = bidsById[bidId]
-  const lockupsOutliveBidDeployment = bid?.lockupsOutliveBidDeployment
+  const bid = bidsInfo[bidId]
+  const hasLockupThatCanVoteInThisTranche = lockups.some(
+    (lockup) =>
+      !lockup.isExpired &&
+      Number(
+        lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote
+      ) <= currentRoundId
+  )
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
-  const hasVotedForAnyThisRound = votesThisRound.length > 0
-  const hasVotedForThisBid = votesThisRound.some((vote) => vote.bidId === bidId)
+  const votesThisTranche = votesThisRound.filter(
+    (vote) => bidsInfo[vote.bidId]?.trancheId === bid?.trancheId
+  )
+  const hasVotedInThisTranche = votesThisTranche.length > 0
+  const hasVotedForThisBid = votesThisTranche.some(
+    (vote) => vote.bidId === bidId
+  )
   const isLoading = toasts.some((toast) => toast.variant === "working")
   const validLockups = lockups.filter(
     (lockup) =>
@@ -117,7 +126,7 @@ export function VoteButton({
       <ConditionalWrapper
         condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}
         wrapper={(children) => (
-          <Tooltip tipContents={networkLimitReachedTooltip}>
+          <Tooltip tipContents={lockupLimitReachedByNetworkTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>
           </Tooltip>
         )}
@@ -133,7 +142,7 @@ export function VoteButton({
         </StyledText>
       </ConditionalWrapper>
     )
-  } else if (!lockupsOutliveBidDeployment) {
+  } else if (!hasLockupThatCanVoteInThisTranche) {
     Button = (
       <Tooltip tipContents={extendLockupsToVoteTooltip}>
         <StyledText
@@ -177,7 +186,7 @@ export function VoteButton({
       </StyledText>
     )
   } else {
-    const hasVotedElsewhere = hasVotedForAnyThisRound && !hasVotedForThisBid
+    const hasVotedElsewhere = hasVotedInThisTranche && !hasVotedForThisBid
     Button = (
       <StyledText
         as="button"

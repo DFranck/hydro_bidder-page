@@ -5,6 +5,7 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -13,6 +14,9 @@ import { twMerge } from "tailwind-merge"
 export default function Navigation() {
   const pathname = usePathname()
   const [isConnected, setIsConnected] = useState<boolean>(false)
+  const backendData = useBackendData()
+  const { isWalletConnected } = backendData
+  const isActuallyConnected = isWalletConnected || isConnected
 
   const navigationMenuTriggerStyle = (link: string) => {
     return twMerge(
@@ -180,7 +184,7 @@ export default function Navigation() {
         </Link>
 
         <ConditionalWrapper
-          condition={!isConnected}
+          condition={!isActuallyConnected}
           wrapper={(children) => (
             <Tooltip tipContents={needsWalletConnectionTooltip}>
               {children}
@@ -191,7 +195,7 @@ export default function Navigation() {
             href="/lockups"
             className={twMerge(
               navigationMenuTriggerStyle("/lockups"),
-              !isConnected && "pointer-events-none opacity-60"
+              !isActuallyConnected && "pointer-events-none opacity-60"
             )}
           >
             Lockups
@@ -199,7 +203,7 @@ export default function Navigation() {
         </ConditionalWrapper>
 
         <ConditionalWrapper
-          condition={!isConnected}
+          condition={!isActuallyConnected}
           wrapper={(children) => (
             <Tooltip tipContents={needsWalletConnectionTooltip}>
               {children}
@@ -210,7 +214,7 @@ export default function Navigation() {
             href="/rewards"
             className={twMerge(
               navigationMenuTriggerStyle("/rewards"),
-              !isConnected && "pointer-events-none opacity-60"
+              !isActuallyConnected && "pointer-events-none opacity-60"
             )}
           >
             Rewards

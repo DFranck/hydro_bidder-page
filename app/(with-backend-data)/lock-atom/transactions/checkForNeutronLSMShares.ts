@@ -1,6 +1,7 @@
 "use client"
 
 import { fetchDenomTrace } from "@/app/(with-backend-data)/lock-atom/transactions/fetchDenomTrace"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 
@@ -14,17 +15,14 @@ export async function checkForNeutronLSMShares(
 
   const restEndpoint = await neutronChain.getRestEndpoint()
 
-  const [restEndpointUrl, headers] =
-    typeof restEndpoint === "string"
-      ? [restEndpoint, {}]
-      : [restEndpoint.url, restEndpoint.headers]
-
-  const url = new URL(
-    `/cosmos/bank/v1beta1/balances/${neutronChain.address}`,
-    restEndpointUrl
-  )
-
-  const response = await fetch(url, { headers }).then((res) => res.json())
+  const response = await fetchWithRetry(
+    `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  ).then((res) => res.json())
 
   const lsmSharesPromises: Promise<{
     validator: string

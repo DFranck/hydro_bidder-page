@@ -5,8 +5,10 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
-  const { bidsById, currentRoundId, metricsForPostHydroBids } = useBackendData()
+  const { bidsById, bidsInfo, currentRoundId, metricsForPostHydroBids } =
+    useBackendData()
   const bid = bidsById[bidId]
+  const bidInfo = bidsInfo[bidId]
 
   if (!bid) return null
 
@@ -35,7 +37,16 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const renderAprValue = () => {
     if (bid.roundId === currentRoundId) {
-      if (safeTributeAprMin * 100 > 1000) {
+      if (bidInfo.points?.length > 0) {
+        return (
+          <>
+            <span>0</span>
+            <StyledText variant="mathSymbol">%</StyledText>
+          </>
+        )
+      }
+
+      if (bid.tributeAprMin.toFixed(2) === bid.tributeAprMax.toFixed(2)) {
         return (
           <>
             <StyledText variant="mathSymbol">&gt;</StyledText>

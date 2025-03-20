@@ -23,7 +23,7 @@ export type WalletProps = {
 }
 
 export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
-  const { setToasts } = useToasts()
+  const { addToast } = useToasts()
 
   const { connect, openView, status, address, message } = useChain(
     chainName || "neutron"
@@ -45,10 +45,7 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
       message &&
       [WalletStatus.Error, WalletStatus.Rejected].includes(status)
     ) {
-      setToasts((prevToasts) => [
-        ...prevToasts,
-        toastMessages.walletConnectionError(new Error(message)),
-      ])
+      addToast(toastMessages.walletConnectionError(new Error(message)))
     } else {
       notifyConnectedCB?.(status === WalletStatus.Connected)
     }

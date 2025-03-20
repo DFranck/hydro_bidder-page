@@ -9,7 +9,7 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts/useToasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
-import { SanitizedLockup } from "@/contract-apis/fetchWalletLockups"
+import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { calculateLockupVotingPower } from "@/lib/calculateLockupVotingPower"
 import { formatAmount } from "@/lib/formatAmount"
@@ -22,7 +22,7 @@ import { FormEvent, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 type EditLockupDurationProps = {
-  lockup: SanitizedLockup | null
+  lockup: AugmentedLockup | null
   isOpen: boolean
   onClose: () => void
   onCloseComplete: () => void
