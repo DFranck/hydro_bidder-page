@@ -675,12 +675,134 @@ export const yourTotalRewardsAllTimeTooltip = (
   </p>
 )
 
-export const yourVotingPowerTooltip = (
-  <p>
-    Your Hydro voting power. The more power you have, the larger share of
-    tributes you will receive
-  </p>
-)
+export const yourVotingPowerTooltip = ({
+  canVoteInAllTranches,
+  canVoteInSomeTranches,
+  hasAllVotingPowerAvailable,
+  hasVotedInEveryTrancheThisRound,
+  hasVotingPowerAvailableButNotAll,
+  hasVotingPowerButNoneAvailable,
+  hasVotingPowerOfAnyKind,
+  votingPowerAvailable,
+  votingPowerSpent,
+  votingPowerTotal,
+}: {
+  canVoteInAllTranches: boolean
+  canVoteInSomeTranches: boolean
+  hasAllVotingPowerAvailable: boolean
+  hasVotedInEveryTrancheThisRound: boolean
+  hasVotingPowerAvailableButNotAll: boolean
+  hasVotingPowerButNoneAvailable: boolean
+  hasVotingPowerOfAnyKind: boolean
+  votingPowerAvailable: number
+  votingPowerSpent: number
+  votingPowerTotal: number
+}) => {
+  const trancheMessage = canVoteInAllTranches ? (
+    <p>You can vote in each of the current&nbsp;tranches</p>
+  ) : canVoteInSomeTranches ? (
+    <p>You can still vote in at least one&nbsp;tranche</p>
+  ) : hasVotedInEveryTrancheThisRound ? (
+    <p>You&rsquo;ve voted in every tranche this round&nbsp;—&nbsp;bravo!</p>
+  ) : null
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div
+        className={twJoin(
+          "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
+          "whitespace-nowrap border-b pb-2"
+        )}
+      >
+        <StyledText variant="label" className="col-span-2">
+          Voting Power Breakdown
+        </StyledText>
+
+        {[
+          ["Spent Voting Power", formatAmount(votingPowerSpent, 0, 4)],
+          [
+            "Available Voting Power",
+            <span className="text-palette-green" key="available-voting-power">
+              {formatAmount(votingPowerAvailable, 0, 4)}
+            </span>,
+          ],
+          [
+            <strong key="total-voting-power">Total Voting Power</strong>,
+            formatAmount(votingPowerTotal, 0, 4),
+          ],
+        ].map(([label, value], index) => (
+          <Fragment key={index}>
+            <div>{label}</div>
+            <div className="text-right">
+              <strong>{value}</strong>
+            </div>
+          </Fragment>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        {!hasVotingPowerOfAnyKind && (
+          <p>
+            <StyledText variant="link" as={Link} href="/lock-atom">
+              Create a lockup
+            </StyledText>{" "}
+            to start&nbsp;voting.
+          </p>
+        )}
+
+        {hasAllVotingPowerAvailable && (
+          <p>
+            <strong className="text-palette-green">All</strong> of your voting
+            power is&nbsp;available.
+          </p>
+        )}
+
+        {hasVotingPowerButNoneAvailable && (
+          <p>
+            <strong className="text-palette-red">None</strong> of your voting
+            power is available because it is currently tied to one or more bids.{" "}
+            <StyledText variant="link" as={Link} href="/lock-atom">
+              Create a new lockup
+            </StyledText>{" "}
+            to&nbsp;vote.
+          </p>
+        )}
+
+        {hasVotingPowerAvailableButNotAll && (
+          <>
+            <p>
+              <strong className="text-palette-green">
+                {formatAmount(votingPowerAvailable, 0, 4)}
+              </strong>{" "}
+              of <strong>{formatAmount(votingPowerTotal, 0, 4)} total</strong>{" "}
+              voting power is&nbsp;available.
+            </p>
+
+            <p>
+              The rest of your voting power is tied to one or more active
+              deployments.{" "}
+              <StyledText variant="link" as={Link} href="/lock-atom">
+                Create a new lockup
+              </StyledText>{" "}
+              for more voting&nbsp;power.
+            </p>
+          </>
+        )}
+      </div>
+
+      {trancheMessage !== null && (
+        <div
+          className={twJoin(
+            "-mx-4 -mb-2 px-4 py-2",
+            "bg-palette-green text-center font-bold text-palette-text"
+          )}
+        >
+          {trancheMessage}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const bidDetailsPolSizeTooltip = (
   <p>

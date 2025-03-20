@@ -1,4 +1,5 @@
 import { BackendDataTweak, BidMetaDataById } from "@/contract-apis/types"
+import { sumBy } from "lodash"
 import cloneDeep from "lodash/cloneDeep"
 import random from "lodash/random"
 import hydroStateSnapshot from "./hydro-state-snapshot.json"
@@ -48,10 +49,11 @@ const bidMetaDataById = Object.fromEntries(
 const dummyLockups = walletDataSnapshot.lockups_with_per_tranche_infos.map(
   (lockup) => {
     const newLockup = cloneDeep(lockup)
+    const randomAmount = (random(1, 50) * 1e6).toString()
 
-    newLockup.lock_with_power.lock_entry.funds.amount = (
-      random(1, 50) * 1e6
-    ).toString()
+    newLockup.lock_with_power.lock_entry.funds.amount = randomAmount
+
+    newLockup.lock_with_power.current_voting_power = randomAmount
 
     newLockup.per_tranche_info.push({
       tranche_id: 2,
@@ -91,6 +93,9 @@ export const initialTweaks: BackendDataTweak[] = [
       ],
       walletData: {
         $lockups_with_per_tranche_infos: dummyLockups,
+        $voting_power: sumBy(dummyLockups, (lockup) =>
+          Number(lockup.lock_with_power.current_voting_power)
+        ),
       },
     },
     label: "Second USDC tranche",

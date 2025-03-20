@@ -1,13 +1,10 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
+import { yourVotingPowerTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
-import Link from "next/link"
-import { Fragment } from "react"
-import { twJoin } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundVotingPowerWallet() {
@@ -33,96 +30,27 @@ export function CurrentRoundVotingPowerWallet() {
   const hasVotingPowerAvailableButNotAll =
     hasVotingPowerAvailable && !hasAllVotingPowerAvailable
 
-  const votingEligibilityByTrancheId = lockups.map(
-    (lockup) => lockup.isEligibleToVote
+  const votingEligibilityByTrancheId = Object.fromEntries(
+    tranches.map((tranche) => {
+      const hasAvailableLockupInTranche = lockups.some(
+        (lockup) => lockup.metaDataByTrancheId[tranche.id].isEligibleToVote
+      )
+
+      return [tranche.id, hasAvailableLockupInTranche]
+    })
   )
 
-  const yourVotingPowerTooltipRevised = (
-    <div className="flex flex-col gap-2">
-      <div
-        className={twJoin(
-          "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
-          "whitespace-nowrap border-b pb-2"
-        )}
-      >
-        <StyledText variant="label" className="col-span-2">
-          Voting Power Breakdown
-        </StyledText>
+  const canVoteInAllTranches = Object.values(
+    votingEligibilityByTrancheId
+  ).every((isEligibleToVote) => isEligibleToVote)
 
-        {[
-          ["Spent Voting Power", formatAmount(votingPowerSpent, 0, 4)],
-          [
-            "Available Voting Power",
-            <span className="text-palette-green" key="available-voting-power">
-              {formatAmount(votingPowerAvailable, 0, 4)}
-            </span>,
-          ],
-          [
-            <strong key="total-voting-power">Total Voting Power</strong>,
-            formatAmount(votingPowerTotal, 0, 4),
-          ],
-        ].map(([label, value], index) => (
-          <Fragment key={index}>
-            <div>{label}</div>
-            <div className="text-right">
-              <strong>{value}</strong>
-            </div>
-          </Fragment>
-        ))}
-      </div>
+  const canVoteInSomeTranches = Object.values(
+    votingEligibilityByTrancheId
+  ).some((isEligibleToVote) => isEligibleToVote)
 
-      <div className="flex flex-col gap-1">
-        {!hasVotingPowerOfAnyKind && (
-          <p>
-            <StyledText variant="link" as={Link} href="/lock-atom">
-              Create a lockup
-            </StyledText>{" "}
-            to start&nbsp;voting.
-          </p>
-        )}
-
-        {hasAllVotingPowerAvailable && (
-          <p>
-            <strong className="text-palette-green">All</strong> of your voting
-            power is&nbsp;available.
-          </p>
-        )}
-
-        {hasVotingPowerButNoneAvailable && (
-          <p>
-            <strong className="text-palette-red">None</strong> of your voting
-            power is available because it is currently tied to one or more
-            active deployments.{" "}
-            <StyledText variant="link" as={Link} href="/lock-atom">
-              Create a lockup
-            </StyledText>{" "}
-            to start&nbsp;voting.
-          </p>
-        )}
-
-        {hasVotingPowerAvailableButNotAll && (
-          <>
-            <p>
-              <strong className="text-palette-green">
-                {formatAmount(votingPowerAvailable, 0, 4)}
-              </strong>{" "}
-              of <strong>{formatAmount(votingPowerTotal, 0, 4)} total</strong>{" "}
-              voting power is&nbsp;available.
-            </p>
-
-            <p>
-              The rest of your voting power is tied to one or more active
-              deployments.{" "}
-              <StyledText variant="link" as={Link} href="/lock-atom">
-                Create a new lockup
-              </StyledText>{" "}
-              for more voting&nbsp;power.
-            </p>
-          </>
-        )}
-      </div>
-    </div>
-  )
+  const hasVotedInEveryTrancheThisRound = Object.values(
+    votingEligibilityByTrancheId
+  ).every((isEligibleToVote) => !isEligibleToVote)
 
   return (
     <StatCard
@@ -130,7 +58,18 @@ export function CurrentRoundVotingPowerWallet() {
       value={formatAmount(votingPowerAvailable, 0, 4)}
       title={
         <Tooltip
-          tipContents={yourVotingPowerTooltipRevised}
+          tipContents={yourVotingPowerTooltip({
+            canVoteInAllTranches,
+            canVoteInSomeTranches,
+            hasAllVotingPowerAvailable,
+            hasVotedInEveryTrancheThisRound,
+            hasVotingPowerAvailableButNotAll,
+            hasVotingPowerButNoneAvailable,
+            hasVotingPowerOfAnyKind,
+            votingPowerAvailable,
+            votingPowerSpent,
+            votingPowerTotal,
+          })}
           classNamesForTooltip="w-72"
         >
           <div className="flex items-center gap-1">

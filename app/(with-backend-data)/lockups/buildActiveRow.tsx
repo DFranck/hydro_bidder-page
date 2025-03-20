@@ -1,9 +1,9 @@
 import { Tranche } from "@/app/ts_types/HydroBase.types"
-import { LockupStatus } from "@/components/LockupStatus"
 import { StyledText } from "@/components/StyledText"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
+import { LockupStatus } from "./LockupStatus"
 
 export function buildActiveRow({
   lockup,

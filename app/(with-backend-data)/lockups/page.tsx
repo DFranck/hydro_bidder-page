@@ -1,7 +1,6 @@
 "use client"
 
 import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
-import { NewLockupButton } from "@/app/(with-backend-data)/lockups/NewLockupButton"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -26,6 +25,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
+import { NewLockupButton } from "./NewLockupButton"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
