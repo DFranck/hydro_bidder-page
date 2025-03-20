@@ -1,7 +1,6 @@
-import { getStore } from "@netlify/blobs"
 import "@netlify/functions"
 import { Config } from "@netlify/functions"
-import { getEnvironmentVariable } from "../contract-apis/getEnvironmentVariable"
+import { supabase } from "../lib/supabase"
 import { fetchHydroMetaData } from "./build-hydro-round-data-in-background/_fetchers/fetchHydroMetaData"
 
 export default async function () {
@@ -9,20 +8,13 @@ export default async function () {
 
   const hydroMetaData = await fetchHydroMetaData()
 
-  console.log(`Writing data to Netlify Blob storage`)
+  console.log(`Writing data to Supabase storage...`)
 
-  const store = getStore({
-    name: "raw-data",
-    consistency: "eventual",
-    siteID: getEnvironmentVariable("NETLIFY_SITE_ID"),
-    token: getEnvironmentVariable("NETLIFY_API_TOKEN"),
-  })
-
-  await store.setJSON("raw-hydro-meta-data", hydroMetaData, {
-    metadata: {
-      buildTime: Date.now(),
-    },
-  })
+  await supabase.storage
+    .from("raw-backend-data")
+    .upload("raw-hydro-meta-data.json", JSON.stringify(hydroMetaData), {
+      upsert: true,
+    })
 
   console.log("Hydro meta data build completed successfully")
 }

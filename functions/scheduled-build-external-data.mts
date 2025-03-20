@@ -1,12 +1,11 @@
-import { getStore } from "@netlify/blobs"
 import "@netlify/functions"
 import { Config } from "@netlify/functions"
 import { fetchAssetListWithPrices } from "../contract-apis/fetchAssetListWithPrices"
 import { fetchBidMetaDataById } from "../contract-apis/fetchBidMetaDataById"
 import { fetchNumiaBidData } from "../contract-apis/fetchNumiaBidData"
 import { fetchNumiaMetricsData } from "../contract-apis/fetchNumiaMetricsData"
-import { getEnvironmentVariable } from "../contract-apis/getEnvironmentVariable"
 import { RawExternalData } from "../contract-apis/types"
+import { supabase } from "../lib/supabase"
 
 export default async function () {
   console.log("Building external data...")
@@ -26,20 +25,13 @@ export default async function () {
     numiaMetrics,
   }
 
-  console.log(`Writing data to Netlify Blob storage...`)
+  console.log(`Writing data to Supabase storage...`)
 
-  const store = getStore({
-    name: "raw-data",
-    consistency: "eventual",
-    siteID: getEnvironmentVariable("NETLIFY_SITE_ID"),
-    token: getEnvironmentVariable("NETLIFY_API_TOKEN"),
-  })
-
-  await store.setJSON("raw-external-data", rawExternalData, {
-    metadata: {
-      buildTime: Date.now(),
-    },
-  })
+  await supabase.storage
+    .from("raw-backend-data")
+    .upload("raw-external-data.json", JSON.stringify(rawExternalData), {
+      upsert: true,
+    })
 
   console.log("External data build completed successfully")
 }

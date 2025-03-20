@@ -17,7 +17,7 @@ export default async function LayoutWithContext({
       ...rawBackendDataBeforeWallet.externalData,
       bidMetaDataById: Object.fromEntries(
         Object.entries(
-          rawBackendDataBeforeWallet.externalData.bidMetaDataById
+          rawBackendDataBeforeWallet.externalData?.bidMetaDataById ?? {}
         ).map(([bidId, bidMetaData]) => [
           bidId,
           omit(bidMetaData, [

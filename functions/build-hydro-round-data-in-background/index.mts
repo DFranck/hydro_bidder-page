@@ -1,6 +1,5 @@
-import { getStore } from "@netlify/blobs"
 import { Context } from "@netlify/functions"
-import { getEnvironmentVariable } from "../../contract-apis/getEnvironmentVariable"
+import { supabase } from "../../lib/supabase"
 import { fetchHydroRoundsData } from "./_fetchers/fetchHydroRoundsData"
 
 export default async (req: Request, context: Context) => {
@@ -10,20 +9,13 @@ export default async (req: Request, context: Context) => {
 
     const hydroRoundData = await fetchHydroRoundsData()
 
-    context.log("Writing data to Netlify Blob storage")
+    context.log("Writing data to Supabase storage...")
 
-    const store = getStore({
-      name: "raw-data",
-      consistency: "eventual",
-      siteID: getEnvironmentVariable("NETLIFY_SITE_ID"),
-      token: getEnvironmentVariable("NETLIFY_API_TOKEN"),
-    })
-
-    await store.setJSON("raw-hydro-round-data", hydroRoundData, {
-      metadata: {
-        buildTime: Date.now(),
-      },
-    })
+    await supabase.storage
+      .from("raw-backend-data")
+      .upload("raw-hydro-round-data.json", JSON.stringify(hydroRoundData), {
+        upsert: true,
+      })
 
     context.log("Background function completed successfully")
   } catch (error) {

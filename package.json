@@ -24,6 +24,7 @@
     "@netlify/blobs": "^8.1.1",
     "@netlify/functions": "^3.0.1",
     "@skip-go/client": "^0.16.17",
+    "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-query": "^5.68.0",
     "chain-registry": "^1.69.152",
