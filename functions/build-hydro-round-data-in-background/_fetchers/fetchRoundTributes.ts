@@ -1,8 +1,8 @@
-import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
-import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import "@netlify/functions"
+import { TributeBaseQueryClient } from "../../../app/ts_types/TributeBase.client"
+import { Tribute } from "../../../app/ts_types/TributeBase.types"
+import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
+import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
 
 export async function fetchRoundTributes({
   roundId,

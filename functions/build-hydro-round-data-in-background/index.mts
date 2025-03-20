@@ -1,7 +1,6 @@
+import { getStore } from "@netlify/blobs"
 import { Context } from "@netlify/functions"
-import fs from "fs"
-import path from "path"
-import { RawStaticHydroRoundData } from "../../contract-apis/types"
+import { getEnvironmentVariable } from "../../contract-apis/getEnvironmentVariable"
 import { fetchHydroRoundsData } from "./_fetchers/fetchHydroRoundsData"
 
 export default async (req: Request, context: Context) => {
@@ -11,31 +10,20 @@ export default async (req: Request, context: Context) => {
 
     const hydroRoundData = await fetchHydroRoundsData()
 
-    context.log("Data fetch completed.")
+    context.log("Writing data to Netlify Blob storage")
 
-    context.log(
-      `Fetched data: ${JSON.stringify(hydroRoundData).substring(0, 100)}...`
-    )
+    const store = getStore({
+      name: "raw-data",
+      consistency: "eventual",
+      siteID: getEnvironmentVariable("NETLIFY_SITE_ID"),
+      token: getEnvironmentVariable("NETLIFY_API_TOKEN"),
+    })
 
-    context.log("Fetched raw hydro round data:", hydroRoundData)
-
-    const rawStaticHydroRoundData: RawStaticHydroRoundData = {
-      timestamp: Date.now(),
-      hydroRoundData,
-    }
-
-    const outputPath = path.join(
-      process.cwd(),
-      "public",
-      "data",
-      "raw-hydro-round-data.json"
-    )
-
-    fs.mkdirSync(path.dirname(outputPath), { recursive: true })
-
-    context.log(`Writing data to: ${outputPath}`)
-
-    fs.writeFileSync(outputPath, JSON.stringify(rawStaticHydroRoundData))
+    await store.setJSON("raw-hydro-round-data", hydroRoundData, {
+      metadata: {
+        buildTime: Date.now(),
+      },
+    })
 
     context.log("Background function completed successfully")
   } catch (error) {

@@ -1,8 +1,7 @@
+import { getStore } from "@netlify/blobs"
 import "@netlify/functions"
 import { Config } from "@netlify/functions"
-import fs from "fs"
-import path from "path"
-import { RawStaticHydroMetaData } from "../contract-apis/types"
+import { getEnvironmentVariable } from "../contract-apis/getEnvironmentVariable"
 import { fetchHydroMetaData } from "./build-hydro-round-data-in-background/_fetchers/fetchHydroMetaData"
 
 export default async function () {
@@ -10,23 +9,20 @@ export default async function () {
 
   const hydroMetaData = await fetchHydroMetaData()
 
-  const rawStaticHydroMetaData: RawStaticHydroMetaData = {
-    timestamp: Date.now(),
-    hydroMetaData,
-  }
+  console.log(`Writing data to Netlify Blob storage`)
 
-  const outputPath = path.join(
-    process.cwd(),
-    "public",
-    "data",
-    "raw-hydro-meta-data.json"
-  )
+  const store = getStore({
+    name: "raw-data",
+    consistency: "eventual",
+    siteID: getEnvironmentVariable("NETLIFY_SITE_ID"),
+    token: getEnvironmentVariable("NETLIFY_API_TOKEN"),
+  })
 
-  fs.mkdirSync(path.dirname(outputPath), { recursive: true })
-
-  console.log(`Writing data to: ${outputPath}`)
-
-  fs.writeFileSync(outputPath, JSON.stringify(rawStaticHydroMetaData))
+  await store.setJSON("raw-hydro-meta-data", hydroMetaData, {
+    metadata: {
+      buildTime: Date.now(),
+    },
+  })
 
   console.log("Hydro meta data build completed successfully")
 }

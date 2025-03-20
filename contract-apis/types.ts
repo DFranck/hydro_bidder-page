@@ -378,35 +378,6 @@ export type RawNumiaBidSlimmed = Omit<
   "comments" | "description" | "project_about"
 >
 
-export interface RawStaticExternalData {
-  timestamp: number
-  externalData: RawExternalData
-}
-
-export type RawStaticExternalDataSlimmed = Omit<
-  RawStaticExternalData,
-  "externalData"
-> & {
-  externalData: RawExternalDataSlimmed
-}
-
-export interface RawStaticHydroMetaData {
-  timestamp: number
-  hydroMetaData: RawHydroMetaData
-}
-
-export interface RawStaticHydroRoundData {
-  timestamp: number
-  hydroRoundData: RawHydroRoundData[]
-}
-
-export type RawStaticHydroRoundDataSlimmed = Omit<
-  RawStaticHydroRoundData,
-  "rawHydroRoundData"
-> & {
-  rawHydroRoundData: RawHydroRoundDataSlimmed[]
-}
-
 export interface RawWalletData {
   voting_power: number
   lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]

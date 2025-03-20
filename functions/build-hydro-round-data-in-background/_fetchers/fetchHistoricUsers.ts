@@ -1,5 +1,5 @@
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import "@netlify/functions"
+import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
 
 export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
   const numiaUsersEndpoint = getEnvironmentVariable("NUMIA_USERS_ENDPOINT")

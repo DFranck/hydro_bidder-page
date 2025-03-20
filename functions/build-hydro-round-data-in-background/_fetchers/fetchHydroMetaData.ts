@@ -1,7 +1,7 @@
 "use server"
 
-import { getHydroQueryClient } from "@/contract-apis/getClient"
-import { RawHydroMetaData } from "@/contract-apis/types"
+import { getHydroQueryClient } from "../../../contract-apis/getClient"
+import { RawHydroMetaData } from "../../../contract-apis/types"
 
 export async function fetchHydroMetaData(): Promise<RawHydroMetaData> {
   const hydroQueryClient = await getHydroQueryClient()

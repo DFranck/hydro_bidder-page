@@ -1,8 +1,8 @@
-import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
-import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import "@netlify/functions"
+import { HydroBaseQueryClient } from "../../../app/ts_types/HydroBase.client"
+import { LockupWithPerTrancheInfo } from "../../../app/ts_types/HydroBase.types"
+import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
+import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
 import { fetchHistoricUsers } from "./fetchHistoricUsers"
 
 export async function fetchRoundLockups({

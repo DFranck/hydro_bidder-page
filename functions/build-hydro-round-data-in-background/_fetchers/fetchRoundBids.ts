@@ -1,7 +1,7 @@
-import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
-import { Proposal } from "@/app/ts_types/HydroBase.types"
-import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
+import { HydroBaseQueryClient } from "../../../app/ts_types/HydroBase.client"
+import { Proposal } from "../../../app/ts_types/HydroBase.types"
+import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
+import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
 
 export async function fetchRoundBids({
   roundId,

@@ -1,15 +1,6 @@
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import "@netlify/functions"
-
-interface PriceDetails {
-  token_symbol: string
-  token_exponent: number
-  token_price: number
-}
-
-interface RoundPrices {
-  [key: string]: PriceDetails
-}
+import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
+import { RoundPrices } from "../../../contract-apis/types"
 
 export async function fetchRoundPrices({
   roundId,
@@ -33,8 +24,7 @@ export async function fetchRoundPrices({
   }
 
   // Clean up the response
-  const responseJson = await response.json()
-  const prices = JSON.parse(responseJson[0].response).data
+  const prices = await response.json()
 
   const roundPrices = prices.reduce((acc: any, price: any) => {
     acc[price.token_denom] = {

@@ -1,12 +1,12 @@
+import { getStore } from "@netlify/blobs"
 import "@netlify/functions"
 import { Config } from "@netlify/functions"
-import fs from "fs"
-import path from "path"
 import { fetchAssetListWithPrices } from "../contract-apis/fetchAssetListWithPrices"
 import { fetchBidMetaDataById } from "../contract-apis/fetchBidMetaDataById"
 import { fetchNumiaBidData } from "../contract-apis/fetchNumiaBidData"
 import { fetchNumiaMetricsData } from "../contract-apis/fetchNumiaMetricsData"
-import { RawStaticExternalData } from "../contract-apis/types"
+import { getEnvironmentVariable } from "../contract-apis/getEnvironmentVariable"
+import { RawExternalData } from "../contract-apis/types"
 
 export default async function () {
   console.log("Building external data...")
@@ -19,28 +19,27 @@ export default async function () {
       fetchNumiaMetricsData(),
     ])
 
-  const rawStaticExternalData: RawStaticExternalData = {
-    timestamp: Date.now(),
-    externalData: {
-      assetListWithPrices,
-      bidMetaDataById,
-      numiaBids,
-      numiaMetrics,
-    },
+  const rawExternalData: RawExternalData = {
+    assetListWithPrices,
+    bidMetaDataById,
+    numiaBids,
+    numiaMetrics,
   }
 
-  const outputPath = path.join(
-    process.cwd(),
-    "public",
-    "data",
-    "raw-external-data.json"
-  )
+  console.log(`Writing data to Netlify Blob storage...`)
 
-  fs.mkdirSync(path.dirname(outputPath), { recursive: true })
+  const store = getStore({
+    name: "raw-data",
+    consistency: "eventual",
+    siteID: getEnvironmentVariable("NETLIFY_SITE_ID"),
+    token: getEnvironmentVariable("NETLIFY_API_TOKEN"),
+  })
 
-  console.log(`Writing data to: ${outputPath}`)
-
-  fs.writeFileSync(outputPath, JSON.stringify(rawStaticExternalData))
+  await store.setJSON("raw-external-data", rawExternalData, {
+    metadata: {
+      buildTime: Date.now(),
+    },
+  })
 
   console.log("External data build completed successfully")
 }
