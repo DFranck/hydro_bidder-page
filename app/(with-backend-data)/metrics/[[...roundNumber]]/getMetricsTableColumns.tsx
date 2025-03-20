@@ -1,5 +1,5 @@
+import { Icon } from "@/components/Icon"
 import { ColumnObject } from "@/components/StyledTable/types"
-import { MetricsRow } from "./MetricsPage"
 import {
   bidTablesFirstColumnTooltips,
   liveBidTributeAprColumnTooltip,
@@ -10,11 +10,11 @@ import {
   pastBidTributeAprColumnTooltip,
 } from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
-import { Icon } from "@/components/Icon"
 import {
   AugmentedBidFromNumiaSlimmed,
   BidRevampMetrics,
 } from "@/contract-apis/types"
+import { MetricsRow } from "./MetricsPage"
 
 export function getMetricsTableColumns(
   requestedPreHydro: boolean,
