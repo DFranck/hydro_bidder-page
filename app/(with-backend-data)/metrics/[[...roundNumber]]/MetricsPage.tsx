@@ -26,7 +26,7 @@ import {
   metricsPolSizeColumnTooltip,
   metricsStatusColumnTooltip,
   metricsTributeColumnTooltip,
-  pastBidTributeAprColumnTooltip,
+  pastBidTributeAprMetricsPageColumnTooltip,
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
@@ -186,7 +186,7 @@ export function MetricsPage({
                 ? metricsTributeColumnTooltip
                 : requestedRoundId === currentRoundId
                   ? liveBidTributeAprColumnTooltip
-                  : pastBidTributeAprColumnTooltip
+                  : pastBidTributeAprMetricsPageColumnTooltip
             }
             classNamesForTooltip="-ml-12"
           >
