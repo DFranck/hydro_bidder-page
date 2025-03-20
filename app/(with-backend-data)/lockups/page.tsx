@@ -100,6 +100,7 @@ export default function LockupsPage() {
     }
 
     addToast({
+      _id: "incomplete-lockups",
       variant: "warning",
       message: (
         <>
@@ -111,7 +112,6 @@ export default function LockupsPage() {
           .
         </>
       ),
-      isDismissible: true,
       actionButtonPrimary: {
         label: "Continue",
         onClick: () => {

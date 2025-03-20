@@ -66,14 +66,15 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
 
   const _createToast = useCallback(
     (toast: DismissibleToastDescriptor) => {
-      const newToastId = crypto.randomUUID()
       const {
+        _id,
         actionButtonPrimary,
         actionButtonSecondary,
         isDismissible,
         variant,
         ...rest
       } = toast
+      const newToastId = _id ?? crypto.randomUUID()
 
       const isDismissibleByDefault = dismissibleByDefault.includes(variant)
 
@@ -88,7 +89,7 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
       return {
         ...rest,
         _id: newToastId,
-        actionButtonPrimary: dismissButton,
+        actionButtonPrimary: actionButtonPrimary ?? dismissButton,
         actionButtonSecondary:
           actionButtonPrimary && !actionButtonSecondary
             ? dismissButton
@@ -96,27 +97,32 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
         variant,
       }
     },
-    [collapseToastById]
+    [collapseToastById, toasts]
   )
 
   /**
-   * Adds new toasts to the list.
+   * Adds new toasts to the list. If a toast has an _id, it will not be
+   * recreated if it already exists.
    * @param newToasts - The toasts to add.
    * @returns An array of the IDs of the new toasts.
    */
   const addToasts = useCallback(
     (newToasts: DismissibleToastDescriptor[]) => {
-      const newToastObjects = newToasts.map(_createToast)
+      const allToastIds = toasts.map((toast) => toast._id)
+      const newToastObjects = newToasts
+        .filter((toast) => !toast._id || !allToastIds.includes(toast._id))
+        .map(_createToast)
       setInnerToasts((prevToasts) => [...newToastObjects, ...prevToasts])
       return newToastObjects.map((toast) => toast._id) as ToastId[]
     },
-    [_createToast, setInnerToasts]
+    [_createToast, setInnerToasts, toasts]
   )
 
   /**
-   * Adds a new toast to the list.
+   * Adds a new toast to the list. If a toast has an _id, it will not be
+   * recreated if it already exists.
    * @param toast - The toast to add.
-   * @returns The ID of the new toast.
+   * @returns The ID of the new toast, or undefined if the toast already exists.
    */
   const addToast = useCallback(
     (newToast: DismissibleToastDescriptor) => {
