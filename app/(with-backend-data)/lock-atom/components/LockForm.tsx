@@ -29,7 +29,7 @@ export function LockForm({
   validatorMap: Map<string, Validator>
 }) {
   const router = useRouter()
-  const [isRefreshing, setIsRefreshing] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const {
     lockedAtomEpochInNanos,
     lockedAtomMaxWallet,
