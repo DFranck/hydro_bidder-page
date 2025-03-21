@@ -409,7 +409,10 @@ export function BidDetails({
               )}
 
             <div>
-              <Tooltip tipContents={bidDetailsVoteReceivedTooltip(votingStats)}>
+              <Tooltip
+                tipContents={bidDetailsVoteReceivedTooltip(votingStats)}
+                classNamesForTooltip="w-72"
+              >
                 <StyledText
                   as="h3"
                   variant="label"
