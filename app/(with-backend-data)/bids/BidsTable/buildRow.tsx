@@ -11,10 +11,10 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { AugmentedBidAfterWallet } from "@/contract-apis/types"
+import { BidRevampMetrics } from "@/contract-apis/types"
 import { classNames } from "./classNames"
 
-export function buildRow({ bid }: { bid: AugmentedBidAfterWallet }) {
+export function buildRow({ bid }: { bid: BidRevampMetrics }) {
   const bidURL = `/bids/${bid.id}`
 
   return {
@@ -44,7 +44,7 @@ export function buildRow({ bid }: { bid: AugmentedBidAfterWallet }) {
         className="flex flex-row-reverse items-center gap-1"
       >
         <ConditionalWrapper
-          condition={bid.percentage < VOTE_SHARE_THRESHOLD}
+          condition={(bid.vote_perc * 100) < VOTE_SHARE_THRESHOLD}
           wrapper={(children) => (
             <Tooltip
               tipContents={voteThresholdTooltip}
@@ -61,7 +61,7 @@ export function buildRow({ bid }: { bid: AugmentedBidAfterWallet }) {
           )}
         >
           <StyledText variant="mathSymbol.container">
-            <span>{Math.round(bid.percentage)}</span>
+            <span>{Math.round(bid.vote_perc * 100)}</span>
             <StyledText variant="mathSymbol">%</StyledText>
           </StyledText>
         </ConditionalWrapper>
