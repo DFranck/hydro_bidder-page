@@ -5,7 +5,6 @@ import {
 } from "@/app/ts_types/TributeBase.client"
 import { getCosmWasmClient } from "@/contract-apis/getCosmWasmClient"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import "@netlify/functions"
 import { invariant } from "ts-invariant"
 
 const nextPublicHydroContractAddress =
