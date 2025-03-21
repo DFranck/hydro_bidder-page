@@ -7,12 +7,12 @@ import {
   liveBidTributeAprColumnTooltip,
   polDurationTooltip,
 } from "@/components/ToolTips"
-import { BidRevampMetrics } from "@/contract-apis/types"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { classNames } from "./classNames"
 
 export function buildColumns<
   Row extends BaseRowObject & {
-    _bid: BidRevampMetrics
+    _bid: AugmentedBidAfterWallet
   },
 >(): ColumnObject<Row, keyof Row>[] {
   return [
@@ -50,7 +50,7 @@ export function buildColumns<
       propsForCells: {
         className: classNames.classNamesForCells,
       },
-      customValueGetter: (row) => row._bid.duration,
+      customValueGetter: (row) => row._bid.deploymentDurationInEpochs,
     },
     {
       key: "tributeApr",
@@ -69,7 +69,7 @@ export function buildColumns<
         className: classNames.classNamesForCells,
       },
       customValueGetter: (row) => {
-        return row._bid.apr_tribute ?? 0
+        return row._bid.tributeApr ?? 0
       },
     },
     {
@@ -91,7 +91,7 @@ export function buildColumns<
       propsForCells: {
         className: classNames.classNamesForCells,
       },
-      customValueGetter: (row) => row._bid.vote_perc,
+      customValueGetter: (row) => row._bid.percentage,
     },
     {
       key: "actions",

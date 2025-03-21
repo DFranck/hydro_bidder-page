@@ -6,14 +6,14 @@ import {
   VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
-import { BidRevampMetrics } from "@/contract-apis/types"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { Fragment } from "react"
 import { classNames } from "./classNames"
 
 export function RowComponent<
   Row extends BaseRowObject & {
-    _bid: BidRevampMetrics
+    _bid: AugmentedBidAfterWallet
   },
 >({
   children,
@@ -27,7 +27,7 @@ export function RowComponent<
   const shouldShowVoteThresholdLine =
     sortedColumnKey === "currentVoteShare" &&
     sortDirection === "DESC" &&
-    row._bid.vote_perc < VOTE_SHARE_THRESHOLD
+    row._bid.percentage < VOTE_SHARE_THRESHOLD
 
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
 

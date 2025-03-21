@@ -11,9 +11,9 @@ import { RowComponent } from "./RowComponent"
 export function BidsTable({ trancheId }: { trancheId: number }) {
   const tableId = `bids-table-${trancheId}`
 
-  const { tranches, bidsInfo, currentRoundId } = useBackendData()
+  const { tranches, bidsById, currentRoundId } = useBackendData()
 
-  const bidsInRound = Object.values(bidsInfo).filter(
+  const bidsInRound = Object.values(bidsById).filter(
     (bid) => bid.roundId === currentRoundId
   )
 
