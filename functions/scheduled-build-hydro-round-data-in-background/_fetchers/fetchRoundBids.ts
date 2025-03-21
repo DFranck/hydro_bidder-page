@@ -45,10 +45,11 @@ export async function fetchRoundBids({
     const query = {
       roundId,
       trancheId,
-      numberOfProposals: 1000,
+      limit: 1000,
+      startFrom: 0,
     }
 
-    const { proposals } = await hydroQueryClient.topNProposals(query)
+    const { proposals } = await hydroQueryClient.roundProposals(query)
 
     return proposals
   } else {
