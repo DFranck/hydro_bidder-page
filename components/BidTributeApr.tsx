@@ -12,66 +12,27 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   if (!bid) return null
 
-  const bidInfoFromNumia = metricsForPostHydroBids.find(
-    (metric) => Number(metric.id) === bid.id
-  )
+  const { apr_tribute } = bidInfo
 
-  if (!bidInfoFromNumia) {
-    return (
-      <StyledText variant="footnote" className="whitespace-nowrap">
-        No data yet
-      </StyledText>
-    )
-  }
+  const tributeApr = apr_tribute ?? 0
 
-  const { isRejected } = bidInfoFromNumia
-  if (isRejected) return null
-
-  const { tributeApr, tributeAprMax, tributeAprMin } = bid
-
-  const safeTributeAprMin = tributeAprMin || Infinity
-  const safeTributeAprMax = tributeAprMax || Infinity
-
-  const formattedTributeAprMin = (safeTributeAprMin * 100).toFixed(0)
-  const formattedTributeAprMax = (safeTributeAprMax * 100).toFixed(0)
+  const formattedTributeAprMin = tributeApr.toFixed(0)
 
   const renderAprValue = () => {
-    if (bid.roundId === currentRoundId) {
-      if (bidInfo.points?.length > 0) {
-        return (
-          <>
-            <span>0</span>
-            <StyledText variant="mathSymbol">%</StyledText>
-          </>
-        )
-      }
-
-      if (bid.tributeAprMin.toFixed(2) === bid.tributeAprMax.toFixed(2)) {
-        return (
-          <>
-            <StyledText variant="mathSymbol">&gt;</StyledText>
-            <span>1,000</span>
-            <StyledText variant="mathSymbol">%</StyledText>
-          </>
-        )
-      }
-
-      if (safeTributeAprMin.toFixed(2) === safeTributeAprMax.toFixed(2)) {
-        const value = !safeTributeAprMin ? "0" : formattedTributeAprMin
-        return (
-          <>
-            <span>{value}</span>
-            <StyledText variant="mathSymbol">%</StyledText>
-          </>
-        )
-      }
-
+    if (Number.isNaN(tributeApr) || bidInfo.points?.length > 0) {
       return (
         <>
-          <span>{formattedTributeAprMin}</span>
+          <span>0</span>
           <StyledText variant="mathSymbol">%</StyledText>
-          <StyledText variant="mathSymbol">&ndash;</StyledText>
-          <span>{formattedTributeAprMax}</span>
+        </>
+      )
+    }
+
+    if (tributeApr > 1000) {
+      return (
+        <>
+          <StyledText variant="mathSymbol">&gt;</StyledText>
+          <span>1,000</span>
           <StyledText variant="mathSymbol">%</StyledText>
         </>
       )
@@ -79,7 +40,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
     return (
       <>
-        <span>{(tributeApr * 100).toFixed(2)}</span>
+        <span>{formattedTributeAprMin}</span>
         <StyledText variant="mathSymbol">%</StyledText>
       </>
     )

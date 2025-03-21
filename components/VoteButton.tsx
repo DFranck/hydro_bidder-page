@@ -17,6 +17,7 @@ import {
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { getDaysAway } from "@/lib/getDaysAway"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
@@ -39,6 +40,7 @@ export function VoteButton({
   const {
     address,
     bidsInfo,
+    currentRoundEndDate,
     currentRoundId,
     isWalletConnected,
     lockups,
@@ -46,17 +48,28 @@ export function VoteButton({
     lockedAtomTotalGlobal,
     votesByRoundId,
     votingPowerAvailable,
+    lockedAtomEpochInNanos,
   } = useBackendData()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
   const bid = bidsInfo[bidId]
-  const hasLockupThatCanVoteInThisTranche = lockups.some(
-    (lockup) =>
+
+  const hasLockupThatExtendsBidsDeploymentDuration = lockups.some((lockup) => {
+    const nextRoundEligibleToVote = Number(
+      lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote
+    )
+
+    const bidDurationInDays =
+      bid.duration * (lockedAtomEpochInNanos / (1e9 * 60 * 60 * 24))
+
+    const daysLeftInRound = getDaysAway(currentRoundEndDate)
+
+    return (
       !lockup.isExpired &&
-      Number(
-        lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote
-      ) <= currentRoundId
-  )
+      nextRoundEligibleToVote <= currentRoundId &&
+      lockup.daysLeft > bidDurationInDays + daysLeftInRound
+    )
+  })
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const votesThisTranche = votesThisRound.filter(
     (vote) => bidsInfo[vote.bidId]?.trancheId === bid?.trancheId
@@ -142,7 +155,7 @@ export function VoteButton({
         </StyledText>
       </ConditionalWrapper>
     )
-  } else if (!hasLockupThatCanVoteInThisTranche) {
+  } else if (!hasLockupThatExtendsBidsDeploymentDuration) {
     Button = (
       <Tooltip tipContents={extendLockupsToVoteTooltip}>
         <StyledText
