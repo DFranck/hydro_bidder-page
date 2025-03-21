@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic"
 
-const BackendDataTweaker = dynamic(
+export const BackendDataTweaker = dynamic(
   () =>
     process.env.NEXT_PUBLIC_USE_FIXTURE_DATA === "true"
       ? import("@/components/BackendDataTweaker").then(
@@ -11,5 +11,3 @@ const BackendDataTweaker = dynamic(
       : Promise.resolve(() => null),
   { ssr: false }
 )
-
-export { BackendDataTweaker }

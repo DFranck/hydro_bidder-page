@@ -1,7 +1,7 @@
 import "@netlify/functions"
 import { Config } from "@netlify/functions"
 import { supabase } from "../lib/supabase"
-import { fetchHydroMetaData } from "./build-hydro-round-data-in-background/_fetchers/fetchHydroMetaData"
+import { fetchHydroMetaData } from "./scheduled-build-hydro-round-data-in-background/_fetchers/fetchHydroMetaData"
 
 export default async function () {
   console.log("Building hydro meta data...")
