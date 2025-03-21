@@ -18,11 +18,6 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const formattedTributeAprMin = tributeApr.toFixed(0)
 
-  console.log({
-    tributeApr,
-    formattedTributeAprMin,
-  })
-
   const renderAprValue = () => {
     if (Number.isNaN(tributeApr) || bidInfo.points?.length > 0) {
       return (
