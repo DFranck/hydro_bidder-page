@@ -1,8 +1,8 @@
 import "@netlify/functions"
+import { invariant } from "ts-invariant"
 import { TributeBaseQueryClient } from "../../../app/ts_types/TributeBase.client"
 import { Tribute } from "../../../app/ts_types/TributeBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
-import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
 
 export async function fetchRoundTributes({
   roundId,
@@ -11,14 +11,28 @@ export async function fetchRoundTributes({
   roundId: number
   currentRoundId: number
 }): Promise<Tribute[]> {
-  const numiaTributesEndpoint = getEnvironmentVariable(
-    "NUMIA_TRIBUTES_ENDPOINT"
+  const numiaTributesEndpoint =
+    process.env.NUMIA_TRIBUTES_ENDPOINT ??
+    Netlify?.env?.get("NUMIA_TRIBUTES_ENDPOINT")
+
+  const numiaCosmosHydroAppApiKey =
+    process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY ??
+    Netlify?.env?.get("NUMIA_COSMOS_HYDRO_APP_API_KEY")
+
+  const tributeContractAddress =
+    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS ??
+    Netlify?.env?.get("NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS")
+
+  invariant(numiaTributesEndpoint, "NUMIA_TRIBUTES_ENDPOINT is not set")
+
+  invariant(
+    numiaCosmosHydroAppApiKey,
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
   )
-  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
-  )
-  const tributeContractAddress = getEnvironmentVariable(
-    "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS"
+
+  invariant(
+    tributeContractAddress,
+    "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set"
   )
 
   if (currentRoundId === roundId) {

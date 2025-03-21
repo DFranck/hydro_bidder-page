@@ -1,10 +1,10 @@
 "use client"
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { StdFee } from "@cosmjs/amino"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 import { MsgExecuteContract } from "interchain/dist/codegen/cosmwasm/wasm/v1/tx"
+import { invariant } from "ts-invariant"
 
 export async function signLockTokens(
   neutronChain: ChainContext,
@@ -15,19 +15,24 @@ export async function signLockTokens(
 ) {
   const client = await neutronChain.getSigningCosmWasmClient()
 
-  if (!neutronChain.address) {
-    throw new Error("Neutron chain address not set")
-  }
+  const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
+
+  invariant(neutronChain.address, "Neutron chain address not set")
+
+  invariant(
+    hydroContractAddress,
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
+  )
 
   const hydroClient = new HydroBaseClient(
     client,
     neutronChain.address,
-    getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
+    hydroContractAddress
   )
 
   // pepare message for simulating gas
   const simulateMsg = MsgExecuteContract.fromPartial({
-    contract: getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"),
+    contract: hydroContractAddress,
     sender: neutronChain.address,
     msg: new TextEncoder().encode(
       JSON.stringify({

@@ -13,6 +13,12 @@ export async function checkForHubLSMShares(
   if (!hubChain.address) {
     throw new Error("Hub chain address not set")
   }
+
+  const restEndpoint = await hubChain.getRestEndpoint()
+
+  const restEndpointURL =
+    typeof restEndpoint === "string" ? restEndpoint : restEndpoint.url
+
   const response: {
     balances: {
       denom: string
@@ -23,7 +29,15 @@ export async function checkForHubLSMShares(
       total: string
     }
   } = await fetch(
-    `${await hubChain.getRestEndpoint()}cosmos/bank/v1beta1/balances/${hubChain.address}`
+    new URL(
+      `cosmos/bank/v1beta1/balances/${hubChain.address}`,
+      restEndpointURL
+    ).toString(),
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    }
   ).then((res) => res.json())
 
   const lsmShares = response.balances

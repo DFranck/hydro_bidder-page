@@ -1,5 +1,5 @@
 import "@netlify/functions"
-import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
+import { invariant } from "ts-invariant"
 import { RoundPrices } from "../../../contract-apis/types"
 
 export async function fetchRoundPrices({
@@ -7,9 +7,19 @@ export async function fetchRoundPrices({
 }: {
   roundId: number
 }): Promise<RoundPrices> {
-  const numiaPricesEndpoint = getEnvironmentVariable("NUMIA_PRICES_ENDPOINT")
-  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
+  const numiaPricesEndpoint =
+    process.env.NUMIA_PRICES_ENDPOINT ??
+    Netlify?.env?.get("NUMIA_PRICES_ENDPOINT")
+
+  const numiaCosmosHydroAppApiKey =
+    process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY ??
+    Netlify?.env?.get("NUMIA_COSMOS_HYDRO_APP_API_KEY")
+
+  invariant(numiaPricesEndpoint, "NUMIA_PRICES_ENDPOINT is not set")
+
+  invariant(
+    numiaCosmosHydroAppApiKey,
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
   )
 
   const response = await fetch(`${numiaPricesEndpoint}?round_id=${roundId}`, {

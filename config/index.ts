@@ -1,4 +1,3 @@
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { AssetList, Chain } from "@chain-registry/types"
 
 export const CHAIN_NAME = "localchain"
@@ -37,9 +36,7 @@ export const ATOM_PRICE_URL =
 
 export const EPOCH_LENGTH = 2628000000000000
 
-export const DEFAULT_CHAIN =
-  getEnvironmentVariable("NEXT_PUBLIC_USE_CHAIN", { allowNull: true }) ||
-  "localchain"
+export const DEFAULT_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN || "localchain"
 
 export const testnetChain: Chain = {
   $schema: "../../chain.schema.json",

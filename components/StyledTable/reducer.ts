@@ -1,6 +1,5 @@
 "use client"
 
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import sortBy from "lodash/sortBy"
 import { Reducer } from "react"
 import { TableState, TableStateAction } from "./types"
@@ -88,7 +87,7 @@ export const tableStateReducer: Reducer<
     }
   }
 
-  if (getEnvironmentVariable("NODE_ENV") === "development") {
+  if (process.env.NODE_ENV === "development") {
     // console.log(`Table action fired:`, { action, state, newState })
   }
 

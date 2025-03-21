@@ -285,7 +285,8 @@ export function BackendDataContextProvider({
   }
 
   function logDebugData(debugData: object[]) {
-    if (process.env.CONTEXT === "production") return
+    if (process.env.NEXT_PUBLIC_USE_FIXTURE_DATA !== "true") return
+
     window.debugData = debugData
 
     console.groupCollapsed(`[ 🐜 Debug Data ]`)
@@ -313,7 +314,7 @@ export function BackendDataContextProvider({
 
     console.log("💡 You have access to the `debugData` object in the console!")
     console.log(
-      `🖪 Debug Data Size: ${(JSON.stringify(debugData).length / 1024 / 1024).toFixed(2)} MB`
+      `🖪 Server Payload Size: ${(JSON.stringify(rawBackendDataBeforeWallet).length / 1024 / 1024).toFixed(2)} MB`
     )
     console.log(
       `🖪 State Size: ${(JSON.stringify(finalState).length / 1024 / 1024).toFixed(2)} MB`

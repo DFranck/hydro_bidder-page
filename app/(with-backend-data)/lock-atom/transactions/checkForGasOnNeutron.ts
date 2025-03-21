@@ -9,6 +9,9 @@ export async function checkForGasOnNeutron(neutronChain: ChainContext) {
 
   const restEndpoint = await neutronChain.getRestEndpoint()
 
+  const restEndpointURL =
+    typeof restEndpoint === "string" ? restEndpoint : restEndpoint.url
+
   const response: {
     balances: {
       denom: string
@@ -19,7 +22,15 @@ export async function checkForGasOnNeutron(neutronChain: ChainContext) {
       total: string
     }
   } = await fetch(
-    `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`
+    new URL(
+      `cosmos/bank/v1beta1/balances/${neutronChain.address}`,
+      restEndpointURL
+    ).toString(),
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    }
   ).then((res) => res.json())
 
   const balances = response.balances

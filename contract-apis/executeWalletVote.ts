@@ -1,7 +1,7 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { invariant } from "ts-invariant"
 
 export async function executeWalletVote({
   getSigningCosmWasmClient,
@@ -16,13 +16,18 @@ export async function executeWalletVote({
   trancheId: number
   lockups: AugmentedLockup[]
 }) {
+  const hydroContractAddress =
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS ??
+    Netlify?.env?.get("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
+
+  invariant(
+    hydroContractAddress,
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
+  )
+
   const client = await getSigningCosmWasmClient()
 
-  const hydroClient = new HydroBaseClient(
-    client,
-    address,
-    getEnvironmentVariable("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
-  )
+  const hydroClient = new HydroBaseClient(client, address, hydroContractAddress)
 
   const { round_id: currentRoundId } = await hydroClient.currentRound()
 

@@ -1,11 +1,17 @@
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import { MetricsFromNumia } from "@/contract-apis/types"
+import { invariant } from "ts-invariant"
 import { fetchWithRetry } from "./fetchWithRetry"
 
 export async function fetchNumiaMetricsData(): Promise<MetricsFromNumia> {
-  const numiaMetricsEndpoint = getEnvironmentVariable("NUMIA_METRICS_ENDPOINT")
-  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
+  const numiaMetricsEndpoint = process.env.NUMIA_METRICS_ENDPOINT
+
+  const numiaCosmosHydroAppApiKey = process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY
+
+  invariant(numiaMetricsEndpoint, "NUMIA_METRICS_ENDPOINT is not set")
+
+  invariant(
+    numiaCosmosHydroAppApiKey,
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
   )
 
   const response = await fetchWithRetry(numiaMetricsEndpoint, {

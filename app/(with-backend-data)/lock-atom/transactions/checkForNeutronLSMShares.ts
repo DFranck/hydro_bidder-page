@@ -15,8 +15,14 @@ export async function checkForNeutronLSMShares(
 
   const restEndpoint = await neutronChain.getRestEndpoint()
 
+  const restEndpointURL =
+    typeof restEndpoint === "string" ? restEndpoint : restEndpoint.url
+
   const response = await fetchWithRetry(
-    `${restEndpoint}cosmos/bank/v1beta1/balances/${neutronChain.address}`,
+    new URL(
+      `cosmos/bank/v1beta1/balances/${neutronChain.address}`,
+      restEndpointURL
+    ).toString(),
     {
       headers: {
         Accept: "application/json",

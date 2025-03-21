@@ -1,7 +1,6 @@
 "use server"
 
 import { getDefaultMetadata, getMetadataByRoute } from "@/app/metadata"
-import { getEnvironmentVariable } from "@/contract-apis/getEnvironmentVariable"
 import sortBy from "lodash/sortBy"
 import { Inter } from "next/font/google"
 import { headers } from "next/headers"
@@ -43,8 +42,7 @@ export default async function RootLayout({
           crossOrigin="anonymous"
           src="https://kit.fontawesome.com/401fb1e734.js"
         />
-        {getEnvironmentVariable("NEXT_PUBLIC_SHOW_HIDDEN_FEATURES") !==
-          "true" && (
+        {process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" && (
           <>
             <Script
               async

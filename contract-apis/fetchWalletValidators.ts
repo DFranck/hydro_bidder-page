@@ -38,9 +38,15 @@ export async function fetchMyValidators(
 ): Promise<ValidatorDelegation[]> {
   const restEndpoint = await chain.getRestEndpoint()
 
+  const restEndpointURL =
+    typeof restEndpoint === "string" ? restEndpoint : restEndpoint.url
+
   const [validatorsResponse, delegationsResponse] = await Promise.all([
     fetchWithRetry(
-      `${restEndpoint}cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`,
+      new URL(
+        `cosmos/staking/v1beta1/delegators/${delegatorAddress}/validators`,
+        restEndpointURL
+      ).toString(),
       {
         headers: {
           Accept: "application/json",
@@ -48,7 +54,11 @@ export async function fetchMyValidators(
       }
     ).then((res) => res.json()),
     fetchWithRetry(
-      `${restEndpoint}cosmos/staking/v1beta1/delegations/${delegatorAddress}`,
+      new URL(
+        `cosmos/staking/v1beta1/delegations/${delegatorAddress}`,
+        restEndpointURL
+      ).toString(),
+
       {
         headers: {
           Accept: "application/json",

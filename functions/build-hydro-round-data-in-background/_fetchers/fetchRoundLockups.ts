@@ -1,8 +1,8 @@
 import "@netlify/functions"
+import { invariant } from "ts-invariant"
 import { HydroBaseQueryClient } from "../../../app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "../../../app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
-import { getEnvironmentVariable } from "../../../contract-apis/getEnvironmentVariable"
 import { fetchHistoricUsers } from "./fetchHistoricUsers"
 
 export async function fetchRoundLockups({
@@ -12,12 +12,28 @@ export async function fetchRoundLockups({
   roundId: number
   currentRoundId: number
 }): Promise<LockupWithPerTrancheInfo[][]> {
-  const numiaCosmosHydroAppApiKey = getEnvironmentVariable(
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY"
+  const numiaCosmosHydroAppApiKey =
+    process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY ??
+    Netlify?.env?.get("NUMIA_COSMOS_HYDRO_APP_API_KEY")
+
+  const numiaLockupsEndpoint =
+    process.env.NUMIA_LOCKUPS_ENDPOINT ??
+    Netlify?.env?.get("NUMIA_LOCKUPS_ENDPOINT")
+
+  const hydroContractAddress =
+    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS ??
+    Netlify?.env?.get("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
+
+  invariant(
+    numiaCosmosHydroAppApiKey,
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
   )
-  const numiaLockupsEndpoint = getEnvironmentVariable("NUMIA_LOCKUPS_ENDPOINT")
-  const hydroContractAddress = getEnvironmentVariable(
-    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS"
+
+  invariant(numiaLockupsEndpoint, "NUMIA_LOCKUPS_ENDPOINT is not set")
+
+  invariant(
+    hydroContractAddress,
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
   )
 
   if (currentRoundId == roundId) {
@@ -73,7 +89,9 @@ export async function fetchRoundLockups({
     }
 
     const tributes = responseJson.map((response: { response: string }) => {
-      return JSON.parse(response.response).data.lockups_with_per_tranche_infos
+      return (
+        JSON.parse(response.response).data?.lockups_with_per_tranche_infos ?? []
+      )
     })
     return tributes as LockupWithPerTrancheInfo[][]
   }
