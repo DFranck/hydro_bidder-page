@@ -1,7 +1,8 @@
 export function getSupabaseNamespacedFilename(filename: string) {
   const supabaseDataNamespace =
     process.env.NEXT_PUBLIC_SUPABASE_DATA_NAMESPACE ??
-    process.env.BRANCH ??
+    process.env.DEPLOY_PRIME_URL ??
+    process.env.DEPLOY_URL ??
     process.env.URL
 
   const safeSupabaseDataNamespace = supabaseDataNamespace
