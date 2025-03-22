@@ -25,17 +25,15 @@ export default async function () {
     numiaMetrics,
   }
 
-  console.log(`Writing data to Supabase storage...`)
+  const filename = getSupabaseNamespacedFilename("raw-external-data.json")
+
+  console.log(`Writing data to Supabase storage: ${filename}`)
 
   await supabase.storage
     .from("raw-backend-data")
-    .upload(
-      getSupabaseNamespacedFilename("raw-external-data.json"),
-      JSON.stringify(rawExternalData),
-      {
-        upsert: true,
-      }
-    )
+    .upload(filename, JSON.stringify(rawExternalData), {
+      upsert: true,
+    })
 
   console.log("External data build completed successfully")
 }

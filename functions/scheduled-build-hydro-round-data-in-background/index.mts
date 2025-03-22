@@ -11,15 +11,15 @@ export default async function () {
 
     console.log("Writing data to Supabase storage...")
 
+    const filename = getSupabaseNamespacedFilename("raw-hydro-round-data.json")
+
+    console.log(`Writing data to Supabase storage: ${filename}`)
+
     await supabase.storage
       .from("raw-backend-data")
-      .upload(
-        getSupabaseNamespacedFilename("raw-hydro-round-data.json"),
-        JSON.stringify(hydroRoundData),
-        {
-          upsert: true,
-        }
-      )
+      .upload(filename, JSON.stringify(hydroRoundData), {
+        upsert: true,
+      })
 
     console.log("Background function completed successfully")
   } catch (error) {
