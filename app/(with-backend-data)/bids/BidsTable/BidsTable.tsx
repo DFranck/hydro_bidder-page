@@ -13,18 +13,18 @@ export function BidsTable({ trancheId }: { trancheId: number }) {
 
   const { tranches, bidsInfo, currentRoundId } = useBackendData()
 
-  const bidsInRound = Object.values(bidsInfo).filter(
-    (bid) => bid.roundId === currentRoundId
-  )
-
   const tranche = tranches.find((t) => t.id === trancheId)
 
   const rowsInTranche = useMemo(() => {
+    const bidsInRound = Object.values(bidsInfo).filter(
+      (bid) => bid.roundId === currentRoundId
+    )
+
     const bidsInTranche = bidsInRound.filter(
       (bid) => bid.trancheId === trancheId
     )
     return bidsInTranche.map((bid) => buildRow({ bid }))
-  }, [])
+  }, [bidsInfo, currentRoundId, trancheId])
 
   type Row = (typeof rowsInTranche)[number]
 
