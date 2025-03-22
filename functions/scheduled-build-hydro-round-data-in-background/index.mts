@@ -1,5 +1,5 @@
-import "@netlify/functions"
 import { Config } from "@netlify/functions"
+import { getSupabaseNamespacedFilename } from "../../lib/getSupabaseNamespacedFilename"
 import { supabase } from "../../lib/supabase"
 import { fetchHydroRoundsData } from "./_fetchers/fetchHydroRoundsData"
 
@@ -13,9 +13,13 @@ export default async function () {
 
     await supabase.storage
       .from("raw-backend-data")
-      .upload("raw-hydro-round-data.json", JSON.stringify(hydroRoundData), {
-        upsert: true,
-      })
+      .upload(
+        getSupabaseNamespacedFilename("raw-hydro-round-data.json"),
+        JSON.stringify(hydroRoundData),
+        {
+          upsert: true,
+        }
+      )
 
     console.log("Background function completed successfully")
   } catch (error) {

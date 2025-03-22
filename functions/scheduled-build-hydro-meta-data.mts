@@ -1,5 +1,5 @@
-import "@netlify/functions"
 import { Config } from "@netlify/functions"
+import { getSupabaseNamespacedFilename } from "../lib/getSupabaseNamespacedFilename"
 import { supabase } from "../lib/supabase"
 import { fetchHydroMetaData } from "./scheduled-build-hydro-round-data-in-background/_fetchers/fetchHydroMetaData"
 
@@ -8,11 +8,13 @@ export default async function () {
 
   const hydroMetaData = await fetchHydroMetaData()
 
-  console.log(`Writing data to Supabase storage...`)
+  const filename = getSupabaseNamespacedFilename("raw-hydro-meta-data.json")
+
+  console.log(`Writing data to Supabase storage: ${filename}`)
 
   await supabase.storage
     .from("raw-backend-data")
-    .upload("raw-hydro-meta-data.json", JSON.stringify(hydroMetaData), {
+    .upload(filename, JSON.stringify(hydroMetaData), {
       upsert: true,
     })
 

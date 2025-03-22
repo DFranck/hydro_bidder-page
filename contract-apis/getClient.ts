@@ -8,12 +8,10 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { invariant } from "ts-invariant"
 
 const nextPublicHydroContractAddress =
-  process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS ??
-  Netlify?.env?.get("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
+  process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
 
 const nextPublicTributeContractAddress =
-  process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS ??
-  Netlify?.env?.get("NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS")
+  process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
 
 export async function getHydroQueryClient() {
   invariant(

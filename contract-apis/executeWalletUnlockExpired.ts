@@ -11,9 +11,7 @@ export async function executeWalletUnlockExpired({
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
   lockIds: number[]
 }) {
-  const hydroContractAddress =
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS ??
-    Netlify?.env?.get("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
+  const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
 
   invariant(
     hydroContractAddress,

@@ -12,16 +12,11 @@ export async function fetchRoundBids({
   trancheId: number
   currentRoundId: number
 }): Promise<Proposal[]> {
-  const numiaBidsEndpoint =
-    process.env.NUMIA_BIDS_ENDPOINT ?? Netlify?.env?.get("NUMIA_BIDS_ENDPOINT")
+  const numiaBidsEndpoint = process.env.NUMIA_BIDS_ENDPOINT
 
-  const numiaCosmosHydroAppApiKey =
-    process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY ??
-    Netlify?.env?.get("NUMIA_COSMOS_HYDRO_APP_API_KEY")
+  const numiaCosmosHydroAppApiKey = process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY
 
-  const hydroContractAddress =
-    process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS ??
-    Netlify?.env?.get("NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS")
+  const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
 
   invariant(numiaBidsEndpoint, "NUMIA_BIDS_ENDPOINT is not set")
 

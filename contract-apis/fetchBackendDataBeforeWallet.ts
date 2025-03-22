@@ -1,19 +1,20 @@
 "use server"
 
 import { BackendDataBeforeWallet } from "@/contract-apis/types"
+import { getSupabaseNamespacedFilename } from "@/lib/getSupabaseNamespacedFilename"
 import { unstable_cache } from "next/cache"
 
 async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
   const [rawHydroRoundData, rawHydroMetaData, rawExternalData] =
     await Promise.all([
       fetch(
-        "https://qqhhwjgeottahfasjzht.supabase.co/storage/v1/object/public/raw-backend-data/raw-hydro-round-data.json"
+        `https://qqhhwjgeottahfasjzht.supabase.co/storage/v1/object/public/raw-backend-data/${getSupabaseNamespacedFilename("raw-hydro-round-data.json")}`
       ).then((res) => res.json()),
       fetch(
-        "https://qqhhwjgeottahfasjzht.supabase.co/storage/v1/object/public/raw-backend-data/raw-hydro-meta-data.json"
+        `https://qqhhwjgeottahfasjzht.supabase.co/storage/v1/object/public/raw-backend-data/${getSupabaseNamespacedFilename("raw-hydro-meta-data.json")}`
       ).then((res) => res.json()),
       fetch(
-        "https://qqhhwjgeottahfasjzht.supabase.co/storage/v1/object/public/raw-backend-data/raw-external-data.json"
+        `https://qqhhwjgeottahfasjzht.supabase.co/storage/v1/object/public/raw-backend-data/${getSupabaseNamespacedFilename("raw-external-data.json")}`
       ).then((res) => res.json()),
     ])
 

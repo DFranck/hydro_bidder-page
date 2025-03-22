@@ -1,14 +1,9 @@
-import "@netlify/functions"
 import { invariant } from "ts-invariant"
 
 export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
-  const numiaUsersEndpoint =
-    process.env.NUMIA_USERS_ENDPOINT ??
-    Netlify?.env?.get("NUMIA_USERS_ENDPOINT")
+  const numiaUsersEndpoint = process.env.NUMIA_USERS_ENDPOINT
 
-  const numiaCosmosHydroAppApiKey =
-    process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY ??
-    Netlify?.env?.get("NUMIA_COSMOS_HYDRO_APP_API_KEY")
+  const numiaCosmosHydroAppApiKey = process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY
 
   invariant(numiaUsersEndpoint, "NUMIA_USERS_ENDPOINT is not set")
 

@@ -1,5 +1,3 @@
-"use server"
-
 import { getHydroQueryClient } from "../../../contract-apis/getClient"
 import { RawHydroMetaData } from "../../../contract-apis/types"
 
