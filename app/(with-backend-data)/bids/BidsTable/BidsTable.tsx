@@ -19,11 +19,12 @@ export function BidsTable({ trancheId }: { trancheId: number }) {
 
   const tranche = tranches.find((t) => t.id === trancheId)
 
-  const bidsInTranche = bidsInRound.filter((bid) => bid.trancheId === trancheId)
-
   const rowsInTranche = useMemo(() => {
+    const bidsInTranche = bidsInRound.filter(
+      (bid) => bid.trancheId === trancheId
+    )
     return bidsInTranche.map((bid) => buildRow({ bid }))
-  }, [bidsInTranche])
+  }, [])
 
   type Row = (typeof rowsInTranche)[number]
 

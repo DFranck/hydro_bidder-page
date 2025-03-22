@@ -161,9 +161,9 @@ export function augmentRoundDeploymentMetrics(
       //vote_power      : vote_power,
       //vote_atom       : vote_atom,
       power: Number(bid.power),
-      vote_perc: vote_perc,
+      vote_perc,
       // Status
-      status: status,
+      status,
       // Deployment metrics
       apr_tribute:
         status === "Rejected"
