@@ -27,7 +27,7 @@ export function RowComponent<
   const shouldShowVoteThresholdLine =
     sortedColumnKey === "currentVoteShare" &&
     sortDirection === "DESC" &&
-    row._bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD
+    (row._bid.vote_perc * 100) < VOTE_SHARE_THRESHOLD
 
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
 
