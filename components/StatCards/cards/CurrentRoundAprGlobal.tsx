@@ -8,22 +8,15 @@ import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAprGlobal() {
-  const { bidsById, currentRoundId, isLoading } = useBackendData()
-  const bidsInRound = Object.values(bidsById).filter(
-    (bid) => bid.roundId === currentRoundId
+  const { bidsInfo, currentRoundId, isLoading } = useBackendData()
+  const tokenBasedBidsInRound = Object.values(bidsInfo).filter(
+    (bid) => bid.roundId === currentRoundId && !bid.points?.length
   )
-
-  // get the bids that have a points-based tribute and filter those out for the average
-  const bidsWithoutPointsTributes = bidsInRound.filter((bid) =>
-    bid.tributes.some((tribute) => tribute.isTokenBased)
+  const totalTributeApr = sumBy(
+    tokenBasedBidsInRound,
+    (bid) => bid.apr_tribute || 0
   )
-
-  const totalTributeAprMin = sumBy(bidsWithoutPointsTributes, "tributeAprMin")
-  const totalTributeAprMax = sumBy(bidsWithoutPointsTributes, "tributeAprMax")
-  const averageTributeApr =
-    (totalTributeAprMin + totalTributeAprMax) /
-    2 /
-    bidsWithoutPointsTributes.length
+  const averageTributeApr = totalTributeApr / 100 / tokenBasedBidsInRound.length
 
   return (
     <StatCard

@@ -5,12 +5,10 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
-  const { bidsById, bidsInfo, currentRoundId, metricsForPostHydroBids } =
-    useBackendData()
-  const bid = bidsById[bidId]
+  const { bidsInfo } = useBackendData()
   const bidInfo = bidsInfo[bidId]
 
-  if (!bid) return null
+  if (!bidInfo) return null
 
   const { apr_tribute } = bidInfo
 
