@@ -232,7 +232,7 @@ export interface BidRevampMetrics {
   duration: number
   id: number
   pointProgramUrl: any
-  points: any
+  points: [amount: number, denom: string] | []
   power: number
   request_amount: any
   roundId: number
@@ -240,7 +240,7 @@ export interface BidRevampMetrics {
   title: string
   trancheId: number
   tribute_value: number
-  tribute: [string, number][]
+  tribute: [denom: string, amount: number][]
   vote_perc: number
 }
 
