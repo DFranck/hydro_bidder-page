@@ -29,7 +29,7 @@ export function BidTribute({
     )
   }
 
-  const { pointProgramUrl, tribute, tribute_value, points = [] } = bid
+  const { pointProgramUrl, tribute, points = [] } = bid
 
   const renderedTokenBasedTributes = tribute.map(([denom, amount], index) => (
     <Tooltip key={index} tipContents={tokenBasedTributeAmountTooltip}>
