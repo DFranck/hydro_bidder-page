@@ -7,7 +7,7 @@ export type RequestAmount = [amount: number, description: string]
 
 export async function fetchBidDescriptionsById() {
   const response = await fetch(
-    `${BID_DESCRIPTIONS_URL}?${new Date().getTime()}`
+    `${BID_DESCRIPTIONS_URL}?time=${new Date().getTime()}`
   )
 
   return (await response.json()) as BidMetaDataById

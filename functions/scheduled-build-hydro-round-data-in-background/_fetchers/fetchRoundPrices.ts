@@ -17,12 +17,15 @@ export async function fetchRoundPrices({
     "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
   )
 
-  const response = await fetch(`${numiaPricesEndpoint}?round_id=${roundId}`, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
-    },
-  })
+  const response = await fetch(
+    `${numiaPricesEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
+    {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
+      },
+    }
+  )
 
   if (!response.ok) {
     throw new Error(`Failed to fetch numia price data: ${response.statusText}`)

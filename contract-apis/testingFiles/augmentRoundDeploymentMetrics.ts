@@ -168,9 +168,7 @@ export function augmentRoundDeploymentMetrics(
       apr_tribute:
         status === "Rejected"
           ? null
-          : (tributeValueInAtom / vote_atom / bid.deployment_duration) *
-            12 *
-            100,
+          : (tributeValueInAtom / vote_atom / bid.deployment_duration) * 12,
       apr_pol:
         status === "Rejected" || status === "Voting Period" ? null : null,
       apr_pol_target: estimatedPolAPR,

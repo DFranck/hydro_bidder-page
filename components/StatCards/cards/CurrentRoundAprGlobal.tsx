@@ -16,7 +16,7 @@ export function CurrentRoundAprGlobal() {
     tokenBasedBidsInRound,
     (bid) => bid.apr_tribute || 0
   )
-  const averageTributeApr = totalTributeApr / 100 / tokenBasedBidsInRound.length
+  const averageTributeApr = totalTributeApr / tokenBasedBidsInRound.length
 
   return (
     <StatCard

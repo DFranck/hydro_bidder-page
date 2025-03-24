@@ -12,7 +12,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const { apr_tribute } = bidInfo
 
-  const tributeApr = apr_tribute ?? 0
+  const tributeApr = (apr_tribute ?? 0) * 100
 
   const formattedTributeAprMin = tributeApr.toFixed(0)
 

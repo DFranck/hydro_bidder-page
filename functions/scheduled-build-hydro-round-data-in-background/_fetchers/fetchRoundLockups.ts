@@ -60,7 +60,7 @@ export async function fetchRoundLockups({
     return allUserLockupsWithTrancheInfos
   } else {
     const response = await fetch(
-      `${numiaLockupsEndpoint}?round_id=${roundId}`,
+      `${numiaLockupsEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
       {
         headers: {
           Accept: "application/json",

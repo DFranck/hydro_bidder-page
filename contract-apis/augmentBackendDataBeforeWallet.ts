@@ -75,18 +75,32 @@ export function augmentBackendDataBeforeWallet(
 
   // New Bids Info
   const bidsInfo = hydroRoundsData
-    .map(({ round_id, round_bids, round_lockups, round_tributes, round_prices }) => {
-      const roundParsedBids = augmentRoundDeploymentMetrics(
+    .map(
+      ({
         round_id,
         round_bids,
         round_lockups,
         round_tributes,
         round_prices,
-        bidMetaDataById,
-        currentRoundId
-      )
-      return roundParsedBids
-    })
+      }) => {
+        const roundParsedBids = augmentRoundDeploymentMetrics(
+          round_id,
+          round_bids,
+          round_lockups,
+          round_tributes,
+          round_id === currentRoundId
+            ? mapValues(assetListWithPrices, (a) => ({
+                token_symbol: a.symbol,
+                token_exponent: a.decimals,
+                token_price: a.priceUsd,
+              }))
+            : round_prices,
+          bidMetaDataById,
+          currentRoundId
+        )
+        return roundParsedBids
+      }
+    )
     .flat()
 
   return {
