@@ -88,13 +88,7 @@ export function augmentBackendDataBeforeWallet(
           round_bids,
           round_lockups,
           round_tributes,
-          round_id === currentRoundId
-            ? mapValues(assetListWithPrices, (a) => ({
-                token_symbol: a.symbol,
-                token_exponent: a.decimals,
-                token_price: a.priceUsd,
-              }))
-            : round_prices,
+          round_prices,
           bidMetaDataById,
           currentRoundId
         )
