@@ -55,21 +55,29 @@ export function VoteButton({
   const bid = bidsInfo[bidId]
 
   const hasLockupThatExtendsBidsDeploymentDuration = lockups.some((lockup) => {
+    if (!bid || lockup.isExpired) return false;
+
     const nextRoundEligibleToVote = Number(
       lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote
     )
 
-    const bidDurationInDays =
-      bid.duration * (lockedAtomEpochInNanos / (1e9 * 60 * 60 * 24))
+    if (nextRoundEligibleToVote > currentRoundId) return false;
+    
+    // Calculate required power round id
+    const powerRequiredRoundId = currentRoundId + bid.duration - 1;
+    
+    // Calculate round end time in nanoseconds
+    const currentRoundEndTime = currentRoundEndDate.getTime() * 1e6; // convert to nanoseconds
+    const roundLength = lockedAtomEpochInNanos; // Using epoch length as round length
+    const powerRequiredRoundEnd = currentRoundEndTime + 
+                                 (powerRequiredRoundId - currentRoundId) * roundLength;
+    
+    // Check if lockup end time is >= power required round end
+    const lockEndTime = lockup.dateEnd.getTime() * 1e6; // Convert milliseconds to nanoseconds
+    
+    return lockEndTime >= powerRequiredRoundEnd;
+  });
 
-    const daysLeftInRound = getDaysAway(currentRoundEndDate)
-
-    return (
-      !lockup.isExpired &&
-      nextRoundEligibleToVote <= currentRoundId &&
-      lockup.daysLeft > bidDurationInDays + daysLeftInRound
-    )
-  })
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const votesThisTranche = votesThisRound.filter(
     (vote) => bidsInfo[vote.bidId]?.trancheId === bid?.trancheId
