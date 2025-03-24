@@ -8,7 +8,6 @@ import {
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
-import groupBy from "lodash/groupBy"
 import { twJoin } from "tailwind-merge"
 
 export function BidTribute({
@@ -18,17 +17,11 @@ export function BidTribute({
   bidId: number
   textAlign?: "left" | "center" | "right"
 }) {
-  const { bidMetaDataById, metricsForPostHydroBids } = useBackendData()
+  const { bidsInfo } = useBackendData()
 
-  const bidDescription = bidMetaDataById[bidId] ?? {}
+  const bid = bidsInfo[bidId]
 
-  const { points = [] } = bidDescription
-
-  const bidInfoFromNumia = metricsForPostHydroBids.find(
-    (metric) => Number(metric.id) === bidId
-  )
-
-  if (!bidInfoFromNumia && points.length === 0) {
+  if (!bid) {
     return (
       <StyledText variant="footnote" className="whitespace-nowrap">
         No data yet
@@ -36,83 +29,45 @@ export function BidTribute({
     )
   }
 
-  const { onchainTributeAssets = [], offchainTribute = [] } =
-    bidInfoFromNumia ?? {}
+  const { pointProgramUrl, tribute, tribute_value, points = [] } = bid
 
-  let offchainTributeWithPoints = offchainTribute
+  const renderedTokenBasedTributes = tribute.map(([denom, amount], index) => (
+    <Tooltip key={index} tipContents={tokenBasedTributeAmountTooltip}>
+      <AmountAndUnitPair
+        amount={simplifyBigNumbers(amount || 0)}
+        unit={denom}
+        textAlign={textAlign}
+      />
+    </Tooltip>
+  ))
 
-  if (points.length && !onchainTributeAssets.length) {
-    offchainTributeWithPoints = [
-      {
-        amount: points[0],
-        type: points[1],
-      },
-    ]
-  }
-
-  const tributesByDenom = {
-    ...groupBy(
-      onchainTributeAssets.map((v) => ({ ...v, tributeType: "tokens" })),
-      "denom"
-    ),
-    ...groupBy(
-      offchainTributeWithPoints.map((v) => ({ ...v, tributeType: "points" })),
-      "type"
-    ),
-  }
-
-  const bidInfoFromGithub = bidMetaDataById[bidId]
-
-  const { pointProgramUrl } = bidInfoFromGithub ?? {}
-
-  const renderedTributes = Object.entries(tributesByDenom).map(
-    ([denomOrType, tributes], index) => {
-      return (
-        <div
-          className={twJoin(
-            "flex flex-col",
-            textAlign === "left" && "items-start",
-            textAlign === "center" && "items-center",
-            textAlign === "right" && "items-end"
-          )}
-          key={index}
-        >
-          {tributes.map((tribute, index) => {
-            const isPointBased = tribute.tributeType === "points"
-
-            return (
-              <Tooltip
-                key={index}
-                tipContents={
-                  isPointBased
-                    ? pointBasedTributeAmountTooltip({
-                        pointProgramUrl,
-                      })
-                    : tokenBasedTributeAmountTooltip
-                }
-              >
-                <AmountAndUnitPair
-                  amount={
-                    <>
-                      {isPointBased && <Icon name="solid:gem" />}{" "}
-                      {simplifyBigNumbers(tribute.amount)}
-                    </>
-                  }
-                  unit={
-                    <>
-                      {denomOrType}
-                      {isPointBased && <Icon name="circle-info" />}
-                    </>
-                  }
-                  textAlign={textAlign}
-                />
-              </Tooltip>
-            )
-          })}
-        </div>
-      )
-    }
+  const renderedPointBasedTributes = !points.length ? null : (
+    <Tooltip tipContents={pointBasedTributeAmountTooltip({ pointProgramUrl })}>
+      <div className="flex items-center gap-1">
+        <Icon name="solid:gem" />
+        <AmountAndUnitPair
+          amount={simplifyBigNumbers(points[0])}
+          unit={points[1]}
+          textAlign={textAlign}
+        />
+        <Icon name="circle-info" />
+      </div>
+    </Tooltip>
   )
 
-  return renderedTributes.length > 0 ? renderedTributes : 0
+  return tribute.length + points.length > 0 ? (
+    <div
+      className={twJoin(
+        "flex flex-col",
+        textAlign === "left" && "items-start",
+        textAlign === "center" && "items-center",
+        textAlign === "right" && "items-end"
+      )}
+    >
+      {renderedTokenBasedTributes}
+      {renderedPointBasedTributes}
+    </div>
+  ) : (
+    0
+  )
 }
