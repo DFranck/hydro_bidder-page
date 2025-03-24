@@ -8,15 +8,21 @@ import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAprGlobal() {
-  const { bidsInfo, currentRoundId, isLoading } = useBackendData()
+  const { atomPrice, bidsInfo, currentRoundId, isLoading } = useBackendData()
+
   const tokenBasedBidsInRound = Object.values(bidsInfo).filter(
     (bid) => bid.roundId === currentRoundId && !bid.points?.length
   )
-  const totalTributeApr = sumBy(
+
+  const summedTributeOverDuration = sumBy(
     tokenBasedBidsInRound,
-    (bid) => bid.apr_tribute || 0
+    (bid) => bid.tribute_value / bid.duration
   )
-  const averageTributeApr = totalTributeApr / tokenBasedBidsInRound.length
+
+  const summedVotingPowerInUsd =
+    sumBy(tokenBasedBidsInRound, (bid) => bid.power / 1e6) * atomPrice
+
+  const averageApr = (summedTributeOverDuration / summedVotingPowerInUsd) * 12
 
   return (
     <StatCard
@@ -30,7 +36,7 @@ export function CurrentRoundAprGlobal() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={(averageTributeApr || 0).toLocaleString("en-US", {
+      value={(averageApr || 0).toLocaleString("en-US", {
         style: "percent",
       })}
     />
