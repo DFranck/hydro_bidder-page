@@ -44,7 +44,7 @@ export function buildRow({ bid }: { bid: BidRevampMetrics }) {
         className="flex flex-row-reverse items-center gap-1"
       >
         <ConditionalWrapper
-          condition={bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD}
+          condition={(bid.vote_perc * 100) < VOTE_SHARE_THRESHOLD}
           wrapper={(children) => (
             <Tooltip
               tipContents={voteThresholdTooltip}
