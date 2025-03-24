@@ -30,7 +30,7 @@ export function augmentBackendDataBeforeWallet(
   const proposals = hydroRoundsData.flatMap((round) => round.round_bids)
 
   // Aux Fields
-  const atomPrice =
+  const atomPriceFromDeprecatedPricingData =
     assetListWithPrices[
       "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
     ]?.priceUsd ?? 0
@@ -65,7 +65,7 @@ export function augmentBackendDataBeforeWallet(
 
   const augmentedBidsBeforeWallet = proposals.map((proposal) =>
     augmentBidBeforeWallet({
-      atomPrice,
+      atomPrice: atomPriceFromDeprecatedPricingData,
       bid: proposal,
       rawBackendDataBeforeWallet,
       totalPowerByRoundId,
@@ -96,6 +96,11 @@ export function augmentBackendDataBeforeWallet(
       }
     )
     .flat()
+
+  const atomPrice =
+    hydroRoundsData[currentRoundId]?.round_prices[
+      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+    ]?.token_price ?? 0
 
   return {
     assetListWithPrices,
