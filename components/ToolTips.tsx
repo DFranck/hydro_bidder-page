@@ -125,7 +125,7 @@ export const bidTableTributeAprTooltip = ({
       <BidTribute bidId={bidId} textAlign="left" />
     </div>
     <p>
-      The estimated value of this bid's tribute is{" "}
+      The estimated value of this bid&rsquo;s tribute is{" "}
       <strong className="text-palette-green">
         {amountToUSDString(tributeValue, {
           appendUsd: false,
