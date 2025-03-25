@@ -7,5 +7,7 @@ export function getAPR({
   principalAssets: number
   rewardPeriodInMonths: number
 }) {
-  return (amountGained / principalAssets) * (rewardPeriodInMonths / 12) || 0
+  return !principalAssets
+    ? Infinity
+    : (amountGained / principalAssets) * (12 / rewardPeriodInMonths) || 0
 }

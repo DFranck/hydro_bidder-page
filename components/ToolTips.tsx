@@ -112,13 +112,29 @@ export const bidTablesFirstColumnTooltips = {
   },
 }
 
-export const bidTableTributeAprTooltip = ({ bidId }: { bidId: number }) => (
+export const bidTableTributeAprTooltip = ({
+  bidId,
+  tributeValue,
+}: {
+  bidId: number
+  tributeValue: number
+}) => (
   <div className="flex flex-col gap-3">
     <div className="flex flex-col">
       <StyledText variant="label">Tribute Size</StyledText>
       <BidTribute bidId={bidId} textAlign="left" />
     </div>
-
+    <p>
+      The estimated value of this bid&rsquo;s tribute is{" "}
+      <strong className="text-palette-green">
+        {amountToUSDString(tributeValue, {
+          appendUsd: false,
+          numberOfDecimals: 2,
+          removeTrailingZeros: true,
+        })}
+      </strong>
+      .
+    </p>
     <p>APR is estimated and based on the range of voting power in the round.</p>
   </div>
 )

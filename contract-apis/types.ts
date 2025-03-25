@@ -232,7 +232,7 @@ export interface BidRevampMetrics {
   duration: number
   id: number
   pointProgramUrl: any
-  points: any
+  points: [amount: number, denom: string] | []
   power: number
   request_amount: any
   roundId: number
@@ -240,20 +240,8 @@ export interface BidRevampMetrics {
   title: string
   trancheId: number
   tribute_value: number
-  tribute: [string, number][]
+  tribute: [denom: string, amount: number][]
   vote_perc: number
-}
-
-export interface EnvironmentVariables {
-  NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS: string
-  NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS: string
-  NUMIA_BIDS_ENDPOINT: string
-  NUMIA_COSMOS_HYDRO_APP_API_KEY: string
-  NUMIA_LOCKUPS_ENDPOINT: string
-  NUMIA_TRIBUTES_ENDPOINT: string
-  NUMIA_PRICES_ENDPOINT: string
-  NUMIA_USERS_ENDPOINT: string
-  URL: string
 }
 
 export interface GlobalLockupCapacityInfo {

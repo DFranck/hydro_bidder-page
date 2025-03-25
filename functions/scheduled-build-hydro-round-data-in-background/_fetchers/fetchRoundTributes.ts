@@ -47,7 +47,7 @@ export async function fetchRoundTributes({
     return tributes
   } else {
     const response = await fetch(
-      `${numiaTributesEndpoint}?round_id=${roundId}`,
+      `${numiaTributesEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
       {
         headers: {
           Accept: "application/json",

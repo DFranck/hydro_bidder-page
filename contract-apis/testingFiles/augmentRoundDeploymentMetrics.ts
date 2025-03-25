@@ -161,6 +161,7 @@ export function augmentRoundDeploymentMetrics(
       //vote_power      : vote_power,
       //vote_atom       : vote_atom,
       power: Number(bid.power),
+      vote_atom,
       vote_perc,
       // Status
       status,
@@ -168,9 +169,7 @@ export function augmentRoundDeploymentMetrics(
       apr_tribute:
         status === "Rejected"
           ? null
-          : (tributeValueInAtom / vote_atom / bid.deployment_duration) *
-            12 *
-            100,
+          : (tributeValueInAtom / vote_atom / bid.deployment_duration) * 12,
       apr_pol:
         status === "Rejected" || status === "Voting Period" ? null : null,
       apr_pol_target: estimatedPolAPR,

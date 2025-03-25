@@ -5,16 +5,14 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
-  const { bidsById, bidsInfo, currentRoundId, metricsForPostHydroBids } =
-    useBackendData()
-  const bid = bidsById[bidId]
+  const { bidsInfo } = useBackendData()
   const bidInfo = bidsInfo[bidId]
 
-  if (!bid) return null
+  if (!bidInfo) return null
 
-  const { apr_tribute } = bidInfo
+  const { apr_tribute, tribute_value } = bidInfo
 
-  const tributeApr = apr_tribute ?? 0
+  const tributeApr = (apr_tribute ?? 0) * 100
 
   const formattedTributeAprMin = tributeApr.toFixed(0)
 
@@ -52,7 +50,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         "inline-flex items-center gap-1",
         "border-b-2 border-dotted border-white/50 hover:border-white"
       )}
-      tipContents={bidTableTributeAprTooltip({ bidId })}
+      tipContents={bidTableTributeAprTooltip({ bidId, tributeValue: tribute_value ?? 0 })}
     >
       <StyledText variant="mathSymbol.container">{renderAprValue()}</StyledText>
     </Tooltip>

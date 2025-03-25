@@ -49,8 +49,11 @@ export async function fetchRoundBids({
     return proposals
   } else {
     try {
-      console.log(`${numiaBidsEndpoint}?round_id=${roundId}`)
-      const response = await fetch(`${numiaBidsEndpoint}?round_id=${roundId}`, {
+      const url = `${numiaBidsEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`
+
+      console.log(url)
+
+      const response = await fetch(url, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,

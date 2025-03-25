@@ -30,7 +30,7 @@ export function augmentBackendDataBeforeWallet(
   const proposals = hydroRoundsData.flatMap((round) => round.round_bids)
 
   // Aux Fields
-  const atomPrice =
+  const atomPriceFromDeprecatedPricingData =
     assetListWithPrices[
       "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
     ]?.priceUsd ?? 0
@@ -65,7 +65,7 @@ export function augmentBackendDataBeforeWallet(
 
   const augmentedBidsBeforeWallet = proposals.map((proposal) =>
     augmentBidBeforeWallet({
-      atomPrice,
+      atomPrice: atomPriceFromDeprecatedPricingData,
       bid: proposal,
       rawBackendDataBeforeWallet,
       totalPowerByRoundId,
@@ -75,19 +75,32 @@ export function augmentBackendDataBeforeWallet(
 
   // New Bids Info
   const bidsInfo = hydroRoundsData
-    .map(({ round_id, round_bids, round_lockups, round_tributes, round_prices }) => {
-      const roundParsedBids = augmentRoundDeploymentMetrics(
+    .map(
+      ({
         round_id,
         round_bids,
         round_lockups,
         round_tributes,
         round_prices,
-        bidMetaDataById,
-        currentRoundId
-      )
-      return roundParsedBids
-    })
+      }) => {
+        const roundParsedBids = augmentRoundDeploymentMetrics(
+          round_id,
+          round_bids,
+          round_lockups,
+          round_tributes,
+          round_prices,
+          bidMetaDataById,
+          currentRoundId
+        )
+        return roundParsedBids
+      }
+    )
     .flat()
+
+  const atomPrice =
+    hydroRoundsData[currentRoundId]?.round_prices[
+      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+    ]?.token_price ?? 0
 
   return {
     assetListWithPrices,

@@ -2,28 +2,31 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { averageAPRTooltip } from "@/components/ToolTips"
+import { averageAPRTooltip, VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAprGlobal() {
-  const { bidsById, currentRoundId, isLoading } = useBackendData()
-  const bidsInRound = Object.values(bidsById).filter(
-    (bid) => bid.roundId === currentRoundId
+  const { atomPrice, bidsInfo, currentRoundId, isLoading } = useBackendData()
+
+  const tokenBasedBidsInRoundAboveThreshold = Object.values(bidsInfo).filter(
+    (bid) =>
+      bid.roundId === currentRoundId &&
+      !bid.points?.length &&
+      bid.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
   )
 
-  // get the bids that have a points-based tribute and filter those out for the average
-  const bidsWithoutPointsTributes = bidsInRound.filter((bid) =>
-    bid.tributes.some((tribute) => tribute.isTokenBased)
+  const summedTributeOverDuration = sumBy(
+    tokenBasedBidsInRoundAboveThreshold,
+    (bid) => bid.tribute_value / bid.duration
   )
 
-  const totalTributeAprMin = sumBy(bidsWithoutPointsTributes, "tributeAprMin")
-  const totalTributeAprMax = sumBy(bidsWithoutPointsTributes, "tributeAprMax")
-  const averageTributeApr =
-    (totalTributeAprMin + totalTributeAprMax) /
-    2 /
-    bidsWithoutPointsTributes.length
+  const summedVotingPowerInUsd =
+    sumBy(tokenBasedBidsInRoundAboveThreshold, (bid) => bid.power / 1e6) *
+    atomPrice
+
+  const averageApr = (summedTributeOverDuration / summedVotingPowerInUsd) * 12
 
   return (
     <StatCard
@@ -37,7 +40,7 @@ export function CurrentRoundAprGlobal() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={(averageTributeApr || 0).toLocaleString("en-US", {
+      value={(averageApr || 0).toLocaleString("en-US", {
         style: "percent",
       })}
     />
