@@ -2,7 +2,8 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { averageAPRTooltip, VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
+import { averageAPRTooltip } from "@/components/ToolTips"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"

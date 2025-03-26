@@ -11,9 +11,9 @@ import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
   metricsPageNoDataTooltip,
-  VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 import {
   AugmentedBidFromNumiaSlimmed,
   BidMetaDataSlimmed,

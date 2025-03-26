@@ -1,6 +1,7 @@
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
-import { HYDRO_TELEGRAM_URL } from "@/config"
+import { IconString } from "@/components/Icon/types"
+import { SOCIAL_MEDIA_LINKS } from "@/config"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -60,19 +61,12 @@ export const Footer = () => {
             gap-3
           "
         >
-          <a href="https://cosmos.network" target="_blank" title="Cosmos Hub">
-            <Icon name="solid:globe" />
-          </a>
-          <a
-            href="https://twitter.com/cosmoshub"
-            target="_blank"
-            title="Twitter"
-          >
-            <Icon name="brands:twitter" />
-          </a>
-          <a href={HYDRO_TELEGRAM_URL} target="_blank" title="Telegram">
-            <Icon name="solid:paper-plane" />
-          </a>
+          {SOCIAL_MEDIA_LINKS.map(({ name, url, icon }) => (
+            <a href={url} target="_blank" title={name} key={name}>
+              <Icon name={icon as IconString} />
+              <span className="sr-only">{name}</span>
+            </a>
+          ))}
         </div>
       </ContentContainer>
     </div>

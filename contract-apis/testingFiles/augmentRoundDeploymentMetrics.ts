@@ -1,6 +1,6 @@
 import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 import { BidRevampMetrics, ProposalSlimmed, RoundPrices } from "../types"
 
 export function augmentRoundDeploymentMetrics(

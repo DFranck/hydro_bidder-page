@@ -1,15 +1,27 @@
 "use client"
 
-import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
-import { Tooltip } from "@/components/Tooltip"
+import { IconString } from "@/components/Icon/types"
+import { StyledText } from "@/components/StyledText"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
+import { HYDRO_TELEGRAM_URL } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
-import { twMerge } from "tailwind-merge"
+import { ReactNode, useState } from "react"
+import { twJoin } from "tailwind-merge"
+
+interface MenuItem {
+  disabled?: boolean
+  href?: string
+  iconLeft?: IconString
+  iconRight?: IconString
+  label: ReactNode
+  menuItems?: MenuItem[]
+  target?: string
+  tooltip?: ReactNode
+}
 
 export default function Navigation() {
   const pathname = usePathname()
@@ -18,30 +30,76 @@ export default function Navigation() {
   const { isWalletConnected } = backendData
   const isActuallyConnected = isWalletConnected || isConnected
 
-  const navigationMenuTriggerStyle = (link: string) => {
-    return twMerge(
-      `
-        block
-        text-sm
-        font-medium
-        leading-tight
-        tracking-tight
-        text-white
-        hover:text-palette-beige
-        focus:bg-transparent
-        focus:text-palette-beige
-        max-lg:w-full
-        max-lg:justify-center
-        max-lg:py-3
-        max-lg:text-center
-      `,
-      pathname?.startsWith(link) ? "font-bold text-palette-beige" : ""
-    )
-  }
-
   function blurActiveElement() {
     ;(document.activeElement as HTMLDivElement)?.blur()
   }
+
+  const menuItems: MenuItem[] = [
+    {
+      label: "Bids",
+      href: "/bids",
+    },
+    {
+      disabled: !isActuallyConnected,
+      label: "Lockups",
+      href: "/lockups",
+      tooltip: !isActuallyConnected ? needsWalletConnectionTooltip : undefined,
+    },
+    {
+      disabled: !isActuallyConnected,
+      label: "Rewards",
+      href: "/rewards",
+      tooltip: !isActuallyConnected ? needsWalletConnectionTooltip : undefined,
+    },
+    {
+      label: "Metrics",
+      href: "/metrics",
+    },
+    {
+      label: "Airdrops",
+      href: "/airdrops",
+    },
+    {
+      label: "Resources",
+      menuItems: [
+        {
+          href: "https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals",
+          iconLeft: "solid:gavel",
+          iconRight: "arrow-up-right-from-square",
+          label: "Governance",
+          target: "_blank",
+        },
+        {
+          href: "/docs",
+          iconLeft: "solid:book",
+          iconRight: "arrow-up-right-from-square",
+          label: "Docs",
+          target: "_blank",
+        },
+        {
+          href: "https://cosmos.network",
+          iconLeft: "solid:globe",
+          iconRight: "arrow-up-right-from-square",
+          label: "Cosmos.Network",
+          target: "_blank",
+        },
+        {
+          href: "https://twitter.com/cosmoshub",
+          iconLeft: "brands:twitter",
+          iconRight: "arrow-up-right-from-square",
+          label: "Twitter",
+          target: "_blank",
+        },
+        {
+          href: HYDRO_TELEGRAM_URL,
+          iconLeft: "solid:paper-plane",
+          iconRight: "arrow-up-right-from-square",
+          label: "Telegram",
+          target: "_blank",
+        },
+      ],
+    },
+  ]
 
   return (
     <nav
@@ -155,96 +213,121 @@ export default function Navigation() {
           z-30
           flex
           flex-col
-          items-center
           justify-between
+          max-lg:gap-3
+          max-lg:px-6
           max-lg:py-12
           max-lg:indent-96
           max-lg:transition-all
           max-lg:duration-500
           max-lg:group-focus-within/navbar:indent-0
           lg:flex-row
+          lg:items-center
           lg:gap-6
         "
-        onClick={blurActiveElement}
       >
-        <Link
-          href="https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals"
-          target="_blank"
-          className={twMerge(
-            navigationMenuTriggerStyle("/governance"),
-            `flex items-center gap-1`
-          )}
-        >
-          Governance <Icon name="solid:arrow-up-right" />
-        </Link>
+        {menuItems.map(
+          (
+            { label, href, disabled, tooltip, menuItems: subMenuItems },
+            index
+          ) => {
+            const hasMenuItems = !!subMenuItems?.length
 
-        <Link
-          href="/docs"
-          target="_blank"
-          className={twMerge(
-            navigationMenuTriggerStyle("/docs"),
-            `flex items-center gap-1`,
-            `md:border-r-2 lg:border-palette-beige/50 lg:pr-5`
-          )}
-        >
-          Docs <Icon name="solid:arrow-up-right" />
-        </Link>
+            return !hasMenuItems ? (
+              <StyledText
+                key={href}
+                as={Link}
+                href={href ?? "#"}
+                tooltip={tooltip}
+                className={twJoin(
+                  disabled && "pointer-events-none opacity-60",
+                  "hover:text-palette-beige",
+                  "max-lg:px-6",
+                  pathname?.startsWith(href ?? "") &&
+                    "font-bold text-palette-beige"
+                )}
+                onClick={blurActiveElement}
+              >
+                {label}
+              </StyledText>
+            ) : (
+              <div
+                className={twJoin(
+                  "group relative cursor-pointer",
+                  "flex flex-col justify-center",
+                  "max-lg:w-full",
+                  "max-lg:gap-3",
+                  "lg:items-center"
+                )}
+                key={index}
+              >
+                <button
+                  tabIndex={0}
+                  className={twJoin("flex items-center gap-1", "max-lg:px-6")}
+                  onFocus={() => console.log("Focused")}
+                  onBlur={() => console.log("Blurred")}
+                >
+                  {label} <Icon name="solid:chevron-down" />
+                </button>
 
-        <Link href="/bids" className={navigationMenuTriggerStyle("/bids")}>
-          Bids
-        </Link>
-
-        <ConditionalWrapper
-          condition={!isActuallyConnected}
-          wrapper={(children) => (
-            <Tooltip tipContents={needsWalletConnectionTooltip}>
-              {children}
-            </Tooltip>
-          )}
-        >
-          <Link
-            href="/lockups"
-            className={twMerge(
-              navigationMenuTriggerStyle("/lockups"),
-              !isActuallyConnected && "pointer-events-none opacity-60"
-            )}
-          >
-            Lockups
-          </Link>
-        </ConditionalWrapper>
-
-        <ConditionalWrapper
-          condition={!isActuallyConnected}
-          wrapper={(children) => (
-            <Tooltip tipContents={needsWalletConnectionTooltip}>
-              {children}
-            </Tooltip>
-          )}
-        >
-          <Link
-            href="/rewards"
-            className={twMerge(
-              navigationMenuTriggerStyle("/rewards"),
-              !isActuallyConnected && "pointer-events-none opacity-60"
-            )}
-          >
-            Rewards
-          </Link>
-        </ConditionalWrapper>
-
-        <Link
-          href={"/metrics"}
-          className={navigationMenuTriggerStyle("/metrics")}
-        >
-          Metrics
-        </Link>
-
-        <Link
-          href="/airdrops"
-          className={navigationMenuTriggerStyle("/airdrops")}
-        >
-          Airdrops
-        </Link>
+                <div
+                  className={twJoin(
+                    "flex flex-col",
+                    "transition-all",
+                    "max-lg:gap-3",
+                    "lg:absolute",
+                    "lg:z-20",
+                    "lg:top-full",
+                    "lg:-left-4",
+                    "lg:py-2",
+                    "lg:rounded-md",
+                    "lg:border",
+                    "lg:bg-palette-text",
+                    "lg:shadow-2xl",
+                    "lg:opacity-0",
+                    "lg:group-has-[:focus-within]:opacity-100"
+                  )}
+                >
+                  {subMenuItems.map(
+                    ({
+                      label,
+                      href,
+                      disabled = false,
+                      target,
+                      tooltip = null,
+                      iconLeft,
+                      iconRight,
+                    }) => (
+                      <StyledText
+                        key={href}
+                        as={Link}
+                        href={href ?? "#"}
+                        target={target}
+                        tooltip={tooltip}
+                        className={twJoin(
+                          disabled && "pointer-events-none opacity-60",
+                          "flex w-full items-center justify-between gap-6",
+                          "whitespace-nowrap transition-all",
+                          "lg:px-4",
+                          "lg:py-2",
+                          "lg:hover:bg-palette-green",
+                          "lg:hover:text-palette-text"
+                        )}
+                        onClick={blurActiveElement}
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          {iconLeft && <Icon name={iconLeft} />}
+                          {label}
+                        </span>
+                        {iconRight && <Icon name={iconRight} />}
+                      </StyledText>
+                    )
+                  )}
+                </div>
+              </div>
+            )
+          }
+        )}
 
         <Wallet notifyConnectedCB={setIsConnected} />
       </div>

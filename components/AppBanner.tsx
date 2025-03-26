@@ -80,18 +80,11 @@ export function AppBanner() {
           transition-all
           duration-300
         `,
-        isScrolled
-          ? `
-            py-1.5
-            text-xs
-          `
-          : `
-            py-2
-            text-sm
-          `
+        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm"
       )}
     >
       {text}
+
       <Link className="absolute inset-0 z-10" href={href} target="_blank">
         <span className="sr-only">Learn More</span>
       </Link>

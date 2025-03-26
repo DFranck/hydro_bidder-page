@@ -2,10 +2,8 @@ import { Icon } from "@/components/Icon"
 import { TD, TR } from "@/components/StyledTable"
 import { BaseRowObject, RowRenderProps } from "@/components/StyledTable/types"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
+import { voteThresholdTooltip } from "@/components/ToolTips"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 import { BidRevampMetrics } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { Fragment } from "react"
@@ -27,7 +25,7 @@ export function RowComponent<
   const shouldShowVoteThresholdLine =
     sortedColumnKey === "currentVoteShare" &&
     sortDirection === "DESC" &&
-    (row._bid.vote_perc * 100) < VOTE_SHARE_THRESHOLD
+    row._bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD
 
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
 
