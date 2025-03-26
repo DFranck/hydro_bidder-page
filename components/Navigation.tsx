@@ -317,7 +317,9 @@ export default function Navigation() {
                           "lg:px-4",
                           "lg:py-2",
                           "lg:hover:bg-palette-green",
-                          "lg:hover:text-palette-text"
+                          "lg:hover:text-palette-text",
+                          "lg:focus:bg-palette-green",
+                          "lg:focus:text-palette-text"
                         )}
                         onClick={blurActiveElement}
                       >
