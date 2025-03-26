@@ -263,7 +263,12 @@ export default function Navigation() {
               >
                 <button
                   tabIndex={0}
-                  className={twJoin("flex items-center gap-1", "max-lg:px-6")}
+                  className={twJoin(
+                    "flex items-center gap-1",
+                    "max-lg:px-6",
+                    "lg:hover:text-palette-beige",
+                    "lg:focus:text-palette-beige"
+                  )}
                   onFocus={() => console.log("Focused")}
                   onBlur={() => console.log("Blurred")}
                 >
@@ -278,7 +283,8 @@ export default function Navigation() {
                     "lg:absolute",
                     "lg:z-20",
                     "lg:top-full",
-                    "lg:-left-4",
+                    "lg:-left-10",
+                    "lg:mt-2",
                     "lg:py-2",
                     "lg:rounded-md",
                     "lg:border",
