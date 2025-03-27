@@ -1,4 +1,4 @@
-Before merging, please make sure you _and someone else_ have completed the following tasks. If they're obviously not applicable to your changes, you can delete it.
+Before merging, please make sure you _and someone else_ have completed the following tasks. If a test is obviously not applicable to your changes, you may delete it.
 
 **Lockup Tests**
 
