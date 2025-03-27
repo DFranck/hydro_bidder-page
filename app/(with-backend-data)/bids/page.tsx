@@ -37,7 +37,7 @@ export default function BidsPage() {
         {!isLoading &&
           bidsInRound.length > 0 &&
           tranches.map(({ id: trancheId }) => (
-            <BidsTable key={trancheId} trancheId={trancheId} />
+            <BidsTable key={`tranche_${trancheId}`} trancheId={trancheId} />
           ))}
       </ContentContainer>
     </>
