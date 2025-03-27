@@ -9,6 +9,7 @@ import { pluralize } from "@/lib/pluralize"
 import { ReactNode, useState } from "react"
 import { twJoin } from "tailwind-merge"
 import { useCopyToClipboard } from "usehooks-ts"
+import { EmptyBox } from "./EmptyBox"
 
 export function CollapsibleTable({
   children,
@@ -21,7 +22,7 @@ export function CollapsibleTable({
   title: ReactNode
   numRows: number
 }) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(numRows === 0)
 
   const [copiedText, copyToClipboard] = useCopyToClipboard()
   const [hasCopied, setHasCopied] = useState(false)
@@ -45,6 +46,7 @@ export function CollapsibleTable({
               as="button"
               variant="button.secondary.small"
               onClick={() => setIsCollapsed(!isCollapsed)}
+              disabled={numRows === 0}
             >
               <Icon name={isCollapsed ? "square-plus" : "square-minus"} />
               <span>{isCollapsed ? "Expand" : "Collapse"}</span>
@@ -67,25 +69,33 @@ export function CollapsibleTable({
         isCollapsed={!isCollapsed}
         className="[&[data-collapsed]]:opacity-0"
       >
-        <StyledText
-          variant="footnote"
-          className={twJoin("block text-center", "pb-1 pt-3")}
-        >
+        {numRows === 0 ? (
+          <EmptyBox>
+            <StyledText>
+              There are no bids in here yet — check back soon!
+            </StyledText>
+          </EmptyBox>
+        ) : (
           <StyledText
-            as="button"
-            variant="link"
-            className="inline-flex items-center gap-0.5"
-            onClick={() => setIsCollapsed(false)}
+            variant="footnote"
+            className={twJoin("block text-center", "pb-1 pt-3")}
           >
-            <Icon name="square-plus" />
-            <span>Expand</span>
-          </StyledText>{" "}
-          {pluralize({
-            count: numRows,
-            singular: "Bid",
-            prefixCount: true,
-          })}
-        </StyledText>
+            <StyledText
+              as="button"
+              variant="link"
+              className="inline-flex items-center gap-0.5"
+              onClick={() => setIsCollapsed(false)}
+            >
+              <Icon name="square-plus" />
+              <span>Expand</span>
+            </StyledText>{" "}
+            {pluralize({
+              count: numRows,
+              singular: "Bid",
+              prefixCount: true,
+            })}
+          </StyledText>
+        )}
       </CollapsibleBox>
 
       <CollapsibleBox
