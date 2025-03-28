@@ -3,6 +3,10 @@ import { getSupabaseNamespacedFilename } from "../lib/getSupabaseNamespacedFilen
 import { supabase } from "../lib/supabase"
 import { fetchHydroMetaData } from "./scheduled-build-hydro-round-data-in-background/_fetchers/fetchHydroMetaData"
 
+export const config: Config = {
+  schedule: "* * * * *", // every minute
+}
+
 export default async function () {
   console.log("Building hydro meta data...")
 
@@ -19,8 +23,4 @@ export default async function () {
     })
 
   console.log("Hydro meta data build completed successfully")
-}
-
-export const config: Config = {
-  schedule: "* * * * *", // every minute
 }
