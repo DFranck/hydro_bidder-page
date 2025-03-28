@@ -7,6 +7,10 @@ import { RawExternalData } from "../contract-apis/types"
 import { getSupabaseNamespacedFilename } from "../lib/getSupabaseNamespacedFilename"
 import { supabase } from "../lib/supabase"
 
+export const config: Config = {
+  schedule: "* * * * *", // every minute
+}
+
 export default async function () {
   console.log("Building external data...")
 
@@ -36,8 +40,4 @@ export default async function () {
     })
 
   console.log("External data build completed successfully")
-}
-
-export const config: Config = {
-  schedule: "* * * * *", // every minute
 }
