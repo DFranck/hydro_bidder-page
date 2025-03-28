@@ -52,7 +52,9 @@ To build data for your own local development:
   - Look for the output message telling you it was written to Supabase
 - Load the app and it will fetch the data assigned to your `NEXT_PUBLIC_SUPABASE_DATA_NAMESPACE`
 
-Alternatively, you can just visit [`http://localhost:3000/api/build-data`](http://localhost:3000/api/build-data) in your browser while the dev server is running.
+## Manually rebuild all the data RIGHT NOW
+
+Visit [`http://localhost:3000/api/build-data`](http://localhost:3000/api/build-data) in your browser while the dev server is running. It calls the three data-building functions manually, but if you're debugging the data-building itself, you'll want to use the Netlify approach above.
 
 ## To use production data:
 
