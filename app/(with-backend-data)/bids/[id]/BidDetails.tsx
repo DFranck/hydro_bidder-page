@@ -47,7 +47,6 @@ export function BidDetails({
     atomPrice,
     bidMetaDataById,
     bidsInfo,
-    bidsById,
     currentRoundId,
     votes,
     metricsForPostHydroBids,
@@ -65,7 +64,7 @@ export function BidDetails({
     title,
   } = bidMetaData
 
-  const bid = bidsById[bidId]
+  const bid = bidsInfo[bidId]
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
@@ -104,7 +103,7 @@ export function BidDetails({
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
-  const tributeUsdc = sumBy(bid.tributes, "valueUsd")
+  const tributeUsdc = bid.tribute_value
 
   const totalTributeValueInAtom = tributeUsdc / atomPrice
 
@@ -122,7 +121,7 @@ export function BidDetails({
   const votingStats = {
     bidPower: formatAmount(bid.power, 6, 0),
     totalPower: formatAmount(totalPowerInRound, 6, 0),
-    percentage: formatAmount(bid.percentage, 0, 2),
+    percentage: formatAmount(bid.vote_perc * 100, 0, 2),
   }
 
   return (
@@ -430,10 +429,10 @@ export function BidDetails({
                 "
               >
                 <StyledText variant="mathSymbol.container">
-                  <span>{Math.round(bid.percentage)}</span>
+                  <span>{Math.round(bid.vote_perc * 100)}</span>
                   <StyledText variant="mathSymbol">%</StyledText>
                 </StyledText>
-                {bid.percentage < VOTE_SHARE_THRESHOLD && (
+                {bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD && (
                   <Tooltip tipContents={voteThresholdTooltip}>
                     <span
                       className="

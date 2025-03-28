@@ -1,7 +1,18 @@
-import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
+import {
+  LiquidityDeployment,
+  LockupWithPerTrancheInfo,
+} from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
-import { BidRevampMetrics, ProposalSlimmed, RoundPrices } from "../types"
+import {
+  BidRevampMetrics,
+  ProposalSlimmed,
+  RoundPrices,
+  TokenBasedTribute,
+} from "../types"
+import { getCoinWithValueInUsdByRoundPrices } from "../getCoinWithValueInUsd"
+import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
+import { omit } from "lodash"
 
 export function augmentRoundDeploymentMetrics(
   roundId: number,
@@ -10,7 +21,8 @@ export function augmentRoundDeploymentMetrics(
   roundTributes: Tribute[],
   roundPrices: RoundPrices, //{[key: string] : { token_symbol: string, decimals: number, priceUsd: number }},
   bidDescriptions: Record<string, any>,
-  currentRoundId: number
+  currentRoundId: number,
+  liquidityDeployments: LiquidityDeployment[]
 ): BidRevampMetrics[] {
   const proposalsTributes: Record<string, Record<string, number>> = {}
   const proposalsVotes: Record<string, any> = {}
@@ -140,6 +152,62 @@ export function augmentRoundDeploymentMetrics(
             ? "Completed"
             : "Ongoing"
 
+    const tributes: TokenBasedTribute[] = roundTributes
+      .filter(
+        (x) => x.round_id === bid.round_id && x.proposal_id === proposalId
+      )
+      .map((tribute) => {
+        const { funds, tribute_id } = tribute
+
+        const fundsWithPrice = getCoinWithValueInUsdByRoundPrices({
+          coin: funds,
+          roundPrices,
+        })
+
+        return {
+          ...keysFromSnakeToCamelCase(omit(tribute, "proposal_id")),
+          id: tribute_id,
+          amount: fundsWithPrice.printableAmount,
+          bidId: proposalId,
+          denom: fundsWithPrice.humanReadableDenom,
+          denomOriginal: funds.denom,
+          priceUsd: fundsWithPrice.priceUsd,
+          valueUsd: fundsWithPrice.valueUsd,
+        }
+      })
+
+    const liquidityDeployment =
+      liquidityDeployments.find(
+        (liquidityDeployment) =>
+          liquidityDeployment.round_id === bid.round_id &&
+          liquidityDeployment.proposal_id === proposalId
+      ) ?? null
+
+    const augmentedDeployedFunds =
+      liquidityDeployment?.deployed_funds.map((coin) =>
+        getCoinWithValueInUsdByRoundPrices({
+          coin,
+          roundPrices,
+        })
+      ) ?? null
+
+    const augmentedFundsBeforeDeployment =
+      liquidityDeployment?.funds_before_deployment.map((coin) =>
+        getCoinWithValueInUsdByRoundPrices({
+          coin,
+          roundPrices,
+        })
+      ) ?? null
+
+    const augmentedLiquidityDeployment = liquidityDeployment
+      ? {
+          ...keysFromSnakeToCamelCase(omit(liquidityDeployment, "proposal_id")),
+          bidId: proposalId,
+          deployedFunds: augmentedDeployedFunds,
+          fundsBeforeDeployment: augmentedFundsBeforeDeployment,
+        }
+      : null
+
     return {
       // ID
       id: bid.proposal_id,
@@ -152,8 +220,10 @@ export function augmentRoundDeploymentMetrics(
       points: proposalPoints,
       pointProgramUrl: proposalPointProgramUrl,
       // Onchain tributes
+      tributes,
       tribute: tributeUnderlyingAssets,
       tribute_value: tributeValueInUsdc,
+      liquidityDeployment: augmentedLiquidityDeployment,
       // Deployment details
       duration: bid.deployment_duration,
       // Votes
@@ -161,7 +231,6 @@ export function augmentRoundDeploymentMetrics(
       //vote_power      : vote_power,
       //vote_atom       : vote_atom,
       power: Number(bid.power),
-      vote_atom,
       vote_perc,
       // Status
       status,

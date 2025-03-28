@@ -3,9 +3,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import Image from "next/image"
 
 export function BidLogoAndTitle({ bidId }: { bidId: number }) {
-  const backendData = useBackendData()
-  const { bidMetaDataById, bidsById } = backendData
-  const bid = bidsById[bidId]
+  const { bidMetaDataById, bidsInfo } = useBackendData()
+  const bid = bidsInfo[bidId]
 
   if (!bid) return null
 

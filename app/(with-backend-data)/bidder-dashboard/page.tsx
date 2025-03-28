@@ -30,7 +30,7 @@ export default function BidsDashboardPage() {
 
   const {
     bidMetaDataById,
-    bidsById,
+    bidsInfo,
     currentRoundId,
     isLoading,
     votesByRoundId,
@@ -46,10 +46,10 @@ export default function BidsDashboardPage() {
     return getBidDashboardTableRows(
       openedRows,
       toggleRow,
-      Object.values(bidsById).filter((bid) => bid.roundId === currentRoundId),
+      Object.values(bidsInfo).filter((bid) => bid.roundId === currentRoundId),
       bidMetaDataById
     )
-  }, [bidMetaDataById, bidsById, currentRoundId, openedRows])
+  }, [bidMetaDataById, bidsInfo, currentRoundId, openedRows])
 
   return (
     <>

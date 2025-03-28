@@ -1,4 +1,3 @@
-import { augmentBidBeforeWallet } from "@/contract-apis/augmentBidBeforeWallet"
 import { augmentNumiaBids } from "@/contract-apis/augmentNumiaBids"
 import {
   AugmentedBackendDataBeforeWallet,
@@ -6,10 +5,7 @@ import {
   GlobalLockupCapacityInfo,
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
-import groupBy from "lodash/groupBy"
 import keyBy from "lodash/keyBy"
-import mapValues from "lodash/mapValues"
-import sumBy from "lodash/sumBy"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
@@ -19,26 +15,24 @@ export function augmentBackendDataBeforeWallet(
   const { hydroMetaData, hydroRoundData, externalData } =
     rawBackendDataBeforeWallet
 
-  const { constants, round_end, round_id, total_locked_tokens, tranches } =
-    hydroMetaData
+  const {
+    constants,
+    round_end,
+    round_id,
+    total_locked_tokens,
+    tranches,
+    liquidity_deployments,
+  } = hydroMetaData
 
   const { assetListWithPrices, bidMetaDataById, numiaBids, numiaMetrics } =
     externalData
 
   const hydroRoundsData = hydroRoundData
 
-  const proposals = hydroRoundsData.flatMap((round) => round.round_bids)
-
   // Aux Fields
-  const atomPriceFromDeprecatedPricingData =
-    assetListWithPrices[
-      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-    ]?.priceUsd ?? 0
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
-  const currentRoundId = round_id
 
   // Hydro Capacity Info
-
   const lockedAtomMaxGlobal = constants.max_locked_tokens / 1e6
   const lockedAtomTotalGlobal = total_locked_tokens / 1e6
   const lockedAtomRemainingCapacityGlobal = Number(
@@ -58,19 +52,6 @@ export function augmentBackendDataBeforeWallet(
   }
 
   // Legacy Info
-  const totalPowerByRoundId = mapValues(
-    groupBy(proposals, "round_id"),
-    (roundProposals) => sumBy(roundProposals, (o) => Number(o.power))
-  )
-
-  const augmentedBidsBeforeWallet = proposals.map((proposal) =>
-    augmentBidBeforeWallet({
-      atomPrice: atomPriceFromDeprecatedPricingData,
-      bid: proposal,
-      rawBackendDataBeforeWallet,
-      totalPowerByRoundId,
-    })
-  )
   const { postHydroBids, preHydroBids } = augmentNumiaBids(numiaBids)
 
   // New Bids Info
@@ -90,7 +71,8 @@ export function augmentBackendDataBeforeWallet(
           round_tributes,
           round_prices,
           bidMetaDataById,
-          currentRoundId
+          round_id,
+          liquidity_deployments
         )
         return roundParsedBids
       }
@@ -98,7 +80,7 @@ export function augmentBackendDataBeforeWallet(
     .flat()
 
   const atomPrice =
-    hydroRoundsData[currentRoundId]?.round_prices[
+    hydroRoundsData[round_id]?.round_prices[
       "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
     ]?.token_price ?? 0
 
@@ -107,7 +89,6 @@ export function augmentBackendDataBeforeWallet(
     atomPrice,
     bidMetaDataById,
     bidsInfo: keyBy(bidsInfo, "id"),
-    bidsById: keyBy(augmentedBidsBeforeWallet, "id"),
     currentRoundEndDate,
     currentRoundId: round_id,
     currentRoundIsPilot: true,

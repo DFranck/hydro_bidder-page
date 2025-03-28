@@ -5,14 +5,10 @@ import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { HYDRO_TELEGRAM_URL } from "@/config"
-import {
-  AugmentedBidAfterWallet,
-  BidMetaDataSlimmed,
-} from "@/contract-apis/types"
+import { AugmentedBidAfterWallet, BidMetaDataSlimmed } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
-import sumBy from "lodash/sumBy"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
@@ -259,8 +255,8 @@ export const estimatedRewardsTooltip = ({
   const { projectName } = bidInfoFromGithub
 
   const totalTributeValue = isTokenBased
-    ? (sumBy(bid.tributes, "valueUsd") ?? 0)
-    : (sumBy(bid.tributes, "amount") ?? 0)
+    ? (bid.tribute_value ?? 0)
+    : (bid.points[0] ?? 0)
 
   const percentageOfTotalTributeValue =
     totalTributeValue > 0
@@ -273,7 +269,7 @@ export const estimatedRewardsTooltip = ({
         ? // $1,234 USD
           amountToUSDString(totalTributeValue)
         : // 1,234 POINTS
-          `${formatAmount(totalTributeValue)} ${bid.tributes[0].denom}`}
+          `${formatAmount(totalTributeValue)} ${bid.points[1]}`}
     </strong>
   )
 
