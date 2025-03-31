@@ -1,36 +1,26 @@
 "use client"
 
-import { CollapsibleTable } from "@/components/CollapsibleTable"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
-import { Icon } from "@/components/Icon"
 import { StatCards } from "@/components/StatCards"
-import { StyledTable, TD, TR } from "@/components/StyledTable"
-import { RowRenderFunction } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  metricsPageNoDataTooltip,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
-import { VOTE_SHARE_THRESHOLD } from "@/config"
+import { metricsPageNoDataTooltip } from "@/components/ToolTips"
 import {
   AugmentedBidFromNumiaSlimmed,
   BidMetaDataSlimmed,
   BidRevampMetrics,
 } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { groupBy, mapValues } from "lodash"
 import max from "lodash/max"
 import range from "lodash/range"
 import uniq from "lodash/uniq"
 import Link from "next/link"
-import { Fragment, ReactNode, useCallback, useMemo } from "react"
+import { Fragment, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
-import { getMetricsTableColumns } from "./getMetricsTableColumns"
-import { getMetricsTableRows } from "./getMetricsTableRows"
+import { MetricsTable } from "./MetricsTable"
 
-const PRE_HYDRO_ROUND_ID = -1
+export const PRE_HYDRO_ROUND_ID = -1
 
 export interface MetricsRow {
   _bid: BidRevampMetrics | AugmentedBidFromNumiaSlimmed
@@ -49,13 +39,7 @@ export function MetricsPage({
 }: {
   requestedRoundNumber: number | null
 }) {
-  const {
-    bidsInfo,
-    bidMetaDataById,
-    currentRoundId,
-    metricsForPreHydroBids,
-    tranches,
-  } = useBackendData()
+  const { bidsInfo, currentRoundId, tranches } = useBackendData()
 
   const bids = Object.values(bidsInfo)
 
@@ -73,116 +57,10 @@ export function MetricsPage({
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
 
-  const bidsToRender = requestedPreHydro
-    ? metricsForPreHydroBids
-    : bids.filter((bid) => bid.roundId === requestedRoundId)
-
-  const bidsByTrancheId = useMemo(
-    () => groupBy(bidsToRender, "trancheId"),
-    [bidsToRender]
-  )
-
-  const metricTableColumns = getMetricsTableColumns(
-    requestedPreHydro,
-    currentRoundId,
-    requestedRoundId
-  )
-
-  const metricRowsByTrancheId = useMemo(
-    () =>
-      mapValues(bidsByTrancheId, (bidsInTranche) =>
-        getMetricsTableRows(
-          (bidsInTranche as
-            | AugmentedBidFromNumiaSlimmed[]
-            | BidRevampMetrics[]) || [],
-          bidsInfo,
-          bidMetaDataById,
-          requestedPreHydro
-        )
-      ),
-    [bidsByTrancheId]
-  )
-
-  function secondPassSortFunction(sortedRows: MetricsRow[]) {
-    return [...sortedRows].sort((a, b) => {
-      if (requestedPreHydro) {
-        return 0
-      }
-      const aExceedsThreshold =
-        a._bidFromContract.vote_perc &&
-        a._bidFromContract.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
-      const bExceedsThreshold =
-        b._bidFromContract.vote_perc &&
-        b._bidFromContract.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
-      return Number(bExceedsThreshold) - Number(aExceedsThreshold)
-    })
-  }
-
-  const renderRow = useCallback<
-    RowRenderFunction<MetricsRow, keyof MetricsRow>
-  >(
-    ({ children, row, rowProps }) => {
-      const shouldShowVoteThresholdLine =
-        !requestedPreHydro &&
-        row._bidFromContract.vote_perc !== null &&
-        row._bidFromContract.vote_perc * 100 < VOTE_SHARE_THRESHOLD
-
-      return (
-        <Fragment key={row._bid.id}>
-          {!!shouldShowVoteThresholdLine && (
-            <TR className="js-vote-threshold-line [&~&]:hidden">
-              <TD colSpan={99} className="!p-0">
-                <div
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                    gap-3
-                    whitespace-nowrap
-                    text-xs
-                    text-palette-beige
-                  "
-                >
-                  <div
-                    className="
-                      w-full
-                      border-t-2
-                      border-palette-beige
-                    "
-                  />
-
-                  <Tooltip tipContents={voteThresholdTooltip}>
-                    <div className="flex items-center gap-1">
-                      <Icon name="solid:circle" />
-                      <span>
-                        These bids are below the{" "}
-                        <strong>
-                          {VOTE_SHARE_THRESHOLD}% vote share threshold
-                        </strong>
-                      </span>
-                      <Icon name="circle-info" />
-                    </div>
-                  </Tooltip>
-
-                  <div
-                    className="
-                      w-full
-                      border-t-2
-                      border-palette-beige
-                    "
-                  />
-                </div>
-              </TD>
-            </TR>
-          )}
-          <TR key={row._bid.id} {...rowProps}>
-            {children}
-          </TR>
-        </Fragment>
-      )
-    },
-    [voteThresholdTooltip]
-  )
+  const displayTranches = tranches.map((x) => {
+    const displayTrancheFromRound = x.id === 2 ? 4 : 0
+    return { ...x, displayTrancheFromRound }
+  })
 
   return (
     <>
@@ -261,27 +139,26 @@ export function MetricsPage({
             )}
           </div>
         </div>
-        {Object.entries(metricRowsByTrancheId).map(
-          ([trancheId, metricRowsInTranche]) => {
-            const tranche = tranches.find((t) => t.id === Number(trancheId))
-            const tableId = `metrics-table-${trancheId}`
+        {requestedPreHydro ? (
+          <MetricsTable
+            key={`tranche_0`}
+            trancheId={0}
+            requestedRoundNumber={requestedRoundNumber}
+          />
+        ) : (
+          displayTranches.map(({ id: trancheId, displayTrancheFromRound }) => {
+            if (requestedRoundId < displayTrancheFromRound) {
+              return <Fragment key={`empty_tranche_${trancheId}`} />
+            }
+
             return (
-              <CollapsibleTable
-                key={tableId}
-                id={tableId}
-                title={tranche?.name ?? <em>(Unnamed Tranche)</em>}
-                numRows={metricRowsInTranche.length}
-              >
-                <StyledTable
-                  initialSortedColumnKey="amount"
-                  columns={metricTableColumns}
-                  rows={metricRowsInTranche}
-                  renderRow={renderRow}
-                  secondPassSortFunction={secondPassSortFunction}
-                />
-              </CollapsibleTable>
+              <MetricsTable
+                key={`tranche_${trancheId}`}
+                trancheId={trancheId}
+                requestedRoundNumber={requestedRoundNumber}
+              />
             )
-          }
+          })
         )}
       </ContentContainer>
     </>

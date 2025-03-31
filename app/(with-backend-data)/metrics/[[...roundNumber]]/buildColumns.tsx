@@ -16,7 +16,7 @@ import {
 } from "@/contract-apis/types"
 import { MetricsRow } from "./MetricsPage"
 
-export function getMetricsTableColumns(
+export function buildColumns(
   requestedPreHydro: boolean,
   currentRoundId: number,
   requestedRoundId: number
@@ -76,7 +76,7 @@ export function getMetricsTableColumns(
       },
       isSortable: true,
       initialSortDirection: "ASC",
-      customValueGetter: (row) => row._bidFromContract.duration,
+      customValueGetter: (row) => row._bidFromContract?.duration,
     },
     {
       key: "polApr",
@@ -94,7 +94,7 @@ export function getMetricsTableColumns(
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bidFromContract.apr_pol ?? 0,
+      customValueGetter: (row) => row._bidFromContract?.apr_pol ?? 0,
     },
     {
       key: "tributeApr",
@@ -116,9 +116,7 @@ export function getMetricsTableColumns(
       textAlign: "right",
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: ({ _bidFromContract }) => {
-        return _bidFromContract.apr_tribute ?? 0
-      },
+      customValueGetter: (row) => row._bidFromContract?.apr_tribute ?? 0,
     },
     {
       key: "status",
