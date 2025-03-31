@@ -1,6 +1,6 @@
-import buildExternalData from "../../../functions/scheduled-build-external-data.mts"
-import buildHydroMetaData from "../../../functions/scheduled-build-hydro-meta-data.mts"
-import buildHydroRoundData from "../../../functions/scheduled-build-hydro-round-data-in-background/index.mts"
+import buildExternalData from "../../../functions/scheduled-build-external-data"
+import buildHydroMetaData from "../../../functions/scheduled-build-hydro-meta-data"
+import buildHydroRoundData from "../../../functions/scheduled-build-hydro-round-data-in-background"
 
 export async function GET() {
   try {
