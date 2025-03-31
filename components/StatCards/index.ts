@@ -15,6 +15,7 @@ import { CurrentRoundPoLAvailable } from "./cards/CurrentRoundPoLAvailable"
 import { CurrentRoundTimeLeft } from "./cards/CurrentRoundTimeLeft"
 import { CurrentRoundUniqueWallets } from "./cards/CurrentRoundUniqueWallets"
 import { CurrentRoundVotingPowerWallet } from "./cards/CurrentRoundVotingPowerWallet"
+import { RedistributionProgress } from "./cards/RedistributionProgress"
 
 const StatCards = Object.assign(BaseStatCards, {
   CurrentRoundAprGlobal,
@@ -33,6 +34,7 @@ const StatCards = Object.assign(BaseStatCards, {
   CurrentRoundAtomLockedWallet,
   AllTimeRewardsWallet,
   CurrentRoundVotingPowerWallet,
+  RedistributionProgress,
 })
 
 export { StatCards }

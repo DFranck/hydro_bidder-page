@@ -14,6 +14,7 @@ import {
 import { useBackendData } from "@/contract-apis/useBackendData"
 import max from "lodash/max"
 import range from "lodash/range"
+import sumBy from "lodash/sumBy"
 import uniq from "lodash/uniq"
 import Link from "next/link"
 import { Fragment, ReactNode } from "react"
@@ -62,10 +63,56 @@ export function MetricsPage({
     return { ...x, displayTrancheFromRound }
   })
 
+  /* ####################################################### */
+
+  const totalTributePaidUsd = sumBy(
+    Object.values(bidsInfo),
+    (bid) => bid.totalTokenBasedTributeValue,
+  )
+  const totalTributeOwedUsd = 667_500
+  const percentRedistributed = (
+    (totalTributePaidUsd / totalTributeOwedUsd) *
+    100
+  ).toFixed(2)
+
+  /* ####################################################### */
+
   return (
     <>
-      <StatCards>
-        <StatCards.CurrentRoundPoLAvailable />
+      <StatCards
+      // bottomSlot={
+      //   <ContentContainer
+      //     className={twJoin(
+      //       "max-w-[90%] gap-6 pb-6",
+      //       "flex flex-row items-center",
+      //     )}
+      //   >
+      //     <div
+      //       className={twJoin(
+      //         "whitespace-nowrap",
+      //         "text-sm font-bold transition-all xl:text-base",
+      //       )}
+      //     >
+      //       Redistributed to ATOM Stakers:
+      //     </div>
+
+      //     <StyledText variant="progressBar.container">
+      //       <StyledText
+      //         variant="progressBar"
+      //         style={{
+      //           minWidth: `${percentRedistributed}%`,
+      //         }}
+      //       >
+      //         {percentRedistributed}%
+      //       </StyledText>
+      //       <div className="px-3 font-bold text-palette-beige">
+      //         ${Math.round(totalTributePaidUsd).toLocaleString()}
+      //       </div>
+      //     </StyledText>
+      //   </ContentContainer>
+      // }
+      >
+        <StatCards.RedistributionProgress />
         <StatCards.AllTimePoLDeployed />
         <StatCards.AllTimePoLRevenue />
       </StatCards>
@@ -77,10 +124,21 @@ export function MetricsPage({
         >
           <h2 className="sr-only">PoL Metrics by Round</h2>
 
-          <div>
-            <StyledText as="p" variant="footnote">
+          <div className="flex flex-col gap-1">
+            <StyledText variant="footnote">
               Metrics are updated at the end of each round.
             </StyledText>
+            {/* <ProgressBar
+              percentage={Number(percentRedistributed)}
+              className="w-full"
+            />
+            <div>
+              <span className="font-bold text-palette-green">
+                ${Math.round(totalTributePaidUsd).toLocaleString()}
+              </span>{" "}
+              of <span>${totalTributeOwedUsd.toLocaleString()}</span>{" "}
+              redistributed to ATOM stakers
+            </div> */}
           </div>
 
           <div className="flex items-center backdrop-blur-sm">
@@ -102,7 +160,7 @@ export function MetricsPage({
                       "transition-all",
                       !isActive &&
                         "text-palette-green/50 hover:text-palette-green",
-                      !hasData && "cursor-default"
+                      !hasData && "cursor-default",
                     )}
                   >
                     <ConditionalWrapper
@@ -117,6 +175,7 @@ export function MetricsPage({
                         {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
                       </span>
                     </ConditionalWrapper>
+
                     {roundId === currentRoundId && (
                       <span
                         className={twJoin(
@@ -127,7 +186,7 @@ export function MetricsPage({
                           "group-hover:text-palette-text group-hover:before:bg-palette-beige",
                           isActive
                             ? "text-palette-text before:bg-palette-beige"
-                            : "text-palette-text/50 before:bg-palette-beige/60"
+                            : "text-palette-text/50 before:bg-palette-beige/60",
                         )}
                       >
                         Current
@@ -135,10 +194,11 @@ export function MetricsPage({
                     )}
                   </StyledText>
                 )
-              }
+              },
             )}
           </div>
         </div>
+
         {requestedPreHydro ? (
           <MetricsTable
             key={`tranche_0`}
@@ -160,6 +220,14 @@ export function MetricsPage({
             )
           })
         )}
+
+        <StyledText
+          as="p"
+          variant="footnote"
+          className="mx-auto inline-block rounded-full bg-palette-text/80 px-3 py-1 text-center backdrop-blur-md"
+        >
+          Metrics are updated at the end of each round.
+        </StyledText>
       </ContentContainer>
     </>
   )
