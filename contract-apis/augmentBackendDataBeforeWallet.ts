@@ -28,6 +28,7 @@ export function augmentBackendDataBeforeWallet(
     externalData
 
   const hydroRoundsData = hydroRoundData
+  const currentRoundId = round_id
 
   // Aux Fields
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
@@ -71,7 +72,7 @@ export function augmentBackendDataBeforeWallet(
           round_tributes,
           round_prices,
           bidMetaDataById,
-          round_id,
+          currentRoundId,
           liquidity_deployments
         )
         return roundParsedBids

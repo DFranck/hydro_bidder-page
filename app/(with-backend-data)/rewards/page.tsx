@@ -48,8 +48,7 @@ export default function RewardsPage() {
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
-      bid.tribute &&
-      bid.tribute.length > 0 // has token-based tribute
+      bid.tokenBasedTributes.length > 0 // has token-based tribute
   )
 
   const [selectedTribute, setSelectedTribute] =
@@ -81,7 +80,7 @@ export default function RewardsPage() {
       const bidUrl = `/bids/${bid.id}`
       const bidDescriptionFromGithub = bidMetaDataById[bid.id]
       const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
-      return bid.tributes.map((tribute) => {
+      return bid.tokenBasedTributes.map((tribute) => {
         const findClaimForBid = (claim: (typeof claimsOutstanding)[number]) =>
           claim.bidId === bid.id &&
           claim.tributeId === tribute.id &&
@@ -247,7 +246,7 @@ export default function RewardsPage() {
         className: "relative whitespace-nowrap",
       },
       customValueGetter: (row) =>
-        row._bid.tributes
+        row._bid.tokenBasedTributes
           .map((t) => t.denom)
           .sort()
           .join(", "),
@@ -267,7 +266,7 @@ export default function RewardsPage() {
         className: "whitespace-nowrap",
       },
       isSortable: true,
-      customValueGetter: (row) => row._bid.tribute_value,
+      customValueGetter: (row) => row._bid.totalTokenBasedTributeValue,
     },
     {
       key: "claimStatus",

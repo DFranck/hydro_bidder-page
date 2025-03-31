@@ -10,7 +10,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   if (!bidInfo) return null
 
-  const { apr_tribute, tribute_value } = bidInfo
+  const { apr_tribute, totalTokenBasedTributeValue } = bidInfo
 
   const tributeApr = (apr_tribute ?? 0) * 100
 
@@ -50,7 +50,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         "inline-flex items-center gap-1",
         "border-b-2 border-dotted border-white/50 hover:border-white"
       )}
-      tipContents={bidTableTributeAprTooltip({ bidId, tributeValue: tribute_value ?? 0 })}
+      tipContents={bidTableTributeAprTooltip({ bidId, tributeValue: totalTokenBasedTributeValue })}
     >
       <StyledText variant="mathSymbol.container">{renderAprValue()}</StyledText>
     </Tooltip>

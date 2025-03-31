@@ -103,9 +103,7 @@ export function BidDetails({
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
-  const tributeUsdc = bid.tribute_value
-
-  const totalTributeValueInAtom = tributeUsdc / atomPrice
+  const totalTributeValueInAtom = bid.totalTokenBasedTributeValue / atomPrice
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 

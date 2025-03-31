@@ -18,7 +18,7 @@ export function TributesList({
 }: TributesListProps) {
   return (
     <div className={twJoin("grid grid-cols-[max-content_auto_min-content]")}>
-      {tokenBasedTributes.length === 0 && pointBasedTributes.length === 0 && (
+      {tokenBasedTributes.length + pointBasedTributes.length === 0 && (
         <EmptyBox className="col-span-3">
           <StyledText variant="label">No tributes on this bid</StyledText>
         </EmptyBox>
@@ -36,8 +36,7 @@ export function TributesList({
           )}
         />
       ))}
-      {pointBasedTributes &&
-        pointBasedTributes.length > 0 &&
+      {pointBasedTributes.length > 0 &&
         pointBasedTributes[0] &&
         pointBasedTributes[1] && (
           <TributesListItemPointBased

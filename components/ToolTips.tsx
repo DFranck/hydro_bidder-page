@@ -255,8 +255,8 @@ export const estimatedRewardsTooltip = ({
   const { projectName } = bidInfoFromGithub
 
   const totalTributeValue = isTokenBased
-    ? (bid.tribute_value ?? 0)
-    : (bid.points[0] ?? 0)
+    ? (bid.totalTokenBasedTributeValue)
+    : (bid.points?.[0] ?? 0)
 
   const percentageOfTotalTributeValue =
     totalTributeValue > 0
@@ -269,7 +269,7 @@ export const estimatedRewardsTooltip = ({
         ? // $1,234 USD
           amountToUSDString(totalTributeValue)
         : // 1,234 POINTS
-          `${formatAmount(totalTributeValue)} ${bid.points[1]}`}
+          `${formatAmount(totalTributeValue)} ${bid.points?.[1]}`}
     </strong>
   )
 

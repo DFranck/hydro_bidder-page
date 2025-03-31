@@ -11,7 +11,10 @@ import {
 import { Tooltip } from "@/components/Tooltip"
 import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
 import { TributesList } from "@/components/Tributes/TributesList/TributesList"
-import { AugmentedBidAfterWallet, BidMetaDataByIdSlimmed } from "@/contract-apis/types"
+import {
+  AugmentedBidAfterWallet,
+  BidMetaDataByIdSlimmed,
+} from "@/contract-apis/types"
 
 export function getBidDashboardTableRows(
   openedRows: number[],
@@ -74,8 +77,8 @@ export function getBidDashboardTableRows(
 
       additional: isOpened && (
         <TributesList
-          tokenBasedTributes={bid.tributes}
-          pointBasedTributes={bid.points}
+          tokenBasedTributes={bid.tokenBasedTributes}
+          pointBasedTributes={bid.points || []}
           bidDescription={bidDescriptions?.[bid.id]}
         />
       ),
@@ -83,7 +86,8 @@ export function getBidDashboardTableRows(
   })
 
   const tokenBasedBids = rows.filter(
-    (row) => row._bid.tribute && row._bid.tribute.length > 0
+    (row) =>
+      row._bid.tokenBasedTributes && row._bid.tokenBasedTributes.length > 0
   )
 
   const pointBasedBids = rows.filter(

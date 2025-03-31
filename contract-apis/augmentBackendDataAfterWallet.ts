@@ -53,7 +53,7 @@ export function augmentBackendDataAfterWallet({
   const bidsWithRewards = allBids.map((bid) => {
     const usersEstimatedRewards =
       estimatedRewardForPower({
-        amount: bid.tribute_value,
+        amount: bid.totalTokenBasedTributeValue,
         walletVotingPower: voting_power,
         bidPower: Number(bid.power),
       }) ?? 0

@@ -43,7 +43,10 @@ export function getBidDashboardTableColumns(
       propsForCells: {
         className: classNames.classNamesForCells,
       },
-      customValueGetter: (row) => row._bid.tribute_value,
+      customValueGetter: (row) =>
+        isTokenBased
+          ? row._bid.totalTokenBasedTributeValue
+          : row._bid.points?.[0] || 0,
     },
     {
       key: "currentVoteShare",

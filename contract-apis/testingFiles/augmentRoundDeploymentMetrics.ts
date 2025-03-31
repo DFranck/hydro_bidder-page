@@ -119,18 +119,12 @@ export function augmentRoundDeploymentMetrics(
 
     // Tribute fields
     const proposalTributes = proposalsTributes[proposalId]
-    const tributeUnderlyingAssets = proposalTributes
-      ? Object.entries(proposalTributes).filter(
-          ([key, value]) => key !== "value_in_usdc" && key !== "value_in_atom"
-        )
-      : []
     const tributeValueInUsdc = proposalTributes
       ? proposalTributes.value_in_usdc
       : 0
     const tributeValueInAtom = proposalTributes
       ? proposalTributes.value_in_atom
       : 0
-
     // FE Aux fields
     //const tributeType             = tributeUnderlyingAssets.length > 0 ? 'Tokens' : (proposalPoints.length > 0 ? 'Points' : '');
 
@@ -152,7 +146,7 @@ export function augmentRoundDeploymentMetrics(
             ? "Completed"
             : "Ongoing"
 
-    const tributes: TokenBasedTribute[] = roundTributes
+    const tokenBasedTributes: TokenBasedTribute[] = roundTributes
       .filter(
         (x) => x.round_id === bid.round_id && x.proposal_id === proposalId
       )
@@ -220,9 +214,8 @@ export function augmentRoundDeploymentMetrics(
       points: proposalPoints,
       pointProgramUrl: proposalPointProgramUrl,
       // Onchain tributes
-      tributes,
-      tribute: tributeUnderlyingAssets,
-      tribute_value: tributeValueInUsdc,
+      tokenBasedTributes,
+      totalTokenBasedTributeValue: tributeValueInUsdc,
       liquidityDeployment: augmentedLiquidityDeployment,
       // Deployment details
       duration: bid.deployment_duration,

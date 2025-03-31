@@ -210,9 +210,8 @@ export interface BidRevampMetrics {
   status: string
   title: string
   trancheId: number
-  tribute_value: number
-  tribute: [denom: string, amount: number][]
-  tributes: TokenBasedTribute[]
+  totalTokenBasedTributeValue: number
+  tokenBasedTributes: TokenBasedTribute[]
   liquidityDeployment: AugmentedLiquidityDeployment | null
   vote_perc: number
 }

@@ -21,12 +21,15 @@ export function BidRewards({ bidId }: { bidId: number }) {
 
   if (!bid) return null
 
-  const isTokenBased = bid.tribute && bid.tribute.length > 0
-  const totalEstimatedRewardsUsd = amountToUSDString(bid.tribute_value, {
-    appendUsd: false,
-    numberOfDecimals: 2,
-    removeTrailingZeros: true,
-  })
+  const isTokenBased = bid.tokenBasedTributes.length > 0
+  const totalEstimatedRewardsUsd = amountToUSDString(
+    bid.totalTokenBasedTributeValue,
+    {
+      appendUsd: false,
+      numberOfDecimals: 2,
+      removeTrailingZeros: true,
+    }
+  )
   const roundedDeltaPercentage = Math.round(
     bid.usersEstimatedRewardRelativeToCurrentPick
   )
@@ -48,21 +51,22 @@ export function BidRewards({ bidId }: { bidId: number }) {
         pointProgramUrl: bidInfoFromGithub.pointProgramUrl,
       })}
     >
-      {bid.tributes.map((tribute) => (
-        <div key={tribute.denom} className="flex flex-col items-end">
+      {bid.points && bid.points.length > 0 && (
+        <div className="flex flex-col items-end">
           <div className="flex items-center gap-1">
-            <span>{simplifyBigNumbers(tribute.amount)}</span>
+            <Icon name="solid:gem" />
+            <span>{simplifyBigNumbers(bid.points?.[0] ?? 0)}</span>
           </div>
           <StyledText
             variant="footnote"
             as="div"
             className="flex items-center gap-1"
           >
-            <span>{startCase(tribute.denom)}</span>
+            <span>{startCase(bid.points?.[1])}</span>
             <Icon name="circle-info" />
           </StyledText>
         </div>
-      ))}
+      )}
     </Tooltip>
   ) : (
     <Tooltip tipContents={computedTooltipContent}>
