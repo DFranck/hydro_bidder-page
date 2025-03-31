@@ -38,8 +38,8 @@ export default defineConfig({
 
     launchOptions: {
       args: [
-        `--disable-extensions-except=${path.join(__dirname, "tests/extensions/keplr")}`,
-        `--load-extension=${path.join(__dirname, "tests/extensions/keplr")}`,
+        `--disable-extensions-except=${path.resolve("tests/extensions/keplr")}`,
+        `--load-extension=${path.resolve("tests/extensions/keplr")}`,
       ],
     },
   },
