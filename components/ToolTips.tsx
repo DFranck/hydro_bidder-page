@@ -4,7 +4,7 @@ import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { HYDRO_TELEGRAM_URL, VOTE_SHARE_THRESHOLD } from "@/config"
+import { HYDRO_TELEGRAM_URL, voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataSlimmed,
@@ -658,23 +658,28 @@ export const usdDisclaimerTooltip = (
   </p>
 )
 
-export const voteThresholdTooltip = (
-  <p>
-    Bids below the minimum threshold of{" "}
-    <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
-    liquidity, and will not pay out tribute to users.{" "}
-    <StyledText
-      as="a"
-      href="/docs#tribute-refunds"
-      variant="link"
-      target="_blank"
-      className="whitespace-nowrap"
-    >
-      Learn more
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
-  </p>
-)
+export const voteThresholdTooltip = ({ trancheId = 0 }) => {
+  const voteThreshold =
+    voteThresholdByTrancheId[trancheId as keyof typeof voteThresholdByTrancheId]
+
+  return (
+    <p>
+      Bids below the minimum threshold of{" "}
+      <strong>{voteThreshold}% total voting power</strong> will not receive
+      liquidity, and will not pay out tribute to users.{" "}
+      <StyledText
+        as="a"
+        href="/docs#tribute-refunds"
+        variant="link"
+        target="_blank"
+        className="whitespace-nowrap"
+      >
+        Learn more
+        <Icon name="solid:arrow-up-right" />
+      </StyledText>
+    </p>
+  )
+}
 
 export const yourAggregateAprTooltip = (
   <p>

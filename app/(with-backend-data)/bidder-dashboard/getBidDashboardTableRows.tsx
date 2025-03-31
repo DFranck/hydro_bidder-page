@@ -8,7 +8,7 @@ import { Tooltip } from "@/components/Tooltip"
 import { voteThresholdTooltip } from "@/components/ToolTips"
 import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
 import { TributesList } from "@/components/Tributes/TributesList/TributesList"
-import { VOTE_SHARE_THRESHOLD } from "@/config"
+import { voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataByIdSlimmed,
@@ -24,6 +24,10 @@ export function getBidDashboardTableRows(
 
   const rows = bids.map((bid) => {
     const isOpened = openedRows.includes(bid.id)
+    const voteThreshold =
+      voteThresholdByTrancheId[
+        bid.trancheId as keyof typeof voteThresholdByTrancheId
+      ]
     return {
       _bid: bid,
 
@@ -42,10 +46,10 @@ export function getBidDashboardTableRows(
       currentVoteShare: (
         <InvisibleButton onClick={() => onToggleRow(bid.id)}>
           <ConditionalWrapper
-            condition={bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD}
+            condition={bid.vote_perc < voteThreshold}
             wrapper={(children) => (
               <Tooltip
-                tipContents={voteThresholdTooltip}
+                tipContents={voteThresholdTooltip({ trancheId: bid.trancheId })}
                 classNamesForTooltip="-ml-24"
               >
                 <div className="flex items-center gap-1">

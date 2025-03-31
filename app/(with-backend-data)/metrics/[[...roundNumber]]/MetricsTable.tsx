@@ -1,24 +1,22 @@
 "use client"
 
 import { CollapsibleTable } from "@/components/CollapsibleTable"
+import { Icon } from "@/components/Icon"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
-import { useBackendData } from "@/contract-apis/useBackendData"
-import { Fragment, useCallback, useMemo } from "react"
-import { buildColumns } from "./buildColumns"
-import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
 import { RowRenderFunction } from "@/components/StyledTable/types"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
-import { Icon } from "@/components/Icon"
-import { max, uniq } from "lodash"
-import { buildRow } from "./buildRow"
+import { voteThresholdTooltip } from "@/components/ToolTips"
+import { voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidFromNumiaSlimmed,
   BidRevampMetrics,
 } from "@/contract-apis/types"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { max, uniq } from "lodash"
+import { Fragment, useCallback, useMemo } from "react"
+import { buildColumns } from "./buildColumns"
+import { buildRow } from "./buildRow"
+import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
 
 export function MetricsTable({
   trancheId,
@@ -34,6 +32,9 @@ export function MetricsTable({
     metricsForPreHydroBids,
     bidMetaDataById,
   } = useBackendData()
+
+  const voteThreshold =
+    voteThresholdByTrancheId[trancheId as keyof typeof voteThresholdByTrancheId]
 
   const tableId = `metrics-table-${trancheId}`
   const bids = Object.values(bidsInfo)
@@ -83,10 +84,10 @@ export function MetricsTable({
       }
       const aExceedsThreshold =
         a._bidFromContract.vote_perc &&
-        a._bidFromContract.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
+        a._bidFromContract.vote_perc >= voteThreshold
       const bExceedsThreshold =
         b._bidFromContract.vote_perc &&
-        b._bidFromContract.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
+        b._bidFromContract.vote_perc >= voteThreshold
       return Number(bExceedsThreshold) - Number(aExceedsThreshold)
     })
   }
@@ -98,7 +99,7 @@ export function MetricsTable({
       const shouldShowVoteThresholdLine =
         !requestedPreHydro &&
         row._bidFromContract.vote_perc !== null &&
-        row._bidFromContract.vote_perc * 100 < VOTE_SHARE_THRESHOLD
+        row._bidFromContract.vote_perc < voteThreshold
 
       return (
         <Fragment key={row._bid.id}>
@@ -124,13 +125,13 @@ export function MetricsTable({
                       "
                   />
 
-                  <Tooltip tipContents={voteThresholdTooltip}>
+                  <Tooltip tipContents={voteThresholdTooltip({ trancheId })}>
                     <div className="flex items-center gap-1">
                       <Icon name="solid:circle" />
                       <span>
                         These bids are below the{" "}
                         <strong>
-                          {VOTE_SHARE_THRESHOLD}% vote share threshold
+                          {voteThreshold * 100}% vote share threshold
                         </strong>
                       </span>
                       <Icon name="circle-info" />

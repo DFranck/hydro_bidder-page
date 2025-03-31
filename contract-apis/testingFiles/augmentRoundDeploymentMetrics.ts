@@ -3,6 +3,7 @@ import {
   LockupWithPerTrancheInfo,
 } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
+import { voteThresholdByTrancheId } from "@/config"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import { omit } from "lodash"
 import { getCoinWithValueInUsdByRoundPrices } from "../getCoinWithValueInUsd"
@@ -12,7 +13,6 @@ import {
   RoundPrices,
   TokenBasedTribute,
 } from "../types"
-import { VOTE_SHARE_THRESHOLD } from "@/config"
 
 export function augmentRoundDeploymentMetrics(
   roundId: number,
@@ -136,11 +136,15 @@ export function augmentRoundDeploymentMetrics(
       ? proposalVotes.voting_power /
         total_voting_power_per_tranche[bid.tranche_id]
       : 0
+    const voteThreshold =
+      voteThresholdByTrancheId[
+        bid.tranche_id as keyof typeof voteThresholdByTrancheId
+      ]
 
     const status =
       bid.round_id === currentRoundId
         ? "Voting Period"
-        : vote_perc * 100 < VOTE_SHARE_THRESHOLD
+        : vote_perc < voteThreshold
           ? "Rejected"
           : bid.round_id + bid.deployment_duration < currentRoundId
             ? "Completed"
