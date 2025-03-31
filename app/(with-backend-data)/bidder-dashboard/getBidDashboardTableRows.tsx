@@ -4,13 +4,11 @@ import { BidRewards } from "@/components/BidRewards"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { InvisibleButton } from "@/components/InvisibleButton"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
+import { voteThresholdTooltip } from "@/components/ToolTips"
 import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
 import { TributesList } from "@/components/Tributes/TributesList/TributesList"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataByIdSlimmed,

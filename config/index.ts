@@ -11,6 +11,26 @@ export enum AllowedLockupPeriodInEpochs {
 
 export const HYDRO_TELEGRAM_URL = "https://t.me/+xUzNOTZjUNw5Mzhk"
 
+export const SOCIAL_MEDIA_LINKS = [
+  {
+    name: "Website",
+    url: "https://cosmos.network",
+    icon: "solid:globe",
+  },
+  {
+    name: "Twitter",
+    url: "https://twitter.com/cosmoshub",
+    icon: "brands:twitter",
+  },
+  {
+    name: "Telegram",
+    url: HYDRO_TELEGRAM_URL,
+    icon: "solid:paper-plane",
+  },
+]
+
+export const VOTE_SHARE_THRESHOLD = 5
+
 export const sharedEndpoints = {
   neutron: {
     rpc: ["https://hydro-neutron-rpc.citadel.one/"],

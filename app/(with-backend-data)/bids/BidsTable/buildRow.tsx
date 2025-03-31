@@ -6,11 +6,9 @@ import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
+import { voteThresholdTooltip } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 import { BidRevampMetrics } from "@/contract-apis/types"
 import { classNames } from "./classNames"
 

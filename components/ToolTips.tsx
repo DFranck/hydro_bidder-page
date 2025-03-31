@@ -4,7 +4,7 @@ import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { HYDRO_TELEGRAM_URL } from "@/config"
+import { HYDRO_TELEGRAM_URL, VOTE_SHARE_THRESHOLD } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataSlimmed,
@@ -16,8 +16,6 @@ import sumBy from "lodash/sumBy"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
-
-export const VOTE_SHARE_THRESHOLD = 5
 
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
