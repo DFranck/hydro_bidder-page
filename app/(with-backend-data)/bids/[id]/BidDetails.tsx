@@ -22,10 +22,10 @@ import {
   metricsPolAprColumnTooltip,
   metricsTributeColumnTooltip,
   pastBidTributeAprBidsPageColumnTooltip,
-  VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 import { BidMetaData } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"

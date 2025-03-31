@@ -8,6 +8,14 @@ const supabaseEndpoint =
   "https://qqhhwjgeottahfasjzht.supabase.co/storage/v1/object/public/raw-backend-data/"
 
 async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBeforeWallet> {
+  if (process.env.NODE_ENV === "development") {
+    const decorativeCharacter = "%"
+    const message = `${decorativeCharacter.repeat(3)} LOADING SUPABASE DATA FOR "${process.env.NEXT_PUBLIC_SUPABASE_DATA_NAMESPACE}" ${decorativeCharacter.repeat(3)}`
+    console.log(decorativeCharacter.repeat(message.length))
+    console.log(message)
+    console.log(decorativeCharacter.repeat(message.length))
+  }
+
   const [rawHydroRoundData, rawHydroMetaData, rawExternalData] =
     await Promise.all(
       [

@@ -3,16 +3,16 @@ import {
   LockupWithPerTrancheInfo,
 } from "@/app/ts_types/HydroBase.types"
 import { Tribute } from "@/app/ts_types/TributeBase.types"
-import { VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
+import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
+import { omit } from "lodash"
+import { getCoinWithValueInUsdByRoundPrices } from "../getCoinWithValueInUsd"
 import {
   BidRevampMetrics,
   ProposalSlimmed,
   RoundPrices,
   TokenBasedTribute,
 } from "../types"
-import { getCoinWithValueInUsdByRoundPrices } from "../getCoinWithValueInUsd"
-import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
-import { omit } from "lodash"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 
 export function augmentRoundDeploymentMetrics(
   roundId: number,

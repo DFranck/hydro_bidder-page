@@ -4,16 +4,17 @@ import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { HYDRO_TELEGRAM_URL } from "@/config"
-import { AugmentedBidAfterWallet, BidMetaDataSlimmed } from "@/contract-apis/types"
+import { HYDRO_TELEGRAM_URL, VOTE_SHARE_THRESHOLD } from "@/config"
+import {
+  AugmentedBidAfterWallet,
+  BidMetaDataSlimmed,
+} from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
-
-export const VOTE_SHARE_THRESHOLD = 5
 
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
@@ -255,7 +256,7 @@ export const estimatedRewardsTooltip = ({
   const { projectName } = bidInfoFromGithub
 
   const totalTributeValue = isTokenBased
-    ? (bid.totalTokenBasedTributeValue)
+    ? bid.totalTokenBasedTributeValue
     : (bid.points?.[0] ?? 0)
 
   const percentageOfTotalTributeValue =
