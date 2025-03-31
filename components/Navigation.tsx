@@ -291,7 +291,9 @@ export default function Navigation() {
                     "lg:bg-palette-text",
                     "lg:shadow-2xl",
                     "lg:opacity-0",
-                    "lg:group-has-[:focus-within]:opacity-100"
+                    "lg:pointer-events-none",
+                    "lg:group-has-[:focus-within]:opacity-100",
+                    "lg:group-has-[:focus-within]:pointer-events-auto",
                   )}
                 >
                   {subMenuItems.map(
