@@ -12,7 +12,8 @@ import {
   BidRevampMetrics,
 } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { max, uniq } from "lodash"
+import max from "lodash/max"
+import uniq from "lodash/uniq"
 import { Fragment, useCallback, useMemo } from "react"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"

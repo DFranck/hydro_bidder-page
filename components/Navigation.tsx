@@ -109,14 +109,11 @@ export default function Navigation() {
         max-lg:fixed
         max-lg:right-0
         max-lg:top-0
-        max-lg:h-12
-        max-lg:w-12
+        max-lg:h-full
+        max-lg:w-1/2
         max-lg:overflow-hidden
         max-lg:transition-all
         max-lg:duration-500
-        max-lg:focus-within:size-auto
-        max-lg:focus-within:h-full
-        max-lg:focus-within:w-1/2
         lg:relative
         lg:bg-transparent
       "
@@ -217,10 +214,10 @@ export default function Navigation() {
           max-lg:gap-3
           max-lg:px-6
           max-lg:py-12
-          max-lg:indent-96
+          max-lg:opacity-0
           max-lg:transition-all
           max-lg:duration-500
-          max-lg:group-focus-within/navbar:indent-0
+          group-focus-within/navbar:max-lg:opacity-100
           lg:flex-row
           lg:items-center
           lg:gap-6
@@ -291,7 +288,9 @@ export default function Navigation() {
                     "lg:bg-palette-text",
                     "lg:shadow-2xl",
                     "lg:opacity-0",
-                    "lg:group-has-[:focus-within]:opacity-100"
+                    "lg:pointer-events-none",
+                    "lg:group-has-[:focus-within]:opacity-100",
+                    "lg:group-has-[:focus-within]:pointer-events-auto"
                   )}
                 >
                   {subMenuItems.map(
@@ -314,12 +313,9 @@ export default function Navigation() {
                           disabled && "pointer-events-none opacity-60",
                           "flex w-full items-center justify-between gap-6",
                           "whitespace-nowrap transition-all",
-                          "lg:px-4",
-                          "lg:py-2",
-                          "lg:hover:bg-palette-green",
-                          "lg:hover:text-palette-text",
-                          "lg:focus:bg-palette-green",
-                          "lg:focus:text-palette-text"
+                          "lg:px-4 lg:py-2",
+                          "lg:hover:bg-palette-green lg:hover:text-palette-text",
+                          "lg:focus:bg-palette-green lg:focus:text-palette-text"
                         )}
                         onClick={blurActiveElement}
                       >
