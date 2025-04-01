@@ -16,7 +16,7 @@ export function AllTimePoLDeployed() {
       title={
         <Tooltip tipContents={polDeployedTooltip}>
           <div className="flex items-center gap-1">
-            <span>PoL Deployed</span>
+            <span>Total Deployments</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>

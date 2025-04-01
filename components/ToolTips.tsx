@@ -651,6 +651,10 @@ export const timeLeftTooltip = (
   </p>
 )
 
+export const totalRevenueTooltip = (
+  <p>The total revenue generated from deployed liquidity. </p>
+)
+
 export const usdDisclaimerTooltip = (
   <p>
     USD equivalent values are estimates and may not reflect the actual current
@@ -746,7 +750,7 @@ export const yourVotingPowerTooltip = ({
       <div
         className={twJoin(
           "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
-          "whitespace-nowrap border-b pb-2"
+          "whitespace-nowrap border-b pb-2",
         )}
       >
         <StyledText variant="label" className="col-span-2">
@@ -829,7 +833,7 @@ export const yourVotingPowerTooltip = ({
         <div
           className={twJoin(
             "-mx-4 -mb-2 px-4 py-2",
-            "bg-palette-green text-center font-bold text-palette-text"
+            "bg-palette-green text-center font-bold text-palette-text",
           )}
         >
           {trancheMessage}
@@ -889,7 +893,7 @@ export const bidDetailsVoteReceivedTooltip = ({
     <div
       className={twJoin(
         "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
-        "whitespace-nowrap border-b border-white/20 pb-2"
+        "whitespace-nowrap border-b border-white/20 pb-2",
       )}
     >
       {[

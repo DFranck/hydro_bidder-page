@@ -3,8 +3,7 @@
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { AllTimePoLDeployed } from "@/components/StatCards/cards/AllTimePoLDeployed"
-import { AllTimePoLRevenue } from "@/components/StatCards/cards/AllTimePoLRevenue"
-import { RedistributionProgress } from "@/components/StatCards/cards/RedistributionProgress"
+import { AllTimeRevenue } from "@/components/StatCards/cards/AllTimeRevenue"
 import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
@@ -22,6 +21,7 @@ import Link from "next/link"
 import { Fragment, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 import { MetricsTable } from "./MetricsTable"
+import { AllTimeBidCount } from "@/components/StatCards/cards/AllTimeBidCount"
 
 export const PRE_HYDRO_ROUND_ID = -1
 
@@ -68,9 +68,9 @@ export function MetricsPage({
   return (
     <>
       <StatCardsContainer>
-        <RedistributionProgress />
         <AllTimePoLDeployed />
-        <AllTimePoLRevenue />
+        <AllTimeRevenue />
+        <AllTimeBidCount />
       </StatCardsContainer>
 
       <ContentContainer className="gap-6 py-6">
