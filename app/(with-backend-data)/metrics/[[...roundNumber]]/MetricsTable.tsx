@@ -1,9 +1,5 @@
 "use client"
 
-import {
-  MetricsRow,
-  PRE_HYDRO_ROUND_ID,
-} from "@/app/(with-backend-data)/metrics/[[...roundNumber]]/MetricsPage"
 import { CollapsibleTable } from "@/components/CollapsibleTable"
 import { Icon } from "@/components/Icon"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
@@ -22,6 +18,7 @@ import { Fragment, useCallback, useMemo } from "react"
 import { twJoin } from "tailwind-merge"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
+import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
 
 export function MetricsTable({
   trancheId,
