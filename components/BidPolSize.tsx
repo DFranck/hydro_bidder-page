@@ -3,9 +3,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { AmountAndUnitPair } from "./AmountAndUnitPair"
 
 export function BidPolSize({ bidId }: { bidId: number }) {
-  const backendData = useBackendData()
-  const { bidsById, metricsForPostHydroBids } = backendData
-  const bid = bidsById[bidId]
+  const { bidsInfo, metricsForPostHydroBids } = useBackendData()
+  const bid = bidsInfo[bidId]
 
   if (!bid) return null
 

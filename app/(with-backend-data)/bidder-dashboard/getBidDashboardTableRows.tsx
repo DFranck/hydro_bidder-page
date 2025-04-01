@@ -42,7 +42,7 @@ export function getBidDashboardTableRows(
       currentVoteShare: (
         <InvisibleButton onClick={() => onToggleRow(bid.id)}>
           <ConditionalWrapper
-            condition={bid.percentage < VOTE_SHARE_THRESHOLD}
+            condition={bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD}
             wrapper={(children) => (
               <Tooltip
                 tipContents={voteThresholdTooltip}
@@ -58,7 +58,7 @@ export function getBidDashboardTableRows(
               </Tooltip>
             )}
           >
-            <span>{Math.round(bid.percentage)}%</span>
+            <span>{Math.round(bid.vote_perc * 100)}%</span>
           </ConditionalWrapper>
         </InvisibleButton>
       ),
@@ -75,19 +75,21 @@ export function getBidDashboardTableRows(
 
       additional: isOpened && (
         <TributesList
-          tributes={bid.tributes}
+          tokenBasedTributes={bid.tokenBasedTributes}
+          pointBasedTributes={bid.points || []}
           bidDescription={bidDescriptions?.[bid.id]}
         />
       ),
     }
   })
 
-  const tokenBasedBids = rows.filter((row) =>
-    row._bid.tributes.every((t) => t.isTokenBased)
+  const tokenBasedBids = rows.filter(
+    (row) =>
+      row._bid.tokenBasedTributes && row._bid.tokenBasedTributes.length > 0
   )
 
   const pointBasedBids = rows.filter(
-    (row) => !row._bid.tributes.every((t) => t.isTokenBased)
+    (row) => row._bid.points && row._bid.points.length > 0
   )
 
   return { token: tokenBasedBids, point: pointBasedBids }

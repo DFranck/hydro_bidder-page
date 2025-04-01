@@ -6,9 +6,9 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
 import {
-  AugmentedBidAfterWallet,
   AugmentedCoin,
-  SanitizedTokenBasedTribute,
+  AugmentedBidAfterWallet,
+  TokenBasedTribute,
 } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -34,7 +34,7 @@ export default function ClaimRewardsStepper({
   claimAmount,
   onExit,
 }: {
-  tribute: SanitizedTokenBasedTribute | null
+  tribute: TokenBasedTribute | null
   bid: AugmentedBidAfterWallet | null
   claimAmount: AugmentedCoin | undefined | null
   onExit: (success?: boolean) => void

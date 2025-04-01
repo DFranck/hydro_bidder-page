@@ -2,9 +2,8 @@ import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 
 export function BidStatus({ bidId }: { bidId: number }) {
-  const backendData = useBackendData()
-  const { bidsById, metricsForPostHydroBids } = backendData
-  const bid = bidsById[bidId]
+  const { bidsInfo, metricsForPostHydroBids } = useBackendData()
+  const bid = bidsInfo[bidId]
 
   if (!bid) return null
 

@@ -5,10 +5,9 @@ import { twJoin } from "tailwind-merge"
 import { bidPolAprTooltip } from "./ToolTips"
 
 export function BidPolApr({ bidId }: { bidId: number }) {
-  const backendData = useBackendData()
-  const { bidsById, bidMetaDataById, currentRoundId, metricsForPostHydroBids } =
-    backendData
-  const bid = bidsById[bidId]
+  const { bidsInfo, bidMetaDataById, currentRoundId, metricsForPostHydroBids } =
+    useBackendData()
+  const bid = bidsInfo[bidId]
 
   if (!bid) return null
 

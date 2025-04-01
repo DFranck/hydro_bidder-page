@@ -17,7 +17,7 @@ export function LockupStatus({
   trancheId: number
   [key: string]: any
 }) {
-  const { bidsById, currentRoundEndDate, lockups, tranches } = useBackendData()
+  const { bidsInfo, currentRoundEndDate, lockups, tranches } = useBackendData()
 
   const lockup = lockups.find((lockup) => lockup.id === lockupId)
   const tranche = tranches.find((tranche) => tranche.id === Number(trancheId))
@@ -37,7 +37,7 @@ export function LockupStatus({
     isEligibleToChangeVote,
   } = metadata
 
-  const votedOnBid = votedOnBidId ? bidsById[votedOnBidId] : null
+  const votedOnBid = votedOnBidId ? bidsInfo[votedOnBidId] : null
 
   const {
     statusTopline,

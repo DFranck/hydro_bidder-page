@@ -1,6 +1,6 @@
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import { SanitizedTokenBasedTribute } from "@/contract-apis/types"
+import { TokenBasedTribute } from "@/contract-apis/types"
 import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
 import { twJoin, twMerge } from "tailwind-merge"
 
@@ -8,7 +8,7 @@ export function TributesListItemTokenBased({
   tribute,
   className,
 }: {
-  tribute: SanitizedTokenBasedTribute
+  tribute: TokenBasedTribute
   className?: string
 }) {
   return (

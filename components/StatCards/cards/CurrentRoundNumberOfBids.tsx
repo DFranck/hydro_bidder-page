@@ -8,12 +8,12 @@ import { pluralize } from "@/lib/pluralize"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundNumberOfBids() {
-  const { bidsById, isLoading, currentRoundId } = useBackendData()
-  const bidsInRound = Object.values(bidsById).filter(
+  const { bidsInfo, isLoading, currentRoundId } = useBackendData()
+  const bidsInRound = Object.values(bidsInfo).filter(
     (bid) => bid.roundId === currentRoundId
   )
   const numPointBasedBids = bidsInRound.filter(
-    (bid) => false === bid.tributes.every((t) => t.isTokenBased)
+    (bid) => bid.points && bid.points.length > 0
   ).length
 
   return (

@@ -20,7 +20,7 @@ export function CurrentRoundAprGlobal() {
 
   const summedTributeOverDuration = sumBy(
     tokenBasedBidsInRoundAboveThreshold,
-    (bid) => bid.tribute_value / bid.duration
+    (bid) => bid.totalTokenBasedTributeValue / bid.duration
   )
 
   const summedVotingPowerInUsd =

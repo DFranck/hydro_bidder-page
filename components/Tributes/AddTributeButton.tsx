@@ -23,10 +23,10 @@ export function AddTributeButton({
   const router = useRouter()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false)
-  const { address, bidsById, isWalletConnected } = useBackendData()
+  const { address, bidsInfo, isWalletConnected } = useBackendData()
   const { setToasts } = useToasts()
 
-  const bid = bidsById[bidId]
+  const bid = bidsInfo[bidId]
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
