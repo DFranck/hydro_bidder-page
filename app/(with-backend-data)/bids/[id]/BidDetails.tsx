@@ -25,7 +25,7 @@ import {
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
-import { VOTE_SHARE_THRESHOLD } from "@/config"
+import { voteThresholdByTrancheId } from "@/config"
 import { BidMetaData } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -121,6 +121,11 @@ export function BidDetails({
     totalPower: formatAmount(totalPowerInRound, 6, 0),
     percentage: formatAmount(bid.vote_perc * 100, 0, 2),
   }
+
+  const voteThreshold =
+    voteThresholdByTrancheId[
+      bid.trancheId as keyof typeof voteThresholdByTrancheId
+    ]
 
   return (
     <ContentContainer className="py-6">
@@ -430,8 +435,12 @@ export function BidDetails({
                   <span>{Math.round(bid.vote_perc * 100)}</span>
                   <StyledText variant="mathSymbol">%</StyledText>
                 </StyledText>
-                {bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD && (
-                  <Tooltip tipContents={voteThresholdTooltip}>
+                {bid.vote_perc < voteThreshold && (
+                  <Tooltip
+                    tipContents={voteThresholdTooltip({
+                      trancheId: bid.trancheId,
+                    })}
+                  >
                     <span
                       className="
                         flex

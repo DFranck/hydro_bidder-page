@@ -27,7 +27,10 @@ export const SOCIAL_MEDIA_LINKS = [
   },
 ]
 
-export const VOTE_SHARE_THRESHOLD = 5
+export const voteThresholdByTrancheId = {
+  1: 0.05,
+  2: 0.35,
+} as const
 
 export const sharedEndpoints = {
   neutron: {
