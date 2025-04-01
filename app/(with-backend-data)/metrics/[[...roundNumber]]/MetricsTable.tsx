@@ -1,5 +1,9 @@
 "use client"
 
+import {
+  MetricsRow,
+  PRE_HYDRO_ROUND_ID,
+} from "@/app/(with-backend-data)/metrics/[[...roundNumber]]/MetricsPage"
 import { CollapsibleTable } from "@/components/CollapsibleTable"
 import { Icon } from "@/components/Icon"
 import { StyledTable, TD, TR } from "@/components/StyledTable"
@@ -12,12 +16,12 @@ import {
   BidRevampMetrics,
 } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { max, uniq } from "lodash"
+import max from "lodash/max"
+import uniq from "lodash/uniq"
 import { Fragment, useCallback, useMemo } from "react"
 import { twJoin } from "tailwind-merge"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
-import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
 
 export function MetricsTable({
   trancheId,
@@ -76,7 +80,7 @@ export function MetricsTable({
 
   const columns = useMemo(() => {
     return buildColumns(requestedPreHydro, currentRoundId, requestedRoundId)
-  }, [])
+  }, [requestedPreHydro, currentRoundId, requestedRoundId])
 
   function secondPassSortFunction(sortedRows: MetricsRow[]) {
     return [...sortedRows].sort((a, b) => {

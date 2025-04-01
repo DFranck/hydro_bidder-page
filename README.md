@@ -45,7 +45,7 @@ The app itself only reads from the static files on Supabase; the cloud functions
 
 To build data for your own local development:
 
-- Set `NEXT_PUBLIC_SUPABASE_DATA_NAMESPACE` to your name, your branch name, or anything. Just something that isn't `main` or `staging` :P Coverts whatever you give to a "kebab-cased-string-like-this"
+- Set `NEXT_PUBLIC_SUPABASE_DATA_NAMESPACE` to your name, your branch name, or anything. Just something that isn't `main` or `staging` :P Converts whatever you give to a "kebab-cased-string-like-this"
 - In one terminal, you must be running `netlify dev`
 - Execute the command for whichever function you want to trigger:
   - `netlify functions:invoke function-name-goes-here --port 8888`
