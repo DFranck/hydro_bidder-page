@@ -4,7 +4,10 @@ import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
-import { StatCards } from "@/components/StatCards"
+import { AllTimeAverageAtomLockedPerWallet } from "@/components/StatCards/cards/AllTimeAverageAtomLockedPerWallet"
+import { AllTimeAverageRoundsPerWallet } from "@/components/StatCards/cards/AllTimeAverageRoundsPerWallet"
+import { CurrentRoundUniqueWallets } from "@/components/StatCards/cards/CurrentRoundUniqueWallets"
+import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
@@ -83,7 +86,7 @@ export default function AirdropsPage() {
               `,
               confirmationStatus === "Confirmed"
                 ? "bg-palette-green"
-                : "bg-palette-beige"
+                : "bg-palette-beige",
             )}
           >
             {confirmationStatus}
@@ -148,11 +151,11 @@ export default function AirdropsPage() {
   ]
 
   const confirmedRows = rows.filter(
-    (row) => row._airdropDescriptor[2] === "Confirmed"
+    (row) => row._airdropDescriptor[2] === "Confirmed",
   )
 
   const otherRows = rows.filter(
-    (row) => row._airdropDescriptor[2] !== "Confirmed"
+    (row) => row._airdropDescriptor[2] !== "Confirmed",
   )
 
   const { currentRoundId } = useBackendData()
@@ -184,11 +187,11 @@ export default function AirdropsPage() {
 
   return (
     <>
-      <StatCards>
-        <StatCards.CurrentRoundUniqueWallets />
-        <StatCards.AllTimeAverageAtomLockedPerWallet />
-        <StatCards.AllTimeAverageRoundsPerWallet />
-      </StatCards>
+      <StatCardsContainer>
+        <CurrentRoundUniqueWallets />
+        <AllTimeAverageAtomLockedPerWallet />
+        <AllTimeAverageRoundsPerWallet />
+      </StatCardsContainer>
 
       <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox className="flex flex-col gap-12">

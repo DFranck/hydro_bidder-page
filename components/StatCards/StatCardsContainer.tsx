@@ -2,7 +2,7 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { Children, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
-export function StatCards({
+export function StatCardsContainer({
   children,
   className,
   bottomSlot,

@@ -9,7 +9,10 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { ModalWindow } from "@/components/ModalWindow"
 import { ProgressBar } from "@/components/ProgressBar"
-import { StatCards } from "@/components/StatCards"
+import { CurrentRoundAtomLockedGlobal } from "@/components/StatCards/cards/CurrentRoundAtomLockedGlobal"
+import { CurrentRoundAtomLockedWallet } from "@/components/StatCards/cards/CurrentRoundAtomLockedWallet"
+import { CurrentRoundVotingPowerWallet } from "@/components/StatCards/cards/CurrentRoundVotingPowerWallet"
+import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
@@ -26,7 +29,6 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
 import { NewLockupButton } from "./NewLockupButton"
-
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
   const router = useRouter()
@@ -44,7 +46,7 @@ export default function LockupsPage() {
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
   const expiredLockups = lockups.filter(
-    (lockup) => new Date() >= lockup.dateEnd
+    (lockup) => new Date() >= lockup.dateEnd,
   )
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
@@ -84,7 +86,7 @@ export default function LockupsPage() {
       setToasts([
         toastMessages.unlockingExpiredLockupsError(
           expiredLockups.length,
-          error as Error
+          error as Error,
         ),
       ])
     }
@@ -123,11 +125,11 @@ export default function LockupsPage() {
 
   return (
     <>
-      <StatCards>
-        <StatCards.CurrentRoundAtomLockedGlobal />
-        <StatCards.CurrentRoundAtomLockedWallet />
-        <StatCards.CurrentRoundVotingPowerWallet />
-      </StatCards>
+      <StatCardsContainer>
+        <CurrentRoundAtomLockedGlobal />
+        <CurrentRoundAtomLockedWallet />
+        <CurrentRoundVotingPowerWallet />
+      </StatCardsContainer>
 
       <ContentContainer className="gap-6 py-6">
         <div

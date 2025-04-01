@@ -4,7 +4,10 @@ import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { EmptyBox } from "@/components/EmptyBox"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
-import { StatCards } from "@/components/StatCards"
+import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
+import { CurrentRoundAprGlobal } from "@/components/StatCards/cards/CurrentRoundAprGlobal"
+import { CurrentRoundNumberOfBids } from "@/components/StatCards/cards/CurrentRoundNumberOfBids"
+import { CurrentRoundTimeLeft } from "@/components/StatCards/cards/CurrentRoundTimeLeft"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { BidsTable } from "./BidsTable"
 
@@ -14,16 +17,16 @@ export default function BidsPage() {
   const { bidsInfo, currentRoundId, isLoading, tranches } = backendData
 
   const bidsInRound = Object.values(bidsInfo).filter(
-    (bid) => bid.roundId === currentRoundId
+    (bid) => bid.roundId === currentRoundId,
   )
 
   return (
     <>
-      <StatCards>
-        <StatCards.CurrentRoundNumberOfBids />
-        <StatCards.CurrentRoundAprGlobal />
-        <StatCards.CurrentRoundTimeLeft />
-      </StatCards>
+      <StatCardsContainer>
+        <CurrentRoundNumberOfBids />
+        <CurrentRoundAprGlobal />
+        <CurrentRoundTimeLeft />
+      </StatCardsContainer>
 
       <ContentContainer className="gap-12 py-6">
         <LoadingSpinner isLoading={isLoading} />
