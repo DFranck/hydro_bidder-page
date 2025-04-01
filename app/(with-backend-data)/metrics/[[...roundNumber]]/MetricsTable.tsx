@@ -9,7 +9,6 @@ import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
 import { RowRenderFunction } from "@/components/StyledTable/types"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  VOTE_SHARE_THRESHOLD,
   voteThresholdTooltip,
 } from "@/components/ToolTips"
 import { Icon } from "@/components/Icon"
@@ -19,6 +18,7 @@ import {
   AugmentedBidFromNumiaSlimmed,
   BidRevampMetrics,
 } from "@/contract-apis/types"
+import { VOTE_SHARE_THRESHOLD } from "@/config"
 
 export function MetricsTable({
   trancheId,
