@@ -26,7 +26,7 @@ export function StatCard({
           w-full
           p-6
         `,
-        className
+        className,
       )}
     >
       {/* Loading spinner */}
@@ -43,7 +43,7 @@ export function StatCard({
             opacity-0
             transition-all
           `,
-          isLoading && "opacity-100"
+          isLoading && "opacity-100",
         )}
       >
         <Icon className="animate-spin" name="solid:loader" />
@@ -54,6 +54,7 @@ export function StatCard({
         className={twMerge(
           `
             flex
+            w-full
             flex-col-reverse
             items-center
             justify-center
@@ -62,10 +63,10 @@ export function StatCard({
             opacity-100
             transition-all
           `,
-          isLoading && "opacity-0"
+          isLoading && "opacity-0",
         )}
       >
-        <div className="whitespace-nowrap">
+        <div className="w-full whitespace-nowrap">
           <h3
             className="
               text-sm

@@ -2,7 +2,9 @@
 
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
-import { StatCards } from "@/components/StatCards"
+import { AllTimePoLDeployed } from "@/components/StatCards/cards/AllTimePoLDeployed"
+import { AllTimeRevenue } from "@/components/StatCards/cards/AllTimeRevenue"
+import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { metricsPageNoDataTooltip } from "@/components/ToolTips"
@@ -19,6 +21,7 @@ import Link from "next/link"
 import { Fragment, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 import { MetricsTable } from "./MetricsTable"
+import { AllTimeBidCount } from "@/components/StatCards/cards/AllTimeBidCount"
 
 export const PRE_HYDRO_ROUND_ID = -1
 
@@ -64,11 +67,11 @@ export function MetricsPage({
 
   return (
     <>
-      <StatCards>
-        <StatCards.CurrentRoundPoLAvailable />
-        <StatCards.AllTimePoLDeployed />
-        <StatCards.AllTimePoLRevenue />
-      </StatCards>
+      <StatCardsContainer>
+        <AllTimePoLDeployed />
+        <AllTimeRevenue />
+        <AllTimeBidCount />
+      </StatCardsContainer>
 
       <ContentContainer className="gap-6 py-6">
         <div
@@ -77,11 +80,9 @@ export function MetricsPage({
         >
           <h2 className="sr-only">PoL Metrics by Round</h2>
 
-          <div>
-            <StyledText as="p" variant="footnote">
-              Metrics are updated at the end of each round.
-            </StyledText>
-          </div>
+          <StyledText variant="footnote">
+            Metrics are updated at the end of each round.
+          </StyledText>
 
           <div className="flex items-center backdrop-blur-sm">
             {[PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)].map(
@@ -102,7 +103,7 @@ export function MetricsPage({
                       "transition-all",
                       !isActive &&
                         "text-palette-green/50 hover:text-palette-green",
-                      !hasData && "cursor-default"
+                      !hasData && "cursor-default",
                     )}
                   >
                     <ConditionalWrapper
@@ -117,6 +118,7 @@ export function MetricsPage({
                         {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
                       </span>
                     </ConditionalWrapper>
+
                     {roundId === currentRoundId && (
                       <span
                         className={twJoin(
@@ -127,7 +129,7 @@ export function MetricsPage({
                           "group-hover:text-palette-text group-hover:before:bg-palette-beige",
                           isActive
                             ? "text-palette-text before:bg-palette-beige"
-                            : "text-palette-text/50 before:bg-palette-beige/60"
+                            : "text-palette-text/50 before:bg-palette-beige/60",
                         )}
                       >
                         Current
@@ -135,10 +137,11 @@ export function MetricsPage({
                     )}
                   </StyledText>
                 )
-              }
+              },
             )}
           </div>
         </div>
+
         {requestedPreHydro ? (
           <MetricsTable
             key={`tranche_0`}

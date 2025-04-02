@@ -9,7 +9,10 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { ModalWindow } from "@/components/ModalWindow"
-import { StatCards } from "@/components/StatCards"
+import { AllTimeAprWallet } from "@/components/StatCards/cards/AllTimeAprWallet"
+import { AllTimeRewardsWallet } from "@/components/StatCards/cards/AllTimeRewardsWallet"
+import { CurrentRoundAprWallet } from "@/components/StatCards/cards/CurrentRoundAprWallet"
+import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
@@ -41,14 +44,14 @@ export default function RewardsPage() {
   const bids = Object.values(bidsInfo)
 
   const votesFromPreviousRounds = votes.filter(
-    (vote) => bidsInfo[vote.bidId]?.roundId < currentRoundId
+    (vote) => bidsInfo[vote.bidId]?.roundId < currentRoundId,
   )
 
   const bidsToRender = bids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
-      bid.tokenBasedTributes.length > 0 // has token-based tribute
+      bid.tokenBasedTributes.length > 0, // has token-based tribute
   )
 
   const [selectedTribute, setSelectedTribute] =
@@ -58,14 +61,14 @@ export default function RewardsPage() {
 
   const findClaimAmountForTribute = (
     claimsArray: AugmentedClaim[],
-    tribute: TokenBasedTribute
+    tribute: TokenBasedTribute,
   ) => {
     return claimsArray.find(
       (claim) =>
         claim.bidId === tribute.bidId &&
         claim.tributeId === tribute.id &&
         claim.roundId === tribute.roundId &&
-        claim.trancheId === tribute.trancheId
+        claim.trancheId === tribute.trancheId,
     )?.amount
   }
 
@@ -94,7 +97,7 @@ export default function RewardsPage() {
         const rewardsInUsd = matchingClaimAmount?.valueUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
-          "amount"
+          "amount",
         )
 
         const canClaim = Boolean(matchingOutstandingClaim)
@@ -166,7 +169,7 @@ export default function RewardsPage() {
                     {
                       maximumFractionDigits: 3,
                       trailingZeroDisplay: "stripIfInteger",
-                    }
+                    },
                   )}
                   &nbsp;
                   {matchingClaimAmount?.humanReadableDenom?.slice(0, 12) ??
@@ -292,11 +295,11 @@ export default function RewardsPage() {
 
   return (
     <>
-      <StatCards>
-        <StatCards.CurrentRoundAprWallet />
-        <StatCards.AllTimeAprWallet />
-        <StatCards.AllTimeRewardsWallet />
-      </StatCards>
+      <StatCardsContainer>
+        <CurrentRoundAprWallet />
+        <AllTimeAprWallet />
+        <AllTimeRewardsWallet />
+      </StatCardsContainer>
 
       <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox>

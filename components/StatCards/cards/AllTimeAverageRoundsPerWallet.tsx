@@ -1,5 +1,6 @@
 "use client"
 
+import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { averageRoundsPerUserTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -13,10 +14,12 @@ export function AllTimeAverageRoundsPerWallet() {
     <StatCard
       isLoading={isLoading}
       title={
-        <div className="flex items-center gap-1">
-          <span>Average Rounds Per User</span>
-          <Tooltip tipContents={averageRoundsPerUserTooltip} />
-        </div>
+        <Tooltip tipContents={averageRoundsPerUserTooltip}>
+          <div className="flex items-center gap-1">
+            <span>Average Rounds Per User</span>
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
       }
       subTitle="All Time"
       value={allTimeUsersAvgRoundsLocked.toFixed(1)}

@@ -15,6 +15,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import max from "lodash/max"
 import uniq from "lodash/uniq"
 import { Fragment, useCallback, useMemo } from "react"
+import { twJoin } from "tailwind-merge"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
 import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
@@ -76,7 +77,7 @@ export function MetricsTable({
 
   const columns = useMemo(() => {
     return buildColumns(requestedPreHydro, currentRoundId, requestedRoundId)
-  }, [])
+  }, [requestedPreHydro, currentRoundId, requestedRoundId])
 
   function secondPassSortFunction(sortedRows: MetricsRow[]) {
     return [...sortedRows].sort((a, b) => {
@@ -108,23 +109,12 @@ export function MetricsTable({
             <TR className="js-vote-threshold-line [&~&]:hidden">
               <TD colSpan={99} className="!p-0">
                 <div
-                  className="
-                      flex
-                      items-center
-                      justify-between
-                      gap-3
-                      whitespace-nowrap
-                      text-xs
-                      text-palette-beige
-                    "
+                  className={twJoin(
+                    "flex items-center justify-between gap-3",
+                    "whitespace-nowrap text-xs text-palette-beige",
+                  )}
                 >
-                  <div
-                    className="
-                        w-full
-                        border-t-2
-                        border-palette-beige
-                      "
-                  />
+                  <div className="w-full border-t-2 border-palette-beige" />
 
                   <Tooltip tipContents={voteThresholdTooltip({ trancheId })}>
                     <div className="flex items-center gap-1">
@@ -139,13 +129,7 @@ export function MetricsTable({
                     </div>
                   </Tooltip>
 
-                  <div
-                    className="
-                        w-full
-                        border-t-2
-                        border-palette-beige
-                      "
-                  />
+                  <div className="w-full border-t-2 border-palette-beige" />
                 </div>
               </TD>
             </TR>
@@ -156,7 +140,7 @@ export function MetricsTable({
         </Fragment>
       )
     },
-    [voteThresholdTooltip]
+    [voteThresholdTooltip],
   )
 
   return (
