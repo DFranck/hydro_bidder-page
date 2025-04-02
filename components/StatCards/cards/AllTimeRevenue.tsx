@@ -11,7 +11,7 @@ export function AllTimeRevenue() {
   const { isLoading, bidsInfo } = useBackendData()
   const totalTributePaidUsd = sumBy(
     Object.values(bidsInfo),
-    (bid) => bid.totalTokenBasedTributeValue,
+    (bid) => bid.status !== "Rejected" ? bid.totalTokenBasedTributeValue : 0
   )
 
   return (
