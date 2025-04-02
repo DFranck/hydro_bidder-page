@@ -9,7 +9,7 @@ import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function RedistributionProgress() {
-  const { isLoading, bidsInfo } = useBackendData()
+  const { currentRoundId, isLoading, bidsInfo } = useBackendData()
   const totalTributePaidUsd = sumBy(
     Object.values(bidsInfo),
     (bid) => bid.totalTokenBasedTributeValue,

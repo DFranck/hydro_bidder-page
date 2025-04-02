@@ -545,18 +545,8 @@ export const polAvailableTooltip = (
 
 export const polDeployedTooltip = (
   <p>
-    The total amount of PoL that has been deployed to bids over time. It is the
-    aggregate amount of all past-round and Pre-Hydro deployments.{" "}
-    <StyledText
-      as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
-      variant="link"
-      className="inline-flex items-center gap-1"
-      target="_blank"
-    >
-      What is PoL?
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
+    The total amount of liquidity that has been deployed to bids over time. It
+    is the sum of all deployments from pre-hydro to the latest&nbsp;round.
   </p>
 )
 
@@ -623,14 +613,14 @@ export const rewardsTotalTributeColumnTooltip = (
   <p>
     The tribute that was offered for this bid in the round displayed. If a
     bidder added additional tribute in a round to a bid, or used multiple tokens
-    as tribute, you may see multiple rows for the same bid.
+    as tribute, you may see multiple rows for the same&nbsp;bid.
   </p>
 )
 
 export const rewardsYourTributeTooltip = (
   <p>
     The estimated USD-equivalent value of the tribute you&rsquo;ve received from
-    this bid.
+    this&nbsp;bid.
   </p>
 )
 
@@ -652,13 +642,16 @@ export const timeLeftTooltip = (
 )
 
 export const totalRevenueTooltip = (
-  <p>The total revenue generated from deployed liquidity. </p>
+  <p>
+    The sum of all tributes paid by bidders, excluding bids that didn&rsquo;t
+    meet the vote&nbsp;threshold.
+  </p>
 )
 
 export const usdDisclaimerTooltip = (
   <p>
-    USD equivalent values are estimates and may not reflect the actual current
-    value.
+    USD equivalent values are estimates and may not reflect the actual
+    current&nbsp;value.
   </p>
 )
 
