@@ -111,10 +111,21 @@ export const bidTablesFirstColumnTooltips = {
 
 export const bidTableTributeAprTooltip = ({
   bidId,
+  hasVotedForThisBid,
   tributeValue,
+  isWalletConnected,
+  userWillReceiveInUsd,
+  userWillReceiveInTokens,
 }: {
   bidId: number
+  hasVotedForThisBid: boolean
   tributeValue: number
+  isWalletConnected: boolean
+  userWillReceiveInUsd: number
+  userWillReceiveInTokens: {
+    denom: string
+    valueInTokens: number
+  }[]
 }) => (
   <div className="flex flex-col gap-3">
     <div className="flex flex-col">
@@ -122,7 +133,7 @@ export const bidTableTributeAprTooltip = ({
       <BidTribute bidId={bidId} textAlign="left" />
     </div>
     <p>
-      The estimated value of this bid&rsquo;s tribute is{" "}
+      The total estimated value of this bid&rsquo;s rewards is currently&nbsp;
       <strong className="text-palette-green">
         {amountToUSDString(tributeValue, {
           appendUsd: false,
@@ -132,6 +143,31 @@ export const bidTableTributeAprTooltip = ({
       </strong>
       .
     </p>
+    {isWalletConnected && (
+      <StyledText>
+        {hasVotedForThisBid
+          ? "Because you voted on this bid, your share of the rewards would be worth an estimated "
+          : "If you vote on this bid, your share of the rewards would be worth an estimated "}
+        <StyledText>
+          <strong className="text-palette-green">
+            {amountToUSDString(userWillReceiveInUsd)}
+          </strong>
+        </StyledText>
+        {userWillReceiveInTokens.map((x, index) => (
+          <StyledText key={`${x.denom}_${index}`}>
+            :&nbsp;{formatAmount(x.valueInTokens, 0, 2)}&nbsp;
+            <StyledText className="inline-flex items-center gap-1 text-sm opacity-60">
+              {x.denom}
+              {index < userWillReceiveInTokens.length - 1 ? (
+                <>,&nbsp;</>
+              ) : (
+                <>&nbsp;</>
+              )}
+            </StyledText>
+          </StyledText>
+        ))}
+      </StyledText>
+    )}
     <p>APR is estimated and based on the range of voting power in the round.</p>
   </div>
 )
