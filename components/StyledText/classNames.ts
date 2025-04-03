@@ -27,6 +27,10 @@ const buttonStyles = {
     commonBaseButtonStyles,
     "border-white bg-white text-palette-text",
   ),
+  tertiaryBase: twJoin(
+    commonBaseButtonStyles,
+    "border-palette-cyan bg-palette-cyan text-palette-text"
+  ),
   circularPrimary: twMerge(
     commonBaseButtonStyles,
     "!size-10 rounded-full border-2 border-transparent bg-palette-green !p-0 text-palette-text hover:bg-palette-green/80",
@@ -50,6 +54,7 @@ const generateButtonClassNames = (
     | "primary"
     | "secondary"
     | "neutral"
+    | "tertiary"
     | "circular-primary"
     | "circular-secondary"
     | "circular-icon",
@@ -59,6 +64,7 @@ const generateButtonClassNames = (
     primary: buttonStyles.primaryBase,
     secondary: buttonStyles.secondaryBase,
     neutral: buttonStyles.neutralBase,
+    tertiary: buttonStyles.tertiaryBase,
     "circular-primary": buttonStyles.circularPrimary,
     "circular-secondary": buttonStyles.circularSecondary,
     "circular-icon": buttonStyles.circularIcon,
@@ -90,6 +96,9 @@ export const classNames = {
   "button.neutral": generateButtonClassNames("neutral"),
   "button.neutral.large": generateButtonClassNames("neutral", "large"),
   "button.neutral.small": generateButtonClassNames("neutral", "small"),
+  "button.tertiary": generateButtonClassNames("tertiary"),
+  "button.tertiary.large": generateButtonClassNames("tertiary", "large"),
+  "button.tertiary.small": generateButtonClassNames("tertiary", "small"),
   "button.circular.primary": generateButtonClassNames("circular-primary"),
   "button.circular.secondary": generateButtonClassNames("circular-secondary"),
   "button.circular.icon": generateButtonClassNames("circular-icon"),

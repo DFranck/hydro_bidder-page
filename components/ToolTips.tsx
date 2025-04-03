@@ -923,3 +923,35 @@ export const bidDetailsTributesListTooltip = (
     contributors, amounts, and token types.
   </p>
 )
+
+export const experimentalTableDeploymentAprTooltip = ({
+  hasEnded,
+  totalAtom,
+  totalUsd,
+  deploymentLasted,
+}: {
+  hasEnded: boolean
+  totalAtom: number
+  totalUsd: number
+  deploymentLasted: string
+}) => (
+  <div className="flex flex-col">
+    <StyledText>
+      {hasEnded
+        ? "At the end of this deployment, it was worth"
+        : "This deployment is currently worth"}
+      &nbsp;a total amount of {formatAmount(totalAtom, 0, 2)}&nbsp;
+      <StyledText variant="footnote">ATOM</StyledText>
+    </StyledText>
+    <StyledText variant="footnote">
+      (
+      {amountToUSDString(totalUsd, {
+        appendUsd: false,
+        numberOfDecimals: 2,
+        removeTrailingZeros: true,
+      })}
+      )&nbsp;
+    </StyledText>
+    <StyledText>and has lasted for {deploymentLasted}</StyledText>
+  </div>
+)

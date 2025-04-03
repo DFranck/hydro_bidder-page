@@ -434,6 +434,39 @@ export interface BalanceItem {
   display_name: string
 }
 
+export interface ExperimentalItem {
+  experimental_id: number
+  name: string
+  description: string
+  logo: string
+  start_timestamp: number
+  end_timestamp: number
+  initial_address_holdings: {
+    balances: BalanceItem[]
+    total_usdc: number
+    total_atom: number
+  }
+  current_address_holdings: {
+    balances: BalanceItem[]
+    total_usdc: number
+    total_atom: number
+  }
+}
+
+export interface ExperimentalRow extends BaseRowObject {
+  _experimental: ExperimentalItem
+  logoAndName: ReactNode
+  startDate: ReactNode
+  status: ReactNode
+  initialAddressHoldings: ReactNode
+  deploymentAPR: ReactNode
+  actions: ReactNode
+  additionalDescription?: ReactNode
+  additionalStatus?: ReactNode
+  additionalInitialAdressHoldings?: ReactNode
+  additionalDeploymentAPR?: ReactNode
+}
+
 type WithOverwrites<T> = T extends object
   ? {
       // Original keys, marked as optional, recursively applied.
