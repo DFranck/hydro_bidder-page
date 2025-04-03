@@ -1,4 +1,4 @@
-# Deployment Process
+# Deployment Execution
 
 By [Johnny Wyles](https://x.com/JohnnyWyles87). The full write-up is available [here](https://docs.google.com/document/d/1Xytt4fpwi6zXVwAX9VHV8XpbW3HpM11ppecKlrYCFmE/edit).
 
