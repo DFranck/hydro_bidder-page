@@ -1,5 +1,5 @@
 const meta = {
-  "committee-members": {
+  "members": {
     title: "Members",
   },
   "risk-management": {
@@ -14,7 +14,7 @@ const meta = {
   "auction-performance": {
     title: "Auction Performance",
   },
-  "deployment-process": {
+  "deployment-execution": {
     title: "Deployment Process",
   },
   "coi-policy": {
