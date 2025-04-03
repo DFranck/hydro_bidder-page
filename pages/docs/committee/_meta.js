@@ -15,7 +15,7 @@ const meta = {
     title: "Auction Performance",
   },
   "deployment-execution": {
-    title: "Deployment Process",
+    title: "Deployment Execution",
   },
   "coi-policy": {
     title: "COI Policy",
