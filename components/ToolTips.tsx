@@ -152,10 +152,11 @@ export const bidTableTributeAprTooltip = ({
           <strong className="text-palette-green">
             {amountToUSDString(userWillReceiveInUsd)}
           </strong>
+          :&nbsp;
         </StyledText>
         {userWillReceiveInTokens.map((x, index) => (
           <StyledText key={`${x.denom}_${index}`}>
-            :&nbsp;{formatAmount(x.valueInTokens, 0, 2)}&nbsp;
+            {formatAmount(x.valueInTokens, 0, 2)}&nbsp;
             <StyledText className="inline-flex items-center gap-1 text-sm opacity-60">
               {x.denom}
               {index < userWillReceiveInTokens.length - 1 ? (
