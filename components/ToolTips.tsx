@@ -699,8 +699,8 @@ export const voteThresholdTooltip = ({ trancheId = 0 }) => {
   return (
     <p>
       Bids below the minimum threshold of{" "}
-      <strong>{voteThreshold}% total voting power</strong> will not receive
-      liquidity, and will not pay out tribute to users.{" "}
+      <strong>{voteThreshold * 100}% total voting power</strong> will not
+      receive liquidity, and will not pay out tribute to users.{" "}
       <StyledText
         as="a"
         href="/docs#tribute-refunds"
