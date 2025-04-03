@@ -2,12 +2,14 @@ import { ContentContainer } from "@/components/ContentContainer"
 import { Children, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
-export function StatCards({
+export function StatCardsContainer({
   children,
   className,
+  bottomSlot,
 }: {
   children: ReactNode
   className?: string
+  bottomSlot?: ReactNode
 }) {
   const childCount = Children.count(children)
   return (
@@ -19,7 +21,7 @@ export function StatCards({
           to-palette-blue/20
           backdrop-blur-md
         `,
-        className
+        className,
       )}
     >
       <ContentContainer
@@ -35,11 +37,13 @@ export function StatCards({
             ? "sm:grid-cols-2"
             : childCount > 2
               ? "md:grid-cols-3"
-              : ""
+              : "",
         )}
       >
         {children}
       </ContentContainer>
+
+      {bottomSlot}
     </div>
   )
 }

@@ -24,6 +24,10 @@ const nextConfig = withNextra({
         protocol: "https",
         hostname: "*.githubusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "pbs.twimg.com",
+      },
     ],
   },
 })

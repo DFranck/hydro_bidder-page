@@ -1,27 +1,24 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import {
-  BidMetaDataSlimmed,
-  SanitizedPointBasedTribute,
-} from "@/contract-apis/types"
+import { BidMetaDataSlimmed } from "@/contract-apis/types"
 import Link from "next/link"
 
 export function TributesListItemPointBased({
-  tribute,
+  amount,
+  denom,
   description,
 }: {
-  tribute: SanitizedPointBasedTribute
+  amount: number
+  denom: string
   description?: BidMetaDataSlimmed
 }) {
   return (
     <div className="grid grid-cols-subgrid">
       <div>
         <StyledText variant="h4" className="flex gap-1 text-palette-green">
-          <span>{tribute.amount}</span>
-          <span>{tribute.denom}</span>
+          <span>{amount}</span>
+          <span>{denom}</span>
         </StyledText>
-
-        {tribute.valueUsd > 0 && <span>(${tribute.valueUsd.toFixed(2)})</span>}
       </div>
 
       {description && description.pointProgramUrl && (

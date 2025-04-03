@@ -5,16 +5,66 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { twJoin } from "tailwind-merge"
 
 export function BidTributeApr({ bidId }: { bidId: number }) {
-  const { bidsInfo } = useBackendData()
+  const {
+    bidsInfo,
+    votingPowerAvailable,
+    isWalletConnected,
+    votesByRoundId,
+    currentRoundId,
+  } = useBackendData()
   const bidInfo = bidsInfo[bidId]
 
   if (!bidInfo) return null
 
-  const { apr_tribute, tribute_value } = bidInfo
+  const {
+    apr_tribute,
+    totalTokenBasedTributeValue,
+    power,
+    tokenBasedTributes,
+  } = bidInfo
 
   const tributeApr = (apr_tribute ?? 0) * 100
 
   const formattedTributeAprMin = tributeApr.toFixed(0)
+
+  const votesThisRound = votesByRoundId[currentRoundId] ?? []
+  const votesThisTranche = votesThisRound.filter(
+    (vote) => bidsInfo[vote.bidId]?.trancheId === bidInfo?.trancheId
+  )
+  const hasVotedForThisBid = votesThisTranche.some(
+    (vote) => vote.bidId === bidId
+  )
+
+  const totalVotingPowerOnBid = hasVotedForThisBid
+    ? power / 10 ** 6
+    : power / 10 ** 6 + votingPowerAvailable
+
+  const tributeAmountByDenom = tokenBasedTributes.reduce(
+    (acc, currTribute) => {
+      if (!acc[currTribute.denom]) {
+        acc[currTribute.denom] = { amount: 0 }
+      }
+      acc[currTribute.denom].amount += currTribute.amount
+      return acc
+    },
+    {} as { [denom: string]: { amount: number } }
+  )
+
+  const userWillReceiveInUsd = isWalletConnected
+    ? (votingPowerAvailable / totalVotingPowerOnBid) *
+      totalTokenBasedTributeValue
+    : 0
+
+  const userWillReceiveInTokens = isWalletConnected
+    ? Object.keys(tributeAmountByDenom).map((denom) => {
+        return {
+          denom,
+          valueInTokens:
+            (votingPowerAvailable / totalVotingPowerOnBid) *
+            tributeAmountByDenom[denom]?.amount,
+        }
+      })
+    : [{ denom: "", valueInTokens: 0 }]
 
   const renderAprValue = () => {
     if (Number.isNaN(tributeApr) || bidInfo.points?.length > 0) {
@@ -50,7 +100,14 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         "inline-flex items-center gap-1",
         "border-b-2 border-dotted border-white/50 hover:border-white"
       )}
-      tipContents={bidTableTributeAprTooltip({ bidId, tributeValue: tribute_value ?? 0 })}
+      tipContents={bidTableTributeAprTooltip({
+        bidId,
+        hasVotedForThisBid,
+        tributeValue: totalTokenBasedTributeValue,
+        isWalletConnected,
+        userWillReceiveInUsd,
+        userWillReceiveInTokens,
+      })}
     >
       <StyledText variant="mathSymbol.container">{renderAprValue()}</StyledText>
     </Tooltip>

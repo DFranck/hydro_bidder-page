@@ -6,16 +6,18 @@ import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
+import { voteThresholdTooltip } from "@/components/ToolTips"
 import { VoteButton } from "@/components/VoteButton"
+import { voteThresholdByTrancheId } from "@/config"
 import { BidRevampMetrics } from "@/contract-apis/types"
 import { classNames } from "./classNames"
 
 export function buildRow({ bid }: { bid: BidRevampMetrics }) {
   const bidURL = `/bids/${bid.id}`
+  const voteThreshold =
+    voteThresholdByTrancheId[
+      bid.trancheId as keyof typeof voteThresholdByTrancheId
+    ]
 
   return {
     _bid: bid,
@@ -44,10 +46,10 @@ export function buildRow({ bid }: { bid: BidRevampMetrics }) {
         className="flex flex-row-reverse items-center gap-1"
       >
         <ConditionalWrapper
-          condition={bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD}
+          condition={bid.vote_perc < voteThreshold}
           wrapper={(children) => (
             <Tooltip
-              tipContents={voteThresholdTooltip}
+              tipContents={voteThresholdTooltip({ trancheId: bid.trancheId })}
               classNamesForTooltip="-ml-24"
             >
               <div className="flex items-center gap-1">
@@ -62,7 +64,7 @@ export function buildRow({ bid }: { bid: BidRevampMetrics }) {
         >
           <StyledText variant="mathSymbol.container">
             <span>
-              {bid.vote_perc * 100 < VOTE_SHARE_THRESHOLD
+              {bid.vote_perc < voteThreshold
                 ? (bid.vote_perc * 100).toFixed(2)
                 : Math.round(bid.vote_perc * 100)}
             </span>

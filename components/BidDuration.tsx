@@ -5,16 +5,16 @@ import { pluralize } from "@/lib/pluralize"
 
 export function BidDuration({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidsById, metricsForPostHydroBids } = backendData
+  const { bidsInfo, metricsForPostHydroBids, lockedAtomEpochInNanos } = backendData
   const bidInfoFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
   )
-  const bid = bidsById[bidId]
+  const bid = bidsInfo[bidId]
 
   const { isRejected } = bidInfoFromNumia ?? {}
 
   const { value: durationNumber, unit: durationUnit } = getTimeUnitFromNanos(
-    bid.deploymentDurationInNanos
+    bid.duration * lockedAtomEpochInNanos
   )
 
   return isRejected ? null : !durationNumber ? (

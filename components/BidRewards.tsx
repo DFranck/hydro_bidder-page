@@ -11,20 +11,19 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import startCase from "lodash/startCase"
-import sumBy from "lodash/sumBy"
 import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidMetaDataById, bidsById, currentRoundId, votesByRoundId } =
+  const { bidMetaDataById, bidsInfo, currentRoundId, votesByRoundId } =
     backendData
-  const bid = bidsById[bidId]
+  const bid = bidsInfo[bidId]
 
   if (!bid) return null
 
-  const isTokenBased = bid.tributes.every((tribute) => tribute.isTokenBased)
+  const isTokenBased = bid.tokenBasedTributes.length > 0
   const totalEstimatedRewardsUsd = amountToUSDString(
-    sumBy(bid.tributes, "valueUsd"),
+    bid.totalTokenBasedTributeValue,
     {
       appendUsd: false,
       numberOfDecimals: 2,
@@ -52,22 +51,22 @@ export function BidRewards({ bidId }: { bidId: number }) {
         pointProgramUrl: bidInfoFromGithub.pointProgramUrl,
       })}
     >
-      {bid.tributes.map((tribute) => (
-        <div key={tribute.denom} className="flex flex-col items-end">
+      {bid.points && bid.points.length > 0 && (
+        <div className="flex flex-col items-end">
           <div className="flex items-center gap-1">
-            {!tribute.isTokenBased && <Icon name="solid:gem" />}
-            <span>{simplifyBigNumbers(tribute.amount)}</span>
+            <Icon name="solid:gem" />
+            <span>{simplifyBigNumbers(bid.points?.[0] ?? 0)}</span>
           </div>
           <StyledText
             variant="footnote"
             as="div"
             className="flex items-center gap-1"
           >
-            <span>{startCase(tribute.denom)}</span>
+            <span>{startCase(bid.points?.[1])}</span>
             <Icon name="circle-info" />
           </StyledText>
         </div>
-      ))}
+      )}
     </Tooltip>
   ) : (
     <Tooltip tipContents={computedTooltipContent}>

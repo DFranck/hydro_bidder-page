@@ -3,6 +3,10 @@ import { getSupabaseNamespacedFilename } from "../../lib/getSupabaseNamespacedFi
 import { supabase } from "../../lib/supabase"
 import { fetchHydroRoundsData } from "./_fetchers/fetchHydroRoundsData"
 
+export const config: Config = {
+  schedule: "*/10 * * * *", // every 10 minutes
+}
+
 export default async function () {
   try {
     console.log("Starting data fetch...")
@@ -23,12 +27,7 @@ export default async function () {
 
     console.log("Background function completed successfully")
   } catch (error) {
-    console.log(`Error: ${error.message}`)
-    console.log(`Stack trace: ${error.stack}`)
+    console.log(`Error: ${error}`)
     console.error("Error building hydro round data:", error)
   }
-}
-
-export const config: Config = {
-  schedule: "*/10 * * * *", // every 10 minutes
 }

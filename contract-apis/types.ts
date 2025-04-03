@@ -36,7 +36,7 @@ export interface AssetListWithPrices {
 export interface AugmentedBackendDataAfterWallet
   extends AugmentedBackendDataBeforeWallet {
   address: string
-  bidsById: Record<number, AugmentedBidAfterWallet>
+  bidsInfo: Record<number, AugmentedBidAfterWallet>
   claimsHistorical: AugmentedClaim[]
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
@@ -57,7 +57,6 @@ export interface AugmentedBackendDataBeforeWallet {
   atomPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
   bidMetaDataById: BidMetaDataByIdSlimmed
-  bidsById: Record<number, AugmentedBidBeforeWalletSlimmed>
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
@@ -74,34 +73,6 @@ export interface AugmentedBackendDataBeforeWallet {
   metricsGlobal: SanitizedMetricsFromNumia
   minTributeFactor: number
 }
-
-export interface AugmentedBidAfterWallet
-  extends AugmentedBidBeforeWalletSlimmed {
-  userIsEligibleToVote: boolean
-  usersEstimatedRewards: number
-  usersEstimatedRewardRelativeToCurrentPick: number
-}
-
-export interface AugmentedBidBeforeWallet
-  extends Omit<
-    CamelCaseKeys<Proposal>,
-    "deploymentDuration" | "percentage" | "proposalId" | "liquidityDeployment"
-  > {
-  id: number
-  deploymentDurationInEpochs: number
-  deploymentDurationInNanos: number
-  liquidityDeployment: AugmentedLiquidityDeployment | null
-  percentage: number
-  tributes: (SanitizedTokenBasedTribute | SanitizedPointBasedTribute)[]
-  tributeApr: number
-  tributeAprMax: number
-  tributeAprMin: number
-}
-
-export type AugmentedBidBeforeWalletSlimmed = Omit<
-  AugmentedBidBeforeWallet,
-  "description"
->
 
 export type AugmentedBidFromNumia = Omit<
   CamelCaseKeys<RawNumiaBid>,
@@ -239,9 +210,15 @@ export interface BidRevampMetrics {
   status: string
   title: string
   trancheId: number
-  tribute_value: number
-  tribute: [denom: string, amount: number][]
+  totalTokenBasedTributeValue: number
+  tokenBasedTributes: TokenBasedTribute[]
+  liquidityDeployment: AugmentedLiquidityDeployment | null
   vote_perc: number
+}
+
+export interface AugmentedBidAfterWallet extends BidRevampMetrics {
+  usersEstimatedRewards: number
+  usersEstimatedRewardRelativeToCurrentPick: number
 }
 
 export interface GlobalLockupCapacityInfo {
@@ -391,18 +368,7 @@ export type SanitizedOnchainTributeFromNumia = {
   denom: string
 }
 
-export type SanitizedPointBasedTribute = {
-  amount: number
-  bidId: number
-  denom: string
-  denomOriginal: string
-  isTokenBased: false
-  roundId: number
-  trancheId: number
-  valueUsd: number
-}
-
-export type SanitizedTokenBasedTribute = Omit<
+export type TokenBasedTribute = Omit<
   CamelCaseKeys<Tribute>,
   "funds" | "proposalId" | "tributeId"
 > & {
@@ -412,7 +378,6 @@ export type SanitizedTokenBasedTribute = Omit<
   denom: string
   denomOriginal: string
   valueUsd: number
-  isTokenBased: true
 }
 
 export interface SanitizedVote
@@ -467,6 +432,39 @@ export interface BalanceItem {
   amount: number
   usd_value: number
   display_name: string
+}
+
+export interface ExperimentalItem {
+  experimental_id: number
+  name: string
+  description: string
+  logo: string
+  start_timestamp: number
+  end_timestamp: number
+  initial_address_holdings: {
+    balances: BalanceItem[]
+    total_usdc: number
+    total_atom: number
+  }
+  current_address_holdings: {
+    balances: BalanceItem[]
+    total_usdc: number
+    total_atom: number
+  }
+}
+
+export interface ExperimentalRow extends BaseRowObject {
+  _experimental: ExperimentalItem
+  logoAndName: ReactNode
+  startDate: ReactNode
+  status: ReactNode
+  initialAddressHoldings: ReactNode
+  deploymentAPR: ReactNode
+  actions: ReactNode
+  additionalDescription?: ReactNode
+  additionalStatus?: ReactNode
+  additionalInitialAdressHoldings?: ReactNode
+  additionalDeploymentAPR?: ReactNode
 }
 
 type WithOverwrites<T> = T extends object

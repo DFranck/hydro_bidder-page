@@ -9,7 +9,10 @@ import { EmptyBox } from "@/components/EmptyBox"
 import { Icon } from "@/components/Icon"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { ModalWindow } from "@/components/ModalWindow"
-import { StatCards } from "@/components/StatCards"
+import { AllTimeAprWallet } from "@/components/StatCards/cards/AllTimeAprWallet"
+import { AllTimeRewardsWallet } from "@/components/StatCards/cards/AllTimeRewardsWallet"
+import { CurrentRoundAprWallet } from "@/components/StatCards/cards/CurrentRoundAprWallet"
+import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
@@ -19,13 +22,9 @@ import {
   rewardsYourTributeColumnTooltip,
   rewardsYourTributeTooltip,
 } from "@/components/ToolTips"
-import {
-  AugmentedClaim,
-  SanitizedTokenBasedTribute,
-} from "@/contract-apis/types"
+import { AugmentedClaim, TokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { amountToUSDString } from "@/lib/amountToUSDString"
-import keyBy from "lodash/keyBy"
 import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
@@ -36,49 +35,40 @@ export default function RewardsPage() {
 
   const {
     bidMetaDataById,
-    bidsById,
+    bidsInfo,
     claimsHistorical,
     claimsOutstanding,
     currentRoundId,
     votes,
   } = useBackendData()
-  const bids = Object.values(bidsById)
+  const bids = Object.values(bidsInfo)
+
   const votesFromPreviousRounds = votes.filter(
-    (vote) => bidsById[vote.bidId]?.roundId < currentRoundId
+    (vote) => bidsInfo[vote.bidId]?.roundId < currentRoundId,
   )
+
   const bidsToRender = bids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
-      bid.tributes.some((t) => t.isTokenBased) // has token-based tribute
-  )
-  const tributesById = keyBy(
-    bidsToRender.flatMap((bid) => bid.tributes),
-    "id"
+      bid.tokenBasedTributes.length > 0, // has token-based tribute
   )
 
-  // "Claim" button sets selection and triggers confirmation modal
-  const [selection, setSelection] = useState<{
-    tributeId: number
-  } | null>(null)
-  const selectedTribute = selection
-    ? (tributesById[selection.tributeId] as SanitizedTokenBasedTribute)
-    : null
-  const selectedBid =
-    selection && selectedTribute
-      ? bidsById[tributesById[selection.tributeId].bidId]
-      : null
+  const [selectedTribute, setSelectedTribute] =
+    useState<TokenBasedTribute | null>(null)
+
+  const selectedBid = selectedTribute ? bidsInfo[selectedTribute.bidId] : null
 
   const findClaimAmountForTribute = (
     claimsArray: AugmentedClaim[],
-    tribute: SanitizedTokenBasedTribute
+    tribute: TokenBasedTribute,
   ) => {
     return claimsArray.find(
       (claim) =>
         claim.bidId === tribute.bidId &&
         claim.tributeId === tribute.id &&
         claim.roundId === tribute.roundId &&
-        claim.trancheId === tribute.trancheId
+        claim.trancheId === tribute.trancheId,
     )?.amount
   }
 
@@ -93,11 +83,7 @@ export default function RewardsPage() {
       const bidUrl = `/bids/${bid.id}`
       const bidDescriptionFromGithub = bidMetaDataById[bid.id]
       const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
-      const tokenBasedTributes = bid.tributes.filter(
-        (tribute) => tribute.isTokenBased
-      )
-
-      return tokenBasedTributes.map((tribute) => {
+      return bid.tokenBasedTributes.map((tribute) => {
         const findClaimForBid = (claim: (typeof claimsOutstanding)[number]) =>
           claim.bidId === bid.id &&
           claim.tributeId === tribute.id &&
@@ -111,8 +97,9 @@ export default function RewardsPage() {
         const rewardsInUsd = matchingClaimAmount?.valueUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
-          "amount"
+          "amount",
         )
+
         const canClaim = Boolean(matchingOutstandingClaim)
         const isClaimed = Boolean(matchingHistoricalClaim)
         const hasDeployment = Boolean(bid.liquidityDeployment)
@@ -182,7 +169,7 @@ export default function RewardsPage() {
                     {
                       maximumFractionDigits: 3,
                       trailingZeroDisplay: "stripIfInteger",
-                    }
+                    },
                   )}
                   &nbsp;
                   {matchingClaimAmount?.humanReadableDenom?.slice(0, 12) ??
@@ -199,11 +186,7 @@ export default function RewardsPage() {
                   <StyledText
                     as="button"
                     variant="button.primary.small"
-                    onClick={() =>
-                      setSelection({
-                        tributeId: tribute.id,
-                      })
-                    }
+                    onClick={() => setSelectedTribute(tribute)}
                   >
                     Claim
                   </StyledText>
@@ -266,7 +249,7 @@ export default function RewardsPage() {
         className: "relative whitespace-nowrap",
       },
       customValueGetter: (row) =>
-        row._bid.tributes
+        row._bid.tokenBasedTributes
           .map((t) => t.denom)
           .sort()
           .join(", "),
@@ -286,7 +269,7 @@ export default function RewardsPage() {
         className: "whitespace-nowrap",
       },
       isSortable: true,
-      customValueGetter: (row) => sumBy(row._bid.tributes, "valueUsd"),
+      customValueGetter: (row) => row._bid.totalTokenBasedTributeValue,
     },
     {
       key: "claimStatus",
@@ -300,7 +283,7 @@ export default function RewardsPage() {
 
   function closeClaimRewardsModal(event?: MouseEvent<HTMLButtonElement>) {
     event?.preventDefault()
-    setSelection(null)
+    setSelectedTribute(null)
   }
 
   function claimRewardsFinished(isSuccess?: boolean) {
@@ -312,11 +295,11 @@ export default function RewardsPage() {
 
   return (
     <>
-      <StatCards>
-        <StatCards.CurrentRoundAprWallet />
-        <StatCards.AllTimeAprWallet />
-        <StatCards.AllTimeRewardsWallet />
-      </StatCards>
+      <StatCardsContainer>
+        <CurrentRoundAprWallet />
+        <AllTimeAprWallet />
+        <AllTimeRewardsWallet />
+      </StatCardsContainer>
 
       <ContentContainer className="gap-12 py-6">
         <BlurryBackdropBox>
@@ -331,7 +314,7 @@ export default function RewardsPage() {
         </BlurryBackdropBox>
       </ContentContainer>
 
-      <ModalWindow isOpen={!!selection} onClose={closeClaimRewardsModal}>
+      <ModalWindow isOpen={!!selectedTribute} onClose={closeClaimRewardsModal}>
         <ClaimRewardsStepper
           bid={selectedBid}
           tribute={selectedTribute}

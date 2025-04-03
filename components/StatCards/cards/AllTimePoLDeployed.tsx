@@ -7,7 +7,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function AllTimePoLDeployed() {
-  const { isLoading, metricsGlobal } = useBackendData()
+  const { currentRoundId, isLoading, metricsGlobal } = useBackendData()
   const { allTimePolDeployed } = metricsGlobal
 
   return (
@@ -16,7 +16,7 @@ export function AllTimePoLDeployed() {
       title={
         <Tooltip tipContents={polDeployedTooltip}>
           <div className="flex items-center gap-1">
-            <span>PoL Deployed</span>
+            <span>Total Deployments</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>

@@ -4,13 +4,11 @@ import { BidRewards } from "@/components/BidRewards"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
 import { InvisibleButton } from "@/components/InvisibleButton"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
+import { voteThresholdTooltip } from "@/components/ToolTips"
 import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
 import { TributesList } from "@/components/Tributes/TributesList/TributesList"
+import { voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataByIdSlimmed,
@@ -26,6 +24,10 @@ export function getBidDashboardTableRows(
 
   const rows = bids.map((bid) => {
     const isOpened = openedRows.includes(bid.id)
+    const voteThreshold =
+      voteThresholdByTrancheId[
+        bid.trancheId as keyof typeof voteThresholdByTrancheId
+      ]
     return {
       _bid: bid,
 
@@ -44,10 +46,10 @@ export function getBidDashboardTableRows(
       currentVoteShare: (
         <InvisibleButton onClick={() => onToggleRow(bid.id)}>
           <ConditionalWrapper
-            condition={bid.percentage < VOTE_SHARE_THRESHOLD}
+            condition={bid.vote_perc < voteThreshold}
             wrapper={(children) => (
               <Tooltip
-                tipContents={voteThresholdTooltip}
+                tipContents={voteThresholdTooltip({ trancheId: bid.trancheId })}
                 classNamesForTooltip="-ml-24"
               >
                 <div className="flex items-center gap-1">
@@ -60,7 +62,7 @@ export function getBidDashboardTableRows(
               </Tooltip>
             )}
           >
-            <span>{Math.round(bid.percentage)}%</span>
+            <span>{Math.round(bid.vote_perc * 100)}%</span>
           </ConditionalWrapper>
         </InvisibleButton>
       ),
@@ -77,19 +79,21 @@ export function getBidDashboardTableRows(
 
       additional: isOpened && (
         <TributesList
-          tributes={bid.tributes}
+          tokenBasedTributes={bid.tokenBasedTributes}
+          pointBasedTributes={bid.points || []}
           bidDescription={bidDescriptions?.[bid.id]}
         />
       ),
     }
   })
 
-  const tokenBasedBids = rows.filter((row) =>
-    row._bid.tributes.every((t) => t.isTokenBased)
+  const tokenBasedBids = rows.filter(
+    (row) =>
+      row._bid.tokenBasedTributes && row._bid.tokenBasedTributes.length > 0
   )
 
   const pointBasedBids = rows.filter(
-    (row) => !row._bid.tributes.every((t) => t.isTokenBased)
+    (row) => row._bid.points && row._bid.points.length > 0
   )
 
   return { token: tokenBasedBids, point: pointBasedBids }

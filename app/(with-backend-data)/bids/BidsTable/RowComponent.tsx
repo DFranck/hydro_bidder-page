@@ -2,10 +2,8 @@ import { Icon } from "@/components/Icon"
 import { TD, TR } from "@/components/StyledTable"
 import { BaseRowObject, RowRenderProps } from "@/components/StyledTable/types"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  VOTE_SHARE_THRESHOLD,
-  voteThresholdTooltip,
-} from "@/components/ToolTips"
+import { voteThresholdTooltip } from "@/components/ToolTips"
+import { voteThresholdByTrancheId } from "@/config"
 import { BidRevampMetrics } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { Fragment } from "react"
@@ -24,10 +22,15 @@ export function RowComponent<
 }: RowRenderProps<Row, keyof Row>) {
   const { currentRoundId, votesByRoundId } = useBackendData()
 
+  const voteThreshold =
+    voteThresholdByTrancheId[
+      row._bid.trancheId as keyof typeof voteThresholdByTrancheId
+    ]
+
   const shouldShowVoteThresholdLine =
     sortedColumnKey === "currentVoteShare" &&
     sortDirection === "DESC" &&
-    (row._bid.vote_perc * 100) < VOTE_SHARE_THRESHOLD
+    row._bid.vote_perc < voteThreshold
 
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
 
@@ -59,14 +62,16 @@ export function RowComponent<
                 "
               />
 
-              <Tooltip tipContents={voteThresholdTooltip}>
+              <Tooltip
+                tipContents={voteThresholdTooltip({
+                  trancheId: row._bid.trancheId,
+                })}
+              >
                 <div className="flex items-center gap-1">
                   <Icon name="solid:circle" />
                   <span>
                     These bids are below the{" "}
-                    <strong>
-                      {VOTE_SHARE_THRESHOLD}% vote share threshold
-                    </strong>
+                    <strong>{voteThreshold * 100}% vote share threshold</strong>
                   </span>
                   <Icon name="circle-info" />
                 </div>

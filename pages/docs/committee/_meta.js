@@ -1,9 +1,21 @@
 const meta = {
-  "committee-members": {
+  "members": {
     title: "Members",
   },
-  "hydro-guidelines": {
-    title: "Guidelines",
+  "risk-management": {
+    title: "Risk Management",
+  },
+  "deployment-performance": {
+    title: "Deployment Performance",
+  },
+  "security": {
+    title: "Security",
+  },
+  "auction-performance": {
+    title: "Auction Performance",
+  },
+  "deployment-execution": {
+    title: "Deployment Execution",
   },
   "coi-policy": {
     title: "COI Policy",

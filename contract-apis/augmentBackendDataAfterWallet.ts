@@ -22,7 +22,7 @@ export function augmentBackendDataAfterWallet({
     ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
 }): AugmentedBackendDataAfterWallet {
-  const { assetListWithPrices, bidsById, currentRoundId, lockedAtomMaxWallet } =
+  const { assetListWithPrices, bidsInfo, currentRoundId, lockedAtomMaxWallet } =
     augmentedBackendDataBeforeWallet
 
   const {
@@ -33,7 +33,7 @@ export function augmentBackendDataAfterWallet({
     voting_power,
   } = walletData
 
-  const allBids = Object.values(bidsById)
+  const allBids = Object.values(bidsInfo)
 
   const sanitizedVotes = votes.map((vote) => {
     const { propId, ...rest } = keysFromSnakeToCamelCase(vote)
@@ -53,23 +53,13 @@ export function augmentBackendDataAfterWallet({
   const bidsWithRewards = allBids.map((bid) => {
     const usersEstimatedRewards =
       estimatedRewardForPower({
-        amount: sumBy(bid.tributes, "valueUsd"),
+        amount: bid.totalTokenBasedTributeValue,
         walletVotingPower: voting_power,
         bidPower: Number(bid.power),
       }) ?? 0
 
-    const userIsEligibleToVote = augmentedLockups.some(
-      (lockup) =>
-        !lockup.isExpired &&
-        Object.values(lockup.metaDataByTrancheId).some(
-          (trancheInfo) =>
-            Number(trancheInfo.nextRoundEligibleToVote) >= currentRoundId
-        )
-    )
-
     return {
       ...bid,
-      userIsEligibleToVote,
       usersEstimatedRewards,
       usersEstimatedRewardRelativeToCurrentPick: 0,
     }
@@ -86,14 +76,14 @@ export function augmentBackendDataAfterWallet({
         : 0,
   }))
 
-  const augmentedBidsById = keyBy(
+  const augmentedBidsInfo = keyBy(
     bidsWithRewardsRelativeToCurrentPick,
     (bid) => bid.id
   )
 
   const votesByRoundId = groupBy(
     sanitizedVotes,
-    (vote) => bidsById[vote.bidId].roundId
+    (vote) => bidsInfo[vote.bidId].roundId
   )
 
   const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>
@@ -128,7 +118,7 @@ export function augmentBackendDataAfterWallet({
   return {
     ...augmentedBackendDataBeforeWallet,
     address,
-    bidsById: augmentedBidsById,
+    bidsInfo: augmentedBidsInfo,
     claimsHistorical: augmentedHistoricalClaims,
     claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,

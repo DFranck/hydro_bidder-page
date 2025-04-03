@@ -2,7 +2,8 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { averageAPRTooltip, VOTE_SHARE_THRESHOLD } from "@/components/ToolTips"
+import { averageAPRTooltip } from "@/components/ToolTips"
+import { voteThresholdByTrancheId } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
@@ -11,15 +12,23 @@ export function CurrentRoundAprGlobal() {
   const { atomPrice, bidsInfo, currentRoundId, isLoading } = useBackendData()
 
   const tokenBasedBidsInRoundAboveThreshold = Object.values(bidsInfo).filter(
-    (bid) =>
-      bid.roundId === currentRoundId &&
-      !bid.points?.length &&
-      bid.vote_perc * 100 >= VOTE_SHARE_THRESHOLD
+    (bid) => {
+      const voteThreshold =
+        voteThresholdByTrancheId[
+          bid.trancheId as keyof typeof voteThresholdByTrancheId
+        ]
+
+      return (
+        bid.roundId === currentRoundId &&
+        !bid.points?.length &&
+        bid.vote_perc >= voteThreshold
+      )
+    }
   )
 
   const summedTributeOverDuration = sumBy(
     tokenBasedBidsInRoundAboveThreshold,
-    (bid) => bid.tribute_value / bid.duration
+    (bid) => bid.totalTokenBasedTributeValue / bid.duration
   )
 
   const summedVotingPowerInUsd =

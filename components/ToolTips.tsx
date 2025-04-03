@@ -4,7 +4,7 @@ import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { HYDRO_TELEGRAM_URL } from "@/config"
+import { HYDRO_TELEGRAM_URL, voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataSlimmed,
@@ -12,12 +12,9 @@ import {
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
-import sumBy from "lodash/sumBy"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
-
-export const VOTE_SHARE_THRESHOLD = 5
 
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
@@ -114,10 +111,21 @@ export const bidTablesFirstColumnTooltips = {
 
 export const bidTableTributeAprTooltip = ({
   bidId,
+  hasVotedForThisBid,
   tributeValue,
+  isWalletConnected,
+  userWillReceiveInUsd,
+  userWillReceiveInTokens,
 }: {
   bidId: number
+  hasVotedForThisBid: boolean
   tributeValue: number
+  isWalletConnected: boolean
+  userWillReceiveInUsd: number
+  userWillReceiveInTokens: {
+    denom: string
+    valueInTokens: number
+  }[]
 }) => (
   <div className="flex flex-col gap-3">
     <div className="flex flex-col">
@@ -125,7 +133,7 @@ export const bidTableTributeAprTooltip = ({
       <BidTribute bidId={bidId} textAlign="left" />
     </div>
     <p>
-      The estimated value of this bid&rsquo;s tribute is{" "}
+      The total estimated value of this bid&rsquo;s rewards is currently&nbsp;
       <strong className="text-palette-green">
         {amountToUSDString(tributeValue, {
           appendUsd: false,
@@ -135,6 +143,31 @@ export const bidTableTributeAprTooltip = ({
       </strong>
       .
     </p>
+    {isWalletConnected && (
+      <StyledText>
+        {hasVotedForThisBid
+          ? "Because you voted on this bid, your share of the rewards would be worth an estimated "
+          : "If you vote on this bid, your share of the rewards would be worth an estimated "}
+        <StyledText>
+          <strong className="text-palette-green">
+            {amountToUSDString(userWillReceiveInUsd)}
+          </strong>
+        </StyledText>
+        {userWillReceiveInTokens.map((x, index) => (
+          <StyledText key={`${x.denom}_${index}`}>
+            :&nbsp;{formatAmount(x.valueInTokens, 0, 2)}&nbsp;
+            <StyledText className="inline-flex items-center gap-1 text-sm opacity-60">
+              {x.denom}
+              {index < userWillReceiveInTokens.length - 1 ? (
+                <>,&nbsp;</>
+              ) : (
+                <>&nbsp;</>
+              )}
+            </StyledText>
+          </StyledText>
+        ))}
+      </StyledText>
+    )}
     <p>APR is estimated and based on the range of voting power in the round.</p>
   </div>
 )
@@ -259,8 +292,8 @@ export const estimatedRewardsTooltip = ({
   const { projectName } = bidInfoFromGithub
 
   const totalTributeValue = isTokenBased
-    ? (sumBy(bid.tributes, "valueUsd") ?? 0)
-    : (sumBy(bid.tributes, "amount") ?? 0)
+    ? bid.totalTokenBasedTributeValue
+    : (bid.points?.[0] ?? 0)
 
   const percentageOfTotalTributeValue =
     totalTributeValue > 0
@@ -273,7 +306,7 @@ export const estimatedRewardsTooltip = ({
         ? // $1,234 USD
           amountToUSDString(totalTributeValue)
         : // 1,234 POINTS
-          `${formatAmount(totalTributeValue)} ${bid.tributes[0].denom}`}
+          `${formatAmount(totalTributeValue)} ${bid.points?.[1]}`}
     </strong>
   )
 
@@ -548,18 +581,8 @@ export const polAvailableTooltip = (
 
 export const polDeployedTooltip = (
   <p>
-    The total amount of PoL that has been deployed to bids over time. It is the
-    aggregate amount of all past-round and Pre-Hydro deployments.{" "}
-    <StyledText
-      as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
-      variant="link"
-      className="inline-flex items-center gap-1"
-      target="_blank"
-    >
-      What is PoL?
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
+    The total amount of liquidity that has been deployed to bids over time. It
+    is the sum of all deployments from pre-hydro to the latest&nbsp;round.
   </p>
 )
 
@@ -626,14 +649,14 @@ export const rewardsTotalTributeColumnTooltip = (
   <p>
     The tribute that was offered for this bid in the round displayed. If a
     bidder added additional tribute in a round to a bid, or used multiple tokens
-    as tribute, you may see multiple rows for the same bid.
+    as tribute, you may see multiple rows for the same&nbsp;bid.
   </p>
 )
 
 export const rewardsYourTributeTooltip = (
   <p>
     The estimated USD-equivalent value of the tribute you&rsquo;ve received from
-    this bid.
+    this&nbsp;bid.
   </p>
 )
 
@@ -654,30 +677,42 @@ export const timeLeftTooltip = (
   </p>
 )
 
-export const usdDisclaimerTooltip = (
+export const totalRevenueTooltip = (
   <p>
-    USD equivalent values are estimates and may not reflect the actual current
-    value.
+    The sum of all tributes paid by bidders, excluding bids that didn&rsquo;t
+    meet the vote&nbsp;threshold.
   </p>
 )
 
-export const voteThresholdTooltip = (
+export const usdDisclaimerTooltip = (
   <p>
-    Bids below the minimum threshold of{" "}
-    <strong>{VOTE_SHARE_THRESHOLD}% total voting power</strong> will not receive
-    liquidity, and will not pay out tribute to users.{" "}
-    <StyledText
-      as="a"
-      href="/docs#tribute-refunds"
-      variant="link"
-      target="_blank"
-      className="whitespace-nowrap"
-    >
-      Learn more
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
+    USD equivalent values are estimates and may not reflect the actual
+    current&nbsp;value.
   </p>
 )
+
+export const voteThresholdTooltip = ({ trancheId = 0 }) => {
+  const voteThreshold =
+    voteThresholdByTrancheId[trancheId as keyof typeof voteThresholdByTrancheId]
+
+  return (
+    <p>
+      Bids below the minimum threshold of{" "}
+      <strong>{voteThreshold}% total voting power</strong> will not receive
+      liquidity, and will not pay out tribute to users.{" "}
+      <StyledText
+        as="a"
+        href="/docs#tribute-refunds"
+        variant="link"
+        target="_blank"
+        className="whitespace-nowrap"
+      >
+        Learn more
+        <Icon name="solid:arrow-up-right" />
+      </StyledText>
+    </p>
+  )
+}
 
 export const yourAggregateAprTooltip = (
   <p>
@@ -744,7 +779,7 @@ export const yourVotingPowerTooltip = ({
       <div
         className={twJoin(
           "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
-          "whitespace-nowrap border-b pb-2"
+          "whitespace-nowrap border-b pb-2",
         )}
       >
         <StyledText variant="label" className="col-span-2">
@@ -827,7 +862,7 @@ export const yourVotingPowerTooltip = ({
         <div
           className={twJoin(
             "-mx-4 -mb-2 px-4 py-2",
-            "bg-palette-green text-center font-bold text-palette-text"
+            "bg-palette-green text-center font-bold text-palette-text",
           )}
         >
           {trancheMessage}
@@ -887,7 +922,7 @@ export const bidDetailsVoteReceivedTooltip = ({
     <div
       className={twJoin(
         "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
-        "whitespace-nowrap border-b border-white/20 pb-2"
+        "whitespace-nowrap border-b border-white/20 pb-2",
       )}
     >
       {[
@@ -923,4 +958,36 @@ export const bidDetailsTributesListTooltip = (
     Here, you can see all tributes associated with this bid, including the
     contributors, amounts, and token types.
   </p>
+)
+
+export const experimentalTableDeploymentAprTooltip = ({
+  hasEnded,
+  totalAtom,
+  totalUsd,
+  deploymentLasted,
+}: {
+  hasEnded: boolean
+  totalAtom: number
+  totalUsd: number
+  deploymentLasted: string
+}) => (
+  <div className="flex flex-col">
+    <StyledText>
+      {hasEnded
+        ? "At the end of this deployment, it was worth"
+        : "This deployment is currently worth"}
+      &nbsp;a total amount of {formatAmount(totalAtom, 0, 2)}&nbsp;
+      <StyledText variant="footnote">ATOM</StyledText>
+    </StyledText>
+    <StyledText variant="footnote">
+      (
+      {amountToUSDString(totalUsd, {
+        appendUsd: false,
+        numberOfDecimals: 2,
+        removeTrailingZeros: true,
+      })}
+      )&nbsp;
+    </StyledText>
+    <StyledText>and has lasted for {deploymentLasted}</StyledText>
+  </div>
 )

@@ -7,7 +7,6 @@ import {
   estimatedRewardsColumnTooltip,
 } from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
-import sumBy from "lodash/sumBy"
 
 export function getBidDashboardTableColumns(
   isTokenBased: boolean,
@@ -44,7 +43,10 @@ export function getBidDashboardTableColumns(
       propsForCells: {
         className: classNames.classNamesForCells,
       },
-      customValueGetter: (row) => sumBy(row._bid.tributes, "valueUsd"),
+      customValueGetter: (row) =>
+        isTokenBased
+          ? row._bid.totalTokenBasedTributeValue
+          : row._bid.points?.[0] || 0,
     },
     {
       key: "currentVoteShare",
@@ -65,7 +67,7 @@ export function getBidDashboardTableColumns(
       propsForCells: {
         className: classNames.classNamesForCells,
       },
-      customValueGetter: (row) => row._bid.percentage,
+      customValueGetter: (row) => row._bid.vote_perc,
     },
     {
       key: "actions",
