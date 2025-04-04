@@ -2,6 +2,7 @@ import { augmentLockup } from "@/contract-apis/augmentLockup"
 import {
   AugmentedBackendDataAfterWallet,
   AugmentedBackendDataBeforeWallet,
+  AugmentedLockup,
   SanitizedVote,
 } from "@/contract-apis/types"
 import { estimatedRewardForPower } from "@/lib/estimatedRewardForPower"
@@ -41,7 +42,7 @@ export function augmentBackendDataAfterWallet({
   })
 
   const augmentedLockups = lockups_with_per_tranche_infos.map((o) =>
-    augmentLockup(o, currentRoundId)
+    augmentLockup(o, currentRoundId),
   )
 
   const votedBidId =
@@ -78,42 +79,76 @@ export function augmentBackendDataAfterWallet({
 
   const augmentedBidsInfo = keyBy(
     bidsWithRewardsRelativeToCurrentPick,
-    (bid) => bid.id
+    (bid) => bid.id,
   )
 
   const votesByRoundId = groupBy(
     sanitizedVotes,
-    (vote) => bidsInfo[vote.bidId].roundId
+    (vote) => bidsInfo[vote.bidId].roundId,
   )
 
   const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>
     augmentClaim({
       assetListWithPrices,
       claim: o,
-    })
+    }),
   )
 
   const augmentedOutstandingClaims = outstanding_tribute_claims.map((o) =>
     augmentClaim({
       assetListWithPrices,
       claim: o,
-    })
+    }),
   )
 
   const lockedAtomTotalWallet = sumBy(augmentedLockups, "funds.amount")
   const lockedAtomPercentageWallet = Math.floor(
-    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
+    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100,
   )
 
-  const usedLockups = augmentedLockups.filter((lockup) =>
-    Object.values(lockup.metaDataByTrancheId).some(
-      (metaData) => metaData.isTiedToDeployment
-    )
-  )
-  const votingPowerSpent =
-    sumBy(usedLockups, (l) => Number(l.currentVotingPower)) / 1e6
   const votingPowerTotal = voting_power / 1e6
-  const votingPowerAvailable = votingPowerTotal - votingPowerSpent
+
+  const usedLockupsPerTranche: Record<string, AugmentedLockup[]> = {}
+  augmentedLockups.forEach((lockup) => {
+    Object.entries(lockup.metaDataByTrancheId).forEach(([id, tranche]) => {
+      const trancheId = id
+      if (!usedLockupsPerTranche[trancheId]) {
+        usedLockupsPerTranche[trancheId] = []
+      }
+      if (tranche.isTiedToDeployment) {
+        usedLockupsPerTranche[trancheId].push(lockup)
+      }
+    })
+  })
+
+  const votingPowerSpentByTrancheId = Object.keys(usedLockupsPerTranche).reduce(
+    (acc, curr) => {
+      if (!acc[curr]) {
+        acc[curr] = 0
+      }
+      acc[curr] =
+        acc[curr] +
+        sumBy(usedLockupsPerTranche[curr], (l) =>
+          Number(l.currentVotingPower),
+        ) /
+          1e6
+      return acc
+    },
+    {} as Record<string, number>,
+  )
+
+  const votingPowerAvailableByTrancheId = Object.keys(
+    votingPowerSpentByTrancheId,
+  ).reduce(
+    (acc, curr) => {
+      if (!acc[curr]) {
+        acc[curr] = 0
+      }
+      acc[curr] = votingPowerTotal - votingPowerSpentByTrancheId[curr]
+      return acc
+    },
+    {} as Record<string, number>,
+  )
 
   return {
     ...augmentedBackendDataBeforeWallet,
@@ -130,8 +165,8 @@ export function augmentBackendDataAfterWallet({
     lockups: augmentedLockups,
     votes: sanitizedVotes,
     votesByRoundId,
-    votingPowerAvailable,
-    votingPowerSpent,
+    votingPowerSpentByTrancheId,
+    votingPowerAvailableByTrancheId,
     votingPowerTotal,
   }
 }

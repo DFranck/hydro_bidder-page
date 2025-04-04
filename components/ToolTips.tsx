@@ -747,25 +747,25 @@ export const yourTotalRewardsAllTimeTooltip = (
 export const yourVotingPowerTooltip = ({
   canVoteInAllTranches,
   canVoteInSomeTranches,
-  hasAllVotingPowerAvailable,
   hasVotedInEveryTrancheThisRound,
-  hasVotingPowerAvailableButNotAll,
-  hasVotingPowerButNoneAvailable,
-  hasVotingPowerOfAnyKind,
-  votingPowerAvailable,
-  votingPowerSpent,
   votingPowerTotal,
+  hasSpentAnyVotingPowerInAnyTranche,
+  isWalletConnected,
+  votingPowerByTranche,
 }: {
   canVoteInAllTranches: boolean
   canVoteInSomeTranches: boolean
-  hasAllVotingPowerAvailable: boolean
   hasVotedInEveryTrancheThisRound: boolean
-  hasVotingPowerAvailableButNotAll: boolean
-  hasVotingPowerButNoneAvailable: boolean
-  hasVotingPowerOfAnyKind: boolean
-  votingPowerAvailable: number
-  votingPowerSpent: number
   votingPowerTotal: number
+  hasSpentAnyVotingPowerInAnyTranche: boolean
+  isWalletConnected: boolean
+  votingPowerByTranche: {
+    [trancheId: string]: {
+      name: string
+      votingPowerAvailable: number
+      votingPowerSpent: number
+    }
+  }
 }) => {
   const trancheMessage = canVoteInAllTranches ? (
     <p>You can vote in each of the current&nbsp;tranches</p>
@@ -775,88 +775,72 @@ export const yourVotingPowerTooltip = ({
     <p>You&rsquo;ve voted in every tranche this round&nbsp;—&nbsp;bravo!</p>
   ) : null
 
+  if (!isWalletConnected) {
+    return <div>Please connect your wallet to see your voting power.</div>
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <div
         className={twJoin(
           "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
-          "whitespace-nowrap border-b pb-2",
+          "whitespace-nowrap",
         )}
       >
         <StyledText variant="label" className="col-span-2">
           Voting Power Breakdown
         </StyledText>
 
-        {[
-          ["Spent Voting Power", formatAmount(votingPowerSpent, 0, 4)],
-          [
-            "Available Voting Power",
-            <span className="text-palette-green" key="available-voting-power">
-              {formatAmount(votingPowerAvailable, 0, 4)}
-            </span>,
-          ],
-          [
-            <strong key="total-voting-power">Total Voting Power</strong>,
-            formatAmount(votingPowerTotal, 0, 4),
-          ],
-        ].map(([label, value], index) => (
-          <Fragment key={index}>
-            <div>{label}</div>
-            <div className="text-right">
-              <strong>{value}</strong>
+        <Fragment>
+          <strong>Total Voting Power</strong>
+          <div className="text-right">
+            <strong>{formatAmount(votingPowerTotal, 0, 4)}</strong>
+          </div>
+        </Fragment>
+      </div>
+
+      <div className="flex flex-col gap-2 border-b pb-2">
+        {Object.keys(votingPowerByTranche).map((trancheId) => (
+          <div key={`tranche_${trancheId}`}>
+            <StyledText variant="label">
+              {votingPowerByTranche[trancheId].name}
+            </StyledText>
+            <div className="flex justify-between">
+              <div>Spent Voting Power</div>
+              <strong>
+                {formatAmount(
+                  votingPowerByTranche[trancheId].votingPowerSpent,
+                  0,
+                  4,
+                )}
+              </strong>
             </div>
-          </Fragment>
+            <div className="flex justify-between">
+              <div>Available Voting Power</div>
+              <strong>
+                {formatAmount(
+                  votingPowerByTranche[trancheId].votingPowerAvailable,
+                  0,
+                  4,
+                )}
+              </strong>
+            </div>
+          </div>
         ))}
       </div>
 
       <div className="flex flex-col gap-1">
-        {!hasVotingPowerOfAnyKind && (
+        {hasSpentAnyVotingPowerInAnyTranche && (
           <p>
-            <StyledText variant="link" as={Link} href="/lock-atom">
-              Create a lockup
-            </StyledText>{" "}
-            to start&nbsp;voting.
+            Your spent voting power is tied to one or more active deployments.
           </p>
         )}
-
-        {hasAllVotingPowerAvailable && (
-          <p>
-            <strong className="text-palette-green">All</strong> of your voting
-            power is&nbsp;available.
-          </p>
-        )}
-
-        {hasVotingPowerButNoneAvailable && (
-          <p>
-            <strong className="text-palette-red">None</strong> of your voting
-            power is available because it is currently tied to one or more bids.{" "}
-            <StyledText variant="link" as={Link} href="/lock-atom">
-              Create a new lockup
-            </StyledText>{" "}
-            to&nbsp;vote.
-          </p>
-        )}
-
-        {hasVotingPowerAvailableButNotAll && (
-          <>
-            <p>
-              <strong className="text-palette-green">
-                {formatAmount(votingPowerAvailable, 0, 4)}
-              </strong>{" "}
-              of <strong>{formatAmount(votingPowerTotal, 0, 4)} total</strong>{" "}
-              voting power is&nbsp;available.
-            </p>
-
-            <p>
-              The rest of your voting power is tied to one or more active
-              deployments.{" "}
-              <StyledText variant="link" as={Link} href="/lock-atom">
-                Create a new lockup
-              </StyledText>{" "}
-              for more voting&nbsp;power.
-            </p>
-          </>
-        )}
+        <p>
+          <StyledText variant="link" as={Link} href="/lock-atom">
+            Create a new lockup
+          </StyledText>{" "}
+          for more voting power.
+        </p>
       </div>
 
       {trancheMessage !== null && (

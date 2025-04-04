@@ -7,7 +7,7 @@ import { twJoin } from "tailwind-merge"
 export function BidTributeApr({ bidId }: { bidId: number }) {
   const {
     bidsInfo,
-    votingPowerAvailable,
+    votingPowerAvailableByTrancheId,
     isWalletConnected,
     votesByRoundId,
     currentRoundId,
@@ -37,7 +37,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
 
   const totalVotingPowerOnBid = hasVotedForThisBid
     ? power / 10 ** 6
-    : power / 10 ** 6 + votingPowerAvailable
+    : power / 10 ** 6 + votingPowerAvailableByTrancheId[bidInfo.trancheId]
 
   const tributeAmountByDenom = tokenBasedTributes.reduce(
     (acc, currTribute) => {
@@ -51,7 +51,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
   )
 
   const userWillReceiveInUsd = isWalletConnected
-    ? (votingPowerAvailable / totalVotingPowerOnBid) *
+    ? (votingPowerAvailableByTrancheId[bidInfo.trancheId] / totalVotingPowerOnBid) *
       totalTokenBasedTributeValue
     : 0
 
@@ -60,7 +60,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         return {
           denom,
           valueInTokens:
-            (votingPowerAvailable / totalVotingPowerOnBid) *
+            (votingPowerAvailableByTrancheId[bidInfo.trancheId] / totalVotingPowerOnBid) *
             tributeAmountByDenom[denom]?.amount,
         }
       })

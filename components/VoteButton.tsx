@@ -46,7 +46,7 @@ export function VoteButton({
     lockedAtomMaxGlobal,
     lockedAtomTotalGlobal,
     votesByRoundId,
-    votingPowerAvailable,
+    votingPowerAvailableByTrancheId,
     lockedAtomEpochInNanos,
   } = useBackendData()
 
@@ -142,7 +142,7 @@ export function VoteButton({
         Loading...
       </StyledText>
     )
-  } else if (votingPowerAvailable === 0) {
+  } else if (votingPowerAvailableByTrancheId[bid.trancheId] === 0) {
     Button = (
       <ConditionalWrapper
         condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}

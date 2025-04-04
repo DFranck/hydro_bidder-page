@@ -65,8 +65,8 @@ const initialBackendDataContext: BackendDataContextType = {
   minTributeFactor: 0,
   votes: [],
   votesByRoundId: {},
-  votingPowerAvailable: 0,
-  votingPowerSpent: 0,
+  votingPowerAvailableByTrancheId: {},
+  votingPowerSpentByTrancheId: {},
   votingPowerTotal: 0,
   metricsGlobal: {
     allTimePolApr: 0,

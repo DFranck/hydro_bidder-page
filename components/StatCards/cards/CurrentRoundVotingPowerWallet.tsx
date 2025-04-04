@@ -10,75 +10,89 @@ import { StatCard } from "../StatCard"
 export function CurrentRoundVotingPowerWallet() {
   const {
     isLoading,
-    votingPowerAvailable,
-    votingPowerSpent,
+    votingPowerAvailableByTrancheId,
+    votingPowerSpentByTrancheId,
     votingPowerTotal,
     tranches,
     lockups,
+    isWalletConnected,
   } = useBackendData()
-
-  const hasVotingPowerOfAnyKind = votingPowerTotal > 0
-
-  const hasVotingPowerAvailable = votingPowerAvailable > 0
-
-  const hasVotingPowerButNoneAvailable =
-    hasVotingPowerOfAnyKind && votingPowerSpent === votingPowerTotal
-
-  const hasAllVotingPowerAvailable =
-    hasVotingPowerOfAnyKind && votingPowerAvailable === votingPowerTotal
-
-  const hasVotingPowerAvailableButNotAll =
-    hasVotingPowerAvailable && !hasAllVotingPowerAvailable
 
   const votingEligibilityByTrancheId = Object.fromEntries(
     tranches.map((tranche) => {
       const hasAvailableLockupInTranche = lockups.some(
-        (lockup) => lockup.metaDataByTrancheId[tranche.id].isEligibleToVote
+        (lockup) => lockup.metaDataByTrancheId[tranche.id].isEligibleToVote,
       )
 
       return [tranche.id, hasAvailableLockupInTranche]
-    })
+    }),
+  )
+
+  const votingPowerByTranche = tranches.reduce(
+    (acc, tranche) => {
+      if (!acc[tranche.id]) {
+        acc[tranche.id] = {
+          name: "",
+          votingPowerAvailable: 0,
+          votingPowerSpent: 0,
+        }
+      }
+
+      acc[tranche.id] = {
+        name: tranche.name,
+        votingPowerAvailable: votingPowerAvailableByTrancheId[tranche.id],
+        votingPowerSpent: votingPowerSpentByTrancheId[tranche.id],
+      }
+      return acc
+    },
+    {} as {
+      [trancheId: string]: {
+        name: string
+        votingPowerAvailable: number
+        votingPowerSpent: number
+      }
+    },
+  )
+
+  const hasSpentAnyVotingPowerInAnyTranche = Object.values(votingPowerByTranche).some(
+    (x) => x.votingPowerSpent > 0,
   )
 
   const canVoteInAllTranches = Object.values(
-    votingEligibilityByTrancheId
+    votingEligibilityByTrancheId,
   ).every((isEligibleToVote) => isEligibleToVote)
 
   const canVoteInSomeTranches = Object.values(
-    votingEligibilityByTrancheId
+    votingEligibilityByTrancheId,
   ).some((isEligibleToVote) => isEligibleToVote)
 
   const hasVotedInEveryTrancheThisRound = Object.values(
-    votingEligibilityByTrancheId
+    votingEligibilityByTrancheId,
   ).every((isEligibleToVote) => !isEligibleToVote)
 
   return (
     <StatCard
       isLoading={isLoading}
-      value={formatAmount(votingPowerAvailable, 0, 4)}
+      value={formatAmount(votingPowerTotal, 0, 2)}
       title={
         <Tooltip
           tipContents={yourVotingPowerTooltip({
             canVoteInAllTranches,
             canVoteInSomeTranches,
-            hasAllVotingPowerAvailable,
             hasVotedInEveryTrancheThisRound,
-            hasVotingPowerAvailableButNotAll,
-            hasVotingPowerButNoneAvailable,
-            hasVotingPowerOfAnyKind,
-            votingPowerAvailable,
-            votingPowerSpent,
             votingPowerTotal,
+            hasSpentAnyVotingPowerInAnyTranche,
+            isWalletConnected,
+            votingPowerByTranche,
           })}
           classNamesForTooltip="w-72"
         >
           <div className="flex items-center gap-1">
-            <span>Available Voting Power</span>
+            <span>Total Voting Power</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
       }
-      subTitle={<span>{formatAmount(votingPowerTotal, 0, 4)} Total</span>}
     />
   )
 }

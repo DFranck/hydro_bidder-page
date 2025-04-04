@@ -47,8 +47,8 @@ export interface AugmentedBackendDataAfterWallet
   lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
-  votingPowerAvailable: number
-  votingPowerSpent: number
+  votingPowerAvailableByTrancheId: Record<number, number>
+  votingPowerSpentByTrancheId: Record<number, number>
   votingPowerTotal: number
 }
 
