@@ -54,9 +54,9 @@ export function CurrentRoundVotingPowerWallet() {
     },
   )
 
-  const hasSpentAnyVotingPowerInAnyTranche = Object.values(votingPowerByTranche).some(
-    (x) => x.votingPowerSpent > 0,
-  )
+  const hasSpentAnyVotingPowerInAnyTranche = Object.values(
+    votingPowerByTranche,
+  ).some((x) => x.votingPowerSpent > 0)
 
   const canVoteInAllTranches = Object.values(
     votingEligibilityByTrancheId,
@@ -73,7 +73,7 @@ export function CurrentRoundVotingPowerWallet() {
   return (
     <StatCard
       isLoading={isLoading}
-      value={formatAmount(votingPowerTotal, 0, 2)}
+      value={formatAmount(votingPowerTotal, 0, votingPowerTotal < 0.01 ? 4 : 2)}
       title={
         <Tooltip
           tipContents={yourVotingPowerTooltip({
