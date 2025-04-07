@@ -31,7 +31,7 @@ export function StakingRewardsButton() {
   }
 
   return (
-    <div className="bg-surfaceSecondary flex items-center justify-between gap-4 rounded-2xl p-2">
+    <div className="bg-surfaceSecondary flex w-fit items-center justify-between gap-4 rounded-2xl p-2">
       <StyledText variant="label" className="text-sm font-bold">
         Staking Rewards: {stakingRewardsAmount} ATOM
       </StyledText>

@@ -2,6 +2,7 @@ import { AppWrapper } from "@/components/AppWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Icon } from "@/components/Icon"
+import { StakingRewardsButton } from "@/components/StakingRewardsButton"
 import { StyledText } from "@/components/StyledText"
 import Image from "next/image"
 import Link from "next/link"
@@ -94,7 +95,7 @@ export default function Home() {
             <div
               key={index}
               className={twMerge(
-                `flex shrink-0 flex-col items-center gap-4 rounded-[10px] text-center`
+                `flex shrink-0 flex-col items-center gap-4 rounded-[10px] text-center`,
               )}
             >
               <Image
@@ -112,7 +113,7 @@ export default function Home() {
               >
                 {tile.description.replace(
                   /[ ]([^ ]+?)$/gm,
-                  `${String.fromCharCode(160)}$1`
+                  `${String.fromCharCode(160)}$1`,
                 )}
               </p>
             </div>
@@ -182,6 +183,7 @@ export default function Home() {
             >
               Get started
             </StyledText>
+            <StakingRewardsButton />
           </ContentContainer>
         </div>
 
