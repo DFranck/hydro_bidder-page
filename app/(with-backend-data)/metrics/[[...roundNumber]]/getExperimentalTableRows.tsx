@@ -100,11 +100,13 @@ export function getExperimentalTableRows(
             variant="footnote"
             onClick={() => onToggleRow(item.experimental_id)}
           >
+            (
             {amountToUSDString(item.initial_address_holdings.total_usdc, {
               appendUsd: false,
               numberOfDecimals: 2,
               removeTrailingZeros: true,
             })}
+            )
           </StyledText>
         </div>
       ),

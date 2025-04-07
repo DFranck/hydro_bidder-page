@@ -14,7 +14,7 @@ export function getTrackingTableRows(
   openedRows: number[],
   onToggleRow: (bidId: number) => void,
   bids?: BidRevampMetrics[],
-  trackings?: TrackingItem[]
+  trackings?: TrackingItem[],
 ): TrackingRow[] {
   if (!bids || !bids.length || !trackings || !trackings.length) return []
 
@@ -31,7 +31,7 @@ export function getTrackingTableRows(
           infoMissing: false,
         }
       },
-      { atom: 0, usdc: 0, infoMissing: false }
+      { atom: 0, usdc: 0, infoMissing: false },
     )
 
     const committeeHolding = (tracking.holdings || []).reduce(
@@ -55,7 +55,7 @@ export function getTrackingTableRows(
           infoMissing: false,
         }
       },
-      { atom: 0, usdc: 0, infoMissing: false }
+      { atom: 0, usdc: 0, infoMissing: false },
     )
 
     const balancesByProtocol = (tracking.holdings || []).reduce(
@@ -93,7 +93,7 @@ export function getTrackingTableRows(
           addressHoldings: BalanceItem[]
           addressRewards: BalanceItem[]
         }
-      }
+      },
     )
 
     return {
@@ -132,13 +132,16 @@ export function getTrackingTableRows(
             </StyledText>
             <StyledText
               as="button"
+              variant="footnote"
               onClick={() => onToggleRow(tracking.bid_id)}
             >
+              (
               {amountToUSDString(venueTvl.usdc, {
                 appendUsd: false,
                 numberOfDecimals: 2,
                 removeTrailingZeros: true,
               })}
+              )
             </StyledText>
           </div>
         ),
@@ -158,13 +161,16 @@ export function getTrackingTableRows(
 
             <StyledText
               as="button"
+              variant="footnote"
               onClick={() => onToggleRow(tracking.bid_id)}
             >
+              (
               {amountToUSDString(committeeHolding.usdc, {
                 appendUsd: false,
                 numberOfDecimals: 2,
                 removeTrailingZeros: true,
               })}
+              )
             </StyledText>
           </div>
         ),
@@ -202,7 +208,7 @@ export function getTrackingTableRows(
                       <StyledText variant="footnote">
                         {balance.display_name}&nbsp;
                       </StyledText>
-                      <StyledText>
+                      <StyledText variant="footnote">
                         (
                         {amountToUSDString(balance.usd_value, {
                           appendUsd: false,
@@ -212,7 +218,7 @@ export function getTrackingTableRows(
                         )
                       </StyledText>
                     </StyledText>
-                  )
+                  ),
                 )}
               </div>
               <div className="flex flex-col items-end">
@@ -233,7 +239,7 @@ export function getTrackingTableRows(
                       <StyledText variant="footnote">
                         {balance.display_name}&nbsp;
                       </StyledText>
-                      <StyledText>
+                      <StyledText variant="footnote">
                         (
                         {amountToUSDString(balance.usd_value, {
                           appendUsd: false,
@@ -243,7 +249,7 @@ export function getTrackingTableRows(
                         )
                       </StyledText>
                     </StyledText>
-                  )
+                  ),
                 )}
                 {balancesByProtocol[protocol].addressRewards.length > 0 && (
                   <StyledText variant="label" className="py-1 underline">
@@ -259,7 +265,7 @@ export function getTrackingTableRows(
                       <StyledText variant="footnote">
                         {balance.display_name}&nbsp;
                       </StyledText>
-                      <StyledText>
+                      <StyledText variant="footnote">
                         (
                         {amountToUSDString(balance.usd_value, {
                           appendUsd: false,
@@ -269,7 +275,7 @@ export function getTrackingTableRows(
                         )
                       </StyledText>
                     </StyledText>
-                  )
+                  ),
                 )}
               </div>
             </div>
