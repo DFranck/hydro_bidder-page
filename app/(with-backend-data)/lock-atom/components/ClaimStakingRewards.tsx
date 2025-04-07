@@ -1,18 +1,45 @@
+// /app/(with-backend-data)/lock-atom/components/claim-staking-rewards.tsx
+
 "use client"
+
+import { Coin } from "@cosmjs/stargate"
+import { useChain } from "@cosmos-kit/react"
+import { useEffect, useState } from "react"
 
 import { Confetti } from "@/components/Confetti"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
-import { useState } from "react"
+import { getTokenizeShareRewardsWithClient } from "../functions/getTokenizeShareRewards"
 
-export function StakingRewardsButton() {
+export function ClaimStakingRewards() {
   const [isClaiming, setIsClaiming] = useState(false)
   const [isCelebrating, setIsCelebrating] = useState(false)
-  const { toasts, setToasts } = useToasts()
+  const [stakingRewardsAmount, setStakingRewardsAmount] = useState("0.000000")
 
-  const stakingRewardsAmount = 0 // TODO: hook + fetch
+  const { toasts, setToasts } = useToasts()
+  const { address, getRpcEndpoint } = useChain("cosmoshub")
+
+  useEffect(() => {
+    const fetchRewards = async () => {
+      if (!address) return
+
+      const rpcEndpoint = await getRpcEndpoint()
+      const rewards = await getTokenizeShareRewardsWithClient(
+        typeof rpcEndpoint === "string" ? rpcEndpoint : rpcEndpoint.url,
+        address,
+      )
+
+      const coin = rewards?.total?.find((c: Coin) => c.denom === "uatom")
+      if (coin) {
+        const parsed = parseInt(coin.amount) / 1_000_000
+        setStakingRewardsAmount(parsed.toFixed(6))
+      }
+    }
+
+    fetchRewards()
+  }, [address, getRpcEndpoint])
 
   const handleClaim = async () => {
     try {

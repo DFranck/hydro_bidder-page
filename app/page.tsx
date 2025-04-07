@@ -1,8 +1,8 @@
 import { AppWrapper } from "@/components/AppWrapper"
+import { ClaimStakingRewards } from "@/app/(with-backend-data)/lock-atom/components/ClaimStakingRewards"
 import { ContentContainer } from "@/components/ContentContainer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Icon } from "@/components/Icon"
-import { StakingRewardsButton } from "@/components/StakingRewardsButton"
 import { StyledText } from "@/components/StyledText"
 import Image from "next/image"
 import Link from "next/link"
@@ -183,7 +183,7 @@ export default function Home() {
             >
               Get started
             </StyledText>
-            <StakingRewardsButton />
+            <ClaimStakingRewards />
           </ContentContainer>
         </div>
 
