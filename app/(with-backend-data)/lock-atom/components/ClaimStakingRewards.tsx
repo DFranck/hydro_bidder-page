@@ -1,5 +1,3 @@
-// /app/(with-backend-data)/lock-atom/components/claim-staking-rewards.tsx
-
 "use client"
 
 import { Coin } from "@cosmjs/stargate"
@@ -11,6 +9,7 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
+
 import { getTokenizeShareRewardsWithClient } from "../functions/getTokenizeShareRewards"
 
 export function ClaimStakingRewards() {
@@ -25,16 +24,15 @@ export function ClaimStakingRewards() {
     const fetchRewards = async () => {
       if (!address) return
 
-      const rpcEndpoint = await getRpcEndpoint()
-      const rewards = await getTokenizeShareRewardsWithClient(
-        typeof rpcEndpoint === "string" ? rpcEndpoint : rpcEndpoint.url,
-        address,
-      )
+      const endpoint = await getRpcEndpoint()
+      const rpc = typeof endpoint === "string" ? endpoint : endpoint.url
 
+      const rewards = await getTokenizeShareRewardsWithClient(rpc, address)
+      console.log("rewards", rewards)
       const coin = rewards?.total?.find((c: Coin) => c.denom === "uatom")
       if (coin) {
         const parsed = parseInt(coin.amount) / 1_000_000
-        setStakingRewardsAmount(parsed.toFixed(6))
+        setStakingRewardsAmount(parsed.toFixed(2))
       }
     }
 
