@@ -976,3 +976,12 @@ export const experimentalTableDeploymentAprTooltip = ({
     <StyledText>and has lasted for {deploymentLasted}</StyledText>
   </div>
 )
+
+// Tooltip: Claim staking rewards from tokenized shares
+// Added by Poly on 2025-04-08
+export const claimStakingRewardsTooltip = (
+  <p>
+    Claim your pending staking rewards from tokenized ATOM shares. Rewards
+    accumulate over time and can be claimed to your wallet balance.
+  </p>
+)
