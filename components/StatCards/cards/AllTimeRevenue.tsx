@@ -20,7 +20,7 @@ export function AllTimeRevenue() {
       title={
         <Tooltip tipContents={totalRevenueTooltip}>
           <div className="flex items-center gap-1">
-            <span>Total Revenue</span>
+            <span>Distributed Rewards</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>
