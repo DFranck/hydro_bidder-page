@@ -17,9 +17,10 @@ import { useToasts } from "@/components/Toasts"
 
 import { Tooltip } from "@/components/Tooltip"
 import { claimStakingRewardsTooltip } from "@/components/ToolTips"
-import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
+import { twMerge } from "tailwind-merge"
 import { useIncompleteNotices } from "../lock-atom/useIncompleteNotices"
 import { getClaimableStakingRewardsSummary } from "./functions/getTokenizeShareRewards"
+import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
 
 export function ClaimStakingRewards() {
   const { hubChain, hubSigner } = useIncompleteNotices()
@@ -36,7 +37,12 @@ export function ClaimStakingRewards() {
 
   useEffect(() => {
     const fetchRewards = async () => {
-      if (!address) return
+      setIsLoadingRewards(true)
+      if (!address) {
+        setIsClaimable(false)
+        setIsLoadingRewards(false)
+        return
+      }
 
       try {
         const endpoint = await getRpcEndpoint()
@@ -85,7 +91,19 @@ export function ClaimStakingRewards() {
           <StyledText variant="label" className="text-sm font-bold">
             {isLoadingRewards ? (
               <span className="flex items-center gap-2">
-                <Icon name="spinner" spin className="text-sm" />
+                <div
+                  className={twMerge(
+                    `
+            pointer-events-none
+            flex
+            items-center
+            justify-center
+            transition-all
+          `,
+                  )}
+                >
+                  <Icon className="animate-spin" name="solid:loader" />
+                </div>
                 <span>Fetching rewards...</span>
               </span>
             ) : isClaimable ? (
