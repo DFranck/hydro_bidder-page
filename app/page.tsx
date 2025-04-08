@@ -1,5 +1,4 @@
 import { AppWrapper } from "@/components/AppWrapper"
-import { ClaimStakingRewards } from "@/app/(with-backend-data)/lock-atom/components/ClaimStakingRewards"
 import { ContentContainer } from "@/components/ContentContainer"
 import { HorizontalDivider } from "@/components/HorizontalDivider"
 import { Icon } from "@/components/Icon"
@@ -7,6 +6,7 @@ import { StyledText } from "@/components/StyledText"
 import Image from "next/image"
 import Link from "next/link"
 import { twMerge } from "tailwind-merge"
+import { ClaimStakingRewards } from "./(with-backend-data)/rewards/ClaimStakingRewards"
 
 const howHydroWorksTiles = [
   {

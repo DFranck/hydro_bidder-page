@@ -1,3 +1,9 @@
+/**
+ * Renders a claimable staking rewards widget.
+ * Fetches rewards summary (ATOM + USD) and triggers claim tx via MsgWithdrawAllTokenizeShareRecordReward.
+ * UI toggles between ATOM and USD on click.
+ */
+
 "use client"
 
 import { useChain } from "@cosmos-kit/react"
@@ -11,13 +17,13 @@ import { useToasts } from "@/components/Toasts"
 
 import { Tooltip } from "@/components/Tooltip"
 import { claimStakingRewardsTooltip } from "@/components/ToolTips"
-import { getClaimableStakingRewardsSummary } from "../functions/getTokenizeShareRewards"
-import { signClaimTokenizedRewards } from "../transactions/signClaimTokenizedRewards"
-import { useIncompleteNotices } from "../useIncompleteNotices"
+import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
+import { useIncompleteNotices } from "../lock-atom/useIncompleteNotices"
+import { getClaimableStakingRewardsSummary } from "./functions/getTokenizeShareRewards"
 
 export function ClaimStakingRewards() {
   const { hubChain, hubSigner } = useIncompleteNotices()
-  const { toasts, setToasts } = useToasts()
+  const { setToasts } = useToasts()
   const { address, getRpcEndpoint } = useChain("cosmoshub")
 
   const [isLoadingRewards, setIsLoadingRewards] = useState(true)
@@ -73,7 +79,7 @@ export function ClaimStakingRewards() {
   if (!address) return null
 
   return (
-    <div className="bg-surfaceSecondary flex w-fit items-center justify-between gap-4 rounded-2xl p-2">
+    <div className="bg-surfaceSecondary flex w-full items-center justify-between gap-4 rounded-2xl p-2 md:w-fit">
       <Tooltip tipContents={claimStakingRewardsTooltip}>
         <div className="flex items-center gap-1">
           <StyledText variant="label" className="text-sm font-bold">
@@ -112,7 +118,7 @@ export function ClaimStakingRewards() {
             name={isClaiming ? "spinner" : "solid:circle-check"}
           />
         )}
-        <span>{isClaiming ? "Claiming..." : "Claim"}</span>
+        <span>{isClaiming ? "Claiming..." : "Claim All"}</span>
       </StyledText>
 
       <Confetti
