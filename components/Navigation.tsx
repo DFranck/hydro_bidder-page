@@ -119,6 +119,7 @@ export default function Navigation() {
         max-lg:pointer-events-none
         max-lg:focus-within:pointer-events-auto
       "
+      tabIndex={0}
     >
       <button
         className="
@@ -135,7 +136,6 @@ export default function Navigation() {
           lg:hidden
           max-lg:pointer-events-auto
         "
-        tabIndex={0}
       >
         <span
           className="
