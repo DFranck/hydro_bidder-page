@@ -10,10 +10,13 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 
 import { getClaimableStakingRewardsSummary } from "../functions/getTokenizeShareRewards"
+import { signClaimTokenizedRewards } from "../transactions/signClaimTokenizedRewards"
+import { useIncompleteNotices } from "../useIncompleteNotices"
 
 export function ClaimStakingRewards() {
   const [isClaiming, setIsClaiming] = useState(false)
   const [isCelebrating, setIsCelebrating] = useState(false)
+  const { hubChain, hubSigner } = useIncompleteNotices()
   const [stakingRewardsAmount, setStakingRewardsAmount] = useState("0.000000")
   const [usdcAmount, setUsdcAmount] = useState("0.00")
   const { toasts, setToasts } = useToasts()
@@ -43,7 +46,11 @@ export function ClaimStakingRewards() {
       setIsClaiming(true)
       setToasts([toastMessages.claimingRewards])
 
-      // TODO: MsgWithdrawAllTokenizeShareRecordReward
+      if (!hubSigner) {
+        throw new Error("hubSigner is not defined")
+      }
+
+      await signClaimTokenizedRewards(hubChain, hubSigner)
 
       setIsCelebrating(true)
       setToasts([toastMessages.claimingRewardsSuccess])
