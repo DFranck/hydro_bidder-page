@@ -116,8 +116,9 @@ export default function Navigation() {
         max-lg:duration-500
         lg:relative
         lg:bg-transparent
+        max-lg:pointer-events-none
+        max-lg:focus-within:pointer-events-auto
       "
-      tabIndex={0}
     >
       <button
         className="
@@ -132,7 +133,9 @@ export default function Navigation() {
           duration-500
           group-focus-within/navbar:rotate-180
           lg:hidden
+          max-lg:pointer-events-auto
         "
+        tabIndex={0}
       >
         <span
           className="
