@@ -6,7 +6,6 @@ import { StyledText } from "@/components/StyledText"
 import Image from "next/image"
 import Link from "next/link"
 import { twMerge } from "tailwind-merge"
-import { ClaimStakingRewards } from "./(with-backend-data)/rewards/ClaimStakingRewards"
 
 const howHydroWorksTiles = [
   {
@@ -183,7 +182,6 @@ export default function Home() {
             >
               Get started
             </StyledText>
-            <ClaimStakingRewards />
           </ContentContainer>
         </div>
 
