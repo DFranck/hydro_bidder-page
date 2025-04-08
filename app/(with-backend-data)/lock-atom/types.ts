@@ -34,3 +34,15 @@ export type IncompleteNotice = {
   denom: string
   baseDenom?: string
 }
+
+export type ClaimableRewardItem = {
+  recordId: string
+  atomAmount: number
+  usdAmount: number
+}
+
+export type ClaimableRewardsSummary = {
+  totalAtom: number
+  totalUsd: number
+  rewards: ClaimableRewardItem[]
+}
