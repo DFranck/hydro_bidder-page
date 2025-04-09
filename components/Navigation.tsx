@@ -62,6 +62,8 @@ export default function Navigation() {
           label: "Airdrops",
           href: "/airdrops",
           iconLeft: "solid:parachute-box",
+          iconRight: "arrow-up-right-from-square",
+          target: "_blank",
         },
         {
           href: "https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals",
