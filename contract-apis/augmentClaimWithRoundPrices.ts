@@ -1,10 +1,10 @@
 import { TributeClaim } from "@/app/ts_types/TributeBase.types"
-import { getCoinWithValueInUsdByRoundPrices } from "@/contract-apis/getCoinWithValueInUsd"
+import { getCoinWithRoundPrices } from "@/contract-apis/getCoinWithRoundPrices"
 import { AugmentedClaim, RoundPrices } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import omit from "lodash/omit"
 
-export function augmentClaimByRoundPrices({
+export function augmentClaimWithRoundPrices({
   roundPrices,
   claim,
 }: {
@@ -13,7 +13,7 @@ export function augmentClaimByRoundPrices({
 }): AugmentedClaim {
   return {
     ...keysFromSnakeToCamelCase(omit(claim, "proposalId")),
-    amount: getCoinWithValueInUsdByRoundPrices({
+    amount: getCoinWithRoundPrices({
       coin: claim.amount,
       roundPrices,
     }),

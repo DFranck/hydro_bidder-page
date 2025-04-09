@@ -6,7 +6,7 @@ import { Tribute } from "@/app/ts_types/TributeBase.types"
 import { voteThresholdByTrancheId } from "@/config"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import { omit } from "lodash"
-import { getCoinWithValueInUsdByRoundPrices } from "../getCoinWithValueInUsd"
+import { getCoinWithRoundPrices } from "../getCoinWithRoundPrices"
 import {
   BidRevampMetrics,
   ProposalSlimmed,
@@ -157,7 +157,7 @@ export function augmentRoundDeploymentMetrics(
       .map((tribute) => {
         const { funds, tribute_id } = tribute
 
-        const fundsWithPrice = getCoinWithValueInUsdByRoundPrices({
+        const fundsWithPrice = getCoinWithRoundPrices({
           coin: funds,
           roundPrices,
         })
@@ -183,7 +183,7 @@ export function augmentRoundDeploymentMetrics(
 
     const augmentedDeployedFunds =
       liquidityDeployment?.deployed_funds.map((coin) =>
-        getCoinWithValueInUsdByRoundPrices({
+        getCoinWithRoundPrices({
           coin,
           roundPrices,
         })
@@ -191,7 +191,7 @@ export function augmentRoundDeploymentMetrics(
 
     const augmentedFundsBeforeDeployment =
       liquidityDeployment?.funds_before_deployment.map((coin) =>
-        getCoinWithValueInUsdByRoundPrices({
+        getCoinWithRoundPrices({
           coin,
           roundPrices,
         })

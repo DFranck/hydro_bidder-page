@@ -4,7 +4,7 @@ import {
   RoundPrices,
 } from "@/contract-apis/types"
 
-export function getCoinWithValueInUsdByRoundPrices({
+export function getCoinWithRoundPrices({
   coin,
   roundPrices,
 }: {
