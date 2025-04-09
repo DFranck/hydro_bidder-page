@@ -10,7 +10,7 @@ import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import groupBy from "lodash/groupBy"
 import keyBy from "lodash/keyBy"
 import sumBy from "lodash/sumBy"
-import { augmentClaim } from "./augmentClaim"
+import { augmentClaimByRoundPrices } from "./augmentClaim"
 
 export function augmentBackendDataAfterWallet({
   address,
@@ -23,7 +23,7 @@ export function augmentBackendDataAfterWallet({
     ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
 }): AugmentedBackendDataAfterWallet {
-  const { assetListWithPrices, bidsInfo, currentRoundId, lockedAtomMaxWallet } =
+  const { bidsInfo, currentRoundId, lockedAtomMaxWallet, currentRoundPrices } =
     augmentedBackendDataBeforeWallet
 
   const {
@@ -88,15 +88,15 @@ export function augmentBackendDataAfterWallet({
   )
 
   const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>
-    augmentClaim({
-      assetListWithPrices,
+    augmentClaimByRoundPrices({
+      roundPrices: currentRoundPrices,
       claim: o,
     }),
   )
 
   const augmentedOutstandingClaims = outstanding_tribute_claims.map((o) =>
-    augmentClaim({
-      assetListWithPrices,
+    augmentClaimByRoundPrices({
+      roundPrices: currentRoundPrices,
       claim: o,
     }),
   )

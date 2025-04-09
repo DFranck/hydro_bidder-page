@@ -25,20 +25,20 @@ export function AddTributeModal({
   const [amount, setAmount] = useState<string>("")
   const [denom, setDenom] = useState<string>("untrn")
   const [description, setDescription] = useState<string>("")
-  const { assetListWithPrices } = useBackendData()
+  const { currentRoundPrices } = useBackendData()
 
   const denomList = useMemo(
     () =>
-      Object.entries(assetListWithPrices).map((asset) => ({
-        name: asset[1].symbol.replace(".", " "),
+      Object.entries(currentRoundPrices).map((asset) => ({
+        name: asset[1].token_symbol.replace(".", " "),
         value: asset[0],
       })),
-    [assetListWithPrices]
+    [currentRoundPrices]
   )
 
   const submit = () => {
-    const asset = assetListWithPrices[denom]
-    const eAmount = (Number(amount) * 10 ** asset.decimals).toFixed(0)
+    const asset = currentRoundPrices[denom]
+    const eAmount = (Number(amount) * 10 ** asset.token_exponent).toFixed(0)
     onCloseCompleteAction(eAmount, denom, description)
   }
 
