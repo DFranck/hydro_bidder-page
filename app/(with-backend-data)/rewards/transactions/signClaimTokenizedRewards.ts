@@ -26,5 +26,5 @@ export async function signClaimTokenizedRewards(
   }
 
   const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
-  return await hubSigner.sign(hubChain.address, [msg], fee, "")
+  return await hubSigner.signAndBroadcast(hubChain.address, [msg], fee, "")
 }
