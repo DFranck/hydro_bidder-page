@@ -4,7 +4,7 @@ import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { HYDRO_TELEGRAM_URL, voteThresholdByTrancheId } from "@/config"
+import { HYDRO_TELEGRAM_COMMUNITY_URL, voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataSlimmed,
@@ -545,7 +545,7 @@ export const lockupLimitReachedByNetworkTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href={HYDRO_TELEGRAM_URL}
+      href={HYDRO_TELEGRAM_COMMUNITY_URL}
       target="_blank"
       className="inline-flex items-center gap-1"
     >

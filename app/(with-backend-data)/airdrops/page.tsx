@@ -13,7 +13,7 @@ import { ColumnObject } from "@/components/StyledTable/types"
 import { StyledText } from "@/components/StyledText"
 import { Toast } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { HYDRO_TELEGRAM_URL } from "@/config"
+import { HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { range } from "lodash"
 import Link from "next/link"
@@ -323,7 +323,7 @@ export default function AirdropsPage() {
                 className="inline-flex items-center gap-1"
                 as={Link}
                 variant="link"
-                href={HYDRO_TELEGRAM_URL}
+                href={HYDRO_TELEGRAM_COMMUNITY_URL}
                 target="_blank"
               >
                 <span>Drop it in the Telegram</span>

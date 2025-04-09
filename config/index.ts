@@ -7,22 +7,18 @@ export enum AllowedLockupPeriodInEpochs {
   THREE_EPOCHS = 3,
 }
 
-export const HYDRO_TELEGRAM_URL = "https://t.me/+xUzNOTZjUNw5Mzhk"
+export const HYDRO_TELEGRAM_COMMUNITY_URL = "https://t.me/hydro_community"
+export const HYDRO_TELEGRAM_ANNOUNCEMENTS_URL = "https://t.me/hydro_announcements"
 
 export const SOCIAL_MEDIA_LINKS = [
   {
-    name: "Website",
-    url: "https://cosmos.network",
-    icon: "solid:globe",
-  },
-  {
     name: "Twitter",
-    url: "https://twitter.com/cosmoshub",
-    icon: "brands:twitter",
+    url: "https://x.com/HydroTeam_",
+    icon: "brands:x-twitter",
   },
   {
     name: "Telegram",
-    url: HYDRO_TELEGRAM_URL,
+    url: HYDRO_TELEGRAM_COMMUNITY_URL,
     icon: "solid:paper-plane",
   },
 ]

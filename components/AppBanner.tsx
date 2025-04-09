@@ -1,7 +1,7 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { HYDRO_TELEGRAM_URL } from "@/config"
+import { HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
 import { fetchCurrentRoundId } from "@/contract-apis/fetchCurrentRoundId"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatOrdinals } from "@/lib/formatOrdinals"
@@ -13,7 +13,7 @@ import { twMerge } from "tailwind-merge"
 const JoinOurTelegramGroupForUpdates = (
   <span>
     <a
-      href={HYDRO_TELEGRAM_URL}
+      href={HYDRO_TELEGRAM_COMMUNITY_URL}
       className="relative z-20 font-bold underline"
       target="_blank"
     >
@@ -44,7 +44,7 @@ export function AppBanner() {
 
   const Banners = {
     maxCapacity: {
-      href: HYDRO_TELEGRAM_URL,
+      href: HYDRO_TELEGRAM_COMMUNITY_URL,
       text: (
         <>
           Hydro&rsquo;s current cap has been reached.{" "}
@@ -53,7 +53,7 @@ export function AppBanner() {
       ),
     },
     pilotRounds: {
-      href: HYDRO_TELEGRAM_URL,
+      href: HYDRO_TELEGRAM_COMMUNITY_URL,
       text: !currentRoundId ? (
         "Loading..."
       ) : (
