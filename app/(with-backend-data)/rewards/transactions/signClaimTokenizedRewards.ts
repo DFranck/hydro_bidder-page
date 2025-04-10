@@ -17,12 +17,12 @@ export async function signClaimTokenizedRewards(
     throw new Error("Hub chain address not set")
   }
 
-  const msg = {
+  const msg: { typeUrl: string; value: MsgWithdrawAllTokenizeShareRecordReward } = {
     typeUrl:
       "/cosmos.distribution.v1beta1.MsgWithdrawAllTokenizeShareRecordReward",
     value: {
       ownerAddress: hubChain.address,
-    } satisfies MsgWithdrawAllTokenizeShareRecordReward,
+    },
   }
 
   const fee = await hubChain.estimateFee([msg], undefined, undefined, 1.5)
