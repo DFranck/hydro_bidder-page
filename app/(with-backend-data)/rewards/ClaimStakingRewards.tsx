@@ -37,11 +37,15 @@ export function ClaimStakingRewards() {
   const [stakingRewardsAmount, setStakingRewardsAmount] = useState("0.000000")
   const [usdcAmount, setUsdcAmount] = useState("0.00")
 
+  // Set loading state when address changes
+  useEffect(() => {
+    if (address) {
+      setIsLoadingRewards(true)
+    }
+  }, [address])
+
   useEffect(() => {
     const fetchRewards = async () => {
-      if (stakingRewardsAmount === "0.000000") {
-        setIsLoadingRewards(true)
-      }
       if (!address) {
         setIsClaimable(false)
         setIsLoadingRewards(false)
