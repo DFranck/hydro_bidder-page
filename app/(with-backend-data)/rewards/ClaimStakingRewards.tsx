@@ -17,11 +17,11 @@ import { useToasts } from "@/components/Toasts"
 
 import { Tooltip } from "@/components/Tooltip"
 import { claimStakingRewardsTooltip } from "@/components/ToolTips"
-import { twMerge } from "tailwind-merge"
-import { useIncompleteNotices } from "../lock-atom/useIncompleteNotices"
-import { getClaimableStakingRewardsSummary } from "./functions/getTokenizeShareRewards"
-import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { twMerge } from "tailwind-merge"
+import { getClaimableStakingRewardsSummary } from "../../../contract-apis/fetchTokenizeShareRewards"
+import { useIncompleteNotices } from "../lock-atom/useIncompleteNotices"
+import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
 
 export function ClaimStakingRewards() {
   const { hubChain, hubSigner } = useIncompleteNotices()
@@ -34,7 +34,7 @@ export function ClaimStakingRewards() {
   const [isCelebrating, setIsCelebrating] = useState(false)
   const [isClaimable, setIsClaimable] = useState(false)
   const [showUsd, setShowUsd] = useState(false)
-  const [stakingRewardsAmount, setStakingRewardsAmount] = useState("0.000000")
+  const [stakingRewardsAmount, setStakingRewardsAmount] = useState("0.00")
   const [usdcAmount, setUsdcAmount] = useState("0.00")
 
   // Set loading state when address changes
@@ -44,29 +44,33 @@ export function ClaimStakingRewards() {
     }
   }, [address])
 
-  useEffect(() => {
-    const fetchRewards = async () => {
-      if (!address) {
-        setIsClaimable(false)
-        setIsLoadingRewards(false)
-        return
-      }
-
-      try {
-        const endpoint = await getRpcEndpoint()
-        const rpc = typeof endpoint === "string" ? endpoint : endpoint.url
-
-        const rewards = await getClaimableStakingRewardsSummary(rpc, address, atomPrice)
-        if (rewards) {
-          setStakingRewardsAmount(rewards.totalAtom.toFixed(2))
-          setUsdcAmount(rewards.totalUsd.toFixed(2))
-          setIsClaimable(rewards?.totalAtom > 0)
-        }
-      } finally {
-        setIsLoadingRewards(false)
-      }
+  const fetchRewards = async () => {
+    if (!address) {
+      setIsClaimable(false)
+      setIsLoadingRewards(false)
+      return
     }
 
+    try {
+      const endpoint = await getRpcEndpoint()
+      const rpc = typeof endpoint === "string" ? endpoint : endpoint.url
+
+      const rewards = await getClaimableStakingRewardsSummary(
+        rpc,
+        address,
+        atomPrice,
+      )
+      if (rewards) {
+        setStakingRewardsAmount(rewards.totalAtom.toFixed(2))
+        setUsdcAmount(rewards.totalUsd.toFixed(2))
+        setIsClaimable(rewards?.totalAtom > 0)
+      }
+    } finally {
+      setIsLoadingRewards(false)
+    }
+  }
+
+  useEffect(() => {
     fetchRewards()
   }, [address, getRpcEndpoint, atomPrice])
 
@@ -81,6 +85,7 @@ export function ClaimStakingRewards() {
 
       await signClaimTokenizedRewards(hubChain, hubSigner)
 
+      await fetchRewards()
       setIsCelebrating(true)
       setToasts([toastMessages.claimingRewardsSuccess])
     } catch (err: any) {
@@ -117,11 +122,15 @@ export function ClaimStakingRewards() {
             ) : isClaimable ? (
               <StyledText
                 className="flex flex-col text-start"
-                onClick={() => parseFloat(usdcAmount) > 0 && setShowUsd((prev) => !prev)}
+                onClick={() =>
+                  parseFloat(usdcAmount) > 0 && setShowUsd((prev) => !prev)
+                }
               >
                 <span className="text-muted text-xs">Staking Rewards</span>
                 <span className="text-base font-bold text-white">
-                  {showUsd && parseFloat(usdcAmount) > 0 ? `$${usdcAmount}` : `${stakingRewardsAmount} ATOM`}
+                  {showUsd && parseFloat(usdcAmount) > 0
+                    ? `$${usdcAmount}`
+                    : `${stakingRewardsAmount} ATOM`}
                 </span>
               </StyledText>
             ) : (
