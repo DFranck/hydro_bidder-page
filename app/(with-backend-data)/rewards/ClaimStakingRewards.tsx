@@ -19,8 +19,8 @@ import { Tooltip } from "@/components/Tooltip"
 import { claimStakingRewardsTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
-import { getClaimableStakingRewardsSummary } from "../../../contract-apis/fetchTokenizeShareRewards"
-import { useIncompleteNotices } from "../lock-atom/useIncompleteNotices"
+import { fetchLSMStakingRewards } from "@/contract-apis/fetchTokenizeShareRewards"
+import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
 
 export function ClaimStakingRewards() {
@@ -55,7 +55,7 @@ export function ClaimStakingRewards() {
       const endpoint = await getRpcEndpoint()
       const rpc = typeof endpoint === "string" ? endpoint : endpoint.url
 
-      const rewards = await getClaimableStakingRewardsSummary(
+      const rewards = await fetchLSMStakingRewards(
         rpc,
         address,
         atomPrice,

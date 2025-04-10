@@ -4,7 +4,7 @@ import { ClaimableRewardsSummary } from "../app/(with-backend-data)/rewards/type
 const UATOM_DENOM = "uatom"
 const ATOM_EXPONENT = 6
 
-export async function getClaimableStakingRewardsSummary(
+export async function fetchLSMStakingRewards(
   rpcEndpoint: string,
   address: string,
   atomPrice: number,
