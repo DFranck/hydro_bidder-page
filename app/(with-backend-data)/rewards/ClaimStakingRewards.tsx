@@ -85,7 +85,7 @@ export function ClaimStakingRewards() {
   if (!address) return null
 
   return (
-    <div className="bg-surfaceSecondary flex w-full items-center justify-between gap-4 rounded-2xl p-2 md:w-fit">
+    <div className="bg-surfaceSecondary flex w-full items-center justify-between gap-4 rounded-2xl md:w-fit">
       <Tooltip tipContents={claimStakingRewardsTooltip}>
         <div className="flex items-center gap-1">
           <StyledText variant="label" className="text-sm font-bold">
@@ -136,7 +136,7 @@ export function ClaimStakingRewards() {
             name={isClaiming ? "spinner" : "solid:circle-check"}
           />
         )}
-        <span>{isClaiming ? "Claiming..." : "Claim All"}</span>
+        <span>{isClaiming ? "Claiming..." : "Claim"}</span>
       </StyledText>
 
       <Confetti

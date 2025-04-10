@@ -301,11 +301,20 @@ export default function RewardsPage() {
         <AllTimeAprWallet />
         <AllTimeRewardsWallet />
       </StatCardsContainer>
-      <div className="flex w-full justify-center md:justify-end">
-        <ClaimStakingRewards />
-      </div>
 
       <ContentContainer className="gap-12 py-6">
+        <div
+          className="
+            flex
+            flex-col
+            items-center
+            justify-end
+            gap-3
+            lg:flex-row
+          "
+        >
+          <ClaimStakingRewards />
+        </div>
         <BlurryBackdropBox>
           {rows.length > 0 ? (
             <StyledTable columns={columns} rows={rows} />
