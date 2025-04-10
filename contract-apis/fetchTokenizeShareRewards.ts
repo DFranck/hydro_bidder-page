@@ -1,14 +1,17 @@
 import type { QueryTokenizeShareRecordRewardRequest } from "moonkittjs/dist/codegen/cosmos/distribution/v1beta1/query"
-import { ClaimableRewardsSummary } from "../app/(with-backend-data)/rewards/types"
+import { LSMStakingRewards } from "../app/(with-backend-data)/rewards/types"
 
-const UATOM_DENOM = "uatom"
 const ATOM_EXPONENT = 6
 
 export async function fetchLSMStakingRewards(
   rpcEndpoint: string,
   address: string,
   atomPrice: number,
-): Promise<ClaimableRewardsSummary | undefined> {
+): Promise<LSMStakingRewards | undefined> {
+  if (!process.env.NEXT_PUBLIC_ATOM_DENOM) {
+    return
+  }
+
   try {
     // if we import from `stridejs`, it creates values with 10**18 exponent
     const cosmos = (await import("moonkittjs")).cosmos
@@ -24,7 +27,7 @@ export async function fetchLSMStakingRewards(
         rewardsReq,
       )
     const atomRewards = stakingRewards.total.find(
-      (entry) => entry.denom === UATOM_DENOM,
+      (entry) => entry.denom === process.env.NEXT_PUBLIC_ATOM_DENOM,
     )
 
     let totalAtom = 0
