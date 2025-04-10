@@ -94,7 +94,7 @@ export default function Home() {
             <div
               key={index}
               className={twMerge(
-                `flex shrink-0 flex-col items-center gap-4 rounded-[10px] text-center`,
+                `flex shrink-0 flex-col items-center gap-4 rounded-[10px] text-center`
               )}
             >
               <Image
@@ -112,7 +112,7 @@ export default function Home() {
               >
                 {tile.description.replace(
                   /[ ]([^ ]+?)$/gm,
-                  `${String.fromCharCode(160)}$1`,
+                  `${String.fromCharCode(160)}$1`
                 )}
               </p>
             </div>

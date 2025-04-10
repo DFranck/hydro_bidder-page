@@ -302,7 +302,7 @@ export default function RewardsPage() {
         <AllTimeRewardsWallet />
       </StatCardsContainer>
 
-      <ContentContainer className="gap-12 py-6">
+      <ContentContainer className="gap-6 py-6">
         <div
           className="
             flex

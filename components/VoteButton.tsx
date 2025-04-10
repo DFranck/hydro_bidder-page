@@ -57,7 +57,7 @@ export function VoteButton({
     if (!bid || lockup.isExpired) return false
 
     const nextRoundEligibleToVote = Number(
-      lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote,
+      lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote
     )
 
     if (nextRoundEligibleToVote > currentRoundId) return false
@@ -80,17 +80,17 @@ export function VoteButton({
 
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const votesThisTranche = votesThisRound.filter(
-    (vote) => bidsInfo[vote.bidId]?.trancheId === bid?.trancheId,
+    (vote) => bidsInfo[vote.bidId]?.trancheId === bid?.trancheId
   )
   const hasVotedInThisTranche = votesThisTranche.length > 0
   const hasVotedForThisBid = votesThisTranche.some(
-    (vote) => vote.bidId === bidId,
+    (vote) => vote.bidId === bidId
   )
   const isLoading = toasts.some((toast) => toast.variant === "working")
   const validLockups = lockups.filter(
     (lockup) =>
       (lockup.metaDataByTrancheId[bid?.trancheId]?.nextRoundEligibleToVote ??
-        Infinity) <= currentRoundId,
+        Infinity) <= currentRoundId
   )
 
   async function handleClickVote() {

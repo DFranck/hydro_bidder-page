@@ -21,11 +21,13 @@ import { twMerge } from "tailwind-merge"
 import { useIncompleteNotices } from "../lock-atom/useIncompleteNotices"
 import { getClaimableStakingRewardsSummary } from "./functions/getTokenizeShareRewards"
 import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
+import { useBackendData } from "@/contract-apis/useBackendData"
 
 export function ClaimStakingRewards() {
   const { hubChain, hubSigner } = useIncompleteNotices()
   const { setToasts } = useToasts()
   const { address, getRpcEndpoint } = useChain("cosmoshub")
+  const { atomPrice } = useBackendData()
 
   const [isLoadingRewards, setIsLoadingRewards] = useState(true)
   const [isClaiming, setIsClaiming] = useState(false)
@@ -37,7 +39,9 @@ export function ClaimStakingRewards() {
 
   useEffect(() => {
     const fetchRewards = async () => {
-      setIsLoadingRewards(true)
+      if (stakingRewardsAmount === "0.000000") {
+        setIsLoadingRewards(true)
+      }
       if (!address) {
         setIsClaimable(false)
         setIsLoadingRewards(false)
@@ -48,7 +52,7 @@ export function ClaimStakingRewards() {
         const endpoint = await getRpcEndpoint()
         const rpc = typeof endpoint === "string" ? endpoint : endpoint.url
 
-        const rewards = await getClaimableStakingRewardsSummary(rpc, address)
+        const rewards = await getClaimableStakingRewardsSummary(rpc, address, atomPrice)
         if (rewards) {
           setStakingRewardsAmount(rewards.totalAtom.toFixed(2))
           setUsdcAmount(rewards.totalUsd.toFixed(2))
@@ -60,7 +64,7 @@ export function ClaimStakingRewards() {
     }
 
     fetchRewards()
-  }, [address, getRpcEndpoint])
+  }, [address, getRpcEndpoint, atomPrice])
 
   const handleClaim = async () => {
     try {
@@ -109,11 +113,11 @@ export function ClaimStakingRewards() {
             ) : isClaimable ? (
               <StyledText
                 className="flex flex-col text-start"
-                onClick={() => setShowUsd((prev) => !prev)}
+                onClick={() => parseFloat(usdcAmount) > 0 && setShowUsd((prev) => !prev)}
               >
                 <span className="text-muted text-xs">Staking Rewards</span>
                 <span className="text-base font-bold text-white">
-                  {showUsd ? `$${usdcAmount}` : `${stakingRewardsAmount} ATOM`}
+                  {showUsd && parseFloat(usdcAmount) > 0 ? `$${usdcAmount}` : `${stakingRewardsAmount} ATOM`}
                 </span>
               </StyledText>
             ) : (
