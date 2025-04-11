@@ -18,12 +18,12 @@ export async function generateMetadata() {
 
   const sortedMetadataByRoute = sortBy(
     Object.entries(metadataByRoute),
-    ([route]) => route.length
+    ([route]) => route.length,
   )
 
   const routeMetadataEntry =
     sortedMetadataByRoute.find(([pathname]) =>
-      pathname.startsWith(requestedPathname)
+      pathname.startsWith(requestedPathname),
     )?.[1] ?? defaultMetadata
 
   return routeMetadataEntry
@@ -46,14 +46,14 @@ export default async function RootLayout({
           <>
             <Script
               async
-              src="https://www.googletagmanager.com/gtag/js?id=G-NZ1F6WL2PM"
+              src="https://www.googletagmanager.com/gtag/js?id=G-JXM6TCWTSW"
             />
             <Script id="google-analytics" strategy="afterInteractive">
               {`
                 window.dataLayer = window.dataLayer || []
                 function gtag(){dataLayer.push(arguments)}
                 gtag('js', new Date())
-                gtag('config', 'G-NZ1F6WL2PM')
+                gtag('config', 'G-JXM6TCWTSW')
               `}
             </Script>
             <Script

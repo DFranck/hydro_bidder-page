@@ -17,22 +17,6 @@ export type ArbitraryAmountWithDescription = [
   description: string,
 ]
 
-export interface AssetListEntry {
-  token: string
-  symbol: string
-  decimals: number
-  coingeckoId?: string
-  priceUsd?: number
-}
-
-export interface AssetListWithPrices {
-  [key: string]: {
-    priceUsd: number
-    symbol: string
-    decimals: number
-  }
-}
-
 export interface AugmentedBackendDataAfterWallet
   extends AugmentedBackendDataBeforeWallet {
   address: string
@@ -53,7 +37,7 @@ export interface AugmentedBackendDataAfterWallet
 }
 
 export interface AugmentedBackendDataBeforeWallet {
-  assetListWithPrices: AssetListWithPrices
+  currentRoundPrices: RoundPrices
   atomPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
   bidMetaDataById: BidMetaDataByIdSlimmed
@@ -271,7 +255,6 @@ export interface PriceDetails {
 export type ProposalSlimmed = Omit<Proposal, "description">
 
 export type RawExternalData = {
-  assetListWithPrices: AssetListWithPrices
   bidMetaDataById: BidMetaDataById
   numiaBids: RawNumiaBid[]
   numiaMetrics: MetricsFromNumia

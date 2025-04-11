@@ -5,7 +5,7 @@ import { IconString } from "@/components/Icon/types"
 import { StyledText } from "@/components/StyledText"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
-import { HYDRO_TELEGRAM_URL } from "@/config"
+import { HYDRO_TELEGRAM_ANNOUNCEMENTS_URL, HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -56,12 +56,15 @@ export default function Navigation() {
       href: "/metrics",
     },
     {
-      label: "Airdrops",
-      href: "/airdrops",
-    },
-    {
-      label: "Resources",
+      label: "More",
       menuItems: [
+        {
+          label: "Airdrops",
+          href: "/airdrops",
+          iconLeft: "solid:parachute-box",
+          iconRight: "arrow-up-right-from-square",
+          target: "_blank",
+        },
         {
           href: "https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals",
           iconLeft: "solid:gavel",
@@ -77,24 +80,24 @@ export default function Navigation() {
           target: "_blank",
         },
         {
-          href: "https://cosmos.network",
-          iconLeft: "solid:globe",
-          iconRight: "arrow-up-right-from-square",
-          label: "Cosmos.Network",
-          target: "_blank",
-        },
-        {
-          href: "https://twitter.com/cosmoshub",
-          iconLeft: "brands:twitter",
+          href: "https://x.com/HydroTeam_",
+          iconLeft: "brands:x-twitter",
           iconRight: "arrow-up-right-from-square",
           label: "Twitter",
           target: "_blank",
         },
         {
-          href: HYDRO_TELEGRAM_URL,
+          href: HYDRO_TELEGRAM_COMMUNITY_URL,
           iconLeft: "solid:paper-plane",
           iconRight: "arrow-up-right-from-square",
-          label: "Telegram",
+          label: "Community",
+          target: "_blank",
+        },
+        {
+          href: HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
+          iconLeft: "solid:paper-plane",
+          iconRight: "arrow-up-right-from-square",
+          label: "Announcements",
           target: "_blank",
         },
       ],

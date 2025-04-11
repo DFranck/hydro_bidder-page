@@ -35,7 +35,7 @@ export function getExperimentalTableRows(
 
     const additionalStatus =
       item.end_timestamp === 0
-        ? "Pending"
+        ? ""
         : new Date(item.end_timestamp * 1000).toLocaleDateString()
 
     const deploymentAPR =
@@ -100,11 +100,13 @@ export function getExperimentalTableRows(
             variant="footnote"
             onClick={() => onToggleRow(item.experimental_id)}
           >
+            (
             {amountToUSDString(item.initial_address_holdings.total_usdc, {
               appendUsd: false,
               numberOfDecimals: 2,
               removeTrailingZeros: true,
             })}
+            )
           </StyledText>
         </div>
       ),
@@ -154,8 +156,12 @@ export function getExperimentalTableRows(
 
       additionalStatus: isOpened && (
         <StyledText className="whitespace-nowrap">
-          Ends:&nbsp;
-          <StyledText variant="label">{additionalStatus}</StyledText>
+          {additionalStatus && (
+            <>
+              Ends:&nbsp;
+              <StyledText variant="label">{additionalStatus}</StyledText>
+            </>
+          )}
         </StyledText>
       ),
 

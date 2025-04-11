@@ -10,7 +10,7 @@ import { StyledText } from "@/components/StyledText"
 import { Toast } from "@/components/Toasts/Toast"
 import { Tooltip } from "@/components/Tooltip"
 import { cannotContinueLockupTooltip } from "@/components/ToolTips"
-import { HYDRO_TELEGRAM_URL } from "@/config"
+import { HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -211,7 +211,7 @@ export function LsmInteraction({
               <p>
                 Hydro is currently at max capacity. Please wait for the next
                 round or for the cap to be increased. Check{" "}
-                <StyledText as={Link} href={HYDRO_TELEGRAM_URL} variant="link">
+                <StyledText as={Link} href={HYDRO_TELEGRAM_COMMUNITY_URL} variant="link">
                   Telegram
                 </StyledText>{" "}
                 for updates.

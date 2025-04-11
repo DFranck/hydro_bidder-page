@@ -4,7 +4,7 @@ import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { HYDRO_TELEGRAM_URL, voteThresholdByTrancheId } from "@/config"
+import { HYDRO_TELEGRAM_COMMUNITY_URL, voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataSlimmed,
@@ -545,7 +545,7 @@ export const lockupLimitReachedByNetworkTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href={HYDRO_TELEGRAM_URL}
+      href={HYDRO_TELEGRAM_COMMUNITY_URL}
       target="_blank"
       className="inline-flex items-center gap-1"
     >
@@ -794,39 +794,46 @@ export const yourVotingPowerTooltip = ({
         <Fragment>
           <strong>Total Voting Power</strong>
           <div className="text-right">
-            <strong>{formatAmount(votingPowerTotal, 0, 4)}</strong>
+            <strong>
+              {formatAmount(
+                votingPowerTotal,
+                0,
+                votingPowerTotal < 0.01 ? 4 : 2,
+              )}
+            </strong>
           </div>
         </Fragment>
       </div>
 
       <div className="flex flex-col gap-2 border-b pb-2">
-        {Object.keys(votingPowerByTranche).map((trancheId) => (
-          <div key={`tranche_${trancheId}`}>
-            <StyledText variant="label">
-              {votingPowerByTranche[trancheId].name}
-            </StyledText>
-            <div className="flex justify-between">
-              <div>Spent Voting Power</div>
-              <strong>
-                {formatAmount(
-                  votingPowerByTranche[trancheId].votingPowerSpent,
-                  0,
-                  4,
-                )}
-              </strong>
+        {Object.keys(votingPowerByTranche).map((trancheId) => {
+          const votingPowerSpent = formatAmount(
+            votingPowerByTranche[trancheId].votingPowerSpent,
+            0,
+            votingPowerByTranche[trancheId].votingPowerSpent < 0.01 ? 4 : 2,
+          )
+          const votingPowerAvailable = formatAmount(
+            votingPowerByTranche[trancheId].votingPowerAvailable,
+            0,
+            votingPowerByTranche[trancheId].votingPowerAvailable < 0.01 ? 4 : 2,
+          )
+
+          return (
+            <div key={`tranche_${trancheId}`}>
+              <StyledText variant="label">
+                {votingPowerByTranche[trancheId].name}
+              </StyledText>
+              <div className="flex justify-between">
+                <div>Spent Voting Power</div>
+                <strong>{votingPowerSpent}</strong>
+              </div>
+              <div className="flex justify-between">
+                <div>Available Voting Power</div>
+                <strong>{votingPowerAvailable}</strong>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <div>Available Voting Power</div>
-              <strong>
-                {formatAmount(
-                  votingPowerByTranche[trancheId].votingPowerAvailable,
-                  0,
-                  4,
-                )}
-              </strong>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <div className="flex flex-col gap-1">
