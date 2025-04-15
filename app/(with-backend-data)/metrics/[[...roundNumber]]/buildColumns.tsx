@@ -83,7 +83,7 @@ export function buildColumns(
       label: (
         <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
           <div className="flex items-center gap-1">
-            Total APR
+            PoL APR
             <Icon name="circle-info" />
           </div>
         </Tooltip>
@@ -94,7 +94,7 @@ export function buildColumns(
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => "-",
+      customValueGetter: (row) => row._bidFromContract?.apr_pol ?? 0,
     },
     {
       key: "tributeApr",
@@ -108,7 +108,7 @@ export function buildColumns(
           classNamesForTooltip="-ml-12"
         >
           <div className="flex items-center gap-1">
-            Voter APR
+            Tribute APR
             <Icon name="circle-info" />
           </div>
         </Tooltip>
