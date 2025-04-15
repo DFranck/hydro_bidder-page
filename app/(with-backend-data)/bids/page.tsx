@@ -33,8 +33,19 @@ export default function BidsPage() {
 
         {!isLoading && bidsInRound.length === 0 && (
           <BlurryBackdropBox>
-            <EmptyBox>There are no bids available at this moment.</EmptyBox>
-          </BlurryBackdropBox>
+          <EmptyBox>
+            Project bids will appear here before the end of the round. Join our{" "}
+            <a
+            href="https://t.me/hydro_community"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:opacity-80"
+            >
+            Telegram announcement group
+            </a>{" "}
+            to get notified!
+          </EmptyBox>
+        </BlurryBackdropBox>
         )}
 
         {!isLoading &&

@@ -57,7 +57,7 @@ export function buildColumns<
       label: (
         <Tooltip tipContents={liveBidTributeAprColumnTooltip}>
           <div className="flex items-center gap-1">
-            <span>Tribute APR</span>
+            <span>Voter APR</span>
             <Icon name="circle-info" />
           </div>
         </Tooltip>

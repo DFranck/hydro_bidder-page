@@ -168,7 +168,7 @@ export function getExperimentalTableRows(
       additionalInitialAdressHoldings: isOpened && (
         <div className="flex flex-col gap-2">
           <StyledText variant="label" className="underline">
-            Initial Holdings Breakdown
+            Initial Breakdown
           </StyledText>
           {item.initial_address_holdings.balances.map(
             (balance, balanceIndex) => (
@@ -201,8 +201,8 @@ export function getExperimentalTableRows(
         <div className="flex flex-col gap-2">
           <StyledText variant="label" className="underline">
             {item.end_timestamp !== 0
-              ? "End Holdings Breakdown"
-              : "Current Holdings Breakdown"}
+              ? "Final Position Breakdown"
+              : "Current Position Breakdown"}
           </StyledText>
           {item.current_address_holdings.balances.map(
             (balance, balanceIndex) => (

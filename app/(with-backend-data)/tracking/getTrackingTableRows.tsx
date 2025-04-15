@@ -192,11 +192,11 @@ export function getTrackingTableRows(
             >
               <div className="flex flex-col items-end">
                 <StyledText className="pb-4 font-bold">
-                  Protocol: {protocol}
+                  On {protocol}
                 </StyledText>
                 {balancesByProtocol[protocol].venueTotal.length > 0 && (
                   <StyledText variant="label" className="pb-1 underline">
-                    Venue Total
+                    Pool Size
                   </StyledText>
                 )}
                 {balancesByProtocol[protocol].venueTotal.map(
@@ -223,11 +223,11 @@ export function getTrackingTableRows(
               </div>
               <div className="flex flex-col items-end">
                 <StyledText className="pb-4 font-bold">
-                  Protocol: {protocol}
+                  On {protocol}
                 </StyledText>
                 {balancesByProtocol[protocol].addressHoldings.length > 0 && (
                   <StyledText variant="label" className="pb-1 underline">
-                    Address Holdings
+                    Position Size
                   </StyledText>
                 )}
                 {balancesByProtocol[protocol].addressHoldings.map(
@@ -253,7 +253,7 @@ export function getTrackingTableRows(
                 )}
                 {balancesByProtocol[protocol].addressRewards.length > 0 && (
                   <StyledText variant="label" className="py-1 underline">
-                    Address Rewards
+                    Rewards
                   </StyledText>
                 )}
                 {balancesByProtocol[protocol].addressRewards.map(
