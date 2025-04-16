@@ -59,6 +59,13 @@ export default function Navigation() {
       label: "More",
       menuItems: [
         {
+          label: "Grants",
+          href: "https://forms.gle/RGPdDenuFQ1pGapKA",
+          iconLeft: "solid:award",
+          iconRight: "arrow-up-right-from-square",
+          target: "_blank",
+        },
+        {
           label: "Airdrops",
           href: "/airdrops",
           iconLeft: "solid:parachute-box",
