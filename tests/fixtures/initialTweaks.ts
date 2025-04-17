@@ -10,13 +10,13 @@ const originalBidsInRoundId3 = hydroStateSnapshot.hydroRoundData[3].round_bids
 const originalBidsInRoundId1 = hydroStateSnapshot.hydroRoundData[1].round_bids
 const originalNumiaBidsForBoth =
   hydroStateSnapshot.externalData.numiaBids.filter((numiaBid) =>
-    [1, 3].includes(Number(numiaBid.round))
+    [1, 3].includes(Number(numiaBid.round)),
   )
 const originalBidIds = originalNumiaBidsForBoth.map((numiaBid) => numiaBid.id)
 const originalBidMetadataForBoth = Object.fromEntries(
   Object.entries(hydroStateSnapshot.externalData.bidMetaDataById).filter(
-    ([bidId]) => originalBidIds.includes(bidId)
-  )
+    ([bidId]) => originalBidIds.includes(bidId),
+  ),
 )
 
 const bidsInTrancheOne = originalBidsInRoundId3.map((bid) => ({
@@ -43,7 +43,7 @@ const bidMetaDataById = Object.fromEntries(
   Object.entries(originalBidMetadataForBoth).map(([bidId, bidMetadata]) => [
     bidId,
     { ...bidMetadata, title: `[TX] ${bidMetadata.title}` },
-  ])
+  ]),
 ) as BidMetaDataById
 
 const dummyLockups = walletDataSnapshot.lockups_with_per_tranche_infos.map(
@@ -62,7 +62,7 @@ const dummyLockups = walletDataSnapshot.lockups_with_per_tranche_infos.map(
     })
 
     return newLockup
-  }
+  },
 )
 
 export const initialTweaks: BackendDataTweak[] = [
@@ -94,7 +94,7 @@ export const initialTweaks: BackendDataTweak[] = [
       walletData: {
         $lockups_with_per_tranche_infos: dummyLockups,
         $voting_power: sumBy(dummyLockups, (lockup) =>
-          Number(lockup.lock_with_power.current_voting_power)
+          Number(lockup.lock_with_power.current_voting_power),
         ),
       },
     },
@@ -127,13 +127,13 @@ export const initialTweaks: BackendDataTweak[] = [
   {
     id: "12",
     json: {
-      externalData: {
-        assetListWithPrices: {
+      patchData: {
+        currentRoundPrices: {
           "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9":
             {
-              priceUsd: 15,
+              token_price: 15,
             },
-        },
+        }
       },
     },
     label: "ATOM to $15",
@@ -142,13 +142,13 @@ export const initialTweaks: BackendDataTweak[] = [
   {
     id: "11",
     json: {
-      externalData: {
-        assetListWithPrices: {
+      patchData: {
+        currentRoundPrices: {
           "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9":
             {
-              priceUsd: 0.5,
+              token_price: 0.5,
             },
-        },
+        }
       },
     },
     label: "ATOM to $0.50",

@@ -52,7 +52,7 @@ export default function TrackingPage() {
     },
     {
       key: "venueTvl",
-      label: "Venue TVL",
+      label: "Venue",
       isSortable: true,
       textAlign: "right",
       initialSortDirection: "DESC",
@@ -79,7 +79,7 @@ export default function TrackingPage() {
     },
     {
       key: "committeeHolding",
-      label: "Current Committee Holdings",
+      label: "Hydro",
       isSortable: true,
       textAlign: "right",
       initialSortDirection: "DESC",

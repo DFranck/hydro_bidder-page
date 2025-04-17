@@ -35,7 +35,7 @@ export function getExperimentalTableRows(
 
     const additionalStatus =
       item.end_timestamp === 0
-        ? "Pending"
+        ? ""
         : new Date(item.end_timestamp * 1000).toLocaleDateString()
 
     const deploymentAPR =
@@ -100,11 +100,13 @@ export function getExperimentalTableRows(
             variant="footnote"
             onClick={() => onToggleRow(item.experimental_id)}
           >
+            (
             {amountToUSDString(item.initial_address_holdings.total_usdc, {
               appendUsd: false,
               numberOfDecimals: 2,
               removeTrailingZeros: true,
             })}
+            )
           </StyledText>
         </div>
       ),
@@ -154,15 +156,19 @@ export function getExperimentalTableRows(
 
       additionalStatus: isOpened && (
         <StyledText className="whitespace-nowrap">
-          Ends:&nbsp;
-          <StyledText variant="label">{additionalStatus}</StyledText>
+          {additionalStatus && (
+            <>
+              Ends:&nbsp;
+              <StyledText variant="label">{additionalStatus}</StyledText>
+            </>
+          )}
         </StyledText>
       ),
 
       additionalInitialAdressHoldings: isOpened && (
         <div className="flex flex-col gap-2">
           <StyledText variant="label" className="underline">
-            Initial Holdings Breakdown
+            Initial Breakdown
           </StyledText>
           {item.initial_address_holdings.balances.map(
             (balance, balanceIndex) => (
@@ -195,8 +201,8 @@ export function getExperimentalTableRows(
         <div className="flex flex-col gap-2">
           <StyledText variant="label" className="underline">
             {item.end_timestamp !== 0
-              ? "End Holdings Breakdown"
-              : "Current Holdings Breakdown"}
+              ? "Final Position Breakdown"
+              : "Current Position Breakdown"}
           </StyledText>
           {item.current_address_holdings.balances.map(
             (balance, balanceIndex) => (

@@ -1,5 +1,4 @@
 import { Config } from "@netlify/functions"
-import { fetchAssetListWithPrices } from "../contract-apis/fetchAssetListWithPrices"
 import { fetchBidMetaDataById } from "../contract-apis/fetchBidMetaDataById"
 import { fetchNumiaBidData } from "../contract-apis/fetchNumiaBidData"
 import { fetchNumiaMetricsData } from "../contract-apis/fetchNumiaMetricsData"
@@ -14,16 +13,14 @@ export const config: Config = {
 export default async function () {
   console.log("Building external data...")
 
-  const [assetListWithPrices, bidMetaDataById, numiaBids, numiaMetrics] =
+  const [bidMetaDataById, numiaBids, numiaMetrics] =
     await Promise.all([
-      fetchAssetListWithPrices(),
       fetchBidMetaDataById(),
       fetchNumiaBidData(),
       fetchNumiaMetricsData(),
     ])
 
   const rawExternalData: RawExternalData = {
-    assetListWithPrices,
     bidMetaDataById,
     numiaBids,
     numiaMetrics,

@@ -83,7 +83,7 @@ export function buildColumns(
       label: (
         <Tooltip tipContents={metricsPolRewardsColumnTooltip}>
           <div className="flex items-center gap-1">
-            PoL APR
+            Total APR
             <Icon name="circle-info" />
           </div>
         </Tooltip>
@@ -108,7 +108,7 @@ export function buildColumns(
           classNamesForTooltip="-ml-12"
         >
           <div className="flex items-center gap-1">
-            Tribute APR
+            Voter APR
             <Icon name="circle-info" />
           </div>
         </Tooltip>

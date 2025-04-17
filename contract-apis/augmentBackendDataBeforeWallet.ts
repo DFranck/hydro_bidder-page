@@ -9,7 +9,7 @@ import keyBy from "lodash/keyBy"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
-  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed,
 ): AugmentedBackendDataBeforeWallet {
   // Extract data
   const { hydroMetaData, hydroRoundData, externalData } =
@@ -24,8 +24,7 @@ export function augmentBackendDataBeforeWallet(
     liquidity_deployments,
   } = hydroMetaData
 
-  const { assetListWithPrices, bidMetaDataById, numiaBids, numiaMetrics } =
-    externalData
+  const { bidMetaDataById, numiaBids, numiaMetrics } = externalData
 
   const hydroRoundsData = hydroRoundData
   const currentRoundId = round_id
@@ -37,10 +36,10 @@ export function augmentBackendDataBeforeWallet(
   const lockedAtomMaxGlobal = constants.max_locked_tokens / 1e6
   const lockedAtomTotalGlobal = total_locked_tokens / 1e6
   const lockedAtomRemainingCapacityGlobal = Number(
-    (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
+    (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6),
   )
   const lockedAtomPercentageGlobal = Math.floor(
-    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
+    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100,
   )
   const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal === 100
 
@@ -73,10 +72,10 @@ export function augmentBackendDataBeforeWallet(
           round_prices,
           bidMetaDataById,
           currentRoundId,
-          liquidity_deployments
+          liquidity_deployments,
         )
         return roundParsedBids
-      }
+      },
     )
     .flat()
 
@@ -86,7 +85,7 @@ export function augmentBackendDataBeforeWallet(
     ]?.token_price ?? 0
 
   return {
-    assetListWithPrices,
+    currentRoundPrices: hydroRoundsData[round_id]?.round_prices,
     atomPrice,
     bidMetaDataById,
     bidsInfo: keyBy(bidsInfo, "id"),

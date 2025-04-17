@@ -291,7 +291,7 @@ export function VoteButton({
           </Card.Body>
           <Card.Footer>
             <StyledText as={Link} href="/lockups" variant="button.primary">
-              Edit Lockups
+              Extend Lockups
             </StyledText>
             <StyledText
               as="button"

@@ -14,7 +14,7 @@ export function getTrackingTableRows(
   openedRows: number[],
   onToggleRow: (bidId: number) => void,
   bids?: BidRevampMetrics[],
-  trackings?: TrackingItem[]
+  trackings?: TrackingItem[],
 ): TrackingRow[] {
   if (!bids || !bids.length || !trackings || !trackings.length) return []
 
@@ -31,7 +31,7 @@ export function getTrackingTableRows(
           infoMissing: false,
         }
       },
-      { atom: 0, usdc: 0, infoMissing: false }
+      { atom: 0, usdc: 0, infoMissing: false },
     )
 
     const committeeHolding = (tracking.holdings || []).reduce(
@@ -55,7 +55,7 @@ export function getTrackingTableRows(
           infoMissing: false,
         }
       },
-      { atom: 0, usdc: 0, infoMissing: false }
+      { atom: 0, usdc: 0, infoMissing: false },
     )
 
     const balancesByProtocol = (tracking.holdings || []).reduce(
@@ -93,7 +93,7 @@ export function getTrackingTableRows(
           addressHoldings: BalanceItem[]
           addressRewards: BalanceItem[]
         }
-      }
+      },
     )
 
     return {
@@ -132,13 +132,16 @@ export function getTrackingTableRows(
             </StyledText>
             <StyledText
               as="button"
+              variant="footnote"
               onClick={() => onToggleRow(tracking.bid_id)}
             >
+              (
               {amountToUSDString(venueTvl.usdc, {
                 appendUsd: false,
                 numberOfDecimals: 2,
                 removeTrailingZeros: true,
               })}
+              )
             </StyledText>
           </div>
         ),
@@ -158,13 +161,16 @@ export function getTrackingTableRows(
 
             <StyledText
               as="button"
+              variant="footnote"
               onClick={() => onToggleRow(tracking.bid_id)}
             >
+              (
               {amountToUSDString(committeeHolding.usdc, {
                 appendUsd: false,
                 numberOfDecimals: 2,
                 removeTrailingZeros: true,
               })}
+              )
             </StyledText>
           </div>
         ),
@@ -186,11 +192,11 @@ export function getTrackingTableRows(
             >
               <div className="flex flex-col items-end">
                 <StyledText className="pb-4 font-bold">
-                  Protocol: {protocol}
+                  On {protocol}
                 </StyledText>
                 {balancesByProtocol[protocol].venueTotal.length > 0 && (
                   <StyledText variant="label" className="pb-1 underline">
-                    Venue Total
+                    Pool Size
                   </StyledText>
                 )}
                 {balancesByProtocol[protocol].venueTotal.map(
@@ -202,7 +208,7 @@ export function getTrackingTableRows(
                       <StyledText variant="footnote">
                         {balance.display_name}&nbsp;
                       </StyledText>
-                      <StyledText>
+                      <StyledText variant="footnote">
                         (
                         {amountToUSDString(balance.usd_value, {
                           appendUsd: false,
@@ -212,16 +218,16 @@ export function getTrackingTableRows(
                         )
                       </StyledText>
                     </StyledText>
-                  )
+                  ),
                 )}
               </div>
               <div className="flex flex-col items-end">
                 <StyledText className="pb-4 font-bold">
-                  Protocol: {protocol}
+                  On {protocol}
                 </StyledText>
                 {balancesByProtocol[protocol].addressHoldings.length > 0 && (
                   <StyledText variant="label" className="pb-1 underline">
-                    Address Holdings
+                    Position Size
                   </StyledText>
                 )}
                 {balancesByProtocol[protocol].addressHoldings.map(
@@ -233,7 +239,7 @@ export function getTrackingTableRows(
                       <StyledText variant="footnote">
                         {balance.display_name}&nbsp;
                       </StyledText>
-                      <StyledText>
+                      <StyledText variant="footnote">
                         (
                         {amountToUSDString(balance.usd_value, {
                           appendUsd: false,
@@ -243,11 +249,11 @@ export function getTrackingTableRows(
                         )
                       </StyledText>
                     </StyledText>
-                  )
+                  ),
                 )}
                 {balancesByProtocol[protocol].addressRewards.length > 0 && (
                   <StyledText variant="label" className="py-1 underline">
-                    Address Rewards
+                    Rewards
                   </StyledText>
                 )}
                 {balancesByProtocol[protocol].addressRewards.map(
@@ -259,7 +265,7 @@ export function getTrackingTableRows(
                       <StyledText variant="footnote">
                         {balance.display_name}&nbsp;
                       </StyledText>
-                      <StyledText>
+                      <StyledText variant="footnote">
                         (
                         {amountToUSDString(balance.usd_value, {
                           appendUsd: false,
@@ -269,7 +275,7 @@ export function getTrackingTableRows(
                         )
                       </StyledText>
                     </StyledText>
-                  )
+                  ),
                 )}
               </div>
             </div>

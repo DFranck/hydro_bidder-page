@@ -62,7 +62,7 @@ export default function ExperimentalTable() {
     },
     {
       key: "initialAddressHoldings",
-      label: "Initial Address Holdings",
+      label: "Initial Position Size",
       isSortable: true,
       initialSortDirection: "DESC",
       textAlign: "right",

@@ -344,7 +344,7 @@ export function BidDetails({
                         variant="label"
                         className="flex cursor-default items-center gap-1"
                       >
-                        <span>PoL APR</span>
+                        <span>Total APR</span>
                         <Icon name="circle-info" />
                       </StyledText>
                     </Tooltip>
@@ -371,7 +371,7 @@ export function BidDetails({
                   variant="label"
                   className="flex cursor-default items-center gap-1"
                 >
-                  <span>Tribute APR</span>
+                  <span>Voter APR</span>
                   <Icon name="circle-info" />
                 </StyledText>
               </Tooltip>

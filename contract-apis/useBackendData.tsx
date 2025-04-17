@@ -37,7 +37,7 @@ export interface BackendDataContextType
 
 const initialBackendDataContext: BackendDataContextType = {
   address: "",
-  assetListWithPrices: {},
+  currentRoundPrices: {},
   atomPrice: 0,
   bidsInfo: {},
   bidMetaDataById: {},
