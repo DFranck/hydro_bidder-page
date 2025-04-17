@@ -33,6 +33,7 @@
     "interchain": "^1.10.4",
     "lodash": "^4.17.21",
     "match-sorter": "^8.0.0",
+    "moonkittjs": "^0.1.0",
     "next": "^15.2.2",
     "nextra": "^3.3.1",
     "nextra-theme-docs": "^3.3.1",

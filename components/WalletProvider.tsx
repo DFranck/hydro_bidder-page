@@ -20,7 +20,7 @@ import {
   cosmosProtoRegistry,
   ibcAminoConverters,
   ibcProtoRegistry,
-} from "stridejs"
+} from "moonkittjs"
 
 function gasPrices(chain: Chain | ChainName) {
   const chainName = typeof chain === "string" ? chain : chain.chain_name

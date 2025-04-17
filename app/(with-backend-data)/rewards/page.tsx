@@ -29,6 +29,7 @@ import sumBy from "lodash/sumBy"
 import Image from "next/image"
 import { MouseEvent, useState } from "react"
 import ClaimRewardsStepper from "./ClaimRewardsStepper"
+import { ClaimStakingRewards } from "./ClaimStakingRewards"
 
 export default function RewardsPage() {
   const [isCelebrating, setIsCelebrating] = useState(false)
@@ -301,7 +302,19 @@ export default function RewardsPage() {
         <AllTimeRewardsWallet />
       </StatCardsContainer>
 
-      <ContentContainer className="gap-12 py-6">
+      <ContentContainer className="gap-6 py-6">
+        <div
+          className="
+            flex
+            flex-col
+            items-center
+            justify-end
+            gap-3
+            lg:flex-row
+          "
+        >
+          <ClaimStakingRewards />
+        </div>
         <BlurryBackdropBox>
           {rows.length > 0 ? (
             <StyledTable columns={columns} rows={rows} />
