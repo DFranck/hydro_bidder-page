@@ -11,7 +11,6 @@ import { InvisibleLink } from "@/components/InvisibleLink"
 import { ModalWindow } from "@/components/ModalWindow"
 import { AllTimeAprWallet } from "@/components/StatCards/cards/AllTimeAprWallet"
 import { AllTimeRewardsWallet } from "@/components/StatCards/cards/AllTimeRewardsWallet"
-import { CurrentRoundAprWallet } from "@/components/StatCards/cards/CurrentRoundAprWallet"
 import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledTable } from "@/components/StyledTable"
 import { ColumnObject } from "@/components/StyledTable/types"
@@ -297,7 +296,6 @@ export default function RewardsPage() {
   return (
     <>
       <StatCardsContainer>
-        <CurrentRoundAprWallet />
         <AllTimeAprWallet />
         <AllTimeRewardsWallet />
       </StatCardsContainer>
