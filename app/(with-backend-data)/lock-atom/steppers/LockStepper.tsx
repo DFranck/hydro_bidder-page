@@ -188,14 +188,9 @@ export const LockStepper = ({
         const { value, unit } = getTimeUnitFromNanos(lockDuration)
 
         return {
-          title: "Locking your ATOM",
+          title: "Review your Lockup",
           contents: (
             <div className="flex flex-col items-center gap-6">
-              <p>
-                Next, you&rsquo;ll be asked to do three wallet approvals. This
-                takes a minute&nbsp;or&nbsp;two,&nbsp;tops.
-              </p>
-
               <div className="grid grid-cols-3 items-center gap-10">
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
                   <div className="text-xs text-palette-beige">ATOM Amount</div>
@@ -313,22 +308,20 @@ export const LockStepper = ({
       case "WaitingForTokenizeSigning":
         return {
           isWorking: true,
-          title: "Waiting for Wallet Approval",
+          title: "(1/3) Tokenize your Staked ATOM",
           contents: (
             <p>
-              Approve the transaction in your wallet to continue. This will
-              start the tokenization of your staked ATOM.
+              Approve the transaction in your wallet to continue.
             </p>
           ),
         }
       case "WaitingForTokenizeBroadcast":
         return {
           isWorking: true,
-          title: "Tokenizing your ATOM",
+          title: "(1/3) Tokenize your Staked ATOM",
           contents: (
             <p>
-              Tokenizing your staked ATOM. This should only take a few seconds
-              (unless the network is congested)
+              Wait until your transaction is included in a block. This should only take a few seconds.
             </p>
           ),
         }

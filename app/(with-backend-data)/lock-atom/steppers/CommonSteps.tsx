@@ -3,11 +3,10 @@ export function CommonSteps(stepName: string) {
     case "WaitingForIBCSigning":
       return {
         isWorking: true,
-        title: "Approve IBC Transfer",
+        title: "(2/3) Transfer your Tokenized ATOM to Hydro",
         contents: (
           <p>
-            Approve the transaction in your wallet to continue. This will start
-            the transfer of your tokenized ATOM to Hydro.
+            Approve the transaction in your wallet to continue.
           </p>
         ),
       }
@@ -15,12 +14,10 @@ export function CommonSteps(stepName: string) {
     case "WaitingForLockingSigning":
       return {
         isWorking: true,
-        title: "Approve Locking",
+        title: "(3/3) Lock your ATOM, get voting power",
         contents: (
           <p>
-            Approve in your wallet again to lock your ATOM. This will initiate
-            the locking of your staked ATOM into the Hydro contract to receive
-            voting power.
+            Approve the transaction in your wallet to continue.
           </p>
         ),
       }
@@ -28,17 +25,17 @@ export function CommonSteps(stepName: string) {
     case "WaitingForLockingBroadcast":
       return {
         isWorking: true,
-        title: "Locking Your ATOM...",
-        contents: <p>Just a few seconds, unless the network is congested</p>,
+        title: "(3/3) Lock your ATOM, get voting power",
+        contents: <p>Wait until your transaction is included in a block. This should only take a few seconds.</p>,
       }
 
     case "WaitingForIBCBroadcastAndRelay":
       return {
         isWorking: true,
-        title: "Transferring to Hydro...",
+        title: "(2/3) Transfer your Tokenized ATOM to Hydro",
         contents: (
           <p>
-            This could take 30 seconds or longer if the network is congested. If
+            Wait until the transfer is complete. This could take 30 seconds or longer if the network is congested. If
             you exit Hydro, this status may not be visible when you return, but
             the transfer will continue. Once the transfer is complete, you will
             need to return to initiate the lockup process.
