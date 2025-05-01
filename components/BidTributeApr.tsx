@@ -50,6 +50,16 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
     {} as { [denom: string]: { amount: number } }
   )
 
+  // add the points based tribute to the tributeAmountByDenom
+  if (bidInfo.points && bidInfo.points.length > 0) {
+    const pointsDenom = bidInfo.points[1] as string
+    const pointsAmount = bidInfo.points[0] as number
+    if (!tributeAmountByDenom[pointsDenom]) {
+      tributeAmountByDenom[pointsDenom] = { amount: 0 }
+    }
+    tributeAmountByDenom[pointsDenom].amount += pointsAmount
+  }
+
   const userWillReceiveInUsd = isWalletConnected
     ? (votingPowerAvailableByTrancheId[bidInfo.trancheId] / totalVotingPowerOnBid) *
       totalTokenBasedTributeValue
