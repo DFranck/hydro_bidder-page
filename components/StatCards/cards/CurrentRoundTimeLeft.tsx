@@ -14,7 +14,7 @@ export function CurrentRoundTimeLeft() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={timeLeftTooltip}>
+        <Tooltip tipContents={timeLeftTooltip(currentRoundEndDate)}>
           <div className="flex items-center gap-1">
             <span>Time Left</span>
             <Icon name="circle-info" />

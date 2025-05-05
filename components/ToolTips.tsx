@@ -639,9 +639,19 @@ export const rewardsYourTributeTooltip = (
   </p>
 )
 
-export const timeLeftTooltip = (
+export const timeLeftTooltip = (currentRoundEndDate: Date) => {
+    const formattedEndDate = currentRoundEndDate ? currentRoundEndDate.toLocaleString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        timeZoneName: "short",
+      })
+    : "N/A"
+    return (
   <p>
-    Amount of time until the round ends. Users must vote before the end of the
+    This round ends on {formattedEndDate}. Users must vote before the end of the
     round to receive tributes.{" "}
     <StyledText
       as="a"
@@ -655,6 +665,7 @@ export const timeLeftTooltip = (
     </StyledText>
   </p>
 )
+}
 
 export const totalRevenueTooltip = (
   <p>
