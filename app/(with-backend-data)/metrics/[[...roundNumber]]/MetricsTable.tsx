@@ -6,6 +6,7 @@ import { StyledTable, TD, TR } from "@/components/StyledTable"
 import { RowRenderFunction } from "@/components/StyledTable/types"
 import { Tooltip } from "@/components/Tooltip"
 import { voteThresholdTooltip } from "@/components/ToolTips"
+import { TrancheTitle } from "@/components/TrancheTitle"
 import { voteThresholdByTrancheId } from "@/config"
 import {
   AugmentedBidFromNumiaSlimmed,
@@ -27,13 +28,8 @@ export function MetricsTable({
   trancheId: number
   requestedRoundNumber: number | null
 }) {
-  const {
-    tranches,
-    bidsInfo,
-    currentRoundId,
-    metricsForPreHydroBids,
-    bidMetaDataById,
-  } = useBackendData()
+  const { bidsInfo, currentRoundId, metricsForPreHydroBids, bidMetaDataById } =
+    useBackendData()
 
   const voteThreshold =
     voteThresholdByTrancheId[trancheId as keyof typeof voteThresholdByTrancheId]
@@ -53,8 +49,6 @@ export function MetricsTable({
         : PRE_HYDRO_ROUND_ID
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
-
-  const tranche = tranches.find((t) => t.id === trancheId)
 
   const rowsInTranche = useMemo(() => {
     const bidsToRender = requestedPreHydro
@@ -146,7 +140,7 @@ export function MetricsTable({
   return (
     <CollapsibleTable
       id={tableId}
-      title={tranche?.name ?? <em>(Unnamed Tranche)</em>}
+      title={<TrancheTitle trancheId={trancheId} />}
       numRows={rowsInTranche.length}
     >
       <StyledTable
