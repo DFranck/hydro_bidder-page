@@ -14,9 +14,8 @@ export function TBODY({
           max-sm:flex
           max-sm:flex-col
           max-sm:gap-3
-          max-sm:p-3
         `,
-        className
+        className,
       )}
       {...otherProps}
     >

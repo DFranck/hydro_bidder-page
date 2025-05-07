@@ -172,6 +172,7 @@ export default function LockupsPage() {
               items-end
               justify-between
               gap-6
+              whitespace-nowrap
               md:flex-row
               md:items-center
             "

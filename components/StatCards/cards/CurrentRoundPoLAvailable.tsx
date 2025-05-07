@@ -14,11 +14,12 @@ export function CurrentRoundPoLAvailable() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={polAvailableTooltip}>
-          <div className="flex items-center gap-1">
-            <span>PoL Available</span>
+        <Tooltip tipContents={polAvailableTooltip} className="w-full">
+          PoL{" "}
+          <span className="inline-flex items-center gap-1">
+            Available
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="Current Round"

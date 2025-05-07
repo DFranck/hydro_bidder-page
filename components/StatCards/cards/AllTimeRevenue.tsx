@@ -9,20 +9,20 @@ import { StatCard } from "../StatCard"
 
 export function AllTimeRevenue() {
   const { isLoading, bidsInfo } = useBackendData()
-  const totalTributePaidUsd = sumBy(
-    Object.values(bidsInfo),
-    (bid) => bid.status !== "Rejected" ? bid.totalTokenBasedTributeValue : 0
+  const totalTributePaidUsd = sumBy(Object.values(bidsInfo), (bid) =>
+    bid.status !== "Rejected" ? bid.totalTokenBasedTributeValue : 0,
   )
 
   return (
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={totalRevenueTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Distributed Rewards</span>
+        <Tooltip tipContents={totalRevenueTooltip} className="w-full">
+          Distributed{" "}
+          <span className="inline-flex items-center gap-1">
+            <span>Rewards</span>
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All Time"

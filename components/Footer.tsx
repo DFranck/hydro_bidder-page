@@ -14,7 +14,7 @@ export const Footer = () => {
           flex-col
           items-center
           justify-between
-          gap-1
+          gap-3
           py-6
           text-base
           font-normal
@@ -34,13 +34,14 @@ export const Footer = () => {
           />
         </Link>
 
-        <div className="flex items-center gap-1">
-          Built for the Cosmos Hub by{" "}
+        <div className="px-6 text-center">
+          <span>Built for the Cosmos Hub by </span>
           <a
             className="
               inline-flex
               items-center
               gap-1
+              whitespace-nowrap
               underline
               hover:text-white
             "

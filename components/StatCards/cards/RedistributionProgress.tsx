@@ -12,7 +12,7 @@ export function RedistributionProgress() {
   const { currentRoundId, isLoading, bidsInfo } = useBackendData()
   const totalTributePaidUsd = sumBy(
     Object.values(bidsInfo),
-    (bid) => bid.totalTokenBasedTributeValue,
+    (bid) => bid.totalTokenBasedTributeValue
   )
   const totalTributeOwedUsd = 667_500
   const percentRedistributed = (
@@ -50,7 +50,7 @@ export function RedistributionProgress() {
             of{" "}
             <span className="font-bold">
               ${totalTributeOwedUsd.toLocaleString()}
-            </span>{" "}
+            </span>
           </div>
         </div>
       }

@@ -23,12 +23,12 @@ export function CurrentRoundAprGlobal() {
         !bid.points?.length &&
         bid.vote_perc >= voteThreshold
       )
-    }
+    },
   )
 
   const summedTributeOverDuration = sumBy(
     tokenBasedBidsInRoundAboveThreshold,
-    (bid) => bid.totalTokenBasedTributeValue / bid.duration
+    (bid) => bid.totalTokenBasedTributeValue / bid.duration,
   )
 
   const summedVotingPowerInUsd =
@@ -41,11 +41,12 @@ export function CurrentRoundAprGlobal() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={averageAPRTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Average APR</span>
+        <Tooltip tipContents={averageAPRTooltip} className="w-full">
+          Average{" "}
+          <span className="inline-flex items-center gap-1">
+            APR
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}

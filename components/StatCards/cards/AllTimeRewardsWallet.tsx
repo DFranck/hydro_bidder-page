@@ -19,11 +19,15 @@ export function AllTimeRewardsWallet() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={yourTotalRewardsAllTimeTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Your Rewards</span>
+        <Tooltip
+          tipContents={yourTotalRewardsAllTimeTooltip}
+          className="w-full"
+        >
+          Your{" "}
+          <span className="inline-flex items-center gap-1">
+            Rewards
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All-Time"

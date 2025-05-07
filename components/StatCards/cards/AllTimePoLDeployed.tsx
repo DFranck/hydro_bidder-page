@@ -14,11 +14,12 @@ export function AllTimePoLDeployed() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={polDeployedTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Total Deployments</span>
+        <Tooltip tipContents={polDeployedTooltip} className="w-full">
+          Total{" "}
+          <span className="inline-flex items-center gap-1">
+            Deployments
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All-Time"

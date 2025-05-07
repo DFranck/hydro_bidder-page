@@ -5,7 +5,10 @@ import { IconString } from "@/components/Icon/types"
 import { StyledText } from "@/components/StyledText"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Wallet } from "@/components/wallet/Wallet"
-import { HYDRO_TELEGRAM_ANNOUNCEMENTS_URL, HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
+import {
+  HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
+  HYDRO_TELEGRAM_COMMUNITY_URL,
+} from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -116,18 +119,18 @@ export default function Navigation() {
       className="
         group/navbar
         z-40
+        max-lg:pointer-events-none
         max-lg:fixed
         max-lg:right-0
         max-lg:top-0
         max-lg:h-full
-        max-lg:w-1/2
+        max-lg:w-2/3
         max-lg:overflow-hidden
         max-lg:transition-all
         max-lg:duration-500
+        max-lg:focus-within:pointer-events-auto
         lg:relative
         lg:bg-transparent
-        max-lg:pointer-events-none
-        max-lg:focus-within:pointer-events-auto
       "
       tabIndex={0}
     >
@@ -143,8 +146,8 @@ export default function Navigation() {
           transition-all
           duration-500
           group-focus-within/navbar:rotate-180
-          lg:hidden
           max-lg:pointer-events-auto
+          lg:hidden
         "
       >
         <span
@@ -239,7 +242,7 @@ export default function Navigation() {
         {menuItems.map(
           (
             { label, href, disabled, tooltip, menuItems: subMenuItems },
-            index
+            index,
           ) => {
             const hasMenuItems = !!subMenuItems?.length
 
@@ -254,7 +257,7 @@ export default function Navigation() {
                   "hover:text-palette-beige",
                   "max-lg:px-6",
                   pathname?.startsWith(href ?? "") &&
-                    "font-bold text-palette-beige"
+                    "font-bold text-palette-beige",
                 )}
                 onClick={blurActiveElement}
               >
@@ -267,7 +270,7 @@ export default function Navigation() {
                   "flex flex-col justify-center",
                   "max-lg:w-full",
                   "max-lg:gap-3",
-                  "lg:items-center"
+                  "lg:items-center",
                 )}
                 key={index}
               >
@@ -277,10 +280,8 @@ export default function Navigation() {
                     "flex items-center gap-1",
                     "max-lg:px-6",
                     "lg:hover:text-palette-beige",
-                    "lg:focus:text-palette-beige"
+                    "lg:focus:text-palette-beige",
                   )}
-                  onFocus={() => console.log("Focused")}
-                  onBlur={() => console.log("Blurred")}
                 >
                   {label} <Icon name="solid:chevron-down" />
                 </button>
@@ -303,7 +304,7 @@ export default function Navigation() {
                     "lg:opacity-0",
                     "lg:pointer-events-none",
                     "lg:group-has-[:focus-within]:opacity-100",
-                    "lg:group-has-[:focus-within]:pointer-events-auto"
+                    "lg:group-has-[:focus-within]:pointer-events-auto",
                   )}
                 >
                   {subMenuItems.map(
@@ -328,7 +329,7 @@ export default function Navigation() {
                           "whitespace-nowrap transition-all",
                           "lg:px-4 lg:py-2",
                           "lg:hover:bg-palette-green lg:hover:text-palette-text",
-                          "lg:focus:bg-palette-green lg:focus:text-palette-text"
+                          "lg:focus:bg-palette-green lg:focus:text-palette-text",
                         )}
                         onClick={blurActiveElement}
                       >
@@ -338,12 +339,12 @@ export default function Navigation() {
                         </span>
                         {iconRight && <Icon name={iconRight} />}
                       </StyledText>
-                    )
+                    ),
                   )}
                 </div>
               </div>
             )
-          }
+          },
         )}
 
         <Wallet notifyConnectedCB={setIsConnected} />

@@ -13,11 +13,15 @@ export function CurrentRoundUniqueWallets() {
   return (
     <StatCard
       title={
-        <Tooltip tipContents={currentRoundUniqueWalletsTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Number of Unique Wallets</span>
+        <Tooltip
+          tipContents={currentRoundUniqueWalletsTooltip}
+          className="w-full"
+        >
+          Number of Unique{" "}
+          <span className="inline-flex items-center gap-1">
+            Wallets
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All time"

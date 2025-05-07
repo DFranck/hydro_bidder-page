@@ -1,8 +1,5 @@
 import { Coin } from "@/app/ts_types/HydroBase.types"
-import {
-  AugmentedCoin,
-  RoundPrices,
-} from "@/contract-apis/types"
+import { AugmentedCoin, RoundPrices } from "@/contract-apis/types"
 
 export function getCoinWithRoundPrices({
   coin,
@@ -11,7 +8,7 @@ export function getCoinWithRoundPrices({
   coin: Coin
   roundPrices: RoundPrices
 }): AugmentedCoin {
-  const asset = roundPrices[coin.denom]
+  const asset = roundPrices?.[coin.denom]
   const assetPriceUsd = asset?.token_price ?? 0
   const decimals = asset?.token_exponent ?? 6
   const humanReadableDenom = asset?.token_symbol ?? coin.denom

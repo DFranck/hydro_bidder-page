@@ -15,11 +15,12 @@ export function CurrentRoundAprWallet() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={yourRoundAprTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Last Round APR</span>
+        <Tooltip tipContents={yourRoundAprTooltip} className="w-full">
+          Last Round{" "}
+          <span className="inline-flex items-center gap-1">
+            APR
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId}`}

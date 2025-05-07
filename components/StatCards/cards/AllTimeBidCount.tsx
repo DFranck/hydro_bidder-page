@@ -13,10 +13,8 @@ export function AllTimeBidCount() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={totalRevenueTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Total Bids</span>
-          </div>
+        <Tooltip tipContents={totalRevenueTooltip} className="w-full">
+          Total Bids
         </Tooltip>
       }
       subTitle="All Time"

@@ -31,6 +31,7 @@ export function CurrentRoundAtomLockedGlobal() {
       value={Math.floor(lockedAtomTotalGlobal ?? 0).toLocaleString()}
       title={
         <Tooltip
+          className="w-full"
           tipContents={
             <>
               {globalTotalAtomLockedTooltip} Available capacity:{" "}
@@ -38,10 +39,11 @@ export function CurrentRoundAtomLockedGlobal() {
             </>
           }
         >
-          <div className="flex items-center gap-1">
-            Total ATOM in Hydro
+          Total ATOM in{" "}
+          <span className="inline-flex items-center gap-1">
+            Hydro
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle={

@@ -18,7 +18,7 @@ export function RowComponent<
           ? "[&_td]:bg-palette-red/20"
           : !isEligibleToVote
             ? "opacity-60 transition-opacity hover:opacity-100"
-            : ""
+            : "",
       )}
       key={row._lockup.id}
       {...rowProps}

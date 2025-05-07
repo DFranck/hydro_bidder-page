@@ -14,11 +14,15 @@ export function CurrentRoundTimeLeft() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={timeLeftTooltip(currentRoundEndDate)}>
-          <div className="flex items-center gap-1">
-            <span>Time Left</span>
+        <Tooltip
+          tipContents={timeLeftTooltip(currentRoundEndDate)}
+          className="w-full"
+        >
+          Time{" "}
+          <span className="inline-flex items-center gap-1">
+            Left
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle={<>Pilot Round {currentRoundId + 1}</>}

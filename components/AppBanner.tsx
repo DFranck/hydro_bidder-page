@@ -29,7 +29,7 @@ export function AppBanner() {
     lockedAtomIsAtCapacityGlobal,
   } = backendData
   const [currentRoundId, setCurrentRoundId] = useState<number>(
-    currentRoundIdFromBackend
+    currentRoundIdFromBackend,
   )
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const activeBannerName = lockedAtomIsAtCapacityGlobal
@@ -73,14 +73,16 @@ export function AppBanner() {
       className={twMerge(
         `
           relative
+          text-balance
           bg-palette-beige
-          px-24
+          px-3
           text-center
           text-palette-text
           transition-all
           duration-300
+          xl:px-24
         `,
-        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm"
+        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm",
       )}
     >
       {text}

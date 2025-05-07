@@ -2,7 +2,7 @@
 
 import { Icon } from "@/components/Icon"
 import { ReactNode } from "react"
-import { twMerge } from "tailwind-merge"
+import { twJoin, twMerge } from "tailwind-merge"
 
 export function StatCard({
   isLoading,
@@ -66,7 +66,12 @@ export function StatCard({
           isLoading && "opacity-0",
         )}
       >
-        <div className="w-full whitespace-nowrap">
+        <div
+          className={twJoin(
+            "w-full shrink-0 grow-0",
+            "flex flex-col items-center justify-center",
+          )}
+        >
           <h3
             className="
               text-sm
@@ -77,6 +82,7 @@ export function StatCard({
           >
             {title}
           </h3>
+
           <div
             className="
               text-xs
@@ -93,9 +99,12 @@ export function StatCard({
         <div
           className="
             font-display
-            text-4xl
+            shrink-0
+            grow-0
+            text-2xl
             font-bold
             text-palette-beige
+            sm:text-4xl
             xl:text-5xl
           "
         >

@@ -16,9 +16,13 @@ export function Header() {
 
   // Update ghost element height when NOT scrolled (at its tallest)
   useEffect(() => {
-    if (elementRef.current && ghostElementRef.current) {
-      ghostElementRef.current.style.height = `${elementRef.current.clientHeight}px`
-    }
+    const interval = setInterval(() => {
+      if (elementRef.current && ghostElementRef.current) {
+        ghostElementRef.current.style.height = `${elementRef.current.clientHeight}px`
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
   }, [])
 
   return (
@@ -51,7 +55,7 @@ export function Header() {
               transition-all
               duration-300
             `,
-            isScrolled ? `py-1` : `py-3`
+            isScrolled ? `py-1` : `py-3`,
           )}
         >
           <div
@@ -61,7 +65,7 @@ export function Header() {
                 transition-all
                 duration-300
               `,
-              isScrolled ? `h-8 w-40` : `h-12 w-56`
+              isScrolled ? `h-8 w-40` : `h-12 w-56`,
             )}
           >
             <Link href="/">

@@ -21,11 +21,11 @@ export function CurrentRoundVotingPowerWallet() {
   const votingEligibilityByTrancheId = Object.fromEntries(
     tranches.map((tranche) => {
       const hasAvailableLockupInTranche = lockups.some(
-        (lockup) => lockup.metaDataByTrancheId[tranche.id].isEligibleToVote,
+        (lockup) => lockup.metaDataByTrancheId[tranche.id].isEligibleToVote
       )
 
       return [tranche.id, hasAvailableLockupInTranche]
-    }),
+    })
   )
 
   const votingPowerByTranche = tranches.reduce(
@@ -51,23 +51,23 @@ export function CurrentRoundVotingPowerWallet() {
         votingPowerAvailable: number
         votingPowerSpent: number
       }
-    },
+    }
   )
 
   const hasSpentAnyVotingPowerInAnyTranche = Object.values(
-    votingPowerByTranche,
+    votingPowerByTranche
   ).some((x) => x.votingPowerSpent > 0)
 
   const canVoteInAllTranches = Object.values(
-    votingEligibilityByTrancheId,
+    votingEligibilityByTrancheId
   ).every((isEligibleToVote) => isEligibleToVote)
 
   const canVoteInSomeTranches = Object.values(
-    votingEligibilityByTrancheId,
+    votingEligibilityByTrancheId
   ).some((isEligibleToVote) => isEligibleToVote)
 
   const hasVotedInEveryTrancheThisRound = Object.values(
-    votingEligibilityByTrancheId,
+    votingEligibilityByTrancheId
   ).every((isEligibleToVote) => !isEligibleToVote)
 
   return (
@@ -86,11 +86,13 @@ export function CurrentRoundVotingPowerWallet() {
             votingPowerByTranche,
           })}
           classNamesForTooltip="w-72"
+          className="w-full"
         >
-          <div className="flex items-center gap-1">
-            <span>Total Voting Power</span>
+          Total Voting{" "}
+          <span className="inline-flex items-center gap-1">
+            Power
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
     />

@@ -16,7 +16,7 @@ export function buildActiveColumns<
     isSortable: true,
     initialSortDirection: "asc",
     propsForCells: {
-      className: "w-1/4 border-x-2 border-palette-beige/50",
+      className: "sm:w-1/4 sm:border-x-2 sm:border-palette-beige/50",
     },
     propsForHeaderCell: {
       className: [

@@ -21,12 +21,13 @@ export function CurrentRoundNumberOfBids() {
       isLoading={isLoading}
       title={
         <Tooltip
+          className="w-full"
           tipContents={currentRoundNumLiveBidsTooltip({
             numPointBasedBids,
             numTokenBasedBids: bidsInRound.length - numPointBasedBids,
           })}
         >
-          <div className="flex items-center gap-1">
+          <span className="inline-flex items-center gap-1">
             <span>
               Live{" "}
               {pluralize({
@@ -35,7 +36,7 @@ export function CurrentRoundNumberOfBids() {
               })}
             </span>
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}

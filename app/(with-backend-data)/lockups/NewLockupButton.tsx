@@ -25,7 +25,7 @@ export function NewLockupButton() {
       }
       wrapper={(children) => (
         <Tooltip
-          classNamesForTooltip="-ml-12"
+          classNamesForTooltip="sm:-ml-12"
           tipContents={
             !isWalletConnected
               ? needsWalletConnectionTooltip
@@ -34,13 +34,7 @@ export function NewLockupButton() {
                 : lockupLimitReachedByNetworkTooltip
           }
         >
-          <div
-            className="
-                      pointer-events-none
-                      cursor-not-allowed
-                      opacity-50
-                    "
-          >
+          <div className="pointer-events-none cursor-not-allowed opacity-50">
             {children}
           </div>
         </Tooltip>

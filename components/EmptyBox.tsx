@@ -15,11 +15,11 @@ export function EmptyBox({
           border-2
           border-dashed
           border-palette-beige/20
-          py-12
+          p-12
           text-center
           text-white/60
         `,
-        className
+        className,
       )}
       {...props}
     >

@@ -15,25 +15,29 @@ export function AllTimeAprGlobal() {
     <StatCard
       isLoading={isLoading}
       title={
-        <div className="flex items-center gap-1">
-          Historical APR
-          <Tooltip
-            classNamesForTooltip="flex flex-col gap-2"
-            tipContents={
-              <p>
-                <StyledText
-                  as={Link}
-                  variant="link"
-                  href="/docs/users/calculating-staking-apr"
-                  target="_blank"
-                >
-                  Learn More
-                  <Icon name="solid:arrow-up-right" />
-                </StyledText>
-              </p>
-            }
-          />
-        </div>
+        <Tooltip
+          className="w-full"
+          classNamesForTooltip="flex flex-col gap-2"
+          tipContents={
+            <p>
+              <StyledText
+                as={Link}
+                variant="link"
+                href="/docs/users/calculating-staking-apr"
+                target="_blank"
+              >
+                Learn More
+                <Icon name="solid:arrow-up-right" />
+              </StyledText>
+            </p>
+          }
+        >
+          Historical{" "}
+          <span className="inline-flex items-center gap-1">
+            APR
+            <Icon name="circle-info" />
+          </span>
+        </Tooltip>
       }
       subTitle="No historical data yet"
       value={`${allTimePolApr}%`}

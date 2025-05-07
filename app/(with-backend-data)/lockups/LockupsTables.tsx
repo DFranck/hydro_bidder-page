@@ -30,7 +30,7 @@ export function LockupsTables({
       buildActiveColumns<ActiveRow>({ tranches }),
       buildExpiredColumns<ExpiredRow>(),
     ],
-    [tranches]
+    [tranches],
   )
 
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
@@ -43,13 +43,13 @@ export function LockupsTables({
           lockup,
           tranches,
           onClickEdit,
-        })
+        }),
       ),
       expiredLockups.map((lockup) =>
         buildExpiredRow({
           lockup,
           onClickEdit,
-        })
+        }),
       ),
     ]
   }, [lockups, tranches, onClickEdit])
@@ -65,6 +65,10 @@ export function LockupsTables({
             className={twMerge(cellProps.className, isExpired && "border-x-0")}
             colSpan={isExpired ? tranches.length : undefined}
           >
+            <StyledText as="div" variant="label" className="mb-1 sm:hidden">
+              {tranches[0].name}
+            </StyledText>
+
             {cell}
           </TD>
         )
@@ -75,6 +79,10 @@ export function LockupsTables({
           <Fragment key={`${row._lockup.id}-2`} />
         ) : (
           <TD key={`${row._lockup.id}-2`} {...cellProps}>
+            <StyledText as="div" variant="label" className="mb-1 sm:hidden">
+              {tranches[1].name}
+            </StyledText>
+
             {cell}
           </TD>
         )

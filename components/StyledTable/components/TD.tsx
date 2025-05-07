@@ -1,3 +1,4 @@
+import { StyledText } from "@/components/StyledText"
 import { ComponentPropsWithRef, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -33,23 +34,18 @@ export function TD({
             ? "sm:text-right"
             : "sm:text-left",
 
-        className
+        className,
       )}
       {...otherProps}
     >
       {label && (
-        <span
-          className="
-            block
-            text-xs
-            font-bold
-            uppercase
-            opacity-70
-            sm:hidden
-          "
+        <StyledText
+          as="div"
+          variant="label"
+          className="mb-1 whitespace-nowrap sm:hidden"
         >
           {label}
-        </span>
+        </StyledText>
       )}
 
       {children}

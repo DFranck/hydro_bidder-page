@@ -116,7 +116,7 @@ export function LockupStatus({
           className={twJoin(
             "grid grid-cols-3",
             "-mx-4 -mt-2", // negate padding from Tooltip
-            "bg-palette-green/5"
+            "bg-palette-green/5",
           )}
         >
           {(
@@ -134,7 +134,7 @@ export function LockupStatus({
                 "text-xs font-bold uppercase",
                 isActive
                   ? "bg-palette-green/10 text-palette-green"
-                  : "text-white/30"
+                  : "text-white/30",
               )}
             >
               <Icon name={isActive ? "solid:check" : "solid:circle-dashed"} />
@@ -173,7 +173,7 @@ export function LockupStatus({
 
   return (
     <Tooltip
-      className="group relative flex gap-3 whitespace-nowrap"
+      className="group relative flex w-full gap-2"
       classNamesForTooltip="w-80"
       tipContents={statusTooltip}
       {...otherProps}
@@ -181,9 +181,16 @@ export function LockupStatus({
       {statusIcon}
 
       <div className="flex flex-col">
-        <span className="w-fit border-b-2 border-dotted border-white/50 hover:border-white">
+        <span
+          className={twJoin(
+            "w-fit",
+            "border-b-2 border-dotted border-white/50",
+            "hover:border-white",
+          )}
+        >
           {statusTopline}
         </span>
+
         {statusBottomline && (
           <StyledText variant="footnote">{statusBottomline}</StyledText>
         )}

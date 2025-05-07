@@ -14,11 +14,12 @@ export function AllTimeAverageRoundsPerWallet() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={averageRoundsPerUserTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Average Rounds Per User</span>
+        <Tooltip tipContents={averageRoundsPerUserTooltip} className="w-full">
+          Average Rounds Per{" "}
+          <span className="inline-flex items-center gap-1">
+            User
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All Time"

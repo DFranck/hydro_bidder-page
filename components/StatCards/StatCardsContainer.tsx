@@ -28,7 +28,7 @@ export function StatCardsContainer({
         className={twMerge(
           `
             grid
-            grid-cols-1
+            grid-cols-3
             items-center
             justify-center
             gap-4

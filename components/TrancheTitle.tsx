@@ -19,7 +19,7 @@ export function TrancheTitle({ trancheId }: { trancheId: number }) {
   })()
 
   return trancheMetadata ? (
-    <div className="flex items-center gap-2">
+    <div className="flex items-start gap-2">
       <div className="relative size-12 shrink-0">
         <Image
           src={`/images/logo-${trancheMetadata.logo}.svg`}
@@ -29,12 +29,12 @@ export function TrancheTitle({ trancheId }: { trancheId: number }) {
         />
       </div>
 
-      <div className="flex flex-col whitespace-nowrap">
+      <div className="flex w-full flex-col">
         <div>{tranche?.name ?? <em>(Unnamed Tranche)</em>}</div>
 
         <MarkdownContainer
           content={trancheMetadata.description}
-          className="font-normal opacity-60"
+          className="max-w-none font-normal opacity-60"
         />
       </div>
     </div>

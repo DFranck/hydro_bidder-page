@@ -25,11 +25,12 @@ export function CurrentRoundAtomLockedWallet() {
         </>
       }
       title={
-        <Tooltip tipContents={yourTotalAtomLockedTooltip}>
-          <div className="flex items-center gap-1">
-            Your Locked ATOM
+        <Tooltip tipContents={yourTotalAtomLockedTooltip} className="w-full">
+          Your Locked{" "}
+          <span className="inline-flex items-center gap-1">
+            ATOM
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle={

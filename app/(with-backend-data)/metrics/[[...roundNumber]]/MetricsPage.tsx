@@ -2,6 +2,8 @@
 
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
+import { Menu } from "@/components/Menu"
+import { AllTimeBidCount } from "@/components/StatCards/cards/AllTimeBidCount"
 import { AllTimePoLDeployed } from "@/components/StatCards/cards/AllTimePoLDeployed"
 import { AllTimeRevenue } from "@/components/StatCards/cards/AllTimeRevenue"
 import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
@@ -20,9 +22,8 @@ import uniq from "lodash/uniq"
 import Link from "next/link"
 import { Fragment, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
-import { MetricsTable } from "./MetricsTable"
-import { AllTimeBidCount } from "@/components/StatCards/cards/AllTimeBidCount"
 import ExperimentalTable from "./ExperimentalTable"
+import { MetricsTable } from "./MetricsTable"
 
 export const PRE_HYDRO_ROUND_ID = -1
 export const EXPERIMENTAL_ROUND_ID = -2
@@ -65,7 +66,7 @@ export function MetricsPage({
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
   const requestedExperimental = requestedRoundId === EXPERIMENTAL_ROUND_ID
-  const tabsArray = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
+  const allRoundIds = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
 
   const displayTranches = tranches.map((x) => {
     const displayTrancheFromRound = x.id === 2 ? 4 : 0
@@ -83,7 +84,7 @@ export function MetricsPage({
       <ContentContainer className="gap-6 py-6">
         <div
           data-testid="metrics-page-round-navigation"
-          className="flex items-center justify-between"
+          className="relative z-20 flex flex-col items-center justify-between gap-6 sm:flex-row"
         >
           <h2 className="sr-only">PoL Metrics by Round</h2>
 
@@ -92,7 +93,30 @@ export function MetricsPage({
           </StyledText>
 
           <div className="flex items-center backdrop-blur-sm">
-            {tabsArray.map((roundId) => {
+            <Menu
+              className="relative z-[100]"
+              items={allRoundIds.map((roundId) => {
+                const isActive = roundId === requestedRoundId
+                const hasData = roundId <= highestRoundIdWithData
+
+                return {
+                  icon:
+                    roundId === requestedRoundId ? "solid:check" : undefined,
+                  label:
+                    roundId === PRE_HYDRO_ROUND_ID
+                      ? "Pre-Hydro"
+                      : `Round ${roundId + 1}`,
+                  href: hasData ? `/metrics/${roundId + 1}` : "#",
+                }
+              })}
+            >
+              <button tabIndex={0}>
+                {requestedRoundId === PRE_HYDRO_ROUND_ID
+                  ? "Pre-Hydro"
+                  : `Round ${requestedRoundId + 1}`}
+              </button>
+            </Menu>
+            {[].map((roundId) => {
               const isActive = roundId === requestedRoundId
               const hasData = roundId <= highestRoundIdWithData
 
@@ -110,7 +134,7 @@ export function MetricsPage({
                     !isActive &&
                       "text-palette-green/50 hover:text-palette-green",
                     !hasData && "cursor-default",
-                    tabsArray.length - 1 === roundId + 1 && "rounded-r-full",
+                    allRoundIds.length - 1 === roundId + 1 && "rounded-r-full"
                   )}
                 >
                   <ConditionalWrapper
@@ -125,6 +149,7 @@ export function MetricsPage({
                       {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
                     </span>
                   </ConditionalWrapper>
+
                   {roundId === currentRoundId && (
                     <span
                       className={twJoin(
@@ -135,7 +160,7 @@ export function MetricsPage({
                         "group-hover:text-palette-text group-hover:before:bg-palette-beige",
                         isActive
                           ? "text-palette-text before:bg-palette-beige"
-                          : "text-palette-text/50 before:bg-palette-beige/60",
+                          : "text-palette-text/50 before:bg-palette-beige/60"
                       )}
                     >
                       Current
@@ -158,7 +183,7 @@ export function MetricsPage({
                 "border-palette-cyan",
                 "ml-12",
                 requestedRoundId !== -2 &&
-                  "text-palette-cyan/80 hover:text-palette-cyan",
+                  "text-palette-cyan/80 hover:text-palette-cyan"
               )}
             >
               Experimental
@@ -191,7 +216,7 @@ export function MetricsPage({
                       }
                     />
                   )
-                },
+                }
               )
             )}
           </>

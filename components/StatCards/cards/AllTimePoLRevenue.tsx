@@ -14,11 +14,12 @@ export function AllTimePoLRevenue() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={polRevenueTooltip}>
-          <div className="flex items-center gap-1">
-            <span>PoL Revenue</span>
+        <Tooltip tipContents={polRevenueTooltip} className="w-full">
+          PoL{" "}
+          <span className="inline-flex items-center gap-1">
+            Revenue
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All Time"

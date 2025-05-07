@@ -14,11 +14,12 @@ export function AllTimeAprWallet() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={yourAggregateAprTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Aggregate APR</span>
+        <Tooltip tipContents={yourAggregateAprTooltip} className="w-full">
+          Aggregate{" "}
+          <span className="inline-flex items-center gap-1">
+            APR
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All-Time"

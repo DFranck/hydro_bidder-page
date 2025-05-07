@@ -14,11 +14,15 @@ export function AllTimeAverageAtomLockedPerWallet() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={averageAtomLockedPerWalletTooltip}>
-          <div className="flex items-center gap-1">
-            <span>Average ATOM Locked Per Wallet</span>
+        <Tooltip
+          tipContents={averageAtomLockedPerWalletTooltip}
+          className="w-full"
+        >
+          Average ATOM Locked Per{" "}
+          <span className="inline-flex items-center gap-1">
+            Wallet
             <Icon name="circle-info" />
-          </div>
+          </span>
         </Tooltip>
       }
       subTitle="All Time"
