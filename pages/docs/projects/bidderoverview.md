@@ -2,7 +2,7 @@
 
 Hydro allocates liquidity through sequential auction rounds, each lasting one month. Bidders compete by offering tribute to voters. This onboarding guide describes how projects may create and submit bids to participate in the auction process.
 
-The best way to get started as a Hydro bidder is to schedule a call with [Brian Truax](https://calendly.com/actional/hydro) from the Hydro team. He will walk you through the process and answer initial questions.
+The best way to get started as a Hydro bidder is to schedule a call with [Patrick Hawk](https://calendly.com/patrick-hydrolabs) from the Hydro team. He will walk you through the process and answer initial questions.
 
 Before starting, briefly familiarize yourself with the complete process of creating a bid through to winning and monitoring a deployment. The table below is a high-level overview:
 

@@ -296,7 +296,7 @@ export default function Home() {
               <StyledText
                 as="a"
                 variant="button.primary.large"
-                href="https://calendly.com/actional/hydro"
+                href="https://calendly.com/patrick-hydrolabs"
                 target="_blank"
               >
                 Get in Touch <Icon name="solid:arrow-up-right" />

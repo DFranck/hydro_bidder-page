@@ -222,7 +222,7 @@ export default function AirdropsPage() {
                   className="inline-flex items-center gap-1"
                   as={Link}
                   variant="link"
-                  href="https://calendly.com/actional/hydro"
+                  href="https://calendly.com/patrick-hydrolabs"
                   target="_blank"
                 >
                   <span>Get in Touch</span>
