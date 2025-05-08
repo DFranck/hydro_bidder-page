@@ -61,7 +61,8 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
   }
 
   const userWillReceiveInUsd = isWalletConnected
-    ? (votingPowerAvailableByTrancheId[bidInfo.trancheId] / totalVotingPowerOnBid) *
+    ? (votingPowerAvailableByTrancheId[bidInfo.trancheId] /
+        totalVotingPowerOnBid) *
       totalTokenBasedTributeValue
     : 0
 
@@ -70,7 +71,8 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         return {
           denom,
           valueInTokens:
-            (votingPowerAvailableByTrancheId[bidInfo.trancheId] / totalVotingPowerOnBid) *
+            (votingPowerAvailableByTrancheId[bidInfo.trancheId] /
+              totalVotingPowerOnBid) *
             tributeAmountByDenom[denom]?.amount,
         }
       })

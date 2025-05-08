@@ -30,5 +30,9 @@ export function BidPolSize({ bidId }: { bidId: number }) {
       })}
       unit="ATOM"
     />
-  ) : null
+  ) : (
+    <StyledText variant="footnote" className="whitespace-nowrap">
+      &mdash;
+    </StyledText>
+  )
 }

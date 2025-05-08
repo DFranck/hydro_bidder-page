@@ -1,18 +1,27 @@
 import { Icon } from "@/components/Icon"
 import { IconString } from "@/components/Icon/types"
 import { ComponentProps, ReactNode } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge"
 interface MenuProps extends ComponentProps<"div"> {
+  classNameForPopup?: string
   items: MenuItem[]
 }
 
-interface MenuItem {
+export interface MenuItem {
+  className?: string
   icon?: IconString
+  isActive?: boolean
   label: ReactNode
   href?: string
 }
 
-export function Menu({ children, className, items, ...otherProps }: MenuProps) {
+export function Menu({
+  children,
+  className,
+  classNameForPopup,
+  items,
+  ...otherProps
+}: MenuProps) {
   return (
     <div
       className={twMerge("group relative inline-block", className)}
@@ -38,14 +47,26 @@ export function Menu({ children, className, items, ...otherProps }: MenuProps) {
           "opacity-0",
           "pointer-events-none",
           "group-has-[:focus-within]:opacity-100",
-          "group-has-[:focus-within]:pointer-events-auto"
+          "group-has-[:focus-within]:pointer-events-auto",
+          classNameForPopup
         )}
       >
         {items.map((item) => (
           <a
             key={item.href}
             href={item.href}
-            className={twJoin("flex items-center gap-2", "px-3 py-1")}
+            className={twMerge(
+              "flex items-center gap-2",
+              "py-1 pl-3 pr-6",
+              "hover:bg-palette-green/20",
+              item.isActive && [
+                "font-bold",
+                "bg-palette-green text-palette-text",
+                "hover:bg-palette-green/80",
+              ],
+              item.className
+            )}
+            tabIndex={0}
           >
             <Icon
               name={item.icon ?? "solid:circle"}

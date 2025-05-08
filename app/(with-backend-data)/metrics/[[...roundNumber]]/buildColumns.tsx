@@ -29,7 +29,7 @@ export function buildColumns(
           tipContents={bidTablesFirstColumnTooltips.metricsTable.tokenBased}
         >
           <div className="flex items-center gap-1">
-            Title
+            Bid Title
             <Icon name="circle-info" />
           </div>
         </Tooltip>

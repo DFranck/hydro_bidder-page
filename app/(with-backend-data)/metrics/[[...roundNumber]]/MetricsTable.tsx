@@ -1,10 +1,8 @@
 "use client"
 
 import { CollapsibleTable } from "@/components/CollapsibleTable"
-import { Icon } from "@/components/Icon"
-import { StyledTable, TD, TR } from "@/components/StyledTable"
+import { StyledTable } from "@/components/StyledTable"
 import { RowRenderFunction } from "@/components/StyledTable/types"
-import { Tooltip } from "@/components/Tooltip"
 import { voteThresholdTooltip } from "@/components/ToolTips"
 import { TrancheTitle } from "@/components/TrancheTitle"
 import { voteThresholdByTrancheId } from "@/config"
@@ -15,11 +13,11 @@ import {
 import { useBackendData } from "@/contract-apis/useBackendData"
 import max from "lodash/max"
 import uniq from "lodash/uniq"
-import { Fragment, useCallback, useMemo } from "react"
-import { twJoin } from "tailwind-merge"
+import { useCallback, useMemo } from "react"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
 import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
+import { RowComponent } from "./RowComponent"
 
 export function MetricsTable({
   trancheId,
@@ -91,50 +89,30 @@ export function MetricsTable({
   const renderRow = useCallback<
     RowRenderFunction<MetricsRow, keyof MetricsRow>
   >(
-    ({ children, row, rowProps }) => {
-      const shouldShowVoteThresholdLine =
-        !requestedPreHydro &&
-        row._bidFromContract.vote_perc !== null &&
-        row._bidFromContract.vote_perc < voteThreshold
-
-      return (
-        <Fragment key={row._bid.id}>
-          {!!shouldShowVoteThresholdLine && (
-            <TR className="js-vote-threshold-line [&~&]:hidden">
-              <TD colSpan={99} className="!p-0">
-                <div
-                  className={twJoin(
-                    "flex items-center justify-between gap-3",
-                    "whitespace-nowrap text-xs text-palette-beige",
-                  )}
-                >
-                  <div className="w-full border-t-2 border-palette-beige" />
-
-                  <Tooltip tipContents={voteThresholdTooltip({ trancheId })}>
-                    <div className="flex items-center gap-1">
-                      <Icon name="solid:circle" />
-                      <span>
-                        These bids are below the{" "}
-                        <strong>
-                          {voteThreshold * 100}% vote share threshold
-                        </strong>
-                      </span>
-                      <Icon name="circle-info" />
-                    </div>
-                  </Tooltip>
-
-                  <div className="w-full border-t-2 border-palette-beige" />
-                </div>
-              </TD>
-            </TR>
-          )}
-          <TR key={row._bid.id} {...rowProps}>
-            {children}
-          </TR>
-        </Fragment>
-      )
-    },
-    [voteThresholdTooltip],
+    ({
+      children,
+      row,
+      rowProps,
+      rowIndex,
+      sortDirection,
+      sortedColumnKey,
+      sortedRows,
+    }) => (
+      <RowComponent
+        requestedPreHydro={requestedPreHydro}
+        voteThreshold={voteThreshold}
+        trancheId={trancheId}
+        row={row as any}
+        rowIndex={rowIndex}
+        sortDirection={sortDirection}
+        sortedColumnKey={sortedColumnKey}
+        sortedRows={sortedRows}
+        rowProps={rowProps}
+      >
+        {children}
+      </RowComponent>
+    ),
+    [voteThresholdTooltip]
   )
 
   return (

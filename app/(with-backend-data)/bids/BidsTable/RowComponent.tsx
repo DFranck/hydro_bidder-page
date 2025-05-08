@@ -7,6 +7,7 @@ import { voteThresholdByTrancheId } from "@/config"
 import { BidRevampMetrics } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { Fragment } from "react"
+import { twMerge } from "tailwind-merge"
 import { classNames } from "./classNames"
 
 export function RowComponent<
@@ -17,6 +18,7 @@ export function RowComponent<
   children,
   row,
   rowProps,
+  rowIndex,
   sortDirection,
   sortedColumnKey,
 }: RowRenderProps<Row, keyof Row>) {
@@ -41,7 +43,7 @@ export function RowComponent<
   return (
     <Fragment key={row._bid.id}>
       {!!shouldShowVoteThresholdLine && (
-        <TR className="js-vote-threshold-line [&~&]:hidden">
+        <TR className="js-vote-threshold-line bg-none [&~&]:hidden">
           <TD colSpan={99} className="!p-0">
             <div
               className="
@@ -89,9 +91,14 @@ export function RowComponent<
         </TR>
       )}
       <TR
-        className={userVotedForBid ? classNames.hasVotedRow : undefined}
-        key={row._bid.id}
         {...rowProps}
+        key={row._bid.id}
+        className={twMerge(
+          rowProps.className,
+          userVotedForBid && classNames.hasVotedRow,
+          "!bg-none",
+          rowIndex % 2 === 0 && "!bg-palette-beige/5"
+        )}
       >
         {children}
       </TR>

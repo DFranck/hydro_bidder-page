@@ -2,7 +2,8 @@
 
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
-import { Menu } from "@/components/Menu"
+import { Icon } from "@/components/Icon"
+import { Menu, MenuItem } from "@/components/Menu"
 import { AllTimeBidCount } from "@/components/StatCards/cards/AllTimeBidCount"
 import { AllTimePoLDeployed } from "@/components/StatCards/cards/AllTimePoLDeployed"
 import { AllTimeRevenue } from "@/components/StatCards/cards/AllTimeRevenue"
@@ -19,9 +20,8 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import max from "lodash/max"
 import range from "lodash/range"
 import uniq from "lodash/uniq"
-import Link from "next/link"
 import { Fragment, ReactNode } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { twJoin } from "tailwind-merge"
 import ExperimentalTable from "./ExperimentalTable"
 import { MetricsTable } from "./MetricsTable"
 
@@ -73,6 +73,46 @@ export function MetricsPage({
     return { ...x, displayTrancheFromRound }
   })
 
+  const menuItems: MenuItem[] = allRoundIds.map((roundId) => {
+    const isActive = roundId === requestedRoundId
+    const hasData = roundId <= highestRoundIdWithData
+
+    return {
+      icon: isActive ? "solid:check" : undefined,
+      isActive,
+      label: (
+        <ConditionalWrapper
+          condition={!hasData}
+          wrapper={(children) => (
+            <Tooltip tipContents={metricsPageNoDataTooltip}>{children}</Tooltip>
+          )}
+        >
+          {roundId === PRE_HYDRO_ROUND_ID
+            ? "Pre-Hydro"
+            : `Round ${roundId + 1}`}
+          {roundId === currentRoundId && (
+            <StyledText variant="badge">Current</StyledText>
+          )}
+        </ConditionalWrapper>
+      ),
+      href: hasData ? `/metrics/${roundId + 1}` : "#",
+    }
+  })
+
+  const isExperimentalActive = requestedRoundId === EXPERIMENTAL_ROUND_ID
+
+  menuItems.push({
+    href: "/metrics/experimental",
+    icon: "solid:flask",
+    isActive: isExperimentalActive,
+    label: "Experimental",
+    className: twJoin(
+      isExperimentalActive
+        ? "bg-palette-cyan hover:bg-palette-cyan/80"
+        : "text-palette-cyan"
+    ),
+  })
+
   return (
     <>
       <StatCardsContainer>
@@ -95,99 +135,36 @@ export function MetricsPage({
           <div className="flex items-center backdrop-blur-sm">
             <Menu
               className="relative z-[100]"
-              items={allRoundIds.map((roundId) => {
-                const isActive = roundId === requestedRoundId
-                const hasData = roundId <= highestRoundIdWithData
-
-                return {
-                  icon:
-                    roundId === requestedRoundId ? "solid:check" : undefined,
-                  label:
-                    roundId === PRE_HYDRO_ROUND_ID
-                      ? "Pre-Hydro"
-                      : `Round ${roundId + 1}`,
-                  href: hasData ? `/metrics/${roundId + 1}` : "#",
-                }
-              })}
+              items={menuItems}
+              classNameForPopup="left-auto -right-10"
             >
-              <button tabIndex={0}>
-                {requestedRoundId === PRE_HYDRO_ROUND_ID
-                  ? "Pre-Hydro"
-                  : `Round ${requestedRoundId + 1}`}
-              </button>
-            </Menu>
-            {[].map((roundId) => {
-              const isActive = roundId === requestedRoundId
-              const hasData = roundId <= highestRoundIdWithData
-
-              return (
-                <StyledText
-                  as={Link}
-                  variant={isActive ? "button.primary" : "button.secondary"}
-                  href={hasData ? `/metrics/${roundId + 1}` : "#"}
-                  key={roundId}
-                  className={twMerge(
-                    "group relative -mx-px rounded-none backdrop-blur-none",
-                    "first:rounded-l-full",
-                    "hover:scale-100",
-                    "transition-all",
-                    !isActive &&
-                      "text-palette-green/50 hover:text-palette-green",
-                    !hasData && "cursor-default",
-                    allRoundIds.length - 1 === roundId + 1 && "rounded-r-full"
-                  )}
-                >
-                  <ConditionalWrapper
-                    condition={!hasData}
-                    wrapper={(children) => (
-                      <Tooltip tipContents={metricsPageNoDataTooltip}>
-                        {children}
-                      </Tooltip>
+              <StyledText
+                variant="button.secondary"
+                as="button"
+                tabIndex={0}
+                className={twJoin(
+                  isExperimentalActive &&
+                    "border-palette-cyan text-palette-cyan"
+                )}
+              >
+                {isExperimentalActive ? (
+                  <>
+                    <Icon name="solid:flask" /> Experimental
+                  </>
+                ) : requestedPreHydro ? (
+                  "Pre-Hydro"
+                ) : (
+                  <>
+                    Round {requestedRoundId + 1}
+                    {requestedRoundId === currentRoundId && (
+                      <StyledText variant="badge">Current</StyledText>
                     )}
-                  >
-                    <span>
-                      {roundId === -1 ? "Pre-Hydro" : `Round ${roundId + 1}`}
-                    </span>
-                  </ConditionalWrapper>
+                  </>
+                )}
 
-                  {roundId === currentRoundId && (
-                    <span
-                      className={twJoin(
-                        "absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/4",
-                        "rounded-full px-2 py-0.5 transition-all",
-                        "border-2 border-palette-text bg-palette-text text-xs",
-                        "before:absolute before:inset-0 before:-z-10 before:rounded-full",
-                        "group-hover:text-palette-text group-hover:before:bg-palette-beige",
-                        isActive
-                          ? "text-palette-text before:bg-palette-beige"
-                          : "text-palette-text/50 before:bg-palette-beige/60"
-                      )}
-                    >
-                      Current
-                    </span>
-                  )}
-                </StyledText>
-              )
-            })}
-            <StyledText
-              as={Link}
-              variant={
-                requestedRoundId === -2 ? "button.tertiary" : "button.secondary"
-              }
-              href="/metrics/experimental"
-              className={twMerge(
-                "relative -mx-px rounded-none backdrop-blur-none",
-                "rounded-l-full rounded-r-full",
-                "hover:scale-100",
-                "transition-all",
-                "border-palette-cyan",
-                "ml-12",
-                requestedRoundId !== -2 &&
-                  "text-palette-cyan/80 hover:text-palette-cyan"
-              )}
-            >
-              Experimental
-            </StyledText>
+                <Icon name="solid:caret-down" />
+              </StyledText>
+            </Menu>
           </div>
         </div>
         {requestedExperimental ? (

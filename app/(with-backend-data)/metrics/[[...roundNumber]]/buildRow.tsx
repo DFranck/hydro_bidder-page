@@ -1,6 +1,9 @@
 import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidDuration } from "@/components/BidDuration"
-import { BidLogoAndTitle } from "@/components/BidLogoAndTitle"
+import {
+  BidLogoAndTitle,
+  BidLogoAndTitleLayout,
+} from "@/components/BidLogoAndTitle"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
 import { BidStatus } from "@/components/BidStatus"
@@ -13,7 +16,6 @@ import {
   BidRevampMetrics,
 } from "@/contract-apis/types"
 import { pluralize } from "@/lib/pluralize"
-import Image from "next/image"
 
 export function buildRow(
   numiaBid: BidRevampMetrics | AugmentedBidFromNumiaSlimmed,
@@ -44,20 +46,11 @@ export function buildRow(
     logoAndTitle: (
       <InvisibleLink href={rowURL}>
         {requestedPreHydro ? (
-          <div className="flex items-center gap-6">
-            <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-              {projectLogoUrl ? (
-                <Image
-                  className="object-contain"
-                  src={projectLogoUrl}
-                  alt={projectName}
-                  fill={true}
-                />
-              ) : null}
-            </div>
-
-            <StyledText variant="h4">{title}</StyledText>
-          </div>
+          <BidLogoAndTitleLayout
+            projectLogoUrl={projectLogoUrl}
+            projectName={projectName}
+            title={title}
+          />
         ) : (
           <BidLogoAndTitle bidId={Number(numiaBid.id)} />
         )}
