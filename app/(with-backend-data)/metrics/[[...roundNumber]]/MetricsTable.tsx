@@ -118,7 +118,7 @@ export function MetricsTable({
   return (
     <CollapsibleTable
       id={tableId}
-      title={<TrancheTitle trancheId={trancheId} />}
+      title={<TrancheTitle trancheId={trancheId} roundId={requestedRoundId} />}
       numRows={rowsInTranche.length}
     >
       <StyledTable
