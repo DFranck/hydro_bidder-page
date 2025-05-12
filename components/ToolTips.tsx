@@ -1,6 +1,5 @@
 "use client"
 
-import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
@@ -15,6 +14,7 @@ import { pluralize } from "@/lib/pluralize"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
@@ -981,3 +981,35 @@ export const claimStakingRewardsTooltip = (
     accumulate over time and can be claimed to your wallet balance.
   </p>
 )
+
+export const bucketTotalLiquidityTooltip = (
+  <p>
+    The amount of liquidity that is deployed in this bucket during this round.
+    This amount is split according to the vote percentages among bidders.
+  </p>
+)
+
+export const bidLiquidityReceivedTooltip = ({
+  votePercentage,
+  totalBidLiquidity,
+  denom,
+}: {
+  votePercentage: number
+  totalBidLiquidity: number
+  denom: string
+}) => {
+  return (
+    <div>
+      With {Math.round(votePercentage * 100)}
+      <StyledText variant="mathSymbol">%</StyledText> of votes, this bid is set
+      to receive up to
+      <div className="flex items-baseline justify-start gap-1">
+        {simplifyBigNumbers(totalBidLiquidity)}
+        <span className="inline-flex items-center gap-1 text-sm opacity-60">
+          {denom}
+        </span>
+        as liquidity.
+      </div>
+    </div>
+  )
+}
