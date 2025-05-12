@@ -84,7 +84,7 @@ export function augmentBackendDataAfterWallet({
 
   const votesByRoundId = groupBy(
     sanitizedVotes,
-    (vote) => bidsInfo[vote.bidId].roundId,
+    (vote) => bidsInfo[vote.bidId]?.roundId,
   )
 
   const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>

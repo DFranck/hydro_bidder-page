@@ -254,7 +254,7 @@ export const estimatedRewardsTooltip = ({
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
-  const { projectName } = bidInfoFromGithub
+  const { projectName } = bidInfoFromGithub ?? {}
 
   const totalTributeValue = isTokenBased
     ? bid.totalTokenBasedTributeValue

@@ -62,7 +62,7 @@ export function BidDetails({
     projectName,
     projectUrl,
     title,
-  } = bidMetaData
+  } = bidMetaData ?? {}
 
   const bid = bidsInfo[bidId]
 

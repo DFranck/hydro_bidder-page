@@ -81,7 +81,7 @@ export default function RewardsPage() {
   const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
-      const bidDescriptionFromGithub = bidMetaDataById[bid.id]
+      const bidDescriptionFromGithub = bidMetaDataById[bid.id] ?? {}
       const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
       return bid.tokenBasedTributes.map((tribute) => {
         const findClaimForBid = (claim: (typeof claimsOutstanding)[number]) =>
