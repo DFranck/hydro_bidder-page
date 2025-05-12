@@ -30,7 +30,7 @@ export async function fetchRoundLockups({
   )
 
   if (currentRoundId == roundId) {
-    const { users } = await fetchHistoricUsers()
+    const { users = [] } = await fetchHistoricUsers()
 
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
@@ -60,7 +60,7 @@ export async function fetchRoundLockups({
     return allUserLockupsWithTrancheInfos
   } else {
     const response = await fetch(
-      `${numiaLockupsEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
+      `${numiaLockupsEndpoint}?round_id=${roundId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`,
       {
         headers: {
           Accept: "application/json",

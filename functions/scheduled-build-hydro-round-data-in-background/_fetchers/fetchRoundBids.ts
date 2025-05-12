@@ -49,7 +49,7 @@ export async function fetchRoundBids({
     return proposals
   } else {
     try {
-      const url = `${numiaBidsEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`
+      const url = `${numiaBidsEndpoint}?round_id=${roundId}&tranche_id=${trancheId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`
 
       console.log(url)
 
@@ -72,6 +72,10 @@ export async function fetchRoundBids({
         responseJson = await response.json()
       } catch (error) {
         throw new Error(`Error converting response to JSON: ${error}`)
+      }
+
+      if (!responseJson || responseJson.length === 0) {
+        return []
       }
 
       const proposals = JSON.parse(responseJson[0].response).data.proposals
