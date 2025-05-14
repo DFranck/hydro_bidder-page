@@ -80,6 +80,8 @@ export const bidTableTributeAprTooltip = ({
   isWalletConnected,
   userWillReceiveInUsd,
   userWillReceiveInTokens,
+  isOnlyPointBased,
+  pointProgramUrl,
 }: {
   bidId: number
   hasVotedForThisBid: boolean
@@ -90,23 +92,33 @@ export const bidTableTributeAprTooltip = ({
     denom: string
     valueInTokens: number
   }[]
+  isOnlyPointBased: boolean
+  pointProgramUrl?: string
 }) => (
   <div className="flex flex-col gap-3">
     <div className="flex flex-col">
       <StyledText variant="label">Tribute Size</StyledText>
       <BidTribute bidId={bidId} textAlign="left" />
     </div>
-    <p>
-      The total estimated value of this bid&rsquo;s rewards is currently&nbsp;
-      <strong className="text-palette-green">
-        {amountToUSDString(tributeValue, {
-          appendUsd: false,
-          numberOfDecimals: 2,
-          removeTrailingZeros: true,
-        })}
-      </strong>
-      .
-    </p>
+    {
+      isOnlyPointBased ?
+      <p>
+        The estimated value of this bid’s rewards cannot be determined due to
+        points not having a monetary value.
+      </p>
+      :
+      <p>
+        The total estimated value of this bid&rsquo;s rewards is currently&nbsp;
+        <strong className="text-palette-green">
+          {amountToUSDString(tributeValue, {
+            appendUsd: false,
+            numberOfDecimals: 2,
+            removeTrailingZeros: true,
+          })}
+        </strong>
+        .
+      </p>
+    }
     {isWalletConnected && (
       <StyledText>
         {hasVotedForThisBid
@@ -133,6 +145,20 @@ export const bidTableTributeAprTooltip = ({
         ))}
       </StyledText>
     )}
+    {
+      pointProgramUrl && !isOnlyPointBased &&
+      <p>
+        This bid is offering points in addition to tokens, which are not taken into account in this APR.{" "}
+        <StyledText
+          as={Link}
+          href={pointProgramUrl}
+          variant="link"
+          className="inline-flex items-center gap-1"
+        >
+          Learn More <Icon name="solid:arrow-up-right" />
+        </StyledText>
+      </p>
+    }
     <p>The APR is based on total voting power associated with the bid at the end of the round.</p>
   </div>
 )
@@ -167,18 +193,15 @@ export const pointBasedTributeAmountTooltip = ({
 
 export const currentRoundNumLiveBidsTooltip = ({
   numPointBasedBids,
-  numTokenBasedBids,
 }: {
   numPointBasedBids: number
-  numTokenBasedBids: number
 }) => (
   <div className="flex flex-col items-center justify-center">
     <div>
-      There {numTokenBasedBids === 1 ? "is" : "are"}{" "}
-      <strong>{numTokenBasedBids}</strong> token-based{" "}
-      {pluralize({ count: numTokenBasedBids, singular: "bid" })} and{" "}
-      <strong>{numPointBasedBids}</strong> point-based{" "}
-      {pluralize({ count: numPointBasedBids, singular: "bid" })}.{" "}
+      <strong>{numPointBasedBids}</strong>{" "}
+      {pluralize({ count: numPointBasedBids, singular: "bid" })}{" "}
+      {numPointBasedBids === 1 ? "is" : "are"} offering points in addition or
+      instead of tokens as tribute.{" "}
       <StyledText
         variant="link"
         as={Link}
