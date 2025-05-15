@@ -4,12 +4,13 @@ import { CollapsibleTable } from "@/components/CollapsibleTable"
 import { StyledTable } from "@/components/StyledTable"
 import { TrancheTitle } from "@/components/TrancheTitle"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
 import { RowComponent } from "./RowComponent"
 
 export function BidsTable({ trancheId }: { trancheId: number }) {
+  const [showBidsWithoutTributes, setShowBidsWithoutTributes] = useState(false)
   const tableId = `bids-table-${trancheId}`
 
   const { bidsInfo, currentRoundId, tranches } = useBackendData()
@@ -17,17 +18,33 @@ export function BidsTable({ trancheId }: { trancheId: number }) {
 
   const rowsInTranche = useMemo(() => {
     const bidsInRound = Object.values(bidsInfo).filter(
-      (bid) => bid.roundId === currentRoundId,
+      (bid) => bid.roundId === currentRoundId
     )
 
     const bidsInTranche = bidsInRound.filter(
       (bid) => bid.trancheId === trancheId
     )
 
+    const filteredBidsInTranche = bidsInTranche.filter((bid) => {
+      if (showBidsWithoutTributes) {
+        return true
+      }
+
+      if (bid.points && bid.points.length > 0) {
+        return true
+      }
+
+      if (bid.tokenBasedTributes.length === 0) {
+        return false
+      }
+
+      return true
+    })
+
     const trancheMetadata = (() => {
       try {
         return JSON.parse(String(tranche?.metadata)) as {
-          pool_sizes: { round_id: number; amount: number, denom: string }[]
+          pool_sizes: { round_id: number; amount: number; denom: string }[]
         }
       } catch {
         return null
@@ -35,19 +52,17 @@ export function BidsTable({ trancheId }: { trancheId: number }) {
     })()
 
     const currentRoundPoolSize = trancheMetadata
-      ? trancheMetadata.pool_sizes?.find(
-          (x) => x.round_id === currentRoundId
-        )
+      ? trancheMetadata.pool_sizes?.find((x) => x.round_id === currentRoundId)
       : undefined
 
-    return bidsInTranche.map((bid) =>
+    return filteredBidsInTranche.map((bid) =>
       buildRow({
         bid,
         totalLiquidityForCurrentRound: currentRoundPoolSize?.amount,
         denom: currentRoundPoolSize?.denom || "",
       })
     )
-  }, [bidsInfo, currentRoundId, trancheId])
+  }, [bidsInfo, currentRoundId, trancheId, showBidsWithoutTributes])
 
   type Row = (typeof rowsInTranche)[number]
 
@@ -60,6 +75,8 @@ export function BidsTable({ trancheId }: { trancheId: number }) {
       id={tableId}
       title={<TrancheTitle trancheId={trancheId} roundId={currentRoundId} />}
       numRows={rowsInTranche.length}
+      showBidsWithoutTributes={showBidsWithoutTributes}
+      setShowBidsWithoutTributes={setShowBidsWithoutTributes}
     >
       <StyledTable
         initialSortedColumnKey="currentVoteShare"

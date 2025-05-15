@@ -13,7 +13,7 @@ import {
 import { useBackendData } from "@/contract-apis/useBackendData"
 import max from "lodash/max"
 import uniq from "lodash/uniq"
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
 import { MetricsRow, PRE_HYDRO_ROUND_ID } from "./MetricsPage"
@@ -26,6 +26,7 @@ export function MetricsTable({
   trancheId: number
   requestedRoundNumber: number | null
 }) {
+  const [showBidsWithoutTributes, setShowBidsWithoutTributes] = useState(false)
   const { bidsInfo, currentRoundId, metricsForPreHydroBids, bidMetaDataById } =
     useBackendData()
 
@@ -60,12 +61,29 @@ export function MetricsTable({
       return (bid as BidRevampMetrics).trancheId === trancheId
     })
 
-    return bidsInTranche.map((bid) => {
+    const filteredBidsInTranche = bidsInTranche.filter((x) => {
+      if (requestedPreHydro || showBidsWithoutTributes) {
+        return true
+      }
+
+      let bid = { ...x } as BidRevampMetrics
+      if (bid.points && bid.points.length > 0) {
+        return true
+      }
+
+      if (bid.tokenBasedTributes.length === 0) {
+        return false
+      }
+
+      return true
+    })
+
+    return filteredBidsInTranche.map((bid) => {
       const bidMetaData = bidMetaDataById[Number(bid.id)] ?? null
       const bidFromContract = bidsInfo[Number(bid.id)] ?? null
       return buildRow(bid, bidMetaData, bidFromContract, requestedPreHydro)
     })
-  }, [bidsInfo, currentRoundId, trancheId])
+  }, [bidsInfo, currentRoundId, trancheId, showBidsWithoutTributes])
 
   const columns = useMemo(() => {
     return buildColumns(requestedPreHydro, currentRoundId, requestedRoundId)
@@ -120,6 +138,8 @@ export function MetricsTable({
       id={tableId}
       title={<TrancheTitle trancheId={trancheId} roundId={requestedRoundId} />}
       numRows={rowsInTranche.length}
+      showBidsWithoutTributes={showBidsWithoutTributes}
+      setShowBidsWithoutTributes={setShowBidsWithoutTributes}
     >
       <StyledTable
         initialSortedColumnKey="amount"
