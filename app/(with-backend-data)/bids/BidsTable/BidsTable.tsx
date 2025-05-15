@@ -26,19 +26,9 @@ export function BidsTable({ trancheId }: { trancheId: number }) {
     )
 
     const filteredBidsInTranche = bidsInTranche.filter((bid) => {
-      if (showBidsWithoutTributes) {
-        return true
-      }
-
-      if (bid.points && bid.points.length > 0) {
-        return true
-      }
-
-      if (bid.tokenBasedTributes.length === 0) {
-        return false
-      }
-
-      return true
+      const hasPoints = bid.points?.length > 0
+      const hasTokenTributes = bid.tokenBasedTributes.length > 0
+      return showBidsWithoutTributes || hasPoints || hasTokenTributes
     })
 
     const trancheMetadata = (() => {

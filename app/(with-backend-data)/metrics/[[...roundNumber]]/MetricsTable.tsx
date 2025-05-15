@@ -66,16 +66,10 @@ export function MetricsTable({
         return true
       }
 
-      let bid = { ...x } as BidRevampMetrics
-      if (bid.points && bid.points.length > 0) {
-        return true
-      }
-
-      if (bid.tokenBasedTributes.length === 0) {
-        return false
-      }
-
-      return true
+      const bid = x as BidRevampMetrics
+      const hasPoints = bid.points?.length > 0
+      const hasTokenTributes = bid.tokenBasedTributes.length > 0
+      return hasPoints || hasTokenTributes
     })
 
     return filteredBidsInTranche.map((bid) => {
