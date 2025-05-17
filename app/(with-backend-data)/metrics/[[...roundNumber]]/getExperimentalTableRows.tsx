@@ -60,6 +60,7 @@ export function getExperimentalTableRows(
               src={item.logo}
               alt={item.name}
               fill={true}
+              sizes="48px"
             />
           </div>
           <StyledText variant="h4" className="text-left">

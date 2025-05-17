@@ -7,7 +7,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function AllTimeAprWallet() {
-  const { currentRoundId, isLoading, metricsGlobal } = useBackendData()
+  const { isLoading, metricsGlobal } = useBackendData()
   const { allTimeTributeApr } = metricsGlobal
 
   return (

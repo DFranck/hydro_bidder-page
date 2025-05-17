@@ -24,13 +24,13 @@ export const Footer = () => {
           md:flex-row
         "
       >
-        <Link href={"/"}>
+        <Link href={"/"} className="relative block h-[35px] w-[160px]">
           <Image
             className="object-contain"
             src={"/images/logo.svg"}
             alt="Hydro Logo"
-            width={160}
-            height={35}
+            fill
+            sizes="160px"
           />
         </Link>
 

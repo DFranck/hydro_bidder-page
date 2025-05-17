@@ -125,6 +125,7 @@ export default function RewardsPage() {
                       src={projectLogoUrl}
                       alt={projectName}
                       fill={true}
+                      sizes="48px"
                     />
                   </div>
                 ) : null}

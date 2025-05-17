@@ -63,11 +63,6 @@ export default async function RootLayout({
             />
           </>
         )}
-        <Script
-          id="service-worker"
-          strategy="afterInteractive"
-          src="/injectServiceWorker.js"
-        />
       </head>
       <body className={`${InterFont.className} relative overflow-x-hidden`}>
         {children}

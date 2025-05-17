@@ -41,6 +41,7 @@ export function TrancheTitle({
           alt={tranche?.name ?? ""}
           fill={true}
           className="object-contain"
+          sizes="48px"
         />
       </div>
 

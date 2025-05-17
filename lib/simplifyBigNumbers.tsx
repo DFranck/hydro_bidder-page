@@ -1,5 +1,3 @@
-"use client"
-
 export function simplifyBigNumbers(num: number, decimals: number = 1): string {
   let formatted = num.toString()
 
