@@ -96,7 +96,7 @@ export function buildRow(
             <StyledText variant="mathSymbol">%</StyledText>
           </StyledText>
         ) : (
-          <BidPolApr bidId={Number(numiaBid.id)} />
+          <BidPolApr />
         )}
       </InvisibleLink>
     ),

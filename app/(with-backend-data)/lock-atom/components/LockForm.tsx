@@ -29,7 +29,6 @@ export function LockForm({
   validatorMap: Map<string, Validator>
 }) {
   const router = useRouter()
-  const [isRefreshing, setIsRefreshing] = useState(false)
   const {
     lockedAtomEpochInNanos,
     lockedAtomMaxWallet,
@@ -261,12 +260,6 @@ export function LockForm({
                             Max: <strong>{maxAtomToBeLocked.toFixed(6)}</strong>{" "}
                             ATOM
                           </StyledText>
-
-                          {isRefreshing && (
-                            <div className="animate-spin">
-                              <Icon name="light:loader" />
-                            </div>
-                          )}
                         </div>
 
                         {parseFloat(amount) < maxAtomToBeLocked && (
@@ -328,8 +321,7 @@ export function LockForm({
                         !amount ||
                         !selectedDuration ||
                         parseFloat(amount) > maxAtomToBeLocked ||
-                        parseFloat(amount) === 0 ||
-                        isRefreshing
+                        parseFloat(amount) === 0
                       }
                       variant="button.primary"
                       type="submit"

@@ -67,19 +67,6 @@ export const toastMessages = {
     }
   },
 
-  unlockingExpiredLockupsSuccess: (count: number) => {
-    const lockupOrLockups = pluralize({
-      count,
-      prefixCount: false,
-      singular: "lockup",
-    })
-
-    return {
-      variant: "success",
-      message: `${count} ${lockupOrLockups} unlocked successfully. Continue to next step.`,
-    }
-  },
-
   unlockingExpiredLockupsError: (count: number, error: Error) => {
     const lockupOrLockups = pluralize({
       count,

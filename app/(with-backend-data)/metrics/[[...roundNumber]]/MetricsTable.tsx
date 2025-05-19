@@ -111,6 +111,7 @@ export function MetricsTable({
       sortedRows,
     }) => (
       <RowComponent
+        key={`metric_row_${row._bid.id}_${rowIndex}`}
         requestedPreHydro={requestedPreHydro}
         voteThreshold={voteThreshold}
         trancheId={trancheId}

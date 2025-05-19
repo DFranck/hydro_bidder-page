@@ -349,7 +349,7 @@ export function BidDetails({
                       </StyledText>
                     </Tooltip>
                     <div className="max-w-64 overflow-x-auto text-xl font-bold">
-                      <BidPolApr bidId={bidId} />
+                      <BidPolApr />
                     </div>
                   </div>
                 )}

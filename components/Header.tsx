@@ -55,21 +55,26 @@ export function Header() {
               transition-all
               duration-300
             `,
-            isScrolled ? `py-1` : `py-3`,
+            isScrolled ? `py-1` : `py-3`
           )}
         >
           <div
             className={twMerge(
               `
-                relative
                 transition-all
                 duration-300
               `,
-              isScrolled ? `h-8 w-40` : `h-12 w-56`,
+              isScrolled ? `h-8 w-40` : `h-12 w-56`
             )}
           >
-            <Link href="/">
-              <Image src={"/images/logo.svg"} alt="Hydro Logo" fill={true} />
+            <Link href="/" className="relative block h-full w-full">
+              <Image
+                src={"/images/logo.svg"}
+                alt="Hydro Logo"
+                fill={true}
+                className="object-contain"
+                sizes="(max-width: 768px) 160px, 224px"
+              />
             </Link>
           </div>
           <div className="flex flex-row items-center justify-between gap-6">
