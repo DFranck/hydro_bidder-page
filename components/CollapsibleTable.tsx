@@ -16,11 +16,15 @@ export function CollapsibleTable({
   id,
   title,
   numRows,
+  showBidsWithoutTributes,
+  setShowBidsWithoutTributes,
 }: {
   children: ReactNode
   id: string
   title: ReactNode
   numRows: number
+  showBidsWithoutTributes: boolean
+  setShowBidsWithoutTributes(shouldShow: boolean): void
 }) {
   const [isCollapsed, setIsCollapsed] = useState(numRows === 0)
 
@@ -36,12 +40,16 @@ export function CollapsibleTable({
     }, 2000)
   }
 
+  const toggleBids = () => {
+    setShowBidsWithoutTributes(!showBidsWithoutTributes)
+  }
+
   return (
     <BlurryBackdropBox id={id} key={id} className="group flex flex-col gap-3">
       <TableHeader
         leftSlot={<StyledText variant="h4">{title}</StyledText>}
         rightSlot={
-          <div className="flex flex-row-reverse items-center gap-6 text-xs">
+          <div className="flex flex-row-reverse items-center gap-4 text-xs">
             <StyledText
               as="button"
               variant="button.secondary.small"
@@ -61,6 +69,22 @@ export function CollapsibleTable({
               <Icon name={hasCopied ? "solid:check" : "solid:link"} />
               <span>{hasCopied ? "Copied!" : "Copy Link"}</span>
             </StyledText>
+            <div
+              className="flex cursor-pointer flex-row items-center gap-2"
+              onClick={toggleBids}
+            >
+              <StyledText
+                as="input"
+                variant="input.checkbox"
+                type="checkbox"
+                className="cursor-pointer"
+                checked={showBidsWithoutTributes}
+                onChange={toggleBids}
+              />
+              <StyledText>
+                Show bids <br /> without tributes
+              </StyledText>
+            </div>
           </div>
         }
       />

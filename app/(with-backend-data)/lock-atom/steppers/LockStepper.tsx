@@ -28,13 +28,6 @@ import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubT
 import { signLockTokens } from "../transactions/signLockTokens"
 import { signTokenizeShares } from "../transactions/signTokenizeShares"
 
-function getValidatorMoniker(
-  validator: string,
-  validatorMap: Map<string, Validator>
-): string {
-  return validatorMap.get(validator)?.description.moniker || validator
-}
-
 type LockStep =
   | "Init"
   | "NoHubGasError"

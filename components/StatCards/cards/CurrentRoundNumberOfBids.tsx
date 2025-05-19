@@ -24,7 +24,6 @@ export function CurrentRoundNumberOfBids() {
           className="w-full"
           tipContents={currentRoundNumLiveBidsTooltip({
             numPointBasedBids,
-            numTokenBasedBids: bidsInRound.length - numPointBasedBids,
           })}
         >
           <span className="inline-flex items-center gap-1">

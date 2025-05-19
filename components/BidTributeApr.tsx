@@ -21,8 +21,10 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
     totalTokenBasedTributeValue,
     power,
     tokenBasedTributes,
+    pointProgramUrl
   } = bidInfo
 
+  const isOnlyPointBased = bidInfo.points && bidInfo.points.length > 0 && bidInfo.tokenBasedTributes.length === 0
   const tributeApr = (apr_tribute ?? 0) * 100
 
   const formattedTributeAprMin = tributeApr.toFixed(0)
@@ -79,7 +81,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
     : [{ denom: "", valueInTokens: 0 }]
 
   const renderAprValue = () => {
-    if (Number.isNaN(tributeApr) || bidInfo.points?.length > 0) {
+    if (Number.isNaN(tributeApr)) {
       return (
         <>
           <span>0</span>
@@ -102,6 +104,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       <>
         <span>{formattedTributeAprMin}</span>
         <StyledText variant="mathSymbol">%</StyledText>
+        {bidInfo.points && bidInfo.points.length > 0 && <StyledText variant="mathSymbol">+</StyledText>}
       </>
     )
   }
@@ -119,6 +122,8 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
         isWalletConnected,
         userWillReceiveInUsd,
         userWillReceiveInTokens,
+        pointProgramUrl,
+        isOnlyPointBased
       })}
     >
       <StyledText variant="mathSymbol.container">{renderAprValue()}</StyledText>
