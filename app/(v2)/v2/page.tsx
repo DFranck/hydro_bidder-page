@@ -1,6 +1,7 @@
 "use client"
 
-import { useDummyData } from "@/app/(v2)/v2/useDummyData"
+import { useDummyData } from "@/app/(v2)/v2/dummy-data/useDummyData"
+import { CollapsibleBox } from "@/components/CollapsibleBox"
 import { Icon } from "@/components/Icon"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import { Logo } from "@/components/v2/Logo"
@@ -10,23 +11,10 @@ import {
   HYDRO_TELEGRAM_COMMUNITY_URL,
 } from "@/config"
 import { useIsMobile } from "@/lib/useIsMobile"
+import range from "lodash/range"
 import Link from "next/link"
 import { useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
-
-export const currentRoundId = 5
-
-export const bidTitleCandidates = [
-  "Decentralized NFT marketplace with gasless transactions",
-  "Blockchain-based voting system for transparent elections",
-  "Tokenized real estate investment platform on Ethereum",
-  "Decentralized social media platform with privacy focus",
-  "Supply chain tracking solution using smart contracts",
-]
-
-export const bidDurationCandidates = ["1 month", "3 months", "6 months"]
-
-export const votingTokenCandidates = ["ATOM", "stOSMO"]
 
 const getMenuItems = (isWalletConnected: boolean): MenuItem[] => [
   {
@@ -107,7 +95,8 @@ const getMenuItems = (isWalletConnected: boolean): MenuItem[] => [
 
 export default function V2() {
   const isMobile = useIsMobile()
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(isMobile ? false : true)
+  const [isRoundSelectorOpen, setIsRoundSelectorOpen] = useState(false)
   const menuItems = getMenuItems(false)
   const isSidebarDocked = !isSidebarOpen && !isMobile
 
@@ -118,33 +107,28 @@ export default function V2() {
     <div
       className={twJoin(
         "relative h-screen w-screen",
-        "grid grid-rows-[min-content_auto] gap-[2px]",
+        "gap-[2px] p-[2px]",
         "scrollbar-thumb-palette-beige scrollbar-track-palette-text",
         "**:scrollbar-thin",
-        "transition-all",
         isMobile
-          ? "grid-cols-1"
+          ? isSidebarOpen
+            ? "grid-areas-mobile-sidebar-open"
+            : "grid-areas-mobile-sidebar-closed"
           : isSidebarOpen
-            ? "grid-cols-[300px_auto]"
-            : "grid-cols-[60px_auto]"
+            ? "grid-areas-desktop-sidebar-open"
+            : "grid-areas-desktop-sidebar-closed"
       )}
-      style={{
-        gridTemplateAreas: isMobile
-          ? `
-            logo    navigation
-            sidebar sidebar
-            content content
-          `
-          : `
-            logo    navigation
-            sidebar content
-          `,
-      }}
     >
-      <header className={twJoin("items-center py-1", isMobile ? "" : "")}>
+      <header
+        className={twJoin(
+          "grid-in-header",
+          "flex items-center justify-between",
+          isMobile ? "" : ""
+        )}
+      >
         <div className="px-3">
           <Link href="/v2" className="relative block h-12 w-full min-w-12">
-            <Logo className="h-full w-full" showText={isSidebarOpen} />
+            <Logo className="h-full w-full" />
           </Link>
         </div>
 
@@ -171,39 +155,52 @@ export default function V2() {
         />
       </header>
 
-      <main
-        className={twJoin(
-          "h-full overflow-hidden",
-          "col-span-2",
-          isMobile ? "" : "grid grid-cols-subgrid"
-        )}
-      >
+      <main className={twJoin("contents", isMobile ? "" : "")}>
         <aside
-          className={twJoin("bg-palette-beige/10")}
+          className={twJoin(
+            "grid-in-sidebar",
+            "flex flex-col",
+            "bg-palette-beige/10",
+            (!isMobile || isSidebarOpen) && "gap-[2px]"
+          )}
           onClick={isSidebarDocked ? () => setIsSidebarOpen(true) : undefined}
         >
           <div
-            id="round-selector"
+            id="sidebar-round-selector"
             className={twJoin(
               "flex items-center justify-between",
               "bg-palette-beige text-palette-text",
               "font-bold transition-all",
-              isSidebarDocked ? "flex-col-reverse p-0.5" : "h-12 px-3"
+              isSidebarDocked
+                ? "flex-col p-[2px]" // move the switcher above
+                : "h-12 px-3"
             )}
           >
             <div
               className={twJoin(
-                "flex w-full items-center gap-1",
-                isSidebarDocked && [
-                  "flex-col",
-                  "[&_span]:uppercase",
-                  "[&_span]:text-[10px]",
-                  "[&_var]:text-3xl",
-                  "[&_var]:leading-none",
-                ]
+                "flex w-full items-center",
+                isSidebarDocked ? "flex-col" : "gap-3"
               )}
             >
-              <span>Round</span> <var className="not-italic">5</var>{" "}
+              <span
+                className={twJoin(
+                  isSidebarDocked && [
+                    "py-2",
+                    "flex flex-col items-center justify-center",
+                    "text-[10px] uppercase",
+                  ]
+                )}
+              >
+                <span>Round</span>{" "}
+                <var
+                  className={twJoin(
+                    "not-italic",
+                    isSidebarDocked && "text-3xl leading-none"
+                  )}
+                >
+                  5
+                </var>
+              </span>{" "}
               <span
                 className={twJoin(
                   "py-0.5",
@@ -217,110 +214,135 @@ export default function V2() {
             </div>
 
             <div className={twJoin("flex items-center gap-2")}>
-              <button className={twJoin("button", isSidebarDocked && "hidden")}>
+              <button
+                className={twJoin("button", isSidebarDocked && "hidden")}
+                onClick={() => setIsRoundSelectorOpen(!isRoundSelectorOpen)}
+              >
                 <Icon name="solid:caret-down" />
               </button>
 
               <button
-                className={twJoin(
-                  "button",
-                  isSidebarDocked && [
-                    "block w-full text-center",
-                    "border-palette-text border-b-2",
-                  ],
-                  isMobile && "hidden"
-                )}
-                onClick={() => setIsSidebarOpen(false)}
+                className={twJoin("button", isSidebarDocked && "hidden")}
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
                 <Icon
                   name="solid:arrow-left-to-line"
                   className={twJoin(
                     "inline-block",
-                    isSidebarDocked && "rotate-180"
+                    isSidebarDocked && "rotate-180",
+                    isMobile && (isSidebarOpen ? "rotate-90" : "-rotate-90")
                   )}
                 />
               </button>
             </div>
           </div>
 
-          <div
-            className={twJoin(
-              isSidebarDocked
-                ? "py-[2px]"
-                : !isMobile
-                  ? "py-3"
-                  : "pt-3 pb-[2px]"
+          <CollapsibleBox
+            id="sidebar-round-selector-options"
+            isCollapsed={!isRoundSelectorOpen || isSidebarDocked}
+            classNamesForInnerWrapper={twJoin(
+              "flex flex-col",
+              "bg-palette-beige text-palette-text"
             )}
           >
-            <div className={twJoin("flex flex-col gap-2")}>
-              <div
+            {range(-2, currentRoundId + 1).map((roundId) => (
+              <Link
+                key={roundId}
+                href={`/v2/rounds/${roundId + 1}`}
                 className={twJoin(
-                  "flex items-center justify-between",
-                  "px-3 py-1",
-                  isSidebarDocked && "hidden"
+                  "flex items-center gap-1",
+                  "h-12 px-3",
+                  "hover:bg-palette-text/10"
                 )}
               >
-                <div className="label">Lockups</div>
+                Round {roundId + 1}
+              </Link>
+            ))}
+          </CollapsibleBox>
 
-                <button className={twJoin("button")}>
-                  <Icon name="solid:ellipsis-vertical" />
-                </button>
-              </div>
+          <CollapsibleBox
+            id="sidebar-content"
+            isCollapsed={isMobile && !isSidebarOpen}
+          >
+            <div
+              className={twJoin(
+                "h-12 px-3",
+                "flex items-center justify-between",
+                isSidebarDocked && "hidden"
+              )}
+            >
+              <div className="label">Lockups</div>
 
-              <div
-                className={twJoin(
-                  "grid gap-[2px]",
-                  isSidebarDocked ? "grid-cols-1" : "grid-cols-2"
-                )}
-              >
-                {(
-                  [
-                    [200, "ATOM", "bg-token-atom"],
-                    [0, "stOSMO", "bg-token-stosmo"],
-                  ] as const
-                ).map(([amount, denom, className]) => (
-                  <div
-                    key={denom}
-                    className={twJoin(
-                      "flex flex-col items-center justify-center",
-                      "gap-1 py-3",
-                      className,
-                      "*:block"
-                    )}
-                  >
-                    <span
-                      className={twJoin(
-                        "-mb-1 size-8 rounded-full bg-white leading-0"
-                      )}
-                    />{" "}
-                    <var className="font-extrabold not-italic">{amount}</var>{" "}
-                    <span className="denom">{denom}</span>
-                  </div>
-                ))}
-              </div>
+              <button className={twJoin("button")}>
+                <Icon name="solid:ellipsis-vertical" />
+              </button>
             </div>
-          </div>
+
+            <div
+              className={twJoin(
+                "grid gap-[2px]",
+                isSidebarDocked ? "grid-cols-1" : "grid-cols-2"
+              )}
+            >
+              {(
+                [
+                  [200, "ATOM", "bg-token-atom"],
+                  [0, "stOSMO", "bg-token-stosmo"],
+                ] as const
+              ).map(([amount, denom, className]) => (
+                <div
+                  key={denom}
+                  className={twJoin(
+                    "flex flex-col items-center justify-center",
+                    "gap-1 py-3",
+                    className,
+                    "*:block"
+                  )}
+                >
+                  <span
+                    className={twJoin(
+                      "-mb-1 size-8 rounded-full bg-white leading-0"
+                    )}
+                  />{" "}
+                  <var className="font-extrabold not-italic">{amount}</var>{" "}
+                  <span className="denom">{denom}</span>
+                </div>
+              ))}
+            </div>
+          </CollapsibleBox>
         </aside>
 
-        <div className="grid h-full grid-rows-[min-content_auto]">
+        <CollapsibleBox
+          id="content-container"
+          isCollapsed={isMobile && isSidebarOpen}
+          className={twJoin("grid-in-content")}
+          classNamesForInnerWrapper="grid grid-rows-[min-content_auto] gap-[2px]"
+        >
           <div
             id="stats-bar"
             className={twJoin(
-              "flex h-12 justify-around gap-3",
+              isMobile ? "gap-1 py-6" : "h-12 gap-3",
+              "flex justify-around",
               "bg-palette-blue"
             )}
           >
             {[
               [14, "Live Bids"],
               ["17%", "Average APR"],
-              [15, "Days Left in Round"],
-            ].map(([count, label]) => (
-              <div key={label} className={twJoin("flex items-center gap-3")}>
+              [15, "Days Left"],
+            ].map(([count, label], index) => (
+              <div
+                key={index}
+                className={twJoin(
+                  "flex items-center",
+                  isMobile ? "flex-col justify-center gap-2" : "gap-3"
+                )}
+              >
                 <var className="text-palette-beige text-3xl font-extrabold not-italic">
                   {count}
                 </var>
 
-                <span>{label}</span>
+                <span className="label text-center">{label}</span>
               </div>
             ))}
           </div>
@@ -328,7 +350,7 @@ export default function V2() {
           <div
             id="bucket-list"
             className={twJoin(
-              "snap-x snap-mandatory scroll-px-[2px] p-[2px]",
+              "snap-x snap-mandatory scroll-px-[2px]",
               "flex gap-[2px] overflow-x-auto",
               isMobile ? [""] : [""]
             )}
@@ -346,7 +368,7 @@ export default function V2() {
                   className={twJoin(
                     "relative",
                     "h-full shrink-0 grow-0",
-                    "snap-start bg-red-400",
+                    "snap-start",
                     isMobile ? "w-screen" : "w-[450px]"
                   )}
                 >
@@ -418,8 +440,8 @@ export default function V2() {
                               tabIndex={0}
                               className={twJoin(
                                 "grid grid-cols-[min-content_auto]",
-                                "gap-3 px-3 py-2",
-                                "items-center",
+                                "gap-3 px-3 pt-2 pb-3",
+                                "items-start",
                                 "focus-within:outline-none",
                                 "focus-within:ring-2",
                                 "focus-within:ring-palette-beige",
@@ -430,6 +452,7 @@ export default function V2() {
                             >
                               <div
                                 className={twJoin(
+                                  "mt-1", // slightly nudged down to align with the text
                                   "size-12 rounded-full",
                                   "bg-palette-beige"
                                 )}
@@ -437,13 +460,11 @@ export default function V2() {
 
                               <div
                                 className={twJoin(
-                                  "h-full pt-2",
-                                  "flex flex-col justify-between gap-3"
+                                  "h-full",
+                                  "flex flex-col justify-between gap-2"
                                 )}
                               >
-                                <h3 className="text-lg text-balance">
-                                  {title}
-                                </h3>
+                                <h3 className="text-lg">{title}</h3>
 
                                 <div
                                   className={twJoin(
@@ -486,7 +507,7 @@ export default function V2() {
               )
             })}
           </div>
-        </div>
+        </CollapsibleBox>
       </main>
     </div>
   )

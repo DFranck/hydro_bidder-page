@@ -6,7 +6,7 @@ import { StyledText } from "@/components/StyledText"
 import { useIsMobile } from "@/lib/useIsMobile"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ReactNode } from "react"
+import { ComponentProps, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
 export interface MenuItem {
@@ -33,7 +33,8 @@ export function ResponsiveMenu({
   classNameForSubItemMobile,
   classNameForSubItemsDesktop,
   classNameForSubItemsMobile,
-}: {
+  ...otherProps
+}: ComponentProps<"nav"> & {
   menuItems: MenuItem[]
   className?: string
   classNameDesktop?: string
@@ -56,9 +57,9 @@ export function ResponsiveMenu({
 
   return (
     <nav
+      tabIndex={0}
       className={twMerge(
         "group/navbar z-40",
-        className,
         isMobile
           ? [
               "pointer-events-none",
@@ -68,9 +69,10 @@ export function ResponsiveMenu({
               "focus-within:pointer-events-auto",
               classNameMobile,
             ]
-          : ["relative bg-transparent", classNameDesktop]
+          : ["relative bg-transparent", classNameDesktop],
+        className
       )}
-      tabIndex={0}
+      {...otherProps}
     >
       <button
         className={twJoin(

@@ -39,10 +39,14 @@ export default async function RootLayout({
     <html lang="en" className="scroll-pt-32">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"
+        />
         <Script
           crossOrigin="anonymous"
           src="https://kit.fontawesome.com/401fb1e734.js"
+          strategy="lazyOnload"
         />
         {process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" && (
           <>

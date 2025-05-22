@@ -2,7 +2,8 @@
 
 import { useIsClient, useMediaQuery } from "usehooks-ts"
 
-export function useIsMobile() {
+export function useIsMobile({ valueOnServer = true } = {}) {
   const isClient = useIsClient()
-  return useMediaQuery("(max-width: 768px)") && isClient
+  const isSmallScreen = useMediaQuery("(max-width: 768px)")
+  return isClient ? isSmallScreen : valueOnServer
 }

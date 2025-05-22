@@ -39,6 +39,10 @@
   ::file-selector-button {
     border-color: rgba(255, 255, 255, 0.2);
   }
+
+  html {
+    font-size: 14px;
+  }
 }
 
 @utility button {
@@ -49,6 +53,7 @@
   font-weight: --value(--font-semibold);
   line-height: --value(--leading-none);
   white-space: nowrap;
+  touch-action: manipulation;
 }
 
 @utility label {
@@ -56,11 +61,55 @@
   font-weight: 700;
   letter-spacing: 0.125em;
   text-transform: uppercase;
-  line-height: 0.8em;
+  line-height: 1.1em;
 }
 
 @utility denom {
   @apply label;
   font-size: 10px;
   opacity: 0.6;
+}
+
+@utility grid-areas-desktop-sidebar-closed {
+  display: grid;
+  transition-property: grid-template-columns, grid-template-rows;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+  grid-template-columns: 60px auto;
+  grid-template-rows: min-content auto;
+  grid-template-areas:
+    "header  header"
+    "sidebar content";
+}
+
+@utility grid-areas-desktop-sidebar-open {
+  @apply grid-areas-desktop-sidebar-closed;
+  grid-template-columns: 350px auto;
+}
+
+@utility grid-areas-mobile-sidebar-closed {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content min-content 1fr;
+  grid-template-areas:
+    "header"
+    "sidebar"
+    "content";
+}
+
+@utility grid-areas-mobile-sidebar-open {
+  @apply grid-areas-mobile-sidebar-closed;
+  grid-template-rows: min-content 1fr 0fr;
+}
+
+@utility grid-in-header {
+  grid-area: header;
+}
+
+@utility grid-in-sidebar {
+  grid-area: sidebar;
+}
+
+@utility grid-in-content {
+  grid-area: content;
 }
