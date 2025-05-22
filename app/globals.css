@@ -1,3 +1,66 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+@plugin "tailwind-scrollbar";
+
+@theme {
+  --breakpoint-2xl: 1400px;
+
+  --container-2xs: 16rem;
+
+  --font-inter: "Inter", "sans-serif";
+
+  --color-palette-beige: #ffe1b8;
+  --color-palette-cyan: #00d1ff;
+  --color-palette-blue: #0061ff;
+  --color-palette-green: #00ffc2;
+  --color-palette-red: #ff7b51;
+  --color-palette-text: #080815;
+  --color-token-atom: #9747ff;
+  --color-token-stosmo: #e50371;
+
+  --color-shaded: rgba(var(--color-palette-beige), 0.8);
+  --color-faded: rgba(255, 255, 255, 0.6);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@utility button {
+  display: inline-block;
+  border-radius: --value(--radius-md);
+  border-width: --value(--border-2);
+  text-align: center;
+  font-weight: --value(--font-semibold);
+  line-height: --value(--leading-none);
+  white-space: nowrap;
+}
+
+@utility label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.125em;
+  text-transform: uppercase;
+  line-height: 0.8em;
+}
+
+@utility denom {
+  @apply label;
+  font-size: 10px;
+  opacity: 0.6;
+}

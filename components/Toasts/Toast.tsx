@@ -47,7 +47,7 @@ export function Toast({
       className={twMerge(
         "js-toast",
         "grid grid-rows-2 items-center",
-        "grid-cols-[min-content,auto,min-content]",
+        "grid-cols-[min-content_auto_min-content]",
         "rounded-md text-xs text-white backdrop-blur-md",
         classNamesAndVariants.variants[variant].container,
         className

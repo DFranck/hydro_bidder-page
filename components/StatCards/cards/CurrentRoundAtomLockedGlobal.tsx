@@ -22,7 +22,7 @@ export function CurrentRoundAtomLockedGlobal() {
       className={twMerge(
         lockedAtomIsAtCapacityGlobal &&
           `
-            bg-gradient-to-t
+            bg-linear-to-t
             from-palette-red/80
             to-palette-red/0
           `

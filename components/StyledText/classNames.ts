@@ -33,20 +33,20 @@ const buttonStyles = {
   ),
   circularPrimary: twMerge(
     commonBaseButtonStyles,
-    "!size-10 rounded-full border-2 border-transparent bg-palette-green !p-0 text-palette-text hover:bg-palette-green/80"
+    "size-10! rounded-full border-2 border-transparent bg-palette-green p-0! text-palette-text hover:bg-palette-green/80"
   ),
   circularSecondary: twMerge(
     commonBaseButtonStyles,
-    "!size-10 rounded-full border-2 border-palette-green !p-0 text-palette-green hover:bg-palette-green hover:text-palette-text"
+    "size-10! rounded-full border-2 border-palette-green p-0! text-palette-green hover:bg-palette-green hover:text-palette-text"
   ),
   circularIcon: twMerge(
     commonBaseButtonStyles,
-    "!size-10 rounded-full border-0 !p-0 text-white/60 hover:bg-white/20 hover:text-white"
+    "size-10! rounded-full border-0 p-0! text-white/60 hover:bg-white/20 hover:text-white"
   ),
 }
 
 const classNamesForAllHeadings = twJoin(
-  "font-display text-balance font-bold !leading-[1.3]"
+  "font-display text-balance font-bold leading-[1.3]!"
 )
 
 const generateButtonClassNames = (
@@ -124,7 +124,7 @@ export const classNames = {
 
   "input.text": twJoin(
     "rounded border-2 bg-white/20 p-2 outline-none",
-    "invalid:!border-palette-red",
+    "invalid:border-palette-red!",
     "focus:border-palette-green"
   ),
 
@@ -132,19 +132,19 @@ export const classNames = {
     "size-5 appearance-none rounded border-2 outline-none",
     "checked:border-transparent",
     "checked:bg-palette-green",
-    `checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset]`
+    `checked:shadow-[0_0_0_2px_var(--color-palette-text)_inset]`
   ),
 
   "input.radio": twJoin(
     "size-5 appearance-none rounded-full border-2 outline-none",
     "checked:border-transparent",
     "checked:bg-palette-green",
-    `checked:shadow-[0_0_0_3px_theme('colors.palette.text')_inset]`
+    `checked:shadow-[0_0_0_3px_var(--color-palette-text)_inset]`
   ),
 
   label: twJoin(
     "whitespace-nowrap text-sm text-white/80",
-    "has-[:checked]:font-bold has-[:checked]:text-white"
+    "has-checked:font-bold has-checked:text-white"
   ),
 
   "mathSymbol.container": twJoin(

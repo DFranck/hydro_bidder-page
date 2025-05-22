@@ -37,7 +37,7 @@ export function RowComponent<
     <Fragment key={row._bid.id}>
       {!!shouldShowVoteThresholdLine && (
         <TR className="js-vote-threshold-line bg-none [&~&]:hidden">
-          <TD colSpan={99} className="!p-0">
+          <TD colSpan={99} className="p-0!">
             <div
               className={twJoin(
                 "flex items-center justify-between gap-3",
@@ -68,8 +68,8 @@ export function RowComponent<
         key={row._bid.id}
         className={twMerge(
           rowProps.className,
-          "!bg-none",
-          rowIndex % 2 === 0 && "!bg-palette-beige/5"
+          "bg-none!",
+          rowIndex % 2 === 0 && "bg-palette-beige/5!"
         )}
       >
         {children}

@@ -171,10 +171,10 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
           return (
             <CollapsibleBox
               className={twJoin(
-                "[&:nth-child(4)]:opacity-75",
-                "[&:nth-child(5)]:opacity-50",
-                "[&:nth-child(6)]:opacity-25",
-                "[&:nth-child(n+7)]:opacity-0"
+                "nth-4:opacity-75",
+                "nth-5:opacity-50",
+                "nth-6:opacity-25",
+                "nth-[n+7]:opacity-0"
               )}
               key={_id}
               isCollapsed={isCollapsed}

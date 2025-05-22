@@ -46,8 +46,8 @@ export function Menu({
           "shadow-2xl",
           "opacity-0",
           "pointer-events-none",
-          "group-has-[:focus-within]:opacity-100",
-          "group-has-[:focus-within]:pointer-events-auto",
+          "group-has-focus-within:opacity-100",
+          "group-has-focus-within:pointer-events-auto",
           classNameForPopup
         )}
       >

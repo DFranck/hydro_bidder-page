@@ -479,7 +479,7 @@ export function BackendDataTweaker() {
                       data-testid="create-tweak-button"
                       as="button"
                       type="button"
-                      className="flex !w-full"
+                      className="flex w-full!"
                       onClick={handleClickCreateNew}
                     >
                       Create New Tweak

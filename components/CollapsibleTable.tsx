@@ -67,7 +67,7 @@ export function CollapsibleTable({
 
       <CollapsibleBox
         isCollapsed={!isCollapsed}
-        className="[&[data-collapsed]]:opacity-0"
+        className="data-collapsed:opacity-0"
       >
         {numRows === 0 ? (
           <EmptyBox>
@@ -100,7 +100,7 @@ export function CollapsibleTable({
 
       <CollapsibleBox
         isCollapsed={isCollapsed}
-        className="js-collapsible-table-content [&[data-collapsed]]:opacity-0"
+        className="js-collapsible-table-content data-collapsed:opacity-0"
       >
         {children}
       </CollapsibleBox>

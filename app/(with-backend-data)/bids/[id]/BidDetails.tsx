@@ -141,7 +141,7 @@ export function BidDetails({
               -z-10
               h-96
               rounded-md
-              bg-gradient-to-bl
+              bg-linear-to-bl
               from-palette-green/30
               via-palette-green/0
               to-palette-green/0
@@ -250,7 +250,7 @@ export function BidDetails({
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
             {bid.roundId === currentRoundId && (
-              <div className="*:!w-full">
+              <div className="*:w-full!">
                 <VoteButton bidId={bidId} size="large" />
               </div>
             )}

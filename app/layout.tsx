@@ -5,6 +5,7 @@ import sortBy from "lodash/sortBy"
 import { Inter } from "next/font/google"
 import { headers } from "next/headers"
 import Script from "next/script"
+import { twJoin } from "tailwind-merge"
 import "./globals.css"
 
 const InterFont = Inter({ subsets: ["latin"], preload: true })
@@ -18,12 +19,12 @@ export async function generateMetadata() {
 
   const sortedMetadataByRoute = sortBy(
     Object.entries(metadataByRoute),
-    ([route]) => route.length,
+    ([route]) => route.length
   )
 
   const routeMetadataEntry =
     sortedMetadataByRoute.find(([pathname]) =>
-      pathname.startsWith(requestedPathname),
+      pathname.startsWith(requestedPathname)
     )?.[1] ?? defaultMetadata
 
   return routeMetadataEntry
@@ -37,6 +38,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-pt-32">
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <Script
           crossOrigin="anonymous"
@@ -63,13 +65,14 @@ export default async function RootLayout({
             />
           </>
         )}
-        <Script
-          id="service-worker"
-          strategy="afterInteractive"
-          src="/injectServiceWorker.js"
-        />
       </head>
-      <body className={`${InterFont.className} relative overflow-x-hidden`}>
+      <body
+        className={twJoin(
+          InterFont.className,
+          "relative overflow-x-hidden",
+          "bg-palette-text text-white"
+        )}
+      >
         {children}
       </body>
     </html>

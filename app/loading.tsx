@@ -1,28 +1,20 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { useIsLoadingNewRoute } from "@/lib/useIsLoadingNewRoute"
 import { twMerge } from "tailwind-merge"
 
-export default function LoadingState({
-  isLoading: outerIsLoading,
-}: {
-  isLoading?: boolean
-}) {
-  const isLoadingNewRoute = useIsLoadingNewRoute()
-  const isLoading = outerIsLoading ?? isLoadingNewRoute
-
+export default function LoadingState({ isLoading }: { isLoading?: boolean }) {
   return (
     <div
       className={twMerge(
         `
+          bg-palette-text
           fixed
           inset-0
           z-30
           flex
           items-center
           justify-center
-          bg-palette-text
           text-2xl
           text-white
           transition-opacity

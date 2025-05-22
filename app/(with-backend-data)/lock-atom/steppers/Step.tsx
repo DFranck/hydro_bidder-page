@@ -53,7 +53,7 @@ export function Step({
     <Card
       className={`
         mx-auto
-        max-w-screen-sm
+        max-w-(--breakpoint-sm)
       `}
     >
       {title && <Card.Header title={title} />}
