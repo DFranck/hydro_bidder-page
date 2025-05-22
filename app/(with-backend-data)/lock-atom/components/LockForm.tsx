@@ -23,10 +23,12 @@ export function LockForm({
   onSubmit,
   hubChain,
   validatorMap,
+  validatorLiquidStakingCap,
 }: {
   onSubmit: (validator: string, amount: string, duration: number) => void
   hubChain: ChainContext
-  validatorMap: Map<string, Validator>
+  validatorMap: Map<string, Validator>,
+  validatorLiquidStakingCap: string
 }) {
   const router = useRouter()
   const {
@@ -199,6 +201,7 @@ export function LockForm({
                         selectedValue={validator}
                         onChange={setValidator}
                         selectedAmount={parseFloat(amount)}
+                        validatorLiquidStakingCap={validatorLiquidStakingCap}
                       />
                     ))}
                   </div>

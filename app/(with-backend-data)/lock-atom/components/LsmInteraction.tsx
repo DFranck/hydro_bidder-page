@@ -28,8 +28,10 @@ import { LoaderCard } from "./LoaderCard"
 
 export function LsmInteraction({
   validatorMap,
+  validatorLiquidStakingCap,
 }: {
   validatorMap: Map<string, Validator>
+  validatorLiquidStakingCap: string
 }) {
   const {
     lockedAtomIsAtCapacityGlobal,
@@ -233,6 +235,7 @@ export function LsmInteraction({
               }
               hubChain={hubChain}
               validatorMap={validatorMap}
+              validatorLiquidStakingCap={validatorLiquidStakingCap}
             />
           )}
         </div>
