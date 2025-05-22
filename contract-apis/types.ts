@@ -11,6 +11,7 @@ import {
 } from "../app/ts_types/HydroBase.types"
 import { Tribute, TributeClaim } from "../app/ts_types/TributeBase.types"
 import { CamelCaseKeys } from "../lib/keysFromSnakeToCamelCase"
+import { StageData } from "@/app/ts_types/GatekeeperBase.types"
 
 export type ArbitraryAmountWithDescription = [
   amount: number,
@@ -27,7 +28,9 @@ export interface AugmentedBackendDataAfterWallet
   isWalletConnected: boolean
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
+  lockedAtomTotalWalletOld: number
   lockedAtomTotalWallet: number
+  lockedAtomMaxWallet: number
   lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
@@ -48,7 +51,6 @@ export interface AugmentedBackendDataBeforeWallet {
   lockedAtomIsAtCapacityGlobal: boolean
   lockedAtomEpochInNanos: number
   lockedAtomMaxGlobal: number
-  lockedAtomMaxWallet: number
   lockedAtomPercentageGlobal: number
   lockedAtomRemainingCapacityGlobal: number
   lockedAtomTotalGlobal: number
@@ -332,6 +334,8 @@ export interface RawWalletData {
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]
+  currently_locked: number | string
+  maxUserCanLock: string
 }
 
 export interface RoundPrices {
@@ -448,6 +452,14 @@ export interface ExperimentalRow extends BaseRowObject {
   additionalStatus?: ReactNode
   additionalInitialAdressHoldings?: ReactNode
   additionalDeploymentAPR?: ReactNode
+}
+
+export interface ProofResponse {
+  proof: string[]
+}
+
+export interface MaxUserCanLockResponse {
+  amount: string
 }
 
 type WithOverwrites<T> = T extends object

@@ -1,5 +1,8 @@
 "use client"
+
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
+import { generateProof } from "@/contract-apis/generateProof"
+import { getMaxUserCanLock } from "@/contract-apis/getMaxUserCanLock"
 import { StdFee } from "@cosmjs/amino"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -11,7 +14,8 @@ export async function signLockTokens(
   neutronSigner: SigningStargateClient,
   lockDuration: number,
   denom: string,
-  amount: string
+  amount: string,
+  lockedAtomMaxWallet: number
 ) {
   const client = await neutronChain.getSigningCosmWasmClient()
 
@@ -61,8 +65,20 @@ export async function signLockTokens(
     amount: [],
     gas: Math.round(gasEstimate * 1.55).toString(),
   }
-  const response = await hydroClient.lockTokens({ lockDuration }, fee, "", [
-    { denom, amount },
-  ])
+
+  const proofResponse = await generateProof(neutronChain.address)
+  const proof = proofResponse
+    ? {
+        maximum_amount: (lockedAtomMaxWallet * 1e6).toString(),
+        proof: proofResponse.proof,
+      }
+    : undefined
+
+  const response = await hydroClient.lockTokens(
+    { lockDuration, proof },
+    fee,
+    "",
+    [{ denom, amount }]
+  )
   return response
 }

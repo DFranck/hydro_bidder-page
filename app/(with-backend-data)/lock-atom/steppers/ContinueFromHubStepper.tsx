@@ -42,7 +42,7 @@ export const ContinueFromHubStepper = ({
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const { lockedAtomEpochInNanos } = useBackendData()
+  const { lockedAtomEpochInNanos, lockedAtomMaxWallet } = useBackendData()
   const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -94,7 +94,8 @@ export const ContinueFromHubStepper = ({
         neutronSigner,
         lockDuration,
         ibcBroadcastResult.denom,
-        amount
+        amount,
+        lockedAtomMaxWallet
       )
 
       // Broadcast the lock tokens transaction

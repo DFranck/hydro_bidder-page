@@ -2,11 +2,13 @@
 
 import { Tranche } from "@/app/ts_types/HydroBase.types"
 import {
+  getGatekeeperQueryClient,
   getHydroQueryClient,
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
-import { RawWalletData } from "@/contract-apis/types"
+import { MaxUserCanLockResponse, RawWalletData } from "@/contract-apis/types"
 import range from "lodash/range"
+import { getMaxUserCanLock } from "./getMaxUserCanLock"
 
 export async function fetchWalletData({
   address,
@@ -19,6 +21,7 @@ export async function fetchWalletData({
 }): Promise<RawWalletData> {
   const hydroQueryClient = await getHydroQueryClient()
   const tributeQueryClient = await getTributeQueryClient()
+  const gatekeeperQueryClient = await getGatekeeperQueryClient()
   const allRoundIds = range(0, currentRoundId + 1)
   const trancheIds = tranches.map((tranche) => tranche.id)
   const allRoundTrancheIdPairs = allRoundIds.flatMap((roundId) =>
@@ -29,6 +32,8 @@ export async function fetchWalletData({
     { voting_power },
     { lockups_with_per_tranche_infos },
     { claims: historical_tribute_claims },
+    { currently_locked },
+    maxUserCanLockResponse,
   ] = await Promise.all([
     hydroQueryClient
       .userVotingPower({ address })
@@ -47,6 +52,14 @@ export async function fetchWalletData({
         userAddress: address,
       })
       .catch(() => ({ claims: [] })),
+    gatekeeperQueryClient
+      .currentEpochUserLocked({
+        userAddress: address,
+      })
+      .catch(() => ({ currently_locked: 0 })),
+    getMaxUserCanLock(address).catch(
+      () => ({ amount: "" }) as MaxUserCanLockResponse
+    ),
   ])
 
   const votesAndClaims = await Promise.all(
@@ -82,5 +95,7 @@ export async function fetchWalletData({
     votes,
     outstanding_tribute_claims,
     historical_tribute_claims,
+    currently_locked,
+    maxUserCanLock: maxUserCanLockResponse?.amount || "",
   }
 }
