@@ -455,10 +455,13 @@ export interface ExperimentalRow extends BaseRowObject {
 }
 
 export interface ProofResponse {
-  proof: string[]
+  address: string
+  amount: string
+  proofs: string[]
 }
 
 export interface MaxUserCanLockResponse {
+  address: string
   amount: string
 }
 

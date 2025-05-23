@@ -36,14 +36,6 @@ export function augmentBackendDataAfterWallet({
     maxUserCanLock,
   } = walletData
 
-  // example json:
-  // const exampleJson = [
-  //   { "address": "neutron14fmxw54lgvheyn7m0p9efpr82fac68ysph96ch", "amount": "100000000"},
-  //   { "address": "neutron1r6rv879netg009eh6ty23v57qrq29afecuehlm", "amount": "1000000"}
-  // ]
-
-  // TODO: this is amount currenlty_locked, need to do lockedAtomMaxWallet - currenlty_locked to see if user is able to lock or not
-  console.log(currently_locked)
   const lockedAtomMaxWallet = maxUserCanLock ? Number(maxUserCanLock) / 1e6 : 0
 
   const allBids = Object.values(bidsInfo)

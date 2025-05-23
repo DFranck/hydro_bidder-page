@@ -2,7 +2,6 @@
 
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
 import { generateProof } from "@/contract-apis/generateProof"
-import { getMaxUserCanLock } from "@/contract-apis/getMaxUserCanLock"
 import { StdFee } from "@cosmjs/amino"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
@@ -14,8 +13,7 @@ export async function signLockTokens(
   neutronSigner: SigningStargateClient,
   lockDuration: number,
   denom: string,
-  amount: string,
-  lockedAtomMaxWallet: number
+  amount: string
 ) {
   const client = await neutronChain.getSigningCosmWasmClient()
 
@@ -34,6 +32,14 @@ export async function signLockTokens(
     hydroContractAddress
   )
 
+  const proofResponse = await generateProof(neutronChain.address)
+  const proof = proofResponse
+    ? {
+        maximum_amount: proofResponse.amount,
+        proof: [...proofResponse.proofs],
+      }
+    : undefined
+
   // pepare message for simulating gas
   const simulateMsg = MsgExecuteContract.fromPartial({
     contract: hydroContractAddress,
@@ -42,6 +48,7 @@ export async function signLockTokens(
       JSON.stringify({
         lock_tokens: {
           lock_duration: lockDuration,
+          proof,
         },
       })
     ),
@@ -65,14 +72,6 @@ export async function signLockTokens(
     amount: [],
     gas: Math.round(gasEstimate * 1.55).toString(),
   }
-
-  const proofResponse = await generateProof(neutronChain.address)
-  const proof = proofResponse
-    ? {
-        maximum_amount: (lockedAtomMaxWallet * 1e6).toString(),
-        proof: proofResponse.proof,
-      }
-    : undefined
 
   const response = await hydroClient.lockTokens(
     { lockDuration, proof },

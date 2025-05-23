@@ -58,7 +58,7 @@ export async function fetchWalletData({
       })
       .catch(() => ({ currently_locked: 0 })),
     getMaxUserCanLock(address).catch(
-      () => ({ amount: "" }) as MaxUserCanLockResponse
+      () => ({ address: "", amount: "" }) as MaxUserCanLockResponse
     ),
   ])
 
