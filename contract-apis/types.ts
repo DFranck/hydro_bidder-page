@@ -11,7 +11,6 @@ import {
 } from "../app/ts_types/HydroBase.types"
 import { Tribute, TributeClaim } from "../app/ts_types/TributeBase.types"
 import { CamelCaseKeys } from "../lib/keysFromSnakeToCamelCase"
-import { StageData } from "@/app/ts_types/GatekeeperBase.types"
 
 export type ArbitraryAmountWithDescription = [
   amount: number,
@@ -28,7 +27,7 @@ export interface AugmentedBackendDataAfterWallet
   isWalletConnected: boolean
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
-  lockedAtomTotalWalletOld: number
+  lockedAtomTotalWalletStat: number
   lockedAtomTotalWallet: number
   lockedAtomMaxWallet: number
   lockups: AugmentedLockup[]
@@ -37,6 +36,7 @@ export interface AugmentedBackendDataAfterWallet
   votingPowerAvailableByTrancheId: Record<number, number>
   votingPowerSpentByTrancheId: Record<number, number>
   votingPowerTotal: number
+  hasGatekeeper: boolean
 }
 
 export interface AugmentedBackendDataBeforeWallet {
@@ -336,6 +336,7 @@ export interface RawWalletData {
   votes: VoteWithPower[]
   currently_locked: number | string
   maxUserCanLock: string
+  hasGatekeeper: boolean
 }
 
 export interface RoundPrices {

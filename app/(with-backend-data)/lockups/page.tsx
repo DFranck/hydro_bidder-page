@@ -42,6 +42,7 @@ export default function LockupsPage() {
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
+    hasGatekeeper,
   } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
@@ -143,27 +144,33 @@ export default function LockupsPage() {
           "
         >
           <h2 className="sr-only">Your Lockups</h2>
-
-          <Tooltip
-            tipContents={lockupLimitTooltip}
-            className="block w-96 shrink-0"
-          >
-            <ProgressBar
-              percentage={lockedAtomPercentageWallet}
-              warningZone={(percentage) => percentage >= 75}
-              dangerZone={(percentage) => percentage >= 95}
+          {hasGatekeeper ? (
+            <Tooltip
+              tipContents={lockupLimitTooltip({
+                lockedAtomMaxWallet,
+                lockedAtomTotalWallet,
+              })}
+              className="block w-96 shrink-0"
             >
-              <div className="flex items-center gap-1 opacity-60">
-                <span>
-                  {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedAtomMaxWallet} ATOM max
-                </span>
-                <span>
-                  <Icon name="circle-info" />
-                </span>
-              </div>
-            </ProgressBar>
-          </Tooltip>
+              <ProgressBar
+                percentage={lockedAtomPercentageWallet}
+                warningZone={(percentage) => percentage >= 75}
+                dangerZone={(percentage) => percentage >= 95}
+              >
+                <div className="flex items-center gap-1 opacity-60">
+                  <span>
+                    {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
+                    {lockedAtomMaxWallet} ATOM max
+                  </span>
+                  <span>
+                    <Icon name="circle-info" />
+                  </span>
+                </div>
+              </ProgressBar>
+            </Tooltip>
+          ) : (
+            <div />
+          )}
 
           <div
             className="

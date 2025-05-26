@@ -13,7 +13,8 @@ export async function signLockTokens(
   neutronSigner: SigningStargateClient,
   lockDuration: number,
   denom: string,
-  amount: string
+  amount: string,
+  hasGatekeeper: boolean
 ) {
   const client = await neutronChain.getSigningCosmWasmClient()
 
@@ -32,13 +33,16 @@ export async function signLockTokens(
     hydroContractAddress
   )
 
-  const proofResponse = await generateProof(neutronChain.address)
-  const proof = proofResponse
-    ? {
-        maximum_amount: proofResponse.amount,
-        proof: [...proofResponse.proofs],
-      }
-    : undefined
+  let proof
+  if (hasGatekeeper) {
+    const proofResponse = await generateProof(neutronChain.address)
+    proof = proofResponse
+      ? {
+          maximum_amount: proofResponse.amount,
+          proof: [...proofResponse.proofs],
+        }
+      : undefined
+  }
 
   // pepare message for simulating gas
   const simulateMsg = MsgExecuteContract.fromPartial({

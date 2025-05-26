@@ -9,6 +9,7 @@ import {
 import { MaxUserCanLockResponse, RawWalletData } from "@/contract-apis/types"
 import range from "lodash/range"
 import { getMaxUserCanLock } from "./getMaxUserCanLock"
+import { CurrentEpochUserLockedResponse } from "@/app/ts_types/GatekeeperBase.types"
 
 export async function fetchWalletData({
   address,
@@ -22,6 +23,8 @@ export async function fetchWalletData({
   const hydroQueryClient = await getHydroQueryClient()
   const tributeQueryClient = await getTributeQueryClient()
   const gatekeeperQueryClient = await getGatekeeperQueryClient()
+  const { gatekeeper: gatekeeperContractAddress } =
+    await hydroQueryClient.gatekeeper()
   const allRoundIds = range(0, currentRoundId + 1)
   const trancheIds = tranches.map((tranche) => tranche.id)
   const allRoundTrancheIdPairs = allRoundIds.flatMap((roundId) =>
@@ -32,8 +35,6 @@ export async function fetchWalletData({
     { voting_power },
     { lockups_with_per_tranche_infos },
     { claims: historical_tribute_claims },
-    { currently_locked },
-    maxUserCanLockResponse,
   ] = await Promise.all([
     hydroQueryClient
       .userVotingPower({ address })
@@ -52,15 +53,24 @@ export async function fetchWalletData({
         userAddress: address,
       })
       .catch(() => ({ claims: [] })),
-    gatekeeperQueryClient
+  ])
+
+  let currently_locked: number | string = "0"
+  let maxUserCanLockResponse: MaxUserCanLockResponse | undefined
+  if (gatekeeperContractAddress) {
+    const currentlyLockedResponse = await gatekeeperQueryClient
       .currentEpochUserLocked({
         userAddress: address,
       })
-      .catch(() => ({ currently_locked: 0 })),
-    getMaxUserCanLock(address).catch(
+      .catch(
+        () => ({ currently_locked: "0" }) as CurrentEpochUserLockedResponse
+      )
+    currently_locked = currentlyLockedResponse.currently_locked
+
+    maxUserCanLockResponse = await getMaxUserCanLock(address).catch(
       () => ({ address: "", amount: "" }) as MaxUserCanLockResponse
-    ),
-  ])
+    )
+  }
 
   const votesAndClaims = await Promise.all(
     allRoundTrancheIdPairs.map(async ({ roundId, trancheId }) => {
@@ -97,5 +107,6 @@ export async function fetchWalletData({
     historical_tribute_claims,
     currently_locked,
     maxUserCanLock: maxUserCanLockResponse?.amount || "",
+    hasGatekeeper: !!gatekeeperContractAddress,
   }
 }

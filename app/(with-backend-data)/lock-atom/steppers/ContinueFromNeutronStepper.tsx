@@ -37,7 +37,7 @@ export const ContinueFromNeutronStepper = ({
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const { lockedAtomEpochInNanos } = useBackendData()
+  const { lockedAtomEpochInNanos, hasGatekeeper } = useBackendData()
   const router = useRouter()
   const [step, setStep] = useState<ContinueFromNeutronStep>(
     startState || "Init"
@@ -73,6 +73,7 @@ export const ContinueFromNeutronStepper = ({
         lockDuration,
         denom,
         amount,
+        hasGatekeeper
       )
 
       // Broadcast the lock tokens transaction
