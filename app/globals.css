@@ -4,6 +4,8 @@
 @plugin "tailwind-scrollbar";
 
 @theme {
+  --sidebar-width: 300px;
+
   --breakpoint-2xl: 1400px;
 
   --container-2xs: 16rem;
@@ -46,9 +48,16 @@
 }
 
 @utility button {
-  @apply inline-block rounded-md border-2;
+  @apply inline-flex items-center justify-center rounded-md border-2;
+  @apply px-3 py-2;
   @apply text-center leading-none font-semibold whitespace-nowrap;
-  @apply touch-manipulation;
+  @apply cursor-pointer touch-manipulation;
+}
+
+@utility button-icon {
+  @apply button;
+  @apply size-10;
+  @apply border-transparent;
 }
 
 @utility empty-box {
@@ -79,7 +88,7 @@
 
 @utility grid-areas-desktop-sidebar-open {
   @apply grid-areas-desktop-sidebar-closed;
-  grid-template-columns: 350px auto;
+  grid-template-columns: var(--sidebar-width) auto;
 }
 
 @utility grid-areas-mobile-sidebar-closed {

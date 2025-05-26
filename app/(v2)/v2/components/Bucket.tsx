@@ -83,7 +83,7 @@ export function Bucket({
                 : "There is still time to vote!"}
             </span>
 
-            <button className={twJoin("button")}>
+            <button className={twJoin("button-icon")}>
               <Icon name="solid:ellipsis-vertical" />
             </button>
           </div>

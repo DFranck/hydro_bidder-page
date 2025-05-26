@@ -103,7 +103,7 @@ export default function V2() {
   const menuItems = getMenuItems(false)
   const isSidebarDocked = !isSidebarOpen && !isMobile
 
-  const { buckets, bids, currentRoundId, userVotedOnBidIds } = useDummyData()!
+  const { buckets, currentRoundId } = useDummyData()!
 
   return (
     <div
@@ -216,14 +216,18 @@ export default function V2() {
 
             <div className={twJoin("flex items-center gap-2")}>
               <button
-                className={twJoin("button", isSidebarDocked && "hidden")}
+                className={twJoin(
+                  "button-icon transition-all",
+                  isSidebarDocked && "hidden",
+                  isRoundSelectorOpen && "rotate-180"
+                )}
                 onClick={() => setIsRoundSelectorOpen(!isRoundSelectorOpen)}
               >
                 <Icon name="solid:caret-down" />
               </button>
 
               <button
-                className={twJoin("button", isSidebarDocked && "hidden")}
+                className={twJoin("button-icon", isSidebarDocked && "hidden")}
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
                 <Icon
@@ -279,7 +283,7 @@ export default function V2() {
             >
               <div className="label">Lockups</div>
 
-              <button className={twJoin("button")}>
+              <button className={twJoin("button-icon")}>
                 <Icon name="solid:ellipsis-vertical" />
               </button>
             </div>

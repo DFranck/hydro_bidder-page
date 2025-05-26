@@ -7,7 +7,7 @@ export function BidCard({
   bidId,
   ...otherProps
 }: ComponentProps<"div"> & { bidId: number }) {
-  const { bids, userVotedOnBidIds, votingTokens } = useDummyData()!
+  const { bids, userVotedOnBidIds } = useDummyData()!
   const userHasVotedOnThisBid = userVotedOnBidIds.includes(bidId)
   const bid = bids.find((bid) => bid.id === bidId)
 
@@ -20,13 +20,19 @@ export function BidCard({
       id="bid-card"
       tabIndex={0}
       className={twJoin(
-        "grid grid-cols-[min-content_auto]",
+        "grid grid-cols-[min-content_auto] items-start",
         "gap-3 px-4 pt-3 pb-4",
-        "items-start",
-        "focus-within:outline-none",
+        "transition-all",
         "border-y-2 border-transparent",
+        "focus-within:outline-none",
         "focus-within:border-palette-beige",
-        userHasVotedOnThisBid && ["bg-palette-green/20 border-palette-green"]
+        "focus-within:bg-palette-beige",
+        "focus-within:text-palette-text",
+        "focus-within:**:text-palette-text",
+        userHasVotedOnThisBid && [
+          "bg-palette-green border-palette-green",
+          "text-palette-text **:text-palette-text",
+        ]
       )}
       {...otherProps}
     >
@@ -34,7 +40,7 @@ export function BidCard({
         className={twJoin(
           "mt-1", // slightly nudged down to align with the text
           "size-12 rounded-full",
-          "bg-palette-beige"
+          "bg-white"
         )}
       />
 

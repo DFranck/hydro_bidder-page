@@ -22,6 +22,16 @@ const bidTitleCandidates = [
   "Tokenized real estate investment platform on Ethereum",
   "Decentralized social media platform with privacy focus",
   "Supply chain tracking solution using smart contracts",
+  "Cross-chain bridge for seamless asset transfers",
+  "DeFi lending protocol with automated risk assessment",
+  "DAO governance tool with quadratic voting",
+  "Web3 identity verification system",
+  "NFT fractionalization platform",
+  "Decentralized file storage with encryption",
+  "Smart contract audit automation tool",
+  "Blockchain-based insurance platform",
+  "Crypto payment gateway for merchants",
+  "DeFi yield aggregator with risk management",
 ]
 
 const bidDurationCandidates = ["1 month", "3 months", "6 months"]
