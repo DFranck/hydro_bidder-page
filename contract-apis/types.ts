@@ -27,13 +27,16 @@ export interface AugmentedBackendDataAfterWallet
   isWalletConnected: boolean
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
+  lockedAtomTotalWalletStat: number
   lockedAtomTotalWallet: number
+  lockedAtomMaxWallet: number
   lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
   votingPowerAvailableByTrancheId: Record<number, number>
   votingPowerSpentByTrancheId: Record<number, number>
   votingPowerTotal: number
+  hasGatekeeper: boolean
 }
 
 export interface AugmentedBackendDataBeforeWallet {
@@ -48,7 +51,6 @@ export interface AugmentedBackendDataBeforeWallet {
   lockedAtomIsAtCapacityGlobal: boolean
   lockedAtomEpochInNanos: number
   lockedAtomMaxGlobal: number
-  lockedAtomMaxWallet: number
   lockedAtomPercentageGlobal: number
   lockedAtomRemainingCapacityGlobal: number
   lockedAtomTotalGlobal: number
@@ -332,6 +334,9 @@ export interface RawWalletData {
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]
+  currently_locked: number | string
+  maxUserCanLock: string
+  hasGatekeeper: boolean
 }
 
 export interface RoundPrices {
@@ -448,6 +453,17 @@ export interface ExperimentalRow extends BaseRowObject {
   additionalStatus?: ReactNode
   additionalInitialAdressHoldings?: ReactNode
   additionalDeploymentAPR?: ReactNode
+}
+
+export interface ProofResponse {
+  address: string
+  amount: string
+  proofs: string[]
+}
+
+export interface MaxUserCanLockResponse {
+  address: string
+  amount: string
 }
 
 type WithOverwrites<T> = T extends object

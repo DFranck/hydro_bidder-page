@@ -7,19 +7,14 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAtomLockedWallet() {
-  const {
-    lockedAtomTotalWallet,
-    lockedAtomMaxWallet,
-    lockedAtomPercentageWallet,
-    isLoading,
-  } = useBackendData()
+  const { lockedAtomTotalWalletStat, isLoading } = useBackendData()
 
   return (
     <StatCard
       isLoading={isLoading}
       value={
         <>
-          {lockedAtomTotalWallet.toLocaleString("en-US", {
+          {lockedAtomTotalWalletStat.toLocaleString("en-US", {
             maximumFractionDigits: 4,
           })}
         </>
@@ -32,12 +27,6 @@ export function CurrentRoundAtomLockedWallet() {
             <Icon name="circle-info" />
           </span>
         </Tooltip>
-      }
-      subTitle={
-        <>
-          <strong>{lockedAtomPercentageWallet}%</strong> of{" "}
-          <strong>{lockedAtomMaxWallet}</strong> max
-        </>
       }
     />
   )

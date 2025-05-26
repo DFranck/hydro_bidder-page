@@ -2,11 +2,14 @@
 
 import { Tranche } from "@/app/ts_types/HydroBase.types"
 import {
+  getGatekeeperQueryClient,
   getHydroQueryClient,
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
-import { RawWalletData } from "@/contract-apis/types"
+import { MaxUserCanLockResponse, RawWalletData } from "@/contract-apis/types"
 import range from "lodash/range"
+import { getMaxUserCanLock } from "./getMaxUserCanLock"
+import { CurrentEpochUserLockedResponse } from "@/app/ts_types/GatekeeperBase.types"
 
 export async function fetchWalletData({
   address,
@@ -19,6 +22,9 @@ export async function fetchWalletData({
 }): Promise<RawWalletData> {
   const hydroQueryClient = await getHydroQueryClient()
   const tributeQueryClient = await getTributeQueryClient()
+  const gatekeeperQueryClient = await getGatekeeperQueryClient()
+  const { gatekeeper: gatekeeperContractAddress } =
+    await hydroQueryClient.gatekeeper()
   const allRoundIds = range(0, currentRoundId + 1)
   const trancheIds = tranches.map((tranche) => tranche.id)
   const allRoundTrancheIdPairs = allRoundIds.flatMap((roundId) =>
@@ -48,6 +54,23 @@ export async function fetchWalletData({
       })
       .catch(() => ({ claims: [] })),
   ])
+
+  let currently_locked: number | string = "0"
+  let maxUserCanLockResponse: MaxUserCanLockResponse | undefined
+  if (gatekeeperContractAddress) {
+    const currentlyLockedResponse = await gatekeeperQueryClient
+      .currentEpochUserLocked({
+        userAddress: address,
+      })
+      .catch(
+        () => ({ currently_locked: "0" }) as CurrentEpochUserLockedResponse
+      )
+    currently_locked = currentlyLockedResponse.currently_locked
+
+    maxUserCanLockResponse = await getMaxUserCanLock(address).catch(
+      () => ({ address: "", amount: "" }) as MaxUserCanLockResponse
+    )
+  }
 
   const votesAndClaims = await Promise.all(
     allRoundTrancheIdPairs.map(async ({ roundId, trancheId }) => {
@@ -82,5 +105,8 @@ export async function fetchWalletData({
     votes,
     outstanding_tribute_claims,
     historical_tribute_claims,
+    currently_locked,
+    maxUserCanLock: maxUserCanLockResponse?.amount || "",
+    hasGatekeeper: !!gatekeeperContractAddress,
   }
 }

@@ -5,7 +5,6 @@ import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
 import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
@@ -57,7 +56,7 @@ export const LockStepper = ({
 }) => {
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
     useIncompleteNotices()
-  const { lockedAtomEpochInNanos } = useBackendData()
+  const { lockedAtomEpochInNanos, hasGatekeeper } = useBackendData()
   const [step, setStep] = useState<LockStep>(startState || "Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -150,7 +149,8 @@ export const LockStepper = ({
         neutronSigner,
         lockDuration,
         ibcBroadcastResult.denom,
-        lsm.amount
+        lsm.amount,
+        hasGatekeeper
       )
 
       // Broadcast the lock tokens transaction
