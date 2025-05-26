@@ -15,21 +15,21 @@ export function Logo({
     return null
   }
 
-  const viewBoxWidth =
-    showLogo && showText ? 220 : showLogo ? 37 : showText ? 220 + 56 : 0
-
   return (
-    <div
-      className={twMerge("relative overflow-hidden", className)}
-      style={{ width: viewBoxWidth }}
-    >
+    <div className={twMerge("relative h-full", className)}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="220"
-        height="45"
-        viewBox="0 0 220 45"
+        viewBox={
+          showText && showLogo
+            ? `0 0 220 45`
+            : showText && !showLogo
+              ? `54 0 ${220 - 54} 45`
+              : showLogo
+                ? `0 0 37 45`
+                : `0 0 0 0`
+        }
         fill="none"
-        className="absolute inset-0 transition-all"
+        className={twJoin("h-full w-auto transition-all")}
         {...otherProps}
       >
         {/* Logo */}

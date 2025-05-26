@@ -1,11 +1,10 @@
 "use client"
 
-import { useDummyData } from "@/app/(v2)/v2/dummy-data/useDummyData"
+import { ScrollIndicator } from "@/app/(v2)/v2/components/ScrollIndicator"
+import { StatBar } from "@/app/(v2)/v2/components/StatBar"
 import { CollapsibleBox } from "@/components/CollapsibleBox"
 import { Icon } from "@/components/Icon"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
-import { Logo } from "@/components/v2/Logo"
-import { MenuItem, ResponsiveMenu } from "@/components/v2/ResponsiveMenu"
 import {
   HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
   HYDRO_TELEGRAM_COMMUNITY_URL,
@@ -14,7 +13,11 @@ import { useIsMobile } from "@/lib/useIsMobile"
 import range from "lodash/range"
 import Link from "next/link"
 import { useState } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { twJoin } from "tailwind-merge"
+import { Bucket } from "./components/Bucket"
+import { Logo } from "./components/Logo"
+import { MenuItem, ResponsiveMenu } from "./components/ResponsiveMenu"
+import { useDummyData } from "./dummy-data/useDummyData"
 
 const getMenuItems = (isWalletConnected: boolean): MenuItem[] => [
   {
@@ -100,14 +103,13 @@ export default function V2() {
   const menuItems = getMenuItems(false)
   const isSidebarDocked = !isSidebarOpen && !isMobile
 
-  const { buckets, bids, currentRoundId, userVotedOnBidIds, votingTokens } =
-    useDummyData()!
+  const { buckets, bids, currentRoundId, userVotedOnBidIds } = useDummyData()!
 
   return (
     <div
       className={twJoin(
         "relative h-screen w-screen",
-        "gap-[2px] p-[2px]",
+        "p-[2px]",
         "scrollbar-thumb-palette-beige scrollbar-track-palette-text",
         "**:scrollbar-thin",
         isMobile
@@ -126,9 +128,9 @@ export default function V2() {
           isMobile ? "" : ""
         )}
       >
-        <div className="px-3">
-          <Link href="/v2" className="relative block h-12 w-full min-w-12">
-            <Logo className="h-full w-full" />
+        <div className={twJoin("h-12 w-full px-3 py-1")}>
+          <Link href="/v2" className={twJoin("relative block h-full")}>
+            <Logo />
           </Link>
         </div>
 
@@ -160,8 +162,7 @@ export default function V2() {
           className={twJoin(
             "grid-in-sidebar",
             "flex flex-col",
-            "bg-palette-beige/10",
-            (!isMobile || isSidebarOpen) && "gap-[2px]"
+            "bg-palette-beige/10"
           )}
           onClick={isSidebarDocked ? () => setIsSidebarOpen(true) : undefined}
         >
@@ -240,6 +241,11 @@ export default function V2() {
           <CollapsibleBox
             id="sidebar-round-selector-options"
             isCollapsed={!isRoundSelectorOpen || isSidebarDocked}
+            className={twJoin(
+              !isMobile &&
+                (!isRoundSelectorOpen || isSidebarDocked) &&
+                "mt-[2px]"
+            )}
             classNamesForInnerWrapper={twJoin(
               "flex flex-col",
               "bg-palette-beige text-palette-text"
@@ -316,197 +322,45 @@ export default function V2() {
           id="content-container"
           isCollapsed={isMobile && isSidebarOpen}
           className={twJoin("grid-in-content")}
-          classNamesForInnerWrapper="grid grid-rows-[min-content_auto] gap-[2px]"
+          classNamesForInnerWrapper={twJoin(
+            "relative",
+            "grid grid-rows-[min-content_auto]"
+          )}
         >
+          <StatBar
+            stats={[
+              ["Live Bids", 14],
+              ["Average APR", "17%"],
+              ["Days Left", 15],
+            ]}
+          />
+
           <div
-            id="stats-bar"
+            id="bid-card-lists"
             className={twJoin(
-              isMobile ? "gap-1 py-6" : "h-12 gap-3",
-              "flex justify-around",
-              "bg-palette-blue"
+              "relative",
+              "snap-x snap-mandatory",
+              "flex overflow-x-auto"
             )}
           >
-            {[
-              [14, "Live Bids"],
-              ["17%", "Average APR"],
-              [15, "Days Left"],
-            ].map(([count, label], index) => (
-              <div
+            {buckets.map(({ id }, index) => (
+              <Bucket
                 key={index}
-                className={twJoin(
-                  "flex items-center",
-                  isMobile ? "flex-col justify-center gap-2" : "gap-3"
-                )}
-              >
-                <var className="text-palette-beige text-3xl font-extrabold not-italic">
-                  {count}
-                </var>
-
-                <span className="label text-center">{label}</span>
-              </div>
+                bucketId={id}
+                classNameForContentContainer="pb-12"
+              />
             ))}
           </div>
 
-          <div
-            id="bucket-list"
+          <ScrollIndicator
+            containerSelector="#bid-card-lists"
+            targetSelector="[id^='bucket-container-']"
             className={twJoin(
-              "snap-x snap-mandatory scroll-px-[2px]",
-              "flex gap-[2px] overflow-x-auto",
-              isMobile ? [""] : [""]
+              "absolute bottom-4 left-1/2 z-10 -translate-x-1/2",
+              "rounded-full px-3",
+              "bg-palette-text/50 backdrop-blur-xs"
             )}
-          >
-            {buckets.map(({ id, label, denom, numBids }, index) => {
-              const bidsInBucket = bids.filter((bid) => bid.bucketId === id)
-              const userVotedInBucket = bidsInBucket.some((bid) =>
-                userVotedOnBidIds.includes(bid.id)
-              )
-
-              return (
-                <div
-                  id={`bucket-${id}-container`}
-                  key={index}
-                  className={twJoin(
-                    "relative",
-                    "h-full shrink-0 grow-0",
-                    "snap-start",
-                    isMobile ? "w-screen" : "w-[450px]"
-                  )}
-                >
-                  <div
-                    id={`bucket-${id}-viewbox`}
-                    tabIndex={0}
-                    className={twMerge(
-                      "absolute inset-0",
-                      "grid grid-rows-[min-content_auto]",
-                      "opacity-80 transition-opacity",
-                      "focus-within:outline-none",
-                      "focus-within:opacity-100",
-                      "focus-within:ring-2",
-                      "focus-within:ring-palette-beige",
-                      userVotedInBucket && [
-                        "bg-palette-green/10",
-                        "scrollbar-thumb-palette-green",
-                        "scrollbar-track-transparent",
-                      ]
-                    )}
-                  >
-                    <div
-                      id="bucket-header"
-                      className={twJoin(
-                        "flex h-12 items-center justify-between px-3",
-                        userVotedInBucket
-                          ? "bg-palette-green/10"
-                          : "bg-palette-beige/10"
-                      )}
-                    >
-                      <h2 className="label">{label}</h2>
-
-                      <div className={twJoin("flex items-center gap-2")}>
-                        <span
-                          className={twJoin(
-                            "text-xs",
-                            userVotedInBucket
-                              ? "text-palette-green"
-                              : "text-palette-beige"
-                          )}
-                        >
-                          {userVotedInBucket
-                            ? "You voted in this bucket"
-                            : "There is still time to vote!"}
-                        </span>
-
-                        <button className={twJoin("button")}>
-                          <Icon name="solid:ellipsis-vertical" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div
-                      className={twJoin(
-                        "h-full",
-                        "overflow-y-auto",
-                        "flex flex-col gap-[2px]"
-                      )}
-                    >
-                      {bidsInBucket.map(
-                        ({ id, title, duration, amount }, index) => {
-                          const userHasVotedOnThisBid =
-                            userVotedOnBidIds.includes(id)
-
-                          return (
-                            <div
-                              key={index}
-                              id="bid-card"
-                              tabIndex={0}
-                              className={twJoin(
-                                "grid grid-cols-[min-content_auto]",
-                                "gap-3 px-3 pt-2 pb-3",
-                                "items-start",
-                                "focus-within:outline-none",
-                                "focus-within:ring-2",
-                                "focus-within:ring-palette-beige",
-                                userHasVotedOnThisBid && [
-                                  "bg-palette-green/20 ring-palette-green ring-2",
-                                ]
-                              )}
-                            >
-                              <div
-                                className={twJoin(
-                                  "mt-1", // slightly nudged down to align with the text
-                                  "size-12 rounded-full",
-                                  "bg-palette-beige"
-                                )}
-                              />
-
-                              <div
-                                className={twJoin(
-                                  "h-full",
-                                  "flex flex-col justify-between gap-2"
-                                )}
-                              >
-                                <h3 className="text-lg">{title}</h3>
-
-                                <div
-                                  className={twJoin(
-                                    "flex items-center justify-between gap-2",
-                                    "text-faded text-xs"
-                                  )}
-                                >
-                                  {(
-                                    [
-                                      ["duration", "calendar", duration],
-                                      ["amount", "dollar-sign", amount],
-                                      [
-                                        "voting status",
-                                        userHasVotedOnThisBid
-                                          ? "circle-check"
-                                          : "circle-dashed",
-                                        userHasVotedOnThisBid
-                                          ? "Change Vote"
-                                          : "Vote",
-                                      ],
-                                    ] as const
-                                  ).map(([label, icon, value], index) => (
-                                    <div
-                                      key={index}
-                                      className="flex items-center gap-1"
-                                    >
-                                      <Icon name={icon} />
-                                      <span>{value}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          )
-                        }
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          />
         </CollapsibleBox>
       </main>
     </div>

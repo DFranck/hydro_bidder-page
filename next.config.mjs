@@ -7,9 +7,6 @@ const withNextra = Nextra({
 })
 
 const nextConfig = withNextra({
-  experimental: {
-    turbo: {},
-  },
   images: {
     remotePatterns: [
       {

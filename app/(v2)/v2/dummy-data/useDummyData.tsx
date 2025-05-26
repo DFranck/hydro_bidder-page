@@ -1,10 +1,28 @@
 "use client"
 
-import { DummyData } from "@/app/(v2)/v2/dummy-data/getDummyData"
-import { createContext, use } from "react"
+import { createContext, useContext } from "react"
+import { DummyData } from "./getDummyData"
 
-export const DummyDataContext = createContext<DummyData | null>(null)
+const DummyDataContext = createContext<DummyData | null>(null)
+
+export function DummyDataProvider({
+  children,
+  dummyData,
+}: {
+  children: React.ReactNode
+  dummyData: DummyData
+}) {
+  return (
+    <DummyDataContext.Provider value={dummyData}>
+      {children}
+    </DummyDataContext.Provider>
+  )
+}
 
 export function useDummyData() {
-  return use(DummyDataContext)
+  const context = useContext(DummyDataContext)
+  if (!context) {
+    throw new Error("useDummyData must be used within DummyDataProvider")
+  }
+  return context
 }

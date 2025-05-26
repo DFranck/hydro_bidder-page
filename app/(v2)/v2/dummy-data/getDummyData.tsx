@@ -81,8 +81,6 @@ export const getDummyData = cache(
       userVotedOnBidIds,
     }
 
-    console.log({ dummyData })
-
     return dummyData
   }
 )

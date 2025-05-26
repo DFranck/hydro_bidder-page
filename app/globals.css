@@ -46,22 +46,17 @@
 }
 
 @utility button {
-  display: inline-block;
-  border-radius: --value(--radius-md);
-  border-width: --value(--border-2);
-  text-align: center;
-  font-weight: --value(--font-semibold);
-  line-height: --value(--leading-none);
-  white-space: nowrap;
-  touch-action: manipulation;
+  @apply inline-block rounded-md border-2;
+  @apply text-center leading-none font-semibold whitespace-nowrap;
+  @apply touch-manipulation;
+}
+
+@utility empty-box {
+  @apply flex h-full items-center justify-center;
 }
 
 @utility label {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.125em;
-  text-transform: uppercase;
-  line-height: 1.1em;
+  @apply text-sm leading-[1.1em] font-bold tracking-widest uppercase;
 }
 
 @utility denom {
