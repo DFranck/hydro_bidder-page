@@ -1,7 +1,7 @@
 "use client"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
-import { MsgTokenizeShares } from "stridejs/types/codegen/cosmos/staking/v1beta1/tx"
+import { MsgTokenizeShares } from "moonkittjs/dist/codegen/gaia/liquid/v1beta1/tx"
 
 export async function signTokenizeShares(
   hubChain: ChainContext,
@@ -14,7 +14,7 @@ export async function signTokenizeShares(
   }
 
   const msg: { typeUrl: string; value: MsgTokenizeShares } = {
-    typeUrl: "/cosmos.staking.v1beta1.MsgTokenizeShares",
+    typeUrl: "/gaia.liquid.v1beta1.MsgTokenizeShares",
     value: {
       delegatorAddress: hubChain.address,
       validatorAddress: validator,
