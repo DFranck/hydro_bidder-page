@@ -1,4 +1,5 @@
 import { BidCard } from "@/app/(v2)/v2/components/BidCard"
+import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { Icon } from "@/components/Icon"
 import { useIsMobile } from "@/lib/useIsMobile"
 import { ComponentProps } from "react"
@@ -17,6 +18,8 @@ export function Bucket({
   classNameForContentContainer?: string
 }) {
   const isMobile = useIsMobile()
+  const { state } = useAppState()
+  const { narrowBuckets } = state
   const { bids, buckets } = useDummyData()!
 
   const bucket = buckets.find((bucket) => bucket.id === bucketId)
@@ -34,7 +37,7 @@ export function Bucket({
         "relative",
         "h-full shrink-0 grow-0",
         "snap-start",
-        isMobile ? "w-screen" : "w-[550px]",
+        isMobile ? "w-screen" : narrowBuckets ? "w-[550px]" : "w-full",
         className
       )}
       {...otherProps}
@@ -71,13 +74,22 @@ export function Bucket({
           <div className={twJoin("flex items-center gap-2")}>
             <span
               className={twJoin(
+                "flex items-center gap-1",
                 "text-xs",
                 userVotedInBucket ? "text-palette-green" : "text-palette-beige"
               )}
             >
-              {userVotedInBucket
-                ? "You voted in this bucket"
-                : "There is still time to vote!"}
+              {userVotedInBucket ? (
+                <>
+                  <span>You voted in this bucket</span>
+                  <Icon name="solid:circle-check" />
+                </>
+              ) : (
+                <>
+                  <span>You haven&rsquo;t voted in this bucket</span>
+                  <Icon name="solid:circle-dashed" />
+                </>
+              )}
             </span>
 
             <button className={twJoin("btn-icon")}>
@@ -91,19 +103,25 @@ export function Bucket({
           className={twMerge(
             "h-full",
             "overflow-y-auto",
-            "flex flex-col gap-[2px]",
             classNameForContentContainer
           )}
         >
-          {bidsInBucket.map(({ id }, index) => (
-            <BidCard key={index} bidId={id} />
-          ))}
+          <div
+            className={twJoin(
+              "max-w-[60vw]",
+              "mx-auto flex flex-col gap-[2px]"
+            )}
+          >
+            {bidsInBucket.map(({ id }, index) => (
+              <BidCard key={index} bidId={id} />
+            ))}
 
-          {!bidsInBucket.length && (
-            <div className="empty-box">
-              <span>No bids in this bucket, yet&hellip;</span>
-            </div>
-          )}
+            {!bidsInBucket.length && (
+              <div className="empty-box">
+                <span>No bids in this bucket, yet&hellip;</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

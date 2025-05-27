@@ -40,8 +40,8 @@ const votingTokenCandidates = ["ATOM", "stOSMO"]
 
 export const getDummyData = cache(
   async ({
-    minBuckets = 3,
-    maxBuckets = 8,
+    minBuckets = 6,
+    maxBuckets = 12,
     maxBidsPerBucket = 20,
     maxVotesCast = 2,
   }: {

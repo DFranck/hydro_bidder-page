@@ -12,11 +12,7 @@ export function DummyDataProvider({
   children: React.ReactNode
   dummyData: DummyData
 }) {
-  return (
-    <DummyDataContext.Provider value={dummyData}>
-      {children}
-    </DummyDataContext.Provider>
-  )
+  return <DummyDataContext value={dummyData}>{children}</DummyDataContext>
 }
 
 export function useDummyData() {

@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation"
 import { ComponentProps, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
-export interface MenuItem {
+export interface MenuItem extends ComponentProps<"a"> {
   disabled?: boolean
   href?: string
   iconLeft?: IconString
@@ -153,7 +153,17 @@ export function ResponsiveMenu({
       >
         {menuItems.map(
           (
-            { label, href, disabled, tooltip, menuItems: subMenuItems },
+            {
+              label,
+              href,
+              disabled,
+              tooltip,
+              iconLeft,
+              iconRight,
+              menuItems: subMenuItems,
+              onClick,
+              ...otherProps
+            },
             index
           ) => {
             const hasMenuItems = !!subMenuItems?.length
@@ -170,7 +180,11 @@ export function ResponsiveMenu({
                   pathname?.startsWith(href ?? "") &&
                     "text-palette-beige font-bold"
                 )}
-                onClick={blurActiveElement}
+                onClick={(event) => {
+                  onClick?.(event)
+                  blurActiveElement()
+                }}
+                {...otherProps}
               >
                 {label}
               </StyledText>
@@ -183,15 +197,18 @@ export function ResponsiveMenu({
                 )}
                 key={index}
               >
-                <button
+                <a
+                  href={href ?? "#"}
                   tabIndex={0}
                   className={twJoin(
                     "flex items-center gap-1",
                     isMobile ? classNameForItemMobile : classNameForItemDesktop
                   )}
+                  onClick={onClick}
+                  {...otherProps}
                 >
                   {label} <Icon name="solid:chevron-down" />
-                </button>
+                </a>
 
                 <div
                   className={twJoin(
@@ -209,17 +226,21 @@ export function ResponsiveMenu({
                   )}
                 >
                   {subMenuItems.map(
-                    ({
-                      label,
-                      href,
-                      disabled = false,
-                      target,
-                      tooltip = null,
-                      iconLeft,
-                      iconRight,
-                    }) => (
+                    (
+                      {
+                        label,
+                        href,
+                        disabled = false,
+                        target,
+                        tooltip = null,
+                        iconLeft,
+                        iconRight,
+                        onClick,
+                      },
+                      index
+                    ) => (
                       <StyledText
-                        key={href}
+                        key={index}
                         as={Link}
                         href={href ?? "#"}
                         target={target}
@@ -232,9 +253,17 @@ export function ResponsiveMenu({
                             ? classNameForSubItemMobile
                             : classNameForSubItemDesktop
                         )}
-                        onClick={blurActiveElement}
+                        onClick={(event) => {
+                          onClick?.(event)
+                          blurActiveElement()
+                        }}
                       >
-                        <span className="inline-flex items-center gap-2">
+                        <span
+                          className={twJoin(
+                            "inline-flex items-center gap-2",
+                            "truncate"
+                          )}
+                        >
                           {iconLeft && <Icon name={iconLeft} />}
                           {label}
                         </span>

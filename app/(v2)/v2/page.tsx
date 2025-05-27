@@ -2,6 +2,7 @@
 
 import { ScrollIndicator } from "@/app/(v2)/v2/components/ScrollIndicator"
 import { StatBar } from "@/app/(v2)/v2/components/StatBar"
+import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { CollapsibleBox } from "@/components/CollapsibleBox"
 import { Icon } from "@/components/Icon"
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
@@ -20,85 +21,10 @@ import { Logo } from "./components/Logo"
 import { MenuItem, ResponsiveMenu } from "./components/ResponsiveMenu"
 import { useDummyData } from "./dummy-data/useDummyData"
 
-const getMenuItems = (isWalletConnected: boolean): MenuItem[] => [
-  {
-    label: "Bids",
-    href: "/bids",
-  },
-  {
-    disabled: !isWalletConnected,
-    label: "Lockups",
-    href: "/lockups",
-    tooltip: !isWalletConnected ? needsWalletConnectionTooltip : undefined,
-  },
-  {
-    disabled: !isWalletConnected,
-    label: "Rewards",
-    href: "/rewards",
-    tooltip: !isWalletConnected ? needsWalletConnectionTooltip : undefined,
-  },
-  {
-    label: "Metrics",
-    href: "/metrics",
-  },
-  {
-    label: "More",
-    menuItems: [
-      {
-        label: "Grants",
-        href: "https://forms.gle/RGPdDenuFQ1pGapKA",
-        iconLeft: "solid:award",
-        iconRight: "arrow-up-right-from-square",
-        target: "_blank",
-      },
-      {
-        label: "Airdrops",
-        href: "/airdrops",
-        iconLeft: "solid:parachute-box",
-        iconRight: "arrow-up-right-from-square",
-        target: "_blank",
-      },
-      {
-        href: "https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals",
-        iconLeft: "solid:gavel",
-        iconRight: "arrow-up-right-from-square",
-        label: "Governance",
-        target: "_blank",
-      },
-      {
-        href: "/docs",
-        iconLeft: "solid:book",
-        iconRight: "arrow-up-right-from-square",
-        label: "Docs",
-        target: "_blank",
-      },
-      {
-        href: "https://x.com/HydroTeam_",
-        iconLeft: "brands:x-twitter",
-        iconRight: "arrow-up-right-from-square",
-        label: "Twitter",
-        target: "_blank",
-      },
-      {
-        href: HYDRO_TELEGRAM_COMMUNITY_URL,
-        iconLeft: "solid:paper-plane",
-        iconRight: "arrow-up-right-from-square",
-        label: "Community",
-        target: "_blank",
-      },
-      {
-        href: HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
-        iconLeft: "solid:paper-plane",
-        iconRight: "arrow-up-right-from-square",
-        label: "Announcements",
-        target: "_blank",
-      },
-    ],
-  },
-]
-
 export default function V2() {
   const isMobile = useIsMobile()
+  const { state, dispatch } = useAppState()
+  const { narrowBuckets } = state
   const [isSidebarOpen, setIsSidebarOpen] = useState(isMobile ? false : true)
   const [isRoundSelectorOpen, setIsRoundSelectorOpen] = useState(false)
   const menuItems = getMenuItems(false)
@@ -107,6 +33,100 @@ export default function V2() {
   const { buckets, currentRoundId } = useDummyData()!
 
   const sortedBuckets = sortBy(buckets, (bucket) => bucket.userVotedInBucket)
+
+  function getMenuItems(isWalletConnected: boolean): MenuItem[] {
+    return [
+      {
+        label: "Bids",
+        href: "/bids",
+      },
+      {
+        disabled: !isWalletConnected,
+        label: "Lockups",
+        href: "/lockups",
+        tooltip: !isWalletConnected ? needsWalletConnectionTooltip : undefined,
+      },
+      {
+        disabled: !isWalletConnected,
+        label: "Rewards",
+        href: "/rewards",
+        tooltip: !isWalletConnected ? needsWalletConnectionTooltip : undefined,
+      },
+      {
+        label: "Metrics",
+        href: "/metrics",
+      },
+      {
+        label: "More",
+        menuItems: [
+          {
+            label: "Grants",
+            href: "https://forms.gle/RGPdDenuFQ1pGapKA",
+            iconLeft: "solid:award",
+            iconRight: "arrow-up-right-from-square",
+            target: "_blank",
+          },
+          {
+            label: "Airdrops",
+            href: "/airdrops",
+            iconLeft: "solid:parachute-box",
+            iconRight: "arrow-up-right-from-square",
+            target: "_blank",
+          },
+          {
+            href: "https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals",
+            iconLeft: "solid:gavel",
+            iconRight: "arrow-up-right-from-square",
+            label: "Governance",
+            target: "_blank",
+          },
+          {
+            href: "/docs",
+            iconLeft: "solid:book",
+            iconRight: "arrow-up-right-from-square",
+            label: "Docs",
+            target: "_blank",
+          },
+          {
+            href: "https://x.com/HydroTeam_",
+            iconLeft: "brands:x-twitter",
+            iconRight: "arrow-up-right-from-square",
+            label: "Twitter",
+            target: "_blank",
+          },
+          {
+            href: HYDRO_TELEGRAM_COMMUNITY_URL,
+            iconLeft: "solid:paper-plane",
+            iconRight: "arrow-up-right-from-square",
+            label: "Community",
+            target: "_blank",
+          },
+          {
+            href: HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
+            iconLeft: "solid:paper-plane",
+            iconRight: "arrow-up-right-from-square",
+            label: "Announcements",
+            target: "_blank",
+          },
+        ],
+      },
+      {
+        label: "Settings",
+        menuItems: [
+          {
+            label: "Narrow Buckets",
+            iconLeft: "solid:columns-3",
+            iconRight: narrowBuckets ? "solid:toggle-on" : "solid:toggle-off",
+            onClick: () =>
+              dispatch({
+                type: "SET_NARROW_BUCKETS",
+                payload: !narrowBuckets,
+              }),
+          },
+        ],
+      },
+    ]
+  }
 
   return (
     <div
@@ -331,7 +351,7 @@ export default function V2() {
           className={twJoin("grid-in-content")}
           classNamesForInnerWrapper={twJoin(
             "relative",
-            "grid grid-rows-[min-content_auto]"
+            "grid grid-rows-[min-content_min-content_auto]"
           )}
         >
           <StatBar
@@ -340,6 +360,39 @@ export default function V2() {
               ["Average APR", "17%"],
               ["Days Left", 15],
             ]}
+          />
+
+          <ScrollIndicator
+            containerSelector="#bid-card-lists"
+            targetSelector="[id^='bucket-container-']"
+            className={twJoin(
+              "w-full gap-[2px] p-[2px]",
+              "bg-palette-text/50 backdrop-blur-xs"
+            )}
+            renderDot={({ index, isActive, spreadProps }) => {
+              const bucket = sortedBuckets[index]
+              const { label, userVotedInBucket } = bucket
+
+              return (
+                <button
+                  {...spreadProps}
+                  key={index}
+                  className={twJoin(
+                    isActive && "is-active",
+                    userVotedInBucket && "has-voted",
+                    "h-12 w-full",
+                    "text-palette-text transition-all",
+                    "border-2 border-transparent transition-all",
+                    "[&:is(.is-active.has-voted,.has-voted:focus-within)]:bg-palette-green",
+                    "[&:is(.is-active,:focus-within):not(.has-voted)]:bg-palette-beige",
+                    "[&:is(.has-voted)]:bg-palette-green/60",
+                    "[&:not(.has-voted)]:bg-palette-beige/60"
+                  )}
+                >
+                  <span className="label">{label}</span>
+                </button>
+              )
+            }}
           />
 
           <div
@@ -359,42 +412,6 @@ export default function V2() {
               />
             ))}
           </div>
-
-          <ScrollIndicator
-            containerSelector="#bid-card-lists"
-            targetSelector="[id^='bucket-container-']"
-            className={twJoin(
-              "absolute bottom-4 left-1/2 z-10 -translate-x-1/2",
-              "rounded-full px-3",
-              "bg-palette-text/50 backdrop-blur-xs"
-            )}
-            renderDot={({ target, index, isActive, spreadProps }) => {
-              const { userVotedInBucket } = sortedBuckets[index]
-
-              return (
-                <button
-                  {...spreadProps}
-                  key={index}
-                  className={twJoin(
-                    "px-2 py-4",
-                    "transition-all",
-                    isActive ? "scale-150" : "group-hover:scale-125",
-                    userVotedInBucket
-                      ? "text-palette-green"
-                      : "text-palette-beige"
-                  )}
-                >
-                  <Icon
-                    name={
-                      userVotedInBucket
-                        ? "solid:circle-check"
-                        : "solid:circle-dashed"
-                    }
-                  />
-                </button>
-              )
-            }}
-          />
         </CollapsibleBox>
       </main>
     </div>
