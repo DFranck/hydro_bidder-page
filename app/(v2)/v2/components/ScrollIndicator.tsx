@@ -1,17 +1,25 @@
 "use client"
 
-import { ComponentProps, useEffect, useState } from "react"
+import { Icon } from "@/components/Icon"
+import { ComponentProps, ReactNode, useEffect, useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
 interface ScrollIndicatorProps extends ComponentProps<"div"> {
   containerSelector: string
   targetSelector: string
+  renderDot?: (props: {
+    target: Element
+    index: number
+    isActive: boolean
+    spreadProps: ComponentProps<"button">
+  }) => ReactNode
 }
 
 export function ScrollIndicator({
   containerSelector,
   targetSelector,
   className,
+  renderDot,
   ...otherProps
 }: ScrollIndicatorProps) {
   const [targets, setTargets] = useState<Element[]>([])
@@ -56,25 +64,39 @@ export function ScrollIndicator({
       className={twMerge("flex items-center justify-center", className)}
       {...otherProps}
     >
-      {targets.map((_, index) => (
-        <button
-          key={index}
-          aria-label={`Go to bucket ${index + 1}`}
-          className={twJoin("px-2 py-4", "transition-all")}
-          onClick={() => {
+      {targets.map((_, index) => {
+        const isActive = activeIndex === index
+        const spreadProps = {
+          "aria-label": `Go to bucket ${index + 1}`,
+          onClick: () => {
             targets[index]?.scrollIntoView({ behavior: "smooth" })
-          }}
-        >
-          <div
+          },
+        }
+
+        if (renderDot) {
+          return renderDot({
+            target: targets[index],
+            index,
+            isActive,
+            spreadProps,
+          })
+        }
+
+        return (
+          <button
+            {...spreadProps}
+            key={index}
             className={twJoin(
-              "size-4 rounded-full",
-              activeIndex === index
-                ? "bg-palette-beige scale-150"
-                : "bg-palette-beige/30 hover:bg-palette-beige/50"
+              "group",
+              "px-2 py-4",
+              "transition-all",
+              isActive ? "scale-150" : "group-hover:scale-125"
             )}
-          />
-        </button>
-      ))}
+          >
+            <Icon name="solid:circle" />
+          </button>
+        )
+      })}
     </div>
   )
 }

@@ -17,19 +17,15 @@ export function Bucket({
   classNameForContentContainer?: string
 }) {
   const isMobile = useIsMobile()
-  const { buckets, bids, userVotedOnBidIds } = useDummyData()!
+  const { bids, buckets } = useDummyData()!
 
   const bucket = buckets.find((bucket) => bucket.id === bucketId)
 
   if (!bucket) return null
 
-  const { label } = bucket
+  const { label, userVotedInBucket } = bucket
 
   const bidsInBucket = bids.filter((bid) => bid.bucketId === bucketId)
-
-  const userVotedInBucket = bidsInBucket.some((bid) =>
-    userVotedOnBidIds.includes(bid.id)
-  )
 
   return (
     <div
@@ -56,6 +52,7 @@ export function Bucket({
           "focus-within:opacity-100",
           userVotedInBucket && [
             "bg-palette-green/10",
+            "focus-within:border-palette-green",
             "scrollbar-thumb-palette-green",
             "scrollbar-track-transparent",
           ],
@@ -83,7 +80,7 @@ export function Bucket({
                 : "There is still time to vote!"}
             </span>
 
-            <button className={twJoin("button-icon")}>
+            <button className={twJoin("btn-icon")}>
               <Icon name="solid:ellipsis-vertical" />
             </button>
           </div>

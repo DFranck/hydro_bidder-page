@@ -9,7 +9,7 @@ interface Bid {
   roundId: number
   title: string
   duration: string
-  amount: number
+  apr: number
 }
 
 export type DummyData = Awaited<ReturnType<typeof getDummyData>>
@@ -50,38 +50,44 @@ export const getDummyData = cache(
     maxBidsPerBucket?: number
     maxVotesCast?: number
   } = {}) => {
+    const userVotedOnBidIds: number[] = []
     const numBuckets = random(minBuckets, maxBuckets)
-
     const bids: Bid[] = []
 
-    const buckets = range(0, numBuckets).map((_, bucketId) => {
-      const bidsInBucket = random(0, maxBidsPerBucket)
+    let votesCast = 0
 
-      bids.push(
-        ...range(0, bidsInBucket).map(
-          (bidIndex) =>
-            ({
-              id: bids.length + bidIndex,
-              bucketId,
-              roundId: currentRoundId,
-              title: sample(bidTitleCandidates),
-              duration: sample(bidDurationCandidates),
-              amount: random(0, 100),
-            }) as Bid
-        )
+    const buckets = range(0, numBuckets).map((_, bucketId) => {
+      const numBidsInBucket = random(0, maxBidsPerBucket)
+      const userVotedInBucket =
+        votesCast < maxVotesCast && sample([true, false])
+
+      if (userVotedInBucket) {
+        votesCast += 1
+        userVotedOnBidIds.push(bids.length + sample(range(0, numBidsInBucket))!)
+      }
+
+      const bidsInBucket = range(0, numBidsInBucket).map(
+        (bidIndex) =>
+          ({
+            id: bids.length + bidIndex,
+            bucketId,
+            roundId: currentRoundId,
+            title: sample(bidTitleCandidates),
+            duration: sample(bidDurationCandidates),
+            apr: random(0, 25) / 100,
+          }) as Bid
       )
+
+      bids.push(...bidsInBucket)
 
       return {
         id: bucketId,
         label: `Bucket No. ${bucketId + 1}`,
         denom: sample(votingTokenCandidates),
-        numBids: bidsInBucket,
+        numBids: numBidsInBucket,
+        userVotedInBucket,
       }
     })
-
-    const userVotedOnBidIds = range(0, maxVotesCast).map(() =>
-      sample(range(0, bids.length))
-    )
 
     const dummyData = {
       buckets,

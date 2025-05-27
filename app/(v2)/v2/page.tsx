@@ -11,6 +11,7 @@ import {
 } from "@/config"
 import { useIsMobile } from "@/lib/useIsMobile"
 import range from "lodash/range"
+import sortBy from "lodash/sortBy"
 import Link from "next/link"
 import { useState } from "react"
 import { twJoin } from "tailwind-merge"
@@ -104,6 +105,8 @@ export default function V2() {
   const isSidebarDocked = !isSidebarOpen && !isMobile
 
   const { buckets, currentRoundId } = useDummyData()!
+
+  const sortedBuckets = sortBy(buckets, (bucket) => bucket.userVotedInBucket)
 
   return (
     <div
@@ -217,7 +220,7 @@ export default function V2() {
             <div className={twJoin("flex items-center gap-2")}>
               <button
                 className={twJoin(
-                  "button-icon transition-all",
+                  "btn-icon transition-all",
                   isSidebarDocked && "hidden",
                   isRoundSelectorOpen && "rotate-180"
                 )}
@@ -227,7 +230,7 @@ export default function V2() {
               </button>
 
               <button
-                className={twJoin("button-icon", isSidebarDocked && "hidden")}
+                className={twJoin("btn-icon", isSidebarDocked && "hidden")}
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
                 <Icon
@@ -283,7 +286,7 @@ export default function V2() {
             >
               <div className="label">Lockups</div>
 
-              <button className={twJoin("button-icon")}>
+              <button className={twJoin("btn-icon")}>
                 <Icon name="solid:ellipsis-vertical" />
               </button>
             </div>
@@ -347,10 +350,11 @@ export default function V2() {
               "flex overflow-x-auto"
             )}
           >
-            {buckets.map(({ id }, index) => (
+            {sortedBuckets.map(({ id }, index) => (
               <Bucket
                 key={index}
                 bucketId={id}
+                className="ml-[-2px] first:ml-0"
                 classNameForContentContainer="pb-12"
               />
             ))}
@@ -364,6 +368,32 @@ export default function V2() {
               "rounded-full px-3",
               "bg-palette-text/50 backdrop-blur-xs"
             )}
+            renderDot={({ target, index, isActive, spreadProps }) => {
+              const { userVotedInBucket } = sortedBuckets[index]
+
+              return (
+                <button
+                  {...spreadProps}
+                  key={index}
+                  className={twJoin(
+                    "px-2 py-4",
+                    "transition-all",
+                    isActive ? "scale-150" : "group-hover:scale-125",
+                    userVotedInBucket
+                      ? "text-palette-green"
+                      : "text-palette-beige"
+                  )}
+                >
+                  <Icon
+                    name={
+                      userVotedInBucket
+                        ? "solid:circle-check"
+                        : "solid:circle-dashed"
+                    }
+                  />
+                </button>
+              )
+            }}
           />
         </CollapsibleBox>
       </main>

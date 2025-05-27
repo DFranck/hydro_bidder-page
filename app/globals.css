@@ -47,17 +47,28 @@
   }
 }
 
-@utility button {
+@utility btn {
   @apply inline-flex items-center justify-center rounded-md border-2;
   @apply px-3 py-2;
   @apply text-center leading-none font-semibold whitespace-nowrap;
   @apply cursor-pointer touch-manipulation;
 }
 
-@utility button-icon {
-  @apply button;
+@utility btn-icon {
+  @apply btn;
   @apply size-10;
   @apply border-transparent;
+}
+
+@utility btn-inline {
+  @apply btn;
+  @apply -mx-2 -my-2;
+  @apply border-transparent;
+}
+
+@utility btn-inverted {
+  @apply bg-palette-text **:text-white!;
+  @apply hover:bg-palette-green hover:**:text-palette-text!;
 }
 
 @utility empty-box {
