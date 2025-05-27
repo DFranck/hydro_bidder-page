@@ -104,7 +104,7 @@ export function BidTributeApr({ bidId }: { bidId: number }) {
       <>
         <span>{formattedTributeAprMin}</span>
         <StyledText variant="mathSymbol">%</StyledText>
-        {bidInfo.points && bidInfo.points.length > 0 && <StyledText variant="mathSymbol">+</StyledText>}
+        {bidInfo.points && bidInfo.points.length > 0 && <StyledText variant="mathSymbol">+ Points</StyledText>}
       </>
     )
   }
