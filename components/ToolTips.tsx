@@ -122,14 +122,16 @@ export const bidTableTributeAprTooltip = ({
     {isWalletConnected && (
       <StyledText>
         {hasVotedForThisBid
-          ? "Because you voted on this bid, your share of the rewards would be worth an estimated "
-          : "If you vote on this bid, your share of the rewards would be worth an estimated "}
-        <StyledText>
+          ? (isOnlyPointBased ? "Because you voted for this bid, you will receive " : "Because you voted on this bid, your share of the rewards would be worth an estimated ")
+          : (isOnlyPointBased ? "If you vote on this bid, you will receive " : "If you vote on this bid, your share of the rewards would be worth an estimated ")}
+        {
+          !isOnlyPointBased ? <StyledText>
           <strong className="text-palette-green">
             {amountToUSDString(userWillReceiveInUsd)}
           </strong>
           :&nbsp;
-        </StyledText>
+        </StyledText> : null
+        }
         {userWillReceiveInTokens.map((x, index) => (
           <StyledText key={`${x.denom}_${index}`}>
             {formatAmount(x.valueInTokens, 0, 2)}&nbsp;

@@ -50,25 +50,29 @@ export function CollapsibleTable({
         leftSlot={<StyledText variant="h4">{title}</StyledText>}
         rightSlot={
           <div className="flex flex-row-reverse items-center gap-4 text-xs">
-            <StyledText
-              as="button"
-              variant="button.secondary.small"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              disabled={numRows === 0}
-            >
-              <Icon name={isCollapsed ? "square-plus" : "square-minus"} />
-              <span>{isCollapsed ? "Expand" : "Collapse"}</span>
-            </StyledText>
+            <div className="flex flex-col items-center gap-2"> {/* stack buttons vertically and center */}
+              <StyledText
+                as="button"
+                variant="button.secondary.small"
+                className="self-end"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                disabled={numRows === 0}
+              >
+                <Icon name={isCollapsed ? "square-plus" : "square-minus"} />
+                <span>{isCollapsed ? "Expand" : "Collapse"}</span>
+              </StyledText>
 
-            <StyledText
-              as="button"
-              variant={hasCopied ? undefined : "link"}
-              className="inline-flex items-center gap-1"
-              onClick={handleCopyLink}
-            >
-              <Icon name={hasCopied ? "solid:check" : "solid:link"} />
-              <span>{hasCopied ? "Copied!" : "Copy Link"}</span>
-            </StyledText>
+              <StyledText
+                as="button"
+                variant={hasCopied ? undefined : "link"}
+                className="inline-flex items-center gap-1"
+                onClick={handleCopyLink}
+              >
+                <Icon name={hasCopied ? "solid:check" : "solid:link"} />
+                <span>{hasCopied ? "Copied!" : "Copy Link"}</span>
+              </StyledText>
+            </div>
+
             <div
               className="flex cursor-pointer flex-row items-center gap-2"
               onClick={toggleBids}
@@ -82,7 +86,7 @@ export function CollapsibleTable({
                 onChange={toggleBids}
               />
               <StyledText>
-                Show bids <br /> without tributes
+                Show bids <br /> without rewards
               </StyledText>
             </div>
           </div>
