@@ -107,9 +107,11 @@ export function Bucket({
           )}
         >
           <div
+            id={`bucket-content-inner-${bucketId}`}
             className={twJoin(
+              "mx-auto flex flex-col gap-[2px]",
               "max-w-[60vw]",
-              "mx-auto flex flex-col gap-[2px]"
+              "md:py-12"
             )}
           >
             {bidsInBucket.map(({ id }, index) => (

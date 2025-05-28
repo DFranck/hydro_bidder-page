@@ -207,7 +207,7 @@ export function ResponsiveMenu({
                   onClick={onClick}
                   {...otherProps}
                 >
-                  {label} <Icon name="solid:chevron-down" />
+                  {label} <Icon name={iconRight ?? "solid:chevron-down"} />
                 </a>
 
                 <div

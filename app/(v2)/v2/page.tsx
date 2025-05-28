@@ -112,6 +112,7 @@ export default function V2() {
       },
       {
         label: "Settings",
+        iconRight: "solid:gear",
         menuItems: [
           {
             label: "Narrow Buckets",
@@ -367,6 +368,7 @@ export default function V2() {
             targetSelector="[id^='bucket-container-']"
             className={twJoin(
               "w-full gap-[2px] p-[2px]",
+              "overflow-x-auto",
               "bg-palette-text/50 backdrop-blur-xs"
             )}
             renderDot={({ index, isActive, spreadProps }) => {
@@ -380,7 +382,7 @@ export default function V2() {
                   className={twJoin(
                     isActive && "is-active",
                     userVotedInBucket && "has-voted",
-                    "h-12 w-full",
+                    "h-12 w-full truncate px-3",
                     "text-palette-text transition-all",
                     "border-2 border-transparent transition-all",
                     "[&:is(.is-active.has-voted,.has-voted:focus-within)]:bg-palette-green",

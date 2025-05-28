@@ -24,14 +24,14 @@ export function BidCard({
         "gap-3 px-4 pt-3 pb-4",
         "md:gap-6 md:px-6 md:pt-5 md:pb-6",
         "transition-all",
-        "border-y-2 border-transparent",
         "focus-within:outline-none",
-        "focus-within:border-palette-beige",
         "focus-within:bg-palette-beige",
         "focus-within:text-palette-text",
         "focus-within:**:text-palette-text",
+        "hover:bg-palette-beige/50",
         userHasVotedOnThisBid && [
-          "bg-palette-green border-palette-green",
+          "bg-palette-green",
+          "hover:bg-palette-green/50",
           "text-palette-text **:text-palette-text",
         ]
       )}
