@@ -27,6 +27,7 @@ export function ScrollIndicator({
 
   useEffect(() => {
     const container = document.querySelector(containerSelector)
+
     if (!container) return
 
     const targets = Array.from(container.querySelectorAll(targetSelector))
@@ -46,7 +47,7 @@ export function ScrollIndicator({
       },
       {
         root: container,
-        threshold: 1,
+        threshold: 0.8,
       }
     )
 

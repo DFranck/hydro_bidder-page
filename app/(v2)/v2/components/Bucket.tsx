@@ -37,7 +37,11 @@ export function Bucket({
         "relative",
         "h-full shrink-0 grow-0",
         "snap-start",
-        isMobile ? "w-screen" : narrowBuckets ? "w-[550px]" : "w-full",
+        isMobile
+          ? "w-[calc(100vw-4px)]"
+          : narrowBuckets
+            ? "w-[550px]"
+            : "w-full",
         className
       )}
       {...otherProps}
@@ -110,7 +114,7 @@ export function Bucket({
             id={`bucket-content-inner-${bucketId}`}
             className={twJoin(
               "mx-auto flex flex-col gap-[2px]",
-              "max-w-[60vw]",
+              "md:max-w-[60vw]",
               "md:py-12"
             )}
           >

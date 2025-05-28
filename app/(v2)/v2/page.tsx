@@ -15,7 +15,7 @@ import range from "lodash/range"
 import sortBy from "lodash/sortBy"
 import Link from "next/link"
 import { useState } from "react"
-import { twJoin } from "tailwind-merge"
+import { twJoin, twMerge } from "tailwind-merge"
 import { Bucket } from "./components/Bucket"
 import { Logo } from "./components/Logo"
 import { MenuItem, ResponsiveMenu } from "./components/ResponsiveMenu"
@@ -351,8 +351,10 @@ export default function V2() {
           isCollapsed={isMobile && isSidebarOpen}
           className={twJoin("grid-in-content")}
           classNamesForInnerWrapper={twJoin(
-            "relative",
-            "grid grid-rows-[min-content_min-content_auto]"
+            "relative grid",
+            isMobile
+              ? "grid-rows-[min-content_auto_min-content]"
+              : "grid-rows-[min-content_min-content_auto]"
           )}
         >
           <StatBar
@@ -366,10 +368,18 @@ export default function V2() {
           <ScrollIndicator
             containerSelector="#bid-card-lists"
             targetSelector="[id^='bucket-container-']"
-            className={twJoin(
-              "w-full gap-[2px] p-[2px]",
+            className={twMerge(
               "overflow-x-auto",
-              "bg-palette-text/50 backdrop-blur-xs"
+              isMobile
+                ? [
+                    "row-start-3 row-end-4",
+                    "mx-auto my-2 w-fit gap-2",
+                    "rounded-full bg-white/20 px-3 py-2",
+                  ]
+                : [
+                    "w-full gap-[2px] p-[2px]",
+                    "bg-palette-text/50 backdrop-blur-xs",
+                  ]
             )}
             renderDot={({ index, isActive, spreadProps }) => {
               const bucket = sortedBuckets[index]
@@ -379,7 +389,7 @@ export default function V2() {
                 <button
                   {...spreadProps}
                   key={index}
-                  className={twJoin(
+                  className={twMerge(
                     isActive && "is-active",
                     userVotedInBucket && "has-voted",
                     "h-12 w-full truncate px-3",
@@ -388,7 +398,12 @@ export default function V2() {
                     "[&:is(.is-active.has-voted,.has-voted:focus-within)]:bg-palette-green",
                     "[&:is(.is-active,:focus-within):not(.has-voted)]:bg-palette-beige",
                     "[&:is(.has-voted)]:bg-palette-green/60",
-                    "[&:not(.has-voted)]:bg-palette-beige/60"
+                    "[&:not(.has-voted)]:bg-palette-beige/60",
+                    isMobile && [
+                      "size-4 rounded-full p-0",
+                      "**:text-[0px]",
+                      "[&:is(.is-active)]:scale-150",
+                    ]
                   )}
                 >
                   <span className="label">{label}</span>
@@ -409,7 +424,7 @@ export default function V2() {
               <Bucket
                 key={index}
                 bucketId={id}
-                className="ml-[-2px] first:ml-0"
+                className={twJoin(!isMobile && "ml-[-2px]", "first:ml-0")}
                 classNameForContentContainer="pb-12"
               />
             ))}
