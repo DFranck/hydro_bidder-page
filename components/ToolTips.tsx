@@ -3,7 +3,10 @@
 import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { HYDRO_TELEGRAM_COMMUNITY_URL, voteThresholdByTrancheId } from "@/config"
+import {
+  HYDRO_TELEGRAM_COMMUNITY_URL,
+  voteThresholdByTrancheId,
+} from "@/config"
 import {
   AugmentedBidAfterWallet,
   BidMetaDataSlimmed,
@@ -100,13 +103,12 @@ export const bidTableTributeAprTooltip = ({
       <StyledText variant="label">Tribute Size</StyledText>
       <BidTribute bidId={bidId} textAlign="left" />
     </div>
-    {
-      isOnlyPointBased ?
+    {isOnlyPointBased ? (
       <p>
         The estimated value of this bid’s rewards cannot be determined due to
         points not having a monetary value.
       </p>
-      :
+    ) : (
       <p>
         The total estimated value of this bid&rsquo;s rewards is currently&nbsp;
         <strong className="text-palette-green">
@@ -118,20 +120,24 @@ export const bidTableTributeAprTooltip = ({
         </strong>
         .
       </p>
-    }
+    )}
     {isWalletConnected && (
       <StyledText>
         {hasVotedForThisBid
-          ? (isOnlyPointBased ? "Because you voted for this bid, you will receive " : "Because you voted on this bid, your share of the rewards would be worth an estimated ")
-          : (isOnlyPointBased ? "If you vote on this bid, you will receive " : "If you vote on this bid, your share of the rewards would be worth an estimated ")}
-        {
-          !isOnlyPointBased ? <StyledText>
-          <strong className="text-palette-green">
-            {amountToUSDString(userWillReceiveInUsd)}
-          </strong>
-          :&nbsp;
-        </StyledText> : null
-        }
+          ? isOnlyPointBased
+            ? "Because you voted for this bid, you will receive "
+            : "Because you voted on this bid, your share of the rewards would be worth an estimated "
+          : isOnlyPointBased
+            ? "If you vote on this bid, you will receive "
+            : "If you vote on this bid, your share of the rewards would be worth an estimated "}
+        {!isOnlyPointBased ? (
+          <StyledText>
+            <strong className="text-palette-green">
+              {amountToUSDString(userWillReceiveInUsd)}
+            </strong>
+            :&nbsp;
+          </StyledText>
+        ) : null}
         {userWillReceiveInTokens.map((x, index) => (
           <StyledText key={`${x.denom}_${index}`}>
             {formatAmount(x.valueInTokens, 0, 2)}&nbsp;
@@ -147,10 +153,10 @@ export const bidTableTributeAprTooltip = ({
         ))}
       </StyledText>
     )}
-    {
-      pointProgramUrl && !isOnlyPointBased &&
+    {pointProgramUrl && !isOnlyPointBased && (
       <p>
-        This bid is offering points in addition to tokens, which are not taken into account in this APR.{" "}
+        This bid is offering points in addition to tokens, which are not taken
+        into account in this APR.{" "}
         <StyledText
           as={Link}
           href={pointProgramUrl}
@@ -160,8 +166,11 @@ export const bidTableTributeAprTooltip = ({
           Learn More <Icon name="solid:arrow-up-right" />
         </StyledText>
       </p>
-    }
-    <p>The APR is based on total voting power associated with the bid at the end of the round.</p>
+    )}
+    <p>
+      The APR is based on total voting power associated with the bid at the end
+      of the round.
+    </p>
   </div>
 )
 
@@ -397,7 +406,8 @@ export const metricsPolAprColumnTooltip = (
 
 export const bidPolAprTooltip = (
   <p>
-    This deployment is still active - the APR will be displayed once the deployment is withdrawn from the venue.
+    This deployment is still active - the APR will be displayed once the
+    deployment is withdrawn from the venue.
   </p>
 )
 
@@ -407,9 +417,10 @@ export const metricsDurationColumnTooltip = (
 
 export const metricsPolRewardsColumnTooltip = (
   <p>
-    This is the annualized return from the rewards associated with each bid and distributed to voters at the end of the round.{" "}
+    This is the annualized return from the rewards associated with each bid and
+    distributed to voters at the end of the round.{" "}
     <StyledText
-      as={Link} 
+      as={Link}
       href="/docs/users/calculating-staking-apr"
       variant="link"
       className="inline-flex items-center gap-1"
@@ -423,8 +434,7 @@ export const metricsPolRewardsColumnTooltip = (
 
 export const metricsPolSizeColumnTooltip = (
   <p>
-    The total amount of ATOM allocated to this bid during the specified
-    round.{" "}
+    The total amount of ATOM allocated to this bid during the specified round.{" "}
     <StyledText
       as={Link}
       href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
@@ -628,7 +638,8 @@ export const rewardsYourTributeTooltip = (
 )
 
 export const timeLeftTooltip = (currentRoundEndDate: Date) => {
-    const formattedEndDate = currentRoundEndDate ? currentRoundEndDate.toLocaleString(undefined, {
+  const formattedEndDate = currentRoundEndDate
+    ? currentRoundEndDate.toLocaleString(undefined, {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -637,22 +648,22 @@ export const timeLeftTooltip = (currentRoundEndDate: Date) => {
         timeZoneName: "short",
       })
     : "N/A"
-    return (
-  <p>
-    This round ends on {formattedEndDate}. Users must vote before the end of the
-    round to receive tributes.{" "}
-    <StyledText
-      as="a"
-      href="/docs/users/voting-for-projects"
-      variant="link"
-      target="_blank"
-      className="whitespace-nowrap"
-    >
-      <span>Learn More</span>
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
-  </p>
-)
+  return (
+    <p>
+      This round ends on {formattedEndDate}. Users must vote before the end of
+      the round to receive tributes.{" "}
+      <StyledText
+        as="a"
+        href="/docs/users/voting-for-projects"
+        variant="link"
+        target="_blank"
+        className="whitespace-nowrap"
+      >
+        <span>Learn More</span>
+        <Icon name="solid:arrow-up-right" />
+      </StyledText>
+    </p>
+  )
 }
 
 export const totalRevenueTooltip = (
@@ -754,7 +765,7 @@ export const yourVotingPowerTooltip = ({
       <div
         className={twJoin(
           "grid grid-cols-[1fr_min-content] gap-x-6 gap-y-1",
-          "whitespace-nowrap",
+          "whitespace-nowrap"
         )}
       >
         <StyledText variant="label" className="col-span-2">
@@ -768,7 +779,7 @@ export const yourVotingPowerTooltip = ({
               {formatAmount(
                 votingPowerTotal,
                 0,
-                votingPowerTotal < 0.01 ? 4 : 2,
+                votingPowerTotal < 0.01 ? 4 : 2
               )}
             </strong>
           </div>
@@ -780,12 +791,12 @@ export const yourVotingPowerTooltip = ({
           const votingPowerSpent = formatAmount(
             votingPowerByTranche[trancheId].votingPowerSpent,
             0,
-            votingPowerByTranche[trancheId].votingPowerSpent < 0.01 ? 4 : 2,
+            votingPowerByTranche[trancheId].votingPowerSpent < 0.01 ? 4 : 2
           )
           const votingPowerAvailable = formatAmount(
             votingPowerByTranche[trancheId].votingPowerAvailable,
             0,
-            votingPowerByTranche[trancheId].votingPowerAvailable < 0.01 ? 4 : 2,
+            votingPowerByTranche[trancheId].votingPowerAvailable < 0.01 ? 4 : 2
           )
 
           return (
@@ -824,7 +835,7 @@ export const yourVotingPowerTooltip = ({
         <div
           className={twJoin(
             "-mx-4 -mb-2 px-4 py-2",
-            "bg-palette-green text-center font-bold text-palette-text",
+            "bg-palette-green text-center font-bold text-palette-text"
           )}
         >
           {trancheMessage}
@@ -884,7 +895,7 @@ export const bidDetailsVoteReceivedTooltip = ({
     <div
       className={twJoin(
         "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
-        "whitespace-nowrap border-b border-white/20 pb-2",
+        "whitespace-nowrap border-b border-white/20 pb-2"
       )}
     >
       {[
@@ -987,3 +998,51 @@ export const bidLiquidityReceivedTooltip = ({
     </div>
   )
 }
+
+export const atomPriceTooltip = (
+  <p>The anticipated price of ATOM when the position is set up.</p>
+)
+
+export const tokenPriceTooltip = ({ tokenName }: { tokenName: string }) => (
+  <p>The anticipated price of {tokenName} when the position is set up.</p>
+)
+
+export const lowerBoundTooltip = ({
+  currentPrice,
+}: {
+  currentPrice: number
+}) => (
+  <p>
+    Lower bound cannot be higher than current price (
+    {amountToUSDString(currentPrice, {
+      appendUsd: false,
+      numberOfDecimals: 5,
+      removeTrailingZeros: true,
+    })}
+    ).
+  </p>
+)
+
+export const upperBoundTooltip = ({
+  currentPrice,
+}: {
+  currentPrice: number
+}) => (
+  <p>
+    Upper bound cannot be lower than current price (
+    {amountToUSDString(currentPrice, {
+      appendUsd: false,
+      numberOfDecimals: 5,
+      removeTrailingZeros: true,
+    })}
+    ).
+  </p>
+)
+
+export const liquidationBonusTooltip = (
+  <p>
+    The necessary liquidation bonus is determined by the Hydro risk manager, but
+    a rough guidance is that it lies between 10 and 50%. To increase the
+    liquidation bonus, increase the upper and lower bounds of the range.
+  </p>
+)
