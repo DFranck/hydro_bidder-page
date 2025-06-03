@@ -69,6 +69,13 @@ export default function Navigation() {
           target: "_blank",
         },
         {
+          label: "Blog",
+          href: "https://x.com/HydroTeam_/articles",
+          iconLeft: "solid:newspaper",
+          iconRight: "arrow-up-right-from-square",
+          target: "_blank",
+        },
+        {
           label: "Airdrops",
           href: "/airdrops",
           iconLeft: "solid:parachute-box",
