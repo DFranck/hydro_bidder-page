@@ -234,29 +234,32 @@ export const RevertFromNeutronStepper = ({
         return {
           title: "Transaction Error",
           contents: (
-            <>
-              <p>
-                This transaction could not be completed. Your staked ATOM has
-                not been reverted.
-              </p>
-              <p>Refresh the page to try again or recover your staked ATOM.</p>
-              <div className="mt-4">
-                {!showErrorLog ? (
+            <div className="overflow-hidden">
+              {!showErrorLog ? (
+                <>
+                  <p>
+                    This transaction could not be completed. Your staked ATOM
+                    has not been reverted.
+                  </p>
+                  <p>
+                    Refresh the page to try again or recover your staked ATOM.
+                  </p>
                   <StyledText
                     as="button"
                     variant="link.subtle"
                     onClick={() => setShowErrorLog(true)}
+                    className="mt-4"
                   >
                     Show Error Log
                     <Icon name="solid:chevron-down" />
                   </StyledText>
-                ) : (
-                  <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
-                    {errorLog}
-                  </pre>
-                )}
-              </div>
-            </>
+                </>
+              ) : (
+                <pre className="max-h-40 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black overflow-scroll">
+                  {errorLog}
+                </pre>
+              )}
+            </div>
           ),
           buttons: [
             {

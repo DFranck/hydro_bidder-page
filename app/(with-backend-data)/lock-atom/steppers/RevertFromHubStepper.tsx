@@ -202,7 +202,6 @@ export const RevertFromHubStepper = ({
         return {
           title: "Transaction Error",
           contents: (
-            <>
               <div className="mt-4 overflow-hidden">
                 {!showErrorLog ? (
                   <>
@@ -225,12 +224,11 @@ export const RevertFromHubStepper = ({
                     </StyledText>
                   </>
                 ) : (
-                  <pre className="mt-2 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
+                  <pre className="max-h-40 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                     {errorLog}
                   </pre>
                 )}
               </div>
-            </>
           ),
           buttons: [
             {

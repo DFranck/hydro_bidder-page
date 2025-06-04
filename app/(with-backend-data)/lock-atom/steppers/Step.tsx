@@ -261,7 +261,7 @@ export function Step({
           </div>
         </div>
       </div>
-      <div className="flex flex-col justify-center gap-6">
+      <div className="flex flex-col justify-center gap-2">
         {title && (
           <Card.Header
             title={title}
