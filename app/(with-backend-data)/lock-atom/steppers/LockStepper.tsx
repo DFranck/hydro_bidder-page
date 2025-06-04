@@ -28,7 +28,7 @@ import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubT
 import { signLockTokens } from "../transactions/signLockTokens"
 import { signTokenizeShares } from "../transactions/signTokenizeShares"
 
-type LockStep =
+export type LockStep =
   | "Init"
   | "NoHubGasError"
   | "WaitingForNeutronGasSigning"
@@ -184,19 +184,19 @@ export const LockStepper = ({
           title: "Review your Lockup",
           contents: (
             <div className="flex flex-col items-center gap-6">
-              <div className="grid grid-cols-3 items-center gap-10">
+              <div className="grid grid-cols-3 items-center">
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
-                  <div className="text-xs text-palette-beige">ATOM Amount</div>
-                  <div className="text-2xl font-bold">
+                  <div className="whitespace-nowrap text-10 text-palette-beige">ATOM Amount</div>
+                  <div className="text-sm font-bold">
                     {formatAmount(amount)}
                   </div>
                 </div>
 
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
-                  <div className="text-xs text-palette-beige">
+                  <div className="whitespace-nowrap text-10 text-palette-beige">
                     Lock Duration
                   </div>
-                  <div className="text-2xl font-bold">
+                  <div className="text-sm font-bold">
                     {pluralize({
                       count: value,
                       prefixCount: true,
@@ -211,7 +211,7 @@ export const LockStepper = ({
                     "rounded-md bg-palette-green/10 px-6 py-3"
                   )}
                 >
-                  <div className="text-xs text-palette-beige">
+                  <div className="whitespace-nowrap text-10 text-palette-beige">
                     Voting Power (
                     {getLockupPeriodMultiplier({
                       lockupTime: lockDuration,
@@ -219,7 +219,7 @@ export const LockStepper = ({
                     })}
                     &thinsp;&times;)
                   </div>
-                  <div className="text-2xl font-bold">
+                  <div className="text-sm font-bold">
                     {formatAmount(
                       scaleLockupPower({
                         lockedAtomEpochInNanos,
@@ -412,6 +412,7 @@ export const LockStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
     />
   )
 }

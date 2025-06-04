@@ -55,6 +55,7 @@ export function LsmInteraction({
               amount={stepper.amount}
               validator={stepper.validator}
               lockDuration={stepper.duration}
+              startState="Init"
               onExit={() => setStepper(undefined)}
             />
           </div>
@@ -64,6 +65,7 @@ export function LsmInteraction({
             <RevertFromHubStepper
               amount={stepper.amount}
               validator={stepper.validator}
+              startState="WaitingForRedeemSigning"
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
@@ -79,6 +81,7 @@ export function LsmInteraction({
               baseDenom={stepper.baseDenom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
+              startState="WaitingForIBCBroadcast"
             />
           </div>
         )}
@@ -90,6 +93,7 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
+              startState="WaitingForIBCBroadcastAndRelay"
             />
           </div>
         )}
@@ -101,6 +105,7 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
+              startState="WaitingForLockingBroadcast"
             />
           </div>
         )}
@@ -211,7 +216,11 @@ export function LsmInteraction({
               <p>
                 Hydro is currently at max capacity. Please wait for the next
                 round or for the cap to be increased. Check{" "}
-                <StyledText as={Link} href={HYDRO_TELEGRAM_COMMUNITY_URL} variant="link">
+                <StyledText
+                  as={Link}
+                  href={HYDRO_TELEGRAM_COMMUNITY_URL}
+                  variant="link"
+                >
                   Telegram
                 </StyledText>{" "}
                 for updates.

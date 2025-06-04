@@ -127,6 +127,8 @@ export const ContinueFromNeutronStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={executeContinueFromNeutron}
     />
   )
 }

@@ -13,7 +13,7 @@ import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForSh
 import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
 
-type RevertFromNeutronStep =
+export type RevertFromNeutronStep =
   | "Init"
   | "WaitingForIBCSigning"
   | "WaitingForIBCBroadcast"
@@ -280,6 +280,8 @@ export const RevertFromNeutronStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={execute}
     />
   )
 }

@@ -36,7 +36,7 @@ export const ContinueFromHubStepper = ({
   amount: string
   validator: string
   denom: string
-  startState?: ContinueFromHubStep
+  startState: ContinueFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
@@ -154,6 +154,8 @@ export const ContinueFromHubStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={execute}
     />
   )
 }
