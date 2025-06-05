@@ -273,11 +273,9 @@ export function Step({
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={cn("mt-2 h-16 w-0.5", {
+                      className={cn("mt-2 h-16 w-0.5 bg-gray-200", {
                         "bg-green-500": step.status === "success",
-                        "bg-red-500": step.status === "error",
                         "bg-palette-blue/90": step.status === "pending",
-                        "bg-gray-200": step.status === "default",
                       })}
                     />
                   )}
