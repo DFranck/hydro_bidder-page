@@ -11,7 +11,21 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 # Getting Started
 
-Because we're hosted by Netlify, you can technically work two ways. I recommend using the Netlify CLI, but you can use the ol' fashioned way if you don't need to build any data:
+Because we're hosted by Netlify, you can technically work two ways. I recommend using the Netlify CLI, but you can use the ol' fashioned way if you don't need to build any data
+
+## Local environment
+
+Setup your local environment by running the below:
+
+Copy the `staging-env` to `.env`
+
+```bash
+cp staging-env .env
+```
+
+## Install Dependencies
+
+Next, install the project dependencies:
 
 ```bash
 npm install
@@ -23,6 +37,23 @@ That defaults to port 3000. Otherwise, using the Netlify CLI:
 ```bash
 npm install
 npm install -g netlify-cli
+```
+
+```bash
+netlify login
+```
+
+Authenticate the CLI in your browser.
+
+Use the below command to connect to the project(hydro-staging)
+
+```bash
+netlify link
+```
+
+Once you've successfully linked the project, run the below command to start the project:
+
+```bash
 netlify dev
 ```
 
