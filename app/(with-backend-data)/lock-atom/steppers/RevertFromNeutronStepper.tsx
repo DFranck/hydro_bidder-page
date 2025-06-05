@@ -12,6 +12,7 @@ import { signIBCTransferNeutronToHub } from "../transactions/signIBCTransferNeut
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
 import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
+import { stepLabels } from "@/constants/lock-atom"
 
 export type RevertFromNeutronStep =
   | "Init"
@@ -255,7 +256,7 @@ export const RevertFromNeutronStepper = ({
                   </StyledText>
                 </>
               ) : (
-                <pre className="max-h-40 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black overflow-scroll">
+                <pre className="max-h-40 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                   {errorLog}
                 </pre>
               )}
@@ -284,6 +285,7 @@ export const RevertFromNeutronStepper = ({
       buttons={buttons}
       isWorking={isWorking}
       steps={step}
+      stepLabels={stepLabels}
       execute={execute}
     />
   )

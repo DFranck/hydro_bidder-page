@@ -27,6 +27,7 @@ export function Step({
   isWorking,
   revalidateCache,
   steps: currentStep,
+  stepLabels,
   execute,
 }: {
   title?: ReactNode
@@ -40,6 +41,11 @@ export function Step({
   isWorking?: boolean
   revalidateCache?: boolean
   steps: LockStep | RevertFromHubStep | RevertFromNeutronStep | ClaimRewardsStep
+  stepLabels?: {
+    labelOne: string
+    labelTwo: string
+    labelThree: string
+  }
   execute?: () => Promise<void>
 }) {
   const { setToasts } = useToasts()
@@ -135,9 +141,18 @@ export function Step({
 
   const generateSteps = (): StakingStep[] => {
     const baseSteps = [
-      { id: 1, title: "Tokenize your Staked ATOM" },
-      { id: 2, title: "Transfer your Tokenized ATOM to Hydro" },
-      { id: 3, title: "Lock your ATOM, get voting power" },
+      {
+        id: 1,
+        title: stepLabels?.labelOne ?? "Tokenize your Staked ATOM",
+      },
+      {
+        id: 2,
+        title: stepLabels?.labelTwo ?? "Transfer your Tokenized ATOM to Hydro",
+      },
+      {
+        id: 3,
+        title: stepLabels?.labelThree ?? "Lock your ATOM, get voting power",
+      },
     ]
 
     return baseSteps.map((step) => {

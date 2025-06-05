@@ -55,8 +55,8 @@ export function LsmInteraction({
               amount={stepper.amount}
               validator={stepper.validator}
               lockDuration={stepper.duration}
-              startState="Init"
               onExit={() => setStepper(undefined)}
+              startState="Init"
             />
           </div>
         )}
@@ -65,10 +65,10 @@ export function LsmInteraction({
             <RevertFromHubStepper
               amount={stepper.amount}
               validator={stepper.validator}
-              startState="WaitingForRedeemSigning"
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
+              startState="WaitingForRedeemSigning"
             />
           </div>
         )}
@@ -81,7 +81,7 @@ export function LsmInteraction({
               baseDenom={stepper.baseDenom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="WaitingForIBCBroadcast"
+              startState="WaitingForIBCSigning"
             />
           </div>
         )}
@@ -93,7 +93,7 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="WaitingForIBCBroadcastAndRelay"
+              startState="WaitingForIBCSigning"
             />
           </div>
         )}
@@ -105,7 +105,7 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="WaitingForLockingBroadcast"
+              startState="WaitingForLockingSigning"
             />
           </div>
         )}

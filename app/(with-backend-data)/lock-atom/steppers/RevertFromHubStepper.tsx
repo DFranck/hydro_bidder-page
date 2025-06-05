@@ -10,6 +10,7 @@ import { broadcastTx } from "../transactions/broadcastTx"
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
 import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
+import { stepLabels } from "@/constants/lock-atom"
 
 function getValidatorMoniker(
   validator: string,
@@ -202,33 +203,33 @@ export const RevertFromHubStepper = ({
         return {
           title: "Transaction Error",
           contents: (
-              <div className="mt-4 overflow-hidden">
-                {!showErrorLog ? (
-                  <>
-                    <p>
-                      This transaction could not be completed. Your staked ATOM
-                      has not been reverted.
-                    </p>
-                    <p>
-                      Refresh the page to try again or recover your staked ATOM.
-                    </p>
+            <div className="mt-4 overflow-hidden">
+              {!showErrorLog ? (
+                <>
+                  <p>
+                    This transaction could not be completed. Your staked ATOM
+                    has not been reverted.
+                  </p>
+                  <p>
+                    Refresh the page to try again or recover your staked ATOM.
+                  </p>
 
-                    <StyledText
-                      as="button"
-                      variant="link.subtle"
-                      onClick={() => setShowErrorLog(true)}
-                      className="mt-4"
-                    >
-                      Show Error Log
-                      <Icon name="solid:chevron-down" />
-                    </StyledText>
-                  </>
-                ) : (
-                  <pre className="max-h-40 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
-                    {errorLog}
-                  </pre>
-                )}
-              </div>
+                  <StyledText
+                    as="button"
+                    variant="link.subtle"
+                    onClick={() => setShowErrorLog(true)}
+                    className="mt-4"
+                  >
+                    Show Error Log
+                    <Icon name="solid:chevron-down" />
+                  </StyledText>
+                </>
+              ) : (
+                <pre className="max-h-40 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
+                  {errorLog}
+                </pre>
+              )}
+            </div>
           ),
           buttons: [
             {
@@ -253,6 +254,7 @@ export const RevertFromHubStepper = ({
       buttons={buttons}
       isWorking={isWorking}
       steps={step}
+      stepLabels={stepLabels}
       execute={execute}
     />
   )
