@@ -114,7 +114,7 @@ export const RevertFromHubStepper = ({
                   {formatAmount(amount)} ATOM
                 </strong>{" "}
                 back to its original state, staked with{" "}
-                <strong className="text-white">
+                <strong className="text-white break-all">
                   {getValidatorMoniker(validator, validatorMap)}
                 </strong>
                 .

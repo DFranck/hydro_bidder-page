@@ -140,7 +140,7 @@ export const RevertFromNeutronStepper = ({
                 You&rsquo;re about to revert{" "}
                 <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
                 back to its original state, staked with{" "}
-                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>.
+                <strong className="break-all">{getValidatorMoniker(validator, validatorMap)}</strong>.
               </p>
               <p>
                 This should take about a minute and will require 2 wallet
