@@ -35,7 +35,6 @@ export const RevertFromNeutronStepper = ({
   validator,
   denom,
   baseDenom,
-  startState,
   onExit,
   validatorMap,
 }: {
@@ -43,14 +42,13 @@ export const RevertFromNeutronStepper = ({
   validator: string
   denom: string
   baseDenom: string
-  startState?: RevertFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
   const router = useRouter()
-  const [step, setStep] = useState<RevertFromNeutronStep>(startState || "Init")
+  const [step, setStep] = useState<RevertFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromNeutronStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
 

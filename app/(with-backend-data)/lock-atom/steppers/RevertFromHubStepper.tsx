@@ -30,20 +30,18 @@ export const RevertFromHubStepper = ({
   amount,
   validator,
   denom,
-  startState,
   onExit,
   validatorMap,
 }: {
   amount: string
   validator: string
   denom: string
-  startState: RevertFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
+  const [step, setStep] = useState<RevertFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
   const router = useRouter()

@@ -46,19 +46,17 @@ export const LockStepper = ({
   amount,
   validator,
   lockDuration,
-  startState,
   onExit,
 }: {
   amount: string
   validator: string
   lockDuration: number
-  startState?: LockStep
   onExit: () => void
 }) => {
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
     useIncompleteNotices()
   const { lockedAtomEpochInNanos } = useBackendData()
-  const [step, setStep] = useState<LockStep>(startState || "Init")
+  const [step, setStep] = useState<LockStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
   const router = useRouter()

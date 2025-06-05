@@ -56,7 +56,6 @@ export function LsmInteraction({
               validator={stepper.validator}
               lockDuration={stepper.duration}
               onExit={() => setStepper(undefined)}
-              startState="Init"
             />
           </div>
         )}
@@ -68,7 +67,6 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="Init"
             />
           </div>
         )}
@@ -81,7 +79,6 @@ export function LsmInteraction({
               baseDenom={stepper.baseDenom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="Init"
             />
           </div>
         )}
@@ -93,7 +90,6 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="WaitingForIBCSigning"
             />
           </div>
         )}
@@ -105,7 +101,6 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="WaitingForLockingSigning"
             />
           </div>
         )}
