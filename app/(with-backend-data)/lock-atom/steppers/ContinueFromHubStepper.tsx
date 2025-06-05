@@ -15,6 +15,7 @@ import {
   StepContent,
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
+import { formatAmount } from "@/lib/formatAmount"
 
 type ContinueFromHubStep =
   | "Init"
@@ -156,6 +157,7 @@ export const ContinueFromHubStepper = ({
       isWorking={isWorking}
       steps={step}
       execute={execute}
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

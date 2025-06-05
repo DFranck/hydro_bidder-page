@@ -286,7 +286,8 @@ export const RevertFromNeutronStepper = ({
       isWorking={isWorking}
       steps={step}
       stepLabels={stepLabels}
-      execute={execute}
+      modalTitle="Revert Back"
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

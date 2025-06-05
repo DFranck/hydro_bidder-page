@@ -68,7 +68,7 @@ export function LsmInteraction({
               denom={stepper.denom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="WaitingForRedeemSigning"
+              startState="Init"
             />
           </div>
         )}
@@ -81,7 +81,7 @@ export function LsmInteraction({
               baseDenom={stepper.baseDenom}
               onExit={() => setStepper(undefined)}
               validatorMap={validatorMap}
-              startState="WaitingForIBCSigning"
+              startState="Init"
             />
           </div>
         )}

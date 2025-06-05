@@ -13,6 +13,7 @@ import { X, Check, AlertCircle, Loader2 } from "lucide-react"
 import { RevertFromHubStep } from "./RevertFromHubStepper"
 import { RevertFromNeutronStep } from "./RevertFromNeutronStepper"
 import { ClaimRewardsStep } from "../../rewards/ClaimRewardsStepper"
+import { ContinueFromNeutronStep } from "./ContinueFromNeutronStepper"
 
 interface StakingStep {
   id: number
@@ -29,6 +30,8 @@ export function Step({
   steps: currentStep,
   stepLabels,
   execute,
+  amount,
+  modalTitle,
 }: {
   title?: ReactNode
   contents: ReactNode
@@ -40,13 +43,20 @@ export function Step({
   }[]
   isWorking?: boolean
   revalidateCache?: boolean
-  steps: LockStep | RevertFromHubStep | RevertFromNeutronStep | ClaimRewardsStep
+  steps?:
+    | LockStep
+    | RevertFromHubStep
+    | RevertFromNeutronStep
+    | ClaimRewardsStep
+    | ContinueFromNeutronStep
   stepLabels?: {
     labelOne: string
     labelTwo: string
     labelThree: string
   }
   execute?: () => Promise<void>
+  amount?: string
+  modalTitle?: string
 }) {
   const { setToasts } = useToasts()
   const router = useRouter()
@@ -80,7 +90,7 @@ export function Step({
   }, [currentStep])
 
   useEffect(() => {
-    if (!["Init", "Success"].includes(currentStep)) {
+    if (!!currentStep && !["Init", "Success"].includes(currentStep)) {
       if (execute) {
         execute()
       }
@@ -211,16 +221,25 @@ export function Step({
         w-md
         m-8
         grid
-        h-5/6
+        h-4/6
         grid-cols-1
         gap-4
         overflow-hidden
         md:m-auto
         md:h-auto
         md:grid-cols-2
+        md:overflow-auto
       `}
     >
       <div>
+        {!!amount && (
+          <div className="my-4 flex flex-col">
+            <StyledText className="uppercase leading-6 tracking-wide">
+              {modalTitle ?? " Lock Amount"}
+            </StyledText>
+            <StyledText variant="h4">{amount}</StyledText>
+          </div>
+        )}
         <div className="space-y-6">
           <div className="space-y-6">
             {steps.map((step, index) => (
@@ -279,7 +298,7 @@ export function Step({
           </div>
         </div>
       </div>
-      <div className="flex flex-col justify-start  gap-2 overflow-scroll  md:justify-center">
+      <div className="flex flex-col justify-start  gap-2 overflow-scroll md:justify-center  md:overflow-visible">
         {title && (
           <Card.Header
             title={title}

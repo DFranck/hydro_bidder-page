@@ -380,7 +380,6 @@ export default function ClaimRewardsStepper({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
-      steps={step}
     />
   )
 }

@@ -12,8 +12,9 @@ import {
   StepContent,
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
+import { formatAmount } from "@/lib/formatAmount"
 
-type ContinueFromNeutronStep =
+export type ContinueFromNeutronStep =
   | "Init"
   | "WaitingForLockingSigning"
   | "WaitingForLockingBroadcast"
@@ -129,6 +130,7 @@ export const ContinueFromNeutronStepper = ({
       isWorking={isWorking}
       steps={step}
       execute={executeContinueFromNeutron}
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }
