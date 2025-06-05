@@ -166,6 +166,18 @@ export default function VortexPage() {
     <ContentContainer className="gap-6 py-6">
       <div className="flex flex-col gap-8">
         <div className="flex w-full flex-col gap-4 rounded-2xl bg-black/30 p-6 shadow-lg backdrop-blur-lg">
+          <p className="text-white/80 text-base">
+            Vortex enables Hydro to deploy liquidity into unstable DEX pools while
+            managing its risk of impermanent loss, using a combination of
+            concentrated liquidity pools and collateral provided by the bidder,
+            which may be liquidated if the concentrated liquidity position crosses
+            a certain threshold. This tool provides bidders with an idea of the
+            parameters that are involved in a Vortex bid, including the amount of
+            tokens each party will need to provide, the positions ticks, and the
+            collateral needed.
+          </p>
+        </div>
+        <div className="flex w-full flex-col gap-4 rounded-2xl bg-black/30 p-6 shadow-lg backdrop-blur-lg">
           <StyledText as="h3" variant="h3" className="pb-4">
             Enter token prices
           </StyledText>
