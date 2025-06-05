@@ -45,7 +45,7 @@ netlify login
 
 Authenticate the CLI in your browser.
 
-Use the below command to connect to the project(hydro-staging)
+Follow the prompt in your terminal to connect to the project(hydro-staging)
 
 ```bash
 netlify link
