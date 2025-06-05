@@ -250,7 +250,7 @@ export function Step({
                     className={cn(
                       "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
                       {
-                        "border-green-500 bg-green-500 text-white":
+                        "border-palette-green bg-palette-green text-white":
                           step.status === "success",
                         "border-red-500 bg-red-500 text-white":
                           step.status === "error",
@@ -274,7 +274,7 @@ export function Step({
                   {index < steps.length - 1 && (
                     <div
                       className={cn("mt-2 h-16 w-0.5 bg-gray-200", {
-                        "bg-green-500": step.status === "success",
+                        "bg-palette-green": step.status === "success",
                         "bg-palette-blue/90": step.status === "pending",
                       })}
                     />
