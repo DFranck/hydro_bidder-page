@@ -14,6 +14,7 @@ import { RevertFromHubStep } from "./RevertFromHubStepper"
 import { RevertFromNeutronStep } from "./RevertFromNeutronStepper"
 import { ClaimRewardsStep } from "../../rewards/ClaimRewardsStepper"
 import { ContinueFromNeutronStep } from "./ContinueFromNeutronStepper"
+import { cn } from "@/lib/utils"
 
 interface StakingStep {
   id: number
@@ -246,15 +247,19 @@ export function Step({
               <div key={step.id} className="flex items-start gap-4">
                 <div className="flex flex-col items-center">
                   <div
-                    className={`flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors ${
-                      step.status === "success"
-                        ? "border-green-500 bg-green-500 text-white"
-                        : step.status === "error"
-                          ? "border-red-500 bg-red-500 text-white"
-                          : step.status === "pending"
-                            ? "border-purple-600 bg-purple-600 text-white"
-                            : "border-gray-200 bg-white text-gray-400"
-                    }`}
+                    className={cn(
+                      "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
+                      {
+                        "border-green-500 bg-green-500 text-white":
+                          step.status === "success",
+                        "border-red-500 bg-red-500 text-white":
+                          step.status === "error",
+                        "border-palette-blue/90 bg-palette-blue/90 text-white":
+                          step.status === "pending",
+                        "border-gray-200 bg-white text-gray-400":
+                          step.status === "default",
+                      }
+                    )}
                   >
                     {step.status === "success" ? (
                       <Check size={20} />
@@ -268,27 +273,23 @@ export function Step({
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`mt-2 h-16 w-0.5 ${
-                        step.status === "success"
-                          ? "bg-green-500"
-                          : step.status === "pending"
-                            ? "bg-purple-600"
-                            : "bg-gray-200"
-                      }`}
+                      className={cn("mt-2 h-16 w-0.5", {
+                        "bg-green-500": step.status === "success",
+                        "bg-red-500": step.status === "error",
+                        "bg-palette-blue/90": step.status === "pending",
+                        "bg-gray-200": step.status === "default",
+                      })}
                     />
                   )}
                 </div>
                 <div className="pt-3">
                   <p
-                    className={`text-sm font-medium ${
-                      step.status === "success"
-                        ? "text-green-600"
-                        : step.status === "error"
-                          ? "text-red-600"
-                          : step.status === "pending"
-                            ? "text-purple-700"
-                            : "text-gray-500"
-                    }`}
+                    className={cn("text-sm font-medium", {
+                      success: step.status === "success",
+                      "text-red-600": step.status === "error",
+                      "text-palette-blue/90": step.status === "pending",
+                      "text-gray-500": step.status === "default",
+                    })}
                   >
                     {step.title}
                   </p>
