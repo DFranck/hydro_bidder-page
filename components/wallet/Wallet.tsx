@@ -19,7 +19,7 @@ import {
 export type WalletProps = {
   chainName?: string
   variant?: StyledTextVariant
-  notifyConnectedCB: (isConnected: boolean) => void
+  notifyConnectedCB?: (isConnected: boolean) => void
 }
 
 export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {

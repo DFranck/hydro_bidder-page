@@ -127,7 +127,6 @@ export function VoteButton({
     Button = (
       <Wallet
         variant={`button.primary${size ? `.${size}` : ""}` as StyledTextVariant}
-        notifyConnectedCB={() => null}
       />
     )
   } else if (isLoading) {
