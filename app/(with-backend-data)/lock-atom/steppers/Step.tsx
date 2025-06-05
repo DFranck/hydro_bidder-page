@@ -128,7 +128,7 @@ export function Step({
       }
     }
 
-    return { activeStep: 1, status: "default" }
+    return { activeStep, status: "error", failedStep: lastActiveStep }
   }
 
   const { activeStep, status, failedStep } = getCurrentStepInfo()
@@ -194,11 +194,14 @@ export function Step({
     <Card
       className={`
         w-md
-        mx-8
+        m-8
         grid
+        h-5/6
         grid-cols-1
         gap-4
-        md:mx-auto
+        overflow-hidden
+        md:m-auto
+        md:h-auto
         md:grid-cols-2
       `}
     >
@@ -261,7 +264,7 @@ export function Step({
           </div>
         </div>
       </div>
-      <div className="flex flex-col justify-center gap-2">
+      <div className="flex flex-col justify-start  gap-2 overflow-scroll  md:justify-center">
         {title && (
           <Card.Header
             title={title}
