@@ -218,85 +218,81 @@ export function Step({
 
   return (
     <Card
-      className={`
-        w-md
-        m-8
-        grid
-        h-4/6
-        grid-cols-1
-        gap-4
-        overflow-hidden
-        md:m-auto
-        md:h-auto
-        md:grid-cols-2
-        md:overflow-auto
-      `}
+      className={cn(
+        "w-md m-8 grid h-4/6 grid-cols-1  gap-4 overflow-hidden md:m-auto md:h-auto md:overflow-auto",
+        {
+          "md:grid-cols-1": !currentStep,
+          "md:grid-cols-2": !!currentStep,
+        }
+      )}
     >
-      <div>
-        {!!amount && (
-          <div className="my-4 flex flex-col">
-            <StyledText className="uppercase leading-6 tracking-wide">
-              {modalTitle ?? " Lock Amount"}
-            </StyledText>
-            <StyledText variant="h4">{amount}</StyledText>
-          </div>
-        )}
-        <div className="space-y-6">
+      {!!currentStep && (
+        <div>
+          {!!amount && (
+            <div className="my-4 flex flex-col">
+              <StyledText className="uppercase leading-6 tracking-wide">
+                {modalTitle ?? " Lock Amount"}
+              </StyledText>
+              <StyledText variant="h4">{amount}</StyledText>
+            </div>
+          )}
           <div className="space-y-6">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-start gap-4">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={cn(
-                      "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
-                      {
-                        "border-palette-green bg-palette-green text-white":
-                          step.status === "success",
-                        "border-red-500 bg-red-500 text-white":
-                          step.status === "error",
-                        "border-palette-blue/90 bg-palette-blue/90 text-white":
-                          step.status === "pending",
-                        "border-gray-200 bg-white text-gray-400":
-                          step.status === "default",
-                      }
-                    )}
-                  >
-                    {step.status === "success" ? (
-                      <Check size={20} />
-                    ) : step.status === "error" ? (
-                      <AlertCircle size={20} />
-                    ) : step.status === "pending" ? (
-                      <Loader2 size={20} className="animate-spin" />
-                    ) : (
-                      step.id
+            <div className="space-y-6">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-start gap-4">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={cn(
+                        "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
+                        {
+                          "border-palette-green bg-palette-green text-white":
+                            step.status === "success",
+                          "border-red-500 bg-red-500 text-white":
+                            step.status === "error",
+                          "border-palette-blue/90 bg-palette-blue/90 text-white":
+                            step.status === "pending",
+                          "border-gray-200 bg-white text-gray-400":
+                            step.status === "default",
+                        }
+                      )}
+                    >
+                      {step.status === "success" ? (
+                        <Check size={20} />
+                      ) : step.status === "error" ? (
+                        <AlertCircle size={20} />
+                      ) : step.status === "pending" ? (
+                        <Loader2 size={20} className="animate-spin" />
+                      ) : (
+                        step.id
+                      )}
+                    </div>
+                    {index < steps.length - 1 && (
+                      <div
+                        className={cn("mt-2 h-16 w-0.5 bg-gray-200", {
+                          "bg-palette-green": step.status === "success",
+                          "bg-palette-blue/90": step.status === "pending",
+                        })}
+                      />
                     )}
                   </div>
-                  {index < steps.length - 1 && (
-                    <div
-                      className={cn("mt-2 h-16 w-0.5 bg-gray-200", {
-                        "bg-palette-green": step.status === "success",
-                        "bg-palette-blue/90": step.status === "pending",
+                  <div className="pt-3">
+                    <p
+                      className={cn("text-sm font-medium", {
+                        success: step.status === "success",
+                        "text-red-600": step.status === "error",
+                        "text-palette-blue/90": step.status === "pending",
+                        "text-gray-500": step.status === "default",
                       })}
-                    />
-                  )}
+                    >
+                      {step.title}
+                    </p>
+                  </div>
                 </div>
-                <div className="pt-3">
-                  <p
-                    className={cn("text-sm font-medium", {
-                      success: step.status === "success",
-                      "text-red-600": step.status === "error",
-                      "text-palette-blue/90": step.status === "pending",
-                      "text-gray-500": step.status === "default",
-                    })}
-                  >
-                    {step.title}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <div className="flex flex-col justify-start  gap-2 overflow-scroll md:justify-center  md:overflow-visible">
         {title && (
           <Card.Header
