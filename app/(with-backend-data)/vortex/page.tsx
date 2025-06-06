@@ -251,8 +251,7 @@ export default function VortexPage() {
                   className="font-bold text-palette-green"
                 >
                   {tokenName || "Token"}
-                </StyledText>-ATOM
-                ):
+                </StyledText>-ATOM):
               </StyledText>
               <StyledText as="label" variant="h4">
                 {amountToUSDString(currentPrice, {
