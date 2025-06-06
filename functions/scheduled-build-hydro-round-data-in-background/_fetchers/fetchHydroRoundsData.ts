@@ -5,21 +5,25 @@ import { fetchRoundLockups } from "./fetchRoundLockups"
 import { fetchRoundPrices } from "./fetchRoundPrices"
 import { fetchRoundTributes } from "./fetchRoundTributes"
 
-export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
+export async function fetchHydroRoundsData(
+  allRoundIds?: number[]
+): Promise<RawHydroRoundData[]> {
   const hydroQueryClient = await getHydroQueryClient()
 
   // Fetch Rounds & Tranches data to iterate over
-  const { round_end, round_id } = await hydroQueryClient.currentRound()
+  const { round_id } = await hydroQueryClient.currentRound()
 
   const { tranches } = await hydroQueryClient.tranches()
 
-  // Generate all possible rounds & tranches
-  const allRoundIds = Array.from({ length: round_id + 1 }, (_, i) => i)
+  // Get all tranche IDs
   const allTrancheIds = tranches.map((tranche) => tranche.id)
 
   // Fetch all data for each round
+  const roundIds =
+    allRoundIds ?? Array.from({ length: round_id + 1 }, (_, i) => i)
+
   const rawRoundData = await Promise.all(
-    allRoundIds.map(async (evaluatedRoundId) => {
+    roundIds.map(async (evaluatedRoundId) => {
       // Fetch tributes and lockups for the evaluated round
       const roundTributes = await fetchRoundTributes({
         roundId: evaluatedRoundId,

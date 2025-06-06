@@ -1,19 +1,29 @@
+import { SourceID } from "@/app/(v2)/v2/environments"
+import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { Icon } from "@/components/Icon"
+import Image from "next/image"
 import { ComponentProps } from "react"
 import { twJoin } from "tailwind-merge"
-import { useDummyData } from "../dummy-data/useDummyData"
 
 export function BidCard({
+  sourceId,
   bidId,
   ...otherProps
-}: ComponentProps<"div"> & { bidId: number }) {
-  const { bids, userVotedOnBidIds } = useDummyData()!
+}: ComponentProps<"div"> & {
+  sourceId: SourceID
+  bidId: number
+}) {
+  const { state } = useAppState()
+  const { hydroStates, bidDescriptionsById } = state
+  const userVotedOnBidIds: number[] = []
   const userHasVotedOnThisBid = userVotedOnBidIds.includes(bidId)
-  const bid = bids.find((bid) => bid.id === bidId)
+  const bid = hydroStates[sourceId].roundData
+    .flatMap((round) => round.round_bids || [])
+    .find((bid) => bid.proposal_id === bidId)
 
   if (!bid) return null
 
-  const { apr, duration, title } = bid
+  const bidDescription = bidDescriptionsById[bidId]
 
   return (
     <div
@@ -40,10 +50,18 @@ export function BidCard({
       <div
         className={twJoin(
           "mt-1", // slightly nudged down to align with the text
-          "size-12 rounded-full",
-          "bg-white"
+          "size-12 rounded-full"
         )}
-      />
+      >
+        {bidDescription?.projectLogoUrl && (
+          <Image
+            src={bidDescription.projectLogoUrl}
+            alt={bidDescription.projectName}
+            width={48}
+            height={48}
+          />
+        )}
+      </div>
 
       <div
         className={twJoin(
@@ -52,7 +70,7 @@ export function BidCard({
           "gap-2 md:gap-4"
         )}
       >
-        <h3 className="text-lg">{title}</h3>
+        <h3 className="text-lg">{bid.title}</h3>
 
         <div
           className={twJoin(
@@ -62,12 +80,12 @@ export function BidCard({
         >
           <div className={twJoin("flex items-center gap-1")}>
             <Icon name="calendar" />
-            <span>{duration}</span>
+            <span>{bid.deployment_duration}</span>
           </div>
 
           <div className={twJoin("flex items-center gap-1")}>
             <Icon name="chart-line-up" />
-            <span>{`${Math.round(apr * 100)}%`}</span>
+            <span>??%</span>
           </div>
 
           <button

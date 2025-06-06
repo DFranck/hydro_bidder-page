@@ -1,38 +1,45 @@
 import { BidCard } from "@/app/(v2)/v2/components/BidCard"
+import { SourceID } from "@/app/(v2)/v2/environments"
 import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { Icon } from "@/components/Icon"
 import { useIsMobile } from "@/lib/useIsMobile"
 import { ComponentProps } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
-import { useDummyData } from "../dummy-data/useDummyData"
 
-export function Bucket({
-  bucketId,
+export function Tranche({
+  sourceId,
+  trancheId,
   className,
   classNameForViewbox,
   classNameForContentContainer,
   ...otherProps
 }: ComponentProps<"div"> & {
-  bucketId: number
+  sourceId: SourceID
+  trancheId: number
   classNameForViewbox?: string
   classNameForContentContainer?: string
 }) {
   const isMobile = useIsMobile()
   const { state } = useAppState()
-  const { narrowBuckets } = state
-  const { bids, buckets } = useDummyData()!
+  const { narrowBuckets, hydroStates } = state
+  const tranche = hydroStates[sourceId].tranches.find(
+    (tranche) => tranche.id === trancheId
+  )
 
-  const bucket = buckets.find((bucket) => bucket.id === bucketId)
+  if (!tranche) return null
 
-  if (!bucket) return null
+  const { name, metadata } = tranche
+  const allBids = hydroStates[sourceId].roundData.flatMap(
+    (round) => round.round_bids || []
+  )
+  const userVotedInBucket = false // TODO: add this
+  const bidsInTranche = allBids.filter((bid) => bid.tranche_id === trancheId)
 
-  const { label, userVotedInBucket } = bucket
-
-  const bidsInBucket = bids.filter((bid) => bid.bucketId === bucketId)
+  console.log({ trancheId, tranche, bidsInTranche })
 
   return (
     <div
-      id={`bucket-container-${bucketId}`}
+      id={`bucket-container-${trancheId}`}
       className={twMerge(
         "relative",
         "h-full shrink-0 grow-0",
@@ -47,7 +54,7 @@ export function Bucket({
       {...otherProps}
     >
       <div
-        id={`bucket-viewbox-${bucketId}`}
+        id={`bucket-viewbox-${trancheId}`}
         tabIndex={0}
         className={twMerge(
           "absolute inset-0",
@@ -67,13 +74,13 @@ export function Bucket({
         )}
       >
         <div
-          id={`bucket-header-${bucketId}`}
+          id={`bucket-header-${trancheId}`}
           className={twJoin(
             "flex h-12 items-center justify-between px-3",
             userVotedInBucket ? "bg-palette-green/10" : "bg-palette-beige/10"
           )}
         >
-          <h2 className="label">{label}</h2>
+          <h2 className="label">{name}</h2>
 
           <div className={twJoin("flex items-center gap-2")}>
             <span
@@ -103,7 +110,7 @@ export function Bucket({
         </div>
 
         <div
-          id={`bucket-content-${bucketId}`}
+          id={`bucket-content-${trancheId}`}
           className={twMerge(
             "h-full",
             "overflow-y-auto",
@@ -111,18 +118,22 @@ export function Bucket({
           )}
         >
           <div
-            id={`bucket-content-inner-${bucketId}`}
+            id={`bucket-content-inner-${trancheId}`}
             className={twJoin(
               "mx-auto flex flex-col gap-[2px]",
               "md:max-w-[60vw]",
               "md:py-12"
             )}
           >
-            {bidsInBucket.map(({ id }, index) => (
-              <BidCard key={index} bidId={id} />
+            {bidsInTranche.map((bid, index) => (
+              <BidCard
+                key={index}
+                sourceId={sourceId}
+                bidId={bid.proposal_id}
+              />
             ))}
 
-            {!bidsInBucket.length && (
+            {!bidsInTranche.length && (
               <div className="empty-box">
                 <span>No bids in this bucket, yet&hellip;</span>
               </div>

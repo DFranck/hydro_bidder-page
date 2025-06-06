@@ -16,23 +16,27 @@ import sortBy from "lodash/sortBy"
 import Link from "next/link"
 import { useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
-import { Bucket } from "./components/Bucket"
 import { Logo } from "./components/Logo"
 import { MenuItem, ResponsiveMenu } from "./components/ResponsiveMenu"
-import { useDummyData } from "./dummy-data/useDummyData"
+import { Tranche } from "./components/Tranche"
 
 export default function V2() {
   const isMobile = useIsMobile()
   const { state, dispatch } = useAppState()
-  const { narrowBuckets } = state
+  const { hydroStates, narrowBuckets } = state
   const [isSidebarOpen, setIsSidebarOpen] = useState(isMobile ? false : true)
   const [isRoundSelectorOpen, setIsRoundSelectorOpen] = useState(false)
   const menuItems = getMenuItems(false)
   const isSidebarDocked = !isSidebarOpen && !isMobile
-
-  const { buckets, currentRoundId } = useDummyData()!
-
-  const sortedBuckets = sortBy(buckets, (bucket) => bucket.userVotedInBucket)
+  const allTranchesSorted = sortBy(
+    Object.values(hydroStates).flatMap(({ sourceId, tranches }) =>
+      tranches.map((tranche) => ({
+        ...tranche,
+        sourceId: sourceId,
+      }))
+    ),
+    (tranche) => tranche.sourceId
+  )
 
   function getMenuItems(isWalletConnected: boolean): MenuItem[] {
     return [
@@ -223,7 +227,7 @@ export default function V2() {
                     isSidebarDocked && "text-3xl leading-none"
                   )}
                 >
-                  5
+                  ??
                 </var>
               </span>{" "}
               <span
@@ -279,7 +283,7 @@ export default function V2() {
               "bg-palette-beige text-palette-text"
             )}
           >
-            {range(-2, currentRoundId + 1).map((roundId) => (
+            {range(-2, 100).map((roundId) => (
               <Link
                 key={roundId}
                 href={`/v2/rounds/${roundId + 1}`}
@@ -382,8 +386,9 @@ export default function V2() {
                   ]
             )}
             renderDot={({ index, isActive, spreadProps }) => {
-              const bucket = sortedBuckets[index]
-              const { label, userVotedInBucket } = bucket
+              const tranche = allTranchesSorted[index]
+              const { name, sourceId } = tranche
+              const userVotedInBucket = false // TODO: add this
 
               return (
                 <button
@@ -406,7 +411,7 @@ export default function V2() {
                     ]
                   )}
                 >
-                  <span className="label">{label}</span>
+                  <span className="label">{name}</span>
                 </button>
               )
             }}
@@ -420,10 +425,11 @@ export default function V2() {
               "flex overflow-x-auto"
             )}
           >
-            {sortedBuckets.map(({ id }, index) => (
-              <Bucket
+            {allTranchesSorted.map(({ id, sourceId }, index) => (
+              <Tranche
                 key={index}
-                bucketId={id}
+                sourceId={sourceId}
+                trancheId={id}
                 className={twJoin(!isMobile && "ml-[-2px]", "first:ml-0")}
                 classNameForContentContainer="pb-12"
               />
