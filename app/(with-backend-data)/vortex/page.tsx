@@ -430,6 +430,19 @@ export default function VortexPage() {
             </Tooltip>
           </div>
         </div>
+        <div className="flex w-full flex-col gap-4 rounded-2xl bg-black/30 p-6 shadow-lg backdrop-blur-lg">
+          <StyledText as="h3" variant="h3" className="pb-4">
+            FAQ
+          </StyledText>
+          <div className="flex flex-col gap-4">
+            <StyledText as="h4" variant="h4" className="text-palette-green">
+              Which price feeds does Vortex consider when deciding whether a position can be liquidated?
+            </StyledText>
+            <StyledText as="p" className="text-white/80">
+              Vortex utilizes the price of the pool that the concentrated liquidity position is deployed in to determine whether a liquidation can occur, and the liquidation price is equal to the lower bound of the position.
+            </StyledText>
+          </div>
+        </div>
       </div>
 
       <StyledText
