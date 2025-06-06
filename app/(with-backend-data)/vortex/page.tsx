@@ -179,7 +179,7 @@ export default function VortexPage() {
                 <li>Collateral losses are partially covered by the Hydro Treasury</li>
               </ul>
               <p>
-                For questions or feedback, <a href="https://t.me/cosmosp4tr1ck" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">reach out to Patrick via Telegram</a>. You can also learn more in <a href="https://x.com/HydroTeam_/status/1909965275346182627" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">this Twitter article here</a>.
+                For questions or feedback, <a href="https://t.me/cosmosp4tr1ck" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">reach out to Patrick via Telegram</a>. You can also learn more in <a href="https://x.com/HydroTeam_/status/1909965275346182627" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">this Twitter article</a>.
               </p>
             </div>
         </div>
