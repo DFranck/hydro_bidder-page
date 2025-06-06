@@ -168,10 +168,10 @@ export default function VortexPage() {
         <div className="flex w-full flex-col gap-4 rounded-2xl bg-black/30 p-6 shadow-lg backdrop-blur-lg">
             <div className="text-white/80 text-base space-y-4">
               <p>
-                Vortex is Hydro's mechanism for deploying liquidity into volatile DEX pools while managing impermanent loss. It does this by combining concentrated liquidity positions with bidder-provided collateral, which may be liquidated if price moves beyond a set range.
+                Vortex is Hydro&apos;s mechanism for deploying liquidity into volatile DEX pools while managing impermanent loss. It does this by combining concentrated liquidity positions with bidder-provided collateral, which may be liquidated if price moves beyond a set range.
               </p>
               <p>
-                This simulation tool allows bidders to preview the parameters of a Vortex bid: token contributions from each side, tick ranges, and the collateral requirements. It's designed to help participants understand the mechanics and optimize their bids.
+                This simulation tool allows bidders to preview the parameters of a Vortex bid: token contributions from each side, tick ranges, and the collateral requirements. It&apos;s designed to help participants understand the mechanics and optimize their bids.
               </p>
               <p>The system is currently in test phase, and to encourage early experimentation, the Hydro team is offering favorable conditions:</p>
               <ul className="list-disc list-inside pl-4 space-y-2">
