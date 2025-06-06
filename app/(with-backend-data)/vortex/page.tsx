@@ -51,12 +51,12 @@ export default function VortexPage() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     setParams({
-      tokenName: urlParams.get("tokenName") || "",
-      atomUsdPrice: urlParams.get("atomUsdPrice") || "",
-      tokenUsdPrice: urlParams.get("tokenUsdPrice") || "",
-      atomSupplied: urlParams.get("atomSupplied") || "",
-      lowerBoundPrice: urlParams.get("lowerBoundPrice") || "",
-      upperBoundPrice: urlParams.get("upperBoundPrice") || "",
+      tokenName: urlParams.get("tokenName") || "USDC",
+      atomUsdPrice: urlParams.get("atomUsdPrice") || "5",
+      tokenUsdPrice: urlParams.get("tokenUsdPrice") || "1",
+      atomSupplied: urlParams.get("atomSupplied") || "1000",
+      lowerBoundPrice: urlParams.get("lowerBoundPrice") || "0.15",
+      upperBoundPrice: urlParams.get("upperBoundPrice") || "0.25",
     })
   }, [])
 
@@ -251,14 +251,13 @@ export default function VortexPage() {
             </div>
             <div className="flex flex-row items-center gap-4 pb-2">
               <StyledText as="label" variant="label">
-                Current Price (ATOM-
-                <StyledText
+                Current Price (<StyledText
                   as="label"
                   variant="label"
                   className="font-bold text-palette-green"
                 >
                   {tokenName || "Token"}
-                </StyledText>
+                </StyledText>-ATOM
                 ):
               </StyledText>
               <StyledText as="label" variant="h4">
