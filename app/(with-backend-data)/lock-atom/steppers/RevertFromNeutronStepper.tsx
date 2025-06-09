@@ -13,6 +13,7 @@ import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForSh
 import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
 import { stepLabels } from "@/constants/lock-atom"
+import { ContinueLockForm } from "../components/ContinueLockForm"
 
 export type RevertFromNeutronStep =
   | "Init"
@@ -31,7 +32,7 @@ function getValidatorMoniker(
 }
 
 export const RevertFromNeutronStepper = ({
-  amount,
+  amount: lockedAmount,
   validator,
   denom,
   baseDenom,
@@ -51,6 +52,7 @@ export const RevertFromNeutronStepper = ({
   const [step, setStep] = useState<RevertFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromNeutronStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
+  const [amount, setNewAmount] = useState(lockedAmount)
 
   const execute = async () => {
     try {
@@ -126,6 +128,7 @@ export const RevertFromNeutronStepper = ({
       label: ReactNode
       onClick?: () => void
       className?: string
+      disabled?: boolean
     }[]
   } {
     switch (step) {
@@ -138,8 +141,17 @@ export const RevertFromNeutronStepper = ({
                 You&rsquo;re about to revert{" "}
                 <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
                 back to its original state, staked with{" "}
-                <strong className="break-all">{getValidatorMoniker(validator, validatorMap)}</strong>.
+                <strong className="break-all">
+                  {getValidatorMoniker(validator, validatorMap)}
+                </strong>
+                .
               </p>
+              <ContinueLockForm
+                validator={validator}
+                amount={amount}
+                maxAmount={lockedAmount}
+                handleNewAmount={setNewAmount}
+              />
               <p>
                 This should take about a minute and will require 2 wallet
                 approvals.
@@ -150,6 +162,7 @@ export const RevertFromNeutronStepper = ({
             {
               label: "Revert",
               onClick: execute,
+              disabled: Number(amount) > Number(lockedAmount) || amount === "0",
             },
             {
               label: "Cancel",

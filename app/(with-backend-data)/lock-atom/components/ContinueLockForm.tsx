@@ -13,10 +13,10 @@ export function ContinueLockForm({
   handleNewAmount,
 }: {
   validator: string
-  selectedDuration: number
+  selectedDuration?: number
   amount: string
   maxAmount: string
-  onChange: (duration: number) => void
+  onChange?: (duration: number) => void
   handleNewAmount: (amount: string) => void
 }) {
   const [lockedAmount, setLockedAmount] = useState<string>(formatAmount(amount))
@@ -116,16 +116,18 @@ export function ContinueLockForm({
             </div>
           </div>
 
-          <div className="col-span-2 block  grid-cols-subgrid items-center md:grid">
-            <StyledText as="label" variant="label">
-              Select Lock Duration:
-            </StyledText>
+          {!!selectedDuration && (
+            <div className="col-span-2 block  grid-cols-subgrid items-center md:grid">
+              <StyledText as="label" variant="label">
+                Select Lock Duration:
+              </StyledText>
 
-            <InputForLockupPeriod
-              selectedDuration={selectedDuration}
-              onChange={onChange}
-            />
-          </div>
+              <InputForLockupPeriod
+                selectedDuration={selectedDuration ?? 0}
+                onChange={onChange}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

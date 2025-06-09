@@ -11,6 +11,7 @@ import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForSh
 import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
 import { stepLabels } from "@/constants/lock-atom"
+import { ContinueLockForm } from "../components/ContinueLockForm"
 
 function getValidatorMoniker(
   validator: string,
@@ -27,7 +28,7 @@ export type RevertFromHubStep =
   | "Error"
 
 export const RevertFromHubStepper = ({
-  amount,
+  amount: lockedAmount,
   validator,
   denom,
   onExit,
@@ -44,6 +45,8 @@ export const RevertFromHubStepper = ({
   const [step, setStep] = useState<RevertFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
+  const [amount, setNewAmount] = useState(lockedAmount)
+
   const router = useRouter()
 
   const execute = async () => {
@@ -98,6 +101,7 @@ export const RevertFromHubStepper = ({
       label: ReactNode
       onClick?: () => void
       className?: string
+      disabled?: boolean
     }[]
   } {
     switch (step) {
@@ -112,11 +116,17 @@ export const RevertFromHubStepper = ({
                   {formatAmount(amount)} ATOM
                 </strong>{" "}
                 back to its original state, staked with{" "}
-                <strong className="text-white break-all">
+                <strong className="break-all text-white">
                   {getValidatorMoniker(validator, validatorMap)}
                 </strong>
                 .
               </p>
+              <ContinueLockForm
+                validator={validator}
+                amount={amount}
+                maxAmount={lockedAmount}
+                handleNewAmount={setNewAmount}
+              />
               <p>
                 This should take about a minute and will require 1 wallet
                 approval.
@@ -127,6 +137,7 @@ export const RevertFromHubStepper = ({
             {
               label: "Revert",
               onClick: execute,
+              disabled: Number(amount) > Number(lockedAmount) || amount === "0",
             },
             {
               label: "Cancel",
