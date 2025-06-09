@@ -235,7 +235,7 @@ export function Step({
           )}
             <div className="flex flex-row justify-center md:justify-start md:flex-col md:space-y-6">
               {steps.map((step, index) => (
-                <div key={step.id} className="flex items-start gap-4">
+                <div key={step.id} className="flex items-start gap-3">
                   <div className="flex flex-row items-center md:flex-col">
                     <div
                       className={cn(
