@@ -219,17 +219,17 @@ export function Step({
   return (
     <Card
       className={cn(
-        "w-md m-8 grid h-4/6 grid-cols-1  gap-4 overflow-hidden md:m-auto md:h-auto md:overflow-auto",
+        "w-md m-8 grid grid-cols-1  gap-4  md:m-auto",
         {
           "md:grid-cols-1": !currentStep,
-          "md:grid-cols-2": !!currentStep,
+          "md:grid-cols-12": !!currentStep,
         }
       )}
     >
       {!!currentStep && (
-        <div>
+        <div className="col-span-4">
           {!!amount && (
-            <div className="my-4 flex flex-col">
+            <div className="mb-4 flex flex-col">
               <StyledText className="uppercase leading-6 tracking-wide">
                 {modalTitle ?? " Lock Amount"}
               </StyledText>
@@ -237,7 +237,7 @@ export function Step({
             </div>
           )}
           <div className="space-y-6">
-            <div className="space-y-6">
+            <div className="space-y-2">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-start gap-4">
                   <div className="flex flex-col items-center">
@@ -268,14 +268,14 @@ export function Step({
                     </div>
                     {index < steps.length - 1 && (
                       <div
-                        className={cn("mt-2 h-16 w-0.5 bg-gray-200", {
+                        className={cn("mt-2 h-8  w-0.5 bg-gray-200 md:h-16", {
                           "bg-palette-green": step.status === "success",
                           "bg-palette-blue/90": step.status === "pending",
                         })}
                       />
                     )}
                   </div>
-                  <div className="pt-3">
+                  <div className="pt-2">
                     <p
                       className={cn("text-sm font-medium", {
                         success: step.status === "success",
@@ -293,7 +293,7 @@ export function Step({
           </div>
         </div>
       )}
-      <div className="flex flex-col justify-start  gap-2 overflow-scroll md:justify-center  md:overflow-visible">
+      <div className="col-span-8 flex flex-col justify-start  gap-2 md:justify-center ">
         {title && (
           <Card.Header
             title={title}
