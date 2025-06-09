@@ -218,16 +218,13 @@ export function Step({
 
   return (
     <Card
-      className={cn(
-        "w-md m-8 grid grid-cols-1  gap-4  md:m-auto",
-        {
-          "md:grid-cols-1": !currentStep,
-          "md:grid-cols-12": !!currentStep,
-        }
-      )}
+      className={cn("w-md m-6 grid  gap-4  md:m-auto", {
+        "md:grid-cols-1": !currentStep,
+        "md:grid-cols-12": !!currentStep,
+      })}
     >
       {!!currentStep && (
-        <div className="col-span-4">
+        <div className="col-span-12 md:col-span-4">
           {!!amount && (
             <div className="mb-4 flex flex-col">
               <StyledText className="uppercase leading-6 tracking-wide">
@@ -236,11 +233,10 @@ export function Step({
               <StyledText variant="h4">{amount}</StyledText>
             </div>
           )}
-          <div className="space-y-6">
-            <div className="space-y-2">
+            <div className="flex flex-row justify-center md:justify-start md:flex-col md:space-y-6">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-start gap-4">
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-row items-center md:flex-col">
                     <div
                       className={cn(
                         "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
@@ -268,14 +264,14 @@ export function Step({
                     </div>
                     {index < steps.length - 1 && (
                       <div
-                        className={cn("mt-2 h-8  w-0.5 bg-gray-200 md:h-16", {
+                        className={cn("mt-2 h-0.5  w-8 bg-gray-200 md:w-0.5 md:h-16", {
                           "bg-palette-green": step.status === "success",
                           "bg-palette-blue/90": step.status === "pending",
                         })}
                       />
                     )}
                   </div>
-                  <div className="pt-2">
+                  <div className="hidden pt-2 md:block">
                     <p
                       className={cn("text-sm font-medium", {
                         success: step.status === "success",
@@ -290,10 +286,9 @@ export function Step({
                 </div>
               ))}
             </div>
-          </div>
         </div>
       )}
-      <div className="col-span-8 flex flex-col justify-start  gap-2 md:justify-center ">
+      <div className="col-span-12 flex flex-col justify-start  gap-2 md:justify-center md:col-span-8">
         {title && (
           <Card.Header
             title={title}
