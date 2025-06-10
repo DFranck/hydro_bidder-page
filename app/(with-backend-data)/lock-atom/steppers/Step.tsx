@@ -226,7 +226,7 @@ export function Step({
       {!!currentStep && (
         <div className="col-span-12 md:col-span-4">
           {!!amount && (
-            <div className="mb-4 flex flex-col">
+            <div className="hidden mb-4 md:flex md:flex-col">
               <StyledText className="uppercase leading-6 tracking-wide">
                 {modalTitle ?? " Lock Amount"}
               </StyledText>
