@@ -123,7 +123,7 @@ export function ContinueLockForm({
               </StyledText>
 
               <InputForLockupPeriod
-                selectedDuration={selectedDuration ?? 0}
+                selectedDuration={selectedDuration}
                 onChange={onChange}
               />
             </div>
