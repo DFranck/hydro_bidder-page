@@ -19,6 +19,10 @@ export type AppAction =
       payload: boolean
     }
   | {
+      type: "SET_SIDEBAR_OPEN"
+      payload: boolean
+    }
+  | {
       type: "SET_STATE"
       payload: Partial<AppState>
     }
@@ -37,6 +41,9 @@ export function reducer(state: AppState, action: AppAction): AppState {
 
       case "SET_NARROW_BUCKETS":
         return { ...state, narrowBuckets: action.payload }
+
+      case "SET_SIDEBAR_OPEN":
+        return { ...state, isSidebarOpen: action.payload }
 
       case "SET_STATE":
         return { ...state, ...action.payload }

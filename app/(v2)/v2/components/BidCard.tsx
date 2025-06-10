@@ -14,12 +14,12 @@ export function BidCard({
   bidId: number
 }) {
   const { state } = useAppState()
-  const { hydroStates, bidDescriptionsById } = state
+  const { currentRoundDataPerSource, bidDescriptionsById } = state
   const userVotedOnBidIds: number[] = []
   const userHasVotedOnThisBid = userVotedOnBidIds.includes(bidId)
-  const bid = hydroStates[sourceId].roundData
-    .flatMap((round) => round.round_bids || [])
-    .find((bid) => bid.proposal_id === bidId)
+  const augmentedBids =
+    currentRoundDataPerSource?.[sourceId]?.augmentedBids ?? []
+  const bid = augmentedBids?.find((bid) => bid.id === bidId)
 
   if (!bid) return null
 
@@ -30,7 +30,7 @@ export function BidCard({
       id="bid-card"
       tabIndex={0}
       className={twJoin(
-        "grid grid-cols-[min-content_auto] items-start",
+        "grid grid-cols-[min-content_auto] items-center",
         "gap-3 px-4 pt-3 pb-4",
         "md:gap-6 md:px-6 md:pt-5 md:pb-6",
         "transition-all",
@@ -38,7 +38,10 @@ export function BidCard({
         "focus-within:bg-palette-beige",
         "focus-within:text-palette-text",
         "focus-within:**:text-palette-text",
-        "hover:bg-palette-beige/50",
+        "hover:bg-palette-beige/20",
+        "hover:**:text-white",
+        "focus-within:hover:bg-palette-beige/90",
+        "focus-within:hover:**:text-palette-text",
         userHasVotedOnThisBid && [
           "bg-palette-green",
           "hover:bg-palette-green/50",
@@ -47,16 +50,11 @@ export function BidCard({
       )}
       {...otherProps}
     >
-      <div
-        className={twJoin(
-          "mt-1", // slightly nudged down to align with the text
-          "size-12 rounded-full"
-        )}
-      >
+      <div className={twJoin("size-12 rounded-full")}>
         {bidDescription?.projectLogoUrl && (
           <Image
             src={bidDescription.projectLogoUrl}
-            alt={bidDescription.projectName}
+            alt={bidDescription.projectName ?? bidDescription.title}
             width={48}
             height={48}
           />
@@ -65,8 +63,7 @@ export function BidCard({
 
       <div
         className={twJoin(
-          "h-full",
-          "flex flex-col justify-between",
+          "flex items-center justify-between",
           "gap-2 md:gap-4"
         )}
       >
@@ -80,7 +77,7 @@ export function BidCard({
         >
           <div className={twJoin("flex items-center gap-1")}>
             <Icon name="calendar" />
-            <span>{bid.deployment_duration}</span>
+            <span>{bid.duration}</span>
           </div>
 
           <div className={twJoin("flex items-center gap-1")}>
@@ -90,7 +87,7 @@ export function BidCard({
 
           <button
             className={twJoin(
-              "btn-inline btn-inverted",
+              "btn-primary btn-inline btn-inverted",
               "flex items-center gap-1"
             )}
           >

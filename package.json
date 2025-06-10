@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "supabase:build-types": "supabase gen types typescript --project-id qqhhwjgeottahfasjzht > supabase/generated-types.ts"
   },
   "dependencies": {
     "@chain-registry/types": "^0.50.135",

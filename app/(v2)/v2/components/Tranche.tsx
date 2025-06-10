@@ -1,4 +1,5 @@
 import { BidCard } from "@/app/(v2)/v2/components/BidCard"
+import { SourceBadge } from "@/app/(v2)/v2/components/SourceBadge"
 import { SourceID } from "@/app/(v2)/v2/environments"
 import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { Icon } from "@/components/Icon"
@@ -21,21 +22,17 @@ export function Tranche({
 }) {
   const isMobile = useIsMobile()
   const { state } = useAppState()
-  const { narrowBuckets, hydroStates } = state
-  const tranche = hydroStates[sourceId].tranches.find(
+  const { narrowBuckets, currentRoundDataPerSource } = state
+  const tranche = currentRoundDataPerSource?.[sourceId].tranches.find(
     (tranche) => tranche.id === trancheId
   )
 
   if (!tranche) return null
 
   const { name, metadata } = tranche
-  const allBids = hydroStates[sourceId].roundData.flatMap(
-    (round) => round.round_bids || []
-  )
+  const allBids = currentRoundDataPerSource?.[sourceId].augmentedBids ?? []
   const userVotedInBucket = false // TODO: add this
-  const bidsInTranche = allBids.filter((bid) => bid.tranche_id === trancheId)
-
-  console.log({ trancheId, tranche, bidsInTranche })
+  const bidsInTranche = allBids.filter((bid) => bid.trancheId === trancheId)
 
   return (
     <div
@@ -59,11 +56,9 @@ export function Tranche({
         className={twMerge(
           "absolute inset-0",
           "grid grid-rows-[min-content_auto] gap-[2px]",
-          "opacity-80 transition-opacity",
           "border-2 border-transparent",
           "focus-within:border-palette-beige",
           "focus-within:outline-none",
-          "focus-within:opacity-100",
           userVotedInBucket && [
             "bg-palette-green/10",
             "focus-within:border-palette-green",
@@ -80,7 +75,10 @@ export function Tranche({
             userVotedInBucket ? "bg-palette-green/10" : "bg-palette-beige/10"
           )}
         >
-          <h2 className="label">{name}</h2>
+          <div className="flex items-center gap-3">
+            <SourceBadge sourceId={sourceId} className="size-6 p-1" />
+            <h2 className="label">{name}</h2>
+          </div>
 
           <div className={twJoin("flex items-center gap-2")}>
             <span
@@ -126,11 +124,7 @@ export function Tranche({
             )}
           >
             {bidsInTranche.map((bid, index) => (
-              <BidCard
-                key={index}
-                sourceId={sourceId}
-                bidId={bid.proposal_id}
-              />
+              <BidCard key={index} sourceId={sourceId} bidId={bid.id} />
             ))}
 
             {!bidsInTranche.length && (

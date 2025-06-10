@@ -1,35 +1,29 @@
 "use client"
 
-import { ScrollIndicator } from "@/app/(v2)/v2/components/ScrollIndicator"
+import { SourceBadge } from "@/app/(v2)/v2/components/SourceBadge"
 import { StatBar } from "@/app/(v2)/v2/components/StatBar"
 import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { CollapsibleBox } from "@/components/CollapsibleBox"
 import { Icon } from "@/components/Icon"
-import { needsWalletConnectionTooltip } from "@/components/ToolTips"
-import {
-  HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
-  HYDRO_TELEGRAM_COMMUNITY_URL,
-} from "@/config"
 import { useIsMobile } from "@/lib/useIsMobile"
-import range from "lodash/range"
 import sortBy from "lodash/sortBy"
 import Link from "next/link"
-import { useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 import { Logo } from "./components/Logo"
-import { MenuItem, ResponsiveMenu } from "./components/ResponsiveMenu"
+import { ResponsiveMenu } from "./components/ResponsiveMenu"
 import { Tranche } from "./components/Tranche"
+import { TrancheNavigation } from "./components/TrancheNavigation"
+import { getMenuItems } from "./utils/getMenuItems"
 
 export default function V2() {
   const isMobile = useIsMobile()
   const { state, dispatch } = useAppState()
-  const { hydroStates, narrowBuckets } = state
-  const [isSidebarOpen, setIsSidebarOpen] = useState(isMobile ? false : true)
-  const [isRoundSelectorOpen, setIsRoundSelectorOpen] = useState(false)
-  const menuItems = getMenuItems(false)
+  const { currentRoundDataPerSource, narrowBuckets, isSidebarOpen } = state
+  const menuItems = getMenuItems(false, narrowBuckets, dispatch)
   const isSidebarDocked = !isSidebarOpen && !isMobile
+  const allSources = Object.values(currentRoundDataPerSource ?? {})
   const allTranchesSorted = sortBy(
-    Object.values(hydroStates).flatMap(({ sourceId, tranches }) =>
+    allSources.flatMap(({ sourceId, tranches }) =>
       tranches.map((tranche) => ({
         ...tranche,
         sourceId: sourceId,
@@ -37,101 +31,6 @@ export default function V2() {
     ),
     (tranche) => tranche.sourceId
   )
-
-  function getMenuItems(isWalletConnected: boolean): MenuItem[] {
-    return [
-      {
-        label: "Bids",
-        href: "/bids",
-      },
-      {
-        disabled: !isWalletConnected,
-        label: "Lockups",
-        href: "/lockups",
-        tooltip: !isWalletConnected ? needsWalletConnectionTooltip : undefined,
-      },
-      {
-        disabled: !isWalletConnected,
-        label: "Rewards",
-        href: "/rewards",
-        tooltip: !isWalletConnected ? needsWalletConnectionTooltip : undefined,
-      },
-      {
-        label: "Metrics",
-        href: "/metrics",
-      },
-      {
-        label: "More",
-        menuItems: [
-          {
-            label: "Grants",
-            href: "https://forms.gle/RGPdDenuFQ1pGapKA",
-            iconLeft: "solid:award",
-            iconRight: "arrow-up-right-from-square",
-            target: "_blank",
-          },
-          {
-            label: "Airdrops",
-            href: "/airdrops",
-            iconLeft: "solid:parachute-box",
-            iconRight: "arrow-up-right-from-square",
-            target: "_blank",
-          },
-          {
-            href: "https://daodao.zone/dao/neutron1lefyfl55ntp7j58k8wy7x3yq9dngsj73s5syrreq55hu4xst660s5p2jtj/proposals",
-            iconLeft: "solid:gavel",
-            iconRight: "arrow-up-right-from-square",
-            label: "Governance",
-            target: "_blank",
-          },
-          {
-            href: "/docs",
-            iconLeft: "solid:book",
-            iconRight: "arrow-up-right-from-square",
-            label: "Docs",
-            target: "_blank",
-          },
-          {
-            href: "https://x.com/HydroTeam_",
-            iconLeft: "brands:x-twitter",
-            iconRight: "arrow-up-right-from-square",
-            label: "Twitter",
-            target: "_blank",
-          },
-          {
-            href: HYDRO_TELEGRAM_COMMUNITY_URL,
-            iconLeft: "solid:paper-plane",
-            iconRight: "arrow-up-right-from-square",
-            label: "Community",
-            target: "_blank",
-          },
-          {
-            href: HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
-            iconLeft: "solid:paper-plane",
-            iconRight: "arrow-up-right-from-square",
-            label: "Announcements",
-            target: "_blank",
-          },
-        ],
-      },
-      {
-        label: "Settings",
-        iconRight: "solid:gear",
-        menuItems: [
-          {
-            label: "Narrow Buckets",
-            iconLeft: "solid:columns-3",
-            iconRight: narrowBuckets ? "solid:toggle-on" : "solid:toggle-off",
-            onClick: () =>
-              dispatch({
-                type: "SET_NARROW_BUCKETS",
-                payload: !narrowBuckets,
-              }),
-          },
-        ],
-      },
-    ]
-  }
 
   return (
     <div
@@ -153,7 +52,7 @@ export default function V2() {
         className={twJoin(
           "grid-in-header",
           "flex items-center justify-between",
-          isMobile ? "" : ""
+          "from-palette-blue/20 to-palette-blue/0 bg-gradient-to-t"
         )}
       >
         <div className={twJoin("h-12 w-full px-3 py-1")}>
@@ -189,74 +88,34 @@ export default function V2() {
         <aside
           className={twJoin(
             "grid-in-sidebar",
-            "flex flex-col",
+            "flex flex-col gap-[2px]",
             "bg-palette-beige/10"
           )}
-          onClick={isSidebarDocked ? () => setIsSidebarOpen(true) : undefined}
+          onClick={() =>
+            dispatch({ type: "SET_SIDEBAR_OPEN", payload: !isSidebarOpen })
+          }
         >
           <div
-            id="sidebar-round-selector"
             className={twJoin(
+              "h-12 px-3",
               "flex items-center justify-between",
-              "bg-palette-beige text-palette-text",
-              "font-bold transition-all",
-              isSidebarDocked
-                ? "flex-col p-[2px]" // move the switcher above
-                : "h-12 px-3"
+              isSidebarDocked && "hidden"
             )}
           >
-            <div
-              className={twJoin(
-                "flex w-full items-center",
-                isSidebarDocked ? "flex-col" : "gap-3"
-              )}
-            >
-              <span
-                className={twJoin(
-                  isSidebarDocked && [
-                    "py-2",
-                    "flex flex-col items-center justify-center",
-                    "text-[10px] uppercase",
-                  ]
-                )}
-              >
-                <span>Round</span>{" "}
-                <var
-                  className={twJoin(
-                    "not-italic",
-                    isSidebarDocked && "text-3xl leading-none"
-                  )}
-                >
-                  ??
-                </var>
-              </span>{" "}
-              <span
-                className={twJoin(
-                  "py-0.5",
-                  "text-[10px] uppercase",
-                  "bg-palette-text text-palette-beige",
-                  isSidebarDocked ? "w-full text-center" : "rounded-full px-2"
-                )}
-              >
-                Current
-              </span>
-            </div>
+            <div className="label whitespace-nowrap">Voting Tokens</div>
 
-            <div className={twJoin("flex items-center gap-2")}>
-              <button
-                className={twJoin(
-                  "btn-icon transition-all",
-                  isSidebarDocked && "hidden",
-                  isRoundSelectorOpen && "rotate-180"
-                )}
-                onClick={() => setIsRoundSelectorOpen(!isRoundSelectorOpen)}
-              >
-                <Icon name="solid:caret-down" />
+            <div className="flex items-center gap-2">
+              <button className={twJoin("btn-icon")}>
+                <Icon name="solid:ellipsis-vertical" />
               </button>
-
               <button
                 className={twJoin("btn-icon", isSidebarDocked && "hidden")}
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                onClick={() =>
+                  dispatch({
+                    type: "SET_SIDEBAR_OPEN",
+                    payload: !isSidebarOpen,
+                  })
+                }
               >
                 <Icon
                   name="solid:arrow-left-to-line"
@@ -270,84 +129,67 @@ export default function V2() {
             </div>
           </div>
 
-          <CollapsibleBox
-            id="sidebar-round-selector-options"
-            isCollapsed={!isRoundSelectorOpen || isSidebarDocked}
-            className={twJoin(
-              !isMobile &&
-                (!isRoundSelectorOpen || isSidebarDocked) &&
-                "mt-[2px]"
+          <div className={twJoin("flex flex-col gap-[2px]")}>
+            {allSources.map(
+              ({ totalLockedTokens, sourceId, currentRoundId }) => (
+                <div
+                  key={sourceId}
+                  className={twMerge(
+                    "relative",
+                    "flex items-center justify-between gap-3",
+                    isSidebarDocked
+                      ? "flex-col gap-1 py-3 text-center"
+                      : "h-12 flex-row pl-3",
+                    sourceId === "atom"
+                      ? "bg-token-atom"
+                      : sourceId === "stosmo"
+                        ? "bg-token-stosmo"
+                        : "bg-palette-red"
+                  )}
+                >
+                  <div
+                    className={twJoin(
+                      "flex items-center",
+                      isSidebarDocked ? "flex-col gap-1" : "flex-row gap-3"
+                    )}
+                  >
+                    <SourceBadge sourceId={sourceId} className="size-8 p-1.5" />
+
+                    <div
+                      className={twJoin(
+                        "flex items-baseline gap-1",
+                        isSidebarDocked ? "flex-col items-center" : "flex-row"
+                      )}
+                    >
+                      <span className="font-extrabold">
+                        {totalLockedTokens.toLocaleString()}
+                      </span>
+                      <span className="denom">{sourceId}</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={twJoin(
+                      "flex items-center gap-2",
+                      isSidebarDocked && "hidden"
+                    )}
+                  >
+                    <div className={twJoin("label")}>
+                      Round {currentRoundId}
+                    </div>
+                    <button className="btn-icon">
+                      <Icon name="solid:caret-down" />
+                    </button>
+                  </div>
+                </div>
+              )
             )}
-            classNamesForInnerWrapper={twJoin(
-              "flex flex-col",
-              "bg-palette-beige text-palette-text"
-            )}
-          >
-            {range(-2, 100).map((roundId) => (
-              <Link
-                key={roundId}
-                href={`/v2/rounds/${roundId + 1}`}
-                className={twJoin(
-                  "flex items-center gap-1",
-                  "h-12 px-3",
-                  "hover:bg-palette-text/10"
-                )}
-              >
-                Round {roundId + 1}
-              </Link>
-            ))}
-          </CollapsibleBox>
+          </div>
 
           <CollapsibleBox
             id="sidebar-content"
             isCollapsed={isMobile && !isSidebarOpen}
-          >
-            <div
-              className={twJoin(
-                "h-12 px-3",
-                "flex items-center justify-between",
-                isSidebarDocked && "hidden"
-              )}
-            >
-              <div className="label">Lockups</div>
-
-              <button className={twJoin("btn-icon")}>
-                <Icon name="solid:ellipsis-vertical" />
-              </button>
-            </div>
-
-            <div
-              className={twJoin(
-                "grid gap-[2px]",
-                isSidebarDocked ? "grid-cols-1" : "grid-cols-2"
-              )}
-            >
-              {(
-                [
-                  [200, "ATOM", "bg-token-atom"],
-                  [0, "stOSMO", "bg-token-stosmo"],
-                ] as const
-              ).map(([amount, denom, className]) => (
-                <div
-                  key={denom}
-                  className={twJoin(
-                    "flex flex-col items-center justify-center",
-                    "gap-1 py-3",
-                    className,
-                    "*:block"
-                  )}
-                >
-                  <span
-                    className={twJoin(
-                      "-mb-1 size-8 rounded-full bg-white leading-0"
-                    )}
-                  />{" "}
-                  <var className="font-extrabold not-italic">{amount}</var>{" "}
-                  <span className="denom">{denom}</span>
-                </div>
-              ))}
-            </div>
-          </CollapsibleBox>
+          ></CollapsibleBox>
         </aside>
 
         <CollapsibleBox
@@ -356,9 +198,8 @@ export default function V2() {
           className={twJoin("grid-in-content")}
           classNamesForInnerWrapper={twJoin(
             "relative grid",
-            isMobile
-              ? "grid-rows-[min-content_auto_min-content]"
-              : "grid-rows-[min-content_min-content_auto]"
+            "gap-[2px]",
+            "grid-rows-[min-content_min-content_auto]"
           )}
         >
           <StatBar
@@ -369,53 +210,7 @@ export default function V2() {
             ]}
           />
 
-          <ScrollIndicator
-            containerSelector="#bid-card-lists"
-            targetSelector="[id^='bucket-container-']"
-            className={twMerge(
-              "overflow-x-auto",
-              isMobile
-                ? [
-                    "row-start-3 row-end-4",
-                    "mx-auto my-2 w-fit gap-2",
-                    "rounded-full bg-white/20 px-3 py-2",
-                  ]
-                : [
-                    "w-full gap-[2px] p-[2px]",
-                    "bg-palette-text/50 backdrop-blur-xs",
-                  ]
-            )}
-            renderDot={({ index, isActive, spreadProps }) => {
-              const tranche = allTranchesSorted[index]
-              const { name, sourceId } = tranche
-              const userVotedInBucket = false // TODO: add this
-
-              return (
-                <button
-                  {...spreadProps}
-                  key={index}
-                  className={twMerge(
-                    isActive && "is-active",
-                    userVotedInBucket && "has-voted",
-                    "h-12 w-full truncate px-3",
-                    "text-palette-text transition-all",
-                    "border-2 border-transparent transition-all",
-                    "[&:is(.is-active.has-voted,.has-voted:focus-within)]:bg-palette-green",
-                    "[&:is(.is-active,:focus-within):not(.has-voted)]:bg-palette-beige",
-                    "[&:is(.has-voted)]:bg-palette-green/60",
-                    "[&:not(.has-voted)]:bg-palette-beige/60",
-                    isMobile && [
-                      "size-4 rounded-full p-0",
-                      "**:text-[0px]",
-                      "[&:is(.is-active)]:scale-150",
-                    ]
-                  )}
-                >
-                  <span className="label">{name}</span>
-                </button>
-              )
-            }}
-          />
+          <TrancheNavigation allTranchesSorted={allTranchesSorted} />
 
           <div
             id="bid-card-lists"

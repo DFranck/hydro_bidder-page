@@ -2,6 +2,7 @@ import { Environment, getSource, SourceID } from "@/app/(v2)/v2/environments"
 import { LiquidityDeployment, Tranche } from "@/app/ts_types/HydroBase.types"
 import { augmentRoundDeploymentMetrics } from "@/contract-apis/testingFiles/augmentRoundDeploymentMetrics"
 import { supabase } from "@/lib/supabase"
+import { Json } from "@/supabase/generated-types"
 import { fetchRoundBids } from "../_helpers/fetchRoundBids"
 import { fetchRoundLockups } from "../_helpers/fetchRoundLockups"
 import { fetchRoundPrices } from "../_helpers/fetchRoundPrices"
@@ -25,28 +26,24 @@ export async function GET(
 
   const { hydroContract, tributeContract, priceChainId } = sourceObject
 
+  const urlPrefix = `/api/v2/${environment}/${source_id}`
+
   const liquidityDeployments = (await fetch(
-    new URL(
-      `/api/v2/liquidity_deployments/${hydroContract}/${round_id}`,
-      request.url
-    )
+    new URL(`${urlPrefix}/liquidity_deployments/${round_id}`, request.url)
   ).then((res) => res.json())) as LiquidityDeployment[]
 
-  // Fetch Rounds & Tranches data to iterate over
   const currentRoundIdResponse = await fetch(
-    new URL(`/api/v2/current_round/${hydroContract}`, request.url)
+    new URL(`${urlPrefix}/current_round`, request.url)
   )
   const { round_id: currentRoundId } = await currentRoundIdResponse.json()
 
   const tranchesResponse = await fetch(
-    new URL(`/api/v2/tranches/${hydroContract}`, request.url)
+    new URL(`${urlPrefix}/tranches`, request.url)
   )
   const tranches = (await tranchesResponse.json()) as Tranche[]
 
-  // Get all tranche IDs
   const allTrancheIds = tranches.map((tranche) => tranche.id)
 
-  // Fetch tributes and lockups for the requested round
   const roundTributes = await fetchRoundTributes({
     tributeContract,
     roundId: Number(round_id),
@@ -62,7 +59,6 @@ export async function GET(
     roundId: Number(round_id),
   })
 
-  // Fetch bids for each tranche in the requested round
   const roundBids = (
     await Promise.all(
       allTrancheIds.map(async (tranche_id) => {
@@ -76,54 +72,61 @@ export async function GET(
     )
   ).flat()
 
+  const bidDescriptionsById = await fetch(
+    new URL(`/api/v2/bid_descriptions`, request.url)
+  ).then((res) => res.json())
+
   const augmentedRoundData = augmentRoundDeploymentMetrics(
     Number(round_id),
     roundBids,
     roundLockups,
     roundTributes,
     roundPrices,
-    {},
+    bidDescriptionsById,
     Number(round_id),
     liquidityDeployments
   )
 
-  const rowData = {
-    hydroContract,
+  const augmentedBidsToUpsert = augmentedRoundData.map((bid) => ({
+    hydro_contract: hydroContract,
+    bid_id: bid.id,
     round_id: Number(round_id),
-    round_bids: roundBids,
-    round_lockups: roundLockups,
-    round_tributes: roundTributes,
-    round_prices: roundPrices,
-    round_deployments: liquidityDeployments,
-  }
+    data: bid as unknown as Json,
+  }))
 
-  // Check if row exists
-  const { data: existingRow } = await supabase
-    .from("round_data")
-    .select("id")
-    .eq("hydroContract", hydroContract)
+  // Get existing records for comparison
+  const { data: existingBids, error: fetchError } = await supabase
+    .from("augmented_round_bids")
+    .select("*")
+    .eq("hydro_contract", hydroContract)
     .eq("round_id", Number(round_id))
-    .single()
 
-  let error
-  if (existingRow) {
-    // Update existing row
-    const { error: updateError } = await supabase
-      .from("round_data")
-      .update(rowData)
-      .eq("id", existingRow.id)
-    error = updateError
-  } else {
-    // Insert new row
-    const { error: insertError } = await supabase
-      .from("round_data")
-      .insert(rowData)
-    error = insertError
+  if (fetchError) {
+    console.error("Failed to fetch existing augmented round bids:", fetchError)
+    throw new Error(
+      `Failed to fetch existing augmented round bids: ${fetchError.message}`
+    )
   }
 
-  if (error) {
-    console.error("Failed to write round data:", error)
-    throw new Error(`Failed to write round data: ${error.message}`)
+  // Filter out bids that haven't changed
+  const existingBidsMap = new Map(
+    existingBids?.map((bid) => [bid.bid_id, bid.data]) ?? []
+  )
+  const bidsToInsert = augmentedBidsToUpsert.filter(
+    (bid) => JSON.stringify(bid.data) !== JSON.stringify(existingBidsMap.get(bid.bid_id))
+  )
+
+  if (bidsToInsert.length > 0) {
+    const { error: insertError } = await supabase
+      .from("augmented_round_bids")
+      .insert(bidsToInsert)
+
+    if (insertError) {
+      console.error("Failed to insert augmented round bids:", insertError)
+      throw new Error(
+        `Failed to insert augmented round bids: ${insertError.message}`
+      )
+    }
   }
 
   return Response.json(augmentedRoundData)

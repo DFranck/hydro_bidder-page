@@ -13,7 +13,7 @@ export function StatBar({
     <div
       id="stats-bar"
       className={twMerge(
-        isMobile ? "gap-1 py-4" : "ml-[2px] h-18 gap-3",
+        isMobile ? "gap-1 py-4" : "h-18 gap-3",
         "flex justify-around",
         "bg-palette-blue",
         className

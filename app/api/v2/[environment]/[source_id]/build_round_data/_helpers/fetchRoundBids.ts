@@ -28,14 +28,12 @@ export async function fetchRoundBids({
 
     return proposals
   } else {
+    const url = new URL("/hydro/v2/round_bids", "https://cosmos.numia.xyz")
+    url.searchParams.append("hydro_contract", hydroContract)
+    url.searchParams.append("round_id", roundId.toString())
+    url.searchParams.append("tranche_id", trancheId.toString())
+
     try {
-      const url = new URL("/hydro/v2/round_bids", "https://cosmos.numia.xyz")
-      url.searchParams.append("hydro_contract", hydroContract)
-      url.searchParams.append("round_id", roundId.toString())
-      url.searchParams.append("time", new Date().getTime().toString())
-
-      console.log(url)
-
       const response = await fetch(url, {
         headers: {
           Accept: "application/json",
@@ -57,11 +55,14 @@ export async function fetchRoundBids({
         throw new Error(`Error converting response to JSON: ${error}`)
       }
 
-      const proposals = JSON.parse(responseJson[0].response).data.proposals
+      const proposals =
+        JSON.parse(responseJson[0]?.response ?? "{}").data?.proposals ?? []
 
       return proposals as Proposal[]
     } catch (error) {
-      throw new Error(`Error fetching bids: ${error}`)
+      throw new Error(
+        [`Request URL: ${url}`, `Error fetching bids: ${error}.`].join("\n")
+      )
     }
   }
 }

@@ -28,7 +28,6 @@ export async function fetchRoundTributes({
     const url = new URL("/hydro/v2/round_tributes", "https://cosmos.numia.xyz")
     url.searchParams.append("tribute_contract", tributeContract)
     url.searchParams.append("round_id", roundId.toString())
-    url.searchParams.append("time", new Date().getTime().toString())
 
     const response = await fetch(url, {
       headers: {

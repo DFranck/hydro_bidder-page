@@ -10,7 +10,6 @@ export async function fetchRoundPrices({
   const url = new URL("/hydro/v2/round_prices", "https://cosmos.numia.xyz")
   url.searchParams.append("chain_id", chainId)
   url.searchParams.append("round_id", roundId.toString())
-  url.searchParams.append("time", new Date().getTime().toString())
 
   const response = await fetch(url, {
     headers: {

@@ -3,9 +3,8 @@ export async function fetchHistoricUsers({
 }: {
   hydroContract: string
 }): Promise<{ users: string[] }> {
-  const url = new URL("/hydro/v2/round_tributes", "https://cosmos.numia.xyz")
+  const url = new URL("/hydro/v2/historic_users", "https://cosmos.numia.xyz")
   url.searchParams.append("hydro_contract", hydroContract)
-  url.searchParams.append("time", new Date().getTime().toString())
 
   const response = await fetch(url, {
     headers: {
@@ -20,6 +19,6 @@ export async function fetchHistoricUsers({
 
   // Clean up the response
   const responseJson = await response.json()
-  const users = responseJson[0]
+  const users = responseJson[0] ?? []
   return users
 }

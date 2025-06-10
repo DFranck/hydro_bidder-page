@@ -42,7 +42,6 @@ export async function fetchRoundLockups({
     const url = new URL("/hydro/v2/round_lockups", "https://cosmos.numia.xyz")
     url.searchParams.append("hydro_contract", hydroContract)
     url.searchParams.append("round_id", roundId.toString())
-    url.searchParams.append("time", new Date().getTime().toString())
 
     const response = await fetch(url, {
       headers: {

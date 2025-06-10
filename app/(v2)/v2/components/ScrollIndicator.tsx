@@ -13,6 +13,13 @@ interface ScrollIndicatorProps extends ComponentProps<"div"> {
     isActive: boolean
     spreadProps: ComponentProps<"button">
   }) => ReactNode
+  renderDots?: (props: {
+    dots: ReactNode[]
+    onPrevious: () => void
+    onNext: () => void
+    canGoPrevious: boolean
+    canGoNext: boolean
+  }) => ReactNode
 }
 
 export function ScrollIndicator({
@@ -20,6 +27,7 @@ export function ScrollIndicator({
   targetSelector,
   className,
   renderDot,
+  renderDots,
   ...otherProps
 }: ScrollIndicatorProps) {
   const [targets, setTargets] = useState<Element[]>([])
@@ -60,44 +68,64 @@ export function ScrollIndicator({
     return () => observer.disconnect()
   }, [containerSelector])
 
+  const handlePrevious = () => {
+    if (activeIndex > 0) {
+      targets[activeIndex - 1]?.scrollIntoView({ behavior: "smooth" })
+    }
+  }
+
+  const handleNext = () => {
+    if (activeIndex < targets.length - 1) {
+      targets[activeIndex + 1]?.scrollIntoView({ behavior: "smooth" })
+    }
+  }
+
+  const dots = targets.map((target, index) => {
+    const isActive = activeIndex === index
+    const spreadProps = {
+      "aria-label": `Go to bucket ${index + 1}`,
+      onClick: () => {
+        targets[index]?.scrollIntoView({ behavior: "smooth" })
+      },
+    }
+
+    if (renderDot) {
+      return renderDot({
+        target,
+        index,
+        isActive,
+        spreadProps,
+      })
+    }
+
+    return (
+      <button
+        {...spreadProps}
+        key={index}
+        className={twJoin(
+          "group",
+          "px-2 py-4",
+          "transition-all",
+          isActive ? "scale-150" : "group-hover:scale-125"
+        )}
+      >
+        <Icon name="solid:circle" />
+      </button>
+    )
+  })
+
   return (
     <div
       className={twMerge("flex items-center justify-center", className)}
       {...otherProps}
     >
-      {targets.map((_, index) => {
-        const isActive = activeIndex === index
-        const spreadProps = {
-          "aria-label": `Go to bucket ${index + 1}`,
-          onClick: () => {
-            targets[index]?.scrollIntoView({ behavior: "smooth" })
-          },
-        }
-
-        if (renderDot) {
-          return renderDot({
-            target: targets[index],
-            index,
-            isActive,
-            spreadProps,
-          })
-        }
-
-        return (
-          <button
-            {...spreadProps}
-            key={index}
-            className={twJoin(
-              "group",
-              "px-2 py-4",
-              "transition-all",
-              isActive ? "scale-150" : "group-hover:scale-125"
-            )}
-          >
-            <Icon name="solid:circle" />
-          </button>
-        )
-      })}
+      {renderDots?.({
+        dots,
+        onPrevious: handlePrevious,
+        onNext: handleNext,
+        canGoPrevious: activeIndex > 0,
+        canGoNext: activeIndex < targets.length - 1,
+      }) ?? dots}
     </div>
   )
 }
