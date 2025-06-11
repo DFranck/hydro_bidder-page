@@ -1,10 +1,11 @@
 import { Icon } from "@/components/Icon"
-import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ReactNode } from "react"
+import { ContinueLockForm } from "../../components/ContinueLockForm"
+import { EPOCH_LENGTH } from "@/config"
 
 export function getValidatorMoniker(
   validator: string,
@@ -22,6 +23,7 @@ export type StepContent = {
     label: ReactNode
     onClick?: () => void
     className?: string
+    disabled?: boolean
   }[]
 }
 
@@ -39,6 +41,8 @@ export function getCommonStepContents({
   onCancel,
   setLockDuration,
   numApprovals,
+  maxAmount,
+  setNewAmount,
 }: {
   step: "Init" | "Success" | "Error"
   amount: string
@@ -52,6 +56,8 @@ export function getCommonStepContents({
   onExecute: () => void
   onCancel: () => void
   setLockDuration: (duration: number) => void
+  maxAmount: string
+  setNewAmount: (amount: string) => void
   numApprovals: number
 }): StepContent {
   switch (step) {
@@ -76,29 +82,29 @@ export function getCommonStepContents({
                 voting power.
               </strong>
             </p>
-            <form
-              className="mt-12"
-              onSubmit={(e) => {
-                e.preventDefault()
-                onExecute()
-              }}
-            >
-              <div className="mb-4">
-                <label className="mb-2 block">Select Lock Duration:</label>
-                <InputForLockupPeriod
-                  selectedDuration={lockDuration}
-                  onChange={setLockDuration}
-                />
-              </div>
-              <p>
-                This will require {numApprovals} wallet approval
-                {numApprovals > 1 ? "s" : ""}.
-              </p>
-            </form>
+            <ContinueLockForm
+              selectedDuration={lockDuration}
+              onChange={setLockDuration}
+              validator={validator}
+              amount={amount}
+              maxAmount={maxAmount}
+              handleNewAmount={setNewAmount}
+            />
+            <p>
+              This will require {numApprovals} wallet approval
+              {numApprovals > 1 ? "s" : ""}.
+            </p>
           </>
         ),
         buttons: [
-          { label: "Lock", onClick: onExecute },
+          {
+            label: "Lock",
+            onClick: onExecute,
+            disabled:
+              Number(amount) > Number(maxAmount) ||
+              amount === "0" ||
+              EPOCH_LENGTH === lockDuration,
+          },
           { label: "Cancel", onClick: onCancel },
         ],
       }

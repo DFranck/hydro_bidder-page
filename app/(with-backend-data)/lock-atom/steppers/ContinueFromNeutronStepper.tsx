@@ -22,7 +22,7 @@ export type ContinueFromNeutronStep =
   | "Error"
 
 export const ContinueFromNeutronStepper = ({
-  amount,
+  amount: lockedAmount,
   validator,
   denom,
   onExit,
@@ -38,14 +38,13 @@ export const ContinueFromNeutronStepper = ({
     useIncompleteNotices()
   const { lockedAtomEpochInNanos } = useBackendData()
   const router = useRouter()
-  const [step, setStep] = useState<ContinueFromNeutronStep>(
-    "WaitingForLockingSigning"
-  )
+  const [step, setStep] = useState<ContinueFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>(
     "ContinueFromNeutronStepper: "
   )
   const [showErrorLog, setShowErrorLog] = useState(false)
   const [lockDuration, setLockDuration] = useState(lockedAtomEpochInNanos)
+  const [amount, setNewAmount] = useState(lockedAmount)
 
   const executeContinueFromNeutron = async () => {
     try {
@@ -105,6 +104,8 @@ export const ContinueFromNeutronStepper = ({
         },
         setLockDuration,
         numApprovals: 1,
+        maxAmount: lockedAmount,
+        setNewAmount,
       })
     }
 

@@ -27,7 +27,7 @@ type ContinueFromHubStep =
   | "Error"
 
 export const ContinueFromHubStepper = ({
-  amount,
+  amount: lockedAmount,
   validator,
   denom,
   onExit,
@@ -42,10 +42,11 @@ export const ContinueFromHubStepper = ({
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
   const { lockedAtomEpochInNanos } = useBackendData()
-  const [step, setStep] = useState<ContinueFromHubStep>("WaitingForIBCSigning")
+  const [step, setStep] = useState<ContinueFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
   const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
+  const [amount, setNewAmount] = useState(lockedAmount)
   const router = useRouter()
 
   const execute = async () => {
@@ -128,6 +129,8 @@ export const ContinueFromHubStepper = ({
         },
         setLockDuration,
         numApprovals: 2,
+        maxAmount: lockedAmount,
+        setNewAmount
       })
     }
 
