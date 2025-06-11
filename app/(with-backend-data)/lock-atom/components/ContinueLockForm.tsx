@@ -99,7 +99,7 @@ export function ContinueLockForm({
                 ) : null}
               </div>
 
-              {amount > maxAmount && (
+              {Number(amount) > Number(maxAmount) && (
                 <StyledText
                   as="p"
                   className="text-palette-red"
