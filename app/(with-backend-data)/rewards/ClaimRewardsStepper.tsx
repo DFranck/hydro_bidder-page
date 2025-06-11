@@ -26,7 +26,7 @@ import {
 import { ReactNode, useEffect, useState } from "react"
 import { Step } from "../lock-atom/steppers/Step"
 
-type ClaimRewardsStep = "Init" | "ConvertToAtom"
+export type ClaimRewardsStep = "Init" | "ConvertToAtom"
 
 export default function ClaimRewardsStepper({
   tribute,

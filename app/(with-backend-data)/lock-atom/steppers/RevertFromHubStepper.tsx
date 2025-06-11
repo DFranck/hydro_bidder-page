@@ -10,6 +10,7 @@ import { broadcastTx } from "../transactions/broadcastTx"
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
 import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
+import { stepLabels } from "@/constants/lock-atom"
 
 function getValidatorMoniker(
   validator: string,
@@ -18,7 +19,7 @@ function getValidatorMoniker(
   return validatorMap.get(validator)?.description.moniker || validator
 }
 
-type RevertFromHubStep =
+export type RevertFromHubStep =
   | "Init"
   | "WaitingForRedeemSigning"
   | "WaitingForRedeemBroadcast"
@@ -29,20 +30,18 @@ export const RevertFromHubStepper = ({
   amount,
   validator,
   denom,
-  startState,
   onExit,
   validatorMap,
 }: {
   amount: string
   validator: string
   denom: string
-  startState?: RevertFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const [step, setStep] = useState<RevertFromHubStep>(startState || "Init")
+  const [step, setStep] = useState<RevertFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
   const router = useRouter()
@@ -113,7 +112,7 @@ export const RevertFromHubStepper = ({
                   {formatAmount(amount)} ATOM
                 </strong>{" "}
                 back to its original state, staked with{" "}
-                <strong className="text-white">
+                <strong className="text-white break-all">
                   {getValidatorMoniker(validator, validatorMap)}
                 </strong>
                 .
@@ -152,7 +151,7 @@ export const RevertFromHubStepper = ({
                   {formatAmount(amount)} ATOM
                 </strong>{" "}
                 staked to{" "}
-                <strong className="text-white">
+                <strong className="break-all text-white">
                   {getValidatorMoniker(validator, validatorMap)}
                 </strong>
                 .
@@ -202,29 +201,33 @@ export const RevertFromHubStepper = ({
         return {
           title: "Transaction Error",
           contents: (
-            <>
-              <p>
-                This transaction could not be completed. Your staked ATOM has
-                not been reverted.
-              </p>
-              <p>Refresh the page to try again or recover your staked ATOM.</p>
-              <div className="mt-4">
-                {!showErrorLog ? (
+            <div className="mt-4 overflow-hidden">
+              {!showErrorLog ? (
+                <>
+                  <p>
+                    This transaction could not be completed. Your staked ATOM
+                    has not been reverted.
+                  </p>
+                  <p>
+                    Refresh the page to try again or recover your staked ATOM.
+                  </p>
+
                   <StyledText
                     as="button"
                     variant="link.subtle"
                     onClick={() => setShowErrorLog(true)}
+                    className="mt-4"
                   >
                     Show Error Log
                     <Icon name="solid:chevron-down" />
                   </StyledText>
-                ) : (
-                  <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
-                    {errorLog}
-                  </pre>
-                )}
-              </div>
-            </>
+                </>
+              ) : (
+                <pre className="max-h-40 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
+                  {errorLog}
+                </pre>
+              )}
+            </div>
           ),
           buttons: [
             {
@@ -248,6 +251,10 @@ export const RevertFromHubStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      stepLabels={stepLabels}
+      modalTitle="Revert Back"
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

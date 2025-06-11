@@ -12,8 +12,9 @@ import {
   StepContent,
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
+import { formatAmount } from "@/lib/formatAmount"
 
-type ContinueFromNeutronStep =
+export type ContinueFromNeutronStep =
   | "Init"
   | "WaitingForLockingSigning"
   | "WaitingForLockingBroadcast"
@@ -24,14 +25,12 @@ export const ContinueFromNeutronStepper = ({
   amount,
   validator,
   denom,
-  startState,
   onExit,
   validatorMap,
 }: {
   amount: string
   validator: string
   denom: string
-  startState?: ContinueFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
@@ -40,7 +39,7 @@ export const ContinueFromNeutronStepper = ({
   const { lockedAtomEpochInNanos } = useBackendData()
   const router = useRouter()
   const [step, setStep] = useState<ContinueFromNeutronStep>(
-    startState || "Init"
+    "WaitingForLockingSigning"
   )
   const [errorLog, setErrorLog] = useState<string>(
     "ContinueFromNeutronStepper: "
@@ -127,6 +126,9 @@ export const ContinueFromNeutronStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={executeContinueFromNeutron}
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

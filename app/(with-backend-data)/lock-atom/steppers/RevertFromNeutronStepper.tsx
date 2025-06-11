@@ -12,8 +12,9 @@ import { signIBCTransferNeutronToHub } from "../transactions/signIBCTransferNeut
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
 import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
+import { stepLabels } from "@/constants/lock-atom"
 
-type RevertFromNeutronStep =
+export type RevertFromNeutronStep =
   | "Init"
   | "WaitingForIBCSigning"
   | "WaitingForIBCBroadcast"
@@ -34,7 +35,6 @@ export const RevertFromNeutronStepper = ({
   validator,
   denom,
   baseDenom,
-  startState,
   onExit,
   validatorMap,
 }: {
@@ -42,14 +42,13 @@ export const RevertFromNeutronStepper = ({
   validator: string
   denom: string
   baseDenom: string
-  startState?: RevertFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
   const router = useRouter()
-  const [step, setStep] = useState<RevertFromNeutronStep>(startState || "Init")
+  const [step, setStep] = useState<RevertFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromNeutronStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
 
@@ -139,7 +138,7 @@ export const RevertFromNeutronStepper = ({
                 You&rsquo;re about to revert{" "}
                 <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
                 back to its original state, staked with{" "}
-                <strong>{getValidatorMoniker(validator, validatorMap)}</strong>.
+                <strong className="break-all">{getValidatorMoniker(validator, validatorMap)}</strong>.
               </p>
               <p>
                 This should take about a minute and will require 2 wallet
@@ -234,29 +233,32 @@ export const RevertFromNeutronStepper = ({
         return {
           title: "Transaction Error",
           contents: (
-            <>
-              <p>
-                This transaction could not be completed. Your staked ATOM has
-                not been reverted.
-              </p>
-              <p>Refresh the page to try again or recover your staked ATOM.</p>
-              <div className="mt-4">
-                {!showErrorLog ? (
+            <div className="overflow-hidden">
+              {!showErrorLog ? (
+                <>
+                  <p>
+                    This transaction could not be completed. Your staked ATOM
+                    has not been reverted.
+                  </p>
+                  <p>
+                    Refresh the page to try again or recover your staked ATOM.
+                  </p>
                   <StyledText
                     as="button"
                     variant="link.subtle"
                     onClick={() => setShowErrorLog(true)}
+                    className="mt-4"
                   >
                     Show Error Log
                     <Icon name="solid:chevron-down" />
                   </StyledText>
-                ) : (
-                  <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
-                    {errorLog}
-                  </pre>
-                )}
-              </div>
-            </>
+                </>
+              ) : (
+                <pre className="max-h-40 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
+                  {errorLog}
+                </pre>
+              )}
+            </div>
           ),
           buttons: [
             {
@@ -280,6 +282,10 @@ export const RevertFromNeutronStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      stepLabels={stepLabels}
+      modalTitle="Revert Back"
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

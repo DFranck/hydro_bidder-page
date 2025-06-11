@@ -15,6 +15,7 @@ import {
   StepContent,
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
+import { formatAmount } from "@/lib/formatAmount"
 
 type ContinueFromHubStep =
   | "Init"
@@ -29,21 +30,19 @@ export const ContinueFromHubStepper = ({
   amount,
   validator,
   denom,
-  startState,
   onExit,
   validatorMap,
 }: {
   amount: string
   validator: string
   denom: string
-  startState?: ContinueFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
   const { lockedAtomEpochInNanos } = useBackendData()
-  const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
+  const [step, setStep] = useState<ContinueFromHubStep>("WaitingForIBCSigning")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
   const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
@@ -154,6 +153,9 @@ export const ContinueFromHubStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={execute}
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

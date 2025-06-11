@@ -34,6 +34,7 @@
     "defi-sim": "^1.0.3",
     "interchain": "^1.10.4",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.511.0",
     "match-sorter": "^8.0.0",
     "moonkittjs": "^0.1.0",
     "next": "^15.2.2",
