@@ -1,8 +1,8 @@
 import { SourceBadge } from "@/app/(v2)/v2/components/SourceBadge"
+import { TokenThemeWrapper } from "@/app/(v2)/v2/components/TokenThemeWrapper"
 import { SourceID } from "@/app/(v2)/v2/environments"
 import { Icon } from "@/components/Icon"
 import { useIsMobile } from "@/lib/useIsMobile"
-import { ComponentProps } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 import { ScrollIndicator } from "./ScrollIndicator"
 
@@ -11,15 +11,16 @@ function TrancheNavigationButton({
   children,
   disabled,
   ...otherProps
-}: ComponentProps<"button">) {
+}: React.ComponentProps<"button">) {
+  const isMobile = useIsMobile()
   return (
     <button
       className={twMerge(
         "cursor-pointer",
-        "h-12 w-full truncate px-3",
-        "flex items-center justify-center gap-2",
-        "text-palette-text bg-palette-beige",
+        "rounded-standard h-full w-full",
+        "flex items-center justify-center",
         "transition-all",
+        isMobile ? "flex-col gap-1 py-2" : "h-12 gap-2 truncate px-3",
         disabled && "cursor-not-allowed",
         disabled && "opacity-50",
         className
@@ -49,60 +50,41 @@ export function TrancheNavigation({
       targetSelector="[id^='bucket-container-']"
       className={twMerge(
         "overflow-x-auto",
-        "w-full gap-[2px]",
+        "gap-standard w-full",
         "bg-palette-text/50 backdrop-blur-xs"
       )}
-      renderDot={({ index, isActive, spreadProps }) => {
+      renderDot={({ index, isActive: isActiveTranche, spreadProps }) => {
         const tranche = allTranchesSorted[index]
         const { sourceId, name } = tranche
         const userVotedInBucket = false // TODO: add this
         return (
-          <TrancheNavigationButton
+          <TokenThemeWrapper
+            as={TrancheNavigationButton}
+            sourceId={sourceId}
             key={index}
             className={twJoin(
-              isActive && "is-active cursor-default",
+              isActiveTranche && "is-active cursor-default",
               userVotedInBucket && "has-voted",
-              "relative",
-              "[&:is(.has-voted)]:bg-palette-green/60",
-              "[&:not(.has-voted)]:bg-palette-beige",
-              "[&:is(.is-active.has-voted,.has-voted:focus-within)]:bg-palette-green",
-              "[&:is(.is-active,:focus-within):not(.has-voted)]:bg-palette-beige"
+              "relative justify-between",
+              "text-white text-shadow-xs",
+
+              // Not voted
+              "border-standard",
+              "[&:not(.has-voted)]:border-token-color",
+              "[&:is(.is-active,:focus-within):not(.has-voted)]:bg-token-color",
+
+              // Voted
+              "[&:is(.has-voted)]:bg-token-color/60",
+              "[&:is(.is-active.has-voted,.has-voted:focus-within)]:bg-token-color"
             )}
             {...spreadProps}
           >
-            {isMobile ? (
-              <Icon name="solid:circle-dashed" />
-            ) : (
-              <>
-                <SourceBadge sourceId={sourceId} className="size-6 p-1" />
-                <span className="label">{name}</span>
-              </>
-            )}
-
-            <div
-              className={twJoin(
-                "absolute inset-0",
-                "bg-gradient-to-t to-transparent",
-                sourceId === "atom"
-                  ? "from-token-atom to-token-atom/0"
-                  : "from-token-stosmo to-token-stosmo/0",
-                "opacity-20 transition-opacity",
-                isActive && "opacity-40"
-              )}
-            />
-
-            <div
-              className={twJoin(
-                "absolute inset-[2px]",
-                "border-2",
-                "opacity-0 transition-opacity",
-                isActive && "opacity-100",
-                sourceId === "atom"
-                  ? "border-token-atom"
-                  : "border-token-stosmo"
-              )}
-            />
-          </TrancheNavigationButton>
+            <div className="flex items-center gap-2">
+              <SourceBadge sourceId={sourceId} className="size-6 p-1" />
+              <span className="label">{name}</span>
+            </div>
+            <Icon name="solid:circle-dashed" />
+          </TokenThemeWrapper>
         )
       }}
       renderDots={({ dots, onPrevious, onNext, canGoPrevious, canGoNext }) => (

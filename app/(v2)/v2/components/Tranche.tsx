@@ -1,10 +1,10 @@
 import { BidCard } from "@/app/(v2)/v2/components/BidCard"
 import { SourceBadge } from "@/app/(v2)/v2/components/SourceBadge"
+import { TokenThemeWrapper } from "@/app/(v2)/v2/components/TokenThemeWrapper"
 import { SourceID } from "@/app/(v2)/v2/environments"
 import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { Icon } from "@/components/Icon"
 import { useIsMobile } from "@/lib/useIsMobile"
-import { ComponentProps } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
 export function Tranche({
@@ -14,7 +14,7 @@ export function Tranche({
   classNameForViewbox,
   classNameForContentContainer,
   ...otherProps
-}: ComponentProps<"div"> & {
+}: React.ComponentProps<"div"> & {
   sourceId: SourceID
   trancheId: number
   classNameForViewbox?: string
@@ -35,7 +35,8 @@ export function Tranche({
   const bidsInTranche = allBids.filter((bid) => bid.trancheId === trancheId)
 
   return (
-    <div
+    <TokenThemeWrapper
+      sourceId={sourceId}
       id={`bucket-container-${trancheId}`}
       className={twMerge(
         "relative",
@@ -55,14 +56,14 @@ export function Tranche({
         tabIndex={0}
         className={twMerge(
           "absolute inset-0",
-          "grid grid-rows-[min-content_auto] gap-[2px]",
+          "gap-standard grid grid-rows-[min-content_auto]",
           "border-2 border-transparent",
-          "focus-within:border-palette-beige",
+          "focus-within:border-token-color",
           "focus-within:outline-none",
+          "bg-token-color/10",
           userVotedInBucket && [
-            "bg-palette-green/10",
-            "focus-within:border-palette-green",
-            "scrollbar-thumb-palette-green",
+            "focus-within:border-token-color",
+            "scrollbar-thumb-token-color",
             "scrollbar-track-transparent",
           ],
           classNameForViewbox
@@ -72,7 +73,7 @@ export function Tranche({
           id={`bucket-header-${trancheId}`}
           className={twJoin(
             "flex h-12 items-center justify-between px-3",
-            userVotedInBucket ? "bg-palette-green/10" : "bg-palette-beige/10"
+            userVotedInBucket ? "bg-token-color/10" : "bg-token-color/10"
           )}
         >
           <div className="flex items-center gap-3">
@@ -85,7 +86,7 @@ export function Tranche({
               className={twJoin(
                 "flex items-center gap-1",
                 "text-xs",
-                userVotedInBucket ? "text-palette-green" : "text-palette-beige"
+                userVotedInBucket ? "text-token-color" : "text-token-color"
               )}
             >
               {userVotedInBucket ? (
@@ -118,7 +119,7 @@ export function Tranche({
           <div
             id={`bucket-content-inner-${trancheId}`}
             className={twJoin(
-              "mx-auto flex flex-col gap-[2px]",
+              "gap-standard mx-auto flex flex-col",
               "md:max-w-[60vw]",
               "md:py-12"
             )}
@@ -135,6 +136,6 @@ export function Tranche({
           </div>
         </div>
       </div>
-    </div>
+    </TokenThemeWrapper>
   )
 }

@@ -1,13 +1,12 @@
 import { SourceID } from "@/app/(v2)/v2/environments"
 import Image from "next/image"
-import { ComponentProps } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function SourceBadge({
   sourceId,
   className,
   ...otherProps
-}: ComponentProps<"div"> & { sourceId: SourceID }) {
+}: React.ComponentProps<"div"> & { sourceId: SourceID }) {
   return (
     <div
       className={twMerge(

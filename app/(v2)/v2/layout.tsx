@@ -4,7 +4,7 @@ import { AppContextProvider } from "@/app/(v2)/v2/state/provider"
 import { BidRevampMetrics } from "@/contract-apis/types"
 import { supabase } from "@/lib/supabase"
 import { headers } from "next/headers"
-import { Suspense } from "react"
+import React from "react"
 
 export default async function Layout({
   children,
@@ -57,10 +57,10 @@ export default async function Layout({
   )
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <React.Suspense fallback={<LoadingSpinner />}>
       <AppContextProvider hydroDataPromise={hydroDataPromise}>
         {children}
       </AppContextProvider>
-    </Suspense>
+    </React.Suspense>
   )
 }

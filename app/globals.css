@@ -5,10 +5,14 @@
 
 @theme {
   --sidebar-width: 300px;
+  --sidebar-width-docked: 80px;
 
   --breakpoint-2xl: 1400px;
 
   --container-2xs: 16rem;
+
+  --spacing-standard: 4px;
+  --radius-standard: 4px;
 
   --font-inter: "Inter", "sans-serif";
 
@@ -20,9 +24,20 @@
   --color-palette-text: #080815;
   --color-token-atom: #9747ff;
   --color-token-stosmo: #e50371;
+  --color-token-color: var(--color-token-atom);
 
   --color-shaded: rgba(var(--color-palette-beige), 0.8);
   --color-faded: rgba(255, 255, 255, 0.6);
+}
+
+@utility border-token-color {
+  border-color: var(--color-token-color);
+}
+
+@utility border-standard {
+  border-width: calc(var(--spacing-standard) / 2);
+  border-style: solid;
+  border-color: transparent;
 }
 
 /*
@@ -34,14 +49,6 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
   html {
     @apply touch-manipulation;
     @apply text-[14px];
@@ -87,12 +94,12 @@
 }
 
 @utility grid-areas-desktop-sidebar-closed {
+  @apply gap-standard;
   display: grid;
-  gap: 2px;
   transition-property: grid-template-columns, grid-template-rows;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
-  grid-template-columns: 60px auto;
+  grid-template-columns: var(--sidebar-width-docked) auto;
   grid-template-rows: min-content auto;
   grid-template-areas:
     "header  header"

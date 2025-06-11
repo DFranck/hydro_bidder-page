@@ -1,15 +1,15 @@
-import { SourceID } from "@/app/(v2)/v2/environments"
-import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { Icon } from "@/components/Icon"
+import { TokenThemeWrapper } from "@v2/components/TokenThemeWrapper"
+import { SourceID } from "@v2/environments"
+import { useAppState } from "@v2/state/provider"
 import Image from "next/image"
-import { ComponentProps } from "react"
 import { twJoin } from "tailwind-merge"
 
 export function BidCard({
   sourceId,
   bidId,
   ...otherProps
-}: ComponentProps<"div"> & {
+}: React.ComponentProps<"div"> & {
   sourceId: SourceID
   bidId: number
 }) {
@@ -26,31 +26,34 @@ export function BidCard({
   const bidDescription = bidDescriptionsById[bidId]
 
   return (
-    <div
-      id="bid-card"
+    <TokenThemeWrapper
+      sourceId={sourceId}
+      id={`bid-card--${bidId}`}
       tabIndex={0}
       className={twJoin(
+        "group",
         "grid grid-cols-[min-content_auto] items-center",
         "gap-3 px-4 pt-3 pb-4",
         "md:gap-6 md:px-6 md:pt-5 md:pb-6",
         "transition-all",
         "focus-within:outline-none",
-        "focus-within:bg-palette-beige",
-        "focus-within:text-palette-text",
-        "focus-within:**:text-palette-text",
-        "hover:bg-palette-beige/20",
-        "hover:**:text-white",
-        "focus-within:hover:bg-palette-beige/90",
-        "focus-within:hover:**:text-palette-text",
-        userHasVotedOnThisBid && [
-          "bg-palette-green",
-          "hover:bg-palette-green/50",
-          "text-palette-text **:text-palette-text",
-        ]
+        "focus-within:bg-token-color",
+        "hover:bg-token-color/20",
+        "focus-within:hover:bg-token-color/90",
+        userHasVotedOnThisBid && []
       )}
       {...otherProps}
     >
-      <div className={twJoin("size-12 rounded-full")}>
+      <div
+        className={twJoin(
+          "size-12 rounded-full",
+          "group-focus-within:border-white",
+          !bidDescription?.projectLogoUrl && [
+            "border-token-color border-2",
+            "bg-token-color/20",
+          ]
+        )}
+      >
         {bidDescription?.projectLogoUrl && (
           <Image
             src={bidDescription.projectLogoUrl}
@@ -98,6 +101,6 @@ export function BidCard({
           </button>
         </div>
       </div>
-    </div>
+    </TokenThemeWrapper>
   )
 }

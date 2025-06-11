@@ -6,18 +6,17 @@ import { StyledText } from "@/components/StyledText"
 import { useIsMobile } from "@/lib/useIsMobile"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ComponentProps, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
-export interface MenuItem extends ComponentProps<"a"> {
+export interface MenuItem extends React.ComponentProps<"a"> {
   disabled?: boolean
   href?: string
   iconLeft?: IconString
   iconRight?: IconString
-  label: ReactNode
+  label: React.ReactNode
   menuItems?: MenuItem[]
   target?: string
-  tooltip?: ReactNode
+  tooltip?: React.ReactNode
 }
 
 export function ResponsiveMenu({
@@ -34,7 +33,7 @@ export function ResponsiveMenu({
   classNameForSubItemsDesktop,
   classNameForSubItemsMobile,
   ...otherProps
-}: ComponentProps<"nav"> & {
+}: React.ComponentProps<"nav"> & {
   menuItems: MenuItem[]
   className?: string
   classNameDesktop?: string

@@ -3,14 +3,7 @@
 import { SourceID } from "@/app/(v2)/v2/environments"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
 import { BidMetaData, BidRevampMetrics } from "@/contract-apis/types"
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  use,
-  useContext,
-  useReducer,
-} from "react"
+import { createContext, use, useContext, useReducer } from "react"
 import { AppAction, reducer } from "./reducer"
 
 export interface RoundState {
@@ -38,7 +31,7 @@ export const initialState: AppState = {
 
 export const AppContext = createContext<{
   state: AppState
-  dispatch: Dispatch<AppAction>
+  dispatch: React.Dispatch<AppAction>
 }>({
   state: initialState,
   dispatch: () => {},
@@ -48,7 +41,7 @@ export function AppContextProvider({
   children,
   hydroDataPromise,
 }: {
-  children: ReactNode
+  children: React.ReactNode
   hydroDataPromise: Promise<
     {
       sourceId: SourceID

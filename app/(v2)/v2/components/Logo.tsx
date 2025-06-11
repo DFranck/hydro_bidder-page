@@ -1,4 +1,3 @@
-import { ComponentProps } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
 export function Logo({
@@ -6,7 +5,7 @@ export function Logo({
   showLogo = true,
   showText = true,
   ...otherProps
-}: ComponentProps<"svg"> & {
+}: React.ComponentProps<"svg"> & {
   className?: string
   showLogo?: boolean
   showText?: boolean

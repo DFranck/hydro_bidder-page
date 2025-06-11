@@ -1,25 +1,25 @@
 "use client"
 
 import { Icon } from "@/components/Icon"
-import { ComponentProps, ReactNode, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
-interface ScrollIndicatorProps extends ComponentProps<"div"> {
+interface ScrollIndicatorProps extends React.ComponentProps<"div"> {
   containerSelector: string
   targetSelector: string
   renderDot?: (props: {
     target: Element
     index: number
     isActive: boolean
-    spreadProps: ComponentProps<"button">
-  }) => ReactNode
+    spreadProps: React.ComponentProps<"button">
+  }) => React.ReactNode
   renderDots?: (props: {
-    dots: ReactNode[]
+    dots: React.ReactNode[]
     onPrevious: () => void
     onNext: () => void
     canGoPrevious: boolean
     canGoNext: boolean
-  }) => ReactNode
+  }) => React.ReactNode
 }
 
 export function ScrollIndicator({

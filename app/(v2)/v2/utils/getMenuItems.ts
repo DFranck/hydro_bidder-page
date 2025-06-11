@@ -1,9 +1,8 @@
 import { needsWalletConnectionTooltip } from "@/components/ToolTips"
 import {
-    HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
-    HYDRO_TELEGRAM_COMMUNITY_URL,
+  HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
+  HYDRO_TELEGRAM_COMMUNITY_URL,
 } from "@/config"
-import { Dispatch } from "react"
 import { MenuItem } from "../components/ResponsiveMenu"
 
 type AppAction = {
@@ -14,7 +13,7 @@ type AppAction = {
 export function getMenuItems(
   isWalletConnected: boolean,
   narrowBuckets: boolean,
-  dispatch: Dispatch<AppAction>
+  dispatch: React.Dispatch<AppAction>
 ): MenuItem[] {
   return [
     {

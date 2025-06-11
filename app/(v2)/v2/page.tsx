@@ -2,6 +2,7 @@
 
 import { SourceBadge } from "@/app/(v2)/v2/components/SourceBadge"
 import { StatBar } from "@/app/(v2)/v2/components/StatBar"
+import { TokenThemeWrapper } from "@/app/(v2)/v2/components/TokenThemeWrapper"
 import { useAppState } from "@/app/(v2)/v2/state/provider"
 import { CollapsibleBox } from "@/components/CollapsibleBox"
 import { Icon } from "@/components/Icon"
@@ -36,7 +37,7 @@ export default function V2() {
     <div
       className={twJoin(
         "relative h-screen w-screen",
-        "p-[2px]",
+        "p-standard",
         "scrollbar-thumb-palette-beige scrollbar-track-palette-text",
         "**:scrollbar-thin",
         isMobile
@@ -51,8 +52,7 @@ export default function V2() {
       <header
         className={twJoin(
           "grid-in-header",
-          "flex items-center justify-between",
-          "from-palette-blue/20 to-palette-blue/0 bg-gradient-to-t"
+          "flex items-center justify-between"
         )}
       >
         <div className={twJoin("h-12 w-full px-3 py-1")}>
@@ -78,17 +78,17 @@ export default function V2() {
           )}
           classNameForSubItemsDesktop={twJoin(
             "right-0 mt-2 py-2",
-            "bg-palette-text rounded-md border shadow-2xl"
+            "bg-palette-text rounded-standard border shadow-2xl"
           )}
           classNameForSubItemsMobile="gap-3"
         />
       </header>
 
-      <main className={twJoin("contents", isMobile ? "" : "")}>
+      <main className="contents">
         <aside
           className={twJoin(
             "grid-in-sidebar",
-            "flex flex-col gap-[2px]",
+            "rounded-standard flex flex-col",
             "bg-palette-beige/10"
           )}
           onClick={() =>
@@ -129,22 +129,24 @@ export default function V2() {
             </div>
           </div>
 
-          <div className={twJoin("flex flex-col gap-[2px]")}>
+          <div
+            className={twJoin(
+              "gap-standard flex flex-col",
+              !isSidebarDocked && "p-standard"
+            )}
+          >
             {allSources.map(
               ({ totalLockedTokens, sourceId, currentRoundId }) => (
-                <div
+                <TokenThemeWrapper
                   key={sourceId}
+                  sourceId={sourceId}
                   className={twMerge(
                     "relative",
                     "flex items-center justify-between gap-3",
+                    "bg-token-color rounded-standard",
                     isSidebarDocked
                       ? "flex-col gap-1 py-3 text-center"
-                      : "h-12 flex-row pl-3",
-                    sourceId === "atom"
-                      ? "bg-token-atom"
-                      : sourceId === "stosmo"
-                        ? "bg-token-stosmo"
-                        : "bg-palette-red"
+                      : "h-12 flex-row pl-3"
                   )}
                 >
                   <div
@@ -181,7 +183,7 @@ export default function V2() {
                       <Icon name="solid:caret-down" />
                     </button>
                   </div>
-                </div>
+                </TokenThemeWrapper>
               )
             )}
           </div>
@@ -198,7 +200,7 @@ export default function V2() {
           className={twJoin("grid-in-content")}
           classNamesForInnerWrapper={twJoin(
             "relative grid",
-            "gap-[2px]",
+            "gap-standard",
             "grid-rows-[min-content_min-content_auto]"
           )}
         >
@@ -225,7 +227,7 @@ export default function V2() {
                 key={index}
                 sourceId={sourceId}
                 trancheId={id}
-                className={twJoin(!isMobile && "ml-[-2px]", "first:ml-0")}
+                className={twJoin(!isMobile && "-ml-standard", "first:ml-0")}
                 classNameForContentContainer="pb-12"
               />
             ))}

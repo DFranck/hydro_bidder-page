@@ -1,12 +1,13 @@
 import { useIsMobile } from "@/lib/useIsMobile"
-import { ComponentProps, ReactNode } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
 export function StatBar({
   stats,
   className,
   ...otherProps
-}: ComponentProps<"div"> & { stats: [label: ReactNode, value: ReactNode][] }) {
+}: React.ComponentProps<"div"> & {
+  stats: [label: React.ReactNode, value: React.ReactNode][]
+}) {
   const isMobile = useIsMobile()
 
   return (
@@ -15,7 +16,7 @@ export function StatBar({
       className={twMerge(
         isMobile ? "gap-1 py-4" : "h-18 gap-3",
         "flex justify-around",
-        "bg-palette-blue",
+        "bg-palette-beige/10 rounded-standard",
         className
       )}
       {...otherProps}
