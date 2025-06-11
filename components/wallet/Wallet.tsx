@@ -19,10 +19,11 @@ import {
 export type WalletProps = {
   chainName?: string
   variant?: StyledTextVariant
-  notifyConnectedCB: (isConnected: boolean) => void
+  notifyConnectedCB?: (isConnected: boolean) => void
+  ignoreStatus?: boolean
 }
 
-export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
+export function Wallet({ chainName, notifyConnectedCB, variant, ignoreStatus }: WalletProps) {
   const { addToast } = useToasts()
 
   const { connect, openView, status, address, message } = useChain(
@@ -41,6 +42,7 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
   }
 
   useEffect(() => {
+    if(ignoreStatus) return;
     if (
       message &&
       [WalletStatus.Error, WalletStatus.Rejected].includes(status)
@@ -49,7 +51,7 @@ export function Wallet({ chainName, notifyConnectedCB, variant }: WalletProps) {
     } else {
       notifyConnectedCB?.(status === WalletStatus.Connected)
     }
-  }, [message, status, notifyConnectedCB])
+  }, [message, status, notifyConnectedCB, ignoreStatus])
 
   const ConnectButton = {
     [WalletStatus.Connected]: (
