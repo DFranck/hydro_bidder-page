@@ -21,6 +21,9 @@ const config = {
       fontFamily: {
         inter: ["Inter"],
       },
+      fontSize: {
+        "10": "0.625rem",
+      },
       borderColor: {
         DEFAULT: "rgba(255, 255, 255, 0.2)",
       },
@@ -36,6 +39,9 @@ const config = {
       },
       containers: {
         "2xs": "16rem",
+      },
+      width: {
+        "md": "800px",
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

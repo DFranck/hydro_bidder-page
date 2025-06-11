@@ -20,6 +20,8 @@ import {
   cosmosProtoRegistry,
   ibcAminoConverters,
   ibcProtoRegistry,
+  gaiaProtoRegistry,
+  gaiaAminoConverters,
 } from "moonkittjs"
 
 function gasPrices(chain: Chain | ChainName) {
@@ -67,10 +69,12 @@ export function WalletProvider({
                 registry: new Registry([
                   ...cosmosProtoRegistry,
                   ...ibcProtoRegistry,
+                  ...gaiaProtoRegistry,
                 ]),
                 aminoTypes: new AminoTypes({
                   ...cosmosAminoConverters,
                   ...ibcAminoConverters,
+                  ...gaiaAminoConverters,
                 }),
                 gasPrice: GasPrice.fromString("0.005uatom"),
               }

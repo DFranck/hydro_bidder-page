@@ -81,7 +81,6 @@ export function AddTributeButton({
           variant={
             `button.primary${size ? `.${size}` : ""}` as StyledTextVariant
           }
-          notifyConnectedCB={() => null}
         />
       )}
       <AddTributeModal

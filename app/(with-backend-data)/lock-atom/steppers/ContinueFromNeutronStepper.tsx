@@ -12,8 +12,9 @@ import {
   StepContent,
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
+import { formatAmount } from "@/lib/formatAmount"
 
-type ContinueFromNeutronStep =
+export type ContinueFromNeutronStep =
   | "Init"
   | "WaitingForLockingSigning"
   | "WaitingForLockingBroadcast"
@@ -21,17 +22,15 @@ type ContinueFromNeutronStep =
   | "Error"
 
 export const ContinueFromNeutronStepper = ({
-  amount,
+  amount: lockedAmount,
   validator,
   denom,
-  startState,
   onExit,
   validatorMap,
 }: {
   amount: string
   validator: string
   denom: string
-  startState?: ContinueFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
@@ -39,14 +38,13 @@ export const ContinueFromNeutronStepper = ({
     useIncompleteNotices()
   const { lockedAtomEpochInNanos, hasGatekeeper } = useBackendData()
   const router = useRouter()
-  const [step, setStep] = useState<ContinueFromNeutronStep>(
-    startState || "Init"
-  )
+  const [step, setStep] = useState<ContinueFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>(
     "ContinueFromNeutronStepper: "
   )
   const [showErrorLog, setShowErrorLog] = useState(false)
   const [lockDuration, setLockDuration] = useState(lockedAtomEpochInNanos)
+  const [amount, setNewAmount] = useState(lockedAmount)
 
   const executeContinueFromNeutron = async () => {
     try {
@@ -107,6 +105,8 @@ export const ContinueFromNeutronStepper = ({
         },
         setLockDuration,
         numApprovals: 1,
+        maxAmount: lockedAmount,
+        setNewAmount,
       })
     }
 
@@ -128,6 +128,9 @@ export const ContinueFromNeutronStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={executeContinueFromNeutron}
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

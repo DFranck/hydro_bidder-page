@@ -1,6 +1,6 @@
 export function calculateLsmCapacity(
-  validator_bond_shares: string,
-  liquid_shares: string
+  delegator_shares: string,
+  validator_liquid_staking_cap: string
 ) {
-  return Number(validator_bond_shares) * 250 - Number(liquid_shares)
+  return Number(delegator_shares) * Number(validator_liquid_staking_cap)
 }

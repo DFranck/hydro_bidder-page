@@ -28,8 +28,10 @@ import { LoaderCard } from "./LoaderCard"
 
 export function LsmInteraction({
   validatorMap,
+  validatorLiquidStakingCap,
 }: {
   validatorMap: Map<string, Validator>
+  validatorLiquidStakingCap: string
 }) {
   const {
     lockedAtomIsAtCapacityGlobal,
@@ -211,7 +213,11 @@ export function LsmInteraction({
               <p>
                 Hydro is currently at max capacity. Please wait for the next
                 round or for the cap to be increased. Check{" "}
-                <StyledText as={Link} href={HYDRO_TELEGRAM_COMMUNITY_URL} variant="link">
+                <StyledText
+                  as={Link}
+                  href={HYDRO_TELEGRAM_COMMUNITY_URL}
+                  variant="link"
+                >
                   Telegram
                 </StyledText>{" "}
                 for updates.
@@ -229,6 +235,7 @@ export function LsmInteraction({
               }
               hubChain={hubChain}
               validatorMap={validatorMap}
+              validatorLiquidStakingCap={validatorLiquidStakingCap}
             />
           )}
         </div>

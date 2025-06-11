@@ -1,7 +1,7 @@
 "use client"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
-import { MsgRedeemTokensForShares } from "stridejs/types/codegen/cosmos/staking/v1beta1/tx"
+import { MsgRedeemTokensForShares } from "moonkittjs/dist/codegen/gaia/liquid/v1beta1/tx"
 
 export async function signRedeemTokensForShares(
   hubChain: ChainContext,
@@ -14,7 +14,7 @@ export async function signRedeemTokensForShares(
   }
 
   const msg: { typeUrl: string; value: MsgRedeemTokensForShares } = {
-    typeUrl: "/cosmos.staking.v1beta1.MsgRedeemTokensForShares",
+    typeUrl: "/gaia.liquid.v1beta1.MsgRedeemTokensForShares",
     value: {
       delegatorAddress: hubChain.address,
       amount: { denom, amount },
