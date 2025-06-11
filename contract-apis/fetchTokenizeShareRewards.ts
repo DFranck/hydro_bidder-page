@@ -1,4 +1,4 @@
-import type { QueryTokenizeShareRecordRewardRequest } from "moonkittjs/dist/codegen/cosmos/distribution/v1beta1/query"
+import type { QueryTokenizeShareRecordRewardRequest } from "moonkittjs/dist/codegen/gaia/liquid/v1beta1/query"
 import { LSMStakingRewards } from "../app/(with-backend-data)/rewards/types"
 
 const ATOM_EXPONENT = 6
@@ -6,7 +6,7 @@ const ATOM_EXPONENT = 6
 export async function fetchLSMStakingRewards(
   rpcEndpoint: string,
   address: string,
-  atomPrice: number,
+  atomPrice: number
 ): Promise<LSMStakingRewards | undefined> {
   if (!process.env.NEXT_PUBLIC_ATOM_DENOM) {
     return
@@ -14,8 +14,8 @@ export async function fetchLSMStakingRewards(
 
   try {
     // if we import from `stridejs`, it creates values with 10**18 exponent
-    const cosmos = (await import("moonkittjs")).cosmos
-    const client = await cosmos.ClientFactory.createRPCQueryClient({
+    const gaia = (await import("moonkittjs")).gaia
+    const client = await gaia.ClientFactory.createRPCQueryClient({
       rpcEndpoint,
     })
 
@@ -23,11 +23,9 @@ export async function fetchLSMStakingRewards(
       ownerAddress: address,
     }
     const stakingRewards =
-      await client.cosmos.distribution.v1beta1.tokenizeShareRecordReward(
-        rewardsReq,
-      )
+      await client.gaia.liquid.v1beta1.tokenizeShareRecordReward(rewardsReq)
     const atomRewards = stakingRewards.total.find(
-      (entry) => entry.denom === process.env.NEXT_PUBLIC_ATOM_DENOM,
+      (entry) => entry.denom === process.env.NEXT_PUBLIC_ATOM_DENOM
     )
 
     let totalAtom = 0

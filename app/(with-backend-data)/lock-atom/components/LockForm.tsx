@@ -23,10 +23,12 @@ export function LockForm({
   onSubmit,
   hubChain,
   validatorMap,
+  validatorLiquidStakingCap,
 }: {
   onSubmit: (validator: string, amount: string, duration: number) => void
   hubChain: ChainContext
   validatorMap: Map<string, Validator>
+  validatorLiquidStakingCap: string
 }) {
   const router = useRouter()
   const {
@@ -83,8 +85,8 @@ export function LockForm({
       )
       if (selectedValidator) {
         const lsmCapacity = calculateLsmCapacity(
-          selectedValidator.validator.validator_bond_shares,
-          selectedValidator.validator.liquid_shares
+          selectedValidator.validator.delegator_shares,
+          validatorLiquidStakingCap
         )
         if (lsmCapacity < parseFloat(amount) && parseFloat(amount) > 0) {
           // Instead of resetting, you could set an error state or show a warning
@@ -199,6 +201,7 @@ export function LockForm({
                         selectedValue={validator}
                         onChange={setValidator}
                         selectedAmount={parseFloat(amount)}
+                        validatorLiquidStakingCap={validatorLiquidStakingCap}
                       />
                     ))}
                   </div>

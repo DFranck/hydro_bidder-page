@@ -13,6 +13,7 @@ export interface ValidatorListItemProps {
   selectedValue: string
   onChange: (value: string) => void
   selectedAmount: number
+  validatorLiquidStakingCap: string
 }
 
 export function ValidatorListItem({
@@ -20,10 +21,11 @@ export function ValidatorListItem({
   selectedValue,
   onChange,
   selectedAmount,
+  validatorLiquidStakingCap,
 }: ValidatorListItemProps) {
   const lsmCapacity = calculateLsmCapacity(
-    v.validator.validator_bond_shares,
-    v.validator.liquid_shares
+    v.validator.delegator_shares,
+    validatorLiquidStakingCap
   )
   const isDisabled = lsmCapacity <= 0 || lsmCapacity < selectedAmount
 
