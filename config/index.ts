@@ -31,8 +31,8 @@ export const sharedEndpoints = {
     rest: ["https://hydro-neutron-api.citadel.one/"],
   },
   cosmoshub: {
-    rpc: ["https://rpc.provider-sentry-01.ics-testnet.polypore.xyz/"],
-    rest: ["https://rest.provider-sentry-01.ics-testnet.polypore.xyz/"],
+    rpc: ["https://hydro-cosmoshub-rpc.citadel.one/"],
+    rest: ["https://hydro-cosmoshub-api.citadel.one/"],
   },
 }
 
@@ -42,7 +42,7 @@ export const hubChain = {
   $schema: "../chain.schema.json",
   chain_name: "cosmoshub",
   chain_type: "cosmos",
-  chain_id: "provider",
+  chain_id: "cosmoshub-4",
   website: "https://cosmos.network/",
   pretty_name: "Cosmos Hub",
   status: "live",
