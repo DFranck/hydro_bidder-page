@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@chain-registry/types": "^0.50.93",
@@ -30,6 +31,7 @@
     "@tanstack/react-query": "^5.68.0",
     "chain-registry": "^1.69.152",
     "clsx": "^2.1.1",
+    "defi-sim": "^1.0.3",
     "interchain": "^1.10.4",
     "lodash": "^4.17.21",
     "match-sorter": "^8.0.0",
@@ -69,7 +71,9 @@
     "@uiw/react-codemirror": "^4.23.10",
     "eslint": "^9",
     "eslint-config-next": "15.0.3",
+    "patch-package": "^8.0.0",
     "postcss": "^8",
+    "postinstall-postinstall": "^2.1.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"

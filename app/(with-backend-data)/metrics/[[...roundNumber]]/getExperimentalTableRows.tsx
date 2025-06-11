@@ -28,10 +28,16 @@ export function getExperimentalTableRows(
         ? currentTimestamp
         : new Date(item.end_timestamp * 1000).getTime()
     const status = item.end_timestamp === 0 ? "Ongoing" : "Completed"
-    const durationBetween = calculateDurationAndUnit(
-      endTimestamp - startTimestamp,
+    
+    const daysBetween = Math.ceil(
+      (endTimestamp - startTimestamp) / (1000 * 60 * 60 * 24),
     )
-    const daysBetween = Math.floor(Math.abs(durationBetween.duration))
+
+    console.log("Days Between:", daysBetween)
+
+    console.log("item.end timestamp:", item.end_timestamp)
+    console.log("Start timestamp:", item.start_timestamp)
+    console.log("End timestamp:", endTimestamp)
 
     const additionalStatus =
       item.end_timestamp === 0
@@ -124,7 +130,7 @@ export function getExperimentalTableRows(
             totalUsd: item.current_address_holdings.total_usdc,
             deploymentLasted: pluralize({
               count: daysBetween,
-              singular: durationBetween.unit,
+              singular: "day",
               prefixCount: true,
             }),
           })}
