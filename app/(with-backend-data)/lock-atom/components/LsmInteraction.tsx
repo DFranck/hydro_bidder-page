@@ -25,6 +25,7 @@ import { RevertFromHubStepper } from "../steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "../steppers/RevertFromNeutronStepper"
 import { Stepper } from "../types"
 import { LoaderCard } from "./LoaderCard"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 
 export function LsmInteraction({
   validatorMap,
@@ -33,11 +34,9 @@ export function LsmInteraction({
   validatorMap: Map<string, Validator>
   validatorLiquidStakingCap: string
 }) {
-  const {
-    lockedAtomIsAtCapacityGlobal,
-    lockedAtomIsAtCapacityWallet,
-    lockedAtomRemainingCapacityGlobal,
-  } = useBackendData()
+  const { lockedAtomIsAtCapacityWallet } = useBackendData()
+  const { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal } =
+    useGlobalLockupCapacityInfo()
   const {
     hubChain,
     hubSigner,

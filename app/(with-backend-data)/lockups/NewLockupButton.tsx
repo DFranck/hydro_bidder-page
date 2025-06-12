@@ -7,14 +7,12 @@ import {
   needsWalletConnectionTooltip,
 } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import Link from "next/link"
 
 export function NewLockupButton() {
-  const {
-    isWalletConnected,
-    lockedAtomPercentageWallet,
-    lockedAtomPercentageGlobal,
-  } = useBackendData()
+  const { isWalletConnected, lockedAtomPercentageWallet } = useBackendData()
+  const { lockedAtomPercentageGlobal } = useGlobalLockupCapacityInfo()
 
   return (
     <ConditionalWrapper
