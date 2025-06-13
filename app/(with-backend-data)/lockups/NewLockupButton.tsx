@@ -1,4 +1,5 @@
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { DropdownMenuButton } from "@/components/Dropdown"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -41,6 +42,7 @@ export function NewLockupButton() {
       <StyledText as={Link} variant="button.primary" href="/lock-atom">
         New Lockup
       </StyledText>
+      <DropdownMenuButton />
     </ConditionalWrapper>
   )
 }
