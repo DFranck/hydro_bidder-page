@@ -1,17 +1,17 @@
-import { LoadingSpinner } from "@/app/(v2)/v2/components/LoadingSpinner"
-import { environments, getEnvironment } from "@/app/(v2)/v2/environments"
-import { AppContextProvider } from "@/app/(v2)/v2/state/provider"
-import { BidRevampMetrics } from "@/contract-apis/types"
-import { supabase } from "@/lib/supabase"
-import { headers } from "next/headers"
-import React from "react"
+import { BidRevampMetrics } from '@/contract-apis/types'
+import { supabase } from '@/lib/supabase'
+import { LoadingSpinner } from '@v2/components/LoadingSpinner'
+import { environments, getEnvironment } from '@v2/environments'
+import { AppContextProvider } from '@v2/state/provider'
+import { headers } from 'next/headers'
+import React from 'react'
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const baseUrl = await headers().then((headers) => headers.get("x-url") ?? "")
+  const baseUrl = await headers().then((headers) => headers.get('x-url') ?? '')
   const environment = getEnvironment()
   const { sources } = environments[environment]
 
@@ -22,24 +22,24 @@ export default async function Layout({
       const [constants, currentRound, totalLockedTokens, tranches] =
         await Promise.all([
           fetch(new URL(`${urlPrefix}/constants`, baseUrl)).then((response) =>
-            response.json()
+            response.json(),
           ),
           fetch(new URL(`${urlPrefix}/current_round`, baseUrl)).then(
-            (response) => response.json()
+            (response) => response.json(),
           ),
           fetch(new URL(`${urlPrefix}/total_locked_tokens`, baseUrl)).then(
-            (response) => response.json()
+            (response) => response.json(),
           ),
           fetch(new URL(`${urlPrefix}/tranches`, baseUrl)).then((response) =>
-            response.json()
+            response.json(),
           ),
         ])
 
       const { data } = await supabase
-        .from("augmented_round_bids")
-        .select("data")
-        .eq("hydro_contract", source.hydroContract)
-        .eq("round_id", currentRound.round_id)
+        .from('augmented_round_bids')
+        .select('data')
+        .eq('hydro_contract', source.hydroContract)
+        .eq('round_id', currentRound.round_id)
 
       const augmentedBids = data?.map((bid) => bid.data) ?? []
 
@@ -53,7 +53,7 @@ export default async function Layout({
           augmentedBids: augmentedBids as unknown as BidRevampMetrics[],
         },
       }
-    })
+    }),
   )
 
   return (

@@ -1,15 +1,16 @@
-import { Icon } from "@/components/Icon"
-import { TokenThemeWrapper } from "@v2/components/TokenThemeWrapper"
-import { SourceID } from "@v2/environments"
-import { useAppState } from "@v2/state/provider"
-import Image from "next/image"
-import { twJoin } from "tailwind-merge"
+import { Icon } from '@/components/Icon'
+import { plural } from '@/lib/pluralize'
+import { SourceID } from '@v2/environments'
+import { useAppState } from '@v2/state/provider'
+import Image from 'next/image'
+import { twJoin, twMerge } from 'tailwind-merge'
 
 export function BidCard({
   sourceId,
   bidId,
+  className,
   ...otherProps
-}: React.ComponentProps<"div"> & {
+}: React.ComponentProps<'div'> & {
   sourceId: SourceID
   bidId: number
 }) {
@@ -26,81 +27,70 @@ export function BidCard({
   const bidDescription = bidDescriptionsById[bidId]
 
   return (
-    <TokenThemeWrapper
-      sourceId={sourceId}
-      id={`bid-card--${bidId}`}
+    <div
+      id={`bid-card--${sourceId}-${bidId}`}
       tabIndex={0}
-      className={twJoin(
-        "group",
-        "grid grid-cols-[min-content_auto] items-center",
-        "gap-3 px-4 pt-3 pb-4",
-        "md:gap-6 md:px-6 md:pt-5 md:pb-6",
-        "transition-all",
-        "focus-within:outline-none",
-        "focus-within:bg-token-color",
-        "hover:bg-token-color/20",
-        "focus-within:hover:bg-token-color/90",
-        userHasVotedOnThisBid && []
+      className={twMerge(
+        'group overflow-hidden',
+        'grid grid-cols-[min-content_auto] items-center',
+        'gap-6 p-6',
+        'mobile:gap-3 mobile:p-3',
+        'outline-none',
+        'bg-token-color/20 rounded-standard',
+        'hover:bg-token-color/40',
+        'focus-within:bg-token-color/60!',
+        className,
       )}
       {...otherProps}
     >
       <div
         className={twJoin(
-          "size-12 rounded-full",
-          "group-focus-within:border-white",
-          !bidDescription?.projectLogoUrl && [
-            "border-token-color border-2",
-            "bg-token-color/20",
-          ]
+          'flex items-center justify-center',
+          'p-2',
+          'bg-token-color/40',
         )}
       >
-        {bidDescription?.projectLogoUrl && (
-          <Image
-            src={bidDescription.projectLogoUrl}
-            alt={bidDescription.projectName ?? bidDescription.title}
-            width={48}
-            height={48}
-          />
-        )}
+        <div className={twJoin('size-12', 'bg-palette-beige')}>
+          {bidDescription?.projectLogoUrl && (
+            <Image
+              src={bidDescription.projectLogoUrl}
+              alt={bidDescription.projectName ?? bidDescription.title}
+              width={48}
+              height={48}
+            />
+          )}
+        </div>
       </div>
 
       <div
-        className={twJoin(
-          "flex items-center justify-between",
-          "gap-2 md:gap-4"
-        )}
+        className={twJoin('px-standard', 'flex items-center justify-between')}
       >
-        <h3 className="text-lg">{bid.title}</h3>
+        <h3 className="label">{bid.title}</h3>
 
         <div
           className={twJoin(
-            "flex items-center justify-end gap-6",
-            "text-faded text-xs"
+            'gap-standard',
+            'flex items-center justify-end',
+            'text-faded text-xs',
           )}
         >
-          <div className={twJoin("flex items-center gap-1")}>
-            <Icon name="calendar" />
+          <div className="flex items-center gap-2">
             <span>{bid.duration}</span>
+            <span>{plural(bid.duration, 'month')}</span>
           </div>
 
-          <div className={twJoin("flex items-center gap-1")}>
-            <Icon name="chart-line-up" />
+          <div className="flex items-center gap-2">
             <span>??%</span>
           </div>
 
-          <button
-            className={twJoin(
-              "btn-primary btn-inline btn-inverted",
-              "flex items-center gap-1"
-            )}
-          >
+          <button className={twJoin('btn-primary btn-inline btn-inverted')}>
             <Icon
-              name={userHasVotedOnThisBid ? "circle-check" : "circle-dashed"}
+              name={userHasVotedOnThisBid ? 'circle-check' : 'circle-dashed'}
             />
-            <span>{userHasVotedOnThisBid ? "Change Vote" : "Vote"}</span>
+            <span>{userHasVotedOnThisBid ? 'Change Vote' : 'Vote'}</span>
           </button>
         </div>
       </div>
-    </TokenThemeWrapper>
+    </div>
   )
 }

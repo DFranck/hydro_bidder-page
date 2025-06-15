@@ -8,26 +8,43 @@
   --sidebar-width-docked: 80px;
 
   --breakpoint-2xl: 1400px;
+  --breakpoint-mobile: 767px;
 
   --container-2xs: 16rem;
 
-  --spacing-standard: 4px;
-  --radius-standard: 4px;
+  --spacing-standard: 6px;
+  --spacing-loose: 12px;
+  --radius-standard: 6px;
+  --radius-large: 12px;
 
   --font-inter: "Inter", "sans-serif";
 
-  --color-palette-beige: #ffe1b8;
-  --color-palette-cyan: #00d1ff;
-  --color-palette-blue: #0061ff;
-  --color-palette-green: #00ffc2;
-  --color-palette-red: #ff7b51;
-  --color-palette-text: #080815;
+  --palette-beige-rgb: 255, 225, 184;
+  --palette-cyan-rgb: 0, 209, 255;
+  --palette-blue-rgb: 0, 97, 255;
+  --palette-green-rgb: 0, 255, 194;
+  --palette-red-rgb: 255, 123, 81;
+  --palette-text-rgb: 8, 8, 21;
+
+  --color-palette-beige: rgb(var(--palette-beige-rgb));
+  --color-palette-cyan: rgb(var(--palette-cyan-rgb));
+  --color-palette-blue: rgb(var(--palette-blue-rgb));
+  --color-palette-green: rgb(var(--palette-green-rgb));
+  --color-palette-red: rgb(var(--palette-red-rgb));
+  --color-palette-text: rgb(var(--palette-text-rgb));
+
   --color-token-atom: #9747ff;
   --color-token-stosmo: #e50371;
-  --color-token-color: var(--color-token-atom);
+  --color-token-color: var(--color-palette-beige);
+  --color-token-color-to-left: var(--color-palette-beige);
+  --color-token-color-to-right: var(--color-palette-beige);
 
-  --color-shaded: rgba(var(--color-palette-beige), 0.8);
+  --color-foreground: rgb(255, 255, 255);
+  --color-background: var(--color-palette-text);
+
+  --color-shaded: rgba(255, 255, 255, 0.05);
   --color-faded: rgba(255, 255, 255, 0.6);
+  --color-darkened: rgba(var(--palette-text-rgb), 0.25);
 }
 
 @utility border-token-color {
@@ -52,12 +69,13 @@
   html {
     @apply touch-manipulation;
     @apply text-[14px];
+    @apply text-shadow-xs;
   }
 }
 
 @utility btn {
   @apply inline-flex items-center justify-center rounded-md border-2;
-  @apply px-3 py-2;
+  @apply gap-1 px-3 py-2;
   @apply text-center leading-none font-semibold whitespace-nowrap;
   @apply cursor-pointer touch-manipulation;
 }
@@ -80,17 +98,29 @@
 }
 
 @utility empty-box {
-  @apply flex h-full items-center justify-center;
+  @apply flex h-full items-center justify-center py-12;
+  @apply text-faded;
+  @apply from-token-color/10 to-token-color/0 bg-gradient-to-b;
 }
 
 @utility label {
-  @apply text-sm leading-[1.1em] font-bold tracking-widest uppercase;
+  @apply text-xs leading-[1.1em] font-bold tracking-widest uppercase;
+}
+
+@utility footnote {
+  @apply text-xs leading-[1.1em] tracking-wide;
+  @apply text-faded;
 }
 
 @utility denom {
   @apply label;
   font-size: 10px;
   opacity: 0.6;
+}
+
+@utility important-value {
+  @apply text-palette-beige font-extrabold not-italic;
+  @apply [.is-mobile_&]:text-2xl;
 }
 
 @utility grid-areas-desktop-sidebar-closed {

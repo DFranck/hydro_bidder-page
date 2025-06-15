@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { twMerge } from "tailwind-merge"
+import { twMerge } from 'tailwind-merge'
 
 type LoadingSpinnerProps = {
   className?: string
@@ -10,16 +10,16 @@ type LoadingSpinnerProps = {
 
 export function LoadingSpinner({
   className,
-  color = "bg-palette-blue",
+  color = 'bg-palette-blue',
   waveDuration = 500,
 }: LoadingSpinnerProps) {
   return (
     <div
       className={twMerge(
-        "bg-palette-text absolute inset-0 z-50",
-        "h-screen w-screen",
-        "flex items-center justify-center",
-        className
+        'bg-background absolute inset-0 z-50',
+        'h-screen w-screen',
+        'flex items-center justify-center',
+        className,
       )}
     >
       <div className="flex h-16 items-end gap-1">
@@ -27,14 +27,14 @@ export function LoadingSpinner({
           <div
             key={index}
             className={twMerge(
-              "w-4 rounded-full",
-              "transition-all duration-300",
-              color
+              'w-4 rounded-full',
+              'transition-all duration-300',
+              color,
             )}
             style={{
               animation: `wave ${waveDuration}ms ease-in-out infinite alternate`,
               animationDelay: `${(index * waveDuration) / 12}ms`,
-              animationPlayState: "running",
+              animationPlayState: 'running',
             }}
           />
         ))}

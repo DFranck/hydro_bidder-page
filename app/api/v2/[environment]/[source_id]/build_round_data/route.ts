@@ -1,4 +1,4 @@
-import { Environment, SourceID } from "@/app/(v2)/v2/environments"
+import { Environment, SourceID } from "@v2/environments"
 import range from "lodash/range"
 
 export async function GET(

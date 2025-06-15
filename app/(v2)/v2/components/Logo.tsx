@@ -1,11 +1,11 @@
-import { twJoin, twMerge } from "tailwind-merge"
+import { twJoin, twMerge } from 'tailwind-merge'
 
 export function Logo({
   className,
   showLogo = true,
   showText = true,
   ...otherProps
-}: React.ComponentProps<"svg"> & {
+}: React.ComponentProps<'svg'> & {
   className?: string
   showLogo?: boolean
   showText?: boolean
@@ -15,7 +15,7 @@ export function Logo({
   }
 
   return (
-    <div className={twMerge("relative h-full", className)}>
+    <div className={twMerge('relative h-full', className)}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox={
@@ -28,14 +28,14 @@ export function Logo({
                 : `0 0 0 0`
         }
         fill="none"
-        className={twJoin("h-full w-auto transition-all")}
+        className={twJoin('h-full w-auto transition-all')}
         {...otherProps}
       >
         {/* Logo */}
         <g
           className={twJoin(
-            "opacity-0 transition-all",
-            showLogo && "opacity-100"
+            'opacity-0 transition-all',
+            showLogo && 'opacity-100',
           )}
         >
           <path
@@ -73,8 +73,8 @@ export function Logo({
         {/* Text */}
         <g
           className={twJoin(
-            "opacity-0 transition-all",
-            showText && "opacity-100"
+            'opacity-0 transition-all',
+            showText && 'opacity-100',
           )}
         >
           <path

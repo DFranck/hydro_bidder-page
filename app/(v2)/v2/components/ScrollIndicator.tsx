@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import { Icon } from "@/components/Icon"
-import { useEffect, useState } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { Icon } from '@/components/Icon'
+import { useEffect, useState } from 'react'
+import { twJoin, twMerge } from 'tailwind-merge'
 
-interface ScrollIndicatorProps extends React.ComponentProps<"div"> {
+interface ScrollIndicatorProps extends React.ComponentProps<'div'> {
   containerSelector: string
   targetSelector: string
   renderDot?: (props: {
     target: Element
     index: number
     isActive: boolean
-    spreadProps: React.ComponentProps<"button">
+    spreadProps: React.ComponentProps<'button'>
   }) => React.ReactNode
   renderDots?: (props: {
     dots: React.ReactNode[]
@@ -45,7 +45,7 @@ export function ScrollIndicator({
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const index = targets.findIndex((target) =>
-              entry.target.isSameNode(target)
+              entry.target.isSameNode(target),
             )
             if (index !== -1) {
               setActiveIndex(index)
@@ -56,7 +56,7 @@ export function ScrollIndicator({
       {
         root: container,
         threshold: 0.8,
-      }
+      },
     )
 
     targets.forEach((target) => {
@@ -70,22 +70,22 @@ export function ScrollIndicator({
 
   const handlePrevious = () => {
     if (activeIndex > 0) {
-      targets[activeIndex - 1]?.scrollIntoView({ behavior: "smooth" })
+      targets[activeIndex - 1]?.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
   const handleNext = () => {
     if (activeIndex < targets.length - 1) {
-      targets[activeIndex + 1]?.scrollIntoView({ behavior: "smooth" })
+      targets[activeIndex + 1]?.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
   const dots = targets.map((target, index) => {
     const isActive = activeIndex === index
     const spreadProps = {
-      "aria-label": `Go to bucket ${index + 1}`,
+      'aria-label': `Go to tranche ${index + 1}`,
       onClick: () => {
-        targets[index]?.scrollIntoView({ behavior: "smooth" })
+        targets[index]?.scrollIntoView({ behavior: 'smooth' })
       },
     }
 
@@ -103,10 +103,10 @@ export function ScrollIndicator({
         {...spreadProps}
         key={index}
         className={twJoin(
-          "group",
-          "px-2 py-4",
-          "transition-all",
-          isActive ? "scale-150" : "group-hover:scale-125"
+          'group',
+          'px-2 py-4',
+          'transition-all',
+          isActive ? 'scale-150' : 'group-hover:scale-125',
         )}
       >
         <Icon name="solid:circle" />
@@ -116,7 +116,7 @@ export function ScrollIndicator({
 
   return (
     <div
-      className={twMerge("flex items-center justify-center", className)}
+      className={twMerge('flex items-center justify-center', className)}
       {...otherProps}
     >
       {renderDots?.({

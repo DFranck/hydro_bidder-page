@@ -1,7 +1,7 @@
-"use server"
+'use server'
 
-import { random, range, sample } from "lodash"
-import { cache } from "react"
+import { random, range, sample } from 'lodash'
+import { cache } from 'react'
 
 interface Bid {
   id: number
@@ -17,26 +17,26 @@ export type DummyData = Awaited<ReturnType<typeof getDummyData>>
 const currentRoundId = 5
 
 const bidTitleCandidates = [
-  "Decentralized NFT marketplace with gasless transactions",
-  "Blockchain-based voting system for transparent elections",
-  "Tokenized real estate investment platform on Ethereum",
-  "Decentralized social media platform with privacy focus",
-  "Supply chain tracking solution using smart contracts",
-  "Cross-chain bridge for seamless asset transfers",
-  "DeFi lending protocol with automated risk assessment",
-  "DAO governance tool with quadratic voting",
-  "Web3 identity verification system",
-  "NFT fractionalization platform",
-  "Decentralized file storage with encryption",
-  "Smart contract audit automation tool",
-  "Blockchain-based insurance platform",
-  "Crypto payment gateway for merchants",
-  "DeFi yield aggregator with risk management",
+  'Decentralized NFT marketplace with gasless transactions',
+  'Blockchain-based voting system for transparent elections',
+  'Tokenized real estate investment platform on Ethereum',
+  'Decentralized social media platform with privacy focus',
+  'Supply chain tracking solution using smart contracts',
+  'Cross-chain bridge for seamless asset transfers',
+  'DeFi lending protocol with automated risk assessment',
+  'DAO governance tool with quadratic voting',
+  'Web3 identity verification system',
+  'NFT fractionalization platform',
+  'Decentralized file storage with encryption',
+  'Smart contract audit automation tool',
+  'Blockchain-based insurance platform',
+  'Crypto payment gateway for merchants',
+  'DeFi yield aggregator with risk management',
 ]
 
-const bidDurationCandidates = ["1 month", "3 months", "6 months"]
+const bidDurationCandidates = ['1 month', '3 months', '6 months']
 
-const votingTokenCandidates = ["ATOM", "stOSMO"]
+const votingTokenCandidates = ['ATOM', 'stOSMO']
 
 export const getDummyData = cache(
   async ({
@@ -75,7 +75,7 @@ export const getDummyData = cache(
             title: sample(bidTitleCandidates),
             duration: sample(bidDurationCandidates),
             apr: random(0, 25) / 100,
-          }) as Bid
+          }) as Bid,
       )
 
       bids.push(...bidsInBucket)
@@ -98,5 +98,5 @@ export const getDummyData = cache(
     }
 
     return dummyData
-  }
+  },
 )

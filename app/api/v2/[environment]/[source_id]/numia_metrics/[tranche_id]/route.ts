@@ -1,4 +1,4 @@
-import { Environment, getSource, SourceID } from "@/app/(v2)/v2/environments"
+import { Environment, getSource, SourceID } from "@v2/environments"
 
 const NUMIA_METRICS_URL = "https://cosmos.numia.xyz/hydro/v2/metrics"
 

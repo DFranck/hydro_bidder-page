@@ -1,23 +1,22 @@
-import { useIsMobile } from "@/lib/useIsMobile"
-import { twJoin, twMerge } from "tailwind-merge"
+import { twJoin, twMerge } from 'tailwind-merge'
 
 export function StatBar({
   stats,
   className,
   ...otherProps
-}: React.ComponentProps<"div"> & {
+}: React.ComponentProps<'div'> & {
   stats: [label: React.ReactNode, value: React.ReactNode][]
 }) {
-  const isMobile = useIsMobile()
-
   return (
     <div
       id="stats-bar"
       className={twMerge(
-        isMobile ? "gap-1 py-4" : "h-18 gap-3",
-        "flex justify-around",
-        "bg-palette-beige/10 rounded-standard",
-        className
+        'h-18',
+        'flex justify-around',
+        'gap-3',
+        'mobile:gap-1',
+        'bg-shaded rounded-standard',
+        className,
       )}
       {...otherProps}
     >
@@ -25,15 +24,18 @@ export function StatBar({
         <div
           key={index}
           className={twJoin(
-            "flex items-center",
-            isMobile ? "flex-col justify-center gap-1" : "gap-3"
+            'flex items-center',
+            'gap-3',
+            'mobile:justify-center mobile:gap-2',
           )}
         >
-          <var className="text-palette-beige text-3xl font-extrabold not-italic">
+          <var className="important-value mobile:text-2xl text-3xl">
             {value}
           </var>
 
-          <span className="label text-center">{label}</span>
+          <span className="label mobile:w-min mobile:text-left text-center">
+            {label}
+          </span>
         </div>
       ))}
     </div>

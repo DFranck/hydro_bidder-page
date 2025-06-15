@@ -1,14 +1,13 @@
-"use client"
+'use client'
 
-import { Icon } from "@/components/Icon"
-import { IconString } from "@/components/Icon/types"
-import { StyledText } from "@/components/StyledText"
-import { useIsMobile } from "@/lib/useIsMobile"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { twJoin, twMerge } from "tailwind-merge"
+import { Icon } from '@/components/Icon'
+import { IconString } from '@/components/Icon/types'
+import { StyledText } from '@/components/StyledText'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { twJoin, twMerge } from 'tailwind-merge'
 
-export interface MenuItem extends React.ComponentProps<"a"> {
+export interface MenuItem extends React.ComponentProps<'a'> {
   disabled?: boolean
   href?: string
   iconLeft?: IconString
@@ -33,7 +32,7 @@ export function ResponsiveMenu({
   classNameForSubItemsDesktop,
   classNameForSubItemsMobile,
   ...otherProps
-}: React.ComponentProps<"nav"> & {
+}: React.ComponentProps<'nav'> & {
   menuItems: MenuItem[]
   className?: string
   classNameDesktop?: string
@@ -47,7 +46,6 @@ export function ResponsiveMenu({
   classNameForSubItemsDesktop?: string
   classNameForSubItemsMobile?: string
 }) {
-  const isMobile = useIsMobile()
   const pathname = usePathname()
 
   function blurActiveElement() {
@@ -58,36 +56,34 @@ export function ResponsiveMenu({
     <nav
       tabIndex={0}
       className={twMerge(
-        "group/navbar z-40",
-        isMobile
-          ? [
-              "pointer-events-none",
-              "fixed top-0 right-0 h-full w-2/3 overflow-hidden",
-              "transition-all",
-              "duration-500",
-              "focus-within:pointer-events-auto",
-              classNameMobile,
-            ]
-          : ["relative bg-transparent", classNameDesktop],
-        className
+        'group/navbar z-40',
+        'relative bg-transparent',
+        'mobile:pointer-events-none',
+        'mobile:fixed mobile:top-0 mobile:right-0 mobile:h-full mobile:w-2/3 mobile:overflow-hidden',
+        'mobile:transition-all mobile:duration-500',
+        'mobile:focus-within:pointer-events-auto',
+        classNameDesktop,
+        classNameMobile,
+        className,
       )}
       {...otherProps}
     >
       <button
         className={twJoin(
-          "fixed top-0 right-0 z-40 size-12",
-          "flex cursor-pointer",
-          "transition-all duration-500",
-          "group-focus-within/navbar:rotate-180",
-          isMobile ? "pointer-events-auto" : "hidden"
+          'fixed top-0 right-0 z-40 size-12',
+          'flex cursor-pointer',
+          'transition-all duration-500',
+          'group-focus-within/navbar:rotate-180',
+          'hidden',
+          'mobile:pointer-events-auto mobile:block',
         )}
       >
         <span
           className={twJoin(
-            "absolute inset-0 flex items-center justify-center",
-            "text-2xl",
-            "opacity-100 transition-all duration-500",
-            "group-focus-within/navbar:opacity-0"
+            'absolute inset-0 flex items-center justify-center',
+            'text-2xl',
+            'opacity-100 transition-all duration-500',
+            'group-focus-within/navbar:opacity-0',
           )}
         >
           <Icon name="solid:bars" />
@@ -111,14 +107,15 @@ export function ResponsiveMenu({
       {/* Backdrop */}
       <div
         className={twMerge(
-          "pointer-events-none",
-          "fixed inset-0 z-10",
-          "opacity-0",
-          "transition-all duration-500",
-          "group-focus-within/navbar:pointer-events-auto",
-          "group-focus-within/navbar:opacity-100",
-          !isMobile && "hidden",
-          classNameForBackdropMobile
+          'pointer-events-none',
+          'fixed inset-0 z-10',
+          'opacity-0',
+          'transition-all duration-500',
+          'group-focus-within/navbar:pointer-events-auto',
+          'group-focus-within/navbar:opacity-100',
+          'hidden',
+          'mobile:block',
+          classNameForBackdropMobile,
         )}
         onClick={blurActiveElement}
       />
@@ -126,28 +123,26 @@ export function ResponsiveMenu({
       {/* Mobile Menu Background */}
       <div
         className={twMerge(
-          "pointer-events-none",
-          "absolute inset-0 z-20",
-          "opacity-0 transition-all duration-500",
-          "group-focus-within/navbar:opacity-100",
-          !isMobile && "hidden",
-          classNameForBackgroundMobile
+          'pointer-events-none',
+          'absolute inset-0 z-20',
+          'opacity-0 transition-all duration-500',
+          'group-focus-within/navbar:opacity-100',
+          'hidden',
+          'mobile:block',
+          classNameForBackgroundMobile,
         )}
       />
 
       {/* Menu Items */}
       <div
         className={twMerge(
-          "relative z-30",
-          "flex",
-          isMobile
-            ? [
-                "flex-col justify-between",
-                "gap-3 px-6 py-12",
-                "opacity-0 transition-all duration-500",
-                "group-focus-within/navbar:opacity-100",
-              ]
-            : "flex-row items-center gap-6"
+          'relative z-30',
+          'flex',
+          'flex-row items-center gap-6',
+          'mobile:flex-col mobile:justify-between',
+          'mobile:gap-3 mobile:px-6 mobile:py-12',
+          'mobile:opacity-0 mobile:transition-all mobile:duration-500',
+          'mobile:group-focus-within/navbar:opacity-100',
         )}
       >
         {menuItems.map(
@@ -163,7 +158,7 @@ export function ResponsiveMenu({
               onClick,
               ...otherProps
             },
-            index
+            index,
           ) => {
             const hasMenuItems = !!subMenuItems?.length
 
@@ -171,13 +166,14 @@ export function ResponsiveMenu({
               <StyledText
                 key={href}
                 as={Link}
-                href={href ?? "#"}
+                href={href ?? '#'}
                 tooltip={tooltip}
                 className={twJoin(
-                  disabled && "pointer-events-none opacity-60",
-                  isMobile ? classNameForItemMobile : classNameForItemDesktop,
-                  pathname?.startsWith(href ?? "") &&
-                    "text-palette-beige font-bold"
+                  disabled && 'pointer-events-none opacity-60',
+                  classNameForItemDesktop,
+                  'mobile:' + classNameForItemMobile,
+                  pathname?.startsWith(href ?? '') &&
+                    'text-palette-beige font-bold',
                 )}
                 onClick={(event) => {
                   onClick?.(event)
@@ -190,90 +186,84 @@ export function ResponsiveMenu({
             ) : (
               <div
                 className={twJoin(
-                  "group relative cursor-pointer",
-                  "flex flex-col justify-center",
-                  isMobile ? "w-full gap-3" : "items-center"
+                  'group relative cursor-pointer',
+                  'flex flex-col justify-center',
+                  'items-center',
+                  'mobile:w-full mobile:gap-3',
                 )}
                 key={index}
               >
                 <a
-                  href={href ?? "#"}
-                  tabIndex={0}
+                  href={href ?? '#'}
                   className={twJoin(
-                    "flex items-center gap-1",
-                    isMobile ? classNameForItemMobile : classNameForItemDesktop
+                    'flex items-center gap-2',
+                    'mobile:w-full mobile:justify-between',
                   )}
-                  onClick={onClick}
-                  {...otherProps}
                 >
-                  {label} <Icon name={iconRight ?? "solid:chevron-down"} />
+                  {iconLeft && <Icon name={iconLeft} />}
+                  <span>{label}</span>
+                  {iconRight && <Icon name={iconRight} />}
                 </a>
 
                 <div
                   className={twJoin(
-                    "flex flex-col",
-                    "transition-all",
-                    isMobile
-                      ? classNameForSubItemsMobile
-                      : [
-                          "absolute top-full z-20",
-                          "pointer-events-none opacity-0",
-                          "group-has-focus-within:opacity-100",
-                          "group-has-focus-within:pointer-events-auto",
-                          classNameForSubItemsDesktop,
-                        ]
+                    'absolute top-full left-0',
+                    'hidden group-hover:block',
+                    'mobile:relative mobile:block',
+                    'mobile:group-hover:hidden',
+                    'mobile:group-focus-within:block',
                   )}
                 >
-                  {subMenuItems.map(
-                    (
-                      {
-                        label,
-                        href,
-                        disabled = false,
-                        target,
-                        tooltip = null,
-                        iconLeft,
-                        iconRight,
-                        onClick,
-                      },
-                      index
-                    ) => (
-                      <StyledText
-                        key={index}
-                        as={Link}
-                        href={href ?? "#"}
-                        target={target}
-                        tooltip={tooltip}
-                        className={twMerge(
-                          disabled && "pointer-events-none opacity-60",
-                          "flex w-full items-center justify-between gap-6",
-                          "whitespace-nowrap transition-all",
-                          isMobile
-                            ? classNameForSubItemMobile
-                            : classNameForSubItemDesktop
-                        )}
-                        onClick={(event) => {
-                          onClick?.(event)
-                          blurActiveElement()
-                        }}
-                      >
-                        <span
+                  <div
+                    className={twJoin(
+                      'flex flex-col gap-2',
+                      'p-2',
+                      'bg-shaded rounded-standard',
+                      'mobile:bg-transparent mobile:p-0',
+                    )}
+                  >
+                    {subMenuItems.map(
+                      (
+                        {
+                          label,
+                          href,
+                          disabled,
+                          tooltip,
+                          iconLeft,
+                          iconRight,
+                          menuItems,
+                          onClick,
+                          ...otherProps
+                        },
+                        subIndex,
+                      ) => (
+                        <StyledText
+                          key={subIndex}
+                          as={Link}
+                          href={href ?? '#'}
+                          tooltip={tooltip}
                           className={twJoin(
-                            "inline-flex items-center gap-2",
-                            "truncate"
+                            disabled && 'pointer-events-none opacity-60',
+                            classNameForSubItemDesktop,
+                            'mobile:' + classNameForSubItemMobile,
+                            pathname?.startsWith(href ?? '') &&
+                              'text-palette-beige font-bold',
                           )}
+                          onClick={(event) => {
+                            onClick?.(event)
+                            blurActiveElement()
+                          }}
+                          {...otherProps}
                         >
-                          {iconLeft && <Icon name={iconLeft} />}
                           {label}
-                        </span>
-                        {iconRight && <Icon name={iconRight} />}
-                      </StyledText>
-                    )
-                  )}
+                        </StyledText>
+                      ),
+                    )}
+                  </div>
                 </div>
               </div>
             )
-          }
+          },
         )}
       </div>
     </nav>

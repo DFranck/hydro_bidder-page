@@ -1,31 +1,35 @@
-import { BidCard } from "@/app/(v2)/v2/components/BidCard"
-import { SourceBadge } from "@/app/(v2)/v2/components/SourceBadge"
-import { TokenThemeWrapper } from "@/app/(v2)/v2/components/TokenThemeWrapper"
-import { SourceID } from "@/app/(v2)/v2/environments"
-import { useAppState } from "@/app/(v2)/v2/state/provider"
-import { Icon } from "@/components/Icon"
-import { useIsMobile } from "@/lib/useIsMobile"
-import { twJoin, twMerge } from "tailwind-merge"
+import { SourceLabel } from '@/app/(v2)/v2/components/SourceLabel'
+import { Icon } from '@/components/Icon'
+import { BidCard } from '@v2/components/BidCard'
+import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
+import { SourceID } from '@v2/environments'
+import { useKeyboardNavigation } from '@v2/hooks/useKeyboardNavigation'
+import { useAppState } from '@v2/state/provider'
+import { useRef } from 'react'
+import { twJoin, twMerge } from 'tailwind-merge'
 
 export function Tranche({
   sourceId,
   trancheId,
+  isActive,
   className,
-  classNameForViewbox,
-  classNameForContentContainer,
+  renderViewbox,
   ...otherProps
-}: React.ComponentProps<"div"> & {
+}: React.ComponentProps<'div'> & {
   sourceId: SourceID
   trancheId: number
-  classNameForViewbox?: string
-  classNameForContentContainer?: string
+  renderViewbox?: (props: {
+    className: string
+    children: React.ReactNode
+  }) => React.ReactNode
+  isActive?: boolean
 }) {
-  const isMobile = useIsMobile()
   const { state } = useAppState()
   const { narrowBuckets, currentRoundDataPerSource } = state
   const tranche = currentRoundDataPerSource?.[sourceId].tranches.find(
-    (tranche) => tranche.id === trancheId
+    (tranche) => tranche.id === trancheId,
   )
+  const viewboxRef = useRef<HTMLDivElement>(null)
 
   if (!tranche) return null
 
@@ -34,108 +38,140 @@ export function Tranche({
   const userVotedInBucket = false // TODO: add this
   const bidsInTranche = allBids.filter((bid) => bid.trancheId === trancheId)
 
+  useKeyboardNavigation({
+    selector: `[id^="bid-card--${sourceId}-"]`,
+    direction: 'vertical',
+    containerRef: viewboxRef,
+    onNavigateToParent: (currentElement) => {
+      const currentId = currentElement.id
+      const match = currentId.match(/bid-card--(.+)-(\d+)/)
+      if (match) {
+        const [, sourceId, trancheId] = match
+        return document.querySelector(
+          `[id="tranche-nav-button--${sourceId}-${trancheId}"]`,
+        ) as HTMLElement | null
+      }
+      return null
+    },
+  })
+
+  const viewboxClassName = twMerge(
+    'rounded-standard absolute inset-0 overflow-hidden',
+    'gap-standard grid grid-rows-[min-content_auto]',
+    narrowBuckets && [
+      'border-2 border-transparent',
+      isActive && 'border-token-color',
+    ],
+    userVotedInBucket && [
+      'border-palette-green',
+      'scrollbar-thumb-palette-green',
+      'scrollbar-track-transparent',
+    ],
+    'opacity-100 transition-opacity duration-200',
+  )
+
+  const contentContainerClassName = twMerge('h-full', 'overflow-y-auto')
+
+  const viewboxContent = (
+    <>
+      <div
+        id={`tranche-header--${sourceId}-${trancheId}`}
+        className={twJoin(
+          'flex h-12 items-center justify-between px-3',
+          'transition-colors',
+          userVotedInBucket
+            ? isActive
+              ? 'bg-palette-green'
+              : 'bg-palette-green/20'
+            : isActive
+              ? 'bg-token-color'
+              : 'bg-token-color/40',
+        )}
+      >
+        <SourceLabel sourceId={sourceId} />
+
+        <div className={twJoin('flex items-center gap-2')}>
+          <span
+            className={twJoin(
+              'footnote',
+              'flex items-center gap-1',
+              userVotedInBucket && 'text-palette-green',
+            )}
+          >
+            {userVotedInBucket ? (
+              <>
+                <span>You voted in this tranche</span>
+                <Icon name="solid:circle-check" />
+              </>
+            ) : (
+              <>
+                <span>You haven&rsquo;t voted in this tranche</span>
+                <Icon name="solid:circle-dashed" />
+              </>
+            )}
+          </span>
+
+          <button className={twJoin('btn-icon')}>
+            <Icon name="solid:ellipsis-vertical" />
+          </button>
+        </div>
+      </div>
+
+      <div
+        id={`tranche-content--${sourceId}-${trancheId}`}
+        className={contentContainerClassName}
+      >
+        <div
+          id={`tranche-content-inner--${sourceId}-${trancheId}`}
+          className={twJoin(
+            'mx-auto flex h-full flex-col',
+            'gap-loose',
+            bidsInTranche.length && ['py-loose', 'md:max-w-[60vw]'],
+          )}
+        >
+          {bidsInTranche.map((bid, index) => {
+            return <BidCard key={bid.id} sourceId={sourceId} bidId={bid.id} />
+          })}
+
+          {!bidsInTranche.length && (
+            <div className="empty-box">
+              <span>No bids in this tranche, yet&hellip;</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  )
+
   return (
     <TokenThemeWrapper
       sourceId={sourceId}
-      id={`bucket-container-${trancheId}`}
+      id={`tranche-container--${sourceId}-${trancheId}`}
       className={twMerge(
-        "relative",
-        "h-full shrink-0 grow-0",
-        "snap-start",
-        isMobile
-          ? "w-[calc(100vw-4px)]"
-          : narrowBuckets
-            ? "w-[550px]"
-            : "w-full",
-        className
+        'relative',
+        'h-full shrink-0 grow-0',
+        'snap-start',
+        narrowBuckets ? 'w-[550px]' : 'w-full',
+        isActive && 'z-10',
+        className,
       )}
       {...otherProps}
     >
-      <div
-        id={`bucket-viewbox-${trancheId}`}
-        tabIndex={0}
-        className={twMerge(
-          "absolute inset-0",
-          "gap-standard grid grid-rows-[min-content_auto]",
-          "border-2 border-transparent",
-          "focus-within:border-token-color",
-          "focus-within:outline-none",
-          "bg-token-color/10",
-          userVotedInBucket && [
-            "focus-within:border-token-color",
-            "scrollbar-thumb-token-color",
-            "scrollbar-track-transparent",
-          ],
-          classNameForViewbox
-        )}
-      >
+      {renderViewbox ? (
+        renderViewbox({
+          className: viewboxClassName,
+          children: viewboxContent,
+        })
+      ) : (
         <div
-          id={`bucket-header-${trancheId}`}
-          className={twJoin(
-            "flex h-12 items-center justify-between px-3",
-            userVotedInBucket ? "bg-token-color/10" : "bg-token-color/10"
-          )}
+          ref={viewboxRef}
+          id={`tranche-viewbox--${sourceId}-${trancheId}`}
+          tabIndex={0}
+          className={viewboxClassName}
         >
-          <div className="flex items-center gap-3">
-            <SourceBadge sourceId={sourceId} className="size-6 p-1" />
-            <h2 className="label">{name}</h2>
-          </div>
-
-          <div className={twJoin("flex items-center gap-2")}>
-            <span
-              className={twJoin(
-                "flex items-center gap-1",
-                "text-xs",
-                userVotedInBucket ? "text-token-color" : "text-token-color"
-              )}
-            >
-              {userVotedInBucket ? (
-                <>
-                  <span>You voted in this bucket</span>
-                  <Icon name="solid:circle-check" />
-                </>
-              ) : (
-                <>
-                  <span>You haven&rsquo;t voted in this bucket</span>
-                  <Icon name="solid:circle-dashed" />
-                </>
-              )}
-            </span>
-
-            <button className={twJoin("btn-icon")}>
-              <Icon name="solid:ellipsis-vertical" />
-            </button>
-          </div>
+          {viewboxContent}
         </div>
-
-        <div
-          id={`bucket-content-${trancheId}`}
-          className={twMerge(
-            "h-full",
-            "overflow-y-auto",
-            classNameForContentContainer
-          )}
-        >
-          <div
-            id={`bucket-content-inner-${trancheId}`}
-            className={twJoin(
-              "gap-standard mx-auto flex flex-col",
-              "md:max-w-[60vw]",
-              "md:py-12"
-            )}
-          >
-            {bidsInTranche.map((bid, index) => (
-              <BidCard key={index} sourceId={sourceId} bidId={bid.id} />
-            ))}
-
-            {!bidsInTranche.length && (
-              <div className="empty-box">
-                <span>No bids in this bucket, yet&hellip;</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      )}
     </TokenThemeWrapper>
   )
 }

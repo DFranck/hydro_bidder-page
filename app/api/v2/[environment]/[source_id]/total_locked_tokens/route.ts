@@ -1,5 +1,5 @@
-import { Environment, getSource, SourceID } from "@/app/(v2)/v2/environments"
 import { getHydroQueryClient } from "@/app/api/v2/_helpers/getHydroQueryClient"
+import { Environment, getSource, SourceID } from "@v2/environments"
 
 export async function GET(
   request: Request,
