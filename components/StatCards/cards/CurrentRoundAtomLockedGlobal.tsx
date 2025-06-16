@@ -40,7 +40,7 @@ export function CurrentRoundAtomLockedGlobal() {
             </>
           }
         >
-          Total ATOM in{" "}
+          Total Tokens in{" "}
           <span className="inline-flex items-center gap-1">
             Hydro
             <Icon name="circle-info" />

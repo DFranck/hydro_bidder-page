@@ -28,7 +28,7 @@ export function CurrentRoundAtomLockedWallet() {
         <Tooltip tipContents={yourTotalAtomLockedTooltip} className="w-full">
           Your Locked{" "}
           <span className="inline-flex items-center gap-1">
-            ATOM
+            Tokens
             <Icon name="circle-info" />
           </span>
         </Tooltip>

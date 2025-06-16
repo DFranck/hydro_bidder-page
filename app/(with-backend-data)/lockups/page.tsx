@@ -207,7 +207,7 @@ export default function LockupsPage() {
               <div className="flex items-center gap-1 opacity-60">
                 <span>
                   {lockedTokenTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedTokenMaxWallet} ATOM max
+                  {lockedTokenMaxWallet} Tokens max
                 </span>
                 <span>
                   <Icon name="circle-info" />
