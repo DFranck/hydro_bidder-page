@@ -62,7 +62,7 @@ export function LockupsLST({
 
     setIsCreationModalOpen(false)
 
-    // setToasts([toastMessages.lockingTokens])
+    setToasts([toastMessages.lockingTokens])
 
     try {
       await signLockTokens(
@@ -73,10 +73,10 @@ export function LockupsLST({
         String(amount * 1e6)
       )
 
-      // setToasts([toastMessages.lockingTokensSuccess])
+      setToasts([toastMessages.lockingTokensSuccess])
     } catch (error) {
       console.error("Error locking tokens:", error)
-      // setToasts([toastMessages.lockingTokensError(error as Error)])
+      setToasts([toastMessages.lockingTokensError(error as Error)])
       setIsCreationModalOpen(true)
     }
   }

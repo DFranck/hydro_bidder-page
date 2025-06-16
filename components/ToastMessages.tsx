@@ -24,6 +24,25 @@ export const toastMessages = {
     }
   },
 
+  lockingTokens: {
+    variant: "working",
+    message: "Locking tokens...",
+  },
+
+  lockingTokensSuccess: {
+    variant: "success",
+    message: "Tokens locked successfully! Reload to see changes.",
+    actionButtonPrimary: {
+      label: "Reload",
+      onClick: () => window.location.reload(),
+    },
+  },
+
+  lockingTokensError: (error: Error) => ({
+    variant: "error",
+    message: `Error locking tokens: ${error}`,
+  }),
+
   lockupCapacityFull: {
     variant: "info",
     message: "There's no longer capacity to create a lockup.",
