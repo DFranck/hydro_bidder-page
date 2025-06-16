@@ -25,9 +25,9 @@ export interface AugmentedBackendDataAfterWallet
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
   isWalletConnected: boolean
-  lockedAtomIsAtCapacityWallet: boolean
-  lockedAtomPercentageWallet: number
-  lockedAtomTotalWallet: number
+  lockedTokenIsAtCapacityWallet: boolean
+  lockedTokenPercentageWallet: number
+  lockedTokenTotalWallet: number
   lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
@@ -39,14 +39,21 @@ export interface AugmentedBackendDataAfterWallet
 export interface AugmentedBackendDataBeforeWallet {
   currentRoundPrices: RoundPrices
   atomPrice: number
+  dAtomPrice: number
+  stAtomPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
   bidMetaDataById: BidMetaDataByIdSlimmed
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
   tranches: Tranche[]
-  lockedAtomEpochInNanos: number
-  lockedAtomMaxWallet: number
+  lockedTokenEpochInNanos: number
+  lockedTokenIsAtCapacityGlobal: boolean
+  lockedTokenMaxGlobal: number
+  lockedTokenMaxWallet: number
+  lockedTokenPercentageGlobal: number
+  lockedTokenRemainingCapacityGlobal: number
+  lockedTokenTotalGlobal: number
   metricsForPostHydroBids: AugmentedBidFromNumiaSlimmed[]
   metricsForPreHydroBids: AugmentedBidFromNumiaSlimmed[]
   metricsGlobal: SanitizedMetricsFromNumia
@@ -201,11 +208,11 @@ export interface AugmentedBidAfterWallet extends BidRevampMetrics {
 }
 
 export interface GlobalLockupCapacityInfo {
-  lockedAtomIsAtCapacityGlobal: boolean
-  lockedAtomMaxGlobal: number
-  lockedAtomPercentageGlobal: number
-  lockedAtomRemainingCapacityGlobal: number
-  lockedAtomTotalGlobal: number
+  lockedTokenIsAtCapacityGlobal: boolean
+  lockedTokenMaxGlobal: number
+  lockedTokenPercentageGlobal: number
+  lockedTokenRemainingCapacityGlobal: number
+  lockedTokenTotalGlobal: number
 }
 
 export interface MetricsFromNumia {
@@ -268,6 +275,7 @@ export type RawHydroMetaData = {
   liquidity_deployments: LiquidityDeployment[]
   round_end: string
   round_id: number
+  total_locked_tokens: number
   tranches: Tranche[]
 }
 

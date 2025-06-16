@@ -55,7 +55,7 @@ export const LockStepper = ({
 }) => {
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
     useIncompleteNotices()
-  const { lockedAtomEpochInNanos } = useBackendData()
+  const { lockedTokenEpochInNanos } = useBackendData()
   const [step, setStep] = useState<LockStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -184,7 +184,7 @@ export const LockStepper = ({
             <div className="flex flex-col items-center gap-6">
               <div className="grid grid-cols-3 items-center">
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
-                  <div className="text-10 whitespace-nowrap text-palette-beige">
+                  <div className="whitespace-nowrap text-10 text-palette-beige">
                     ATOM Amount
                   </div>
                   <div className="text-sm font-bold">
@@ -193,7 +193,7 @@ export const LockStepper = ({
                 </div>
 
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
-                  <div className="text-10 whitespace-nowrap text-palette-beige">
+                  <div className="whitespace-nowrap text-10 text-palette-beige">
                     Lock Duration
                   </div>
                   <div className="text-sm font-bold">
@@ -211,18 +211,18 @@ export const LockStepper = ({
                     "rounded-md bg-palette-green/10 px-6 py-3"
                   )}
                 >
-                  <div className="text-10 whitespace-nowrap text-palette-beige">
+                  <div className="whitespace-nowrap text-10 text-palette-beige">
                     Voting Power (
                     {getLockupPeriodMultiplier({
                       lockupTime: lockDuration,
-                      lockedAtomEpochInNanos,
+                      lockedTokenEpochInNanos,
                     })}
                     &thinsp;&times;)
                   </div>
                   <div className="text-sm font-bold">
                     {formatAmount(
                       scaleLockupPower({
-                        lockedAtomEpochInNanos,
+                        lockedTokenEpochInNanos,
                         lockupTime: lockDuration,
                         rawPower: BigInt(amount),
                       })
@@ -339,7 +339,7 @@ export const LockStepper = ({
                     </StyledText>
                   </>
                 ) : (
-                  <pre className="max-h-40 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black overflow-scroll">
+                  <pre className="max-h-40 overflow-scroll whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
                     {errorLog}
                   </pre>
                 )}
@@ -373,7 +373,7 @@ export const LockStepper = ({
                 <strong>
                   {formatAmount(
                     scaleLockupPower({
-                      lockedAtomEpochInNanos,
+                      lockedTokenEpochInNanos,
                       lockupTime: lockDuration,
                       rawPower: BigInt(amount),
                     })

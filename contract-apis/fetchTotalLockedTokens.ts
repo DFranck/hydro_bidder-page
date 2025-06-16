@@ -6,7 +6,7 @@ import { invariant } from "ts-invariant"
 
 export async function fetchTotalLockedTokens(): Promise<{
   totalLockedTokens: number
-  lockedAtomMaxGlobal: number
+  lockedTokenMaxGlobal: number
 }> {
   const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
 
@@ -29,6 +29,6 @@ export async function fetchTotalLockedTokens(): Promise<{
 
   return {
     totalLockedTokens: total_locked_tokens,
-    lockedAtomMaxGlobal: constants.max_locked_tokens,
+    lockedTokenMaxGlobal: constants.max_locked_tokens,
   }
 }

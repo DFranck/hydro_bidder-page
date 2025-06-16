@@ -34,8 +34,8 @@ export function LsmInteraction({
   validatorMap: Map<string, Validator>
   validatorLiquidStakingCap: string
 }) {
-  const { lockedAtomIsAtCapacityWallet } = useBackendData()
-  const { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal } =
+  const { lockedTokenIsAtCapacityWallet } = useBackendData()
+  const { lockedTokenIsAtCapacityGlobal, lockedTokenRemainingCapacityGlobal } =
     useGlobalLockupCapacityInfo()
   const {
     hubChain,
@@ -112,7 +112,7 @@ export function LsmInteraction({
                 .slice(0, numVisibleNotices)
                 .map((notice, index) => {
                   const canFinalizeLockup =
-                    lockedAtomRemainingCapacityGlobal >=
+                    lockedTokenRemainingCapacityGlobal >=
                     Number((Number(notice.amount) / 10 ** 6).toFixed(6))
 
                   function getStepperConfigForAction(
@@ -200,14 +200,14 @@ export function LsmInteraction({
             </>
           )}
 
-          {lockedAtomIsAtCapacityWallet ? (
+          {lockedTokenIsAtCapacityWallet ? (
             <BlurryBackdropBox className="p-6">
               <p>
                 You&rsquo;ve reached the maximum of ATOM you can lock for this
                 pilot round.
               </p>
             </BlurryBackdropBox>
-          ) : lockedAtomIsAtCapacityGlobal ? (
+          ) : lockedTokenIsAtCapacityGlobal ? (
             <BlurryBackdropBox className="p-6">
               <p>
                 Hydro is currently at max capacity. Please wait for the next

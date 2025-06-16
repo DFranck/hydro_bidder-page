@@ -6,7 +6,7 @@ export async function GET() {
     const response = await fetchTotalLockedTokens()
     return NextResponse.json({
       rawTotalLockedTokens: response.totalLockedTokens,
-      rawLockedAtomMaxGlobal: response.lockedAtomMaxGlobal,
+      rawlockedTokenMaxGlobal: response.lockedTokenMaxGlobal,
     })
   } catch (error) {
     console.error("Error in API route:", error)

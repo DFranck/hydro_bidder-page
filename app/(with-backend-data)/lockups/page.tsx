@@ -30,6 +30,11 @@ import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
 import { NewLockupButton } from "./NewLockupButton"
 import { DropdownMenuButton } from "@/components/Dropdown"
+import { LockupsLST } from "./LockupsLST"
+import { set } from "lodash"
+
+const minTokenToBeLocked = 1 / 1e6
+
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
   const router = useRouter()
@@ -40,9 +45,9 @@ export default function LockupsPage() {
     address,
     isWalletConnected,
     lockups,
-    lockedAtomMaxWallet,
-    lockedAtomPercentageWallet,
-    lockedAtomTotalWallet,
+    lockedTokenMaxWallet,
+    lockedTokenPercentageWallet,
+    lockedTokenTotalWallet,
   } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
@@ -52,6 +57,41 @@ export default function LockupsPage() {
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+
+  const [token, setToken] = useState({
+    name: "",
+    minAmount: 0,
+    maxAmount: 0,
+  })
+
+  function handleStAtom() {
+    setIsOpen(true)
+    setToken({
+      name: "stATOM",
+      minAmount: minTokenToBeLocked,
+      maxAmount: 1000000,
+    })
+  }
+
+  function handleDAtom() {
+    setIsOpen(true)
+    setToken({
+      name: "dATOM",
+      minAmount: minTokenToBeLocked,
+      maxAmount: 1000000,
+    })
+  }
+
+  function handleCreationModalWindowClose() {
+    setIsOpen(false)
+  }
+
+  function handleModalWindowCloseComplete() {
+    setIsOpen(false)
+    // setAmount(maxStOsmoToBeLocked)
+    // setSelectedLockDurationInEpochs(3)
+  }
 
   async function handleClickToNextUnlockingStep() {
     router.push("/lock-atom")
@@ -150,14 +190,14 @@ export default function LockupsPage() {
             className="block w-96 shrink-0"
           >
             <ProgressBar
-              percentage={lockedAtomPercentageWallet}
+              percentage={lockedTokenPercentageWallet}
               warningZone={(percentage) => percentage >= 75}
               dangerZone={(percentage) => percentage >= 95}
             >
               <div className="flex items-center gap-1 opacity-60">
                 <span>
-                  {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedAtomMaxWallet} ATOM max
+                  {lockedTokenTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
+                  {lockedTokenMaxWallet} ATOM max
                 </span>
                 <span>
                   <Icon name="circle-info" />
@@ -189,7 +229,10 @@ export default function LockupsPage() {
                 Unlock {expiredLockups.length} Expired
               </StyledText>
             )}
-            <DropdownMenuButton />
+            <DropdownMenuButton
+              handleStAtom={handleStAtom}
+              handleDAtom={handleDAtom}
+            />
           </div>
         </div>
 
@@ -303,6 +346,16 @@ export default function LockupsPage() {
           </Card.Footer>
         </Card>
       </ModalWindow>
+
+      <LockupsLST
+        minTokenBeLocked={minTokenToBeLocked}
+        maxTokenToBeLocked={1000000}
+        votingTokenName={token.name}
+        isCreationModalOpen={isOpen}
+        setIsCreationModalOpen={setIsOpen}
+        handleCreationModalWindowClose={handleCreationModalWindowClose}
+        handleModalWindowCloseComplete={handleModalWindowCloseComplete}
+      />
     </>
   )
 }

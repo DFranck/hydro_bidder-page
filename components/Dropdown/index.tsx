@@ -22,16 +22,22 @@ import {
   needsWalletConnectionTooltip,
 } from "../ToolTips"
 
-export function DropdownMenuButton() {
-  const { isWalletConnected, lockedAtomPercentageWallet } = useBackendData()
-  const { lockedAtomPercentageGlobal } = useGlobalLockupCapacityInfo()
+export function DropdownMenuButton({
+  handleStAtom,
+  handleDAtom,
+}: {
+  handleStAtom: () => void
+  handleDAtom: () => void
+}) {
+  const { isWalletConnected, lockedTokenPercentageWallet } = useBackendData()
+  const { lockedTokenPercentageGlobal } = useGlobalLockupCapacityInfo()
 
   const { push } = useRouter()
 
   const MENU_ITEMS = [
     {
       label: "stATOM",
-      action: () => console.log("stATOM clicked"),
+      action: () => handleStAtom(),
       isDisabled: false,
       cta: {
         label: "Get stATOM",
@@ -40,7 +46,7 @@ export function DropdownMenuButton() {
     },
     {
       label: "dATOM",
-      action: () => console.log("dATOM clicked"),
+      action: () => handleDAtom(),
       isDisabled: false,
       cta: {
         label: "Get stATOM",
@@ -52,8 +58,8 @@ export function DropdownMenuButton() {
       action: () => push("/lock-atom"),
       isDisabled:
         !isWalletConnected ||
-        lockedAtomPercentageWallet === 100 ||
-        lockedAtomPercentageGlobal === 100,
+        lockedTokenPercentageWallet === 100 ||
+        lockedTokenPercentageGlobal === 100,
       cta: {
         label: "Stake ATOM",
         href: "https://www.mintscan.io/cosmos",
@@ -65,8 +71,8 @@ export function DropdownMenuButton() {
       <ConditionalWrapper
         condition={
           !isWalletConnected ||
-          lockedAtomPercentageWallet === 100 ||
-          lockedAtomPercentageGlobal === 100
+          lockedTokenPercentageWallet === 100 ||
+          lockedTokenPercentageGlobal === 100
         }
         wrapper={(children) => (
           <Tooltip
@@ -74,7 +80,7 @@ export function DropdownMenuButton() {
             tipContents={
               !isWalletConnected
                 ? needsWalletConnectionTooltip
-                : lockedAtomPercentageWallet === 100
+                : lockedTokenPercentageWallet === 100
                   ? lockupLimitReachedByUserTooltip
                   : lockupLimitReachedByNetworkTooltip
             }
@@ -98,7 +104,7 @@ export function DropdownMenuButton() {
             key={item.label}
             className="flex cursor-pointer justify-between"
           >
-            <StyledText onClick={!item.isDisabled ? () => {} : item.action}>
+            <StyledText onClick={item.isDisabled ? () => {} : item.action}>
               Lock {item.label}
             </StyledText>
             <StyledText

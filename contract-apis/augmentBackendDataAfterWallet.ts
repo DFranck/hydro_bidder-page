@@ -23,7 +23,7 @@ export function augmentBackendDataAfterWallet({
     ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
 }): AugmentedBackendDataAfterWallet {
-  const { bidsInfo, currentRoundId, lockedAtomMaxWallet, currentRoundPrices } =
+  const { bidsInfo, currentRoundId, lockedTokenMaxWallet, currentRoundPrices } =
     augmentedBackendDataBeforeWallet
 
   const {
@@ -42,7 +42,7 @@ export function augmentBackendDataAfterWallet({
   })
 
   const augmentedLockups = lockups_with_per_tranche_infos.map((o) =>
-    augmentLockup(o, currentRoundId),
+    augmentLockup(o, currentRoundId)
   )
 
   const votedBidId =
@@ -79,31 +79,31 @@ export function augmentBackendDataAfterWallet({
 
   const augmentedBidsInfo = keyBy(
     bidsWithRewardsRelativeToCurrentPick,
-    (bid) => bid.id,
+    (bid) => bid.id
   )
 
   const votesByRoundId = groupBy(
     sanitizedVotes,
-    (vote) => bidsInfo[vote.bidId].roundId,
+    (vote) => bidsInfo[vote.bidId]?.roundId
   )
 
   const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>
     augmentClaimWithRoundPrices({
       roundPrices: currentRoundPrices,
       claim: o,
-    }),
+    })
   )
 
   const augmentedOutstandingClaims = outstanding_tribute_claims.map((o) =>
     augmentClaimWithRoundPrices({
       roundPrices: currentRoundPrices,
       claim: o,
-    }),
+    })
   )
 
-  const lockedAtomTotalWallet = sumBy(augmentedLockups, "funds.amount")
-  const lockedAtomPercentageWallet = Math.floor(
-    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100,
+  const lockedTokenTotalWallet = sumBy(augmentedLockups, "funds.amount")
+  const lockedTokenPercentageWallet = Math.floor(
+    (lockedTokenTotalWallet / lockedTokenMaxWallet) * 100
   )
 
   const votingPowerTotal = voting_power / 1e6
@@ -129,16 +129,16 @@ export function augmentBackendDataAfterWallet({
       acc[curr] =
         acc[curr] +
         sumBy(usedLockupsPerTranche[curr], (l) =>
-          Number(l.currentVotingPower),
+          Number(l.currentVotingPower)
         ) /
           1e6
       return acc
     },
-    {} as Record<string, number>,
+    {} as Record<string, number>
   )
 
   const votingPowerAvailableByTrancheId = Object.keys(
-    votingPowerSpentByTrancheId,
+    votingPowerSpentByTrancheId
   ).reduce(
     (acc, curr) => {
       if (!acc[curr]) {
@@ -147,7 +147,7 @@ export function augmentBackendDataAfterWallet({
       acc[curr] = votingPowerTotal - votingPowerSpentByTrancheId[curr]
       return acc
     },
-    {} as Record<string, number>,
+    {} as Record<string, number>
   )
 
   return {
@@ -158,10 +158,11 @@ export function augmentBackendDataAfterWallet({
     claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,
     isWalletConnected: true,
-    lockedAtomIsAtCapacityWallet: lockedAtomTotalWallet === lockedAtomMaxWallet,
-    lockedAtomMaxWallet,
-    lockedAtomPercentageWallet,
-    lockedAtomTotalWallet,
+    lockedTokenIsAtCapacityWallet:
+      lockedTokenTotalWallet === lockedTokenMaxWallet,
+    lockedTokenMaxWallet,
+    lockedTokenPercentageWallet,
+    lockedTokenTotalWallet,
     lockups: augmentedLockups,
     votes: sanitizedVotes,
     votesByRoundId,

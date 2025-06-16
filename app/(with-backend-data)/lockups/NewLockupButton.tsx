@@ -1,5 +1,4 @@
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
-import { DropdownMenuButton } from "@/components/Dropdown"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import {
@@ -12,15 +11,15 @@ import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapa
 import Link from "next/link"
 
 export function NewLockupButton() {
-  const { isWalletConnected, lockedAtomPercentageWallet } = useBackendData()
-  const { lockedAtomPercentageGlobal } = useGlobalLockupCapacityInfo()
+  const { isWalletConnected, lockedTokenPercentageWallet } = useBackendData()
+  const { lockedTokenPercentageGlobal } = useGlobalLockupCapacityInfo()
 
   return (
     <ConditionalWrapper
       condition={
         !isWalletConnected ||
-        lockedAtomPercentageWallet === 100 ||
-        lockedAtomPercentageGlobal === 100
+        lockedTokenPercentageWallet === 100 ||
+        lockedTokenPercentageGlobal === 100
       }
       wrapper={(children) => (
         <Tooltip
@@ -28,7 +27,7 @@ export function NewLockupButton() {
           tipContents={
             !isWalletConnected
               ? needsWalletConnectionTooltip
-              : lockedAtomPercentageWallet === 100
+              : lockedTokenPercentageWallet === 100
                 ? lockupLimitReachedByUserTooltip
                 : lockupLimitReachedByNetworkTooltip
           }
@@ -42,7 +41,6 @@ export function NewLockupButton() {
       <StyledText as={Link} variant="button.primary" href="/lock-atom">
         New Lockup
       </StyledText>
-      <DropdownMenuButton />
     </ConditionalWrapper>
   )
 }

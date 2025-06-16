@@ -41,7 +41,7 @@ export const ContinueFromHubStepper = ({
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const { lockedAtomEpochInNanos } = useBackendData()
+  const { lockedTokenEpochInNanos } = useBackendData()
   const [step, setStep] = useState<ContinueFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -118,7 +118,7 @@ export const ContinueFromHubStepper = ({
         validator,
         validatorMap,
         lockDuration,
-        lockedAtomEpochInNanos,
+        lockedTokenEpochInNanos,
         errorLog,
         showErrorLog,
         setShowErrorLog,
@@ -130,7 +130,7 @@ export const ContinueFromHubStepper = ({
         setLockDuration,
         numApprovals: 2,
         maxAmount: lockedAmount,
-        setNewAmount
+        setNewAmount,
       })
     }
 

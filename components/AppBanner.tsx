@@ -26,12 +26,12 @@ const JoinOurTelegramGroupForUpdates = (
 export function AppBanner() {
   const backendData = useBackendData()
   const { currentRoundId: currentRoundIdFromBackend } = backendData
-  const { lockedAtomIsAtCapacityGlobal } = useGlobalLockupCapacityInfo()
+  const { lockedTokenIsAtCapacityGlobal } = useGlobalLockupCapacityInfo()
   const [currentRoundId, setCurrentRoundId] = useState<number>(
     currentRoundIdFromBackend
   )
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
-  const activeBannerName = lockedAtomIsAtCapacityGlobal
+  const activeBannerName = lockedTokenIsAtCapacityGlobal
     ? "maxCapacity"
     : "pilotRounds"
 
