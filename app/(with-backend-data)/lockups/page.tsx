@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
 import { NewLockupButton } from "./NewLockupButton"
+import { DropdownMenuButton } from "@/components/Dropdown"
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
   const router = useRouter()
@@ -46,7 +47,7 @@ export default function LockupsPage() {
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
   const expiredLockups = lockups.filter(
-    (lockup) => new Date() >= lockup.dateEnd,
+    (lockup) => new Date() >= lockup.dateEnd
   )
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
@@ -86,7 +87,7 @@ export default function LockupsPage() {
       setToasts([
         toastMessages.unlockingExpiredLockupsError(
           expiredLockups.length,
-          error as Error,
+          error as Error
         ),
       ])
     }
@@ -188,8 +189,7 @@ export default function LockupsPage() {
                 Unlock {expiredLockups.length} Expired
               </StyledText>
             )}
-
-            <NewLockupButton />
+            <DropdownMenuButton />
           </div>
         </div>
 
