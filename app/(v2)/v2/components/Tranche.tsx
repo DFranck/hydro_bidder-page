@@ -57,7 +57,8 @@ export function Tranche({
 
   const viewboxClassName = twMerge(
     'rounded-standard absolute inset-0 overflow-hidden',
-    'gap-standard grid grid-rows-[min-content_auto]',
+    'grid grid-rows-[min-content_auto]',
+    'gap-standard desktop:gap-loose',
     narrowBuckets && [
       'border-2 border-transparent',
       isActive && 'border-token-color',
@@ -125,8 +126,8 @@ export function Tranche({
           id={`tranche-content-inner--${sourceId}-${trancheId}`}
           className={twJoin(
             'mx-auto flex h-full flex-col',
-            'gap-loose',
-            bidsInTranche.length && ['py-loose', 'md:max-w-[60vw]'],
+            'gap-standard desktop:gap-loose',
+            bidsInTranche.length && 'md:max-w-[60vw]',
           )}
         >
           {bidsInTranche.map((bid, index) => {

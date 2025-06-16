@@ -18,16 +18,16 @@ export default function V2() {
         '**:scrollbar-thumb-palette-beige',
         '**:scrollbar-track-background',
         '**:scrollbar-thin',
-        'p-standard',
-        'mobile:p-0',
+        'p-0',
+        'desktop:p-standard',
         isSidebarOpen
           ? [
-              'grid-areas-desktop-sidebar-open',
-              'mobile:grid-areas-mobile-sidebar-open',
+              'grid-areas-mobile-sidebar-open',
+              'desktop:grid-areas-desktop-sidebar-open',
             ]
           : [
-              'grid-areas-desktop-sidebar-closed',
-              'mobile:grid-areas-mobile-sidebar-closed',
+              'grid-areas-mobile-sidebar-closed',
+              'desktop:grid-areas-desktop-sidebar-closed',
             ],
       )}
     >

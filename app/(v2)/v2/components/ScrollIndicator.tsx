@@ -1,6 +1,7 @@
 'use client'
 
 import { Icon } from '@/components/Icon'
+import { useAppState } from '@v2/state/provider'
 import { useEffect, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
@@ -31,7 +32,8 @@ export function ScrollIndicator({
   ...otherProps
 }: ScrollIndicatorProps) {
   const [targets, setTargets] = useState<Element[]>([])
-  const [activeIndex, setActiveIndex] = useState(0)
+  const { state, dispatch } = useAppState()
+  const { activeTrancheIndex } = state
 
   useEffect(() => {
     const container = document.querySelector(containerSelector)
@@ -39,6 +41,7 @@ export function ScrollIndicator({
     if (!container) return
 
     const targets = Array.from(container.querySelectorAll(targetSelector))
+    setTargets(targets)
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -47,8 +50,8 @@ export function ScrollIndicator({
             const index = targets.findIndex((target) =>
               entry.target.isSameNode(target),
             )
-            if (index !== -1) {
-              setActiveIndex(index)
+            if (index !== -1 && index !== activeTrancheIndex) {
+              dispatch({ type: 'SET_ACTIVE_TRANCHE_INDEX', payload: index })
             }
           }
         })
@@ -63,25 +66,23 @@ export function ScrollIndicator({
       observer.observe(target)
     })
 
-    setTargets(targets)
-
     return () => observer.disconnect()
-  }, [containerSelector])
+  }, [containerSelector, activeTrancheIndex, dispatch])
 
   const handlePrevious = () => {
-    if (activeIndex > 0) {
-      targets[activeIndex - 1]?.scrollIntoView({ behavior: 'smooth' })
+    if (activeTrancheIndex > 0) {
+      targets[activeTrancheIndex - 1]?.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
   const handleNext = () => {
-    if (activeIndex < targets.length - 1) {
-      targets[activeIndex + 1]?.scrollIntoView({ behavior: 'smooth' })
+    if (activeTrancheIndex < targets.length - 1) {
+      targets[activeTrancheIndex + 1]?.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
   const dots = targets.map((target, index) => {
-    const isActive = activeIndex === index
+    const isActive = activeTrancheIndex === index
     const spreadProps = {
       'aria-label': `Go to tranche ${index + 1}`,
       onClick: () => {
@@ -123,8 +124,8 @@ export function ScrollIndicator({
         dots,
         onPrevious: handlePrevious,
         onNext: handleNext,
-        canGoPrevious: activeIndex > 0,
-        canGoNext: activeIndex < targets.length - 1,
+        canGoPrevious: activeTrancheIndex > 0,
+        canGoNext: activeTrancheIndex < targets.length - 1,
       }) ?? dots}
     </div>
   )

@@ -23,6 +23,10 @@ export type AppAction =
       payload: boolean
     }
   | {
+      type: 'SET_ACTIVE_TRANCHE_INDEX'
+      payload: number
+    }
+  | {
       type: 'SET_STATE'
       payload: Partial<AppState>
     }
@@ -44,6 +48,9 @@ export function reducer(state: AppState, action: AppAction): AppState {
 
       case 'SET_SIDEBAR_OPEN':
         return { ...state, isSidebarOpen: action.payload }
+
+      case 'SET_ACTIVE_TRANCHE_INDEX':
+        return { ...state, activeTrancheIndex: action.payload }
 
       case 'SET_STATE':
         return { ...state, ...action.payload }

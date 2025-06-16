@@ -11,11 +11,10 @@ export function StatBar({
     <div
       id="stats-bar"
       className={twMerge(
-        'h-18',
+        'h-18 gap-1',
         'flex justify-around',
-        'gap-3',
-        'mobile:gap-1',
         'bg-shaded rounded-standard',
+        'desktop:gap-3',
         className,
       )}
       {...otherProps}
@@ -25,15 +24,23 @@ export function StatBar({
           key={index}
           className={twJoin(
             'flex items-center',
-            'gap-3',
-            'mobile:justify-center mobile:gap-2',
+            'justify-center gap-2',
+            'desktop:gap-3',
           )}
         >
-          <var className="important-value mobile:text-2xl text-3xl">
+          <var
+            className={twJoin('important-value text-2xl', 'desktop:text-3xl')}
+          >
             {value}
           </var>
 
-          <span className="label mobile:w-min mobile:text-left text-center">
+          <span
+            className={twJoin(
+              'label w-min',
+              'desktop:text-center',
+              'desktop:w-auto',
+            )}
+          >
             {label}
           </span>
         </div>

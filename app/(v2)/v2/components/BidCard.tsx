@@ -33,8 +33,6 @@ export function BidCard({
       className={twMerge(
         'group overflow-hidden',
         'grid grid-cols-[min-content_auto] items-center',
-        'gap-6 p-6',
-        'mobile:gap-3 mobile:p-3',
         'outline-none',
         'bg-token-color/20 rounded-standard',
         'hover:bg-token-color/40',
@@ -46,8 +44,9 @@ export function BidCard({
       <div
         className={twJoin(
           'flex items-center justify-center',
-          'p-2',
           'bg-token-color/40',
+          'p-standard',
+          'desktop:p-loose',
         )}
       >
         <div className={twJoin('size-12', 'bg-palette-beige')}>
@@ -63,7 +62,11 @@ export function BidCard({
       </div>
 
       <div
-        className={twJoin('px-standard', 'flex items-center justify-between')}
+        className={twJoin(
+          'flex items-center justify-between',
+          'px-standard gap-standard',
+          'desktop:px-loose desktop:gap-loose',
+        )}
       >
         <h3 className="label">{bid.title}</h3>
 

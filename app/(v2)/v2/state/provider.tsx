@@ -20,6 +20,7 @@ export interface AppState {
   currentRoundDataPerSource: Record<SourceID, RoundState> | null
   bidDescriptionsById: Record<number, BidMetaData>
   isSidebarOpen: boolean
+  activeTrancheIndex: number
 }
 
 export const initialState: AppState = {
@@ -27,6 +28,7 @@ export const initialState: AppState = {
   currentRoundDataPerSource: null,
   narrowBuckets: false,
   isSidebarOpen: true,
+  activeTrancheIndex: 0,
 }
 
 export const AppContext = createContext<{

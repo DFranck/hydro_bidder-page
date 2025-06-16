@@ -129,24 +129,34 @@ export function AppHeader() {
 
       <ResponsiveMenu
         menuItems={menuItems}
-        classNameDesktop={twJoin('flex justify-end text-sm', 'px-3')}
-        classNameForBackdropMobile="bg-shaded backdrop-blur-sm"
-        classNameForBackgroundMobile="bg-palette-blue/80"
-        classNameForItemDesktop="hover:text-palette-beige cursor-pointer"
-        classNameForItemMobile={twJoin(
-          'px-6',
-          'hover:text-palette-beige focus-within:text-palette-beige',
+        className={twJoin(
+          'desktop:flex',
+          'desktop:justify-end',
+          'desktop:text-sm',
+          'desktop:px-3',
         )}
-        classNameForSubItemDesktop={twJoin(
-          'px-4 py-2',
-          'hover:bg-palette-green hover:text-background',
-          'focus-within:bg-palette-green focus-within:text-background',
+        classNameForBackdrop="bg-shaded backdrop-blur-sm"
+        classNameForBackground="bg-palette-blue/80"
+        classNameForItem={twJoin(
+          'hover:text-palette-beige cursor-pointer',
+          'desktop:px-6',
+          'desktop:hover:text-palette-beige desktop:focus-within:text-palette-beige',
         )}
-        classNameForSubItemsDesktop={twJoin(
-          'right-0 mt-2 py-2',
-          'bg-background rounded-standard border shadow-2xl',
+        classNameForSubItem={twJoin(
+          'desktop:px-4 desktop:py-2',
+          'desktop:hover:bg-palette-green desktop:hover:text-background',
+          'desktop:focus-within:bg-palette-green desktop:focus-within:text-background',
         )}
-        classNameForSubItemsMobile="gap-3"
+        classNameForSubItems={twJoin(
+          'gap-3',
+          'desktop:right-0',
+          'desktop:mt-2',
+          'desktop:py-2',
+          'desktop:bg-background',
+          'desktop:rounded-standard',
+          'desktop:border',
+          'desktop:shadow-2xl',
+        )}
       />
     </header>
   )

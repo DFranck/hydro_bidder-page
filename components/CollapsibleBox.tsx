@@ -12,6 +12,7 @@ import { twMerge } from "tailwind-merge"
 type CollapsibleBoxProps<T extends ElementType = "div"> = ComponentProps<T> & {
   as?: T
   classNamesForInnerWrapper?: string
+  dontUnmountOnCollapse?: boolean
   isCollapsed?: boolean
   onExpandStart?: () => void
   onExpandEnd?: () => void
@@ -24,6 +25,7 @@ export function CollapsibleBox<T extends ElementType = "div">({
   children,
   className,
   classNamesForInnerWrapper,
+  dontUnmountOnCollapse,
   isCollapsed,
   onExpandStart,
   onExpandEnd,
@@ -80,7 +82,7 @@ export function CollapsibleBox<T extends ElementType = "div">({
       {...otherProps}
     >
       <div className={twMerge("overflow-hidden", classNamesForInnerWrapper)}>
-        {shouldRenderChildren && children}
+        {shouldRenderChildren || dontUnmountOnCollapse ? children : null}
       </div>
     </Component>
   )

@@ -4,8 +4,9 @@ import { Tranche } from '@v2/components/Tranche'
 import { TrancheNavigation } from '@v2/components/TrancheNavigation'
 import { useAppState } from '@v2/state/provider'
 import sortBy from 'lodash/sortBy'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
+import { useMediaQuery } from 'usehooks-ts'
 
 const GradientOverlay = ({
   direction,
@@ -30,20 +31,34 @@ const GradientOverlay = ({
 )
 
 export function TrancheBrowser() {
-  const { state } = useAppState()
-  const { currentRoundDataPerSource, narrowBuckets, isSidebarOpen } = state
-  const [activeTrancheIndex, setActiveTrancheIndex] = useState(0)
+  const isMobile = useMediaQuery('(max-width: 768px)')
+  const { state, dispatch } = useAppState()
+  const {
+    currentRoundDataPerSource,
+    narrowBuckets,
+    isSidebarOpen,
+    activeTrancheIndex,
+  } = state
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const allSources = Object.values(currentRoundDataPerSource ?? {})
-  const allTranchesSorted = sortBy(
-    allSources.flatMap(({ sourceId, tranches }) =>
-      tranches.map((tranche) => ({
-        ...tranche,
-        sourceId: sourceId,
-      })),
-    ),
-    (tranche) => tranche.sourceId,
+  const allTranchesSorted = useMemo(() => {
+    const allSources = Object.values(currentRoundDataPerSource ?? {})
+    return sortBy(
+      allSources.flatMap(({ sourceId, tranches }) =>
+        tranches.map((tranche) => ({
+          ...tranche,
+          sourceId: sourceId,
+        })),
+      ),
+      (tranche) => tranche.sourceId,
+    )
+  }, [currentRoundDataPerSource])
+
+  const handleActiveTrancheChange = useCallback(
+    (index: number) => {
+      dispatch({ type: 'SET_ACTIVE_TRANCHE_INDEX', payload: index })
+    },
+    [dispatch],
   )
 
   useEffect(() => {
@@ -78,21 +93,19 @@ export function TrancheBrowser() {
         )
       }
     })
-  }, [allTranchesSorted])
-
-  const shortenName = (name: string) => {
-    return name.split(' ')[0]
-  }
+  }, [allTranchesSorted.length])
 
   return (
     <CollapsibleBox
       id="content-container"
-      isCollapsed={isSidebarOpen}
+      dontUnmountOnCollapse={isMobile}
+      isCollapsed={isMobile && isSidebarOpen}
       className={twJoin('grid-in-content')}
       classNamesForInnerWrapper={twJoin(
         'relative grid',
         'grid-rows-[min-content_min-content_auto]',
-        'mobile:px-standard',
+        'px-standard',
+        'desktop:px-0',
       )}
     >
       <StatBar
@@ -105,8 +118,7 @@ export function TrancheBrowser() {
 
       <TrancheNavigation
         allTranchesSorted={allTranchesSorted}
-        onActiveTrancheChange={setActiveTrancheIndex}
-        onShortenName={shortenName}
+        onActiveTrancheChange={handleActiveTrancheChange}
       />
 
       <div
@@ -124,7 +136,7 @@ export function TrancheBrowser() {
 
           return (
             <Tranche
-              key={index}
+              key={`${sourceId}-${id}`}
               sourceId={sourceId}
               trancheId={id}
               isActive={index === activeTrancheIndex}

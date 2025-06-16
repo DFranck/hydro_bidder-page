@@ -5,7 +5,7 @@ import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
 import { useKeyboardNavigation } from '@v2/hooks/useKeyboardNavigation'
 import { useEffect, useRef, useState } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twJoin, twMerge } from 'tailwind-merge'
 
 function TrancheNavigationButton({
   className,
@@ -20,8 +20,11 @@ function TrancheNavigationButton({
         'rounded-standard h-12 w-full',
         'flex items-center justify-center',
         'transition-all',
-        'gap-2 truncate px-3',
-        'mobile:flex-col mobile:gap-1',
+        'flex-col gap-1',
+        'truncate',
+        'desktop:flex-row',
+        'desktop:gap-2',
+        'desktop:px-3',
         disabled && 'cursor-not-allowed',
         disabled && 'opacity-50',
         className,
@@ -40,13 +43,11 @@ interface TrancheNavigationProps {
     sourceId: SourceID
   }>
   onActiveTrancheChange?: (index: number) => void
-  onShortenName?: (name: string) => string
 }
 
 export function TrancheNavigation({
   allTranchesSorted,
   onActiveTrancheChange,
-  onShortenName,
 }: TrancheNavigationProps) {
   const [bridgeWidth, setBridgeWidth] = useState<number>(0)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -89,10 +90,6 @@ export function TrancheNavigation({
         const { sourceId, name } = tranche
         const userVotedInBucket = false // TODO: add this
 
-        if (isActiveTranche) {
-          onActiveTrancheChange?.(index)
-        }
-
         return (
           <TokenThemeWrapper
             as={TrancheNavigationButton}
@@ -101,8 +98,8 @@ export function TrancheNavigation({
             id={`tranche-nav-button--${sourceId}-${tranche.id}`}
             className={twMerge(
               'relative items-center',
-              'justify-between',
-              'mobile:justify-center',
+              'justify-center',
+              'desktop:justify-between',
               'text-white',
               'border-standard transition-all duration-500',
               'overflow-visible',
@@ -124,6 +121,10 @@ export function TrancheNavigation({
                 'focus-within:bg-palette-green',
               ],
             )}
+            onClick={(e) => {
+              onActiveTrancheChange?.(index)
+              spreadProps.onClick?.(e)
+            }}
             {...spreadProps}
           >
             {/* The briding element between tab and content */}
@@ -138,15 +139,16 @@ export function TrancheNavigation({
                   : 'scale-x-0 duration-200 ease-in',
               )}
               style={{
-                height:
-                  'calc(var(--spacing-standard) + var(--radius-standard))',
+                height: isActiveTranche
+                  ? 'calc(var(--spacing-standard) + var(--radius-standard))'
+                  : 'var(--spacing-standard)',
                 transform: 'translateZ(0)',
               }}
             />
 
             <SourceLabel sourceId={sourceId} isShortened={true} />
 
-            <span className="mobile:hidden">
+            <span className="desktop:inline-block hidden">
               <Icon name="solid:circle-dashed" />
             </span>
           </TokenThemeWrapper>
@@ -159,7 +161,7 @@ export function TrancheNavigation({
               <TrancheNavigationButton
                 id="tranche-nav-previous"
                 disabled={!canGoPrevious}
-                className="mobile:w-min w-12 shrink-0"
+                className={twJoin('w-min shrink-0', 'desktop:w-12')}
                 onClick={onPrevious}
               >
                 <Icon name="solid:chevron-left" />
@@ -176,7 +178,7 @@ export function TrancheNavigation({
               <TrancheNavigationButton
                 id="tranche-nav-next"
                 disabled={!canGoNext}
-                className="mobile:w-min w-12 shrink-0"
+                className={twJoin('w-min shrink-0', 'desktop:w-12')}
                 onClick={onNext}
               >
                 <Icon name="solid:chevron-right" />

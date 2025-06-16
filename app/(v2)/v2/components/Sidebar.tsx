@@ -1,8 +1,10 @@
-import { CollapsibleBox } from '@/components/CollapsibleBox'
+'use client'
+
 import { Icon } from '@/components/Icon'
 import { SidebarSourcePanel } from '@v2/components/SidebarSourcePanel'
 import { type SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/provider'
+import { useEffect } from 'react'
 import { twJoin } from 'tailwind-merge'
 import { useMediaQuery } from 'usehooks-ts'
 
@@ -18,7 +20,7 @@ function getSidebarState(isMobile: boolean, isOpen: boolean): SidebarState {
 }
 
 export function Sidebar() {
-  const isMobile = useMediaQuery('(max-width: var(--breakpoint-mobile))')
+  const isMobile = useMediaQuery('(max-width: 768px)')
   const { state, dispatch } = useAppState()
   const { currentRoundDataPerSource, isSidebarOpen } = state
   const allSources = Object.values(currentRoundDataPerSource ?? {})
@@ -26,6 +28,11 @@ export function Sidebar() {
   const isDesktop = sidebarState.startsWith('desktop')
   const isOpen = sidebarState.endsWith('open')
   const isClosed = sidebarState.endsWith('closed')
+
+  useEffect(() => {
+    const initialIsOpen = !isMobile
+    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: initialIsOpen })
+  }, [])
 
   return (
     <aside
@@ -90,11 +97,6 @@ export function Sidebar() {
           />
         ))}
       </div>
-
-      <CollapsibleBox
-        id="sidebar-content"
-        isCollapsed={sidebarState === 'mobile-closed'}
-      />
     </aside>
   )
 }
