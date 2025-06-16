@@ -28,10 +28,9 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
-import { NewLockupButton } from "./NewLockupButton"
 import { DropdownMenuButton } from "@/components/Dropdown"
 import { LockupsLST } from "./LockupsLST"
-import { set } from "lodash"
+import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 
 const minTokenToBeLocked = 1 / 1e6
 
@@ -47,6 +46,7 @@ export default function LockupsPage() {
     lockups,
     lockedTokenMaxWallet,
     lockedTokenPercentageWallet,
+    lockedTokenRemainingCapacityGlobal,
     lockedTokenTotalWallet,
   } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -64,6 +64,16 @@ export default function LockupsPage() {
     minAmount: 0,
     maxAmount: 0,
   })
+
+  const amountOfTokenInWallet = useAmountOfTokenInWallet()
+
+  const usersLimitRemainder = lockedTokenMaxWallet - lockedTokenTotalWallet
+
+  const maxTokenToBeLocked = Math.min(
+    lockedTokenRemainingCapacityGlobal, // no more than the global limit
+    amountOfTokenInWallet, // no more than they have
+    usersLimitRemainder // no more than their limit
+  )
 
   function handleStAtom() {
     setIsOpen(true)
@@ -89,7 +99,7 @@ export default function LockupsPage() {
 
   function handleModalWindowCloseComplete() {
     setIsOpen(false)
-    // setAmount(maxStOsmoToBeLocked)
+    // setAmount(maxTokenToBeLocked)
     // setSelectedLockDurationInEpochs(3)
   }
 
@@ -349,7 +359,7 @@ export default function LockupsPage() {
 
       <LockupsLST
         minTokenBeLocked={minTokenToBeLocked}
-        maxTokenToBeLocked={1000000}
+        maxTokenToBeLocked={maxTokenToBeLocked}
         votingTokenName={token.name}
         isCreationModalOpen={isOpen}
         setIsCreationModalOpen={setIsOpen}

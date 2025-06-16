@@ -68,13 +68,14 @@ export function LockupsLST({
       await signLockTokens(
         neutronChain,
         neutronSigner,
-        3, // selectedLockDurationInEpochs
+        selectedLockDurationInEpochs,
         neutronStOsmoDenom,
         String(amount * 1e6)
       )
 
       // setToasts([toastMessages.lockingTokensSuccess])
     } catch (error) {
+      console.error("Error locking tokens:", error)
       // setToasts([toastMessages.lockingTokensError(error as Error)])
       setIsCreationModalOpen(true)
     }
