@@ -107,6 +107,7 @@ export default function ClaimRewardsStepper({
         setSkipApiRoute(route)
         setStep("ConvertToAtom")
       } else {
+        setToasts([toastMessages.claimingRewardsSuccess])
         onExit(true)
       }
 
