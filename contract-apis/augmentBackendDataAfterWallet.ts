@@ -16,18 +16,19 @@ export function augmentBackendDataAfterWallet({
   address,
   augmentedBackendDataBeforeWallet,
   walletData,
+  lockedAtomRemainingCapacityGlobal,
 }: {
   address: string
   augmentedBackendDataBeforeWallet: AugmentedBackendDataBeforeWallet
   walletData: Awaited<
     ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
+  lockedAtomRemainingCapacityGlobal: number
 }): AugmentedBackendDataAfterWallet {
   const {
     bidsInfo,
     currentRoundId,
     currentRoundPrices,
-    lockedAtomRemainingCapacityGlobal,
   } = augmentedBackendDataBeforeWallet
 
   const {

@@ -2,27 +2,20 @@ import { augmentNumiaBids } from "@/contract-apis/augmentNumiaBids"
 import {
   AugmentedBackendDataBeforeWallet,
   BackendDataBeforeWalletSlimmed,
-  GlobalLockupCapacityInfo,
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import keyBy from "lodash/keyBy"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
-  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed,
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
 ): AugmentedBackendDataBeforeWallet {
   // Extract data
   const { hydroMetaData, hydroRoundData, externalData } =
     rawBackendDataBeforeWallet
 
-  const {
-    constants,
-    round_end,
-    round_id,
-    total_locked_tokens,
-    tranches,
-    liquidity_deployments,
-  } = hydroMetaData
+  const { constants, round_end, round_id, tranches, liquidity_deployments } =
+    hydroMetaData
 
   const { bidMetaDataById, numiaBids, numiaMetrics } = externalData
 
@@ -31,25 +24,6 @@ export function augmentBackendDataBeforeWallet(
 
   // Aux Fields
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
-
-  // Hydro Capacity Info
-  const lockedAtomMaxGlobal = constants.max_locked_tokens / 1e6
-  const lockedAtomTotalGlobal = total_locked_tokens / 1e6
-  const lockedAtomRemainingCapacityGlobal = Number(
-    (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6),
-  )
-  const lockedAtomPercentageGlobal = Math.floor(
-    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100,
-  )
-  const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal === 100
-
-  const globalLockupCapacityInfo: GlobalLockupCapacityInfo = {
-    lockedAtomMaxGlobal,
-    lockedAtomTotalGlobal,
-    lockedAtomRemainingCapacityGlobal,
-    lockedAtomIsAtCapacityGlobal,
-    lockedAtomPercentageGlobal,
-  }
 
   // Legacy Info
   const { postHydroBids, preHydroBids } = augmentNumiaBids(numiaBids)
@@ -72,10 +46,10 @@ export function augmentBackendDataBeforeWallet(
           round_prices,
           bidMetaDataById,
           currentRoundId,
-          liquidity_deployments,
+          liquidity_deployments
         )
         return roundParsedBids
-      },
+      }
     )
     .flat()
 
@@ -98,6 +72,5 @@ export function augmentBackendDataBeforeWallet(
     metricsGlobal: keysFromSnakeToCamelCase(numiaMetrics),
     minTributeFactor: 0.0001, // TODO: get this from contract
     tranches,
-    ...globalLockupCapacityInfo,
   }
 }

@@ -4,6 +4,7 @@ import { Icon } from "@/components/Icon"
 import { HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
 import { fetchCurrentRoundId } from "@/contract-apis/fetchCurrentRoundId"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { formatOrdinals } from "@/lib/formatOrdinals"
 import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Link from "next/link"
@@ -24,12 +25,12 @@ const JoinOurTelegramGroupForUpdates = (
 
 export function AppBanner() {
   const backendData = useBackendData()
+  const { currentRoundId: currentRoundIdFromBackend } = backendData
   const {
-    currentRoundId: currentRoundIdFromBackend,
-    lockedAtomIsAtCapacityGlobal,
-  } = backendData
+    data: { lockedAtomIsAtCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const [currentRoundId, setCurrentRoundId] = useState<number>(
-    currentRoundIdFromBackend,
+    currentRoundIdFromBackend
   )
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const activeBannerName = lockedAtomIsAtCapacityGlobal
@@ -82,7 +83,7 @@ export function AppBanner() {
           duration-300
           xl:px-24
         `,
-        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm",
+        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm"
       )}
     >
       {text}

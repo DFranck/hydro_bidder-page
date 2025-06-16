@@ -145,7 +145,7 @@ export function Step({
       }
     }
 
-    return { activeStep, status: "error", failedStep: lastActiveStep }
+    return { activeStep: 1, status: "default", failedStep: lastActiveStep }
   }
 
   const { activeStep, status, failedStep } = getCurrentStepInfo()

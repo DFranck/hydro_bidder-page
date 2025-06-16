@@ -18,6 +18,7 @@ import { classNames } from "../classNames"
 import { ValidatorListItem } from "../components/ValidatorListItem"
 import { calculateLsmCapacity } from "../functions/calculateLsmCapacity"
 import { getValidatorMoniker } from "../functions/getValidatorMoniker"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 
 export function LockForm({
   onSubmit,
@@ -31,13 +32,11 @@ export function LockForm({
   validatorLiquidStakingCap: string
 }) {
   const router = useRouter()
+  const { lockedAtomEpochInNanos, lockedAtomMaxWallet, lockedAtomTotalWallet } =
+    useBackendData()
   const {
-    lockedAtomEpochInNanos,
-    lockedAtomMaxWallet,
-    lockedAtomTotalWallet,
-    lockedAtomRemainingCapacityGlobal,
-    lockedAtomTotalGlobal,
-  } = useBackendData()
+    data: { lockedAtomTotalGlobal, lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const { setToasts } = useToasts()
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(

@@ -6,16 +6,19 @@ import { globalTotalAtomLockedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 
 export function CurrentRoundAtomLockedGlobal() {
+  const { isLoading } = useBackendData()
   const {
-    isLoading,
-    lockedAtomIsAtCapacityGlobal,
-    lockedAtomMaxGlobal,
-    lockedAtomPercentageGlobal,
-    lockedAtomRemainingCapacityGlobal,
-    lockedAtomTotalGlobal,
-  } = useBackendData()
+    data: {
+      lockedAtomTotalGlobal,
+      lockedAtomRemainingCapacityGlobal,
+      lockedAtomPercentageGlobal,
+      lockedAtomIsAtCapacityGlobal,
+      lockedAtomMaxGlobal,
+    },
+  } = useGlobalLockupCapacityInfo()
 
   return (
     <StatCard
