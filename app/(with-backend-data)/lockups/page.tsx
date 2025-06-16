@@ -359,7 +359,7 @@ export default function LockupsPage() {
 
       <LockupsLST
         minTokenBeLocked={minTokenToBeLocked}
-        maxTokenToBeLocked={maxTokenToBeLocked}
+        maxTokenToBeLocked={1000} //maxTokenToBeLocked
         votingTokenName={token.name}
         isCreationModalOpen={isOpen}
         setIsCreationModalOpen={setIsOpen}

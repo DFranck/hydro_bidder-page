@@ -157,7 +157,16 @@ export function LockupsLST({
             </Card.Body>
 
             <Card.Footer>
-              <StyledText variant="button.primary" as="button" type="submit">
+              <StyledText
+                disabled={
+                  selectedLockDurationInEpochs === 3 ||
+                  !Number(amount) ||
+                  Number(amount) > Number(maxTokenToBeLocked)
+                }
+                variant="button.primary"
+                as="button"
+                type="submit"
+              >
                 Lock {votingTokenName}
               </StyledText>
 
