@@ -218,9 +218,9 @@ export function Step({
 
   return (
     <Card
-      className={cn("w-md m-6 grid  gap-4  md:m-auto", {
-        "md:grid-cols-1": !currentStep,
-        "md:grid-cols-12": !!currentStep,
+      className={cn("m-6 grid  gap-4  md:m-auto", {
+        "w-auto md:grid-cols-1": !currentStep,
+        "w-md md:grid-cols-12": !!currentStep,
       })}
     >
       {!!currentStep && (
