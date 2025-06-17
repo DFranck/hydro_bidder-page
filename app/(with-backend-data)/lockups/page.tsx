@@ -80,7 +80,7 @@ export default function LockupsPage() {
     setToken({
       name: "stATOM",
       minAmount: minTokenToBeLocked,
-      maxAmount: 1000000,
+      maxAmount: maxTokenToBeLocked,
     })
   }
 
@@ -89,7 +89,7 @@ export default function LockupsPage() {
     setToken({
       name: "dATOM",
       minAmount: minTokenToBeLocked,
-      maxAmount: 1000000,
+      maxAmount: maxTokenToBeLocked,
     })
   }
 
@@ -99,8 +99,6 @@ export default function LockupsPage() {
 
   function handleModalWindowCloseComplete() {
     setIsOpen(false)
-    // setAmount(maxTokenToBeLocked)
-    // setSelectedLockDurationInEpochs(3)
   }
 
   async function handleClickToNextUnlockingStep() {
@@ -359,7 +357,7 @@ export default function LockupsPage() {
 
       <LockupsLST
         minTokenBeLocked={minTokenToBeLocked}
-        maxTokenToBeLocked={1000} //maxTokenToBeLocked
+        maxTokenToBeLocked={maxTokenToBeLocked}
         votingTokenName={token.name}
         isCreationModalOpen={isOpen}
         setIsCreationModalOpen={setIsOpen}
