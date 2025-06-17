@@ -11,6 +11,7 @@ import { signLockTokens } from "../lock-atom/transactions/signLockTokens"
 import { useChain } from "@cosmos-kit/react"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { toastMessages } from "@/components/ToastMessages"
+import { configDenom } from "@/contract-apis/useAmountOfTokenInWallet"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -19,7 +20,7 @@ interface LockupsLSTProps {
   handleCreationModalWindowClose: () => void
   handleModalWindowCloseComplete: () => void
   minTokenBeLocked: number
-  votingTokenName?: string
+  votingTokenName: "stATOM" | "dATOM"
 }
 
 export function LockupsLST({
@@ -50,10 +51,10 @@ export function LockupsLST({
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const neutronStOsmoDenom = process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM
+    const neutronTokenDenom = configDenom.tokenDenom[votingTokenName]
 
-    if (!neutronStOsmoDenom) {
-      throw new Error("NEXT_PUBLIC_NEUTRON_STOSMO_DENOM is not set")
+    if (!neutronTokenDenom) {
+      throw new Error("Demon is not set")
     }
 
     if (!neutronSigner) {
@@ -69,7 +70,7 @@ export function LockupsLST({
         neutronChain,
         neutronSigner,
         selectedLockDurationInEpochs,
-        neutronStOsmoDenom,
+        neutronTokenDenom,
         String(amount * 1e6)
       )
 
@@ -95,8 +96,16 @@ export function LockupsLST({
     <>
       <ModalWindow
         isOpen={isCreationModalOpen}
-        onClose={handleCreationModalWindowClose}
-        onCloseComplete={handleModalWindowCloseComplete}
+        onClose={() => {
+          handleCreationModalWindowClose()
+          setAmount(maxTokenToBeLocked)
+          setSelectedLockDurationInEpochs(3)
+        }}
+        onCloseComplete={() => {
+          handleModalWindowCloseComplete()
+          setAmount(maxTokenToBeLocked)
+          setSelectedLockDurationInEpochs(3)
+        }}
         title="Create New Lockup"
       >
         <form onSubmit={handleSubmitCreationForm}>

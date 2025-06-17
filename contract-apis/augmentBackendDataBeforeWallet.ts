@@ -86,12 +86,12 @@ export function augmentBackendDataBeforeWallet(
 
   const dAtomPrice =
     hydroRoundsData[round_id]?.round_prices[
-      "ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93"
+      "ibc/factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom"
     ]?.token_price ?? 0
 
   const stAtomPrice =
     hydroRoundsData[round_id]?.round_prices[
-      "ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93"
+      "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C"
     ]?.token_price ?? 0
 
   return {

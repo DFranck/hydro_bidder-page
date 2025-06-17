@@ -4,12 +4,17 @@ import { RawHydroMetaData } from "../../../contract-apis/types"
 export async function fetchHydroMetaData(): Promise<RawHydroMetaData> {
   const hydroQueryClient = await getHydroQueryClient()
 
-  const [{ constants }, { round_end, round_id }, { tranches }] =
-    await Promise.all([
-      hydroQueryClient.constants(),
-      hydroQueryClient.currentRound(),
-      hydroQueryClient.tranches(),
-    ])
+  const [
+    { constants },
+    { round_end, round_id },
+    { tranches },
+    { total_locked_tokens },
+  ] = await Promise.all([
+    hydroQueryClient.constants(),
+    hydroQueryClient.currentRound(),
+    hydroQueryClient.tranches(),
+    hydroQueryClient.totalLockedTokens(),
+  ])
 
   const currentRoundId = round_id
   const allRoundIds = Array.from(
@@ -45,6 +50,7 @@ export async function fetchHydroMetaData(): Promise<RawHydroMetaData> {
     liquidity_deployments,
     round_end,
     round_id,
+    total_locked_tokens,
     tranches,
   }
 }

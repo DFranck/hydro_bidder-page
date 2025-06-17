@@ -59,13 +59,19 @@ export default function LockupsPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
-  const [token, setToken] = useState({
-    name: "",
+  const [token, setToken] = useState<{
+    name: "stATOM" | "dATOM"
+    minAmount: number
+    maxAmount: number
+  }>({
+    name: "dATOM",
     minAmount: 0,
     maxAmount: 0,
   })
 
-  const amountOfTokenInWallet = useAmountOfTokenInWallet()
+  const amountOfTokenInWallet = useAmountOfTokenInWallet(
+    token.name as "stATOM" | "dATOM"
+  )
 
   const usersLimitRemainder = lockedTokenMaxWallet - lockedTokenTotalWallet
 
@@ -180,7 +186,7 @@ export default function LockupsPage() {
         <CurrentRoundVotingPowerWallet />
       </StatCardsContainer>
 
-      <ContentContainer className="gap-6 py-6">
+      <ContentContainer className="gaxp-6 py-6">
         <div
           className="
             flex
