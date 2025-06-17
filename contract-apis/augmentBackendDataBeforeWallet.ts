@@ -37,7 +37,7 @@ export function augmentBackendDataBeforeWallet(
 
   // Hydro Capacity Info
   const lockedTokenMaxGlobal = constants.max_locked_tokens / 1e6
-  const lockedTokenTotalGlobal = total_locked_tokens / 1e6
+  const lockedTokenTotalGlobal = total_locked_tokens ?? 0 / 1e6
   const lockedTokenRemainingCapacityGlobal = Number(
     (lockedTokenMaxGlobal - lockedTokenTotalGlobal).toFixed(6)
   )
