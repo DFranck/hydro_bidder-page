@@ -31,6 +31,7 @@ import { LockupsTables } from "./LockupsTables"
 import { DropdownMenuButton } from "@/components/Dropdown"
 import { LockupsLST } from "./LockupsLST"
 import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 
 const minTokenToBeLocked = 1 / 1e6
 
@@ -46,9 +47,13 @@ export default function LockupsPage() {
     lockups,
     lockedTokenMaxWallet,
     lockedTokenPercentageWallet,
-    lockedTokenRemainingCapacityGlobal,
     lockedTokenTotalWallet,
   } = useBackendData()
+
+    const {
+      lockedTokenRemainingCapacityGlobal
+    } = useGlobalLockupCapacityInfo()
+
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
   const expiredLockups = lockups.filter(
