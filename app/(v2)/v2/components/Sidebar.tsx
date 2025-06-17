@@ -4,87 +4,70 @@ import { Icon } from '@/components/Icon'
 import { SidebarSourcePanel } from '@v2/components/SidebarSourcePanel'
 import { type SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/provider'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { twJoin } from 'tailwind-merge'
-import { useMediaQuery } from 'usehooks-ts'
-
-type SidebarState =
-  | 'mobile-open'
-  | 'mobile-closed'
-  | 'desktop-open'
-  | 'desktop-closed'
-
-function getSidebarState(isMobile: boolean, isOpen: boolean): SidebarState {
-  if (isMobile) return isOpen ? 'mobile-open' : 'mobile-closed'
-  return isOpen ? 'desktop-open' : 'desktop-closed'
-}
 
 export function Sidebar() {
-  const isMobile = useMediaQuery('(max-width: 768px)')
   const { state, dispatch } = useAppState()
   const { currentRoundDataPerSource, isSidebarOpen } = state
   const allSources = Object.values(currentRoundDataPerSource ?? {})
-  const sidebarState = getSidebarState(isMobile, isSidebarOpen)
-  const isDesktop = sidebarState.startsWith('desktop')
-  const isOpen = sidebarState.endsWith('open')
-  const isClosed = sidebarState.endsWith('closed')
+
+  const setSidebarIsOpen = useCallback(
+    (isOpen: boolean) => {
+      document.documentElement.classList.toggle('sidebar-open', isOpen)
+      document.documentElement.classList.toggle('sidebar-closed', !isOpen)
+      dispatch({ type: 'SET_SIDEBAR_OPEN', payload: isOpen })
+    },
+    [dispatch],
+  )
 
   useEffect(() => {
-    const initialIsOpen = !isMobile
-    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: initialIsOpen })
-  }, [])
+    const isSidebarOpen =
+      document.documentElement.classList.contains('sidebar-open')
+    setSidebarIsOpen(isSidebarOpen)
+  }, [setSidebarIsOpen])
 
   return (
     <aside
       className={twJoin(
         'grid-in-sidebar',
         'rounded-standard flex flex-col',
-        !isClosed && 'bg-shaded',
+        'sidebar-open:bg-shaded',
       )}
-      onClick={() =>
-        dispatch({ type: 'SET_SIDEBAR_OPEN', payload: !isSidebarOpen })
-      }
     >
       <div
         className={twJoin(
           'flex items-center',
           'px-3',
-          isClosed ? 'justify-center' : 'justify-between',
-          isMobile && isClosed ? 'h-0' : 'h-12',
+          'justify-center',
+          'sidebar-open:justify-between',
+          'sidebar-open:h-12',
         )}
-        onClick={() =>
-          dispatch({
-            type: 'SET_SIDEBAR_OPEN',
-            payload: !isSidebarOpen,
-          })
-        }
       >
-        <div className={twJoin('label', isClosed && 'hidden')}>Lockups</div>
+        <div className={twJoin('label', 'sidebar-closed:hidden')}>Lockups</div>
 
         <button
           className={twJoin(
             'btn-icon',
-            isMobile && ['size-12', 'fixed top-0 right-12 z-20'],
+            'size-12',
+            'fixed top-0 right-12 z-20',
+            'desktop:static',
+            'desktop:size-auto',
           )}
+          onClick={() => setSidebarIsOpen(!isSidebarOpen)}
         >
-          <Icon
-            name={
-              isMobile
-                ? isOpen
-                  ? 'solid:arrow-up-to-line'
-                  : 'solid:arrow-down-to-line'
-                : 'solid:sidebar'
-            }
-            className="inline-block"
-          />
+          <Icon name="solid:sidebar" />
         </button>
       </div>
 
       <div
         className={twJoin(
-          'gap-standard flex',
-          (isOpen || isMobile) && 'px-standard',
-          ((isMobile && !isClosed) || isDesktop) && 'flex-col',
+          'gap-tight flex',
+          'px-tight',
+          'sidebar-open:px-tight',
+          'sidebar-open:flex-col',
+          'desktop:flex-col',
+          'desktop:px-0',
         )}
       >
         {allSources.map(({ totalLockedTokens, sourceId, currentRoundId }) => (
@@ -93,7 +76,6 @@ export function Sidebar() {
             sourceId={sourceId as SourceID}
             totalLockedTokens={totalLockedTokens}
             currentRoundId={currentRoundId}
-            sidebarState={sidebarState}
           />
         ))}
       </div>

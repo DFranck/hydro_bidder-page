@@ -1,10 +1,11 @@
 import { Icon } from '@/components/Icon'
+import { useIsMobile } from '@/lib/useIsMobile'
 import { ScrollIndicator } from '@v2/components/ScrollIndicator'
 import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
-import { useKeyboardNavigation } from '@v2/hooks/useKeyboardNavigation'
-import { useEffect, useRef, useState } from 'react'
+import { useAppState } from '@v2/state/provider'
+import { useEffect, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
 function TrancheNavigationButton({
@@ -17,14 +18,14 @@ function TrancheNavigationButton({
     <button
       className={twMerge(
         'cursor-pointer',
-        'rounded-standard h-12 w-full',
+        'h-4 w-full rounded-[calc(var(--spacing)*2)]',
         'flex items-center justify-center',
         'transition-all',
         'flex-col gap-1',
         'truncate',
         'desktop:flex-row',
         'desktop:gap-2',
-        'desktop:px-3',
+        'desktop:px-standard',
         disabled && 'cursor-not-allowed',
         disabled && 'opacity-50',
         className,
@@ -42,49 +43,32 @@ interface TrancheNavigationProps {
     name: string
     sourceId: SourceID
   }>
-  onActiveTrancheChange?: (index: number) => void
+  onActiveTrancheChange?: (previousIndex: number, newIndex: number) => void
 }
 
 export function TrancheNavigation({
   allTranchesSorted,
   onActiveTrancheChange,
 }: TrancheNavigationProps) {
-  const [bridgeWidth, setBridgeWidth] = useState<number>(0)
-  const buttonRef = useRef<HTMLButtonElement>(null)
+  const [isMounted, setIsMounted] = useState(false)
+  const { state, dispatch } = useAppState()
+  const { isSidebarOpen } = state
+  const isMobile = useIsMobile()
 
   useEffect(() => {
-    if (buttonRef.current) {
-      const width = Math.ceil(buttonRef.current.getBoundingClientRect().width)
-      setBridgeWidth(width)
-    }
+    setIsMounted(true)
   }, [])
-
-  useKeyboardNavigation({
-    selector: '[id^="tranche-nav-button--"]',
-    direction: 'horizontal',
-    clickAfterFocus: true,
-    onNavigateToChild: (currentElement) => {
-      const currentId = currentElement.id
-      const match = currentId.match(/tranche-nav-button--(.+)-(\d+)/)
-      if (match) {
-        const [, sourceId, trancheId] = match
-        const childElements = Array.from(
-          document.querySelectorAll(`[id^="bid-card-container--${sourceId}-"]`),
-        ) as HTMLElement[]
-        return childElements[0] ?? null
-      }
-      return null
-    },
-  })
 
   return (
     <ScrollIndicator
       containerSelector="#tranches-container"
       targetSelector="[id^='tranche-container--']"
+      disabled={isMobile && isSidebarOpen}
       className={twMerge(
         'rounded-standard w-full',
         'grid grid-cols-[auto_1fr_auto]',
       )}
+      onChange={onActiveTrancheChange}
       renderDot={({ index, isActive: isActiveTranche, spreadProps }) => {
         const tranche = allTranchesSorted[index]
         const { sourceId, name } = tranche
@@ -106,14 +90,14 @@ export function TrancheNavigation({
 
               // Base styles
               'border-token-color',
-              'bg-token-color/40',
+              'bg-token-color/60',
               'focus-within:bg-token-color',
               'outline-none',
               'focus-within:shadow-2xl',
               'focus-within:shadow-token-color',
 
               // Active state
-              isActiveTranche && 'bg-token-color cursor-default',
+              isActiveTranche && 'bg-token-color cursor-default rounded-b-none',
 
               // Voted state
               userVotedInBucket && [
@@ -122,63 +106,66 @@ export function TrancheNavigation({
               ],
             )}
             onClick={(e) => {
-              onActiveTrancheChange?.(index)
               spreadProps.onClick?.(e)
             }}
             {...spreadProps}
           >
-            {/* The briding element between tab and content */}
+            {/* The bridging element between tab and content */}
             <div
               className={twMerge(
-                '-bottom-standard absolute right-0 left-0',
+                '-bottom-tight absolute right-0 left-0',
                 'bg-token-color',
-                'origin-center',
-                'transition-all',
-                isActiveTranche
-                  ? 'scale-x-100 duration-500 ease-out'
-                  : 'scale-x-0 duration-200 ease-in',
+                'origin-bottom',
+                isMounted
+                  ? [
+                      'transition-all',
+                      isActiveTranche
+                        ? 'scale-x-100 duration-500 ease-out'
+                        : 'scale-x-0 duration-200 ease-in',
+                    ]
+                  : isActiveTranche
+                    ? 'scale-x-100'
+                    : 'scale-x-0',
               )}
               style={{
-                height: isActiveTranche
-                  ? 'calc(var(--spacing-standard) + var(--radius-standard))'
-                  : 'var(--spacing-standard)',
+                height: 'var(--spacing-tight)',
                 transform: 'translateZ(0)',
               }}
             />
 
-            <SourceLabel sourceId={sourceId} isShortened={true} />
-
-            <span className="desktop:inline-block hidden">
-              <Icon name="solid:circle-dashed" />
-            </span>
+            <SourceLabel
+              sourceId={sourceId}
+              isShortened={true}
+              className="sr-only"
+            />
           </TokenThemeWrapper>
         )
       }}
       renderDots={({ dots, onPrevious, onNext, canGoPrevious, canGoNext }) => {
         return (
           <>
-            <div className="py-standard">
+            <div className="py-tight">
               <TrancheNavigationButton
                 id="tranche-nav-previous"
                 disabled={!canGoPrevious}
-                className={twJoin('w-min shrink-0', 'desktop:w-12')}
+                className={twJoin('px-standard w-min shrink-0', 'desktop:w-12')}
                 onClick={onPrevious}
               >
                 <Icon name="solid:chevron-left" />
               </TrancheNavigationButton>
             </div>
 
-            <div className="py-standard overflow-x-auto">
-              <div className="gap-standard grid auto-cols-fr grid-flow-col">
+            <div className="py-tight overflow-x-auto">
+              <div className="gap-tight grid auto-cols-fr grid-flow-col">
                 {dots}
               </div>
             </div>
 
-            <div className="py-standard">
+            <div className="py-tight">
               <TrancheNavigationButton
                 id="tranche-nav-next"
                 disabled={!canGoNext}
-                className={twJoin('w-min shrink-0', 'desktop:w-12')}
+                className={twJoin('px-standard w-min shrink-0', 'desktop:w-12')}
                 onClick={onNext}
               >
                 <Icon name="solid:chevron-right" />

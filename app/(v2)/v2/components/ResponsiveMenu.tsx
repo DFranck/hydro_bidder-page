@@ -21,24 +21,24 @@ export interface MenuItem extends React.ComponentProps<'a'> {
 export function ResponsiveMenu({
   menuItems,
   className,
-  classNameDesktop,
-  classNameMobile,
   classNameForBackdrop,
   classNameForBackground,
+  classNameForItems,
   classNameForItem,
   classNameForSubItem,
   classNameForSubItems,
+  classNameForSubItemActive,
   ...otherProps
 }: React.ComponentProps<'nav'> & {
   menuItems: MenuItem[]
   className?: string
-  classNameDesktop?: string
-  classNameMobile?: string
   classNameForBackdrop?: string
   classNameForBackground?: string
+  classNameForItems?: string
   classNameForItem?: string
   classNameForSubItem?: string
   classNameForSubItems?: string
+  classNameForSubItemActive?: string
 }) {
   const pathname = usePathname()
 
@@ -51,13 +51,14 @@ export function ResponsiveMenu({
       tabIndex={0}
       className={twMerge(
         'group/navbar z-40',
-        'relative bg-transparent',
+        'bg-transparent',
         'pointer-events-none',
-        'fixed top-0 right-0 h-full w-2/3 overflow-hidden',
+        'fixed top-0 right-0 h-full w-2/3',
         'transition-all duration-500',
         'focus-within:pointer-events-auto',
-        classNameDesktop,
-        classNameMobile,
+        'desktop:pointer-events-auto',
+        'desktop:relative',
+        'desktop:flex',
         className,
       )}
       {...otherProps}
@@ -131,14 +132,9 @@ export function ResponsiveMenu({
       <div
         className={twMerge(
           'relative z-30',
-          'px-6 py-12',
-          'flex',
-          'justify-between',
-          'desktop:flex-row flex-col',
-          'desktop:gap-6 gap-3',
-          'desktop:items-center',
           'opacity-0 transition-all duration-500',
           'group-focus-within/navbar:opacity-100',
+          classNameForItems,
         )}
       >
         {menuItems.map(
@@ -180,14 +176,7 @@ export function ResponsiveMenu({
               </StyledText>
             ) : (
               <div
-                className={twJoin(
-                  'group relative cursor-pointer',
-                  'flex flex-col justify-center',
-                  'items-center',
-                  'w-full gap-3',
-                  'desktop:w-auto',
-                  'desktop:gap-0',
-                )}
+                className="group/nav-item relative cursor-pointer"
                 key={index}
               >
                 <a
@@ -205,22 +194,19 @@ export function ResponsiveMenu({
 
                 <div
                   className={twJoin(
-                    'absolute top-full left-0',
-                    'group-hover:block',
-                    'relative block',
-                    'group-hover:hidden',
-                    'group-focus-within:block',
-                    'desktop:hidden',
+                    'desktop:absolute',
+                    'desktop:top-full',
+                    'desktop:left-1/2',
+                    'desktop:-translate-x-1/2',
+                    'desktop:pointer-events-none',
+                    'desktop:opacity-0',
+                    'desktop:transition-all',
+                    'desktop:group-focus-within/nav-item:opacity-100',
+                    'desktop:group-focus-within/nav-item:pointer-events-auto',
                   )}
                 >
                   <div
-                    className={twJoin(
-                      'flex flex-col gap-2',
-                      'bg-transparent p-0',
-                      'desktop:p-2',
-                      'desktop:bg-shaded',
-                      'desktop:rounded-standard',
-                    )}
+                    className={twJoin('flex flex-col', classNameForSubItems)}
                   >
                     {subMenuItems.map(
                       (
@@ -245,8 +231,9 @@ export function ResponsiveMenu({
                           className={twJoin(
                             disabled && 'pointer-events-none opacity-60',
                             classNameForSubItem,
-                            pathname?.startsWith(href ?? '') &&
-                              'text-palette-beige font-bold',
+                            href &&
+                              pathname?.startsWith(href) &&
+                              classNameForSubItemActive,
                           )}
                           onClick={(event) => {
                             onClick?.(event)

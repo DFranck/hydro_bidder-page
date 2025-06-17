@@ -12,9 +12,16 @@
 
   --container-2xs: 16rem;
 
-  --spacing-standard: 6px;
+  --spacing-tightest: 2px;
+  --spacing-tighter: 4px;
+  --spacing-tight: 6px;
+  --spacing-standard: 8px;
   --spacing-loose: 12px;
-  --radius-standard: 6px;
+  --spacing-looser: 16px;
+  --spacing-loosest: 24px;
+
+  --radius-small: 6px;
+  --radius-standard: 9px;
   --radius-large: 12px;
 
   --font-inter: "Inter", "sans-serif";
@@ -43,16 +50,19 @@
   --color-background: var(--color-palette-text);
 
   --color-shaded: rgba(255, 255, 255, 0.05);
-  --color-faded: rgba(255, 255, 255, 0.6);
+  --color-faded: rgba(255, 255, 255, 0.7);
   --color-darkened: rgba(var(--palette-text-rgb), 0.25);
 }
+
+@custom-variant sidebar-open (&:where(.sidebar-open *));
+@custom-variant sidebar-closed (&:where(.sidebar-closed *));
 
 @utility border-token-color {
   border-color: var(--color-token-color);
 }
 
 @utility border-standard {
-  border-width: calc(var(--spacing-standard) / 2);
+  border-width: calc(var(--spacing-tight) / 2);
   border-style: solid;
   border-color: transparent;
 }
@@ -71,12 +81,28 @@
     @apply text-[14px];
     @apply text-shadow-xs;
   }
+
+  @media (min-width: 768px) {
+    :root {
+      --spacing-tightest: 4px;
+      --spacing-tighter: 6px;
+      --spacing-tight: 8px;
+      --spacing-standard: 12px;
+      --spacing-loose: 16px;
+      --spacing-looser: 24px;
+      --spacing-loosest: 32px;
+
+      --radius-small: 9px;
+      --radius-standard: 14px;
+      --radius-large: 18px;
+    }
+  }
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center rounded-md border-2;
+  @apply inline-flex items-center justify-center;
   @apply gap-1 px-3 py-2;
-  @apply text-center leading-none font-semibold whitespace-nowrap;
+  @apply text-center leading-[1.1em] whitespace-nowrap;
   @apply cursor-pointer touch-manipulation;
 }
 
@@ -107,6 +133,13 @@
   @apply text-xs leading-[1.1em] font-bold tracking-widest uppercase;
 }
 
+@utility title {
+  @apply font-bold;
+  @apply text-lg;
+  @apply normal-case;
+  @apply tracking-wide;
+}
+
 @utility footnote {
   @apply text-xs leading-[1.1em] tracking-wide;
   @apply text-faded;
@@ -120,11 +153,11 @@
 
 @utility important-value {
   @apply text-palette-beige font-extrabold not-italic;
-  @apply [.is-mobile_&]:text-2xl;
+  @apply text-2xl leading-[1em];
 }
 
 @utility grid-areas-desktop-sidebar-closed {
-  @apply gap-standard;
+  @apply gap-tight;
   display: grid;
   transition-property: grid-template-columns, grid-template-rows;
   transition-duration: 0.2s;

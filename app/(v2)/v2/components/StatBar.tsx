@@ -28,11 +28,7 @@ export function StatBar({
             'desktop:gap-3',
           )}
         >
-          <var
-            className={twJoin('important-value text-2xl', 'desktop:text-3xl')}
-          >
-            {value}
-          </var>
+          <var className="important-value">{value}</var>
 
           <span
             className={twJoin(

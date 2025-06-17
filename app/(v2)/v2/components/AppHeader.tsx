@@ -121,7 +121,7 @@ export function AppHeader() {
     <header
       className={twJoin('grid-in-header', 'flex items-center justify-between')}
     >
-      <div className={twJoin('h-12 w-full px-3 py-1')}>
+      <div className={twJoin('px-standard h-12 w-full pt-2 pb-1')}>
         <Link href="/v2" className={twJoin('relative block h-full')}>
           <Logo />
         </Link>
@@ -133,29 +133,46 @@ export function AppHeader() {
           'desktop:flex',
           'desktop:justify-end',
           'desktop:text-sm',
-          'desktop:px-3',
         )}
         classNameForBackdrop="bg-shaded backdrop-blur-sm"
         classNameForBackground="bg-palette-blue/80"
+        classNameForItems={twJoin(
+          'flex flex-col justify-between',
+          'px-standard py-loose gap-standard',
+          'desktop:flex-row',
+          'desktop:gap-loose',
+          'desktop:items-center',
+          'desktop:justify-end',
+          'desktop:px-standard',
+          'desktop:opacity-100',
+        )}
         classNameForItem={twJoin(
           'hover:text-palette-beige cursor-pointer',
-          'desktop:px-6',
-          'desktop:hover:text-palette-beige desktop:focus-within:text-palette-beige',
-        )}
-        classNameForSubItem={twJoin(
-          'desktop:px-4 desktop:py-2',
-          'desktop:hover:bg-palette-green desktop:hover:text-background',
-          'desktop:focus-within:bg-palette-green desktop:focus-within:text-background',
+          'desktop:hover:text-palette-beige',
+          'desktop:focus-within:text-palette-beige',
         )}
         classNameForSubItems={twJoin(
-          'gap-3',
           'desktop:right-0',
           'desktop:mt-2',
           'desktop:py-2',
-          'desktop:bg-background',
+          'desktop:bg-palette-beige',
+          'desktop:text-background',
           'desktop:rounded-standard',
-          'desktop:border',
           'desktop:shadow-2xl',
+        )}
+        classNameForSubItem={twJoin(
+          'desktop:px-standard',
+          'desktop:w-full',
+          'desktop:whitespace-nowrap',
+          'desktop:py-tight',
+          'desktop:hover:bg-background',
+          'desktop:hover:text-palette-beige',
+          'desktop:focus-within:bg-background',
+          'desktop:focus-within:text-palette-beige',
+        )}
+        classNameForSubItemActive={twJoin(
+          'desktop:bg-background',
+          'desktop:text-palette-beige',
         )}
       />
     </header>

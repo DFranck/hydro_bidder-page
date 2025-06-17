@@ -19,16 +19,16 @@ export interface AppState {
   narrowBuckets: boolean
   currentRoundDataPerSource: Record<SourceID, RoundState> | null
   bidDescriptionsById: Record<number, BidMetaData>
-  isSidebarOpen: boolean
   activeTrancheIndex: number
+  isSidebarOpen: boolean
 }
 
 export const initialState: AppState = {
   bidDescriptionsById: {},
   currentRoundDataPerSource: null,
   narrowBuckets: false,
-  isSidebarOpen: true,
   activeTrancheIndex: 0,
+  isSidebarOpen: true,
 }
 
 export const AppContext = createContext<{
@@ -42,6 +42,7 @@ export const AppContext = createContext<{
 export function AppContextProvider({
   children,
   hydroDataPromise,
+  bidDescriptionsPromise,
 }: {
   children: React.ReactNode
   hydroDataPromise: Promise<
@@ -56,10 +57,13 @@ export function AppContextProvider({
       }
     }[]
   >
+  bidDescriptionsPromise: Promise<Record<number, BidMetaData>>
 }) {
   const hydroData = use(hydroDataPromise)
+  const bidDescriptions = use(bidDescriptionsPromise)
   const initialStateWithData: AppState = {
     ...initialState,
+    bidDescriptionsById: bidDescriptions,
     currentRoundDataPerSource: hydroData
       ? (Object.fromEntries(
           hydroData.map(({ sourceId, data }) => [

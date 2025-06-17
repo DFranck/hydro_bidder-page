@@ -15,6 +15,10 @@ export default async function Layout({
   const environment = getEnvironment()
   const { sources } = environments[environment]
 
+  const bidDescriptionsPromise = fetch(
+    new URL(`/api/v2/bid_descriptions`, baseUrl),
+  ).then((response) => response.json())
+
   const hydroDataPromise = Promise.all(
     sources.map(async (source) => {
       const urlPrefix = `/api/v2/${environment}/${source.id}`
@@ -58,7 +62,10 @@ export default async function Layout({
 
   return (
     <React.Suspense fallback={<LoadingSpinner />}>
-      <AppContextProvider hydroDataPromise={hydroDataPromise}>
+      <AppContextProvider
+        hydroDataPromise={hydroDataPromise}
+        bidDescriptionsPromise={bidDescriptionsPromise}
+      >
         {children}
       </AppContextProvider>
     </React.Suspense>

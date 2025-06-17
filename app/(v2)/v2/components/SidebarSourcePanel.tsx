@@ -4,98 +4,95 @@ import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { type SourceID } from '@v2/environments'
 import { twJoin, twMerge } from 'tailwind-merge'
 
-type SidebarState =
-  | 'mobile-open'
-  | 'mobile-closed'
-  | 'desktop-open'
-  | 'desktop-closed'
-
 interface SidebarSourcePanelProps {
   sourceId: SourceID
   totalLockedTokens: number
   currentRoundId: number
-  sidebarState: SidebarState
 }
 
 export function SidebarSourcePanel({
   sourceId,
   totalLockedTokens,
   currentRoundId,
-  sidebarState,
 }: SidebarSourcePanelProps) {
-  const isDesktop = sidebarState.startsWith('desktop')
-  const isMobile = sidebarState.startsWith('mobile')
-  const isOpen = sidebarState.endsWith('open')
-  const isClosed = sidebarState.endsWith('closed')
-
   return (
     <TokenThemeWrapper
+      as="button"
       sourceId={sourceId}
       className={twMerge(
         'relative w-full',
         'flex items-center justify-between gap-3',
         'bg-token-color rounded-standard',
-        isDesktop
-          ? isClosed
-            ? 'flex-col gap-1 text-center'
-            : 'h-12 flex-row px-3'
-          : isClosed
-            ? 'h-18 flex-row'
-            : 'h-12 flex-row px-3',
+        'h-18 flex-row',
+        'sidebar-open:h-12',
+        'desktop:h-auto',
+        'desktop:flex-col',
+        'desktop:gap-1',
+        'desktop:text-center',
+        'desktop:sidebar-open:flex-row',
+        'desktop:sidebar-open:h-12',
       )}
     >
-      <div
+      <span
         className={twJoin(
           'flex items-center',
-          isDesktop
-            ? isClosed
-              ? 'flex-col gap-1 py-3'
-              : 'flex-row gap-3'
-            : isClosed
-              ? 'flex-row gap-3 px-3 py-1'
-              : 'flex-row gap-3 py-3',
+          'gap-tight',
+          'px-standard',
+          'desktop:flex-row',
+          'desktop:py-loose',
+          'desktop:sidebar-closed:gap-1',
+          'desktop:sidebar-closed:py-loose',
+          'desktop:sidebar-closed:px-0console.log()',
+          'desktop:sidebar-closed:flex-col',
         )}
       >
         <SourceBadge sourceId={sourceId} />
 
-        <div
+        <span
           className={twJoin(
             'flex items-baseline',
-            isDesktop
-              ? ['gap-1', isClosed ? 'flex-col items-center' : 'flex-row']
-              : isClosed
-                ? 'flex-col'
-                : 'flex-row gap-1',
+            'flex-col',
+            'sidebar-open:flex-row',
+            'sidebar-open:gap-1',
+            'desktop:flex-col',
+            'desktop:items-center',
           )}
         >
           <span className="font-extrabold">
             {totalLockedTokens.toLocaleString()}
           </span>
           <span className="denom">{sourceId}</span>
-        </div>
-      </div>
+        </span>
+      </span>
 
-      <div
+      <span
         className={twJoin(
-          'flex items-center justify-center gap-2',
-          isClosed && 'bg-darkened w-full py-2',
-          isMobile && 'h-full',
+          'gap-tight flex items-center justify-center',
+          'bg-darkened',
+          'px-standard',
+          'h-full',
+          'sidebar-open:w-[130px]',
+          'sidebar-open:justify-between',
+          'desktop:sidebar-closed:w-full',
+          'desktop:sidebar-closed:px-0',
+          'desktop:sidebar-closed:py-tight',
         )}
       >
-        <div
+        <span
           className={twJoin(
             'flex items-center gap-1',
-            isMobile && isClosed && 'flex-col',
+            'flex-col',
+            'sidebar-open:flex-row',
           )}
         >
-          <span className="label">Round</span>
+          <span className="label sidebar-closed:hidden">Round</span>
           <span className="important-value">{currentRoundId}</span>
-        </div>
+        </span>
 
-        <button className={twJoin('btn-icon btn-inline', isClosed && 'hidden')}>
+        <span className={twJoin('hidden', 'sidebar-open:block')}>
           <Icon name="solid:caret-down" />
-        </button>
-      </div>
+        </span>
+      </span>
     </TokenThemeWrapper>
   )
 }

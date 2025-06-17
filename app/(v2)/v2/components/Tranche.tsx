@@ -1,11 +1,10 @@
-import { SourceLabel } from '@/app/(v2)/v2/components/SourceLabel'
 import { Icon } from '@/components/Icon'
-import { BidCard } from '@v2/components/BidCard'
+import { BidCard, bidCardFields } from '@v2/components/BidCard'
+import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
-import { useKeyboardNavigation } from '@v2/hooks/useKeyboardNavigation'
 import { useAppState } from '@v2/state/provider'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
 export function Tranche({
@@ -35,30 +34,79 @@ export function Tranche({
 
   const { name, metadata } = tranche
   const allBids = currentRoundDataPerSource?.[sourceId].augmentedBids ?? []
-  const userVotedInBucket = false // TODO: add this
+  const userVotedInBucket = false
   const bidsInTranche = allBids.filter((bid) => bid.trancheId === trancheId)
 
-  useKeyboardNavigation({
-    selector: `[id^="bid-card--${sourceId}-"]`,
-    direction: 'vertical',
-    containerRef: viewboxRef,
-    onNavigateToParent: (currentElement) => {
-      const currentId = currentElement.id
-      const match = currentId.match(/bid-card--(.+)-(\d+)/)
-      if (match) {
-        const [, sourceId, trancheId] = match
-        return document.querySelector(
-          `[id="tranche-nav-button--${sourceId}-${trancheId}"]`,
+  useEffect(() => {
+    const updateLabelPositions = () => {
+      const container = document.querySelector(
+        `#tranche-content-inner--${sourceId}-${trancheId}`,
+      ) as HTMLElement | null
+
+      if (!container) return
+
+      const containerRect = container.getBoundingClientRect()
+
+      bidCardFields.forEach(({ key }) => {
+        const labelElement = document.querySelector(
+          `#bid-card-field-label--${sourceId}-${trancheId}-${key}`,
         ) as HTMLElement | null
-      }
-      return null
-    },
-  })
+        if (!labelElement) return
+
+        const firstValueElement = document.querySelector(
+          [
+            `#tranche-content-inner--${sourceId}-${trancheId}`,
+            `[id^="bid-card-field--${sourceId}-"][id$="-${key}"]`,
+          ].join(' '),
+        ) as HTMLElement | null
+        if (!firstValueElement) return
+
+        const valueRect = firstValueElement.getBoundingClientRect()
+
+        if (valueRect.left === 0 || containerRect.left === 0) {
+          console.warn('Invalid position detected for', key, {
+            valueRect,
+            containerRect,
+          })
+          return
+        }
+
+        // Get the computed padding of the container
+        const containerStyle = window.getComputedStyle(container)
+        const containerPaddingLeft = parseFloat(containerStyle.paddingLeft)
+
+        // Calculate center position accounting for padding
+        const centerPosition =
+          valueRect.left -
+          (containerRect.left + containerPaddingLeft) +
+          valueRect.width / 2
+
+        labelElement.style.left = `${centerPosition}px`
+      })
+    }
+
+    const timeoutId = setTimeout(updateLabelPositions, 0)
+
+    const containerResizeObserver = new ResizeObserver(updateLabelPositions)
+    const container = document.querySelector(
+      `#tranche-content-inner--${sourceId}-${trancheId}`,
+    )
+    if (container) {
+      containerResizeObserver.observe(container)
+    }
+
+    const intervalId = setInterval(updateLabelPositions, 500)
+
+    return () => {
+      clearTimeout(timeoutId)
+      containerResizeObserver.disconnect()
+      clearInterval(intervalId)
+    }
+  }, [bidsInTranche.length, sourceId, trancheId])
 
   const viewboxClassName = twMerge(
     'rounded-standard absolute inset-0 overflow-hidden',
     'grid grid-rows-[min-content_auto]',
-    'gap-standard desktop:gap-loose',
     narrowBuckets && [
       'border-2 border-transparent',
       isActive && 'border-token-color',
@@ -78,7 +126,9 @@ export function Tranche({
       <div
         id={`tranche-header--${sourceId}-${trancheId}`}
         className={twJoin(
-          'flex h-12 items-center justify-between px-3',
+          'relative z-10',
+          'flex h-12 items-center justify-between',
+          'px-standard gap-standard',
           'transition-colors',
           userVotedInBucket
             ? isActive
@@ -101,12 +151,12 @@ export function Tranche({
           >
             {userVotedInBucket ? (
               <>
-                <span>You voted in this tranche</span>
+                <span>Voted!</span>
                 <Icon name="solid:circle-check" />
               </>
             ) : (
               <>
-                <span>You haven&rsquo;t voted in this tranche</span>
+                <span>Haven&rsquo;t voted</span>
                 <Icon name="solid:circle-dashed" />
               </>
             )}
@@ -126,17 +176,46 @@ export function Tranche({
           id={`tranche-content-inner--${sourceId}-${trancheId}`}
           className={twJoin(
             'mx-auto flex h-full flex-col',
-            'gap-standard desktop:gap-loose',
-            bidsInTranche.length && 'md:max-w-[60vw]',
+            'px-tight',
+            'gap-tight',
+            'desktop:gap-loose',
+            bidsInTranche.length && [
+              'py-tight',
+              'desktop:py-loose',
+              'md:max-w-[70vw]',
+            ],
           )}
         >
+          {bidsInTranche.length > 0 && (
+            <div className="relative h-6">
+              {bidCardFields.map(({ key, label }) => (
+                <div
+                  id={`bid-card-field-label--${sourceId}-${trancheId}-${key}`}
+                  key={key}
+                  className={twJoin(
+                    'label',
+                    'absolute',
+                    'transition-all duration-200',
+                    'whitespace-nowrap',
+                    '-translate-x-1/2',
+                    'top-1/2 -translate-y-1/2',
+                  )}
+                >
+                  {label}
+                </div>
+              ))}
+            </div>
+          )}
+
           {bidsInTranche.map((bid, index) => {
             return <BidCard key={bid.id} sourceId={sourceId} bidId={bid.id} />
           })}
 
           {!bidsInTranche.length && (
             <div className="empty-box">
-              <span>No bids in this tranche, yet&hellip;</span>
+              <span>
+                This is a fresh round &ndash; Bids will be posted soon!
+              </span>
             </div>
           )}
         </div>

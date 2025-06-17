@@ -1,45 +1,22 @@
 import { CollapsibleBox } from '@/components/CollapsibleBox'
+import { useIsMobile } from '@/lib/useIsMobile'
+import { GradientOverlay } from '@v2/components/GradientOverlay'
 import { StatBar } from '@v2/components/StatBar'
 import { Tranche } from '@v2/components/Tranche'
 import { TrancheNavigation } from '@v2/components/TrancheNavigation'
 import { useAppState } from '@v2/state/provider'
 import sortBy from 'lodash/sortBy'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
-import { useMediaQuery } from 'usehooks-ts'
-
-const GradientOverlay = ({
-  direction,
-  className,
-}: {
-  direction: 'left' | 'right'
-  className?: string
-}) => (
-  <div
-    className={twJoin(
-      'pointer-events-none',
-      'absolute inset-y-0 w-1/2',
-      direction === 'left'
-        ? 'left-0 bg-gradient-to-r'
-        : 'right-0 bg-gradient-to-l',
-      direction === 'left'
-        ? 'from-token-color-to-left/10 to-transparent'
-        : 'from-token-color-to-right/10 to-transparent',
-      className,
-    )}
-  />
-)
 
 export function TrancheBrowser() {
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useIsMobile()
   const { state, dispatch } = useAppState()
-  const {
-    currentRoundDataPerSource,
-    narrowBuckets,
-    isSidebarOpen,
-    activeTrancheIndex,
-  } = state
+  const { currentRoundDataPerSource, activeTrancheIndex, isSidebarOpen } = state
   const containerRef = useRef<HTMLDivElement>(null)
+  const [trancheAndBidIdsMap, setTrancheAndBidIdsMap] = useState<
+    [trancheId: string, bidIds: string[]][]
+  >([])
 
   const allTranchesSorted = useMemo(() => {
     const allSources = Object.values(currentRoundDataPerSource ?? {})
@@ -54,11 +31,33 @@ export function TrancheBrowser() {
     )
   }, [currentRoundDataPerSource])
 
+  useEffect(() => {
+    const tranches = containerRef.current?.querySelectorAll(
+      '[id^="tranche-container--"]',
+    )
+    if (tranches) {
+      setTrancheAndBidIdsMap(
+        Array.from(tranches).map((tranche) => {
+          const trancheId = tranche.id
+          const bidIds = Array.from(
+            tranche.querySelectorAll('[id^="bid-card--"]'),
+          ).map((bid) => bid.id)
+          return [trancheId, bidIds]
+        }),
+      )
+    }
+  }, [currentRoundDataPerSource])
+
   const handleActiveTrancheChange = useCallback(
-    (index: number) => {
-      dispatch({ type: 'SET_ACTIVE_TRANCHE_INDEX', payload: index })
+    (previousIndex: number, newIndex: number) => {
+      dispatch({ type: 'SET_ACTIVE_TRANCHE_INDEX', payload: newIndex })
+      const bidIds = trancheAndBidIdsMap[newIndex]?.[1]
+      const bidId = bidIds?.[0]
+      if (bidId) {
+        document.getElementById(bidId)?.focus()
+      }
     },
-    [dispatch],
+    [dispatch, trancheAndBidIdsMap],
   )
 
   useEffect(() => {
@@ -95,16 +94,24 @@ export function TrancheBrowser() {
     })
   }, [allTranchesSorted.length])
 
+  useEffect(() => {
+    const bidIds = trancheAndBidIdsMap[activeTrancheIndex]?.[1]
+    const bidId = bidIds?.[0]
+    if (bidId) {
+      document.getElementById(bidId)?.focus()
+    }
+  }, [activeTrancheIndex, trancheAndBidIdsMap])
+
   return (
     <CollapsibleBox
       id="content-container"
-      dontUnmountOnCollapse={isMobile}
+      dontUnmountOnCollapse={true}
       isCollapsed={isMobile && isSidebarOpen}
       className={twJoin('grid-in-content')}
       classNamesForInnerWrapper={twJoin(
         'relative grid',
         'grid-rows-[min-content_min-content_auto]',
-        'px-standard',
+        'px-tight',
         'desktop:px-0',
       )}
     >
@@ -128,6 +135,7 @@ export function TrancheBrowser() {
           'relative',
           'snap-x snap-mandatory',
           'flex overflow-x-auto',
+          'rounded-standard',
         )}
       >
         {allTranchesSorted.map(({ id, sourceId }, index) => {
@@ -144,6 +152,7 @@ export function TrancheBrowser() {
                 <div className={twMerge(className, 'relative h-full')}>
                   {children}
 
+                  <GradientOverlay direction="down" />
                   {hasTrancheToLeft && <GradientOverlay direction="left" />}
                   {hasTrancheToRight && <GradientOverlay direction="right" />}
                 </div>
