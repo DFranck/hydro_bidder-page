@@ -21,7 +21,7 @@ import {
   lockupLimitReachedByUserTooltip,
   needsWalletConnectionTooltip,
 } from "../ToolTips"
-import { cn } from "@/lib/utils"
+import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 
 export function DropdownMenuButton({
   handleStAtom,
@@ -32,6 +32,8 @@ export function DropdownMenuButton({
 }) {
   const { isWalletConnected, lockedTokenPercentageWallet } = useBackendData()
   const { lockedTokenPercentageGlobal } = useGlobalLockupCapacityInfo()
+  const amountOfdAtomInWallet = useAmountOfTokenInWallet("dATOM")
+  const amountOfsTAtomInWallet = useAmountOfTokenInWallet("stATOM")
 
   const { push } = useRouter()
 
@@ -39,18 +41,18 @@ export function DropdownMenuButton({
     {
       label: "stATOM",
       action: () => handleStAtom(),
-      isDisabled: false,
+      isDisabled: amountOfsTAtomInWallet === 0,
       cta: {
         label: "Get stATOM",
-        href: "https://go.skip.build?src_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&src_chain=neutron-1&dest_asset=ibc%2F27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2&dest_chain=stride-1&amount_in=&amount_out=",
+        href: "https://go.skip.build/?src_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&src_chain=neutron-1&dest_asset=ibc%2F27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2&dest_chain=stride-1&amount_in=&amount_out=",
       },
     },
     {
       label: "dATOM",
       action: () => handleDAtom(),
-      isDisabled: false,
+      isDisabled: amountOfdAtomInWallet === 0,
       cta: {
-        label: "Get stATOM",
+        label: "Get dtATOM",
         href: "https://go.skip.build/?src_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&src_chain=neutron-1&dest_asset=ibc%2F27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2&dest_chain=stride-1&amount_in=&amount_out=",
       },
     },
