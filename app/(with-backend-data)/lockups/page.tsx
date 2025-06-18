@@ -50,9 +50,7 @@ export default function LockupsPage() {
     lockedTokenTotalWallet,
   } = useBackendData()
 
-    const {
-      lockedTokenRemainingCapacityGlobal
-    } = useGlobalLockupCapacityInfo()
+  const { lockedTokenRemainingCapacityGlobal } = useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
@@ -63,13 +61,14 @@ export default function LockupsPage() {
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
-
   const [token, setToken] = useState<{
     name: "stATOM" | "dATOM"
+    amount: number
     minAmount: number
     maxAmount: number
   }>({
     name: "dATOM",
+    amount: 0,
     minAmount: 0,
     maxAmount: 0,
   })
@@ -82,7 +81,7 @@ export default function LockupsPage() {
 
   const maxTokenToBeLocked = Math.min(
     lockedTokenRemainingCapacityGlobal, // no more than the global limit
-    amountOfTokenInWallet, // no more than they have
+    token.amount, // no more than they have
     usersLimitRemainder // no more than their limit
   )
 
@@ -90,6 +89,7 @@ export default function LockupsPage() {
     setIsOpen(true)
     setToken({
       name: "stATOM",
+      amount: amountOfTokenInWallet,
       minAmount: minTokenToBeLocked,
       maxAmount: maxTokenToBeLocked,
     })
@@ -99,6 +99,7 @@ export default function LockupsPage() {
     setIsOpen(true)
     setToken({
       name: "dATOM",
+      amount: amountOfTokenInWallet,
       minAmount: minTokenToBeLocked,
       maxAmount: maxTokenToBeLocked,
     })
