@@ -17,7 +17,10 @@ import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { lockupLimitTooltip } from "@/components/ToolTips"
+import {
+  lockupLimitTooltip,
+  needsWalletConnectionTooltip,
+} from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -32,6 +35,7 @@ import { DropdownMenuButton } from "@/components/Dropdown"
 import { LockupsLST } from "./LockupsLST"
 import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 
 const minTokenToBeLocked = 1 / 1e6
 
@@ -249,10 +253,25 @@ export default function LockupsPage() {
                 Unlock {expiredLockups.length} Expired
               </StyledText>
             )}
-            <DropdownMenuButton
-              handleStAtom={handleStAtom}
-              handleDAtom={handleDAtom}
-            />
+            <ConditionalWrapper
+              condition={!isWalletConnected}
+              wrapper={(children) => (
+                <Tooltip
+                  className="w-auto"
+                  classNamesForTooltip="sm:-ml-12"
+                  tipContents={needsWalletConnectionTooltip}
+                >
+                  <div className="pointer-events-none cursor-not-allowed opacity-50">
+                    {children}
+                  </div>
+                </Tooltip>
+              )}
+            >
+              <DropdownMenuButton
+                handleStAtom={handleStAtom}
+                handleDAtom={handleDAtom}
+              />
+            </ConditionalWrapper>
           </div>
         </div>
 

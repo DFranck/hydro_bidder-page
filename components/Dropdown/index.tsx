@@ -44,7 +44,7 @@ export function DropdownMenuButton({
       isDisabled: amountOfsTAtomInWallet === 0,
       cta: {
         label: "Get stATOM",
-        href: "https://go.skip.build/?src_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&src_chain=neutron-1&dest_asset=ibc%2F27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2&dest_chain=stride-1&amount_in=&amount_out=",
+        href: "https://go.skip.build?src_asset=ibc%2FC140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901&src_chain=osmosis-1&dest_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&dest_chain=neutron-1&amount_in=&amount_out=",
       },
     },
     {
@@ -53,7 +53,7 @@ export function DropdownMenuButton({
       isDisabled: amountOfdAtomInWallet === 0,
       cta: {
         label: "Get dtATOM",
-        href: "https://go.skip.build/?src_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&src_chain=neutron-1&dest_asset=ibc%2F27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2&dest_chain=stride-1&amount_in=&amount_out=",
+        href: "https://go.skip.build?src_asset=uatom&src_chain=cosmoshub-4&dest_asset=factory%2Fneutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa%2Fudatom&dest_chain=neutron-1&amount_in=&amount_out=",
       },
     },
     {
@@ -65,7 +65,7 @@ export function DropdownMenuButton({
         lockedTokenPercentageGlobal === 100,
       cta: {
         label: "Stake ATOM",
-        href: "https://www.mintscan.io/cosmos",
+        href: "https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake",
       },
     },
   ]
