@@ -83,30 +83,32 @@ export function DropdownMenuButton({
             key={item.label}
             className="flex cursor-pointer justify-between"
           >
-            <ConditionalWrapper
-              condition={item.isDisabled}
-              wrapper={(children) => (
-                <Tooltip
-                  className="w-auto"
-                  classNamesForTooltip="sm:-ml-12"
-                  tipContents={
-                    !isWalletConnected
-                      ? needsWalletConnectionTooltip
-                      : lockedTokenPercentageWallet === 100
-                        ? lockupLimitReachedByUserTooltip
-                        : lockupLimitReachedByNetworkTooltip
-                  }
-                >
-                  <div className="pointer-events-none cursor-not-allowed opacity-50">
-                    {children}
-                  </div>
-                </Tooltip>
-              )}
-            >
-              <StyledText onClick={item.isDisabled ? () => {} : item.action}>
-                Lock {item.label}
-              </StyledText>
-            </ConditionalWrapper>
+            <div className="flex-1">
+              <ConditionalWrapper
+                condition={item.isDisabled}
+                wrapper={(children) => (
+                  <Tooltip
+                    className="w-auto"
+                    classNamesForTooltip="sm:-ml-12"
+                    tipContents={
+                      !isWalletConnected
+                        ? needsWalletConnectionTooltip
+                        : lockedTokenPercentageWallet === 100
+                          ? lockupLimitReachedByUserTooltip
+                          : lockupLimitReachedByNetworkTooltip
+                    }
+                  >
+                    <div className="pointer-events-none cursor-not-allowed opacity-50">
+                      {children}
+                    </div>
+                  </Tooltip>
+                )}
+              >
+                <StyledText onClick={item.isDisabled ? () => {} : item.action}>
+                  Lock {item.label}
+                </StyledText>
+              </ConditionalWrapper>
+            </div>
 
             <StyledText
               as={Link}
