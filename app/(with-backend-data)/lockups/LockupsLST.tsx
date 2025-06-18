@@ -54,7 +54,7 @@ export function LockupsLST({
     const neutronTokenDenom = configDenom.tokenDenom[votingTokenName]
 
     if (!neutronTokenDenom) {
-      throw new Error("Demon is not set")
+      throw new Error("Denom is not set")
     }
 
     if (!neutronSigner) {

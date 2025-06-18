@@ -21,6 +21,7 @@ import {
   lockupLimitReachedByUserTooltip,
   needsWalletConnectionTooltip,
 } from "../ToolTips"
+import { cn } from "@/lib/utils"
 
 export function DropdownMenuButton({
   handleStAtom,
@@ -68,35 +69,11 @@ export function DropdownMenuButton({
   ]
   return (
     <DropdownMenu>
-      <ConditionalWrapper
-        condition={
-          !isWalletConnected ||
-          lockedTokenPercentageWallet === 100 ||
-          lockedTokenPercentageGlobal === 100
-        }
-        wrapper={(children) => (
-          <Tooltip
-            classNamesForTooltip="sm:-ml-12"
-            tipContents={
-              !isWalletConnected
-                ? needsWalletConnectionTooltip
-                : lockedTokenPercentageWallet === 100
-                  ? lockupLimitReachedByUserTooltip
-                  : lockupLimitReachedByNetworkTooltip
-            }
-          >
-            <div className="pointer-events-none cursor-not-allowed opacity-50">
-              {children}
-            </div>
-          </Tooltip>
-        )}
-      >
-        <DropdownMenuTrigger asChild>
-          <StyledText as={"span"} variant="button.primary">
-            New Lockup
-          </StyledText>
-        </DropdownMenuTrigger>
-      </ConditionalWrapper>
+      <DropdownMenuTrigger asChild>
+        <StyledText as={"span"} variant="button.primary">
+          New Lockup
+        </StyledText>
+      </DropdownMenuTrigger>
       <DropdownMenuContent className="w-80 bg-black">
         <DropdownMenuSeparator />
         {MENU_ITEMS.map((item) => (
@@ -104,9 +81,31 @@ export function DropdownMenuButton({
             key={item.label}
             className="flex cursor-pointer justify-between"
           >
-            <StyledText onClick={item.isDisabled ? () => {} : item.action}>
-              Lock {item.label}
-            </StyledText>
+            <ConditionalWrapper
+              condition={item.isDisabled}
+              wrapper={(children) => (
+                <Tooltip
+                  className="w-auto"
+                  classNamesForTooltip="sm:-ml-12"
+                  tipContents={
+                    !isWalletConnected
+                      ? needsWalletConnectionTooltip
+                      : lockedTokenPercentageWallet === 100
+                        ? lockupLimitReachedByUserTooltip
+                        : lockupLimitReachedByNetworkTooltip
+                  }
+                >
+                  <div className="pointer-events-none cursor-not-allowed opacity-50">
+                    {children}
+                  </div>
+                </Tooltip>
+              )}
+            >
+              <StyledText onClick={item.isDisabled ? () => {} : item.action}>
+                Lock {item.label}
+              </StyledText>
+            </ConditionalWrapper>
+
             <StyledText
               as={Link}
               variant="button.secondary"

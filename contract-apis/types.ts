@@ -275,7 +275,6 @@ export type RawHydroMetaData = {
   liquidity_deployments: LiquidityDeployment[]
   round_end: string
   round_id: number
-  total_locked_tokens: number
   tranches: Tranche[]
 }
 

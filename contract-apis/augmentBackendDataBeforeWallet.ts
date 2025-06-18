@@ -9,7 +9,8 @@ import keyBy from "lodash/keyBy"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
-  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed,
+  total_locked_tokens: number
 ): AugmentedBackendDataBeforeWallet {
   // Extract data
   const { hydroMetaData, hydroRoundData, externalData } =
@@ -21,7 +22,6 @@ export function augmentBackendDataBeforeWallet(
     round_id,
     tranches,
     liquidity_deployments,
-    total_locked_tokens,
   } = hydroMetaData
 
   const { bidMetaDataById, numiaBids, numiaMetrics } = externalData
@@ -37,7 +37,7 @@ export function augmentBackendDataBeforeWallet(
 
   // Hydro Capacity Info
   const lockedTokenMaxGlobal = constants.max_locked_tokens / 1e6
-  const lockedTokenTotalGlobal = total_locked_tokens ?? 0 / 1e6
+  const lockedTokenTotalGlobal = total_locked_tokens / 1e6
   const lockedTokenRemainingCapacityGlobal = Number(
     (lockedTokenMaxGlobal - lockedTokenTotalGlobal).toFixed(6)
   )
@@ -86,7 +86,7 @@ export function augmentBackendDataBeforeWallet(
 
   const dAtomPrice =
     hydroRoundsData[round_id]?.round_prices[
-      "ibc/factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom"
+      "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom"
     ]?.token_price ?? 0
 
   const stAtomPrice =

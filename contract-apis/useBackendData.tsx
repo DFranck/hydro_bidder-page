@@ -20,6 +20,7 @@ import {
   useState,
 } from "react"
 import { BackendDataTweak } from "./types"
+import { useGlobalLockupCapacityInfo } from "./useGlobalLockupCapacityInfo"
 
 // Declare backendData property on Window interface
 declare global {
@@ -129,6 +130,8 @@ export function BackendDataContextProvider({
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
+  const { lockedTokenTotalGlobal } = useGlobalLockupCapacityInfo()
+
   // Dependencies: [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
     const enabledTweaks: BackendDataTweak["json"] = merge(
@@ -163,7 +166,8 @@ export function BackendDataContextProvider({
     )
 
     const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(
-      tweakedRawBackendDataBeforeWallet
+      tweakedRawBackendDataBeforeWallet,
+      lockedTokenTotalGlobal
     )
 
     const effectiveAddress = patchData?.address ?? address
