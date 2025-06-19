@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 type LoadingSpinnerProps = {
@@ -13,11 +14,19 @@ export function LoadingSpinner({
   color = 'bg-palette-blue',
   waveDuration = 500,
 }: LoadingSpinnerProps) {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
+
   return (
     <div
       className={twMerge(
         'bg-background absolute inset-0 z-50',
         'flex items-center justify-center',
+        'transition-opacity duration-300 ease-in-out',
+        isVisible ? 'opacity-100' : 'opacity-0',
         className,
       )}
     >

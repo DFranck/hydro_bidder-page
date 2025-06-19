@@ -22,12 +22,7 @@ export function AppPageContainer({
       dontUnmountOnCollapse={true}
       isCollapsed={isMobile && isSidebarOpen}
       className="grid-in-content h-full overflow-hidden"
-      classNamesForInnerWrapper={twMerge(
-        'relative',
-        'px-tight',
-        'desktop:px-0',
-        className,
-      )}
+      classNamesForInnerWrapper={twMerge('relative', className)}
     >
       {children}
     </CollapsibleBox>

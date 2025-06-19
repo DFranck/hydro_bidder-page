@@ -29,11 +29,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className={twJoin(
-        'grid-in-sidebar',
-        'rounded-standard flex flex-col',
-        'sidebar-open:bg-shaded',
-      )}
+      className={twJoin('grid-in-sidebar', 'rounded-standard flex flex-col')}
     >
       <div
         className={twJoin(
@@ -64,11 +60,8 @@ export function Sidebar() {
       <div
         className={twJoin(
           'gap-tight flex',
-          'px-tight',
-          'sidebar-open:px-tight',
           'sidebar-open:flex-col',
           'desktop:flex-col',
-          'desktop:px-0',
         )}
       >
         {allSources.map(({ totalLockedTokens, sourceId, currentRoundId }) => (

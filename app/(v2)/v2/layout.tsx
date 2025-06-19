@@ -20,7 +20,9 @@ export default async function Layout({
     <div
       className={twJoin(
         'relative h-screen w-screen',
-        'bg-background gap-tight p-tight',
+        'bg-background gap-tight',
+        'px-loose desktop:px-standard',
+        'py-standard desktop:py-tight',
         'sidebar-open:grid-areas-mobile-sidebar-open',
         'sidebar-closed:grid-areas-mobile-sidebar-closed',
         'desktop:sidebar-open:grid-areas-desktop-sidebar-open',

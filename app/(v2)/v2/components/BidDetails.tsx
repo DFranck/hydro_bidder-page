@@ -1,10 +1,12 @@
 'use client'
 
 import { MarkdownContainer } from '@/components/MarkdownContainer'
+import { useIsMobile } from '@/lib/useIsMobile'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { getEnvironment, getSource, SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/ClientDataProvider'
 import sumBy from 'lodash/sumBy'
+import { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
 export function BidDetails({
@@ -22,6 +24,23 @@ export function BidDetails({
   const bid = currentRoundDataPerSource?.[sourceId]?.augmentedBids?.find(
     (bid) => bid.id === bidId,
   )
+  const isMobile = useIsMobile()
+  const sidebarRef = useRef<HTMLElement>(null)
+  const mainRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const main = mainRef.current
+    const sidebar = sidebarRef.current
+
+    if (!main || !sidebar || isMobile) return
+
+    const handleScroll = () => {
+      sidebar.style.transform = `translateY(${main.scrollTop}px)`
+    }
+
+    main.addEventListener('scroll', handleScroll)
+    return () => main.removeEventListener('scroll', handleScroll)
+  }, [isMobile])
 
   if (!bid) return null
 
@@ -34,30 +53,49 @@ export function BidDetails({
       className={twMerge(
         'grid grid-rows-[min-content_auto]',
         'h-full',
+        'relative',
         className,
       )}
     >
-      <div>
-        <header
-          className={twJoin(
-            'h-bar-height-large',
-            'flex items-center',
-            'px-loosest py-standard',
-            'bg-token-color',
-          )}
-        >
-          <h1 className="title">{bidDescription?.title}</h1>
-        </header>
+      <header
+        className={twJoin(
+          'h-bar-height-large',
+          'flex items-center',
+          'px-loosest py-standard',
+          'bg-token-color',
+        )}
+      >
+        <h1 className="title">{bidDescription?.title}</h1>
+      </header>
 
-        <div
+      <main ref={mainRef} className="relative overflow-hidden overflow-y-auto">
+        <aside
+          ref={sidebarRef}
           className={twJoin(
-            'p-loosest bg-token-color/20',
-            'gap-loosest flex flex-wrap',
+            'bg-token-color/20',
+            'grid grid-cols-2',
+            'px-loosest',
+            'py-looser',
+            'gap-x-loosest',
+            'gap-y-looser',
+            'transition-all ease-out',
+            'desktop:absolute',
+            'desktop:grid-cols-1',
+            'desktop:top-loosest',
+            'desktop:right-loosest',
+            'desktop:w-64',
+            'desktop:p-loose',
+            'desktop:gap-loosest',
+            'desktop:rounded-standard',
+            'desktop:max-h-[calc(100%-var(--spacing-loosest)*2)]',
+            'desktop:overflow-y-auto',
           )}
         >
           {[
             ['Project Name', bidDescription?.projectName],
             ['Bid in Round', bid.roundId + 1],
+            ['Status', bid.status],
+            ['Vote %', bid.vote_perc],
             ['Voter APR', bid.apr_tribute?.toFixed(2) || '–'],
             [
               'Max Deployment Amount',
@@ -67,17 +105,23 @@ export function BidDetails({
               )?.toFixed(2) || '–',
             ],
           ].map(([label, value]) => (
-            <div key={label} className="gap-tight flex flex-col">
+            <div
+              key={label}
+              className={twJoin(
+                'gap-tighter flex flex-col',
+                'desktop:items-end',
+              )}
+            >
               <div className="label">{label}</div>
               <div className="important-value">{value}</div>
             </div>
           ))}
-        </div>
-      </div>
+        </aside>
 
-      <div className="p-loosest overflow-hidden overflow-y-auto text-balance">
-        <MarkdownContainer content={bidDescription?.description} />
-      </div>
+        <div className="p-loosest desktop:pr-80 text-balance">
+          <MarkdownContainer content={bidDescription?.description} />
+        </div>
+      </main>
     </TokenThemeWrapper>
   )
 }

@@ -121,7 +121,12 @@ export function AppHeader() {
     <header
       className={twJoin('grid-in-header', 'flex items-center justify-between')}
     >
-      <div className={twJoin('px-standard h-bar-height-standard w-full p-1')}>
+      <div
+        className={twJoin(
+          'h-bar-height-standard w-full',
+          'pl-loose desktop:pl-tight py-1',
+        )}
+      >
         <Link href="/v2" className={twJoin('relative block h-full')}>
           <Logo />
         </Link>
