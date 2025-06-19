@@ -1,18 +1,18 @@
-import { CollapsibleBox } from '@/components/CollapsibleBox'
-import { useIsMobile } from '@/lib/useIsMobile'
+'use client'
+
+import { AppPageContainer } from '@v2/components/AppPageContainer'
 import { GradientOverlay } from '@v2/components/GradientOverlay'
 import { StatBar } from '@v2/components/StatBar'
 import { Tranche } from '@v2/components/Tranche'
 import { TrancheNavigation } from '@v2/components/TrancheNavigation'
-import { useAppState } from '@v2/state/provider'
+import { useAppState } from '@v2/state/ClientDataProvider'
 import sortBy from 'lodash/sortBy'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
 export function TrancheBrowser() {
-  const isMobile = useIsMobile()
   const { state, dispatch } = useAppState()
-  const { currentRoundDataPerSource, activeTrancheIndex, isSidebarOpen } = state
+  const { currentRoundDataPerSource, activeTrancheIndex } = state
   const containerRef = useRef<HTMLDivElement>(null)
   const [trancheAndBidIdsMap, setTrancheAndBidIdsMap] = useState<
     [trancheId: string, bidIds: string[]][]
@@ -103,18 +103,7 @@ export function TrancheBrowser() {
   }, [activeTrancheIndex, trancheAndBidIdsMap])
 
   return (
-    <CollapsibleBox
-      id="content-container"
-      dontUnmountOnCollapse={true}
-      isCollapsed={isMobile && isSidebarOpen}
-      className={twJoin('grid-in-content')}
-      classNamesForInnerWrapper={twJoin(
-        'relative grid',
-        'grid-rows-[min-content_min-content_auto]',
-        'px-tight',
-        'desktop:px-0',
-      )}
-    >
+    <AppPageContainer className="grid grid-rows-[min-content_min-content_auto]">
       <StatBar
         stats={[
           ['Live Bids', 14],
@@ -132,7 +121,7 @@ export function TrancheBrowser() {
         ref={containerRef}
         id="tranches-container"
         className={twJoin(
-          'relative',
+          'relative h-full',
           'snap-x snap-mandatory',
           'flex overflow-x-auto',
           'rounded-standard',
@@ -161,6 +150,6 @@ export function TrancheBrowser() {
           )
         })}
       </div>
-    </CollapsibleBox>
+    </AppPageContainer>
   )
 }

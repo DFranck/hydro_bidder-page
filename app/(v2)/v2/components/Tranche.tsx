@@ -1,9 +1,11 @@
+'use client'
+
 import { Icon } from '@/components/Icon'
 import { BidCard, bidCardFields } from '@v2/components/BidCard'
 import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/provider'
+import { useAppState } from '@v2/state/ClientDataProvider'
 import { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
@@ -127,7 +129,7 @@ export function Tranche({
         id={`tranche-header--${sourceId}-${trancheId}`}
         className={twJoin(
           'relative z-10',
-          'flex h-12 items-center justify-between',
+          'h-bar-height-standard flex items-center justify-between',
           'px-standard gap-standard',
           'transition-colors',
           userVotedInBucket

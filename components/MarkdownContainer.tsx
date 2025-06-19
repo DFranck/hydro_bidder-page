@@ -1,3 +1,4 @@
+import { breakLongStringsEvery } from "@/lib/breakLongStringsEvery"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { twMerge } from "tailwind-merge"
@@ -5,17 +6,21 @@ import { twMerge } from "tailwind-merge"
 export function MarkdownContainer({
   className,
   content,
+  breakThreshold = 10,
 }: {
   className?: string
   content?: string
+  breakThreshold?: number
 }) {
+  const processedContent = content
+    ? breakLongStringsEvery({ text: content, breakThreshold })
+    : content
+
   return (
     <div
       className={twMerge(
         `
           prose
-          text-white
-          marker:text-white
           prose-headings:text-white
           prose-h1:tracking-normal
           prose-a:font-normal
@@ -36,12 +41,14 @@ export function MarkdownContainer({
           prose-td:px-3
           prose-td:py-1
           [&_a:hover]:text-palette-green
+          text-white
+          marker:text-white
         `,
         className
       )}
     >
       <Markdown remarkPlugins={[remarkGfm]}>
-        {content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
+        {processedContent?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
       </Markdown>
     </div>
   )

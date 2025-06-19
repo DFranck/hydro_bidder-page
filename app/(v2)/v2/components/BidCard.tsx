@@ -1,13 +1,16 @@
+'use client'
+
 import { Icon } from '@/components/Icon'
 import { OrphanController } from '@/components/OrphanController'
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { plural } from '@/lib/pluralize'
 import { SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/provider'
-import Image from 'next/image'
+import { useAppState } from '@v2/state/ClientDataProvider'
+import Link from 'next/link'
 import { useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 import { useHover } from 'usehooks-ts'
+import { BidCardLogo } from './BidCardLogo'
 
 export const bidCardFields = [
   {
@@ -83,37 +86,18 @@ export function BidCard({
       }
       {...otherProps}
     >
-      <div
-        className={twJoin(
-          'relative',
-          'flex items-center justify-center',
-          'bg-background overflow-hidden',
-          'rounded-[calc(var(--radius-standard)-var(--spacing-tightest))]',
-          'p-standard',
-        )}
-      >
-        <div className="relative z-10 size-10">
-          <Image
-            src={projectLogoUrl}
-            alt={
-              bidDescription?.projectName ??
-              bidDescription?.title ??
-              '(Untitled)'
-            }
-            width={48}
-            height={48}
-          />
-        </div>
-        <div className={twJoin('absolute inset-0 z-0', 'opacity-50 blur-lg')}>
-          <Image
-            src={projectLogoUrl}
-            alt="Decorative Shadow"
-            sizes="5vw"
-            fill={true}
-            className="object-cover"
-          />
-        </div>
+      <div className="absolute inset-0 z-0">
+        <Link
+          href={`/v2/bids/${sourceId}/${bidId}`}
+          className="absolute inset-0"
+        />
       </div>
+
+      <BidCardLogo
+        projectLogoUrl={projectLogoUrl}
+        projectName={bidDescription?.projectName}
+        title={bidDescription?.title}
+      />
 
       <div
         className={twJoin(
@@ -165,6 +149,7 @@ export function BidCard({
       <div
         className={twJoin(
           'h-full',
+          'relative z-10',
           'flex items-center justify-center',
           'gap-tightest',
           '*:last:rounded-r-[calc(var(--radius-standard)-var(--spacing-tightest))]',

@@ -20,6 +20,9 @@
   --spacing-looser: 16px;
   --spacing-loosest: 24px;
 
+  --spacing-bar-height-large: calc(var(--spacing) * 18);
+  --spacing-bar-height-standard: calc(var(--spacing) * 12);
+
   --radius-small: 6px;
   --radius-standard: 9px;
   --radius-large: 12px;
@@ -40,7 +43,7 @@
   --color-palette-red: rgb(var(--palette-red-rgb));
   --color-palette-text: rgb(var(--palette-text-rgb));
 
-  --color-token-atom: #9747ff;
+  --color-token-atom: var(--color-palette-blue);
   --color-token-stosmo: #e50371;
   --color-token-color: var(--color-palette-beige);
   --color-token-color-to-left: var(--color-palette-beige);
@@ -156,12 +159,16 @@
   @apply text-2xl leading-[1em];
 }
 
-@utility grid-areas-desktop-sidebar-closed {
-  @apply gap-tight;
-  display: grid;
+@utility transition-grid {
   transition-property: grid-template-columns, grid-template-rows;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
+}
+
+@utility grid-areas-desktop-sidebar-closed {
+  @apply transition-grid;
+  @apply gap-tight;
+  display: grid;
   grid-template-columns: var(--sidebar-width-docked) auto;
   grid-template-rows: min-content auto;
   grid-template-areas:
@@ -175,6 +182,7 @@
 }
 
 @utility grid-areas-mobile-sidebar-closed {
+  @apply transition-grid;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: min-content min-content 1fr;

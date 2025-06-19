@@ -23,14 +23,14 @@ export function SidebarSourcePanel({
         'relative w-full',
         'flex items-center justify-between gap-3',
         'bg-token-color rounded-standard',
-        'h-18 flex-row',
-        'sidebar-open:h-12',
+        'h-bar-height-large flex-row',
+        'sidebar-open:h-bar-height-standard',
         'desktop:h-auto',
         'desktop:flex-col',
         'desktop:gap-1',
         'desktop:text-center',
         'desktop:sidebar-open:flex-row',
-        'desktop:sidebar-open:h-12',
+        'desktop:sidebar-open:h-bar-height-standard',
       )}
     >
       <span
@@ -85,7 +85,7 @@ export function SidebarSourcePanel({
             'sidebar-open:flex-row',
           )}
         >
-          <span className="label sidebar-closed:hidden">Round</span>
+          <span className="label">Round</span>
           <span className="important-value">{currentRoundId}</span>
         </span>
 

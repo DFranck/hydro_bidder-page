@@ -3,7 +3,7 @@
 import { Icon } from '@/components/Icon'
 import { SidebarSourcePanel } from '@v2/components/SidebarSourcePanel'
 import { type SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/provider'
+import { useAppState } from '@v2/state/ClientDataProvider'
 import { useCallback, useEffect } from 'react'
 import { twJoin } from 'tailwind-merge'
 
@@ -38,10 +38,10 @@ export function Sidebar() {
       <div
         className={twJoin(
           'flex items-center',
-          'px-3',
           'justify-center',
+          'sidebar-open:px-tight',
           'sidebar-open:justify-between',
-          'sidebar-open:h-12',
+          'sidebar-open:h-bar-height-standard',
         )}
       >
         <div className={twJoin('label', 'sidebar-closed:hidden')}>Lockups</div>
@@ -49,8 +49,9 @@ export function Sidebar() {
         <button
           className={twJoin(
             'btn-icon',
-            'size-12',
-            'fixed top-0 right-12 z-20',
+            'size-bar-height-standard',
+            'top-tight fixed z-20',
+            'right-[calc(var(--spacing)*12+var(--spacing-tight))]',
             'desktop:static',
             'desktop:size-auto',
           )}

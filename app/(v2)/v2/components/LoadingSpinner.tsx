@@ -17,7 +17,6 @@ export function LoadingSpinner({
     <div
       className={twMerge(
         'bg-background absolute inset-0 z-50',
-        'h-screen w-screen',
         'flex items-center justify-center',
         className,
       )}

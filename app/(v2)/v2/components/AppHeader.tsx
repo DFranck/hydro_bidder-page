@@ -7,7 +7,7 @@ import {
 } from '@/config'
 import { Logo } from '@v2/components/Logo'
 import { MenuItem, ResponsiveMenu } from '@v2/components/ResponsiveMenu'
-import { useAppState } from '@v2/state/provider'
+import { useAppState } from '@v2/state/ClientDataProvider'
 import { AppAction } from '@v2/state/reducer'
 import Link from 'next/link'
 import { twJoin } from 'tailwind-merge'
@@ -121,7 +121,7 @@ export function AppHeader() {
     <header
       className={twJoin('grid-in-header', 'flex items-center justify-between')}
     >
-      <div className={twJoin('px-standard h-12 w-full pt-2 pb-1')}>
+      <div className={twJoin('px-standard h-bar-height-standard w-full p-1')}>
         <Link href="/v2" className={twJoin('relative block h-full')}>
           <Logo />
         </Link>

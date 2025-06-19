@@ -1,7 +1,7 @@
 'use client'
 
 import { Icon } from '@/components/Icon'
-import { useAppState } from '@v2/state/provider'
+import { useAppState } from '@v2/state/ClientDataProvider'
 import { useEffect, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 

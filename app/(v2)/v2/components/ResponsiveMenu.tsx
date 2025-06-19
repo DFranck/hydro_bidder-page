@@ -65,7 +65,7 @@ export function ResponsiveMenu({
     >
       <button
         className={twJoin(
-          'fixed top-0 right-0 z-40 size-12',
+          'top-tight right-tight fixed z-40 size-12',
           'flex cursor-pointer',
           'transition-all duration-500',
           'group-focus-within/navbar:rotate-180',

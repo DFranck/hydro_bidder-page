@@ -1,10 +1,12 @@
+'use client'
+
 import { Icon } from '@/components/Icon'
 import { useIsMobile } from '@/lib/useIsMobile'
 import { ScrollIndicator } from '@v2/components/ScrollIndicator'
 import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/provider'
+import { useAppState } from '@v2/state/ClientDataProvider'
 import { useEffect, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 

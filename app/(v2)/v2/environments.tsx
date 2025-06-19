@@ -15,15 +15,15 @@ export const environments = {
           'neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t',
         priceChainId: 'neutron-1',
       },
-      {
-        id: 'stosmo',
-        label: 'stOSMO',
-        hydroContract:
-          'neutron1xkvzdzfzacuzlwlxf5hhlrqgv9sz4rgd2gkhvgm8lmudn8lmw0fq2296nu',
-        tributeContract:
-          'neutron1l6sq43kzhw77t7f5n9e6vxente0agcj3wyedkxtc08pm7c9uu2jsssq9wj',
-        priceChainId: 'neutron-1',
-      },
+      // {
+      //   id: 'stosmo',
+      //   label: 'stOSMO',
+      //   hydroContract:
+      //     'neutron1xkvzdzfzacuzlwlxf5hhlrqgv9sz4rgd2gkhvgm8lmudn8lmw0fq2296nu',
+      //   tributeContract:
+      //     'neutron1l6sq43kzhw77t7f5n9e6vxente0agcj3wyedkxtc08pm7c9uu2jsssq9wj',
+      //   priceChainId: 'neutron-1',
+      // },
     ],
   },
   production: {

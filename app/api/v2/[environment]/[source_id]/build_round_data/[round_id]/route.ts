@@ -94,39 +94,18 @@ export async function GET(
     data: bid as unknown as Json,
   }))
 
-  // Get existing records for comparison
-  const { data: existingBids, error: fetchError } = await supabase
+  // Upsert all augmented bids - Supabase will handle insert vs update automatically
+  const { error: upsertError } = await supabase
     .from("augmented_round_bids")
-    .select("*")
-    .eq("hydro_contract", hydroContract)
-    .eq("round_id", Number(round_id))
+    .upsert(augmentedBidsToUpsert, {
+      onConflict: "hydro_contract,round_id,bid_id"
+    })
 
-  if (fetchError) {
-    console.error("Failed to fetch existing augmented round bids:", fetchError)
+  if (upsertError) {
+    console.error("Failed to upsert augmented round bids:", upsertError)
     throw new Error(
-      `Failed to fetch existing augmented round bids: ${fetchError.message}`
+      `Failed to upsert augmented round bids: ${upsertError.message}`
     )
-  }
-
-  // Filter out bids that haven't changed
-  const existingBidsMap = new Map(
-    existingBids?.map((bid) => [bid.bid_id, bid.data]) ?? []
-  )
-  const bidsToInsert = augmentedBidsToUpsert.filter(
-    (bid) => JSON.stringify(bid.data) !== JSON.stringify(existingBidsMap.get(bid.bid_id))
-  )
-
-  if (bidsToInsert.length > 0) {
-    const { error: insertError } = await supabase
-      .from("augmented_round_bids")
-      .insert(bidsToInsert)
-
-    if (insertError) {
-      console.error("Failed to insert augmented round bids:", insertError)
-      throw new Error(
-        `Failed to insert augmented round bids: ${insertError.message}`
-      )
-    }
   }
 
   return Response.json(augmentedRoundData)
