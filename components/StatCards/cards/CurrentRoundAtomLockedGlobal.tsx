@@ -35,12 +35,9 @@ export function CurrentRoundAtomLockedGlobal() {
       title={
         <Tooltip
           className="w-full"
-          tipContents={
-            <>
-              {globalTotalAtomLockedTooltip} Available capacity:{" "}
-              {lockedAtomRemainingCapacityGlobal}
-            </>
-          }
+          tipContents={globalTotalAtomLockedTooltip({
+            lockedAtomRemainingCapacityGlobal,
+          })}
         >
           Total ATOM in{" "}
           <span className="inline-flex items-center gap-1">

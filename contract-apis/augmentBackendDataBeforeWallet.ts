@@ -1,3 +1,4 @@
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { augmentNumiaBids } from "@/contract-apis/augmentNumiaBids"
 import {
   AugmentedBackendDataBeforeWallet,
@@ -5,6 +6,7 @@ import {
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import keyBy from "lodash/keyBy"
+import round from "lodash/round"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
