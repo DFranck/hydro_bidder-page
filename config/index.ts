@@ -7,6 +7,8 @@ export enum AllowedLockupPeriodInEpochs {
 export const HYDRO_TELEGRAM_COMMUNITY_URL = "https://t.me/hydro_community"
 export const HYDRO_TELEGRAM_ANNOUNCEMENTS_URL = "https://t.me/hydro_announcements"
 
+export const DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS = 3
+
 export const SOCIAL_MEDIA_LINKS = [
   {
     name: "Twitter",

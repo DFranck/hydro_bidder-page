@@ -920,7 +920,26 @@ export const bidDetailsVoteReceivedTooltip = ({
   </div>
 )
 
-export const globalTotalAtomLockedTooltip = <p>Total ATOM locked in Hydro.</p>
+export const globalTotalAtomLockedTooltip = ({
+  lockedAtomRemainingCapacityGlobal = 0,
+}) => (
+  <p className="text-center">
+    Total ATOM locked in Hydro.{" "}
+    <strong
+      className={twJoin(
+        lockedAtomRemainingCapacityGlobal > 0
+          ? "text-palette-green"
+          : "text-palette-red"
+      )}
+    >
+      {lockedAtomRemainingCapacityGlobal > 0 ? (
+        <>Available capacity: {lockedAtomRemainingCapacityGlobal}</>
+      ) : (
+        "Currently at capacity."
+      )}
+    </strong>
+  </p>
+)
 
 export const metricsPageNoDataTooltip = (
   <p>No data available for this round yet.</p>
