@@ -116,6 +116,7 @@ export interface AugmentedLockup {
   funds: {
     amount: number
     denom: string
+    denomInfo: AugmentedCoin
   }
   isEligibleToVote: boolean
   isExpired: boolean

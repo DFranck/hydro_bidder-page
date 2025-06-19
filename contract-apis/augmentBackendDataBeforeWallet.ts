@@ -16,13 +16,8 @@ export function augmentBackendDataBeforeWallet(
   const { hydroMetaData, hydroRoundData, externalData } =
     rawBackendDataBeforeWallet
 
-  const {
-    constants,
-    round_end,
-    round_id,
-    tranches,
-    liquidity_deployments,
-  } = hydroMetaData
+  const { constants, round_end, round_id, tranches, liquidity_deployments } =
+    hydroMetaData
 
   const { bidMetaDataById, numiaBids, numiaMetrics } = externalData
 

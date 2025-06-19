@@ -29,6 +29,7 @@ export function augmentLockup(
     funds: {
       amount: Number(lockup.lock_with_power.lock_entry.funds.amount) / 1e6,
       denom: lockup.lock_with_power.lock_entry.funds.denom,
+      denomInfo: lockup.lock_with_power.lock_entry.funds.denomInfo,
     },
     isEligibleToVote,
     isExpired,

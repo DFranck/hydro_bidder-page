@@ -35,7 +35,9 @@ export function buildActiveRow({
     amount: (
       <>
         {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
-        <StyledText variant="footnote">ATOM</StyledText>
+        <StyledText variant="footnote">
+          {lockup.funds.denomInfo.humanReadableDenom}
+        </StyledText>
       </>
     ),
 

@@ -192,7 +192,7 @@ export function BackendDataContextProvider({
       return
     }
 
-    const { currentRoundId, tranches } = augmentedBackendDataBeforeWallet
+    const { currentRoundId, tranches, currentRoundPrices } = augmentedBackendDataBeforeWallet
 
     ;(async () => {
       setIsLoading(true)
@@ -201,6 +201,7 @@ export function BackendDataContextProvider({
         address: effectiveAddress,
         currentRoundId,
         tranches,
+        currentRoundPrices
       })
 
       const tweakedWalletData = mergeWithOverwrite(

@@ -4,9 +4,11 @@ import { AugmentedCoin, RoundPrices } from "@/contract-apis/types"
 export function getCoinWithRoundPrices({
   coin,
   roundPrices,
+  validator,
 }: {
   coin: Coin
   roundPrices: RoundPrices
+  validator?: string
 }): AugmentedCoin {
   const asset = roundPrices?.[coin.denom]
   const assetPriceUsd = asset?.token_price ?? 0
@@ -16,7 +18,7 @@ export function getCoinWithRoundPrices({
 
   return {
     ...coin,
-    humanReadableDenom,
+    humanReadableDenom: validator ? "ATOM" : humanReadableDenom,
     printableAmount,
     priceUsd: assetPriceUsd,
     valueUsd: printableAmount * assetPriceUsd,
