@@ -3,7 +3,7 @@
 import { Icon } from '@/components/Icon'
 import { SidebarSourcePanel } from '@v2/components/SidebarSourcePanel'
 import { type SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/ClientDataProvider'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useCallback, useEffect } from 'react'
 import { twJoin } from 'tailwind-merge'
 

@@ -5,7 +5,7 @@ import { BidCard, bidCardFields } from '@v2/components/BidCard'
 import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/ClientDataProvider'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 

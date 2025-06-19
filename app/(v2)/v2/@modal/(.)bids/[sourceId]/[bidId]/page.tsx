@@ -1,4 +1,4 @@
-import { BidDetailsModal } from '@/app/(v2)/v2/components/BidDetailsModal'
+import { BidDetailsModal } from '@v2/components/BidDetailsModal'
 import { SourceID } from '@v2/environments'
 
 export default async function BidPage({

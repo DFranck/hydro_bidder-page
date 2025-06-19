@@ -6,7 +6,7 @@ import { ScrollIndicator } from '@v2/components/ScrollIndicator'
 import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/ClientDataProvider'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useEffect, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 

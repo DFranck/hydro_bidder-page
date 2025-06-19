@@ -5,12 +5,12 @@ import { OrphanController } from '@/components/OrphanController'
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { plural } from '@/lib/pluralize'
 import { SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/ClientDataProvider'
-import Link from 'next/link'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 import { useHover } from 'usehooks-ts'
 import { BidCardLogo } from './BidCardLogo'
+import { InternalLink } from './InternalLink'
 
 export const bidCardFields = [
   {
@@ -43,7 +43,7 @@ export function BidCard({
   bidId: number
 }) {
   const { state } = useAppState()
-  const { currentRoundDataPerSource, bidDescriptionsById } = state
+  const { currentRoundDataPerSource, bidDescriptionsById, isLoading } = state
   const voteButtonRef = useRef<HTMLDivElement | null>(null)
   const isHoveringVoteButton = useHover(
     voteButtonRef as React.RefObject<HTMLDivElement>,
@@ -75,6 +75,7 @@ export function BidCard({
         'focus-within:bg-token-color/60!',
         'transition-all',
         isHoveringVoteButton && 'duration-700',
+        isLoading && 'opacity-75',
         className,
       )}
       style={
@@ -87,9 +88,10 @@ export function BidCard({
       {...otherProps}
     >
       <div className="absolute inset-0 z-0">
-        <Link
+        <InternalLink
           href={`/v2/bids/${sourceId}/${bidId}`}
-          className="absolute inset-0"
+          className="absolute inset-0 h-full w-full cursor-pointer border-none bg-transparent"
+          disabled={isLoading}
         />
       </div>
 

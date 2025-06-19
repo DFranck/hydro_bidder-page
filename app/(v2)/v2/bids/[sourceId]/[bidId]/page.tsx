@@ -1,4 +1,4 @@
-import { AppPageContainer } from '@/app/(v2)/v2/components/AppPageContainer'
+import { AppPageContainer } from '@v2/components/AppPageContainer'
 import { BidDetails } from '@v2/components/BidDetails'
 import { SourceID } from '@v2/environments'
 

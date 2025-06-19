@@ -3,10 +3,10 @@
 import { Icon } from '@/components/Icon'
 import { IconString } from '@/components/Icon/types'
 import { BidDetails } from '@v2/components/BidDetails'
+import { useInternalLink } from '@v2/components/InternalLink'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
-import { useAppState } from '@v2/state/ClientDataProvider'
-import { useRouter } from 'next/navigation'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twJoin } from 'tailwind-merge'
 
 export function BidDetailsModal({
@@ -21,7 +21,7 @@ export function BidDetailsModal({
   const currentRoundData = currentRoundDataPerSource?.[sourceId]
   const { augmentedBids } = currentRoundData ?? {}
 
-  const router = useRouter()
+  const { navigate } = useInternalLink()
 
   // Find current bid and its tranche
   const currentBid = augmentedBids?.find((bid) => bid.id === parseInt(bidId))
@@ -47,11 +47,11 @@ export function BidDetailsModal({
       : null
 
   const closeModal = () => {
-    router.push('/v2')
+    navigate('/v2')
   }
 
   const navigateToBid = (targetBidId: number) => {
-    router.push(`/v2/bids/${sourceId}/${targetBidId}`)
+    navigate(`/v2/bids/${sourceId}/${targetBidId}`)
   }
 
   return (

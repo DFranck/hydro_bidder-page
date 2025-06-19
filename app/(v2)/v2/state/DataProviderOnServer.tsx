@@ -2,7 +2,7 @@ import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { BidMetaData, BidRevampMetrics } from '@/contract-apis/types'
 import { SourceID } from '@v2/environments'
 import { Suspense } from 'react'
-import { ClientDataProvider } from './ClientDataProvider'
+import { DataProviderOnClient } from './DataProviderOnClient'
 
 export interface RoundState {
   sourceId: SourceID
@@ -19,6 +19,7 @@ export interface AppState {
   bidDescriptionsById: Record<number, BidMetaData>
   activeTrancheIndex: number
   isSidebarOpen: boolean
+  isLoading: boolean
 }
 
 export const initialState: AppState = {
@@ -27,9 +28,10 @@ export const initialState: AppState = {
   narrowBuckets: false,
   activeTrancheIndex: 0,
   isSidebarOpen: true,
+  isLoading: false,
 }
 
-export function ServerDataProvider({
+export function DataProviderOnServer({
   children,
   hydroData,
   bidDescriptions,
@@ -52,18 +54,18 @@ export function ServerDataProvider({
       fallback={
         <>
           {/* Render the header and sidebar with initial state */}
-          <ClientDataProvider hydroData={null} bidDescriptions={{}}>
+          <DataProviderOnClient hydroData={null} bidDescriptions={{}}>
             {children}
-          </ClientDataProvider>
+          </DataProviderOnClient>
         </>
       }
     >
-      <ClientDataProvider
+      <DataProviderOnClient
         hydroData={hydroData}
         bidDescriptions={bidDescriptions}
       >
         {children}
-      </ClientDataProvider>
+      </DataProviderOnClient>
     </Suspense>
   )
 }

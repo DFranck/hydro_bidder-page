@@ -4,7 +4,7 @@ import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { BidMetaData, BidRevampMetrics } from '@/contract-apis/types'
 import { SourceID } from '@v2/environments'
 import { createContext, useContext, useReducer } from 'react'
-import { AppState, initialState } from './ServerDataProvider'
+import { AppState, initialState } from './DataProviderOnServer'
 import { AppAction, reducer } from './reducer'
 
 export const AppContext = createContext<{
@@ -30,7 +30,7 @@ interface ClientDataProviderProps {
   bidDescriptions: Record<number, BidMetaData>
 }
 
-export function ClientDataProvider({
+export function DataProviderOnClient({
   children,
   hydroData,
   bidDescriptions,
@@ -59,11 +59,7 @@ export function ClientDataProvider({
 
   console.log(JSON.stringify(state).length, 'bytes', { state })
 
-  return (
-    <AppContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppContext.Provider>
-  )
+  return <AppContext value={{ state, dispatch }}>{children}</AppContext>
 }
 
 export function useAppState() {

@@ -7,7 +7,7 @@ import {
 } from '@/config'
 import { Logo } from '@v2/components/Logo'
 import { MenuItem, ResponsiveMenu } from '@v2/components/ResponsiveMenu'
-import { useAppState } from '@v2/state/ClientDataProvider'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { AppAction } from '@v2/state/reducer'
 import Link from 'next/link'
 import { twJoin } from 'tailwind-merge'

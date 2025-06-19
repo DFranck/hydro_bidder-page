@@ -1,8 +1,9 @@
 'use client'
 
-import { useAppState } from '@/app/(v2)/v2/state/ClientDataProvider'
 import { CollapsibleBox } from '@/components/CollapsibleBox'
 import { useIsMobile } from '@/lib/useIsMobile'
+import { LoadingSpinner } from '@v2/components/LoadingSpinner'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twMerge } from 'tailwind-merge'
 
 export function AppPageContainer({
@@ -14,7 +15,7 @@ export function AppPageContainer({
 }) {
   const isMobile = useIsMobile({ valueOnServer: false })
   const { state } = useAppState()
-  const { isSidebarOpen } = state
+  const { isSidebarOpen, isLoading } = state
 
   return (
     <CollapsibleBox
@@ -25,6 +26,7 @@ export function AppPageContainer({
       classNamesForInnerWrapper={twMerge('relative', className)}
     >
       {children}
+      {isLoading && <LoadingSpinner />}
     </CollapsibleBox>
   )
 }

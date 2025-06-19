@@ -1,8 +1,8 @@
-import { AppPageContainer } from '@/app/(v2)/v2/components/AppPageContainer'
 import { AppHeader } from '@v2/components/AppHeader'
+import { AppPageContainer } from '@v2/components/AppPageContainer'
 import { Sidebar } from '@v2/components/Sidebar'
+import { DataProviderOnServer } from '@v2/state/DataProviderOnServer'
 import { fetchData } from '@v2/state/fetchData'
-import { ServerDataProvider } from '@v2/state/ServerDataProvider'
 import { twJoin } from 'tailwind-merge'
 
 export default async function Layout({
@@ -32,7 +32,7 @@ export default async function Layout({
         '**:scrollbar-thin',
       )}
     >
-      <ServerDataProvider
+      <DataProviderOnServer
         hydroData={hydroData}
         bidDescriptions={bidDescriptions}
       >
@@ -45,7 +45,7 @@ export default async function Layout({
         </main>
 
         {modal}
-      </ServerDataProvider>
+      </DataProviderOnServer>
     </div>
   )
 }
