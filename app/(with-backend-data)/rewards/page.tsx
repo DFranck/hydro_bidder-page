@@ -34,7 +34,6 @@ export default function RewardsPage() {
   const [isCelebrating, setIsCelebrating] = useState(false)
 
   const {
-    bidMetaDataById,
     bidsInfo,
     claimsHistorical,
     claimsOutstanding,
@@ -44,14 +43,14 @@ export default function RewardsPage() {
   const bids = Object.values(bidsInfo)
 
   const votesFromPreviousRounds = votes.filter(
-    (vote) => bidsInfo[vote.bidId]?.roundId < currentRoundId,
+    (vote) => bidsInfo[vote.bidId]?.roundId < currentRoundId
   )
 
   const bidsToRender = bids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
-      bid.tokenBasedTributes.length > 0, // has token-based tribute
+      bid.tokenBasedTributes.length > 0 // has token-based tribute
   )
 
   const [selectedTribute, setSelectedTribute] =
@@ -61,14 +60,14 @@ export default function RewardsPage() {
 
   const findClaimAmountForTribute = (
     claimsArray: AugmentedClaim[],
-    tribute: TokenBasedTribute,
+    tribute: TokenBasedTribute
   ) => {
     return claimsArray.find(
       (claim) =>
         claim.bidId === tribute.bidId &&
         claim.tributeId === tribute.id &&
         claim.roundId === tribute.roundId &&
-        claim.trancheId === tribute.trancheId,
+        claim.trancheId === tribute.trancheId
     )?.amount
   }
 
@@ -81,8 +80,7 @@ export default function RewardsPage() {
   const rows = bidsToRender
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
-      const bidDescriptionFromGithub = bidMetaDataById[bid.id]
-      const { projectLogoUrl, projectName, title } = bidDescriptionFromGithub
+      const { projectLogoUrl, projectName, projectTitle } = bid
       return bid.tokenBasedTributes.map((tribute) => {
         const findClaimForBid = (claim: (typeof claimsOutstanding)[number]) =>
           claim.bidId === bid.id &&
@@ -97,7 +95,7 @@ export default function RewardsPage() {
         const rewardsInUsd = matchingClaimAmount?.valueUsd ?? 0
         const totalDeployedFunds = sumBy(
           bid.liquidityDeployment?.deployedFunds,
-          "amount",
+          "amount"
         )
 
         const canClaim = Boolean(matchingOutstandingClaim)
@@ -130,7 +128,7 @@ export default function RewardsPage() {
                   </div>
                 ) : null}
                 <div className="flex flex-col">
-                  <StyledText variant="h4">{title}</StyledText>
+                  <StyledText variant="h4">{projectTitle}</StyledText>
                   <StyledText variant="footnote">{projectName}</StyledText>
                 </div>
               </div>
@@ -170,7 +168,7 @@ export default function RewardsPage() {
                     {
                       maximumFractionDigits: 3,
                       trailingZeroDisplay: "stripIfInteger",
-                    },
+                    }
                   )}
                   &nbsp;
                   {matchingClaimAmount?.humanReadableDenom?.slice(0, 12) ??

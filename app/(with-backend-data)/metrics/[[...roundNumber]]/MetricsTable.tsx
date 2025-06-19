@@ -27,8 +27,7 @@ export function MetricsTable({
   requestedRoundNumber: number | null
 }) {
   const [showBidsWithoutTributes, setShowBidsWithoutTributes] = useState(false)
-  const { bidsInfo, currentRoundId, metricsForPreHydroBids, bidMetaDataById } =
-    useBackendData()
+  const { bidsInfo, currentRoundId, metricsForPreHydroBids } = useBackendData()
 
   const voteThreshold =
     voteThresholdByTrancheId[trancheId as keyof typeof voteThresholdByTrancheId]
@@ -73,9 +72,8 @@ export function MetricsTable({
     })
 
     return filteredBidsInTranche.map((bid) => {
-      const bidMetaData = bidMetaDataById[Number(bid.id)] ?? null
       const bidFromContract = bidsInfo[Number(bid.id)] ?? null
-      return buildRow(bid, bidMetaData, bidFromContract, requestedPreHydro)
+      return buildRow(bid, bidFromContract, requestedPreHydro)
     })
   }, [bidsInfo, currentRoundId, trancheId, showBidsWithoutTributes])
 

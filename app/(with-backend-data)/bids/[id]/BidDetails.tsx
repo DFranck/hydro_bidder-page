@@ -45,7 +45,6 @@ export function BidDetails({
 
   const {
     atomPrice,
-    bidMetaDataById,
     bidsInfo,
     currentRoundId,
     votes,
@@ -62,15 +61,13 @@ export function BidDetails({
     projectName,
     projectUrl,
     title,
-  } = bidMetaData
+  } = bidMetaData ?? {}
 
   const bid = bidsInfo[bidId]
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
-
-  const bidInfoFromGithub = bidMetaDataById[bidId]
 
   const bidMetricsFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
@@ -81,10 +78,10 @@ export function BidDetails({
     onchainTributeUsdc: 0,
   }
 
-  if (!bidInfoFromGithub && process.env.NODE_ENV !== "development") {
+  if (!bid.isWhitelisted && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
-        This bid is active on the Hydro smart sontract but has not yet been
+        This bid is active on the Hydro smart contract but has not yet been
         whitelisted for the front-end by the Hydro Team. Check back later or
         contact the Hydro Team in the{" "}
         <StyledText
@@ -152,8 +149,8 @@ export function BidDetails({
         <div
           className="
             grid
-            gap-12
             grid-cols-1
+            gap-12
             md:grid-cols-[3fr_1fr]
           "
         >
@@ -175,10 +172,10 @@ export function BidDetails({
                   size-12
                   rounded-full
                   bg-palette-beige/20
+                  md:flex
                   md:shrink-0
                   md:items-center
                   md:justify-center
-                  md:flex
                 "
               >
                 <Icon name="solid:scroll" />
@@ -224,7 +221,10 @@ export function BidDetails({
                   >
                     Bid Description
                   </StyledText>
-                  <MarkdownContainer content={description}  className="break-all"/>
+                  <MarkdownContainer
+                    content={description}
+                    className="break-all"
+                  />
                 </div>
               )}
               {committeeComments && (

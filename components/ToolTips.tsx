@@ -279,17 +279,13 @@ export const estimatedRewardsColumnTooltip = ({
 
 export const estimatedRewardsTooltip = ({
   bid,
-  bidInfoFromGithub,
   hasVotedThisRound,
   isTokenBased,
 }: {
   bid: AugmentedBidAfterWallet
-  bidInfoFromGithub: BidMetaDataSlimmed
   hasVotedThisRound: boolean
   isTokenBased: boolean
 }) => {
-  const { projectName } = bidInfoFromGithub
-
   const totalTributeValue = isTokenBased
     ? bid.totalTokenBasedTributeValue
     : (bid.points?.[0] ?? 0)
@@ -316,7 +312,7 @@ export const estimatedRewardsTooltip = ({
   const messageIfHasVotedThisRound = (
     <p>
       The {rewardDescription} you would receive from{" "}
-      <strong>{projectName}</strong>. It represents{" "}
+      <strong>{bid.projectName}</strong>. It represents{" "}
       <strong>{percentageOfTotalTributeValue}%</strong> of the total tribute{" "}
       <strong className="text-palette-beige">{formattedTotalTribute}</strong>.
       Over time, the value may increase if the bidder adds tribute or decrease
@@ -325,7 +321,7 @@ export const estimatedRewardsTooltip = ({
   )
   const messageIfHasNotVotedThisRound = (
     <p>
-      The {rewardDescription} offered by <strong>{projectName}</strong> as
+      The {rewardDescription} offered by <strong>{bid.projectName}</strong> as
       tribute. If you vote for this bid and it passes minimum thresholds, you
       will receive a portion of this value relative to your voting power.
     </p>

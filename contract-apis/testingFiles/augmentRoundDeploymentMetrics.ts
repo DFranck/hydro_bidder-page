@@ -104,6 +104,15 @@ export function augmentRoundDeploymentMetrics(
 
     // Github fields
     const proposalGithubFields = bidDescriptions[proposalId]
+    const proposalProjectName = proposalGithubFields
+      ? proposalGithubFields.projectName
+      : ""
+    const proposalProjectLogoUrl = proposalGithubFields
+      ? proposalGithubFields.projectLogoUrl
+      : ""
+    const proposalProjectTitle = proposalGithubFields
+      ? proposalGithubFields.title
+      : ""
     const proposalPoints = proposalGithubFields
       ? proposalGithubFields.points
       : []
@@ -217,6 +226,10 @@ export function augmentRoundDeploymentMetrics(
       // Offchain tributes
       points: proposalPoints,
       pointProgramUrl: proposalPointProgramUrl,
+      projectName: proposalProjectName,
+      projectLogoUrl: proposalProjectLogoUrl,
+      projectTitle: proposalProjectTitle,
+      isWhitelisted: !!proposalGithubFields,
       // Onchain tributes
       tokenBasedTributes,
       totalTokenBasedTributeValue: tributeValueInUsdc,
