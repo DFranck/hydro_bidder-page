@@ -1,6 +1,5 @@
 "use client"
 
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -29,6 +28,8 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
 import { NewLockupButton } from "./NewLockupButton"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
+
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
   const router = useRouter()
@@ -44,9 +45,9 @@ export default function LockupsPage() {
     lockedAtomTotalWallet,
   } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const { setToasts, addToast } = useToasts()
+  const { setToasts } = useToasts()
   const expiredLockups = lockups.filter(
-    (lockup) => new Date() >= lockup.dateEnd,
+    (lockup) => new Date() >= lockup.dateEnd
   )
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
@@ -86,7 +87,7 @@ export default function LockupsPage() {
       setToasts([
         toastMessages.unlockingExpiredLockupsError(
           expiredLockups.length,
-          error as Error,
+          error as Error
         ),
       ])
     }
@@ -101,26 +102,18 @@ export default function LockupsPage() {
       return
     }
 
-    addToast({
-      _id: "incomplete-lockups",
-      variant: "warning",
-      message: (
-        <>
-          You have <strong>{incompleteNotices.length}</strong> incomplete{" "}
-          {pluralize({
-            count: incompleteNotices.length,
-            singular: "lockup",
-          })}
-          .
-        </>
-      ),
-      actionButtonPrimary: {
-        label: "Continue",
-        onClick: () => {
-          router.push("/lock-atom")
+    setToasts([
+      {
+        variant: "warning",
+        message: <>You have incomplete lockups.</>,
+        actionButtonPrimary: {
+          label: "Continue",
+          onClick: () => {
+            router.push("/lock-atom")
+          },
         },
       },
-    })
+    ])
   }, [incompleteNotices])
 
   return (

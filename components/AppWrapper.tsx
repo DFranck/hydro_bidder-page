@@ -22,6 +22,8 @@ const WalletProvider = dynamic(
 
 import { BackendDataTweaker } from "@/components/BackendDataTweakerLoader"
 import { GlobalLockupInfoProvider } from "./GlobalLockupInfoProvider"
+import { ChainsAndSignersProvider } from "./ChainsAndSignersProvider"
+import { IncompleteNoticesProvider } from "./IncompleteNoticesProvider"
 
 const QueryClientProvider = dynamic(
   () =>
@@ -68,18 +70,22 @@ export function AppWrapper({
                 <BackendDataContextProvider
                   rawBackendDataBeforeWallet={rawBackendDataBeforeWallet!}
                 >
-                  <GlobalLockupInfoProvider>
-                    {children}
-                    <Suspense
-                      fallback={
-                        <div className="fixed inset-12 z-50 bg-red-500">
-                          Tweaker failed to load
-                        </div>
-                      }
-                    >
-                      <BackendDataTweaker />
-                    </Suspense>
-                  </GlobalLockupInfoProvider>
+                  <ChainsAndSignersProvider>
+                    <GlobalLockupInfoProvider>
+                      <IncompleteNoticesProvider>
+                        {children}
+                        <Suspense
+                          fallback={
+                            <div className="fixed inset-12 z-50 bg-red-500">
+                              Tweaker failed to load
+                            </div>
+                          }
+                        >
+                          <BackendDataTweaker />
+                        </Suspense>
+                      </IncompleteNoticesProvider>
+                    </GlobalLockupInfoProvider>
+                  </ChainsAndSignersProvider>
                 </BackendDataContextProvider>
               )}
             >

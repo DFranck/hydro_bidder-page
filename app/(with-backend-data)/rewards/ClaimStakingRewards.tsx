@@ -20,11 +20,11 @@ import { claimStakingRewardsTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
 import { fetchLSMStakingRewards } from "@/contract-apis/fetchTokenizeShareRewards"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 
 export function ClaimStakingRewards() {
-  const { hubChain, hubSigner } = useIncompleteNotices()
+  const { hubChain, hubSigner } = useChainsAndSigners()
   const { setToasts } = useToasts()
   const { address, getRpcEndpoint } = useChain("cosmoshub")
   const { atomPrice } = useBackendData()
@@ -55,11 +55,7 @@ export function ClaimStakingRewards() {
       const endpoint = await getRpcEndpoint()
       const rpc = typeof endpoint === "string" ? endpoint : endpoint.url
 
-      const rewards = await fetchLSMStakingRewards(
-        rpc,
-        address,
-        atomPrice,
-      )
+      const rewards = await fetchLSMStakingRewards(rpc, address, atomPrice)
       if (rewards) {
         setStakingRewardsAmount(rewards.totalAtom.toFixed(2))
         setUsdcAmount(rewards.totalUsd.toFixed(2))
@@ -112,7 +108,7 @@ export function ClaimStakingRewards() {
             items-center
             justify-center
             transition-all
-          `,
+          `
                   )}
                 >
                   <Icon className="animate-spin" name="solid:loader" />
