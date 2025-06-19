@@ -55,7 +55,7 @@ export const LockStepper = ({
 }) => {
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
     useIncompleteNotices()
-  const { lockedTokenEpochInNanos } = useBackendData()
+  const { lockedAtomEpochInNanos } = useBackendData()
   const [step, setStep] = useState<LockStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -215,14 +215,14 @@ export const LockStepper = ({
                     Voting Power (
                     {getLockupPeriodMultiplier({
                       lockupTime: lockDuration,
-                      lockedTokenEpochInNanos,
+                      lockedAtomEpochInNanos,
                     })}
                     &thinsp;&times;)
                   </div>
                   <div className="text-sm font-bold">
                     {formatAmount(
                       scaleLockupPower({
-                        lockedTokenEpochInNanos,
+                        lockedAtomEpochInNanos,
                         lockupTime: lockDuration,
                         rawPower: BigInt(amount),
                       })
@@ -373,7 +373,7 @@ export const LockStepper = ({
                 <strong>
                   {formatAmount(
                     scaleLockupPower({
-                      lockedTokenEpochInNanos,
+                      lockedAtomEpochInNanos,
                       lockupTime: lockDuration,
                       rawPower: BigInt(amount),
                     })

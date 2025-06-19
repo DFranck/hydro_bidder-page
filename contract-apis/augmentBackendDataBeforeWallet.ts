@@ -31,22 +31,22 @@ export function augmentBackendDataBeforeWallet(
   const { postHydroBids, preHydroBids } = augmentNumiaBids(numiaBids)
 
   // Hydro Capacity Info
-  const lockedTokenMaxGlobal = constants.max_locked_tokens / 1e6
-  const lockedTokenTotalGlobal = total_locked_tokens / 1e6
-  const lockedTokenRemainingCapacityGlobal = Number(
-    (lockedTokenMaxGlobal - lockedTokenTotalGlobal).toFixed(6)
+  const lockedAtomMaxGlobal = constants.max_locked_tokens / 1e6
+  const lockedAtomTotalGlobal = total_locked_tokens / 1e6
+  const lockedAtomRemainingCapacityGlobal = Number(
+    (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
   )
-  const lockedTokenPercentageGlobal = Math.floor(
-    (lockedTokenTotalGlobal / lockedTokenMaxGlobal) * 100
+  const lockedAtomPercentageGlobal = Math.floor(
+    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
   )
-  const lockedTokenIsAtCapacityGlobal = lockedTokenPercentageGlobal === 100
+  const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal === 100
 
   const globalLockupCapacityInfo: GlobalLockupCapacityInfo = {
-    lockedTokenMaxGlobal,
-    lockedTokenTotalGlobal,
-    lockedTokenRemainingCapacityGlobal,
-    lockedTokenIsAtCapacityGlobal,
-    lockedTokenPercentageGlobal,
+    lockedAtomMaxGlobal,
+    lockedAtomTotalGlobal,
+    lockedAtomRemainingCapacityGlobal,
+    lockedAtomIsAtCapacityGlobal,
+    lockedAtomPercentageGlobal,
   }
 
   // New Bids Info
@@ -99,8 +99,8 @@ export function augmentBackendDataBeforeWallet(
     currentRoundEndDate,
     currentRoundId: round_id,
     currentRoundIsPilot: true,
-    lockedTokenEpochInNanos: constants.lock_epoch_length,
-    lockedTokenMaxWallet: 250, // TODO: get this from contract
+    lockedAtomEpochInNanos: constants.lock_epoch_length,
+    lockedAtomMaxWallet: 250, // TODO: get this from contract
     metricsForPostHydroBids: postHydroBids,
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: keysFromSnakeToCamelCase(numiaMetrics),

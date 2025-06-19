@@ -52,16 +52,16 @@ const initialBackendDataContext: BackendDataContextType = {
   tranches: [],
   isLoading: false,
   isWalletConnected: false,
-  lockedTokenEpochInNanos: 0,
-  lockedTokenIsAtCapacityGlobal: false,
-  lockedTokenIsAtCapacityWallet: false,
-  lockedTokenMaxGlobal: 0,
-  lockedTokenMaxWallet: 0,
-  lockedTokenPercentageGlobal: 0,
-  lockedTokenPercentageWallet: 0,
-  lockedTokenRemainingCapacityGlobal: 0,
-  lockedTokenTotalGlobal: 0,
-  lockedTokenTotalWallet: 0,
+  lockedAtomEpochInNanos: 0,
+  lockedAtomIsAtCapacityGlobal: false,
+  lockedAtomIsAtCapacityWallet: false,
+  lockedAtomMaxGlobal: 0,
+  lockedAtomMaxWallet: 0,
+  lockedAtomPercentageGlobal: 0,
+  lockedAtomPercentageWallet: 0,
+  lockedAtomRemainingCapacityGlobal: 0,
+  lockedAtomTotalGlobal: 0,
+  lockedAtomTotalWallet: 0,
   lockups: [],
   metricsForPostHydroBids: [],
   metricsForPreHydroBids: [],
@@ -130,7 +130,7 @@ export function BackendDataContextProvider({
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
-  const { lockedTokenTotalGlobal } = useGlobalLockupCapacityInfo()
+  const { lockedAtomTotalGlobal } = useGlobalLockupCapacityInfo()
 
   // Dependencies: [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
@@ -167,7 +167,7 @@ export function BackendDataContextProvider({
 
     const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(
       tweakedRawBackendDataBeforeWallet,
-      lockedTokenTotalGlobal
+      lockedAtomTotalGlobal
     )
 
     const effectiveAddress = patchData?.address ?? address
@@ -192,7 +192,8 @@ export function BackendDataContextProvider({
       return
     }
 
-    const { currentRoundId, tranches, currentRoundPrices } = augmentedBackendDataBeforeWallet
+    const { currentRoundId, tranches, currentRoundPrices } =
+      augmentedBackendDataBeforeWallet
 
     ;(async () => {
       setIsLoading(true)
@@ -201,7 +202,7 @@ export function BackendDataContextProvider({
         address: effectiveAddress,
         currentRoundId,
         tranches,
-        currentRoundPrices
+        currentRoundPrices,
       })
 
       const tweakedWalletData = mergeWithOverwrite(

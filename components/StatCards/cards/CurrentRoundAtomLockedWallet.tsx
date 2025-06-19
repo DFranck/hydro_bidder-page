@@ -8,9 +8,9 @@ import { StatCard } from "../StatCard"
 
 export function CurrentRoundAtomLockedWallet() {
   const {
-    lockedTokenTotalWallet,
-    lockedTokenMaxWallet,
-    lockedTokenPercentageWallet,
+    lockedAtomTotalWallet,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageWallet,
     isLoading,
   } = useBackendData()
 
@@ -19,7 +19,7 @@ export function CurrentRoundAtomLockedWallet() {
       isLoading={isLoading}
       value={
         <>
-          {lockedTokenTotalWallet.toLocaleString("en-US", {
+          {lockedAtomTotalWallet.toLocaleString("en-US", {
             maximumFractionDigits: 4,
           })}
         </>
@@ -35,8 +35,8 @@ export function CurrentRoundAtomLockedWallet() {
       }
       subTitle={
         <>
-          <strong>{lockedTokenPercentageWallet}%</strong> of{" "}
-          <strong>{lockedTokenMaxWallet}</strong> max
+          <strong>{lockedAtomPercentageWallet}%</strong> of{" "}
+          <strong>{lockedAtomMaxWallet}</strong> max
         </>
       }
     />

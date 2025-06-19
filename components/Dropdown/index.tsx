@@ -30,8 +30,8 @@ export function DropdownMenuButton({
   handleStAtom: () => void
   handleDAtom: () => void
 }) {
-  const { isWalletConnected, lockedTokenPercentageWallet } = useBackendData()
-  const { lockedTokenPercentageGlobal } = useGlobalLockupCapacityInfo()
+  const { isWalletConnected, lockedAtomPercentageWallet } = useBackendData()
+  const { lockedAtomPercentageGlobal } = useGlobalLockupCapacityInfo()
   const amountOfdAtomInWallet = useAmountOfTokenInWallet("dATOM")
   const amountOfsTAtomInWallet = useAmountOfTokenInWallet("stATOM")
 
@@ -61,8 +61,8 @@ export function DropdownMenuButton({
       action: () => push("/lock-atom"),
       isDisabled:
         !isWalletConnected ||
-        lockedTokenPercentageWallet === 100 ||
-        lockedTokenPercentageGlobal === 100,
+        lockedAtomPercentageWallet === 100 ||
+        lockedAtomPercentageGlobal === 100,
       cta: {
         label: "Stake ATOM",
         href: "https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake",
@@ -93,7 +93,7 @@ export function DropdownMenuButton({
                     tipContents={
                       !isWalletConnected
                         ? needsWalletConnectionTooltip
-                        : lockedTokenPercentageWallet === 100
+                        : lockedAtomPercentageWallet === 100
                           ? lockupLimitReachedByUserTooltip
                           : lockupLimitReachedByNetworkTooltip
                     }

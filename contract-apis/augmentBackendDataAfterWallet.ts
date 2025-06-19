@@ -23,7 +23,7 @@ export function augmentBackendDataAfterWallet({
     ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
 }): AugmentedBackendDataAfterWallet {
-  const { bidsInfo, currentRoundId, lockedTokenMaxWallet, currentRoundPrices } =
+  const { bidsInfo, currentRoundId, lockedAtomMaxWallet, currentRoundPrices } =
     augmentedBackendDataBeforeWallet
 
   const {
@@ -101,9 +101,9 @@ export function augmentBackendDataAfterWallet({
     })
   )
 
-  const lockedTokenTotalWallet = sumBy(augmentedLockups, "funds.amount")
-  const lockedTokenPercentageWallet = Math.floor(
-    (lockedTokenTotalWallet / lockedTokenMaxWallet) * 100
+  const lockedAtomTotalWallet = sumBy(augmentedLockups, "funds.amount")
+  const lockedAtomPercentageWallet = Math.floor(
+    (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
 
   const votingPowerTotal = voting_power / 1e6
@@ -158,11 +158,10 @@ export function augmentBackendDataAfterWallet({
     claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,
     isWalletConnected: true,
-    lockedTokenIsAtCapacityWallet:
-      lockedTokenTotalWallet === lockedTokenMaxWallet,
-    lockedTokenMaxWallet,
-    lockedTokenPercentageWallet,
-    lockedTokenTotalWallet,
+    lockedAtomIsAtCapacityWallet: lockedAtomTotalWallet === lockedAtomMaxWallet,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageWallet,
+    lockedAtomTotalWallet,
     lockups: augmentedLockups,
     votes: sanitizedVotes,
     votesByRoundId,

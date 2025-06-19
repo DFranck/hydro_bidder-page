@@ -33,7 +33,7 @@ export function getCommonStepContents({
   validator,
   validatorMap,
   lockDuration,
-  lockedTokenEpochInNanos,
+  lockedAtomEpochInNanos,
   errorLog,
   showErrorLog,
   setShowErrorLog,
@@ -49,7 +49,7 @@ export function getCommonStepContents({
   validator: string
   validatorMap: Map<string, Validator>
   lockDuration: number
-  lockedTokenEpochInNanos: number
+  lockedAtomEpochInNanos: number
   errorLog: string
   showErrorLog: boolean
   setShowErrorLog: (show: boolean) => void
@@ -74,7 +74,7 @@ export function getCommonStepContents({
               <strong>
                 {formatAmount(
                   scaleLockupPower({
-                    lockedTokenEpochInNanos,
+                    lockedAtomEpochInNanos,
                     lockupTime: lockDuration,
                     rawPower: BigInt(amount),
                   })
@@ -120,7 +120,7 @@ export function getCommonStepContents({
             <strong>
               {formatAmount(
                 scaleLockupPower({
-                  lockedTokenEpochInNanos,
+                  lockedAtomEpochInNanos,
                   lockupTime: lockDuration,
                   rawPower: BigInt(amount),
                 })

@@ -11,17 +11,17 @@ import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapa
 export function CurrentRoundAtomLockedGlobal() {
   const { isLoading } = useBackendData()
   const {
-    lockedTokenTotalGlobal,
-    lockedTokenRemainingCapacityGlobal,
-    lockedTokenPercentageGlobal,
-    lockedTokenIsAtCapacityGlobal,
-    lockedTokenMaxGlobal,
+    lockedAtomTotalGlobal,
+    lockedAtomRemainingCapacityGlobal,
+    lockedAtomPercentageGlobal,
+    lockedAtomIsAtCapacityGlobal,
+    lockedAtomMaxGlobal,
   } = useGlobalLockupCapacityInfo()
 
   return (
     <StatCard
       className={twMerge(
-        lockedTokenIsAtCapacityGlobal &&
+        lockedAtomIsAtCapacityGlobal &&
           `
             bg-gradient-to-t
             from-palette-red/80
@@ -29,14 +29,14 @@ export function CurrentRoundAtomLockedGlobal() {
           `
       )}
       isLoading={isLoading}
-      value={Math.floor(lockedTokenTotalGlobal ?? 0).toLocaleString()}
+      value={Math.floor(lockedAtomTotalGlobal ?? 0).toLocaleString()}
       title={
         <Tooltip
           className="w-full"
           tipContents={
             <>
               {globalTotalAtomLockedTooltip} Available capacity:{" "}
-              {lockedTokenRemainingCapacityGlobal}
+              {lockedAtomRemainingCapacityGlobal}
             </>
           }
         >
@@ -49,8 +49,8 @@ export function CurrentRoundAtomLockedGlobal() {
       }
       subTitle={
         <>
-          <strong>{lockedTokenPercentageGlobal}%</strong> of{" "}
-          <strong>{lockedTokenMaxGlobal.toLocaleString()}</strong> max
+          <strong>{lockedAtomPercentageGlobal}%</strong> of{" "}
+          <strong>{lockedAtomMaxGlobal.toLocaleString()}</strong> max
         </>
       }
     />

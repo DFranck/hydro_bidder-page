@@ -25,9 +25,9 @@ export interface AugmentedBackendDataAfterWallet
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
   isWalletConnected: boolean
-  lockedTokenIsAtCapacityWallet: boolean
-  lockedTokenPercentageWallet: number
-  lockedTokenTotalWallet: number
+  lockedAtomIsAtCapacityWallet: boolean
+  lockedAtomPercentageWallet: number
+  lockedAtomTotalWallet: number
   lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
@@ -47,13 +47,13 @@ export interface AugmentedBackendDataBeforeWallet {
   currentRoundId: number
   currentRoundIsPilot: boolean
   tranches: Tranche[]
-  lockedTokenEpochInNanos: number
-  lockedTokenIsAtCapacityGlobal: boolean
-  lockedTokenMaxGlobal: number
-  lockedTokenMaxWallet: number
-  lockedTokenPercentageGlobal: number
-  lockedTokenRemainingCapacityGlobal: number
-  lockedTokenTotalGlobal: number
+  lockedAtomEpochInNanos: number
+  lockedAtomIsAtCapacityGlobal: boolean
+  lockedAtomMaxGlobal: number
+  lockedAtomMaxWallet: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomRemainingCapacityGlobal: number
+  lockedAtomTotalGlobal: number
   metricsForPostHydroBids: AugmentedBidFromNumiaSlimmed[]
   metricsForPreHydroBids: AugmentedBidFromNumiaSlimmed[]
   metricsGlobal: SanitizedMetricsFromNumia
@@ -209,11 +209,11 @@ export interface AugmentedBidAfterWallet extends BidRevampMetrics {
 }
 
 export interface GlobalLockupCapacityInfo {
-  lockedTokenIsAtCapacityGlobal: boolean
-  lockedTokenMaxGlobal: number
-  lockedTokenPercentageGlobal: number
-  lockedTokenRemainingCapacityGlobal: number
-  lockedTokenTotalGlobal: number
+  lockedAtomIsAtCapacityGlobal: boolean
+  lockedAtomMaxGlobal: number
+  lockedAtomPercentageGlobal: number
+  lockedAtomRemainingCapacityGlobal: number
+  lockedAtomTotalGlobal: number
 }
 
 export interface MetricsFromNumia {

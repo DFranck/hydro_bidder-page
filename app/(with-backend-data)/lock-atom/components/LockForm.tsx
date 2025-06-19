@@ -32,17 +32,14 @@ export function LockForm({
   validatorLiquidStakingCap: string
 }) {
   const router = useRouter()
-  const {
-    lockedTokenEpochInNanos,
-    lockedTokenMaxWallet,
-    lockedTokenTotalWallet,
-  } = useBackendData()
-  const { lockedTokenTotalGlobal, lockedTokenRemainingCapacityGlobal } =
+  const { lockedAtomEpochInNanos, lockedAtomMaxWallet, lockedAtomTotalWallet } =
+    useBackendData()
+  const { lockedAtomTotalGlobal, lockedAtomRemainingCapacityGlobal } =
     useGlobalLockupCapacityInfo()
   const { setToasts } = useToasts()
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(
-    lockedTokenEpochInNanos
+    lockedAtomEpochInNanos
   )
   const { data: validators } = useWalletValidators(
     hubChain,
@@ -54,28 +51,28 @@ export function LockForm({
   )
   const usersLimitRemainder = Math.max(
     0,
-    lockedTokenMaxWallet - lockedTokenTotalWallet
+    lockedAtomMaxWallet - lockedAtomTotalWallet
   )
   const maxAtomToBeLocked = Math.min(
     delegationBalance ? delegationBalance / 1e6 : Infinity, // no more than they have
     usersLimitRemainder, // no more than their limit
-    lockedTokenRemainingCapacityGlobal // no more than the global limit
+    lockedAtomRemainingCapacityGlobal // no more than the global limit
   )
 
   const [amount, setAmount] = useState<string>("")
 
   useEffect(() => {
-    if (maxAtomToBeLocked > 0 && lockedTokenRemainingCapacityGlobal > 0) {
+    if (maxAtomToBeLocked > 0 && lockedAtomRemainingCapacityGlobal > 0) {
       setAmount(maxAtomToBeLocked.toFixed(6))
     } else if (
-      lockedTokenTotalGlobal &&
-      (maxAtomToBeLocked === 0 || lockedTokenRemainingCapacityGlobal === 0)
+      lockedAtomTotalGlobal &&
+      (maxAtomToBeLocked === 0 || lockedAtomRemainingCapacityGlobal === 0)
     ) {
       setAmount((0).toFixed(6))
       setToasts([toastMessages.lockupCapacityFull])
       router.push("/lockups")
     }
-  }, [maxAtomToBeLocked, lockedTokenRemainingCapacityGlobal])
+  }, [maxAtomToBeLocked, lockedAtomRemainingCapacityGlobal])
 
   useEffect(() => {
     const numericAmount = parseFloat(amount)
@@ -308,7 +305,7 @@ export function LockForm({
                           Math.round(parseFloat(amount) * 1e6 || 0)
                         )
                         const lockupPower = scaleLockupPower({
-                          lockedTokenEpochInNanos: lockedTokenEpochInNanos,
+                          lockedAtomEpochInNanos: lockedAtomEpochInNanos,
                           lockupTime: selectedDuration,
                           rawPower: amountInUatom,
                         })

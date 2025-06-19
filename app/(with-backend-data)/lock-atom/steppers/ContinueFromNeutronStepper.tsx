@@ -36,14 +36,14 @@ export const ContinueFromNeutronStepper = ({
 }) => {
   const { hubChain, neutronChain, deleteIncompleteNotice } =
     useIncompleteNotices()
-  const { lockedTokenEpochInNanos } = useBackendData()
+  const { lockedAtomEpochInNanos } = useBackendData()
   const router = useRouter()
   const [step, setStep] = useState<ContinueFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>(
     "ContinueFromNeutronStepper: "
   )
   const [showErrorLog, setShowErrorLog] = useState(false)
-  const [lockDuration, setLockDuration] = useState(lockedTokenEpochInNanos)
+  const [lockDuration, setLockDuration] = useState(lockedAtomEpochInNanos)
   const [amount, setNewAmount] = useState(lockedAmount)
 
   const executeContinueFromNeutron = async () => {
@@ -93,7 +93,7 @@ export const ContinueFromNeutronStepper = ({
         validator,
         validatorMap,
         lockDuration,
-        lockedTokenEpochInNanos,
+        lockedAtomEpochInNanos,
         errorLog,
         showErrorLog,
         setShowErrorLog,

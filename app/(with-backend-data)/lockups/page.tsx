@@ -49,12 +49,12 @@ export default function LockupsPage() {
     address,
     isWalletConnected,
     lockups,
-    lockedTokenMaxWallet,
-    lockedTokenPercentageWallet,
-    lockedTokenTotalWallet,
+    lockedAtomMaxWallet,
+    lockedAtomPercentageWallet,
+    lockedAtomTotalWallet,
   } = useBackendData()
 
-  const { lockedTokenRemainingCapacityGlobal } = useGlobalLockupCapacityInfo()
+  const { lockedAtomRemainingCapacityGlobal } = useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts, addToast } = useToasts()
@@ -81,10 +81,10 @@ export default function LockupsPage() {
     token.name as "stATOM" | "dATOM"
   )
 
-  const usersLimitRemainder = lockedTokenMaxWallet - lockedTokenTotalWallet
+  const usersLimitRemainder = lockedAtomMaxWallet - lockedAtomTotalWallet
 
   const maxTokenToBeLocked = Math.min(
-    lockedTokenRemainingCapacityGlobal, // no more than the global limit
+    lockedAtomRemainingCapacityGlobal, // no more than the global limit
     token.amount, // no more than they have
     usersLimitRemainder // no more than their limit
   )
@@ -214,14 +214,14 @@ export default function LockupsPage() {
             className="block w-96 shrink-0"
           >
             <ProgressBar
-              percentage={lockedTokenPercentageWallet}
+              percentage={lockedAtomPercentageWallet}
               warningZone={(percentage) => percentage >= 75}
               dangerZone={(percentage) => percentage >= 95}
             >
               <div className="flex items-center gap-1 opacity-60">
                 <span>
-                  {lockedTokenTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedTokenMaxWallet} Tokens max
+                  {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
+                  {lockedAtomMaxWallet} Tokens max
                 </span>
                 <span>
                   <Icon name="circle-info" />

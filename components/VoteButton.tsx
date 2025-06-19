@@ -46,10 +46,10 @@ export function VoteButton({
     lockups,
     votesByRoundId,
     votingPowerAvailableByTrancheId,
-    lockedTokenEpochInNanos,
+    lockedAtomEpochInNanos,
   } = useBackendData()
 
-  const { lockedTokenTotalGlobal, lockedTokenMaxGlobal } =
+  const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
     useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -69,7 +69,7 @@ export function VoteButton({
 
     // Calculate round end time in nanoseconds
     const currentRoundEndTime = currentRoundEndDate.getTime() * 1e6 // convert to nanoseconds
-    const roundLength = lockedTokenEpochInNanos // Using epoch length as round length
+    const roundLength = lockedAtomEpochInNanos // Using epoch length as round length
     const powerRequiredRoundEnd =
       currentRoundEndTime +
       (powerRequiredRoundId - currentRoundId) * roundLength
@@ -147,7 +147,7 @@ export function VoteButton({
   } else if (votingPowerAvailableByTrancheId[bid.trancheId] === 0) {
     Button = (
       <ConditionalWrapper
-        condition={lockedTokenTotalGlobal >= lockedTokenMaxGlobal}
+        condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}
         wrapper={(children) => (
           <Tooltip tipContents={lockupLimitReachedByNetworkTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>
