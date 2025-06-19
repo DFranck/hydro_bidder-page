@@ -33,12 +33,12 @@ export function buildActiveRow({
     _lockup: { ...lockup, daysLeft },
 
     amount: (
-      <>
+      <div className="flex items-center gap-1">
         {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
         <StyledText variant="footnote">
           {lockup.funds.denomInfo.humanReadableDenom}
         </StyledText>
-      </>
+      </div>
     ),
 
     timeLeft: pluralize({
