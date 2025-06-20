@@ -34,7 +34,9 @@ export function buildActiveRow({
 
     amount: (
       <div className="flex items-center gap-1">
-        {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
+        <StyledText>
+          {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}
+        </StyledText>
         <StyledText variant="footnote">
           {lockup.funds.denomInfo.humanReadableDenom}
         </StyledText>
