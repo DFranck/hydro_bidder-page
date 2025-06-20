@@ -31,7 +31,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
-import { DropdownMenuButton } from "@/components/Dropdown"
+import { NewLockUpButton } from "@/components/NewLockUpButton"
 import { LockupsLST } from "./LockupsLST"
 import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
@@ -286,7 +286,7 @@ export default function LockupsPage() {
                 </Tooltip>
               )}
             >
-              <DropdownMenuButton
+              <NewLockUpButton
                 handleStAtom={handleStAtom}
                 handleDAtom={handleDAtom}
               />

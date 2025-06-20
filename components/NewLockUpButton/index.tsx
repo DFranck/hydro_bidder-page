@@ -22,8 +22,9 @@ import {
   needsWalletConnectionTooltip,
 } from "../ToolTips"
 import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
+import { Icon } from "../Icon"
 
-export function DropdownMenuButton({
+export function NewLockUpButton({
   handleStAtom,
   handleDAtom,
 }: {
@@ -117,6 +118,7 @@ export function DropdownMenuButton({
               target="_blank"
             >
               {item.cta.label}
+              <Icon name="solid:arrow-up-right" />
             </StyledText>
           </DropdownMenuItem>
         ))}
