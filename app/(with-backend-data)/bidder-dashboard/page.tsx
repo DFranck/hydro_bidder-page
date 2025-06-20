@@ -28,13 +28,8 @@ export interface BidRow extends BaseRowObject {
 export default function BidsDashboardPage() {
   const [openedRows, setOpenedRows] = useState<number[]>([])
 
-  const {
-    bidMetaDataById,
-    bidsInfo,
-    currentRoundId,
-    isLoading,
-    votesByRoundId,
-  } = useBackendData()
+  const { bidsInfo, currentRoundId, isLoading, votesByRoundId } =
+    useBackendData()
 
   const hasVotedThisRound = votesByRoundId[currentRoundId]?.length > 0
 
@@ -46,10 +41,9 @@ export default function BidsDashboardPage() {
     return getBidDashboardTableRows(
       openedRows,
       toggleRow,
-      Object.values(bidsInfo).filter((bid) => bid.roundId === currentRoundId),
-      bidMetaDataById
+      Object.values(bidsInfo).filter((bid) => bid.roundId === currentRoundId)
     )
-  }, [bidMetaDataById, bidsInfo, currentRoundId, openedRows])
+  }, [bidsInfo, currentRoundId, openedRows])
 
   return (
     <>
@@ -59,14 +53,15 @@ export default function BidsDashboardPage() {
         {!isLoading && bids.point.length + bids.token.length === 0 && (
           <BlurryBackdropBox>
             <EmptyBox>
-              Project bids will appear here before the end of the round. Join our{" "}
+              Project bids will appear here before the end of the round. Join
+              our{" "}
               <a
-              href="https://t.me/hydro_community"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:opacity-80"
+                href="https://t.me/hydro_community"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:opacity-80"
               >
-              Telegram announcement group
+                Telegram announcement group
               </a>{" "}
               to get notified!
             </EmptyBox>

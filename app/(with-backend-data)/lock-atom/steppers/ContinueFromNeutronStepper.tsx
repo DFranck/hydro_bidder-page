@@ -5,7 +5,6 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { signLockTokens } from "../transactions/signLockTokens"
-import { useIncompleteNotices } from "../useIncompleteNotices"
 import { CommonSteps } from "./CommonSteps"
 import {
   getCommonStepContents,
@@ -13,6 +12,8 @@ import {
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
 import { formatAmount } from "@/lib/formatAmount"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 export type ContinueFromNeutronStep =
   | "Init"
@@ -34,8 +35,9 @@ export const ContinueFromNeutronStepper = ({
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
-  const { hubChain, neutronChain, deleteIncompleteNotice } =
-    useIncompleteNotices()
+  const { deleteIncompleteNotice } = useIncompleteNotices()
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useChainsAndSigners()
   const { lockedAtomEpochInNanos, hasGatekeeper } = useBackendData()
   const router = useRouter()
   const [step, setStep] = useState<ContinueFromNeutronStep>("Init")
@@ -51,8 +53,6 @@ export const ContinueFromNeutronStepper = ({
       setErrorLog(
         `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
       )
-      const hubSigner = await hubChain.getSigningStargateClient()
-      const neutronSigner = await neutronChain.getSigningStargateClient()
 
       if (
         !hubChain.address ||

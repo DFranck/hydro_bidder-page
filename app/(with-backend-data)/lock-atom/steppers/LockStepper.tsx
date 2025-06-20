@@ -2,7 +2,6 @@
 
 import { CommonSteps } from "@/app/(with-backend-data)/lock-atom/steppers/CommonSteps"
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -26,6 +25,7 @@ import { signATOMGasTransferToNeutron } from "../transactions/signATOMGasTransfe
 import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
 import { signLockTokens } from "../transactions/signLockTokens"
 import { signTokenizeShares } from "../transactions/signTokenizeShares"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 
 export type LockStep =
   | "Init"
@@ -53,7 +53,7 @@ export const LockStepper = ({
   onExit: () => void
 }) => {
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
-    useIncompleteNotices()
+    useChainsAndSigners()
   const { lockedAtomEpochInNanos, hasGatekeeper } = useBackendData()
   const [step, setStep] = useState<LockStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")

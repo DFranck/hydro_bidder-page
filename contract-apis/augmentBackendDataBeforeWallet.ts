@@ -63,7 +63,6 @@ export function augmentBackendDataBeforeWallet(
   return {
     currentRoundPrices: hydroRoundsData[round_id]?.round_prices,
     atomPrice,
-    bidMetaDataById,
     bidsInfo: keyBy(bidsInfo, "id"),
     currentRoundEndDate,
     currentRoundId: round_id,

@@ -2,13 +2,9 @@
 
 import { fetchDenomTrace } from "@/app/(with-backend-data)/lock-atom/transactions/fetchDenomTrace"
 import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
-import { SigningStargateClient } from "@cosmjs/stargate"
 import { ChainContext } from "@cosmos-kit/core"
 
-export async function checkForNeutronLSMShares(
-  neutronChain: ChainContext,
-  neutronSigner: SigningStargateClient
-) {
+export async function checkForNeutronLSMShares(neutronChain: ChainContext) {
   if (!neutronChain.address) {
     throw new Error("Neutron chain address not set")
   }

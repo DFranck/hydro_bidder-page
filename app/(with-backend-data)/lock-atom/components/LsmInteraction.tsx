@@ -2,7 +2,6 @@
 
 import { LockForm } from "@/app/(with-backend-data)/lock-atom/components/LockForm"
 import { getValidatorMoniker } from "@/app/(with-backend-data)/lock-atom/functions/getValidatorMoniker"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
@@ -26,6 +25,8 @@ import { RevertFromNeutronStepper } from "../steppers/RevertFromNeutronStepper"
 import { Stepper } from "../types"
 import { LoaderCard } from "./LoaderCard"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 export function LsmInteraction({
   validatorMap,
@@ -38,13 +39,9 @@ export function LsmInteraction({
   const {
     data: { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal },
   } = useGlobalLockupCapacityInfo()
-  const {
-    hubChain,
-    hubSigner,
-    neutronChain,
-    neutronSigner,
-    incompleteNotices,
-  } = useIncompleteNotices()
+  const { incompleteNotices } = useIncompleteNotices()
+  const { hubChain, hubSigner, neutronChain, neutronSigner } =
+    useChainsAndSigners()
   const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
   const [numVisibleNotices, setVisibleNotices] = useState(2)
 

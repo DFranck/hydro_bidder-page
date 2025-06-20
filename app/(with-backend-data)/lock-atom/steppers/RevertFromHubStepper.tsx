@@ -8,10 +8,11 @@ import { useRouter } from "next/navigation"
 import { ReactNode, useState } from "react"
 import { broadcastTx } from "../transactions/broadcastTx"
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
-import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
 import { stepLabels } from "@/constants/lock-atom"
 import { ContinueLockForm } from "../components/ContinueLockForm"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 function getValidatorMoniker(
   validator: string,
@@ -40,8 +41,9 @@ export const RevertFromHubStepper = ({
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
-  const { hubChain, neutronChain, deleteIncompleteNotice } =
-    useIncompleteNotices()
+  const { deleteIncompleteNotice } = useIncompleteNotices()
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useChainsAndSigners()
   const [step, setStep] = useState<RevertFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -54,8 +56,6 @@ export const RevertFromHubStepper = ({
       setErrorLog(
         `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`
       )
-      const hubSigner = await hubChain.getSigningStargateClient()
-      const neutronSigner = await neutronChain.getSigningStargateClient()
 
       if (
         !hubChain.address ||

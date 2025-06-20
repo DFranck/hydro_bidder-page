@@ -10,10 +10,11 @@ import { broadcastAndRelayIBCNeutronToHub } from "../transactions/broadcastAndRe
 import { broadcastTx } from "../transactions/broadcastTx"
 import { signIBCTransferNeutronToHub } from "../transactions/signIBCTransferNeutronToHub"
 import { signRedeemTokensForShares } from "../transactions/signRedeemTokensForShares"
-import { useIncompleteNotices } from "../useIncompleteNotices"
 import { Step } from "./Step"
 import { stepLabels } from "@/constants/lock-atom"
 import { ContinueLockForm } from "../components/ContinueLockForm"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 export type RevertFromNeutronStep =
   | "Init"
@@ -46,8 +47,9 @@ export const RevertFromNeutronStepper = ({
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
-  const { hubChain, neutronChain, deleteIncompleteNotice } =
-    useIncompleteNotices()
+  const { deleteIncompleteNotice } = useIncompleteNotices()
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useChainsAndSigners()
   const router = useRouter()
   const [step, setStep] = useState<RevertFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("RevertFromNeutronStepper: ")
@@ -59,8 +61,6 @@ export const RevertFromNeutronStepper = ({
       setErrorLog(
         `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}`
       )
-      const hubSigner = await hubChain.getSigningStargateClient()
-      const neutronSigner = await neutronChain.getSigningStargateClient()
 
       if (
         !hubChain.address ||

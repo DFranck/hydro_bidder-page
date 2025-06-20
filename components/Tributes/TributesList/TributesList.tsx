@@ -1,6 +1,6 @@
 import { EmptyBox } from "@/components/EmptyBox"
 import { StyledText } from "@/components/StyledText"
-import { BidMetaDataSlimmed, TokenBasedTribute } from "@/contract-apis/types"
+import { TokenBasedTribute } from "@/contract-apis/types"
 import { twJoin } from "tailwind-merge"
 import { TributesListItemPointBased } from "./TributesListItemPointBased"
 import { TributesListItemTokenBased } from "./TributesListItemTokenBased"
@@ -8,13 +8,13 @@ import { TributesListItemTokenBased } from "./TributesListItemTokenBased"
 interface TributesListProps {
   tokenBasedTributes: TokenBasedTribute[]
   pointBasedTributes: [amount: number, denom: string] | []
-  bidDescription?: BidMetaDataSlimmed
+  pointProgramUrl?: string
 }
 
 export function TributesList({
   tokenBasedTributes,
   pointBasedTributes,
-  bidDescription,
+  pointProgramUrl,
 }: TributesListProps) {
   return (
     <div className={twJoin("grid grid-cols-[max-content_auto_min-content]")}>
@@ -42,7 +42,7 @@ export function TributesList({
           <TributesListItemPointBased
             amount={pointBasedTributes[0]}
             denom={pointBasedTributes[1]}
-            description={bidDescription}
+            pointProgramUrl={pointProgramUrl}
           />
         )}
     </div>

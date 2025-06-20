@@ -1,16 +1,15 @@
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { BidMetaDataSlimmed } from "@/contract-apis/types"
 import Link from "next/link"
 
 export function TributesListItemPointBased({
   amount,
   denom,
-  description,
+  pointProgramUrl,
 }: {
   amount: number
   denom: string
-  description?: BidMetaDataSlimmed
+  pointProgramUrl?: string
 }) {
   return (
     <div className="grid grid-cols-subgrid">
@@ -21,10 +20,10 @@ export function TributesListItemPointBased({
         </StyledText>
       </div>
 
-      {description && description.pointProgramUrl && (
+      {pointProgramUrl && (
         <StyledText
           variant="link"
-          href={description.pointProgramUrl}
+          href={pointProgramUrl}
           as={Link}
           target="_blank"
           className="flex items-center gap-1"

@@ -13,7 +13,6 @@ import { Tooltip } from "@/components/Tooltip"
 import { metricsPageNoDataTooltip } from "@/components/ToolTips"
 import {
   AugmentedBidFromNumiaSlimmed,
-  BidMetaDataSlimmed,
   BidRevampMetrics,
 } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -31,7 +30,6 @@ export const EXPERIMENTAL_ROUND_ID = -2
 export interface MetricsRow {
   _bid: BidRevampMetrics | AugmentedBidFromNumiaSlimmed
   _bidFromContract: BidRevampMetrics
-  _bidMetaData: BidMetaDataSlimmed
   logoAndTitle: ReactNode
   amount: ReactNode
   duration: ReactNode
