@@ -18,8 +18,8 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
-  lockupLimitTooltip,
   needsWalletConnectionTooltip,
+  TotalLockupLimitTooltip,
 } from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { AugmentedLockup } from "@/contract-apis/types"
@@ -36,6 +36,7 @@ import { LockupsLST } from "./LockupsLST"
 import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { formatAmountToUsd } from "@/lib/amountToUSDString"
 
 const minTokenToBeLocked = 1 / 1e6
 
@@ -52,6 +53,9 @@ export default function LockupsPage() {
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
+    atomPrice,
+    stAtomPrice,
+    dAtomPrice,
   } = useBackendData()
 
   const { lockedAtomRemainingCapacityGlobal } = useGlobalLockupCapacityInfo()
@@ -210,7 +214,20 @@ export default function LockupsPage() {
           <h2 className="sr-only">Your Lockups</h2>
 
           <Tooltip
-            tipContents={lockupLimitTooltip}
+            tipContents={TotalLockupLimitTooltip({
+              atomLockedTotal: {
+                amount: lockedAtomTotalWallet,
+                usdAmount: formatAmountToUsd(lockedAtomTotalWallet, atomPrice),
+              },
+              dAtomLockedTotal: {
+                amount: 0,
+                usdAmount: formatAmountToUsd(0, dAtomPrice),
+              },
+              stAtomLockedTotal: {
+                amount: 0,
+                usdAmount: formatAmountToUsd(0, stAtomPrice),
+              },
+            })}
             className="block w-96 shrink-0"
           >
             <ProgressBar
@@ -220,8 +237,10 @@ export default function LockupsPage() {
             >
               <div className="flex items-center gap-1 opacity-60">
                 <span>
-                  {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedAtomMaxWallet} Tokens max
+                  {lockedAtomTotalWallet.toLocaleString("en-US", {
+                    maximumFractionDigits: 4,
+                  })}{" "}
+                  / {lockedAtomMaxWallet} Tokens max
                 </span>
                 <span>
                   <Icon name="circle-info" />

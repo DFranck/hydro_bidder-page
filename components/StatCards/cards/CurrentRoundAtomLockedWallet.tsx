@@ -2,11 +2,10 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  yourTotalTokenLockedTooltip,
-} from "@/components/ToolTips"
+import { yourTotalTokenLockedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
+import { formatAmountToUsd } from "@/lib/amountToUSDString"
 
 export function CurrentRoundAtomLockedWallet() {
   const {
@@ -14,6 +13,9 @@ export function CurrentRoundAtomLockedWallet() {
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     isLoading,
+    atomPrice,
+    stAtomPrice,
+    dAtomPrice,
   } = useBackendData()
 
   return (
@@ -29,9 +31,18 @@ export function CurrentRoundAtomLockedWallet() {
       title={
         <Tooltip
           tipContents={yourTotalTokenLockedTooltip({
-            atomLockedTotal: lockedAtomTotalWallet,
-            dAtomLockedTotal: 0,
-            stAtomLockedTotal: 0,
+            atomLockedTotal: {
+              amount: lockedAtomTotalWallet,
+              usdAmount: formatAmountToUsd(lockedAtomTotalWallet, atomPrice),
+            },
+            dAtomLockedTotal: {
+              amount: 0,
+              usdAmount: formatAmountToUsd(0, dAtomPrice),
+            },
+            stAtomLockedTotal: {
+              amount: 0,
+              usdAmount: formatAmountToUsd(0, stAtomPrice),
+            },
           })}
           classNamesForTooltip="w-80"
           className="w-full"

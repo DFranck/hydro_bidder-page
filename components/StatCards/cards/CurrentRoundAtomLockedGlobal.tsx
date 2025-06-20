@@ -2,14 +2,15 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { globalTotalAtomLockedTooltip } from "@/components/ToolTips"
+import { globalTotalTokenLockedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
+import { formatAmountToUsd } from "@/lib/amountToUSDString"
 
 export function CurrentRoundAtomLockedGlobal() {
-  const { isLoading } = useBackendData()
+  const { isLoading, atomPrice, stAtomPrice, dAtomPrice } = useBackendData()
   const {
     lockedAtomTotalGlobal,
     lockedAtomRemainingCapacityGlobal,
@@ -33,12 +34,24 @@ export function CurrentRoundAtomLockedGlobal() {
       title={
         <Tooltip
           className="w-full"
-          tipContents={
-            <>
-              {globalTotalAtomLockedTooltip} Available capacity:{" "}
-              {lockedAtomRemainingCapacityGlobal}
-            </>
-          }
+          classNamesForTooltip="w-80"
+          tipContents={globalTotalTokenLockedTooltip({
+            atomGlobalLockedTotal: {
+              amount: lockedAtomRemainingCapacityGlobal ?? 0,
+              usdAmount: formatAmountToUsd(
+                lockedAtomRemainingCapacityGlobal,
+                atomPrice
+              ),
+            },
+            dAtomGlobalLockedTotal: {
+              amount: 0,
+              usdAmount: formatAmountToUsd(0, dAtomPrice),
+            },
+            stAtomGlobalLockedTotal: {
+              amount: 0,
+              usdAmount: formatAmountToUsd(0, stAtomPrice),
+            },
+          })}
         >
           Total Tokens in{" "}
           <span className="inline-flex items-center gap-1">
