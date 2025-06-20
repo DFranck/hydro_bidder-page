@@ -13,7 +13,7 @@ export function AppPageContainer({
   children: React.ReactNode
   className?: string
 }) {
-  const isMobile = useIsMobile({ valueOnServer: false })
+  const isMobile = useIsMobile()
   const { state } = useAppState()
   const { isSidebarOpen, isLoading } = state
 

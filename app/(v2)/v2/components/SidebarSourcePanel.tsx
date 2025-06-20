@@ -20,79 +20,71 @@ export function SidebarSourcePanel({
       as="button"
       sourceId={sourceId}
       className={twMerge(
+        '@container',
         'relative w-full',
-        'flex items-center justify-between gap-3',
         'bg-token-color rounded-standard',
-        'h-bar-height-large flex-row',
-        'sidebar-open:h-bar-height-standard',
-        'desktop:h-auto',
-        'desktop:flex-col',
-        'desktop:gap-1',
-        'desktop:text-center',
-        'desktop:sidebar-open:flex-row',
-        'desktop:sidebar-open:h-bar-height-standard',
       )}
     >
-      <span
+      <div
         className={twJoin(
-          'flex items-center',
-          'gap-tight',
-          'px-standard',
-          'desktop:flex-row',
-          'desktop:py-loose',
-          'desktop:sidebar-closed:gap-1',
-          'desktop:sidebar-closed:py-loose',
-          'desktop:sidebar-closed:px-0console.log()',
-          'desktop:sidebar-closed:flex-col',
+          'flex items-center justify-between gap-1',
+          'flex-col text-center',
+          '@2xs:flex-row',
+          '@2xs:h-bar-height-standard',
+          '@2xs:gap-3',
+          '@2xs:text-left',
         )}
       >
-        <SourceBadge sourceId={sourceId} />
-
         <span
           className={twJoin(
-            'flex items-baseline',
+            'flex items-center',
+            'gap-1',
+            'py-loose',
+            'px-0',
             'flex-col',
-            'sidebar-open:flex-row',
-            'sidebar-open:gap-1',
-            'desktop:flex-col',
-            'desktop:items-center',
+            '@2xs:gap-tight',
+            '@2xs:px-standard',
+            '@2xs:flex-row',
           )}
         >
-          <span className="font-extrabold">
-            {totalLockedTokens.toLocaleString()}
+          <SourceBadge sourceId={sourceId} />
+          <span
+            className={twJoin(
+              'flex items-center',
+              'flex-col',
+              '@2xs:items-baseline',
+              '@2xs:flex-row',
+              '@2xs:gap-1',
+            )}
+          >
+            <span className="font-extrabold">
+              {totalLockedTokens.toLocaleString()}
+            </span>
+            <span className="denom">{sourceId}</span>
           </span>
-          <span className="denom">{sourceId}</span>
         </span>
-      </span>
-
-      <span
-        className={twJoin(
-          'gap-tight flex items-center justify-center',
-          'bg-darkened',
-          'px-standard',
-          'h-full',
-          'sidebar-open:w-[130px]',
-          'sidebar-open:justify-between',
-          'desktop:sidebar-closed:w-full',
-          'desktop:sidebar-closed:px-0',
-          'desktop:sidebar-closed:py-tight',
-        )}
-      >
         <span
           className={twJoin(
-            'flex items-center gap-1',
-            'flex-col',
-            'sidebar-open:flex-row',
+            'gap-tight flex items-center justify-center',
+            'bg-darkened',
+            'w-full',
+            'px-0',
+            'py-tight',
+            'h-full',
+            '@2xs:w-[130px]',
+            '@2xs:px-standard',
+            '@2xs:justify-between',
           )}
         >
-          <span className="label">Round</span>
-          <span className="important-value">{currentRoundId}</span>
+          <span className={twJoin('flex items-center gap-1')}>
+            <span className="label">Round</span>
+            <span className="important-value">{currentRoundId}</span>
+          </span>
+          <span className={twJoin('hidden', '@2xs:block')}>
+            <Icon name="solid:caret-down" />
+          </span>
         </span>
-
-        <span className={twJoin('hidden', 'sidebar-open:block')}>
-          <Icon name="solid:caret-down" />
-        </span>
-      </span>
+      </div>
     </TokenThemeWrapper>
   )
 }

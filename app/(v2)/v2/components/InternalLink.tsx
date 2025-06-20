@@ -2,7 +2,7 @@
 
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 
 /**
  * Hook for programmatic navigation with automatic loading state management
@@ -37,19 +37,6 @@ export function useInternalLink() {
     },
     [isLoading, dispatch, router],
   )
-
-  // Turn off loading when navigation completes
-  useEffect(() => {
-    if (isLoading) {
-      // Set a timeout as fallback in case pathname doesn't change
-      const timeout = setTimeout(() => {
-        dispatch({ type: 'SET_IS_LOADING', payload: false })
-      }, 5000)
-
-      // Clean up timeout if component unmounts
-      return () => clearTimeout(timeout)
-    }
-  }, [isLoading, dispatch])
 
   return { navigate, isLoading }
 }

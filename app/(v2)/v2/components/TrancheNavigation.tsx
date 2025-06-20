@@ -20,7 +20,8 @@ function TrancheNavigationButton({
     <button
       className={twMerge(
         'cursor-pointer',
-        'h-4 w-full rounded-[calc(var(--spacing)*2)]',
+        'h-bar-height-standard',
+        'w-full rounded-[calc(var(--spacing)*2)]',
         'flex items-center justify-center',
         'transition-all',
         'flex-col gap-1',
@@ -135,11 +136,7 @@ export function TrancheNavigation({
               }}
             />
 
-            <SourceLabel
-              sourceId={sourceId}
-              isShortened={true}
-              className="sr-only"
-            />
+            <SourceLabel sourceId={sourceId} isShortened={true} />
           </TokenThemeWrapper>
         )
       }}

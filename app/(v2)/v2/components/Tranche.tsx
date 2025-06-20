@@ -1,8 +1,8 @@
 'use client'
 
 import { Icon } from '@/components/Icon'
+import { MarkdownContainer } from '@/components/MarkdownContainer'
 import { BidCard, bidCardFields } from '@v2/components/BidCard'
-import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
@@ -141,7 +141,9 @@ export function Tranche({
               : 'bg-token-color/40',
         )}
       >
-        <SourceLabel sourceId={sourceId} />
+        <div>
+          <MarkdownContainer content={metadata} />
+        </div>
 
         <div className={twJoin('flex items-center gap-2')}>
           <span
@@ -189,7 +191,7 @@ export function Tranche({
           )}
         >
           {bidsInTranche.length > 0 && (
-            <div className="relative h-6">
+            <div className="relative h-6 shrink-0">
               {bidCardFields.map(({ key, label }) => (
                 <div
                   id={`bid-card-field-label--${sourceId}-${trancheId}-${key}`}

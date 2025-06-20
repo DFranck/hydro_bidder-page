@@ -59,8 +59,8 @@ export function BidDetailsModal({
       sourceId={sourceId}
       className={twJoin(
         'fixed inset-0 z-20',
-        'top-[calc(var(--spacing-bar-height-standard))]',
-        'desktop:top-[calc(var(--spacing-bar-height-large))]',
+        'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-loose))]',
+        'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tightest))]',
         'bg-token-color/20 backdrop-blur-sm',
       )}
       onClick={closeModal}

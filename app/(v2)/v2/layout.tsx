@@ -12,9 +12,7 @@ export default async function Layout({
   children: React.ReactNode
   modal: React.ReactNode
 }) {
-  const { hydroDataPromise, bidDescriptionsPromise } = await fetchData()
-  const hydroData = await hydroDataPromise
-  const bidDescriptions = await bidDescriptionsPromise
+  const dataPromises = fetchData()
 
   return (
     <div
@@ -32,10 +30,7 @@ export default async function Layout({
         '**:scrollbar-thin',
       )}
     >
-      <DataProviderOnServer
-        hydroData={hydroData}
-        bidDescriptions={bidDescriptions}
-      >
+      <DataProviderOnServer dataPromises={dataPromises}>
         <AppHeader />
 
         <main className="contents">

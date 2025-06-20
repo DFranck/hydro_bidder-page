@@ -65,7 +65,7 @@ export function BidCard({
       id={`bid-card--${sourceId}-${bidId}`}
       tabIndex={0}
       className={twMerge(
-        'relative z-10',
+        'relative z-10 shrink-0',
         'group overflow-hidden',
         'grid grid-cols-[min-content_auto_min-content]',
         'outline-none',

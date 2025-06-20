@@ -1,4 +1,5 @@
 import { breakLongStringsEvery } from "@/lib/breakLongStringsEvery"
+import { useEffect, useRef } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { twMerge } from "tailwind-merge"
@@ -12,12 +13,51 @@ export function MarkdownContainer({
   content?: string
   breakThreshold?: number
 }) {
-  const processedContent = content
-    ? breakLongStringsEvery({ text: content, breakThreshold })
-    : content
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (containerRef.current && content) {
+      // Apply string breaking to the rendered HTML content
+      const container = containerRef.current
+      const textNodes = getTextNodes(container)
+
+      textNodes.forEach((node) => {
+        if (node.textContent && node.textContent.length > breakThreshold) {
+          const processedText = breakLongStringsEvery({
+            text: node.textContent,
+            breakThreshold,
+          })
+          if (processedText !== node.textContent) {
+            // Replace the text node with a span that can render HTML entities
+            const span = document.createElement("span")
+            span.innerHTML = processedText
+            node.parentNode?.replaceChild(span, node)
+          }
+        }
+      })
+    }
+  }, [content, breakThreshold])
+
+  // Helper function to get all text nodes in the container
+  const getTextNodes = (element: Node): Text[] => {
+    const textNodes: Text[] = []
+    const walker = document.createTreeWalker(
+      element,
+      NodeFilter.SHOW_TEXT,
+      null
+    )
+
+    let node
+    while ((node = walker.nextNode())) {
+      textNodes.push(node as Text)
+    }
+
+    return textNodes
+  }
 
   return (
     <div
+      ref={containerRef}
       className={twMerge(
         `
           prose
@@ -48,7 +88,7 @@ export function MarkdownContainer({
       )}
     >
       <Markdown remarkPlugins={[remarkGfm]}>
-        {processedContent?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
+        {content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
       </Markdown>
     </div>
   )

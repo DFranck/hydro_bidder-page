@@ -5,11 +5,11 @@ import {
   HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
   HYDRO_TELEGRAM_COMMUNITY_URL,
 } from '@/config'
+import { InternalLink } from '@v2/components/InternalLink'
 import { Logo } from '@v2/components/Logo'
 import { MenuItem, ResponsiveMenu } from '@v2/components/ResponsiveMenu'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { AppAction } from '@v2/state/reducer'
-import Link from 'next/link'
 import { twJoin } from 'tailwind-merge'
 
 function getMenuItems(
@@ -127,9 +127,9 @@ export function AppHeader() {
           'pl-loose desktop:pl-tight py-1',
         )}
       >
-        <Link href="/v2" className={twJoin('relative block h-full')}>
+        <InternalLink href="/v2" className={twJoin('relative block h-full')}>
           <Logo />
-        </Link>
+        </InternalLink>
       </div>
 
       <ResponsiveMenu

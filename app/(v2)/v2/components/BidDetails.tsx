@@ -119,7 +119,10 @@ export function BidDetails({
         </aside>
 
         <div className="p-loosest desktop:pr-80 text-balance">
-          <MarkdownContainer content={bidDescription?.description} />
+          <MarkdownContainer
+            breakThreshold={24}
+            content={bidDescription?.description}
+          />
         </div>
       </main>
     </TokenThemeWrapper>

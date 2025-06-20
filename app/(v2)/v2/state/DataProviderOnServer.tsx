@@ -31,41 +31,60 @@ export const initialState: AppState = {
   isLoading: false,
 }
 
-export function DataProviderOnServer({
+interface DataPromises {
+  hydroDataPromise: Promise<
+    Array<{
+      sourceId: SourceID
+      data: {
+        constants: any
+        totalLockedTokens: number
+        currentRound: any
+        tranches: Tranche[]
+        augmentedBids: BidRevampMetrics[]
+      }
+    }>
+  >
+  bidDescriptionsPromise: Promise<Record<number, BidMetaData>>
+}
+
+async function DataLoader({
   children,
-  hydroData,
-  bidDescriptions,
+  dataPromises,
 }: {
   children: React.ReactNode
-  hydroData: Array<{
-    sourceId: SourceID
-    data: {
-      constants: any
-      totalLockedTokens: number
-      currentRound: any
-      tranches: Tranche[]
-      augmentedBids: BidRevampMetrics[]
-    }
-  }> | null
-  bidDescriptions: Record<number, BidMetaData>
+  dataPromises: DataPromises
+}) {
+  const [hydroData, bidDescriptions] = await Promise.all([
+    dataPromises.hydroDataPromise,
+    dataPromises.bidDescriptionsPromise,
+  ])
+
+  return (
+    <DataProviderOnClient
+      hydroData={hydroData}
+      bidDescriptions={bidDescriptions}
+    >
+      {children}
+    </DataProviderOnClient>
+  )
+}
+
+export function DataProviderOnServer({
+  children,
+  dataPromises,
+}: {
+  children: React.ReactNode
+  dataPromises: DataPromises
 }) {
   return (
     <Suspense
       fallback={
-        <>
-          {/* Render the header and sidebar with initial state */}
-          <DataProviderOnClient hydroData={null} bidDescriptions={{}}>
-            {children}
-          </DataProviderOnClient>
-        </>
+        <DataProviderOnClient hydroData={null} bidDescriptions={{}}>
+          {children}
+        </DataProviderOnClient>
       }
     >
-      <DataProviderOnClient
-        hydroData={hydroData}
-        bidDescriptions={bidDescriptions}
-      >
-        {children}
-      </DataProviderOnClient>
+      <DataLoader dataPromises={dataPromises}>{children}</DataLoader>
     </Suspense>
   )
 }
