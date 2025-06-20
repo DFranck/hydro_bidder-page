@@ -45,7 +45,6 @@ export function BidDetails({
 
   const {
     atomPrice,
-    bidMetaDataById,
     bidsInfo,
     currentRoundId,
     votes,
@@ -62,15 +61,13 @@ export function BidDetails({
     projectName,
     projectUrl,
     title,
-  } = bidMetaData
+  } = bidMetaData ?? {}
 
   const bid = bidsInfo[bidId]
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
-
-  const bidInfoFromGithub = bidMetaDataById[bidId]
 
   const bidMetricsFromNumia = metricsForPostHydroBids.find(
     (metric) => Number(metric.id) === bidId
@@ -81,10 +78,10 @@ export function BidDetails({
     onchainTributeUsdc: 0,
   }
 
-  if (!bidInfoFromGithub && process.env.NODE_ENV !== "development") {
+  if (!bid.isWhitelisted && process.env.NODE_ENV !== "development") {
     return (
       <ErrorBox>
-        This bid is active on the Hydro smart sontract but has not yet been
+        This bid is active on the Hydro smart contract but has not yet been
         whitelisted for the front-end by the Hydro Team. Check back later or
         contact the Hydro Team in the{" "}
         <StyledText
@@ -129,7 +126,7 @@ export function BidDetails({
 
   return (
     <ContentContainer className="py-6">
-      <BlurryBackdropBox className="p-12">
+      <BlurryBackdropBox className="p-4 md:p-12">
         {hasVotedForBid && (
           <div
             className="
@@ -152,6 +149,7 @@ export function BidDetails({
         <div
           className="
             grid
+            grid-cols-1
             gap-12
             md:grid-cols-[3fr_1fr]
           "
@@ -170,23 +168,24 @@ export function BidDetails({
             <div className="flex flex-row items-center gap-4">
               <div
                 className="
-                  flex
+                  hidden
                   size-12
-                  shrink-0
-                  items-center
-                  justify-center
                   rounded-full
                   bg-palette-beige/20
+                  md:flex
+                  md:shrink-0
+                  md:items-center
+                  md:justify-center
                 "
               >
                 <Icon name="solid:scroll" />
               </div>
-              <StyledText as="h2" variant="h2">
+              <StyledText as="h2" variant="h2" className="text-2xl sm:text-4xl">
                 {title}
               </StyledText>
             </div>
 
-            <div className="flex flex-col gap-6 pl-16">
+            <div className="flex flex-col gap-6 p-0 md:pl-16">
               {aboutProject && (
                 <div className="flex flex-col gap-3">
                   <StyledText
@@ -222,7 +221,10 @@ export function BidDetails({
                   >
                     Bid Description
                   </StyledText>
-                  <MarkdownContainer content={description} />
+                  <MarkdownContainer
+                    content={description}
+                    className="break-all"
+                  />
                 </div>
               )}
               {committeeComments && (
@@ -349,7 +351,7 @@ export function BidDetails({
                       </StyledText>
                     </Tooltip>
                     <div className="max-w-64 overflow-x-auto text-xl font-bold">
-                      <BidPolApr bidId={bidId} />
+                      <BidPolApr />
                     </div>
                   </div>
                 )}

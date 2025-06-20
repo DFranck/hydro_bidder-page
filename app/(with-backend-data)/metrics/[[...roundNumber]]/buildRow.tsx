@@ -12,14 +12,12 @@ import { InvisibleLink } from "@/components/InvisibleLink"
 import { StyledText } from "@/components/StyledText"
 import {
   AugmentedBidFromNumiaSlimmed,
-  BidMetaDataSlimmed,
   BidRevampMetrics,
 } from "@/contract-apis/types"
 import { pluralize } from "@/lib/pluralize"
 
 export function buildRow(
   numiaBid: BidRevampMetrics | AugmentedBidFromNumiaSlimmed,
-  bidMetaData: BidMetaDataSlimmed,
   bidFromContract: BidRevampMetrics,
   requestedPreHydro: boolean
 ) {
@@ -32,16 +30,16 @@ export function buildRow(
     projectName = bid.projectName
     title = bid.title
   } else {
+    const regularBid = numiaBid as BidRevampMetrics
     rowURL = `/bids/${numiaBid.id}`
-    projectLogoUrl = bidMetaData?.projectLogoUrl ?? ""
-    projectName = bidMetaData?.projectName ?? ""
-    title = bidMetaData?.title ?? ""
+    projectLogoUrl = regularBid?.projectLogoUrl ?? ""
+    projectName = regularBid?.projectName ?? ""
+    title = regularBid?.projectTitle ?? ""
   }
 
   return {
     _bid: numiaBid,
     _bidFromContract: bidFromContract,
-    _bidMetaData: bidMetaData,
 
     logoAndTitle: (
       <InvisibleLink href={rowURL}>
@@ -96,7 +94,7 @@ export function buildRow(
             <StyledText variant="mathSymbol">%</StyledText>
           </StyledText>
         ) : (
-          <BidPolApr bidId={Number(numiaBid.id)} />
+          <BidPolApr />
         )}
       </InvisibleLink>
     ),

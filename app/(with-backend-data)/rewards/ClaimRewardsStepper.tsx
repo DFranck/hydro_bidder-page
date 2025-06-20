@@ -26,7 +26,7 @@ import {
 import { ReactNode, useEffect, useState } from "react"
 import { Step } from "../lock-atom/steppers/Step"
 
-type ClaimRewardsStep = "Init" | "ConvertToAtom"
+export type ClaimRewardsStep = "Init" | "ConvertToAtom"
 
 export default function ClaimRewardsStepper({
   tribute,
@@ -107,6 +107,7 @@ export default function ClaimRewardsStepper({
         setSkipApiRoute(route)
         setStep("ConvertToAtom")
       } else {
+        setToasts([toastMessages.claimingRewardsSuccess])
         onExit(true)
       }
 
@@ -323,7 +324,7 @@ export default function ClaimRewardsStepper({
               <div className="flex flex-col justify-between gap-6">
                 <div className="flex flex-col gap-1">
                   <StyledText>
-                    {formatAmount(skipApiRoute.amountIn)}&nbsp;
+                    {formatAmount(skipApiRoute?.amountIn)}&nbsp;
                     <StyledText variant="footnote">{tribute!.denom}</StyledText>
                   </StyledText>
                   <StyledText>
@@ -333,6 +334,7 @@ export default function ClaimRewardsStepper({
                       href={srcAddressUrl}
                       target="_blank"
                       variant="link"
+                      className="break-all"
                     >
                       {address}
                     </StyledText>
@@ -350,6 +352,7 @@ export default function ClaimRewardsStepper({
                       variant="link"
                       href={destAddressUrl}
                       target="_blank"
+                      className="break-all"
                     >
                       {cosmosHubAddress}
                     </StyledText>

@@ -188,7 +188,6 @@ export default function AirdropsPage() {
   return (
     <>
       <StatCardsContainer>
-        <CurrentRoundUniqueWallets />
         <AllTimeAverageAtomLockedPerWallet />
         <AllTimeAverageRoundsPerWallet />
       </StatCardsContainer>

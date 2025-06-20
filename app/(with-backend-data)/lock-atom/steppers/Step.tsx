@@ -2,13 +2,25 @@
 
 import { Card } from "@/components/Card"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
-import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { revalidateTag } from "@/lib/revalidateTag"
+import { cn } from "@/lib/utils"
+import { AlertCircle, Check, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { ReactNode, useEffect } from "react"
+import { ReactNode, useEffect, useState } from "react"
+import { ClaimRewardsStep } from "../../rewards/ClaimRewardsStepper"
+import { ContinueFromNeutronStep } from "./ContinueFromNeutronStepper"
+import { LockStep } from "./LockStepper"
+import { RevertFromHubStep } from "./RevertFromHubStepper"
+import { RevertFromNeutronStep } from "./RevertFromNeutronStepper"
+
+interface StakingStep {
+  id: number
+  title: string
+  status: "default" | "pending" | "error" | "success"
+}
 
 export function Step({
   title,
@@ -16,6 +28,11 @@ export function Step({
   buttons,
   isWorking,
   revalidateCache,
+  steps: currentStep,
+  stepLabels,
+  execute,
+  amount,
+  modalTitle,
 }: {
   title?: ReactNode
   contents: ReactNode
@@ -27,9 +44,159 @@ export function Step({
   }[]
   isWorking?: boolean
   revalidateCache?: boolean
+  steps?:
+    | LockStep
+    | RevertFromHubStep
+    | RevertFromNeutronStep
+    | ClaimRewardsStep
+    | ContinueFromNeutronStep
+  stepLabels?: {
+    labelOne: string
+    labelTwo: string
+    labelThree: string
+  }
+  execute?: () => Promise<void>
+  amount?: string
+  modalTitle?: string
 }) {
   const { setToasts } = useToasts()
   const router = useRouter()
+
+  const [lastActiveStep, setLastActiveStep] = useState<number>(1)
+
+  useEffect(() => {
+    if (
+      currentStep !== "Error" &&
+      currentStep !== "Init" &&
+      currentStep !== "Success"
+    ) {
+      if (
+        currentStep === "WaitingForTokenizeSigning" ||
+        currentStep === "WaitingForTokenizeBroadcast" ||
+        currentStep === "WaitingForRedeemSigning"
+      ) {
+        setLastActiveStep(1)
+      } else if (
+        currentStep === "WaitingForIBCSigning" ||
+        currentStep === "WaitingForIBCBroadcastAndRelay"
+      ) {
+        setLastActiveStep(2)
+      } else if (
+        currentStep === "WaitingForLockingSigning" ||
+        currentStep === "WaitingForLockingBroadcast"
+      ) {
+        setLastActiveStep(3)
+      }
+    }
+  }, [currentStep])
+
+  useEffect(() => {
+    if (!!currentStep && !["Init", "Success"].includes(currentStep)) {
+      if (execute) {
+        execute()
+      }
+    }
+  }, [])
+
+  const getCurrentStepInfo = (): {
+    activeStep: number
+    status: "default" | "pending" | "error" | "success"
+    failedStep?: number
+  } => {
+    if (currentStep === "Success") {
+      return { activeStep: 3, status: "success" }
+    }
+
+    if (currentStep === "Init") {
+      return { activeStep: 1, status: "default" }
+    }
+
+    if (
+      currentStep === "WaitingForTokenizeSigning" ||
+      currentStep === "WaitingForTokenizeBroadcast" ||
+      currentStep === "WaitingForRedeemSigning"
+    ) {
+      return { activeStep: 1, status: "pending" }
+    }
+
+    if (
+      currentStep === "WaitingForIBCSigning" ||
+      currentStep === "WaitingForIBCBroadcastAndRelay" ||
+      currentStep === "WaitingForRedeemBroadcast"
+    ) {
+      return { activeStep: 2, status: "pending" }
+    }
+
+    if (
+      currentStep === "WaitingForLockingSigning" ||
+      currentStep === "WaitingForLockingBroadcast" ||
+      currentStep === "WaitingForIBCBroadcast"
+    ) {
+      return { activeStep: 3, status: "pending" }
+    }
+
+    if (currentStep === "Error" || currentStep === "NoHubGasError") {
+      const failedAtStep = lastActiveStep
+
+      return {
+        activeStep: failedAtStep,
+        status: "error",
+        failedStep: failedAtStep,
+      }
+    }
+
+    return { activeStep: 1, status: "default", failedStep: lastActiveStep }
+  }
+
+  const { activeStep, status, failedStep } = getCurrentStepInfo()
+
+  const generateSteps = (): StakingStep[] => {
+    const baseSteps = [
+      {
+        id: 1,
+        title: stepLabels?.labelOne ?? "Tokenize your Staked ATOM",
+      },
+      {
+        id: 2,
+        title: stepLabels?.labelTwo ?? "Transfer your Tokenized ATOM to Hydro",
+      },
+      {
+        id: 3,
+        title: stepLabels?.labelThree ?? "Lock your ATOM, get voting power",
+      },
+    ]
+
+    return baseSteps.map((step) => {
+      let stepStatus: "default" | "pending" | "error" | "success" = "default"
+
+      if (currentStep === "Success") {
+        stepStatus = "success"
+      } else if (currentStep === "Error" && failedStep !== undefined) {
+        if (step.id === failedStep) {
+          stepStatus = "error"
+        } else if (step.id < failedStep) {
+          stepStatus = "success"
+        } else {
+          stepStatus = "default"
+        }
+      } else if (currentStep === "Init") {
+        stepStatus = "default"
+      } else if (step.id === activeStep) {
+        stepStatus = status
+      } else if (step.id < activeStep) {
+        stepStatus = "success"
+      } else {
+        stepStatus = "default"
+      }
+
+      return {
+        ...step,
+        status: stepStatus,
+      }
+    })
+  }
+
+  const steps = generateSteps()
 
   useEffect(() => {
     if (revalidateCache) {
@@ -51,47 +218,119 @@ export function Step({
 
   return (
     <Card
-      className={`
-        mx-auto
-        max-w-(--breakpoint-sm)
-      `}
+      className={cn("m-6 grid gap-4 md:m-auto", {
+        "h-auto  w-[350px] md:h-[300px] md:w-[650px] md:grid-cols-1":
+          !currentStep,
+        "w-md md:grid-cols-12": !!currentStep,
+      })}
     >
-      {title && <Card.Header title={title} />}
-
-      {contents && (
-        <Card.Body>
-          <ConditionalWrapper
-            condition={!!isWorking}
-            wrapper={(children) => (
-              <div className="flex items-center gap-6">
-                <div className="shrink-0 animate-spin text-2xl">
-                  <Icon name="solid:loader" />
+      {!!currentStep && (
+        <div className="col-span-12 md:col-span-4">
+          {!!amount && (
+            <div className="mb-4 hidden md:flex md:flex-col">
+              <StyledText className="leading-6 tracking-wide uppercase">
+                {modalTitle ?? " Lock Amount"}
+              </StyledText>
+              <StyledText variant="h4">{amount}</StyledText>
+            </div>
+          )}
+          <div className="flex flex-row justify-center md:flex-col md:justify-start md:space-y-6">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex items-start gap-3">
+                <div className="flex flex-row items-center md:flex-col">
+                  <div
+                    className={cn(
+                      "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
+                      {
+                        "border-palette-green bg-palette-green text-white":
+                          step.status === "success",
+                        "border-red-500 bg-red-500 text-white":
+                          step.status === "error",
+                        "border-palette-blue/90 bg-palette-blue/90 text-white":
+                          step.status === "pending",
+                        "border-gray-200 bg-white text-gray-400":
+                          step.status === "default",
+                      }
+                    )}
+                  >
+                    {step.status === "success" ? (
+                      <Check size={20} />
+                    ) : step.status === "error" ? (
+                      <AlertCircle size={20} />
+                    ) : step.status === "pending" ? (
+                      <Loader2 size={20} className="animate-spin" />
+                    ) : (
+                      step.id
+                    )}
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={cn(
+                        "mx-2 mt-0 h-0.5  w-8 bg-gray-200 md:mx-0 md:mt-2 md:h-16 md:w-0.5",
+                        {
+                          "bg-palette-green": step.status === "success",
+                          "bg-palette-blue/90": step.status === "pending",
+                        }
+                      )}
+                    />
+                  )}
                 </div>
-                <div className="flex flex-col gap-3">{children}</div>
+                <div className="hidden pt-2 md:block">
+                  <p
+                    className={cn("text-sm font-medium", {
+                      success: step.status === "success",
+                      "text-red-600": step.status === "error",
+                      "text-palette-blue/90": step.status === "pending",
+                      "text-gray-500": step.status === "default",
+                    })}
+                  >
+                    {step.title}
+                  </p>
+                </div>
               </div>
-            )}
-          >
-            {contents}
-          </ConditionalWrapper>
-        </Card.Body>
+            ))}
+          </div>
+        </div>
       )}
+      <div className="col-span-12 flex flex-col justify-start  gap-2 md:col-span-8 md:justify-center">
+        {title && (
+          <Card.Header
+            title={title}
+            variant="h5"
+            className="mt-4 pb-0 md:mt-0"
+          />
+        )}
 
-      {buttons && (
-        <Card.Footer>
-          {buttons.map((button, index) => (
-            <StyledText
-              as="button"
-              key={index}
-              className={button.className}
-              variant={index === 0 ? "button.primary" : "button.secondary"}
-              onClick={button.onClick}
-              disabled={button.disabled}
+        {contents && (
+          <Card.Body>
+            <ConditionalWrapper
+              condition={!!isWorking}
+              wrapper={(children) => (
+                <div className="flex flex-col gap-3">{children}</div>
+              )}
             >
-              {button.label}
-            </StyledText>
-          ))}
-        </Card.Footer>
-      )}
+              {contents}
+            </ConditionalWrapper>
+          </Card.Body>
+        )}
+
+        {buttons && (
+          <Card.Footer>
+            {buttons.map((button, index) => (
+              <StyledText
+                as="button"
+                key={index}
+                className={button.className}
+                variant={index === 0 ? "button.primary" : "button.secondary"}
+                onClick={button.onClick}
+                disabled={button.disabled}
+              >
+                {button.label}
+              </StyledText>
+            ))}
+          </Card.Footer>
+        )}
+      </div>
     </Card>
   )
 }

@@ -1,4 +1,4 @@
-import { StyledText } from "@/components/StyledText"
+import { StyledText, StyledTextVariant } from "@/components/StyledText"
 import { ComponentProps, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -28,11 +28,13 @@ export function Card({ children, className, ...otherProps }: CardProps) {
 }
 
 interface CardHeaderProps extends Omit<CardProps, "title"> {
-  title?: ReactNode
+  title?: ReactNode;
+  variant?: StyledTextVariant;
 }
 
 function CardHeader({
   title,
+  variant = "h3",
   children,
   className,
   ...otherProps
@@ -40,7 +42,7 @@ function CardHeader({
   return (
     <div className={twMerge(`pb-6`, className)} {...otherProps}>
       {(title || (!title && children)) && (
-        <StyledText as="h2" variant="h3">
+        <StyledText as="h2" variant={variant}>
           {title ?? children}
         </StyledText>
       )}

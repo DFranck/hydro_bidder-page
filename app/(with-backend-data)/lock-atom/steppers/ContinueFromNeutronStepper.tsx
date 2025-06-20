@@ -5,15 +5,17 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { signLockTokens } from "../transactions/signLockTokens"
-import { useIncompleteNotices } from "../useIncompleteNotices"
 import { CommonSteps } from "./CommonSteps"
 import {
   getCommonStepContents,
   StepContent,
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
+import { formatAmount } from "@/lib/formatAmount"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
-type ContinueFromNeutronStep =
+export type ContinueFromNeutronStep =
   | "Init"
   | "WaitingForLockingSigning"
   | "WaitingForLockingBroadcast"
@@ -21,40 +23,36 @@ type ContinueFromNeutronStep =
   | "Error"
 
 export const ContinueFromNeutronStepper = ({
-  amount,
+  amount: lockedAmount,
   validator,
   denom,
-  startState,
   onExit,
   validatorMap,
 }: {
   amount: string
   validator: string
   denom: string
-  startState?: ContinueFromNeutronStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
-  const { hubChain, neutronChain, deleteIncompleteNotice } =
-    useIncompleteNotices()
+  const { deleteIncompleteNotice } = useIncompleteNotices()
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useChainsAndSigners()
   const { lockedAtomEpochInNanos } = useBackendData()
   const router = useRouter()
-  const [step, setStep] = useState<ContinueFromNeutronStep>(
-    startState || "Init"
-  )
+  const [step, setStep] = useState<ContinueFromNeutronStep>("Init")
   const [errorLog, setErrorLog] = useState<string>(
     "ContinueFromNeutronStepper: "
   )
   const [showErrorLog, setShowErrorLog] = useState(false)
   const [lockDuration, setLockDuration] = useState(lockedAtomEpochInNanos)
+  const [amount, setNewAmount] = useState(lockedAmount)
 
   const executeContinueFromNeutron = async () => {
     try {
       setErrorLog(
         `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
       )
-      const hubSigner = await hubChain.getSigningStargateClient()
-      const neutronSigner = await neutronChain.getSigningStargateClient()
 
       if (
         !hubChain.address ||
@@ -106,6 +104,8 @@ export const ContinueFromNeutronStepper = ({
         },
         setLockDuration,
         numApprovals: 1,
+        maxAmount: lockedAmount,
+        setNewAmount,
       })
     }
 
@@ -127,6 +127,9 @@ export const ContinueFromNeutronStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={executeContinueFromNeutron}
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

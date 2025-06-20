@@ -40,18 +40,12 @@ export interface AugmentedBackendDataBeforeWallet {
   currentRoundPrices: RoundPrices
   atomPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
-  bidMetaDataById: BidMetaDataByIdSlimmed
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
   tranches: Tranche[]
-  lockedAtomIsAtCapacityGlobal: boolean
   lockedAtomEpochInNanos: number
-  lockedAtomMaxGlobal: number
   lockedAtomMaxWallet: number
-  lockedAtomPercentageGlobal: number
-  lockedAtomRemainingCapacityGlobal: number
-  lockedAtomTotalGlobal: number
   metricsForPostHydroBids: AugmentedBidFromNumiaSlimmed[]
   metricsForPreHydroBids: AugmentedBidFromNumiaSlimmed[]
   metricsGlobal: SanitizedMetricsFromNumia
@@ -188,6 +182,10 @@ export interface BidRevampMetrics {
   id: number
   pointProgramUrl: any
   points: [amount: number, denom: string] | []
+  projectName: string
+  projectLogoUrl: string
+  projectTitle: string
+  isWhitelisted: boolean
   power: number
   request_amount: any
   roundId: number
@@ -273,7 +271,6 @@ export type RawHydroMetaData = {
   liquidity_deployments: LiquidityDeployment[]
   round_end: string
   round_id: number
-  total_locked_tokens: number
   tranches: Tranche[]
 }
 

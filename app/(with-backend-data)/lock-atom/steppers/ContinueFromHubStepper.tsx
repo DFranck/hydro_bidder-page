@@ -8,13 +8,15 @@ import { useState } from "react"
 import { broadcastAndRelayIBCHubToNeutron } from "../transactions/broadcastAndRelayIBCHubToNeutron"
 import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
 import { signLockTokens } from "../transactions/signLockTokens"
-import { useIncompleteNotices } from "../useIncompleteNotices"
 import { CommonSteps } from "./CommonSteps"
 import {
   getCommonStepContents,
   StepContent,
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
+import { formatAmount } from "@/lib/formatAmount"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 type ContinueFromHubStep =
   | "Init"
@@ -26,27 +28,27 @@ type ContinueFromHubStep =
   | "Error"
 
 export const ContinueFromHubStepper = ({
-  amount,
+  amount: lockedAmount,
   validator,
   denom,
-  startState,
   onExit,
   validatorMap,
 }: {
   amount: string
   validator: string
   denom: string
-  startState?: ContinueFromHubStep
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
-  const { hubChain, neutronChain, deleteIncompleteNotice } =
-    useIncompleteNotices()
+  const { deleteIncompleteNotice } = useIncompleteNotices()
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useChainsAndSigners()
   const { lockedAtomEpochInNanos } = useBackendData()
-  const [step, setStep] = useState<ContinueFromHubStep>(startState || "Init")
+  const [step, setStep] = useState<ContinueFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
   const [lockDuration, setLockDuration] = useState(EPOCH_LENGTH)
+  const [amount, setNewAmount] = useState(lockedAmount)
   const router = useRouter()
 
   const execute = async () => {
@@ -54,8 +56,6 @@ export const ContinueFromHubStepper = ({
       setErrorLog(
         `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
       )
-      const hubSigner = await hubChain.getSigningStargateClient()
-      const neutronSigner = await neutronChain.getSigningStargateClient()
 
       if (
         !hubChain.address ||
@@ -129,6 +129,8 @@ export const ContinueFromHubStepper = ({
         },
         setLockDuration,
         numApprovals: 2,
+        maxAmount: lockedAmount,
+        setNewAmount,
       })
     }
 
@@ -154,6 +156,9 @@ export const ContinueFromHubStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
+      execute={execute}
+      amount={`${formatAmount(amount)} ATOM`}
     />
   )
 }

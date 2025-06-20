@@ -1,6 +1,3 @@
-export const CHAIN_NAME = "localchain"
-export const CHAIN_NAME_STORAGE_KEY = "selected-chain"
-
 export enum AllowedLockupPeriodInEpochs {
   ONE_EPOCH = 1,
   TWO_EPOCHS = 2,
@@ -9,6 +6,8 @@ export enum AllowedLockupPeriodInEpochs {
 
 export const HYDRO_TELEGRAM_COMMUNITY_URL = "https://t.me/hydro_community"
 export const HYDRO_TELEGRAM_ANNOUNCEMENTS_URL = "https://t.me/hydro_announcements"
+
+export const DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS = 3
 
 export const SOCIAL_MEDIA_LINKS = [
   {
@@ -39,13 +38,7 @@ export const sharedEndpoints = {
   },
 }
 
-export const DEFAULT_EPOCH_LENGTH = 2628000000000000
-
-export const DEFAULT_TOP_N = 5
-
 export const EPOCH_LENGTH = 2628000000000000
-
-export const DEFAULT_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN || "localchain"
 
 export const hubChain = {
   $schema: "../chain.schema.json",

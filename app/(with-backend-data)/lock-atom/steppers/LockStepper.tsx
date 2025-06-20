@@ -2,10 +2,8 @@
 
 import { CommonSteps } from "@/app/(with-backend-data)/lock-atom/steppers/CommonSteps"
 import { Step } from "@/app/(with-backend-data)/lock-atom/steppers/Step"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
-import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { getLockupPeriodMultiplier } from "@/lib/getLockupPeriodMultiplier"
@@ -27,15 +25,9 @@ import { signATOMGasTransferToNeutron } from "../transactions/signATOMGasTransfe
 import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
 import { signLockTokens } from "../transactions/signLockTokens"
 import { signTokenizeShares } from "../transactions/signTokenizeShares"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 
-function getValidatorMoniker(
-  validator: string,
-  validatorMap: Map<string, Validator>
-): string {
-  return validatorMap.get(validator)?.description.moniker || validator
-}
-
-type LockStep =
+export type LockStep =
   | "Init"
   | "NoHubGasError"
   | "WaitingForNeutronGasSigning"
@@ -53,19 +45,17 @@ export const LockStepper = ({
   amount,
   validator,
   lockDuration,
-  startState,
   onExit,
 }: {
   amount: string
   validator: string
   lockDuration: number
-  startState?: LockStep
   onExit: () => void
 }) => {
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
-    useIncompleteNotices()
+    useChainsAndSigners()
   const { lockedAtomEpochInNanos } = useBackendData()
-  const [step, setStep] = useState<LockStep>(startState || "Init")
+  const [step, setStep] = useState<LockStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
   const router = useRouter()
@@ -191,19 +181,21 @@ export const LockStepper = ({
           title: "Review your Lockup",
           contents: (
             <div className="flex flex-col items-center gap-6">
-              <div className="grid grid-cols-3 items-center gap-10">
+              <div className="grid grid-cols-3 items-center">
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
-                  <div className="text-xs text-palette-beige">ATOM Amount</div>
-                  <div className="text-2xl font-bold">
+                  <div className="text-10 whitespace-nowrap text-palette-beige">
+                    ATOM Amount
+                  </div>
+                  <div className="text-sm font-bold">
                     {formatAmount(amount)}
                   </div>
                 </div>
 
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
-                  <div className="text-xs text-palette-beige">
+                  <div className="text-10 whitespace-nowrap text-palette-beige">
                     Lock Duration
                   </div>
-                  <div className="text-2xl font-bold">
+                  <div className="text-sm font-bold">
                     {pluralize({
                       count: value,
                       prefixCount: true,
@@ -218,7 +210,7 @@ export const LockStepper = ({
                     "rounded-md bg-palette-green/10 px-6 py-3"
                   )}
                 >
-                  <div className="text-xs text-palette-beige">
+                  <div className="text-10 whitespace-nowrap text-palette-beige">
                     Voting Power (
                     {getLockupPeriodMultiplier({
                       lockupTime: lockDuration,
@@ -226,7 +218,7 @@ export const LockStepper = ({
                     })}
                     &thinsp;&times;)
                   </div>
-                  <div className="text-2xl font-bold">
+                  <div className="text-sm font-bold">
                     {formatAmount(
                       scaleLockupPower({
                         lockedAtomEpochInNanos,
@@ -308,20 +300,17 @@ export const LockStepper = ({
       case "WaitingForTokenizeSigning":
         return {
           isWorking: true,
-          title: "(1/3) Tokenize your Staked ATOM",
-          contents: (
-            <p>
-              Approve the transaction in your wallet to continue.
-            </p>
-          ),
+          title: "Tokenize your Staked ATOM",
+          contents: <p>Approve the transaction in your wallet to continue.</p>,
         }
       case "WaitingForTokenizeBroadcast":
         return {
           isWorking: true,
-          title: "(1/3) Tokenize your Staked ATOM",
+          title: "Tokenize your Staked ATOM",
           contents: (
             <p>
-              Wait until your transaction is included in a block. This should only take a few seconds.
+              Wait until your transaction is included in a block. This should
+              only take a few seconds.
             </p>
           ),
         }
@@ -330,22 +319,26 @@ export const LockStepper = ({
           title: "Transaction Error",
           contents: (
             <>
-              <p>
-                This transaction could not be completed. Your staked ATOM has
-                not been locked in Hydro. Refresh the page to try again.
-              </p>
-              <div className="mt-4">
+              <div className="mt-4 overflow-hidden">
                 {!showErrorLog ? (
-                  <StyledText
-                    as="button"
-                    variant="link.subtle"
-                    onClick={() => setShowErrorLog(true)}
-                  >
-                    Show Error Log
-                    <Icon name="solid:chevron-down" />
-                  </StyledText>
+                  <>
+                    <p>
+                      This transaction could not be completed. Your staked ATOM
+                      has not been locked in Hydro. Refresh the page to try
+                      again.
+                    </p>
+                    <StyledText
+                      as="button"
+                      variant="link.subtle"
+                      onClick={() => setShowErrorLog(true)}
+                      className="mt-4"
+                    >
+                      Show Error Log
+                      <Icon name="solid:chevron-down" />
+                    </StyledText>
+                  </>
                 ) : (
-                  <pre className="mt-2 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black">
+                  <pre className="max-h-40 whitespace-pre-wrap rounded bg-gray-100 p-2 text-xs text-black overflow-scroll">
                     {errorLog}
                   </pre>
                 )}
@@ -419,6 +412,7 @@ export const LockStepper = ({
       contents={contents}
       buttons={buttons}
       isWorking={isWorking}
+      steps={step}
     />
   )
 }

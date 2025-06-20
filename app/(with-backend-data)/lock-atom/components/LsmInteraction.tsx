@@ -2,7 +2,6 @@
 
 import { LockForm } from "@/app/(with-backend-data)/lock-atom/components/LockForm"
 import { getValidatorMoniker } from "@/app/(with-backend-data)/lock-atom/functions/getValidatorMoniker"
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Icon } from "@/components/Icon"
@@ -25,24 +24,23 @@ import { RevertFromHubStepper } from "../steppers/RevertFromHubStepper"
 import { RevertFromNeutronStepper } from "../steppers/RevertFromNeutronStepper"
 import { Stepper } from "../types"
 import { LoaderCard } from "./LoaderCard"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 export function LsmInteraction({
   validatorMap,
+  validatorLiquidStakingCap,
 }: {
   validatorMap: Map<string, Validator>
+  validatorLiquidStakingCap: string
 }) {
-  const {
-    lockedAtomIsAtCapacityGlobal,
-    lockedAtomIsAtCapacityWallet,
-    lockedAtomRemainingCapacityGlobal,
-  } = useBackendData()
-  const {
-    hubChain,
-    hubSigner,
-    neutronChain,
-    neutronSigner,
-    incompleteNotices,
-  } = useIncompleteNotices()
+  const { lockedAtomIsAtCapacityWallet } = useBackendData()
+  const { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal } =
+    useGlobalLockupCapacityInfo()
+  const { incompleteNotices } = useIncompleteNotices()
+  const { hubChain, hubSigner, neutronChain, neutronSigner } =
+    useChainsAndSigners()
   const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
   const [numVisibleNotices, setVisibleNotices] = useState(2)
 
@@ -211,7 +209,11 @@ export function LsmInteraction({
               <p>
                 Hydro is currently at max capacity. Please wait for the next
                 round or for the cap to be increased. Check{" "}
-                <StyledText as={Link} href={HYDRO_TELEGRAM_COMMUNITY_URL} variant="link">
+                <StyledText
+                  as={Link}
+                  href={HYDRO_TELEGRAM_COMMUNITY_URL}
+                  variant="link"
+                >
                   Telegram
                 </StyledText>{" "}
                 for updates.
@@ -229,6 +231,7 @@ export function LsmInteraction({
               }
               hubChain={hubChain}
               validatorMap={validatorMap}
+              validatorLiquidStakingCap={validatorLiquidStakingCap}
             />
           )}
         </div>

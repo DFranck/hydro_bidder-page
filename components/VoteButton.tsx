@@ -17,6 +17,7 @@ import {
 import { Wallet } from "@/components/wallet/Wallet"
 import { executeWalletVote } from "@/contract-apis/executeWalletVote"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
@@ -43,12 +44,13 @@ export function VoteButton({
     currentRoundId,
     isWalletConnected,
     lockups,
-    lockedAtomMaxGlobal,
-    lockedAtomTotalGlobal,
     votesByRoundId,
     votingPowerAvailableByTrancheId,
     lockedAtomEpochInNanos,
   } = useBackendData()
+
+  const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
+    useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
   const bid = bidsInfo[bidId]
@@ -127,7 +129,7 @@ export function VoteButton({
     Button = (
       <Wallet
         variant={`button.primary${size ? `.${size}` : ""}` as StyledTextVariant}
-        notifyConnectedCB={() => null}
+        ignoreStatus={true}
       />
     )
   } else if (isLoading) {

@@ -1,6 +1,6 @@
 "use client"
 
-import LoadingState from "@/app/loading"
+import Loading from "@/app/loading"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
@@ -15,12 +15,15 @@ import { twJoin } from "tailwind-merge"
 const WalletProvider = dynamic(
   () => import("@/components/WalletProvider").then((mod) => mod.WalletProvider),
   {
-    loading: () => <LoadingState />,
+    loading: () => <Loading />,
     ssr: false,
   }
 )
 
 import { BackendDataTweaker } from "@/components/BackendDataTweakerLoader"
+import { GlobalLockupInfoProvider } from "./GlobalLockupInfoProvider"
+import { ChainsAndSignersProvider } from "./ChainsAndSignersProvider"
+import { IncompleteNoticesProvider } from "./IncompleteNoticesProvider"
 
 const QueryClientProvider = dynamic(
   () =>
@@ -28,7 +31,7 @@ const QueryClientProvider = dynamic(
       (mod) => mod.QueryClientProvider
     ),
   {
-    loading: () => <LoadingState />,
+    loading: () => <Loading />,
     ssr: false, // Since react-query needs browser APIs
   }
 )
@@ -44,8 +47,6 @@ export function AppWrapper({
     <WalletProvider>
       <QueryClientProvider>
         <ToastContextProvider>
-          <LoadingState />
-
           <div
             className={twJoin(
               "fixed inset-0 -z-10",
@@ -69,16 +70,22 @@ export function AppWrapper({
                 <BackendDataContextProvider
                   rawBackendDataBeforeWallet={rawBackendDataBeforeWallet!}
                 >
-                  {children}
-                  <Suspense
-                    fallback={
-                      <div className="fixed inset-12 z-50 bg-red-500">
-                        Tweaker failed to load
-                      </div>
-                    }
-                  >
-                    <BackendDataTweaker />
-                  </Suspense>
+                  <ChainsAndSignersProvider>
+                    <GlobalLockupInfoProvider>
+                      <IncompleteNoticesProvider>
+                        {children}
+                        <Suspense
+                          fallback={
+                            <div className="fixed inset-12 z-50 bg-red-500">
+                              Tweaker failed to load
+                            </div>
+                          }
+                        >
+                          <BackendDataTweaker />
+                        </Suspense>
+                      </IncompleteNoticesProvider>
+                    </GlobalLockupInfoProvider>
+                  </ChainsAndSignersProvider>
                 </BackendDataContextProvider>
               )}
             >

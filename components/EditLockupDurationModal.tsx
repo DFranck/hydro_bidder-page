@@ -62,7 +62,6 @@ export function EditLockupDurationModal({
   }
 
   function onCloseComplete() {
-    setToasts([])
     setIsLoading(false)
     outerOnCloseComplete()
   }

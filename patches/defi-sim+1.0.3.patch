@@ -1,0 +1,20 @@
+diff --git a/node_modules/defi-sim/dist/concentrated-liquidity-position.js b/node_modules/defi-sim/dist/concentrated-liquidity-position.js
+index b22e035..1f63a26 100644
+--- a/node_modules/defi-sim/dist/concentrated-liquidity-position.js
++++ b/node_modules/defi-sim/dist/concentrated-liquidity-position.js
+@@ -1,13 +1,13 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.ConcentratedLiquidityPosition = void 0;
+-const crypto_1 = require("crypto");
++const isBrowser = typeof window !== "undefined" && typeof window.crypto?.randomUUID === "function";
+ const utils_1 = require("./utils");
+ /** Represents a position in a {@link ConcentratedLiquidityPool | liquidity pool that uses concentrated liquidity} */
+ class ConcentratedLiquidityPosition {
+     constructor(params) {
+         var _a, _b, _c;
+-        this.id = (_a = params.id) !== null && _a !== void 0 ? _a : (0, crypto_1.randomUUID)();
++        this.id = (_a = params.id) ?? (isBrowser ? window.crypto.randomUUID() : require("crypto").randomUUID())
+         this.liquidityPool = params.liquidityPool;
+         this.sqrtRange =
+             (_b = params.sqrtRange) !== null && _b !== void 0 ? _b : params.range.map((v) => Math.sqrt(v));

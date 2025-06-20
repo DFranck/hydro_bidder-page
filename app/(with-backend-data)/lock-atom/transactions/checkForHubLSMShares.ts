@@ -1,15 +1,12 @@
 "use client"
-import { SigningStargateClient } from "@cosmjs/stargate"
+
 import { ChainContext } from "@cosmos-kit/core"
 
 // TODO: unlock and move tokens from this contract after the lock is complete
 // const hydroContractAddress =
 //     "neutron192s005pfsx7j397l4jarhgu8gs2lcgwyuntehp6wundrh8pgkywqgss0tm"
 
-export async function checkForHubLSMShares(
-  hubChain: ChainContext,
-  hubSigner: SigningStargateClient
-) {
+export async function checkForHubLSMShares(hubChain: ChainContext) {
   if (!hubChain.address) {
     throw new Error("Hub chain address not set")
   }

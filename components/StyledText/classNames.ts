@@ -119,6 +119,7 @@ export const classNames = {
   h2: twMerge(classNamesForAllHeadings, "text-4xl"),
   h3: twMerge(classNamesForAllHeadings, "text-3xl"),
   h4: twMerge(classNamesForAllHeadings, "font-body text-lg"),
+  h5: twMerge(classNamesForAllHeadings, "text-xl md:text-2xl"),
 
   "icon.huge": twJoin("text-8xl"),
 

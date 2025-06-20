@@ -65,7 +65,7 @@ export function LockupsTables({
             className={twMerge(cellProps.className, isExpired && "border-x-0")}
             colSpan={isExpired ? tranches.length : undefined}
           >
-            <StyledText as="div" variant="label" className="mb-1 sm:hidden">
+            <StyledText key={`text_cell_${row._lockup.id}-1`} as="div" variant="label" className="mb-1 sm:hidden">
               {tranches[0].name}
             </StyledText>
 

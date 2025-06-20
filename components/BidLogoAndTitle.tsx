@@ -1,26 +1,21 @@
 import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Image from "next/image"
-import { ReactNode } from "react"
 import { twJoin } from "tailwind-merge"
 
 export function BidLogoAndTitle({ bidId }: { bidId: number }) {
-  const { bidMetaDataById, bidsInfo } = useBackendData()
+  const { bidsInfo } = useBackendData()
   const bid = bidsInfo[bidId]
 
   if (!bid) return null
 
-  const {
-    projectLogoUrl,
-    projectName,
-    title = bid.title,
-  } = bidMetaDataById[bidId] || {}
+  const { projectLogoUrl, projectName, projectTitle, title } = bid
 
   return (
     <BidLogoAndTitleLayout
       projectLogoUrl={projectLogoUrl}
       projectName={projectName}
-      title={title}
+      title={projectTitle || title}
     />
   )
 }
@@ -32,7 +27,7 @@ export function BidLogoAndTitleLayout({
 }: {
   projectLogoUrl?: string
   projectName: string
-  title: ReactNode
+  title: string
 }) {
   return (
     <div className="flex items-center gap-2 sm:gap-6">
@@ -47,8 +42,9 @@ export function BidLogoAndTitleLayout({
           <Image
             className="object-contain"
             src={projectLogoUrl}
-            alt={projectName}
+            alt={projectName || title}
             fill={true}
+            sizes="(max-width: 639px) 32px, 48px"
           />
         ) : null}
       </div>
