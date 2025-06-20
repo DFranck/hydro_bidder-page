@@ -29,6 +29,11 @@ export const toastMessages = {
     message: "Locking tokens...",
   },
 
+   lockingUnavailableTokens: {
+    variant: "error",
+    message: "Tokens are not available for locking. Please try again later.",
+  },
+
   lockingTokensSuccess: {
     variant: "success",
     message: "Tokens locked successfully! Reload to see changes.",

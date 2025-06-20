@@ -63,23 +63,23 @@ export function LockupsLST({
 
     setIsCreationModalOpen(false)
 
-    setToasts([toastMessages.lockingTokens])
+    setToasts([toastMessages.lockingUnavailableTokens])
 
-    try {
-      await signLockTokens(
-        neutronChain,
-        neutronSigner,
-        selectedLockDurationInEpochs,
-        neutronTokenDenom,
-        String(amount * 1e6)
-      )
+    // try {
+    //   await signLockTokens(
+    //     neutronChain,
+    //     neutronSigner,
+    //     selectedLockDurationInEpochs,
+    //     neutronTokenDenom,
+    //     String(amount * 1e6)
+    //   )
 
-      setToasts([toastMessages.lockingTokensSuccess])
-    } catch (error) {
-      console.error("Error locking tokens:", error)
-      setToasts([toastMessages.lockingTokensError(error as Error)])
-      setIsCreationModalOpen(true)
-    }
+    //   // setToasts([toastMessages.lockingTokensSuccess])
+    // } catch (error) {
+    //   console.error("Error locking tokens:", error)
+    //   setToasts([toastMessages.lockingTokensError(error as Error)])
+    //   setIsCreationModalOpen(true)
+    // }
   }
 
   useEffect(() => {
