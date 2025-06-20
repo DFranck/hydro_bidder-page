@@ -84,7 +84,7 @@ export function NewLockUpButton({
           <Icon name="solid:chevron-down" />
         </StyledText>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="mx-4 w-80 bg-black md:w-96">
+      <DropdownMenuContent className="w-80 bg-black">
         <DropdownMenuSeparator />
         {MENU_ITEMS.map((item) => (
           <DropdownMenuItem
