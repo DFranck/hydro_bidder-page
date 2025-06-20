@@ -563,6 +563,10 @@ export const needsWalletConnectionTooltip = (
   <p>Connect your wallet to access this feature.</p>
 )
 
+export const notEnoughTokenInWalletTooltip = (
+  <p>You do not have enough tokens in your wallet to lock up.</p>
+)
+
 export const lockupLimitReachedByNetworkTooltip = (
   <p>
     Lockup caps have been reached. Join the{" "}
