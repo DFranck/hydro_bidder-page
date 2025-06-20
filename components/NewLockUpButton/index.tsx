@@ -81,6 +81,7 @@ export function NewLockUpButton({
       <DropdownMenuTrigger asChild>
         <StyledText as={"span"} variant="button.primary">
           New Lockup
+          <Icon name="solid:chevron-down" />
         </StyledText>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mx-4 w-80 bg-black md:w-96">
