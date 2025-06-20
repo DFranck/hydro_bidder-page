@@ -96,7 +96,7 @@ export function BidDetails({
             ['Project Name', bidDescription?.projectName],
             ['Bid in Round', bid.roundId + 1],
             ['Status', bid.status],
-            ['Vote %', <BidVoteShare bid={bid} />],
+            ['Vote %', <BidVoteShare key={bid.id} bid={bid} />],
             ['Voter APR', bid.apr_tribute?.toFixed(2) || '–'],
             [
               'Max Deployment Amount',

@@ -6,7 +6,7 @@ import { BidCard, bidCardFields } from '@v2/components/BidCard'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
 export function Tranche({
@@ -32,80 +32,11 @@ export function Tranche({
   )
   const viewboxRef = useRef<HTMLDivElement>(null)
 
-  if (!tranche) return null
-
-  const { name, metadata } = tranche
-  const { logo, description } = JSON.parse(metadata)
+  const { name, metadata } = tranche ?? {}
+  const { logo, description } = JSON.parse(metadata ?? '{}')
   const allBids = currentRoundDataPerSource?.[sourceId].augmentedBids ?? []
   const userVotedInBucket = false
   const bidsInTranche = allBids.filter((bid) => bid.trancheId === trancheId)
-
-  useEffect(() => {
-    const updateLabelPositions = () => {
-      const container = document.querySelector(
-        `#tranche-content-inner--${sourceId}-${trancheId}`,
-      ) as HTMLElement | null
-
-      if (!container) return
-
-      const containerRect = container.getBoundingClientRect()
-
-      bidCardFields.forEach(({ key }) => {
-        const labelElement = document.querySelector(
-          `#bid-card-field-label--${sourceId}-${trancheId}-${key}`,
-        ) as HTMLElement | null
-        if (!labelElement) return
-
-        const firstValueElement = document.querySelector(
-          [
-            `#tranche-content-inner--${sourceId}-${trancheId}`,
-            `[id^="bid-card-field--${sourceId}-"][id$="-${key}"]`,
-          ].join(' '),
-        ) as HTMLElement | null
-        if (!firstValueElement) return
-
-        const valueRect = firstValueElement.getBoundingClientRect()
-
-        if (valueRect.left === 0 || containerRect.left === 0) {
-          console.warn('Invalid position detected for', key, {
-            valueRect,
-            containerRect,
-          })
-          return
-        }
-
-        // Get the computed padding of the container
-        const containerStyle = window.getComputedStyle(container)
-        const containerPaddingLeft = parseFloat(containerStyle.paddingLeft)
-
-        // Calculate center position accounting for padding
-        const centerPosition =
-          valueRect.left -
-          (containerRect.left + containerPaddingLeft) +
-          valueRect.width / 2
-
-        labelElement.style.left = `${centerPosition}px`
-      })
-    }
-
-    const timeoutId = setTimeout(updateLabelPositions, 0)
-
-    const containerResizeObserver = new ResizeObserver(updateLabelPositions)
-    const container = document.querySelector(
-      `#tranche-content-inner--${sourceId}-${trancheId}`,
-    )
-    if (container) {
-      containerResizeObserver.observe(container)
-    }
-
-    const intervalId = setInterval(updateLabelPositions, 500)
-
-    return () => {
-      clearTimeout(timeoutId)
-      containerResizeObserver.disconnect()
-      clearInterval(intervalId)
-    }
-  }, [bidsInTranche.length, sourceId, trancheId])
 
   const viewboxClassName = twMerge(
     'rounded-standard absolute inset-0 overflow-hidden',

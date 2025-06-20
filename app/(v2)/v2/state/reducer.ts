@@ -1,5 +1,5 @@
 import { Tranche } from '@/app/ts_types/HydroBase.types'
-import { AppState } from './provider'
+import { AppState } from '@v2/state/DataProviderOnServer'
 
 export type AppAction =
   | {

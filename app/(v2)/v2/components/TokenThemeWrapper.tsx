@@ -1,6 +1,6 @@
 import { SourceID } from '@v2/environments'
 
-const tokenColorVars: Record<SourceID, string> = {
+const tokenColorVars: Record<string, string> = {
   atom: 'var(--color-token-atom)',
   stosmo: 'var(--color-token-stosmo)',
 }
