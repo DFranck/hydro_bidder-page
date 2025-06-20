@@ -50,7 +50,7 @@ export function NewLockUpButton({
       action: () => handleStAtom(),
       isDisabled: verifyLockupCapacity || amountOfsTAtomInWallet === 0,
       cta: {
-        label: "Get stATOM",
+        label: "Get",
         href: "https://go.skip.build?src_asset=uatom&src_chain=cosmoshub-4&dest_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&dest_chain=neutron-1&amount_in=&amount_out=",
       },
     },
@@ -59,7 +59,7 @@ export function NewLockUpButton({
       action: () => handleDAtom(),
       isDisabled: verifyLockupCapacity || amountOfdAtomInWallet === 0,
       cta: {
-        label: "Get dtATOM",
+        label: "Get",
         href: "https://go.skip.build?src_asset=uatom&src_chain=cosmoshub-4&dest_asset=factory%2Fneutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa%2Fudatom&dest_chain=neutron-1&amount_in=&amount_out=",
       },
     },
@@ -71,7 +71,7 @@ export function NewLockUpButton({
         lockedAtomPercentageWallet === 100 ||
         lockedAtomPercentageGlobal === 100,
       cta: {
-        label: "Stake ATOM",
+        label: "Get",
         href: "https://www.mintscan.io/wallet/stake?chain=cosmos&type=stake",
       },
     },
@@ -116,7 +116,10 @@ export function NewLockUpButton({
                   </Tooltip>
                 )}
               >
-                <StyledText onClick={item.isDisabled ? () => {} : item.action}>
+                <StyledText
+                  variant="h4"
+                  onClick={item.isDisabled ? () => {} : item.action}
+                >
                   Lock {item.label}
                 </StyledText>
               </ConditionalWrapper>
@@ -127,6 +130,7 @@ export function NewLockUpButton({
               variant="button.secondary"
               href={item.cta.href}
               target="_blank"
+              className="p-2"
             >
               {item.cta.label}
               <Icon name="solid:arrow-up-right" />
