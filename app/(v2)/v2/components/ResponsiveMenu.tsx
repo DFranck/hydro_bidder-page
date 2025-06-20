@@ -1,5 +1,6 @@
 'use client'
 
+import { InternalLink } from '@/app/(v2)/v2/components/InternalLink'
 import { Icon } from '@/components/Icon'
 import { IconString } from '@/components/Icon/types'
 import { StyledText } from '@/components/StyledText'
@@ -155,11 +156,10 @@ export function ResponsiveMenu({
             const hasMenuItems = !!subMenuItems?.length
 
             return !hasMenuItems ? (
-              <StyledText
-                key={href}
-                as={Link}
+              <InternalLink
+                key={href ?? index}
                 href={href ?? '#'}
-                tooltip={tooltip}
+                // tooltip={tooltip}
                 className={twJoin(
                   disabled && 'pointer-events-none opacity-60',
                   classNameForItem,
@@ -173,7 +173,7 @@ export function ResponsiveMenu({
                 {...otherProps}
               >
                 {label}
-              </StyledText>
+              </InternalLink>
             ) : (
               <div
                 className="group/nav-item relative cursor-pointer"
@@ -196,8 +196,7 @@ export function ResponsiveMenu({
                   className={twJoin(
                     'desktop:absolute',
                     'desktop:top-full',
-                    'desktop:left-1/2',
-                    'desktop:-translate-x-1/2',
+                    'desktop:right-0',
                     'desktop:pointer-events-none',
                     'desktop:opacity-0',
                     'desktop:transition-all',

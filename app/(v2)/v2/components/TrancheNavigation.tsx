@@ -86,6 +86,7 @@ export function TrancheNavigation({
             key={index}
             id={`tranche-nav-button--${sourceId}-${tranche.id}`}
             className={twMerge(
+              '@container/tranche-nav-button',
               'relative items-center',
               'justify-center',
               'desktop:justify-between',
@@ -155,7 +156,9 @@ export function TrancheNavigation({
                   />
                 </span>
               </span>
-              <span className="label">{name}</span>
+              <span className={twJoin('label', 'hidden', '@4xs:block')}>
+                {name}
+              </span>
             </span>
           </TokenThemeWrapper>
         )

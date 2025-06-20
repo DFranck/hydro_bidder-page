@@ -6,11 +6,12 @@ import { BidRevampMetrics } from '@/contract-apis/types'
 import { plural } from '@/lib/pluralize'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import { useRef } from 'react'
+import { useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
-import { useHover } from 'usehooks-ts'
 import { BidCardLogo } from './BidCardLogo'
+import { BidVoteShare } from './BidVoteShare'
 import { InternalLink } from './InternalLink'
+import { VoteButton } from './VoteButton'
 
 export const bidCardFields = [
   {
@@ -28,8 +29,8 @@ export const bidCardFields = [
   {
     key: 'vote-percentage',
     label: 'Vote %',
-    value: (bid: BidRevampMetrics) => bid.vote_perc,
-    unit: '%',
+    value: (bid: BidRevampMetrics) => <BidVoteShare bid={bid} />,
+    unit: null,
   },
 ]
 
@@ -44,15 +45,16 @@ export function BidCard({
 }) {
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById, isLoading } = state
-  const voteButtonRef = useRef<HTMLDivElement | null>(null)
-  const isHoveringVoteButton = useHover(
-    voteButtonRef as React.RefObject<HTMLDivElement>,
-  )
   const userVotedOnBidIds: number[] = []
   const userHasVotedOnThisBid = userVotedOnBidIds.includes(bidId)
   const augmentedBids =
     currentRoundDataPerSource?.[sourceId]?.augmentedBids ?? []
   const bid = augmentedBids?.find((bid) => bid.id === bidId)
+
+  // Track VoteButton hover and focus state
+  const [isVoteButtonHovered, setIsVoteButtonHovered] = useState(false)
+  const [isVoteButtonFocused, setIsVoteButtonFocused] = useState(false)
+  const isHoveringVoteButton = isVoteButtonHovered || isVoteButtonFocused
 
   if (!bid) return null
 
@@ -74,7 +76,6 @@ export function BidCard({
         'hover:bg-token-color/40',
         'focus-within:bg-token-color/60!',
         'transition-all',
-        isHoveringVoteButton && 'duration-700',
         isLoading && 'opacity-75',
         className,
       )}
@@ -83,7 +84,7 @@ export function BidCard({
           ? ({
               '--color-token-color': 'var(--color-palette-green)',
             } as React.CSSProperties)
-          : undefined
+          : {}
       }
       {...otherProps}
     >
@@ -157,73 +158,14 @@ export function BidCard({
           '*:last:rounded-r-[calc(var(--radius-standard)-var(--spacing-tightest))]',
         )}
       >
-        <div
-          role="button"
-          tabIndex={0}
-          ref={voteButtonRef}
-          className={twMerge(
-            'vote-button',
-            'group/action-button',
-            'btn h-full',
-            'flex items-center justify-center',
-            'transition-all',
-            'px-standard',
-            className,
-          )}
-        >
-          <span className={twJoin('relative block')}>
-            {/* The initial circle icon */}
-            <span
-              className={twJoin(
-                'transition-all',
-                'group-hover/action-button:opacity-0',
-                'group-hover/action-button:scale-0',
-              )}
-            >
-              <Icon name="solid:circle-dashed" />
-            </span>
-
-            {/* A lighter circle icon to enlarge and rotate */}
-            <span
-              className={twJoin(
-                'z-10 transition-all',
-                'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-                'opacity-0',
-                'group-hover/action-button:opacity-100',
-                'group-hover/action-button:rotate-180',
-                'group-hover/action-button:scale-200',
-                'group-hover/action-button:animate-spin',
-              )}
-            >
-              <Icon name="light:circle-dashed" />
-            </span>
-
-            <span
-              className={twJoin(
-                'z-10 transition-all',
-                'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-                'scale-0 opacity-0',
-                'group-hover/action-button:scale-100',
-                'group-hover/action-button:opacity-100',
-              )}
-            >
-              <Icon name="solid:check" />
-            </span>
-
-            <span
-              className={twJoin(
-                'pointer-events-none z-0 size-12',
-                'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-                'transition-all',
-                'scale-0 opacity-0',
-                'group-hover/action-button:scale-300',
-                'group-hover/action-button:opacity-100',
-                'bg-radial to-50%',
-                'from-palette-green to-transparent',
-              )}
-            />
-          </span>
-        </div>
+        <VoteButton
+          bidId={bidId}
+          sourceId={sourceId}
+          onMouseEnter={() => setIsVoteButtonHovered(true)}
+          onMouseLeave={() => setIsVoteButtonHovered(false)}
+          onFocus={() => setIsVoteButtonFocused(true)}
+          onBlur={() => setIsVoteButtonFocused(false)}
+        />
 
         <button
           type="button"

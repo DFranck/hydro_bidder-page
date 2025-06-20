@@ -8,6 +8,7 @@ import { useAppState } from '@v2/state/DataProviderOnClient'
 import sumBy from 'lodash/sumBy'
 import { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
+import { BidVoteShare } from './BidVoteShare'
 
 export function BidDetails({
   sourceId,
@@ -95,7 +96,7 @@ export function BidDetails({
             ['Project Name', bidDescription?.projectName],
             ['Bid in Round', bid.roundId + 1],
             ['Status', bid.status],
-            ['Vote %', bid.vote_perc],
+            ['Vote %', <BidVoteShare bid={bid} />],
             ['Voter APR', bid.apr_tribute?.toFixed(2) || '–'],
             [
               'Max Deployment Amount',
@@ -106,7 +107,7 @@ export function BidDetails({
             ],
           ].map(([label, value]) => (
             <div
-              key={label}
+              key={String(label)}
               className={twJoin(
                 'gap-tighter flex flex-col',
                 'desktop:items-end',

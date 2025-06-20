@@ -35,6 +35,7 @@ export function Tranche({
   if (!tranche) return null
 
   const { name, metadata } = tranche
+  const { logo, description } = JSON.parse(metadata)
   const allBids = currentRoundDataPerSource?.[sourceId].augmentedBids ?? []
   const userVotedInBucket = false
   const bidsInTranche = allBids.filter((bid) => bid.trancheId === trancheId)
@@ -132,18 +133,17 @@ export function Tranche({
           'h-bar-height-standard flex items-center justify-between',
           'px-standard gap-standard',
           'transition-colors',
+          'bg-gradient-to-b',
           userVotedInBucket
             ? isActive
-              ? 'bg-palette-green'
-              : 'bg-palette-green/20'
+              ? 'from-palette-green to-palette-green/50'
+              : 'to-palette-green/50 from-palette-green/50'
             : isActive
-              ? 'bg-token-color'
-              : 'bg-token-color/40',
+              ? 'from-token-color to-token-color/50'
+              : 'to-token-color/50 from-token-color/50',
         )}
       >
-        <div>
-          <MarkdownContainer content={metadata} />
-        </div>
+        <MarkdownContainer content={description} className="text-xs" />
 
         <div className={twJoin('flex items-center gap-2')}>
           <span

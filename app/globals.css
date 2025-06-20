@@ -10,7 +10,7 @@
   --breakpoint-2xl: 1400px;
   --breakpoint-desktop: 768px;
 
-  --container-2xs: 16rem;
+  --container-4xs: 10rem;
 
   --spacing-tightest: 2px;
   --spacing-tighter: 4px;
@@ -111,15 +111,25 @@
   @apply cursor-pointer touch-manipulation;
 }
 
+@utility btn-primary {
+  @apply btn;
+  @apply bg-palette-green text-background;
+  @apply rounded-standard border-transparent;
+  @apply h-bar-height-standard;
+  @apply hover:bg-palette-green/80;
+  @apply focus:bg-palette-green/80;
+  @apply active:bg-palette-green/60;
+}
+
 @utility btn-icon {
   @apply btn;
-  @apply size-10;
+  @apply size-bar-height-standard;
   @apply border-transparent;
 }
 
 @utility btn-inline {
   @apply btn;
-  @apply -mx-2 -my-2;
+  @apply -mx-3 -my-2;
   @apply border-transparent;
 }
 

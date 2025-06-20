@@ -20,7 +20,7 @@ function getMenuItems(
   return [
     {
       label: 'Bids',
-      href: '/bids',
+      href: '/v2',
     },
     {
       disabled: !isWalletConnected,
@@ -92,22 +92,6 @@ function getMenuItems(
         },
       ],
     },
-    {
-      label: 'Settings',
-      iconRight: 'solid:gear',
-      menuItems: [
-        {
-          label: 'Narrow Buckets',
-          iconLeft: 'solid:columns-3',
-          iconRight: narrowBuckets ? 'solid:toggle-on' : 'solid:toggle-off',
-          onClick: () =>
-            dispatch({
-              type: 'SET_NARROW_BUCKETS',
-              payload: !narrowBuckets,
-            }),
-        },
-      ],
-    },
   ]
 }
 
@@ -157,7 +141,6 @@ export function AppHeader() {
           'desktop:focus-within:text-palette-beige',
         )}
         classNameForSubItems={twJoin(
-          'desktop:right-0',
           'desktop:mt-2',
           'desktop:py-2',
           'desktop:bg-palette-beige',

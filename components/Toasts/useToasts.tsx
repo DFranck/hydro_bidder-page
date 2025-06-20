@@ -1,7 +1,7 @@
 "use client"
 
 import { CollapsibleBox } from "@/components/CollapsibleBox"
-import { Toast, ToastDescriptor } from "@/components/Toasts"
+import { Toast, ToastDescriptor, Toasts } from "@/components/Toasts"
 import {
   createContext,
   ReactNode,
@@ -13,7 +13,6 @@ import {
 import { createPortal } from "react-dom"
 import { twJoin } from "tailwind-merge"
 import { useIsClient } from "usehooks-ts"
-import { Toasts } from "./Toasts"
 
 export interface DismissibleToastDescriptor extends ToastDescriptor {
   isDismissible?: boolean

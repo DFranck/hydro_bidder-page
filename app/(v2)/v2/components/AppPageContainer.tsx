@@ -23,7 +23,7 @@ export function AppPageContainer({
       dontUnmountOnCollapse={true}
       isCollapsed={isMobile && isSidebarOpen}
       className="grid-in-content h-full overflow-hidden"
-      classNamesForInnerWrapper={twMerge('relative', className)}
+      classNamesForInnerWrapper={twMerge('relative h-full', className)}
     >
       {children}
       {isLoading && <LoadingSpinner />}
