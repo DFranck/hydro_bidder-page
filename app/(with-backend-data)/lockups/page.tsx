@@ -35,7 +35,6 @@ import { LockupsLST } from "./LockupsLST"
 import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
-import { formatAmountToUsd } from "@/lib/amountToUSDString"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 const minTokenToBeLocked = 1 / 1e6
@@ -53,9 +52,6 @@ export default function LockupsPage() {
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
-    atomPrice,
-    stAtomPrice,
-    dAtomPrice,
   } = useBackendData()
 
   const { lockedAtomRemainingCapacityGlobal } = useGlobalLockupCapacityInfo()
@@ -206,20 +202,7 @@ export default function LockupsPage() {
           <h2 className="sr-only">Your Lockups</h2>
 
           <Tooltip
-            tipContents={TotalLockupLimitTooltip({
-              atomLockedTotal: {
-                amount: lockedAtomTotalWallet,
-                usdAmount: formatAmountToUsd(lockedAtomTotalWallet, atomPrice),
-              },
-              dAtomLockedTotal: {
-                amount: 0,
-                usdAmount: formatAmountToUsd(0, dAtomPrice),
-              },
-              stAtomLockedTotal: {
-                amount: 0,
-                usdAmount: formatAmountToUsd(0, stAtomPrice),
-              },
-            })}
+            tipContents={TotalLockupLimitTooltip}
             className="block w-96 shrink-0"
           >
             <ProgressBar

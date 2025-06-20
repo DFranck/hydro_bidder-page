@@ -7,10 +7,9 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
-import { formatAmountToUsd } from "@/lib/amountToUSDString"
 
 export function CurrentRoundAtomLockedGlobal() {
-  const { isLoading, atomPrice, stAtomPrice, dAtomPrice } = useBackendData()
+  const { isLoading } = useBackendData()
   const {
     lockedAtomTotalGlobal,
     lockedAtomRemainingCapacityGlobal,
@@ -34,23 +33,8 @@ export function CurrentRoundAtomLockedGlobal() {
       title={
         <Tooltip
           className="w-full"
-          classNamesForTooltip="w-80"
           tipContents={globalTotalTokenLockedTooltip({
-            atomGlobalLockedTotal: {
-              amount: lockedAtomRemainingCapacityGlobal,
-              usdAmount: formatAmountToUsd(
-                lockedAtomRemainingCapacityGlobal,
-                atomPrice
-              ),
-            },
-            dAtomGlobalLockedTotal: {
-              amount: 0,
-              usdAmount: formatAmountToUsd(0, dAtomPrice),
-            },
-            stAtomGlobalLockedTotal: {
-              amount: 0,
-              usdAmount: formatAmountToUsd(0, stAtomPrice),
-            },
+            lockedAtomRemainingCapacityGlobal,
           })}
         >
           Total Tokens in{" "}

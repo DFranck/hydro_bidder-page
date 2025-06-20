@@ -342,51 +342,21 @@ export const lockupLimitReachedByUserTooltip = (
   <p>You&rsquo;ve reached the maximum locked tokens for this round.</p>
 )
 
-export const TotalLockupLimitTooltip = ({
-  atomLockedTotal,
-  dAtomLockedTotal,
-  stAtomLockedTotal,
-}: {
-  atomLockedTotal: TokenLockedTotal
-  dAtomLockedTotal: TokenLockedTotal
-  stAtomLockedTotal: TokenLockedTotal
-}) => {
-  return (
-    <div className="flex flex-col gap-1">
-      <p className="mb-3">
-        During Pilot Rounds, there is a maximum limit of ATOM you can lockup.{" "}
-        <StyledText
-          as={Link}
-          href="/docs#pilot-rounds"
-          className="inline-flex items-center gap-1"
-          target="_blank"
-          variant="link"
-        >
-          Learn More
-          <Icon name="solid:arrow-up-right" />
-        </StyledText>
-      </p>
-
-      <TokenDetails
-        name="ATOM"
-        amount={atomLockedTotal.amount}
-        usdAmount={atomLockedTotal.usdAmount}
-      />
-
-      <TokenDetails
-        name="stATOM"
-        amount={stAtomLockedTotal.amount}
-        usdAmount={stAtomLockedTotal.usdAmount}
-      />
-
-      <TokenDetails
-        name="dATOM"
-        amount={dAtomLockedTotal.amount}
-        usdAmount={dAtomLockedTotal.usdAmount}
-      />
-    </div>
-  )
-}
+export const TotalLockupLimitTooltip = (
+  <p className="mb-3">
+    During Pilot Rounds, there is a maximum limit of ATOM you can lockup.{" "}
+    <StyledText
+      as={Link}
+      href="/docs#pilot-rounds"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+      variant="link"
+    >
+      Learn More
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
+  </p>
+)
 
 export const lockupsTableTimeLeftColumnTooltip = (
   <p>
@@ -988,39 +958,25 @@ export const bidDetailsVoteReceivedTooltip = ({
 )
 
 export const globalTotalTokenLockedTooltip = ({
-  atomGlobalLockedTotal,
-  dAtomGlobalLockedTotal,
-  stAtomGlobalLockedTotal,
-}: {
-  atomGlobalLockedTotal: TokenLockedTotal
-  dAtomGlobalLockedTotal: TokenLockedTotal
-  stAtomGlobalLockedTotal: TokenLockedTotal
-}) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <StyledText variant="label">Total Tokens locked in Hydro.</StyledText>
-      <StyledText>Available capacity:</StyledText>
-      <TokenDetails
-        name="ATOM"
-        amount={atomGlobalLockedTotal.amount}
-        usdAmount={atomGlobalLockedTotal.usdAmount}
-        isGlobal={true}
-      />
-      <TokenDetails
-        name="stATOM"
-        amount={stAtomGlobalLockedTotal.amount}
-        usdAmount={stAtomGlobalLockedTotal.usdAmount}
-        isGlobal={true}
-      />
-      <TokenDetails
-        name="dATOM"
-        amount={dAtomGlobalLockedTotal.amount}
-        usdAmount={dAtomGlobalLockedTotal.usdAmount}
-        isGlobal={true}
-      />
-    </div>
-  )
-}
+  lockedAtomRemainingCapacityGlobal = 0,
+}) => (
+  <p className="text-center">
+    Total ATOM locked in Hydro.{" "}
+    <strong
+      className={twJoin(
+        lockedAtomRemainingCapacityGlobal > 0
+          ? "text-palette-green"
+          : "text-palette-red"
+      )}
+    >
+      {lockedAtomRemainingCapacityGlobal > 0 ? (
+        <>Available capacity: {lockedAtomRemainingCapacityGlobal}</>
+      ) : (
+        "Currently at capacity."
+      )}
+    </strong>
+  </p>
+)
 
 export const metricsPageNoDataTooltip = (
   <p>No data available for this round yet.</p>
