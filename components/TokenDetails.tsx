@@ -17,18 +17,16 @@ const TokenDetails = ({ name, amount, usdAmount, isGlobal = false }: Props) => {
         "text-palette-red": amount === 0 && isGlobal,
       })}
     >
-      <div>
-        {isGlobal && amount > 0 ? (
-          <strong>
-            {amount.toLocaleString("en-US", {
-              maximumFractionDigits: 4,
-            })}
-          </strong>
-        ) : null}{" "}
+      <div className="flex items-center gap-1">
+        <strong>
+          {amount.toLocaleString("en-US", {
+            maximumFractionDigits: 4,
+          })}
+        </strong>
         {isGlobal && amount === 0 ? (
           <strong>Currently at capacity</strong>
-        ) : null}{" "}
-        {name}
+        ) : null}
+        <span> {name}</span>
       </div>
       <div>
         (
