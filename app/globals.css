@@ -20,6 +20,8 @@
   --spacing-looser: 16px;
   --spacing-loosest: 24px;
 
+  --spacing-md: 800px;
+
   --spacing-bar-height-large: calc(var(--spacing) * 18);
   --spacing-bar-height-standard: calc(var(--spacing) * 12);
 
