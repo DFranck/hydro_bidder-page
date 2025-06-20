@@ -1,12 +1,13 @@
 'use client'
 
+import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { Icon } from '@/components/Icon'
 import { useIsMobile } from '@/lib/useIsMobile'
 import { ScrollIndicator } from '@v2/components/ScrollIndicator'
-import { SourceLabel } from '@v2/components/SourceLabel'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
@@ -41,11 +42,11 @@ function TrancheNavigationButton({
 }
 
 interface TrancheNavigationProps {
-  allTranchesSorted: Array<{
-    id: number
-    name: string
-    sourceId: SourceID
-  }>
+  allTranchesSorted: Array<
+    Tranche & {
+      sourceId: SourceID
+    }
+  >
   onActiveTrancheChange?: (previousIndex: number, newIndex: number) => void
 }
 
@@ -74,8 +75,9 @@ export function TrancheNavigation({
       onChange={onActiveTrancheChange}
       renderDot={({ index, isActive: isActiveTranche, spreadProps }) => {
         const tranche = allTranchesSorted[index]
-        const { sourceId, name } = tranche
+        const { sourceId, name, metadata } = tranche
         const userVotedInBucket = false // TODO: add this
+        const { logo, description } = JSON.parse(metadata)
 
         return (
           <TokenThemeWrapper
@@ -136,7 +138,25 @@ export function TrancheNavigation({
               }}
             />
 
-            <SourceLabel sourceId={sourceId} isShortened={true} />
+            <span className={twMerge('flex items-center gap-2')}>
+              <span
+                className={twMerge(
+                  'relative size-6',
+                  'flex items-center justify-center',
+                  'shrink-0',
+                )}
+              >
+                <span className="absolute inset-0">
+                  <Image
+                    src={`/images/logo-${logo}.svg`}
+                    alt={name}
+                    fill={true}
+                    sizes="10vw"
+                  />
+                </span>
+              </span>
+              <span className="label">{name}</span>
+            </span>
           </TokenThemeWrapper>
         )
       }}
