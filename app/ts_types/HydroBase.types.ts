@@ -25,7 +25,7 @@ export interface LockEntry {
 export interface Coin {
   amount: Uint128
   denom: string
-  denomInfo: AugmentedCoin
+  denomInfo?: AugmentedCoin
 }
 export interface AllUserLockupsWithTrancheInfosResponse {
   lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
