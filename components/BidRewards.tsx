@@ -15,8 +15,7 @@ import { twMerge } from "tailwind-merge"
 
 export function BidRewards({ bidId }: { bidId: number }) {
   const backendData = useBackendData()
-  const { bidMetaDataById, bidsInfo, currentRoundId, votesByRoundId } =
-    backendData
+  const { bidsInfo, currentRoundId, votesByRoundId } = backendData
   const bid = bidsInfo[bidId]
 
   if (!bid) return null
@@ -37,10 +36,8 @@ export function BidRewards({ bidId }: { bidId: number }) {
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const hasVotedThisRound = votesThisRound.length > 0
   const isPositive = roundedDeltaPercentage > 0
-  const bidInfoFromGithub = bidMetaDataById[bidId] ?? {}
   const computedTooltipContent = estimatedRewardsTooltip({
     bid,
-    bidInfoFromGithub,
     hasVotedThisRound,
     isTokenBased,
   })
@@ -48,7 +45,7 @@ export function BidRewards({ bidId }: { bidId: number }) {
   return !isTokenBased ? (
     <Tooltip
       tipContents={pointBasedTributeAmountTooltip({
-        pointProgramUrl: bidInfoFromGithub.pointProgramUrl,
+        pointProgramUrl: bid.pointProgramUrl,
       })}
     >
       {bid.points && bid.points.length > 0 && (

@@ -40,7 +40,6 @@ const initialBackendDataContext: BackendDataContextType = {
   currentRoundPrices: {},
   atomPrice: 0,
   bidsInfo: {},
-  bidMetaDataById: {},
   claimsHistorical: [],
   claimsOutstanding: [],
   currentRoundEndDate: new Date(),
