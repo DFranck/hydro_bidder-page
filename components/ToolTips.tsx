@@ -710,12 +710,71 @@ export const yourRoundAprTooltip = (
   </p>
 )
 
-export const yourTotalAtomLockedTooltip = (
-  <p>
-    Your staked ATOM locked in Hydro. The more ATOM you lock, the higher your
-    voting power will be.
-  </p>
-)
+export const yourTotalTokenLockedTooltip = ({
+  atomLockedTotal,
+  dAtomLockedTotal,
+  stAtomLockedTotal,
+}: {
+  atomLockedTotal: number
+  dAtomLockedTotal: number
+  stAtomLockedTotal: number
+}) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <StyledText >
+        Your tokens locked in Hydro. The more tokens you lock, the higher your
+        voting power will be.
+      </StyledText>
+      <StyledText>You have currently locked:</StyledText>
+
+      <div className="flex justify-between">
+        <strong>
+          {atomLockedTotal.toLocaleString("en-US", {
+            maximumFractionDigits: 4,
+          })}{" "}
+          ATOM
+        </strong>
+        <div>
+          {amountToUSDString(atomLockedTotal, {
+            appendUsd: false,
+            numberOfDecimals: 2,
+            removeTrailingZeros: true,
+          })}
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <strong>
+          {stAtomLockedTotal.toLocaleString("en-US", {
+            maximumFractionDigits: 4,
+          })}{" "}
+          stATOM
+        </strong>
+        <div>
+          {amountToUSDString(stAtomLockedTotal, {
+            appendUsd: false,
+            numberOfDecimals: 2,
+            removeTrailingZeros: true,
+          })}
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <strong>
+          {dAtomLockedTotal.toLocaleString("en-US", {
+            maximumFractionDigits: 4,
+          })}{" "}
+          dATOM
+        </strong>
+        <div>
+          {amountToUSDString(dAtomLockedTotal, {
+            appendUsd: false,
+            numberOfDecimals: 2,
+            removeTrailingZeros: true,
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export const yourTotalRewardsAllTimeTooltip = (
   <p>
