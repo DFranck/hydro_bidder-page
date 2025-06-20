@@ -51,7 +51,7 @@ export interface TributeClaim {
 export interface Coin {
   amount: Uint128
   denom: string
-  denomInfo: AugmentedCoin
+  denomInfo?: AugmentedCoin
 }
 export interface InstantiateMsg {
   hydro_contract: string
