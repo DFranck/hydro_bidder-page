@@ -51,7 +51,7 @@ export function NewLockUpButton({
       isDisabled: verifyLockupCapacity || amountOfsTAtomInWallet === 0,
       cta: {
         label: "Get stATOM",
-        href: "https://go.skip.build?src_asset=ibc%2FC140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901&src_chain=osmosis-1&dest_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&dest_chain=neutron-1&amount_in=&amount_out=",
+        href: "https://go.skip.build?src_asset=uatom&src_chain=cosmoshub-4&dest_asset=ibc%2FB7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C&dest_chain=neutron-1&amount_in=&amount_out=",
       },
     },
     {
