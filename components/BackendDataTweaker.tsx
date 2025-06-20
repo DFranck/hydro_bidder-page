@@ -79,7 +79,6 @@ export function BackendDataTweaker() {
       setLabelValue("")
     }
 
-    setToasts([])
     formElementRef.current?.reset()
   }, [modalState])
 

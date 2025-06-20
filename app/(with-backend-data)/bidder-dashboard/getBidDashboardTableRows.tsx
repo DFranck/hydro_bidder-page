@@ -9,16 +9,12 @@ import { voteThresholdTooltip } from "@/components/ToolTips"
 import { AddTributeButton } from "@/components/Tributes/AddTributeButton"
 import { TributesList } from "@/components/Tributes/TributesList/TributesList"
 import { voteThresholdByTrancheId } from "@/config"
-import {
-  AugmentedBidAfterWallet,
-  BidMetaDataByIdSlimmed,
-} from "@/contract-apis/types"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 
 export function getBidDashboardTableRows(
   openedRows: number[],
   onToggleRow: (bidId: number) => void,
-  bids?: AugmentedBidAfterWallet[],
-  bidDescriptions?: BidMetaDataByIdSlimmed
+  bids?: AugmentedBidAfterWallet[]
 ): { token: BidRow[]; point: BidRow[] } {
   if (!bids || !bids.length) return { token: [], point: [] }
 
@@ -81,7 +77,7 @@ export function getBidDashboardTableRows(
         <TributesList
           tokenBasedTributes={bid.tokenBasedTributes}
           pointBasedTributes={bid.points || []}
-          bidDescription={bidDescriptions?.[bid.id]}
+          pointProgramUrl={bid.pointProgramUrl}
         />
       ),
     }

@@ -4,12 +4,14 @@ import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { Toast, useToasts } from "@/components/Toasts"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useWalletValidators } from "@/contract-apis/useWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
 import { scaleLockupPower } from "@/lib/scaleLockupPower"
 import { ChainContext } from "@cosmos-kit/core"
+import floor from "lodash/floor"
 import isNumber from "lodash/isNumber"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -53,22 +55,29 @@ export function LockForm({
     0,
     lockedAtomMaxWallet - lockedAtomTotalWallet
   )
-  const maxAtomToBeLocked = Math.min(
-    delegationBalance ? delegationBalance / 1e6 : Infinity, // no more than they have
-    usersLimitRemainder, // no more than their limit
-    lockedAtomRemainingCapacityGlobal // no more than the global limit
+  const minAtomToBeLocked = floor(
+    1 / 1e6,
+    DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+  )
+  const maxAtomToBeLocked = floor(
+    Math.min(
+      delegationBalance ? delegationBalance / 1e6 : Infinity, // no more than they have
+      usersLimitRemainder, // no more than their limit
+      lockedAtomRemainingCapacityGlobal // no more than the global limit
+    ),
+    DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
   )
 
   const [amount, setAmount] = useState<string>("")
 
   useEffect(() => {
     if (maxAtomToBeLocked > 0 && lockedAtomRemainingCapacityGlobal > 0) {
-      setAmount(maxAtomToBeLocked.toFixed(6))
+      setAmount(String(maxAtomToBeLocked))
     } else if (
       lockedAtomTotalGlobal &&
       (maxAtomToBeLocked === 0 || lockedAtomRemainingCapacityGlobal === 0)
     ) {
-      setAmount((0).toFixed(6))
+      setAmount(String(0))
       setToasts([toastMessages.lockupCapacityFull])
       router.push("/lockups")
     }
@@ -87,7 +96,6 @@ export function LockForm({
           validatorLiquidStakingCap
         )
         if (lsmCapacity < parseFloat(amount) && parseFloat(amount) > 0) {
-          // Instead of resetting, you could set an error state or show a warning
           console.warn("Selected amount exceeds LSM capacity")
         }
       }
@@ -106,13 +114,17 @@ export function LockForm({
     }
   }
 
+  // Clamp the user's manually-typed value between min and max
   function handleBlur(e: ChangeEvent<HTMLInputElement>) {
-    const value = parseFloat(e.target.value) || 0
-    const minAmount = 1 / 1e6
-    if (value < minAmount && value !== 0) {
-      setAmount(minAmount.toFixed(6))
+    const typedValue = floor(
+      parseFloat(e.target.value) || 0,
+      DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+    )
+
+    if (typedValue !== 0 && typedValue < minAtomToBeLocked) {
+      setAmount(String(minAtomToBeLocked))
     } else {
-      setAmount(Math.min(value, maxAtomToBeLocked).toFixed(6))
+      setAmount(String(Math.min(typedValue, maxAtomToBeLocked)))
     }
   }
 
@@ -258,8 +270,7 @@ export function LockForm({
 
                         <div className="flex items-center gap-1">
                           <StyledText as="span" variant="footnote">
-                            Max: <strong>{maxAtomToBeLocked.toFixed(6)}</strong>{" "}
-                            ATOM
+                            Max: <strong>{maxAtomToBeLocked}</strong> ATOM
                           </StyledText>
                         </div>
 
@@ -269,9 +280,7 @@ export function LockForm({
                             type="button"
                             variant="link"
                             className="text-xs"
-                            onClick={() =>
-                              setAmount(maxAtomToBeLocked.toFixed(6))
-                            }
+                            onClick={() => setAmount(String(maxAtomToBeLocked))}
                           >
                             Set to Max
                           </StyledText>

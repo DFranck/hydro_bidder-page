@@ -37,7 +37,7 @@ export function CurrentRoundAtomLockedGlobal() {
           classNamesForTooltip="w-80"
           tipContents={globalTotalTokenLockedTooltip({
             atomGlobalLockedTotal: {
-              amount: lockedAtomRemainingCapacityGlobal ?? 0,
+              amount: lockedAtomRemainingCapacityGlobal,
               usdAmount: formatAmountToUsd(
                 lockedAtomRemainingCapacityGlobal,
                 atomPrice

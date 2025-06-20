@@ -25,7 +25,7 @@ export async function broadcastAndRelayIBCNeutronToHub(
       setTimeout(resolve, resolveResponsesCheckIntervalMs)
     )
 
-    const hubShares = await checkForHubLSMShares(hubChain, hubSigner)
+    const hubShares = await checkForHubLSMShares(hubChain)
     const foundShare = hubShares.find((share) => share.denom === baseDenom)
 
     if (foundShare) {

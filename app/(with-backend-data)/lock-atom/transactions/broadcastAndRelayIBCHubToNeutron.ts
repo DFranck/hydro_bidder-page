@@ -24,10 +24,7 @@ export async function broadcastAndRelayIBCHubToNeutron(
       setTimeout(resolve, resolveResponsesCheckIntervalMs)
     )
 
-    const neutronShares = await checkForNeutronLSMShares(
-      neutronChain,
-      neutronSigner
-    )
+    const neutronShares = await checkForNeutronLSMShares(neutronChain)
     const foundShare = neutronShares.find((share) => share.baseDenom === denom)
 
     if (foundShare) {

@@ -4,22 +4,18 @@ import Image from "next/image"
 import { twJoin } from "tailwind-merge"
 
 export function BidLogoAndTitle({ bidId }: { bidId: number }) {
-  const { bidMetaDataById, bidsInfo } = useBackendData()
+  const { bidsInfo } = useBackendData()
   const bid = bidsInfo[bidId]
 
   if (!bid) return null
 
-  const {
-    projectLogoUrl,
-    projectName,
-    title = bid.title,
-  } = bidMetaDataById[bidId] || {}
+  const { projectLogoUrl, projectName, projectTitle, title } = bid
 
   return (
     <BidLogoAndTitleLayout
       projectLogoUrl={projectLogoUrl}
       projectName={projectName}
-      title={title}
+      title={projectTitle || title}
     />
   )
 }

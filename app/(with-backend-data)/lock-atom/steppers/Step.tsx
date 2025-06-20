@@ -145,7 +145,7 @@ export function Step({
       }
     }
 
-    return { activeStep, status: "error", failedStep: lastActiveStep }
+    return { activeStep: 1, status: "default", failedStep: lastActiveStep }
   }
 
   const { activeStep, status, failedStep } = getCurrentStepInfo()
@@ -218,77 +218,81 @@ export function Step({
 
   return (
     <Card
-      className={cn("w-md m-6 grid  gap-4  md:m-auto", {
-        "md:grid-cols-1": !currentStep,
-        "md:grid-cols-12": !!currentStep,
+      className={cn("m-6 grid gap-4 md:m-auto", {
+        "h-auto  w-[350px] md:h-[300px] md:w-[650px] md:grid-cols-1":
+          !currentStep,
+        "w-md md:grid-cols-12": !!currentStep,
       })}
     >
       {!!currentStep && (
         <div className="col-span-12 md:col-span-4">
           {!!amount && (
-            <div className="hidden mb-4 md:flex md:flex-col">
+            <div className="mb-4 hidden md:flex md:flex-col">
               <StyledText className="uppercase leading-6 tracking-wide">
                 {modalTitle ?? " Lock Amount"}
               </StyledText>
               <StyledText variant="h4">{amount}</StyledText>
             </div>
           )}
-            <div className="flex flex-row justify-center md:justify-start md:flex-col md:space-y-6">
-              {steps.map((step, index) => (
-                <div key={step.id} className="flex items-start gap-3">
-                  <div className="flex flex-row items-center md:flex-col">
-                    <div
-                      className={cn(
-                        "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
-                        {
-                          "border-palette-green bg-palette-green text-white":
-                            step.status === "success",
-                          "border-red-500 bg-red-500 text-white":
-                            step.status === "error",
-                          "border-palette-blue/90 bg-palette-blue/90 text-white":
-                            step.status === "pending",
-                          "border-gray-200 bg-white text-gray-400":
-                            step.status === "default",
-                        }
-                      )}
-                    >
-                      {step.status === "success" ? (
-                        <Check size={20} />
-                      ) : step.status === "error" ? (
-                        <AlertCircle size={20} />
-                      ) : step.status === "pending" ? (
-                        <Loader2 size={20} className="animate-spin" />
-                      ) : (
-                        step.id
-                      )}
-                    </div>
-                    {index < steps.length - 1 && (
-                      <div
-                        className={cn("mt-0 mx-2 h-0.5  w-8 bg-gray-200 md:mt-2 md:mx-0 md:w-0.5 md:h-16", {
-                          "bg-palette-green": step.status === "success",
-                          "bg-palette-blue/90": step.status === "pending",
-                        })}
-                      />
+          <div className="flex flex-row justify-center md:flex-col md:justify-start md:space-y-6">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex items-start gap-3">
+                <div className="flex flex-row items-center md:flex-col">
+                  <div
+                    className={cn(
+                      "flex size-10 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
+                      {
+                        "border-palette-green bg-palette-green text-white":
+                          step.status === "success",
+                        "border-red-500 bg-red-500 text-white":
+                          step.status === "error",
+                        "border-palette-blue/90 bg-palette-blue/90 text-white":
+                          step.status === "pending",
+                        "border-gray-200 bg-white text-gray-400":
+                          step.status === "default",
+                      }
+                    )}
+                  >
+                    {step.status === "success" ? (
+                      <Check size={20} />
+                    ) : step.status === "error" ? (
+                      <AlertCircle size={20} />
+                    ) : step.status === "pending" ? (
+                      <Loader2 size={20} className="animate-spin" />
+                    ) : (
+                      step.id
                     )}
                   </div>
-                  <div className="hidden pt-2 md:block">
-                    <p
-                      className={cn("text-sm font-medium", {
-                        success: step.status === "success",
-                        "text-red-600": step.status === "error",
-                        "text-palette-blue/90": step.status === "pending",
-                        "text-gray-500": step.status === "default",
-                      })}
-                    >
-                      {step.title}
-                    </p>
-                  </div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={cn(
+                        "mx-2 mt-0 h-0.5  w-8 bg-gray-200 md:mx-0 md:mt-2 md:h-16 md:w-0.5",
+                        {
+                          "bg-palette-green": step.status === "success",
+                          "bg-palette-blue/90": step.status === "pending",
+                        }
+                      )}
+                    />
+                  )}
                 </div>
-              ))}
-            </div>
+                <div className="hidden pt-2 md:block">
+                  <p
+                    className={cn("text-sm font-medium", {
+                      success: step.status === "success",
+                      "text-red-600": step.status === "error",
+                      "text-palette-blue/90": step.status === "pending",
+                      "text-gray-500": step.status === "default",
+                    })}
+                  >
+                    {step.title}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
-      <div className="col-span-12 flex flex-col justify-start  gap-2 md:justify-center md:col-span-8">
+      <div className="col-span-12 flex flex-col justify-start  gap-2 md:col-span-8 md:justify-center">
         {title && (
           <Card.Header
             title={title}

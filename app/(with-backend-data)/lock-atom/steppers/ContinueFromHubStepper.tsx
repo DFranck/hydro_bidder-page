@@ -8,7 +8,6 @@ import { useState } from "react"
 import { broadcastAndRelayIBCHubToNeutron } from "../transactions/broadcastAndRelayIBCHubToNeutron"
 import { signIBCTransferHubToNeutron } from "../transactions/signIBCTransferHubToNeutron"
 import { signLockTokens } from "../transactions/signLockTokens"
-import { useIncompleteNotices } from "../useIncompleteNotices"
 import { CommonSteps } from "./CommonSteps"
 import {
   getCommonStepContents,
@@ -16,6 +15,8 @@ import {
 } from "./shared/LockAtomStepperCommon"
 import { Step } from "./Step"
 import { formatAmount } from "@/lib/formatAmount"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 type ContinueFromHubStep =
   | "Init"
@@ -39,8 +40,9 @@ export const ContinueFromHubStepper = ({
   onExit: () => void
   validatorMap: Map<string, Validator>
 }) => {
-  const { hubChain, neutronChain, deleteIncompleteNotice } =
-    useIncompleteNotices()
+  const { deleteIncompleteNotice } = useIncompleteNotices()
+  const { hubChain, neutronChain, hubSigner, neutronSigner } =
+    useChainsAndSigners()
   const { lockedAtomEpochInNanos } = useBackendData()
   const [step, setStep] = useState<ContinueFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
@@ -54,8 +56,6 @@ export const ContinueFromHubStepper = ({
       setErrorLog(
         `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
       )
-      const hubSigner = await hubChain.getSigningStargateClient()
-      const neutronSigner = await neutronChain.getSigningStargateClient()
 
       if (
         !hubChain.address ||

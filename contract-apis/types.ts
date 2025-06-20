@@ -42,7 +42,6 @@ export interface AugmentedBackendDataBeforeWallet {
   dAtomPrice: number
   stAtomPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
-  bidMetaDataById: BidMetaDataByIdSlimmed
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
@@ -191,6 +190,10 @@ export interface BidRevampMetrics {
   id: number
   pointProgramUrl: any
   points: [amount: number, denom: string] | []
+  projectName: string
+  projectLogoUrl: string
+  projectTitle: string
+  isWhitelisted: boolean
   power: number
   request_amount: any
   roundId: number

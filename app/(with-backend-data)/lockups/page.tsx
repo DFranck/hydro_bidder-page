@@ -1,6 +1,5 @@
 "use client"
 
-import { useIncompleteNotices } from "@/app/(with-backend-data)/lock-atom/useIncompleteNotices"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { Card } from "@/components/Card"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -37,6 +36,7 @@ import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWall
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { formatAmountToUsd } from "@/lib/amountToUSDString"
+import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 
 const minTokenToBeLocked = 1 / 1e6
 
@@ -61,7 +61,7 @@ export default function LockupsPage() {
   const { lockedAtomRemainingCapacityGlobal } = useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
-  const { setToasts, addToast } = useToasts()
+  const { setToasts } = useToasts()
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
@@ -170,26 +170,18 @@ export default function LockupsPage() {
       return
     }
 
-    addToast({
-      _id: "incomplete-lockups",
-      variant: "warning",
-      message: (
-        <>
-          You have <strong>{incompleteNotices.length}</strong> incomplete{" "}
-          {pluralize({
-            count: incompleteNotices.length,
-            singular: "lockup",
-          })}
-          .
-        </>
-      ),
-      actionButtonPrimary: {
-        label: "Continue",
-        onClick: () => {
-          router.push("/lock-atom")
+    setToasts([
+      {
+        variant: "warning",
+        message: <>You have incomplete lockups.</>,
+        actionButtonPrimary: {
+          label: "Continue",
+          onClick: () => {
+            router.push("/lock-atom")
+          },
         },
       },
-    })
+    ])
   }, [incompleteNotices])
 
   return (
