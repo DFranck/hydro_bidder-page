@@ -33,7 +33,7 @@ export function CurrentRoundAtomLockedWallet() {
           tipContents={yourTotalTokenLockedTooltip({
             atomLockedTotal: {
               amount: lockedAtomTotalWallet,
-              usdAmount: formatAmountToUsd(250, 4.0893),
+              usdAmount: formatAmountToUsd(lockedAtomTotalWallet, atomPrice),
             },
             dAtomLockedTotal: {
               amount: 0,
