@@ -221,10 +221,7 @@ export function BidDetails({
                   >
                     Bid Description
                   </StyledText>
-                  <MarkdownContainer
-                    content={description}
-                    className="break-all"
-                  />
+                  <MarkdownContainer content={description} />
                 </div>
               )}
               {committeeComments && (
