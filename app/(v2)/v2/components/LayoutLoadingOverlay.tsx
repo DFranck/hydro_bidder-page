@@ -3,12 +3,9 @@
 import { LoadingSpinner } from '@v2/components/LoadingSpinner'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useEffect } from 'react'
+import { twJoin } from 'tailwind-merge'
 
-export function GlobalLoadingProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export function LayoutLoadingOverlay() {
   const { state } = useAppState()
   const { isLoading } = state
 
@@ -33,14 +30,16 @@ export function GlobalLoadingProvider({
     }
   }, [isLoading])
 
+  if (!isLoading) return null
+
   return (
-    <>
-      {children}
-      {isLoading && (
-        <div className="fixed inset-0 z-50">
-          <LoadingSpinner />
-        </div>
+    <div
+      className={twJoin(
+        'fixed inset-0 z-50',
+        'bg-background/50 backdrop-blur-md',
       )}
-    </>
+    >
+      <LoadingSpinner />
+    </div>
   )
 }

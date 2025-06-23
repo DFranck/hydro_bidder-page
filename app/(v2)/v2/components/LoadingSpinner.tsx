@@ -23,7 +23,7 @@ export function LoadingSpinner({
   return (
     <div
       className={twMerge(
-        'bg-background absolute inset-0 z-50',
+        'absolute inset-0 z-50',
         'flex items-center justify-center',
         'transition-opacity duration-300 ease-in-out',
         isVisible ? 'opacity-100' : 'opacity-0',

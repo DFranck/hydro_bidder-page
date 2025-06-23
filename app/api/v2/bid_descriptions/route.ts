@@ -8,7 +8,7 @@ export async function GET() {
     headers: {
       Accept: "application/json",
     },
-    next: { revalidate: 60 * 60 * 24 },
+    next: { revalidate: 300 },
   })
 
   const bidDescriptionsById: Record<string, BidMetaData> =

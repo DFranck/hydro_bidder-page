@@ -3,9 +3,11 @@ import { RoundPrices } from "@/contract-apis/types"
 export async function fetchRoundPrices({
   chainId,
   roundId,
+  cacheDuration = 300,
 }: {
   chainId: string
   roundId: number
+  cacheDuration?: number
 }): Promise<RoundPrices> {
   const url = new URL("/hydro/v2/round_prices", "https://cosmos.numia.xyz")
   url.searchParams.append("chain_id", chainId)
@@ -16,6 +18,7 @@ export async function fetchRoundPrices({
       Accept: "application/json",
       Authorization: `Bearer ${process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY}`,
     },
+    next: { revalidate: cacheDuration },
   })
 
   if (!response.ok) {

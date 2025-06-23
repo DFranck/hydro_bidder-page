@@ -5,10 +5,15 @@ import { environments, getEnvironment } from '@v2/environments'
 import { headers } from 'next/headers'
 
 export function fetchData() {
+  const environment = getEnvironment()
+  const bidDescriptionsCacheDuration = environments[environment].externalDataCacheDuration
+
   const bidDescriptionsPromise = headers()
     .then((headers) => headers.get('x-url') ?? '')
     .then((baseUrl) =>
-      fetch(new URL(`/api/v2/bid_descriptions`, baseUrl)).then((response) =>
+      fetch(new URL(`/api/v2/bid_descriptions`, baseUrl), {
+        next: { revalidate: bidDescriptionsCacheDuration },
+      }).then((response) =>
         response.json(),
       ),
     )
@@ -16,25 +21,33 @@ export function fetchData() {
   const hydroDataPromise = headers()
     .then((headers) => headers.get('x-url') ?? '')
     .then(async (baseUrl) => {
-      const environment = getEnvironment()
       const { sources } = environments[environment]
 
       return Promise.all(
         sources.map(async (source) => {
           const urlPrefix = `/api/v2/${environment}/${source.id}`
+          const cacheDuration = source.cacheDuration
 
           const [constants, currentRound, totalLockedTokens, tranches] =
             await Promise.all([
-              fetch(new URL(`${urlPrefix}/constants`, baseUrl)).then(
+              fetch(new URL(`${urlPrefix}/constants`, baseUrl), {
+                next: { revalidate: cacheDuration },
+              }).then(
                 (response) => response.json(),
               ),
-              fetch(new URL(`${urlPrefix}/current_round`, baseUrl)).then(
+              fetch(new URL(`${urlPrefix}/current_round`, baseUrl), {
+                next: { revalidate: cacheDuration },
+              }).then(
                 (response) => response.json(),
               ),
-              fetch(new URL(`${urlPrefix}/total_locked_tokens`, baseUrl)).then(
+              fetch(new URL(`${urlPrefix}/total_locked_tokens`, baseUrl), {
+                next: { revalidate: cacheDuration },
+              }).then(
                 (response) => response.json(),
               ),
-              fetch(new URL(`${urlPrefix}/tranches`, baseUrl)).then(
+              fetch(new URL(`${urlPrefix}/tranches`, baseUrl), {
+                next: { revalidate: cacheDuration },
+              }).then(
                 (response) => response.json(),
               ),
             ])
@@ -50,6 +63,7 @@ export function fetchData() {
           const roundPrices = await fetchRoundPrices({
             chainId: source.priceChainId,
             roundId: currentRound.round_id,
+            cacheDuration,
           })
 
           const atomPrice = roundPrices[source.atomDenom]?.token_price ?? 0

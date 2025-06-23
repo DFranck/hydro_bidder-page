@@ -13,8 +13,8 @@ export async function GET(
   }
 ) {
   const { environment, source_id } = await params
-
   const sourceObject = getSource(environment, source_id)
+  const cacheDuration = sourceObject.cacheDuration
 
   const { hydroContract } = sourceObject
 
@@ -24,5 +24,9 @@ export async function GET(
 
   const { tranches } = await hydroQueryClient.tranches()
 
-  return Response.json(tranches)
+  return Response.json(tranches, {
+    headers: {
+      'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
+    },
+  })
 }

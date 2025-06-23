@@ -130,12 +130,13 @@ export function AppHeader() {
           'flex flex-col justify-between',
           'p-loosest',
           'gap-looser',
+          'desktop:h-bar-height-large',
           'desktop:flex-row',
           'desktop:gap-loose',
           'desktop:items-center',
           'desktop:justify-end',
           'desktop:px-standard',
-          'desktop:py-tight',
+          'desktop:py-0',
           'desktop:opacity-100',
         )}
         classNameForItem={twJoin(

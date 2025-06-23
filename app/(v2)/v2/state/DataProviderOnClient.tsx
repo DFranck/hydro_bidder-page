@@ -2,7 +2,6 @@
 
 import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { BidMetaData, BidRevampMetrics } from '@/contract-apis/types'
-import { GlobalLoadingProvider } from '@v2/components/GlobalLoadingProvider'
 import { LoadingSpinner } from '@v2/components/LoadingSpinner'
 import { SourceID } from '@v2/environments'
 import { useProcessedData } from '@v2/hooks'
@@ -164,9 +163,7 @@ export function DataProviderOnClient({
           <ChainsAndSignersProvider>
             <GlobalLockupInfoProvider>
               <IncompleteNoticesProvider>
-                <AppContext value={{ state, dispatch }}>
-                  <GlobalLoadingProvider>{children}</GlobalLoadingProvider>
-                </AppContext>
+                <AppContext value={{ state, dispatch }}>{children}</AppContext>
               </IncompleteNoticesProvider>
             </GlobalLockupInfoProvider>
           </ChainsAndSignersProvider>

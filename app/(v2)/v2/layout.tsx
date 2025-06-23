@@ -1,6 +1,7 @@
 import { WalletProvider } from '@/components/WalletProvider'
 import { AppHeader } from '@v2/components/AppHeader'
 import { AppPageContainer } from '@v2/components/AppPageContainer'
+import { LayoutLoadingOverlay } from '@v2/components/LayoutLoadingOverlay'
 import { WalletDataProvider } from '@v2/components/WalletDataProvider'
 import { fetchData } from '@v2/state/fetchData'
 import { twJoin } from 'tailwind-merge'
@@ -45,6 +46,8 @@ export default async function Layout({
 
           {modal}
         </div>
+
+        <LayoutLoadingOverlay />
       </WalletDataProvider>
     </WalletProvider>
   )

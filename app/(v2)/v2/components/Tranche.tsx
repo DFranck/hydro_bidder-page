@@ -9,7 +9,7 @@ import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import orderBy from 'lodash/orderBy'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
 function TH({
@@ -189,7 +189,7 @@ export function Tranche({
                       .every((prevBid) => prevBid.vote_perc >= voteThreshold)
 
                   return (
-                    <>
+                    <React.Fragment key={bid.id}>
                       {isFirstBelowThreshold && (
                         <div className="@card-is-row:table-row">
                           <div
@@ -232,12 +232,8 @@ export function Tranche({
                           </div>
                         </div>
                       )}
-                      <BidCard
-                        key={bid.id}
-                        sourceId={sourceId}
-                        bidId={bid.id}
-                      />
-                    </>
+                      <BidCard sourceId={sourceId} bidId={bid.id} />
+                    </React.Fragment>
                   )
                 })}
               </div>

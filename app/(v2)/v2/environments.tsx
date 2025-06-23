@@ -5,6 +5,7 @@ export type SourceID =
 
 export const environments = {
   development: {
+    externalDataCacheDuration: 300,
     sources: [
       {
         id: 'atom',
@@ -20,6 +21,7 @@ export const environments = {
           1: 0.05,
           2: 0.35,
         },
+        cacheDuration: 300,
       },
       // {
       //   id: 'stosmo',
@@ -34,10 +36,12 @@ export const environments = {
       //     1: 0.05,
       //     2: 0.35,
       //   },
+      //   cacheDuration: 300,
       // },
     ],
   },
   production: {
+    externalDataCacheDuration: 300,
     sources: [
       {
         id: 'atom',
@@ -53,6 +57,7 @@ export const environments = {
           1: 0.05,
           2: 0.35,
         },
+        cacheDuration: 300,
       },
     ],
   },
