@@ -47,6 +47,12 @@ export function BidDetails({
 
   if (!bid) return null
 
+  const voteThreshold = bid?.trancheId
+    ? source.voteThresholds[bid.trancheId as keyof typeof source.voteThresholds]
+    : null
+  const isBelowVoteThreshold =
+    bid && voteThreshold ? bid.vote_perc < voteThreshold : false
+
   const bidDescription = bidDescriptionsById[bidId]
 
   return (
@@ -54,11 +60,19 @@ export function BidDetails({
       as="article"
       sourceId={sourceId}
       className={twMerge(
+        isBelowVoteThreshold && 'low-votes',
         'grid grid-rows-[min-content_auto]',
         'h-full overflow-hidden',
         'relative',
         className,
       )}
+      style={
+        isBelowVoteThreshold
+          ? ({
+              '--color-theme-color': 'var(--color-palette-beige)',
+            } as React.CSSProperties)
+          : undefined
+      }
     >
       <header
         className={twJoin(
@@ -66,6 +80,7 @@ export function BidDetails({
           'flex items-center',
           'px-loosest py-standard',
           'bg-theme-color',
+          'low-votes:text-background',
         )}
       >
         <h1 className="title">{bidDescription?.title}</h1>

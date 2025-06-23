@@ -24,7 +24,7 @@ const QueryClientProvider = dynamic(
       (mod) => mod.QueryClientProvider,
     ),
   {
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
     ssr: false, // Since react-query needs browser APIs
   },
 )
@@ -32,7 +32,7 @@ const QueryClientProvider = dynamic(
 const WalletProvider = dynamic(
   () => import('@/components/WalletProvider').then((mod) => mod.WalletProvider),
   {
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
     ssr: false,
   },
 )
@@ -40,7 +40,7 @@ const WalletProvider = dynamic(
 const ToastContextProvider = dynamic(
   () => import('@/components/Toasts').then((mod) => mod.ToastContextProvider),
   {
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
     ssr: false,
   },
 )
@@ -51,7 +51,7 @@ const ChainsAndSignersProvider = dynamic(
       (mod) => mod.ChainsAndSignersProvider,
     ),
   {
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
     ssr: false,
   },
 )
@@ -62,7 +62,7 @@ const GlobalLockupInfoProvider = dynamic(
       (mod) => mod.GlobalLockupInfoProvider,
     ),
   {
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
     ssr: false,
   },
 )
@@ -73,7 +73,7 @@ const IncompleteNoticesProvider = dynamic(
       (mod) => mod.IncompleteNoticesProvider,
     ),
   {
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
     ssr: false,
   },
 )

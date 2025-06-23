@@ -7,8 +7,8 @@ import { voteThresholdTooltip } from '@/components/ToolTips'
 import { BidCard, bidCardFields } from '@v2/components/BidCard'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
+import { sortBidsInTranche } from '@v2/lib/sortBidsInTranche'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import orderBy from 'lodash/orderBy'
 import React, { useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
@@ -60,10 +60,8 @@ export function Tranche({
   const { logo, description } = JSON.parse(metadata ?? '{}')
   const allBids = currentRoundDataPerSource?.[sourceId].augmentedBids ?? []
 
-  const bidsInTranche = orderBy(
+  const bidsInTranche = sortBidsInTranche(
     allBids.filter((bid) => bid.trancheId === trancheId),
-    ['vote_perc'],
-    ['desc'],
   )
 
   const environment = getEnvironment()

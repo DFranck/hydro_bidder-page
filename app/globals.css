@@ -65,6 +65,7 @@
 @custom-variant sidebar-closed (&:where(.sidebar-closed *));
 @custom-variant voted-on (&:where(.voted-on, .voted-on *));
 @custom-variant voted-within (&:where(.voted-within, .voted-within *));
+@custom-variant low-votes (&:where(.low-votes, .low-votes *));
 
 @utility border-theme-color {
   border-color: var(--color-theme-color);

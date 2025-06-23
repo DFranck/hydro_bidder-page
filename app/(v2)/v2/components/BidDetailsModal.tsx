@@ -5,7 +5,8 @@ import { IconString } from '@/components/Icon/types'
 import { BidDetails } from '@v2/components/BidDetails'
 import { useInternalLink } from '@v2/components/InternalLink'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
-import { SourceID } from '@v2/environments'
+import { SourceID, getEnvironment, getSource } from '@v2/environments'
+import { sortBidsInTranche } from '@v2/lib/sortBidsInTranche'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twJoin } from 'tailwind-merge'
 
@@ -28,10 +29,9 @@ export function BidDetailsModal({
   const currentTrancheId = currentBid?.trancheId
 
   // Find all bids in the same tranche, sorted by ID
-  const bidsInSameTranche =
-    augmentedBids
-      ?.filter((bid) => bid.trancheId === currentTrancheId)
-      .sort((a, b) => a.id - b.id) ?? []
+  const bidsInSameTranche = sortBidsInTranche(
+    augmentedBids?.filter((bid) => bid.trancheId === currentTrancheId) ?? [],
+  )
 
   // Find current bid index in the tranche
   const currentBidIndex = bidsInSameTranche.findIndex(
@@ -54,16 +54,35 @@ export function BidDetailsModal({
     navigate(`/v2/bids/${sourceId}/${targetBidId}`)
   }
 
+  // Check if current bid is below vote threshold
+  const environment = getEnvironment()
+  const source = getSource(environment, sourceId)
+  const voteThreshold = currentBid?.trancheId
+    ? source.voteThresholds[
+        currentBid.trancheId as keyof typeof source.voteThresholds
+      ]
+    : null
+  const isBelowVoteThreshold =
+    currentBid && voteThreshold ? currentBid.vote_perc < voteThreshold : false
+
   return (
     <TokenThemeWrapper
       sourceId={sourceId}
       className={twJoin(
+        isBelowVoteThreshold && 'low-votes',
         'fixed inset-0 z-20',
         'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-loose))]',
         'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tight))]',
         'bg-theme-color/20 backdrop-blur-sm',
       )}
       onClick={closeModal}
+      style={
+        isBelowVoteThreshold
+          ? ({
+              '--color-theme-color': 'var(--color-palette-beige)',
+            } as React.CSSProperties)
+          : undefined
+      }
     >
       <div
         className={twJoin(
