@@ -9,20 +9,31 @@ export const environments = {
       {
         id: 'atom',
         label: 'ATOM',
+        atomDenom:
+          'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
         hydroContract:
           'neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp',
         tributeContract:
           'neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t',
         priceChainId: 'neutron-1',
+        voteThresholds: {
+          1: 0.05,
+          2: 0.35,
+        },
       },
       // {
       //   id: 'stosmo',
       //   label: 'stOSMO',
+      //   atomDenom: 'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
       //   hydroContract:
       //     'neutron1xkvzdzfzacuzlwlxf5hhlrqgv9sz4rgd2gkhvgm8lmudn8lmw0fq2296nu',
       //   tributeContract:
       //     'neutron1l6sq43kzhw77t7f5n9e6vxente0agcj3wyedkxtc08pm7c9uu2jsssq9wj',
       //   priceChainId: 'neutron-1',
+      //   voteThresholds: {
+      //     1: 0.05,
+      //     2: 0.35,
+      //   },
       // },
     ],
   },
@@ -31,11 +42,17 @@ export const environments = {
       {
         id: 'atom',
         label: 'ATOM',
+        atomDenom:
+          'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
         hydroContract:
           'neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp',
         tributeContract:
           'neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t',
         priceChainId: 'neutron-1',
+        voteThresholds: {
+          1: 0.05,
+          2: 0.35,
+        },
       },
     ],
   },

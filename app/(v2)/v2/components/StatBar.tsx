@@ -11,8 +11,8 @@ export function StatBar({
     <div
       id="stats-bar"
       className={twMerge(
-        'h-bar-height-large gap-1',
-        'flex justify-around',
+        'h-bar-height-large',
+        'flex items-center justify-around',
         'bg-shaded rounded-standard',
         'desktop:gap-3',
         className,

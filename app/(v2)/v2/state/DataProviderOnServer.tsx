@@ -1,16 +1,31 @@
 import { Tranche } from '@/app/ts_types/HydroBase.types'
-import { BidMetaData, BidRevampMetrics } from '@/contract-apis/types'
+import {
+  AugmentedLockup,
+  BidMetaData,
+  RoundPrices,
+} from '@/contract-apis/types'
 import { SourceID } from '@v2/environments'
+import { AugmentedBidWithVoteData } from '@v2/lib/augmentBidsWithVoteData'
 import { Suspense } from 'react'
 import { DataProviderOnClient } from './DataProviderOnClient'
+
+export interface AugmentedTranche extends Tranche {
+  userVotedInTranche: boolean
+  userVotedOnBidId: number | null
+}
 
 export interface RoundState {
   sourceId: SourceID
   currentRoundId: number
   roundEnd: string
-  tranches: Tranche[]
-  augmentedBids: BidRevampMetrics[]
+  tranches: AugmentedTranche[]
+  augmentedBids: AugmentedBidWithVoteData[]
+  lockups: AugmentedLockup[]
   totalLockedTokens: number
+  walletData?: any
+  constants?: any
+  roundPrices?: RoundPrices
+  atomPrice?: number
 }
 
 export interface AppState {
@@ -27,7 +42,7 @@ export const initialState: AppState = {
   currentRoundDataPerSource: null,
   narrowBuckets: false,
   activeTrancheIndex: 0,
-  isSidebarOpen: true,
+  isSidebarOpen: false,
   isLoading: false,
 }
 
@@ -40,7 +55,8 @@ interface DataPromises {
         totalLockedTokens: number
         currentRound: any
         tranches: Tranche[]
-        augmentedBids: BidRevampMetrics[]
+        augmentedBids: AugmentedBidWithVoteData[]
+        walletData?: any
       }
     }>
   >

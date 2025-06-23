@@ -21,7 +21,7 @@ export const TokenThemeWrapper = <C extends React.ElementType = 'div'>({
 }: TokenThemeWrapperProps<C>) => {
   const Component = as || 'div'
   const style = {
-    '--color-token-color': tokenColorVars[sourceId],
+    '--color-theme-color': tokenColorVars[sourceId],
   } as React.CSSProperties
 
   return (

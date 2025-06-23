@@ -22,7 +22,7 @@ export function SidebarSourcePanel({
       className={twMerge(
         '@container',
         'relative w-full',
-        'bg-token-color rounded-standard',
+        'bg-theme-color rounded-standard',
       )}
     >
       <div

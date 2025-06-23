@@ -1,12 +1,12 @@
 'use client'
 
-import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { Icon } from '@/components/Icon'
 import { useIsMobile } from '@/lib/useIsMobile'
 import { ScrollIndicator } from '@v2/components/ScrollIndicator'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import { AugmentedTranche } from '@v2/state/DataProviderOnServer'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
@@ -43,7 +43,7 @@ function TrancheNavigationButton({
 
 interface TrancheNavigationProps {
   allTranchesSorted: Array<
-    Tranche & {
+    AugmentedTranche & {
       sourceId: SourceID
     }
   >
@@ -75,8 +75,7 @@ export function TrancheNavigation({
       onChange={onActiveTrancheChange}
       renderDot={({ index, isActive: isActiveTranche, spreadProps }) => {
         const tranche = allTranchesSorted[index]
-        const { sourceId, name, metadata } = tranche
-        const userVotedInBucket = false // TODO: add this
+        const { sourceId, name, metadata, userVotedInTranche } = tranche
         const { logo, description } = JSON.parse(metadata)
 
         return (
@@ -86,6 +85,8 @@ export function TrancheNavigation({
             key={index}
             id={`tranche-nav-button--${sourceId}-${tranche.id}`}
             className={twMerge(
+              userVotedInTranche && 'voted-within',
+              isActiveTranche && 'is-active',
               '@container/tranche-nav-button',
               'relative items-center',
               'justify-center',
@@ -95,22 +96,28 @@ export function TrancheNavigation({
               'overflow-visible',
 
               // Base styles
-              'border-token-color',
-              'bg-token-color/60',
-              'focus-within:bg-token-color',
+              'border-theme-color',
+              'bg-theme-color/60',
+              'focus-within:bg-theme-color',
               'outline-none',
               'focus-within:shadow-2xl',
-              'focus-within:shadow-token-color',
+              'focus-within:shadow-theme-color',
 
               // Active state
-              isActiveTranche && 'bg-token-color cursor-default rounded-b-none',
+              'is-active:bg-theme-color',
+              'is-active:cursor-default',
+              'is-active:rounded-b-none',
 
               // Voted state
-              userVotedInBucket && [
-                isActiveTranche && 'bg-palatte-green',
-                'focus-within:bg-palette-green',
-              ],
+              'voted-within:text-background',
             )}
+            style={
+              userVotedInTranche
+                ? ({
+                    '--color-theme-color': 'var(--color-palette-green)',
+                  } as React.CSSProperties)
+                : undefined
+            }
             onClick={(e) => {
               spreadProps.onClick?.(e)
             }}
@@ -120,7 +127,7 @@ export function TrancheNavigation({
             <div
               className={twMerge(
                 '-bottom-tight absolute right-0 left-0',
-                'bg-token-color',
+                'bg-theme-color',
                 'origin-bottom',
                 isMounted
                   ? [

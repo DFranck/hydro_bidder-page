@@ -5,6 +5,7 @@ import {
   HYDRO_TELEGRAM_ANNOUNCEMENTS_URL,
   HYDRO_TELEGRAM_COMMUNITY_URL,
 } from '@/config'
+import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
 import { Logo } from '@v2/components/Logo'
 import { MenuItem, ResponsiveMenu } from '@v2/components/ResponsiveMenu'
@@ -98,7 +99,7 @@ function getMenuItems(
 export function AppHeader() {
   const { state, dispatch } = useAppState()
   const { narrowBuckets } = state
-  const isWalletConnected = false // TODO: Add wallet connection state
+  const { isWalletConnected } = useChain('neutron')
   const menuItems = getMenuItems(isWalletConnected, narrowBuckets, dispatch)
 
   return (

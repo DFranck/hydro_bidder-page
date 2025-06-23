@@ -89,6 +89,7 @@ export function ScrollIndicator({
     if (state.activeTrancheIndex > 0) {
       targets[state.activeTrancheIndex - 1]?.scrollIntoView({
         behavior: 'smooth',
+        block: 'nearest',
       })
     }
   }
@@ -97,6 +98,7 @@ export function ScrollIndicator({
     if (state.activeTrancheIndex < targets.length - 1) {
       targets[state.activeTrancheIndex + 1]?.scrollIntoView({
         behavior: 'smooth',
+        block: 'nearest',
       })
     }
   }
@@ -106,7 +108,10 @@ export function ScrollIndicator({
     const spreadProps = {
       'aria-label': `Go to tranche ${index + 1}`,
       onClick: () => {
-        targets[index]?.scrollIntoView({ behavior: 'smooth' })
+        targets[index]?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        })
       },
     }
 

@@ -1,54 +1,78 @@
 'use client'
 
 import { ConditionalWrapper } from '@/components/ConditionalWrapper'
-import { Icon } from '@/components/Icon'
-import { StyledText } from '@/components/StyledText'
 import { Tooltip } from '@/components/Tooltip'
 import {
   bidLiquidityReceivedTooltip,
   voteThresholdTooltip,
 } from '@/components/ToolTips'
-import { voteThresholdByTrancheId } from '@/config'
-import { BidRevampMetrics } from '@/contract-apis/types'
+import { SourceID, getEnvironment, getSource } from '@v2/environments'
+import { AugmentedBidWithVoteData } from '@v2/lib/augmentBidsWithVoteData'
+import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twJoin } from 'tailwind-merge'
 
 interface BidVoteShareProps {
-  bid: BidRevampMetrics
+  bidId: number
+  sourceId: SourceID
   totalLiquidityForCurrentRound?: number
-  denom?: string
   className?: string
 }
 
 export function BidVoteShare({
-  bid,
+  bidId,
+  sourceId,
   totalLiquidityForCurrentRound,
-  denom = 'ATOM',
   className,
 }: BidVoteShareProps) {
+  const { state } = useAppState()
+  const { currentRoundDataPerSource } = state
+
+  const environment = getEnvironment()
+  const source = getSource(environment, sourceId)
+  const denom = source.label
+
+  const sourceData =
+    currentRoundDataPerSource?.[
+      sourceId as keyof typeof currentRoundDataPerSource
+    ]
+  const bid = sourceData?.augmentedBids?.find(
+    (bid: AugmentedBidWithVoteData) => bid.id === bidId,
+  )
+
+  if (!bid) return null
+
   const totalBidLiquidity = totalLiquidityForCurrentRound
     ? totalLiquidityForCurrentRound * bid.vote_perc
     : 0
   const voteThreshold =
-    voteThresholdByTrancheId[
-      bid.trancheId as keyof typeof voteThresholdByTrancheId
-    ]
+    source.voteThresholds[bid.trancheId as keyof typeof source.voteThresholds]
 
   if (bid.vote_perc < voteThreshold) {
+    const percentage = bid.vote_perc * 100
+    const formattedPercentage =
+      percentage === 0 ? '0' : Math.floor(percentage * 100) / 100
+
     return (
       <Tooltip
+        className={twJoin(
+          'relative z-20',
+          'inline-flex items-center gap-1',
+          'border-b-2 border-dotted border-white/50 hover:border-white',
+          className,
+        )}
         tipContents={voteThresholdTooltip({ trancheId: bid.trancheId })}
         classNamesForTooltip="-ml-24"
       >
-        <div className={twJoin('flex items-center gap-1', className)}>
-          <StyledText variant="mathSymbol.container">
-            <span>{(bid.vote_perc * 100).toFixed(2)}</span>
-            <StyledText variant="mathSymbol">%</StyledText>
-          </StyledText>
-          <Icon name="circle-info" className="text-palette-beige text-xs" />
+        <div className="math-symbol">
+          <span className="important-value">{formattedPercentage}</span>
+          <span className="math-symbol-text">%</span>
         </div>
       </Tooltip>
     )
   }
+
+  const percentage = bid.vote_perc * 100
+  const formattedPercentage = percentage === 0 ? '0' : Math.floor(percentage)
 
   return (
     <ConditionalWrapper
@@ -56,7 +80,8 @@ export function BidVoteShare({
       wrapper={(children) => (
         <Tooltip
           className={twJoin(
-            'inline-flex items-center gap-1',
+            'relative z-20',
+            'gap-tighter inline-flex items-center',
             'border-b-2 border-dotted border-white/50 hover:border-white',
           )}
           tipContents={bidLiquidityReceivedTooltip({
@@ -70,10 +95,10 @@ export function BidVoteShare({
         </Tooltip>
       )}
     >
-      <StyledText variant="mathSymbol.container" className={className}>
-        <span>{Math.round(bid.vote_perc * 100)}</span>
-        <StyledText variant="mathSymbol">%</StyledText>
-      </StyledText>
+      <div className={twJoin('math-symbol', className)}>
+        <span className="important-value">{formattedPercentage}</span>
+        <span className="math-symbol-text">%</span>
+      </div>
     </ConditionalWrapper>
   )
 }

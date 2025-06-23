@@ -61,17 +61,17 @@ export function BidDetailsModal({
         'fixed inset-0 z-20',
         'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-loose))]',
         'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tightest))]',
-        'bg-token-color/20 backdrop-blur-sm',
+        'bg-theme-color/20 backdrop-blur-sm',
       )}
       onClick={closeModal}
     >
       <div
         className={twJoin(
-          'inset-loose fixed',
+          'inset-loose absolute',
           'rounded-standard',
           'overflow-hidden',
-          'border-background border-4',
           'bg-background',
+          'grid grid-rows-[min-content_auto]',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -79,7 +79,7 @@ export function BidDetailsModal({
           className={twJoin(
             'h-bar-height-standard',
             'flex items-center justify-between',
-            'bg-token-color/50',
+            'bg-theme-color/50',
           )}
         >
           {(

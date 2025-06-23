@@ -1,3 +1,4 @@
+import { fetchRoundPrices } from '@/app/api/v2/[environment]/[source_id]/build_round_data/_helpers/fetchRoundPrices'
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { supabase } from '@/lib/supabase'
 import { environments, getEnvironment } from '@v2/environments'
@@ -46,6 +47,13 @@ export function fetchData() {
 
           const augmentedBids = data?.map((bid) => bid.data) ?? []
 
+          const roundPrices = await fetchRoundPrices({
+            chainId: source.priceChainId,
+            roundId: currentRound.round_id,
+          })
+
+          const atomPrice = roundPrices[source.atomDenom]?.token_price ?? 0
+
           return {
             sourceId: source.id,
             data: {
@@ -54,6 +62,8 @@ export function fetchData() {
               currentRound,
               tranches,
               augmentedBids: augmentedBids as unknown as BidRevampMetrics[],
+              roundPrices,
+              atomPrice,
             },
           }
         }),

@@ -42,14 +42,7 @@ export async function fetchRoundTributes({
       )
     }
 
-    // Clean up the response
     const responseJson = await response.json()
-
-    // Add debugging and proper error handling
-    console.log(
-      "fetchRoundTributes responseJson:",
-      JSON.stringify(responseJson, null, 2)
-    )
 
     if (!Array.isArray(responseJson) || responseJson.length === 0) {
       console.warn(`No tribute data found for round ${roundId}`)

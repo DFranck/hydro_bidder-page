@@ -2,8 +2,8 @@
 
 import { CollapsibleBox } from '@/components/CollapsibleBox'
 import { useIsMobile } from '@/lib/useIsMobile'
-import { LoadingSpinner } from '@v2/components/LoadingSpinner'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export function AppPageContainer({
@@ -15,7 +15,21 @@ export function AppPageContainer({
 }) {
   const isMobile = useIsMobile()
   const { state } = useAppState()
-  const { isSidebarOpen, isLoading } = state
+  const { isSidebarOpen } = state
+
+  useEffect(() => {
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+    document.body.style.height = '100dvh'
+    document.body.style.width = '100dvw'
+
+    return () => {
+      document.documentElement.style.overflow = 'auto'
+      document.body.style.overflow = 'auto'
+      document.body.style.height = 'auto'
+      document.body.style.width = 'auto'
+    }
+  })
 
   return (
     <CollapsibleBox
@@ -26,7 +40,6 @@ export function AppPageContainer({
       classNamesForInnerWrapper={twMerge('relative h-full', className)}
     >
       {children}
-      {isLoading && <LoadingSpinner />}
     </CollapsibleBox>
   )
 }

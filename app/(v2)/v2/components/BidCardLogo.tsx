@@ -15,7 +15,7 @@ export function BidCardLogo({
   return (
     <div
       className={twJoin(
-        'relative',
+        'relative h-full',
         'flex items-center justify-center',
         'bg-background overflow-hidden',
         'rounded-[calc(var(--radius-standard)-var(--spacing-tightest))]',

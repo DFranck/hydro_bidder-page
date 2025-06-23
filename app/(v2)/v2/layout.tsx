@@ -1,7 +1,7 @@
+import { WalletProvider } from '@/components/WalletProvider'
 import { AppHeader } from '@v2/components/AppHeader'
 import { AppPageContainer } from '@v2/components/AppPageContainer'
-import { Sidebar } from '@v2/components/Sidebar'
-import { DataProviderOnServer } from '@v2/state/DataProviderOnServer'
+import { WalletDataProvider } from '@v2/components/WalletDataProvider'
 import { fetchData } from '@v2/state/fetchData'
 import { twJoin } from 'tailwind-merge'
 
@@ -12,35 +12,40 @@ export default async function Layout({
   children: React.ReactNode
   modal: React.ReactNode
 }) {
-  const dataPromises = fetchData()
+  const initialDataPromises = fetchData()
 
   return (
-    <DataProviderOnServer dataPromises={dataPromises}>
-      <div
-        className={twJoin(
-          'relative h-screen w-screen',
-          'bg-background gap-tight',
-          'px-loose desktop:px-standard',
-          'py-standard desktop:py-tight',
-          'sidebar-open:grid-areas-mobile-sidebar-open',
-          'sidebar-closed:grid-areas-mobile-sidebar-closed',
-          'desktop:sidebar-open:grid-areas-desktop-sidebar-open',
-          'desktop:sidebar-closed:grid-areas-desktop-sidebar-closed',
-          '**:scrollbar-thumb-palette-beige',
-          '**:scrollbar-track-background',
-          '**:scrollbar-thin',
-        )}
-      >
-        <AppHeader />
+    <WalletProvider>
+      <WalletDataProvider initialDataPromises={initialDataPromises}>
+        <div
+          className={twJoin(
+            'relative h-screen w-screen',
+            'bg-background gap-tight',
+            'p-standard',
+            'grid-areas-mobile-no-sidebar',
+            'desktop:grid-areas-desktop-no-sidebar',
+            'desktop:px-standard',
+            'desktop:py-tight',
+            // 'sidebar-open:grid-areas-mobile-sidebar-open',
+            // 'sidebar-closed:grid-areas-mobile-sidebar-closed',
+            // 'desktop:sidebar-open:grid-areas-desktop-sidebar-open',
+            // 'desktop:sidebar-closed:grid-areas-desktop-sidebar-closed',
+            '**:scrollbar-thumb-palette-beige',
+            '**:scrollbar-track-background',
+            '**:scrollbar-thin',
+          )}
+        >
+          <AppHeader />
 
-        <main className="contents">
-          <Sidebar />
+          <main className="contents">
+            {/* <Sidebar /> */}
 
-          <AppPageContainer>{children}</AppPageContainer>
-        </main>
+            <AppPageContainer>{children}</AppPageContainer>
+          </main>
 
-        {modal}
-      </div>
-    </DataProviderOnServer>
+          {modal}
+        </div>
+      </WalletDataProvider>
+    </WalletProvider>
   )
 }

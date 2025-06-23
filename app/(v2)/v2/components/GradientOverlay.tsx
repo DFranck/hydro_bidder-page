@@ -25,10 +25,10 @@ export function GradientOverlay({
 
   const gradientColors =
     direction === 'down'
-      ? 'from-token-color/40 to-transparent'
+      ? 'from-theme-color/40 to-transparent'
       : direction === 'left'
-        ? 'from-token-color-to-left/20 to-transparent'
-        : 'from-token-color-to-right/20 to-transparent'
+        ? 'from-theme-color-to-left/20 to-transparent'
+        : 'from-theme-color-to-right/20 to-transparent'
 
   return (
     <div

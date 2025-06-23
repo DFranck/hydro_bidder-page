@@ -8,6 +8,8 @@ import { useAppState } from '@v2/state/DataProviderOnClient'
 import sumBy from 'lodash/sumBy'
 import { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
+import { BidDuration } from './BidDuration'
+import { BidTributeApr } from './BidTributeApr'
 import { BidVoteShare } from './BidVoteShare'
 
 export function BidDetails({
@@ -53,7 +55,7 @@ export function BidDetails({
       sourceId={sourceId}
       className={twMerge(
         'grid grid-rows-[min-content_auto]',
-        'h-full',
+        'h-full overflow-hidden',
         'relative',
         className,
       )}
@@ -63,17 +65,17 @@ export function BidDetails({
           'h-bar-height-large',
           'flex items-center',
           'px-loosest py-standard',
-          'bg-token-color',
+          'bg-theme-color',
         )}
       >
         <h1 className="title">{bidDescription?.title}</h1>
       </header>
 
-      <main ref={mainRef} className="relative overflow-hidden overflow-y-auto">
+      <main ref={mainRef} className="relative min-h-0 overflow-y-auto">
         <aside
           ref={sidebarRef}
           className={twJoin(
-            'bg-token-color/20',
+            'bg-theme-color/20',
             'grid grid-cols-2',
             'px-loosest',
             'py-looser',
@@ -96,8 +98,26 @@ export function BidDetails({
             ['Project Name', bidDescription?.projectName],
             ['Bid in Round', bid.roundId + 1],
             ['Status', bid.status],
-            ['Vote %', <BidVoteShare key={bid.id} bid={bid} />],
-            ['Voter APR', bid.apr_tribute?.toFixed(2) || '–'],
+            [
+              'Duration',
+              <BidDuration key="duration" bidId={bid.id} sourceId={sourceId} />,
+            ],
+            [
+              'Vote %',
+              <BidVoteShare
+                key="vote-share"
+                bidId={bid.id}
+                sourceId={sourceId}
+              />,
+            ],
+            [
+              'Voter APR',
+              <BidTributeApr
+                key="tribute-apr"
+                bidId={bid.id}
+                sourceId={sourceId}
+              />,
+            ],
             [
               'Max Deployment Amount',
               sumBy(

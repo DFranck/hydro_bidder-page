@@ -1,8 +1,10 @@
 'use client'
 
 import { AppPageContainer } from '@v2/components/AppPageContainer'
+import { CurrentRoundAprGlobal } from '@v2/components/CurrentRoundAprGlobal'
+import { CurrentRoundNumberOfBids } from '@v2/components/CurrentRoundNumberOfBids'
+import { CurrentRoundTimeLeft } from '@v2/components/CurrentRoundTimeLeft'
 import { GradientOverlay } from '@v2/components/GradientOverlay'
-import { StatBar } from '@v2/components/StatBar'
 import { Tranche } from '@v2/components/Tranche'
 import { TrancheNavigation } from '@v2/components/TrancheNavigation'
 import { useAppState } from '@v2/state/DataProviderOnClient'
@@ -74,20 +76,20 @@ export function TrancheBrowser() {
 
       if (leftTranche) {
         const leftColor = getComputedStyle(leftTranche)
-          .getPropertyValue('--color-token-color')
+          .getPropertyValue('--color-theme-color')
           .trim()
         currentTranche.style.setProperty(
-          '--color-token-color-to-left',
+          '--color-theme-color-to-left',
           leftColor,
         )
       }
 
       if (rightTranche) {
         const rightColor = getComputedStyle(rightTranche)
-          .getPropertyValue('--color-token-color')
+          .getPropertyValue('--color-theme-color')
           .trim()
         currentTranche.style.setProperty(
-          '--color-token-color-to-right',
+          '--color-theme-color-to-right',
           rightColor,
         )
       }
@@ -104,13 +106,11 @@ export function TrancheBrowser() {
 
   return (
     <AppPageContainer className="grid grid-rows-[min-content_min-content_auto]">
-      <StatBar
-        stats={[
-          ['Live Bids', 14],
-          ['Average APR', '17%'],
-          ['Days Left', 15],
-        ]}
-      />
+      <div className="h-bar-height-large bg-shaded rounded-standard desktop:gap-3 flex justify-around gap-1">
+        <CurrentRoundNumberOfBids />
+        <CurrentRoundAprGlobal />
+        <CurrentRoundTimeLeft />
+      </div>
 
       <TrancheNavigation
         allTranchesSorted={allTranchesSorted}
