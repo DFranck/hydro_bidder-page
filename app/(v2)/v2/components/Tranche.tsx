@@ -155,7 +155,7 @@ export function Tranche({
           {bidsInTranche.length > 0 ? (
             <div
               className={twJoin(
-                'h-full w-full',
+                'w-full',
                 '@card-is-row:table',
                 '@card-is-row:table-fixed',
                 '@card-is-row:border-separate',
