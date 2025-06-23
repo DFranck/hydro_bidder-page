@@ -30,18 +30,51 @@ export function useProcessedData(
   hydroData: RawHydroData[] | null,
   bidDescriptions: Record<number, BidMetaData>,
 ): ProcessedData {
-  const currentRoundDataPerSource = useMemo(() => {
+  const staticDataPerSource = useMemo(() => {
     if (!hydroData) return null
 
-    return Object.fromEntries(
+    const result = Object.fromEntries(
       hydroData.map(({ sourceId, data }) => {
-        // Augment tranches with voting information
+        const currentRoundEndDate = data.currentRound?.round_end
+          ? new Date(Number(data.currentRound.round_end) / 1e6)
+          : new Date()
+        const lockedAtomEpochInNanos = data.constants?.lock_epoch_length ?? 7 * 24 * 60 * 60 * 1e9
+
+        return [
+          sourceId,
+          {
+            sourceId,
+            currentRoundId: data.currentRound?.round_id ?? 0,
+            roundEnd: data.currentRound?.round_end ? new Date(Number(data.currentRound.round_end) / 1e6).toISOString() : '',
+            tranches: data.tranches ?? [],
+            augmentedBids: data.augmentedBids ?? [],
+            totalLockedTokens: data.totalLockedTokens ?? 0,
+            constants: data.constants,
+            roundPrices: data.roundPrices,
+            atomPrice: data.atomPrice,
+            _currentRoundEndDate: currentRoundEndDate,
+            _lockedAtomEpochInNanos: lockedAtomEpochInNanos,
+          },
+        ]
+      }),
+    ) as Record<SourceID, any>
+
+    return result
+  }, [hydroData])
+
+  const currentRoundDataPerSource = useMemo(() => {
+    if (!staticDataPerSource || !hydroData) return null
+
+    const result = Object.fromEntries(
+      hydroData.map(({ sourceId, data }) => {
+        const staticData = staticDataPerSource[sourceId]
+
         const augmentedTranches: AugmentedTranche[] =
-          data.tranches?.map((tranche: Tranche) => {
+          staticData.tranches?.map((tranche: Tranche) => {
             const { userVotedInTranche, userVotedOnBidId } =
               calculateUserVotedInTranche(
                 tranche,
-                data.augmentedBids ?? [],
+                staticData.augmentedBids ?? [],
                 data.walletData,
               )
 
@@ -52,39 +85,29 @@ export function useProcessedData(
             }
           }) ?? []
 
-        // Augment bids with vote button data
-        const currentRoundEndDate = data.currentRound?.round_end
-          ? new Date(Number(data.currentRound.round_end) / 1e6)
-          : new Date()
-        const lockedAtomEpochInNanos = data.constants?.lock_epoch_length ?? 7 * 24 * 60 * 60 * 1e9
-
         const { augmentedBids, augmentedLockups } = augmentBidsWithVoteData(
-          data.augmentedBids ?? [],
+          staticData.augmentedBids ?? [],
           data.walletData,
-          data.currentRound?.round_id ?? 0,
-          currentRoundEndDate,
-          lockedAtomEpochInNanos,
+          staticData.currentRoundId,
+          staticData._currentRoundEndDate,
+          staticData._lockedAtomEpochInNanos,
         )
 
         return [
           sourceId,
           {
-            sourceId,
-            currentRoundId: data.currentRound?.round_id ?? 0,
-            roundEnd: data.currentRound?.round_end ? new Date(Number(data.currentRound.round_end) / 1e6).toISOString() : '',
+            ...staticData,
             tranches: augmentedTranches,
             augmentedBids,
             lockups: augmentedLockups,
-            totalLockedTokens: data.totalLockedTokens ?? 0,
             walletData: data.walletData ?? null,
-            constants: data.constants,
-            roundPrices: data.roundPrices,
-            atomPrice: data.atomPrice,
           },
         ]
       }),
     ) as Record<SourceID, any>
-  }, [hydroData])
+
+    return result
+  }, [staticDataPerSource, hydroData])
 
   const filteredBidDescriptions = useMemo(() => {
     if (!currentRoundDataPerSource) return bidDescriptions

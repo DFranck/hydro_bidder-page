@@ -31,7 +31,6 @@ export function augmentBidsWithVoteData(
   lockedAtomEpochInNanos: number,
 ): AugmentedSourceData {
   if (!walletData) {
-    // Return bids with empty vote button data when no wallet is connected
     return {
       augmentedBids: bids.map((bid) => ({
         ...bid,
@@ -50,14 +49,12 @@ export function augmentBidsWithVoteData(
     }
   }
 
-  // Process lockups
   const lockups: AugmentedLockup[] = walletData.lockups_with_per_tranche_infos
     ? walletData.lockups_with_per_tranche_infos.map((lockup: any) =>
         augmentLockup(lockup, currentRoundId),
       )
     : []
 
-  // Process votes
   const votes: SanitizedVote[] = walletData.votes
     ? walletData.votes.map((vote: any) => {
         const { propId, ...rest } = keysFromSnakeToCamelCase(vote)
@@ -70,12 +67,10 @@ export function augmentBidsWithVoteData(
     return bidInfo?.roundId
   })
 
-  // Calculate voting power available by tranche
   const votingPowerTotal = (walletData.voting_power ?? 0) / 1e6
   const votingPowerAvailableByTrancheId: Record<number, number> = {}
 
   if (walletData.voting_power) {
-    // Calculate spent voting power per tranche
     const usedLockupsPerTranche: Record<string, AugmentedLockup[]> = {}
     lockups.forEach((lockup: AugmentedLockup) => {
       Object.entries(lockup.metaDataByTrancheId).forEach(([id, tranche]) => {
@@ -106,7 +101,6 @@ export function augmentBidsWithVoteData(
       {} as Record<string, number>,
     )
 
-    // Calculate available voting power per tranche
     Object.keys(votingPowerSpentByTrancheId).forEach((trancheId) => {
       votingPowerAvailableByTrancheId[parseInt(trancheId)] =
         votingPowerTotal - votingPowerSpentByTrancheId[trancheId]
@@ -144,18 +138,15 @@ export function augmentBidsWithVoteData(
 
         if (nextRoundEligibleToVote > currentRoundId) return false
 
-        // Calculate required power round id
         const powerRequiredRoundId = currentRoundId + bid.duration - 1
 
-        // Calculate round end time in nanoseconds
-        const currentRoundEndTime = currentRoundEndDate.getTime() * 1e6 // convert to nanoseconds
-        const roundLength = lockedAtomEpochInNanos // Using epoch length as round length
+        const currentRoundEndTime = currentRoundEndDate.getTime() * 1e6
+        const roundLength = lockedAtomEpochInNanos
         const powerRequiredRoundEnd =
           currentRoundEndTime +
           (powerRequiredRoundId - currentRoundId) * roundLength
 
-        // Check if lockup end time is >= power required round end
-        const lockEndTime = lockup.dateEnd.getTime() * 1e6 // Convert milliseconds to nanoseconds
+        const lockEndTime = lockup.dateEnd.getTime() * 1e6
 
         return lockEndTime >= powerRequiredRoundEnd
       },

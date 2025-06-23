@@ -1,3 +1,4 @@
+import { WalletButton } from '@/app/(v2)/v2/components/WalletButton'
 import { WalletProvider } from '@/components/WalletProvider'
 import { AppHeader } from '@v2/components/AppHeader'
 import { AppPageContainer } from '@v2/components/AppPageContainer'
@@ -27,10 +28,6 @@ export default async function Layout({
             'desktop:grid-areas-desktop-no-sidebar',
             'desktop:px-standard',
             'desktop:py-tight',
-            // 'sidebar-open:grid-areas-mobile-sidebar-open',
-            // 'sidebar-closed:grid-areas-mobile-sidebar-closed',
-            // 'desktop:sidebar-open:grid-areas-desktop-sidebar-open',
-            // 'desktop:sidebar-closed:grid-areas-desktop-sidebar-closed',
             '**:scrollbar-thumb-palette-beige',
             '**:scrollbar-track-background',
             '**:scrollbar-thin',
@@ -39,14 +36,13 @@ export default async function Layout({
           <AppHeader />
 
           <main className="contents">
-            {/* <Sidebar /> */}
-
             <AppPageContainer>{children}</AppPageContainer>
           </main>
 
           {modal}
         </div>
 
+        <WalletButton />
         <LayoutLoadingOverlay />
       </WalletDataProvider>
     </WalletProvider>

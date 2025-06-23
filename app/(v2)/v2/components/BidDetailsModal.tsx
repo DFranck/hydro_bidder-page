@@ -24,21 +24,17 @@ export function BidDetailsModal({
 
   const { navigate } = useInternalLink()
 
-  // Find current bid and its tranche
   const currentBid = augmentedBids?.find((bid) => bid.id === parseInt(bidId))
   const currentTrancheId = currentBid?.trancheId
 
-  // Find all bids in the same tranche, sorted by ID
   const bidsInSameTranche = sortBidsInTranche(
     augmentedBids?.filter((bid) => bid.trancheId === currentTrancheId) ?? [],
   )
 
-  // Find current bid index in the tranche
   const currentBidIndex = bidsInSameTranche.findIndex(
     (bid) => bid.id === parseInt(bidId),
   )
 
-  // Find previous and next bids
   const previousBidInTranche =
     currentBidIndex > 0 ? bidsInSameTranche[currentBidIndex - 1] : null
   const nextBidInTranche =
@@ -54,7 +50,6 @@ export function BidDetailsModal({
     navigate(`/v2/bids/${sourceId}/${targetBidId}`)
   }
 
-  // Check if current bid is below vote threshold
   const environment = getEnvironment()
   const source = getSource(environment, sourceId)
   const voteThreshold = currentBid?.trancheId

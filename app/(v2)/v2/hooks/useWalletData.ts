@@ -12,14 +12,20 @@ export function useWalletData(address: string | null) {
   const [error, setError] = useState<Error | null>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
   const lastAddressRef = useRef<string | null>(null)
+  const lastDataRef = useRef<WalletDataResult[] | null>(null)
+  const isFetchingRef = useRef(false)
 
   const fetchData = useCallback(async (walletAddress: string) => {
-    // Cancel any ongoing request
+    if (isFetchingRef.current) {
+      return
+    }
+
+    isFetchingRef.current = true
+
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
     }
 
-    // Create new abort controller for this request
     abortControllerRef.current = new AbortController()
 
     setIsLoading(true)
@@ -28,23 +34,29 @@ export function useWalletData(address: string | null) {
     try {
       const data = await fetchWalletData(walletAddress)
 
-      // Check if this request was cancelled
       if (abortControllerRef.current.signal.aborted) {
         return
       }
 
-      setWalletData(data)
+      const dataString = JSON.stringify(data)
+      const lastDataString = JSON.stringify(lastDataRef.current)
+
+      if (dataString !== lastDataString) {
+        setWalletData(data)
+        lastDataRef.current = data
+      }
+
       lastAddressRef.current = walletAddress
     } catch (err) {
-      // Don't set error if request was cancelled
+      console.error('useWalletData: Error fetching wallet data:', err)
       if (!abortControllerRef.current.signal.aborted) {
         setError(err instanceof Error ? err : new Error('Failed to fetch wallet data'))
       }
     } finally {
-      // Only update loading state if this request wasn't cancelled
       if (!abortControllerRef.current.signal.aborted) {
         setIsLoading(false)
       }
+      isFetchingRef.current = false
     }
   }, [])
 
@@ -54,24 +66,28 @@ export function useWalletData(address: string | null) {
       setError(null)
       setIsLoading(false)
       lastAddressRef.current = null
+      lastDataRef.current = null
+      isFetchingRef.current = false
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
       return
     }
 
-    // Only fetch if address has changed
-    if (lastAddressRef.current !== address) {
+    if (lastAddressRef.current !== address && !isFetchingRef.current) {
       fetchData(address)
     }
 
-    // Cleanup function to cancel ongoing requests
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
     }
-  }, [address, fetchData])
+  }, [address])
 
   const refetch = useCallback(() => {
-    if (address) {
+    if (address && !isFetchingRef.current) {
       fetchData(address)
     }
   }, [address, fetchData])

@@ -145,11 +145,9 @@ export function BidCard({
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById, isLoading } = state
 
-  // Get wallet data for this source
   const walletData = currentRoundDataPerSource?.[sourceId]?.walletData
   const userVotes = walletData?.votes || []
 
-  // Check if user has voted on this specific bid
   const userVotedOnBidIds = userVotes
     .filter((vote: any) => vote.prop_id === bidId)
     .map((vote: any) => vote.prop_id)
@@ -160,7 +158,6 @@ export function BidCard({
     currentRoundDataPerSource?.[sourceId]?.augmentedBids ?? []
   const bid = augmentedBids?.find((bid) => bid.id === bidId)
 
-  // Track VoteButton hover and focus state
   const [isVoteButtonHovered, setIsVoteButtonHovered] = useState(false)
   const [isVoteButtonFocused, setIsVoteButtonFocused] = useState(false)
   const isHoveringVoteButton = isVoteButtonHovered || isVoteButtonFocused
@@ -171,7 +168,6 @@ export function BidCard({
 
   const { projectLogoUrl = '/images/logo-drop.png' } = bidDescription ?? {}
 
-  // Check if bid is below vote threshold
   const environment = getEnvironment()
   const source = getSource(environment, sourceId)
   const voteThreshold =

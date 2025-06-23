@@ -30,16 +30,15 @@ export function WalletDataProvider({
   initialDataPromises,
 }: WalletDataProviderProps) {
   const { address, isWalletConnected } = useChain('neutron')
+
   const [hydroData, setHydroData] = useState<any[] | null>(null)
   const [bidDescriptions, setBidDescriptions] = useState<Record<number, any>>(
     {},
   )
 
-  // Use the optimized wallet data hook
   const { walletData: walletDataResults, isLoading: isWalletDataLoading } =
     useWalletData(isWalletConnected && address ? address : null)
 
-  // Resolve initial data promises
   useEffect(() => {
     const resolveInitialData = async () => {
       try {
@@ -61,30 +60,39 @@ export function WalletDataProvider({
     resolveInitialData()
   }, [initialDataPromises])
 
-  // Merge wallet data with hydro data when wallet data is available
+  const walletDataBySourceId = useMemo(() => {
+    if (!isWalletConnected || !walletDataResults) {
+      return new Map()
+    }
+    return new Map(walletDataResults.map((wd) => [wd.sourceId, wd.walletData]))
+  }, [isWalletConnected, walletDataResults])
+
   const mergedHydroData = useMemo(() => {
     if (!hydroData) {
       return null
     }
 
-    return hydroData.map((sourceData) => {
-      const walletDataForSource = walletDataResults?.find(
-        (wd) => wd.sourceId === sourceData.sourceId,
-      )
+    const result = hydroData.map((sourceData) => {
+      const walletDataForSource =
+        walletDataBySourceId.get(sourceData.sourceId) ?? null
+
       return {
         ...sourceData,
         data: {
           ...sourceData.data,
-          walletData: walletDataForSource?.walletData ?? null,
+          walletData: walletDataForSource,
         },
       }
     })
-  }, [hydroData, walletDataResults])
+
+    return result
+  }, [hydroData, walletDataBySourceId, isWalletConnected, walletDataResults])
 
   return (
     <DataProviderOnClient
       hydroData={mergedHydroData}
       bidDescriptions={bidDescriptions}
+      isWalletDataLoading={isWalletDataLoading}
     >
       {children}
     </DataProviderOnClient>

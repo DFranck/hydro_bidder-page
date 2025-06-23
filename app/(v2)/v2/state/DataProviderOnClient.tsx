@@ -29,14 +29,6 @@ const QueryClientProvider = dynamic(
   },
 )
 
-const WalletProvider = dynamic(
-  () => import('@/components/WalletProvider').then((mod) => mod.WalletProvider),
-  {
-    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
-    ssr: false,
-  },
-)
-
 const ToastContextProvider = dynamic(
   () => import('@/components/Toasts').then((mod) => mod.ToastContextProvider),
   {
@@ -102,62 +94,72 @@ interface DataProviderOnClientProps {
     }
   }> | null
   bidDescriptions: Record<number, BidMetaData>
+  isWalletDataLoading?: boolean
 }
 
 export function DataProviderOnClient({
   children,
   hydroData,
   bidDescriptions,
+  isWalletDataLoading = false,
 }: DataProviderOnClientProps) {
   const pathname = usePathname()
   const previousPathnameRef = useRef(pathname)
 
-  // Use the custom hook for data processing
   const { currentRoundDataPerSource, filteredBidDescriptions, isLoading } =
     useProcessedData(hydroData, bidDescriptions)
+
+  const combinedIsLoading = isLoading || isWalletDataLoading
+
+  const hydroDataKey = useMemo(() => {
+    if (!hydroData) return 'no-data'
+    const hasWalletData = hydroData.some((data) => data.data.walletData)
+    return `hydro-${hasWalletData ? 'with-wallet' : 'no-wallet'}-${JSON.stringify(hydroData).length}`
+  }, [hydroData])
 
   const initialStateWithData = useMemo(
     () => ({
       ...initialState,
       bidDescriptionsById: filteredBidDescriptions,
       currentRoundDataPerSource,
-      isLoading,
+      isLoading: combinedIsLoading,
     }),
-    [filteredBidDescriptions, currentRoundDataPerSource, isLoading],
+    [filteredBidDescriptions, currentRoundDataPerSource, combinedIsLoading],
   )
 
   const [state, dispatch] = useReducer(reducer, initialStateWithData)
 
-  // Update state when data changes
   useEffect(() => {
     dispatch({
       type: 'SET_STATE',
       payload: {
-        currentRoundDataPerSource,
+        ...initialState,
         bidDescriptionsById: filteredBidDescriptions,
-        isLoading,
+        currentRoundDataPerSource,
+        isLoading: combinedIsLoading,
       },
     })
-  }, [currentRoundDataPerSource, filteredBidDescriptions, isLoading])
+  }, [
+    hydroDataKey,
+    filteredBidDescriptions,
+    currentRoundDataPerSource,
+    combinedIsLoading,
+    isWalletDataLoading,
+  ])
 
-  // Update loading state when data changes
   useEffect(() => {
-    dispatch({ type: 'SET_IS_LOADING', payload: isLoading })
-  }, [isLoading])
+    dispatch({ type: 'SET_IS_LOADING', payload: combinedIsLoading })
+  }, [combinedIsLoading])
 
-  // Watch for pathname changes to clear loading state when navigation completes
   useEffect(() => {
     if (state.isLoading && pathname !== previousPathnameRef.current) {
-      // Pathname has changed, navigation completed
       dispatch({ type: 'SET_IS_LOADING', payload: false })
     }
     previousPathnameRef.current = pathname
   }, [pathname, state.isLoading])
 
-  console.log(JSON.stringify(state).length, 'bytes', { state })
-
   return (
-    <WalletProvider>
+    <div key={hydroDataKey}>
       <QueryClientProvider>
         <ToastContextProvider>
           <ChainsAndSignersProvider>
@@ -169,7 +171,7 @@ export function DataProviderOnClient({
           </ChainsAndSignersProvider>
         </ToastContextProvider>
       </QueryClientProvider>
-    </WalletProvider>
+    </div>
   )
 }
 

@@ -123,7 +123,6 @@ export function TrancheNavigation({
             }}
             {...spreadProps}
           >
-            {/* The bridging element between tab and content */}
             <div
               className={twMerge(
                 '-bottom-tight absolute right-0 left-0',

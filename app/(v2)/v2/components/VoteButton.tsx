@@ -19,7 +19,6 @@ import { revalidateTag } from '@/lib/revalidateTag'
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
 import { SourceID } from '@v2/environments'
-import { useWalletConnection, useWalletData } from '@v2/hooks'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
@@ -56,22 +55,8 @@ export function VoteButton({
   const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
     useGlobalLockupCapacityInfo()
 
-  const { getSigningCosmWasmClient, address } = useChain('neutron')
-
-  // Get wallet data refetch function
-  const { refetch: refetchWalletData } = useWalletData(address || null)
-
-  const { isWalletConnected, onClickConnect, onClickOpenView } =
-    useWalletConnection({
-      chainName: 'neutron',
-      ignoreStatus: true,
-      notifyConnectedCB: (isConnected: boolean) => {
-        if (isConnected && address) {
-          // Trigger wallet data refetch when wallet connects
-          refetchWalletData()
-        }
-      },
-    })
+  const { getSigningCosmWasmClient, address, isWalletConnected, connect } =
+    useChain('neutron')
 
   const sourceData = currentRoundDataPerSource?.[sourceId as SourceID]
   const bid = sourceData?.augmentedBids?.find((bid: any) => bid.id === bidId)
@@ -104,7 +89,6 @@ export function VoteButton({
 
       setToasts([toastMessages.votingSuccess])
 
-      // Call the onVote callback if provided
       onVote?.()
     } catch (err: any) {
       setToasts([toastMessages.votingError(err as Error)])
@@ -114,7 +98,6 @@ export function VoteButton({
     }
   }
 
-  // Determine button state and behavior
   let buttonProps = {
     onClick: undefined as React.MouseEventHandler | undefined,
     tooltip: undefined as React.ReactNode,
@@ -125,7 +108,10 @@ export function VoteButton({
 
   if (!isWalletConnected) {
     buttonProps = {
-      onClick: onClickConnect,
+      onClick: async (e: React.MouseEvent) => {
+        e.preventDefault()
+        await connect()
+      },
       tooltip: 'Connect Wallet to Vote',
       disabled: false,
       isLink: false,
@@ -222,7 +208,6 @@ export function VoteButton({
         {...otherProps}
       >
         <span className={twJoin('relative block')}>
-          {/* The circle (solid or dashed) */}
           <span
             className={twJoin(
               'z-10 transition-all',
@@ -245,7 +230,6 @@ export function VoteButton({
             />
           </span>
 
-          {/* The check icon */}
           <span
             className={twJoin(
               'z-10 transition-all',
@@ -263,7 +247,6 @@ export function VoteButton({
             <Icon name="solid:check" />
           </span>
 
-          {/* The radial gradient */}
           <span
             className={twJoin(
               'pointer-events-none z-0 size-12',
