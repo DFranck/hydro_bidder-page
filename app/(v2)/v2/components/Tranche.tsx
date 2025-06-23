@@ -2,9 +2,11 @@
 
 import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
+import { Tooltip } from '@/components/Tooltip'
+import { voteThresholdTooltip } from '@/components/ToolTips'
 import { BidCard, bidCardFields } from '@v2/components/BidCard'
 import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
-import { SourceID } from '@v2/environments'
+import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import orderBy from 'lodash/orderBy'
 import { useRef } from 'react'
@@ -58,6 +60,11 @@ export function Tranche({
     ['vote_perc'],
     ['desc'],
   )
+
+  const environment = getEnvironment()
+  const source = getSource(environment, sourceId)
+  const voteThreshold =
+    source.voteThresholds[trancheId as keyof typeof source.voteThresholds]
 
   const viewboxClassName = twMerge(
     'rounded-standard absolute inset-0 overflow-hidden',
@@ -167,8 +174,54 @@ export function Tranche({
                 )}
               >
                 {bidsInTranche.map((bid, index) => {
+                  const isBelowThreshold = bid.vote_perc < voteThreshold
+                  const isFirstBelowThreshold =
+                    isBelowThreshold &&
+                    bidsInTranche
+                      .slice(0, index)
+                      .every((prevBid) => prevBid.vote_perc >= voteThreshold)
+
                   return (
-                    <BidCard key={bid.id} sourceId={sourceId} bidId={bid.id} />
+                    <>
+                      {isFirstBelowThreshold && (
+                        <div className="@lg:table-row">
+                          <div className="@lg:col-span-99 @lg:table-cell">
+                            <div
+                              className={twJoin(
+                                'h-bar-height-standard',
+                                'gap-standard flex items-center justify-between',
+                                'text-palette-beige text-xs whitespace-nowrap',
+                              )}
+                            >
+                              <div className="border-palette-beige w-full border-t-2" />
+                              <Tooltip
+                                tipContents={voteThresholdTooltip({
+                                  trancheId,
+                                })}
+                              >
+                                <div className="gap-tightest flex items-center">
+                                  <Icon name="solid:circle-exclamation" />
+                                  <span>
+                                    These are below the{' '}
+                                    <strong className="has-tooltip">
+                                      {voteThreshold * 100}% vote share
+                                      threshold
+                                    </strong>
+                                  </span>
+                                  <Icon name="circle-info" />
+                                </div>
+                              </Tooltip>
+                              <div className="border-palette-beige w-full border-t-2" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <BidCard
+                        key={bid.id}
+                        sourceId={sourceId}
+                        bidId={bid.id}
+                      />
+                    </>
                   )
                 })}
               </div>

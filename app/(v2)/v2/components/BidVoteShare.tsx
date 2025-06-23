@@ -55,9 +55,9 @@ export function BidVoteShare({
     return (
       <Tooltip
         className={twJoin(
+          'has-tooltip',
           'relative z-20',
           'inline-flex items-center gap-1',
-          'border-b-2 border-dotted border-white/50 hover:border-white',
           className,
         )}
         tipContents={voteThresholdTooltip({ trancheId: bid.trancheId })}
@@ -80,9 +80,9 @@ export function BidVoteShare({
       wrapper={(children) => (
         <Tooltip
           className={twJoin(
+            'has-tooltip',
             'relative z-20',
             'gap-tighter inline-flex items-center',
-            'border-b-2 border-dotted border-white/50 hover:border-white',
           )}
           tipContents={bidLiquidityReceivedTooltip({
             votePercentage: bid.vote_perc,

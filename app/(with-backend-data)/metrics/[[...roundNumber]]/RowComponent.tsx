@@ -41,10 +41,10 @@ export function RowComponent<
             <div
               className={twJoin(
                 "flex items-center justify-between gap-3",
-                "whitespace-nowrap text-xs text-palette-beige"
+                "text-palette-beige text-xs whitespace-nowrap"
               )}
             >
-              <div className="w-full border-t-2 border-palette-beige" />
+              <div className="border-palette-beige w-full border-t-2" />
 
               <Tooltip tipContents={voteThresholdTooltip({ trancheId })}>
                 <div className="flex items-center gap-1">
@@ -57,7 +57,7 @@ export function RowComponent<
                 </div>
               </Tooltip>
 
-              <div className="w-full border-t-2 border-palette-beige" />
+              <div className="border-palette-beige w-full border-t-2" />
             </div>
           </TD>
         </TR>

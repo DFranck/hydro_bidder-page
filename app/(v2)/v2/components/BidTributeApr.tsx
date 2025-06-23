@@ -97,9 +97,9 @@ export function BidTributeApr({
   return (
     <Tooltip
       className={twJoin(
+        'has-tooltip',
         'relative z-20',
         'inline-flex items-center gap-1',
-        'border-b-2 border-dotted border-white/50 hover:border-white',
         className,
       )}
       tipContents={tooltipContent}

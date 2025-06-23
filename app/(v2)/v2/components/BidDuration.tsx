@@ -37,9 +37,9 @@ export function BidDuration({ bidId, sourceId, className }: BidDurationProps) {
   return (
     <Tooltip
       className={twJoin(
+        'has-tooltip',
         'relative z-20',
         'gap-tighter flex items-center',
-        'border-b-2 border-dotted border-white/50 hover:border-white',
         className,
       )}
       tipContents={polDurationTooltip}

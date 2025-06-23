@@ -52,8 +52,8 @@ export function CurrentRoundTimeLeft() {
         <var className="important-value">{isLoading ? '...' : value}</var>
         <span
           className={twJoin(
+            'has-tooltip',
             'label desktop:text-center desktop:w-auto w-min',
-            'border-b-2 border-dotted border-white/50 hover:border-white',
           )}
         >
           {isLoading ? 'Time Left' : label}

@@ -54,7 +54,7 @@
   --color-foreground: rgb(255, 255, 255);
   --color-background: var(--color-palette-text);
 
-  --color-shaded: rgba(255, 255, 255, 0.05);
+  --color-shaded: rgba(255, 255, 255, 0.1);
   --color-faded: rgba(255, 255, 255, 0.7);
   --color-darkened: rgba(var(--palette-text-rgb), 0.25);
 }
@@ -274,4 +274,9 @@
 
 @utility math-symbol-text {
   @apply text-sm font-bold opacity-80;
+}
+
+@utility has-tooltip {
+  @apply border-palette-beige/50 border-b-2 border-dotted;
+  @apply hover:border-palette-beige;
 }

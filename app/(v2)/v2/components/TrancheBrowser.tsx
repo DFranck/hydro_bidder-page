@@ -106,7 +106,14 @@ export function TrancheBrowser() {
 
   return (
     <AppPageContainer className="grid grid-rows-[min-content_min-content_auto]">
-      <div className="h-bar-height-large bg-shaded rounded-standard desktop:gap-3 flex justify-around gap-1">
+      <div
+        className={twJoin(
+          'h-bar-height-large',
+          'flex items-center justify-around gap-1',
+          'bg-shaded rounded-standard',
+          'desktop:gap-3',
+        )}
+      >
         <CurrentRoundNumberOfBids />
         <CurrentRoundAprGlobal />
         <CurrentRoundTimeLeft />
