@@ -41,31 +41,38 @@ export function WalletButton() {
     return (
       <div
         className={twJoin(
+          'h-bar-height-large',
           'fixed right-0 bottom-0 left-0 z-50',
-          'p-standard',
-          'from-palette-green bg-gradient-to-t to-transparent',
+          'desktop:bottom-auto',
+          'desktop:top-0',
         )}
       >
-        <div className="mx-auto max-w-sm">
-          <button
-            onClick={buttonProps.onClick}
-            disabled={buttonProps.disabled}
-            className={twJoin(
-              'w-full',
-              'btn-primary',
-              'gap-tight flex items-center justify-center',
-              'py-looser px-loosest',
-              'rounded-standard',
-              'shadow-lg',
-              'transition-all',
-              'hover:shadow-xl',
-              'focus:shadow-xl',
-            )}
-          >
-            <Icon name="solid:wallet" className="size-5" />
-            <span className="font-medium">{buttonProps.children}</span>
-          </button>
-        </div>
+        <div
+          className={twJoin(
+            'w-[200vw]',
+            'pointer-events-none absolute inset-y-0',
+            'left-1/2 -translate-x-1/2',
+            'from-palette-green bg-radial via-transparent to-transparent',
+            'translate-y-1/2',
+            'desktop:-translate-y-1/2',
+          )}
+        />
+        <button
+          onClick={buttonProps.onClick}
+          disabled={buttonProps.disabled}
+          className={twJoin(
+            'absolute top-1/2 left-1/2',
+            '-translate-x-1/2 -translate-y-1/2',
+            'btn-primary',
+            'transition-all',
+            'shadow-lg',
+            'hover:shadow-xl',
+            'focus:shadow-xl',
+          )}
+        >
+          <Icon name="solid:wallet" className="size-5" />
+          <span className="font-medium">{buttonProps.children}</span>
+        </button>
       </div>
     )
   }
