@@ -21,7 +21,12 @@ function TH({
 }) {
   return (
     <div
-      className={twJoin('label', '@lg:table-cell', '@lg:px-tight', className)}
+      className={twJoin(
+        'label whitespace-nowrap',
+        '@card-is-row:table-cell',
+        '@card-is-row:px-tight',
+        className,
+      )}
     >
       {children}
     </div>
@@ -150,27 +155,29 @@ export function Tranche({
           {bidsInTranche.length > 0 ? (
             <div
               className={twJoin(
-                'w-full',
-                '@lg:table',
-                '@lg:table-auto',
-                '@lg:border-separate',
-                '@lg:border-spacing-y-standard',
+                'h-full w-full',
+                '@card-is-row:table',
+                '@card-is-row:table-fixed',
+                '@card-is-row:border-separate',
+                '@card-is-row:border-spacing-y-standard',
               )}
             >
-              <div className="@lg:table-header-group">
-                <div className={twJoin('hidden', '@lg:table-row')}>
-                  <TH>Logo</TH>
-                  <TH>Title</TH>
+              <div className="@card-is-row:table-header-group">
+                <div className={twJoin('hidden', '@card-is-row:table-row')}>
+                  <TH className="w-24">Logo</TH>
+                  <TH className="w-auto">Title</TH>
                   {bidCardFields.map(({ key, label }) => (
-                    <TH key={key}>{label}</TH>
+                    <TH key={key} className="w-24 text-center">
+                      {label}
+                    </TH>
                   ))}
-                  <TH className="@lg:text-right">Actions</TH>
+                  <TH className="w-24 text-right">Actions</TH>
                 </div>
               </div>
               <div
                 className={twJoin(
                   'gap-standard flex flex-col',
-                  '@lg:table-row-group',
+                  '@card-is-row:table-row-group',
                 )}
               >
                 {bidsInTranche.map((bid, index) => {
@@ -184,13 +191,22 @@ export function Tranche({
                   return (
                     <>
                       {isFirstBelowThreshold && (
-                        <div className="@lg:table-row">
-                          <div className="@lg:col-span-99 @lg:table-cell">
+                        <div className="@card-is-row:table-row">
+                          <div
+                            className={twJoin(
+                              '@card-is-row:relative @card-is-row:table-cell',
+                              'h-bar-height-standard',
+                            )}
+                          >
                             <div
                               className={twJoin(
-                                'h-bar-height-standard',
-                                'gap-standard flex items-center justify-between',
+                                'h-full w-[100cqw]',
+                                'flex items-center justify-between',
+                                'gap-standard',
                                 'text-palette-beige text-xs whitespace-nowrap',
+                                '@card-is-row:absolute',
+                                '@card-is-row:top-1/2',
+                                '@card-is-row:-translate-y-1/2',
                               )}
                             >
                               <div className="border-palette-beige w-full border-t-2" />

@@ -28,12 +28,7 @@ export function CurrentRoundNumberOfBids() {
         <var className="important-value">
           {isLoading ? '...' : bidsInRound.length}
         </var>
-        <span
-          className={twJoin(
-            'has-tooltip',
-            'label desktop:text-center desktop:w-auto w-min',
-          )}
-        >
+        <span className={twJoin('has-tooltip', 'label desktop:w-auto w-min')}>
           Live{' '}
           {pluralize({
             count: bidsInRound.length,

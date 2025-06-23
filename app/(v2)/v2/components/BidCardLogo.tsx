@@ -15,14 +15,21 @@ export function BidCardLogo({
   return (
     <div
       className={twJoin(
-        'relative h-full',
+        'relative',
         'flex items-center justify-center',
         'bg-background overflow-hidden',
         'rounded-[calc(var(--radius-standard)-var(--spacing-tightest))]',
         'p-standard',
+        '@card-is-row:inset-tight',
+        '@card-is-row:absolute',
       )}
     >
-      <div className="relative z-10 size-10">
+      <div
+        className={twJoin(
+          'inset-tight absolute z-10',
+          'flex items-center justify-center',
+        )}
+      >
         <Image
           src={projectLogoUrl}
           alt={projectName ?? title ?? '(Untitled)'}

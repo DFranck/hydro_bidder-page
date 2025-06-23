@@ -46,12 +46,13 @@ function TD({
   return (
     <div
       className={twMerge(
-        '@lg:h-full',
-        '@lg:relative',
-        '@lg:table-cell',
-        '@lg:w-auto',
-        '@lg:align-middle',
-        '@lg:p-tight',
+        'grid',
+        '@card-is-row:relative',
+        '@card-is-row:table-cell',
+        '@card-is-row:h-full',
+        '@card-is-row:w-1',
+        '@card-is-row:p-tight',
+        '@card-is-row:align-middle',
         className,
       )}
       {...otherProps}
@@ -94,13 +95,13 @@ function FloatingCardElements({
           'transition-all',
           'group-hover/bid-card:bg-theme-color/40',
           'group-focus-within/bid-card:bg-theme-color/60!',
-          'hidden @lg:block',
+          '@card-is-row:block hidden',
           isFirstCell
             ? [
                 'block',
                 'rounded-standard',
-                '@lg:rounded-none',
-                '@lg:rounded-l-standard',
+                '@card-is-row:rounded-none',
+                '@card-is-row:rounded-l-standard',
               ]
             : '',
           isLastCell ? 'rounded-r-standard' : '',
@@ -120,9 +121,11 @@ function FloatingCardElements({
             '-inset-tightest absolute',
             'border-theme-color border-(length:--spacing-tightest)',
             'rounded-[calc(var(--radius-standard)+var(--spacing-tightest))]',
-            isFirstCell && '@lg:rounded-r-none @lg:border-r-0',
-            isLastCell && '@lg:rounded-l-none @lg:border-l-0',
-            !(isFirstCell || isLastCell) && '@lg:rounded-none @lg:border-x-0',
+            isFirstCell &&
+              '@card-is-row:rounded-r-none @card-is-row:border-r-0',
+            isLastCell && '@card-is-row:rounded-l-none @card-is-row:border-l-0',
+            !(isFirstCell || isLastCell) &&
+              '@card-is-row:rounded-none @card-is-row:border-x-0',
           )}
         />
       </div>
@@ -183,19 +186,19 @@ export function BidCard({
         userHasVotedOnThisBid && 'voted-on',
         isBelowVoteThreshold && 'low-votes',
         'group/bid-card',
-        'block',
+        'grid',
         'relative z-10',
         'outline-none',
         'gap-tight',
         'transition-all',
         'p-tighter',
         'grid-areas-bid-card',
-        'grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto]',
-        '@lg:table-row',
-        '@lg:grid-cols-none',
-        '@lg:grid-rows-none',
-        '@lg:gap-0',
-        '@lg:p-0',
+        '@card-is-row:table-row',
+        '@card-is-row:grid-cols-none',
+        '@card-is-row:grid-rows-none',
+        '@card-is-row:gap-0',
+        '@card-is-row:p-0',
+        '[&_.important-value]:text-base',
         isLoading && 'opacity-75',
         className,
       )}
@@ -212,7 +215,7 @@ export function BidCard({
       }
       {...otherProps}
     >
-      <TD className="grid-in-logo">
+      <TD className="grid-in-logo @card-is-row:h-24">
         <FloatingCardElements
           sourceId={sourceId}
           bidId={bidId}
@@ -227,7 +230,13 @@ export function BidCard({
         />
       </TD>
 
-      <TD className={twJoin('grid-in-title', 'px-tighter py-tightest')}>
+      <TD
+        className={twJoin(
+          'grid-in-title',
+          'px-tighter py-tightest',
+          '@card-is-row:w-auto',
+        )}
+      >
         <FloatingCardElements
           sourceId={sourceId}
           bidId={bidId}
@@ -246,7 +255,7 @@ export function BidCard({
           'grid-in-fields',
           'gap-loose flex items-center justify-between',
           'px-tighter py-tightest',
-          '@lg:contents',
+          '@card-is-row:contents',
         )}
       >
         {bidCardFields.map(({ key, label, value }) => {
@@ -254,7 +263,7 @@ export function BidCard({
             typeof value === 'function' ? value(bid, sourceId) : value
 
           return (
-            <TD key={key} className="@lg:text-center">
+            <TD key={key} className="@card-is-row:text-center">
               <FloatingCardElements
                 sourceId={sourceId}
                 bidId={bidId}
@@ -265,7 +274,7 @@ export function BidCard({
                 className={twJoin(
                   'gap-tight flex flex-col',
                   'text-sm',
-                  '@lg:items-center',
+                  '@card-is-row:items-center',
                 )}
               >
                 <span className="sr-only">{label}</span>

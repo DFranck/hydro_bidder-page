@@ -11,6 +11,7 @@
   --breakpoint-desktop: 768px;
 
   --container-4xs: 10rem;
+  --container-card-is-row: 500px;
 
   --spacing-tightest: 2px;
   --spacing-tighter: 4px;
@@ -249,6 +250,9 @@
   grid-template-areas:
     "logo title actions"
     "logo fields actions";
+  @apply grid;
+  @apply grid-cols-[var(--spacing-bar-height-standard)_auto_min-content];
+  @apply grid-rows-[auto_auto];
 }
 
 @utility grid-in-logo {

@@ -51,12 +51,7 @@ export function CurrentRoundAprGlobal() {
                 style: 'percent',
               })}
         </var>
-        <span
-          className={twJoin(
-            'has-tooltip',
-            'label desktop:text-center desktop:w-auto w-min',
-          )}
-        >
+        <span className={twJoin('has-tooltip', 'label desktop:w-auto w-min')}>
           Average APR
         </span>
       </div>

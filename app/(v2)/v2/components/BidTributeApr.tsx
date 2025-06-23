@@ -105,7 +105,7 @@ export function BidTributeApr({
       tipContents={tooltipContent}
       classNamesForTooltip="-ml-24"
     >
-      <span className="flex items-center gap-1 @lg:flex-col">
+      <span className="@card-is-row:flex-col flex items-center gap-1">
         {renderAprValue()}
       </span>
     </Tooltip>

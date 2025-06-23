@@ -50,12 +50,7 @@ export function CurrentRoundTimeLeft() {
     <Tooltip tipContents={tooltipContent} className="cursor-help">
       <div className="desktop:gap-3 flex items-center justify-center gap-2">
         <var className="important-value">{isLoading ? '...' : value}</var>
-        <span
-          className={twJoin(
-            'has-tooltip',
-            'label desktop:text-center desktop:w-auto w-min',
-          )}
-        >
+        <span className={twJoin('has-tooltip', 'label desktop:w-auto w-min')}>
           {isLoading ? 'Time Left' : label}
         </span>
       </div>

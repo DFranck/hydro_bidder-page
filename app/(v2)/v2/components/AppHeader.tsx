@@ -125,15 +125,17 @@ export function AppHeader() {
           'desktop:text-sm',
         )}
         classNameForBackdrop="bg-shaded backdrop-blur-sm"
-        classNameForBackground="bg-palette-blue/80"
+        classNameForBackground="bg-gradient-to-l from-palette-blue to-background"
         classNameForItems={twJoin(
           'flex flex-col justify-between',
-          'px-standard py-loose gap-standard',
+          'p-loosest',
+          'gap-looser',
           'desktop:flex-row',
           'desktop:gap-loose',
           'desktop:items-center',
           'desktop:justify-end',
           'desktop:px-standard',
+          'desktop:py-tight',
           'desktop:opacity-100',
         )}
         classNameForItem={twJoin(
@@ -142,8 +144,16 @@ export function AppHeader() {
           'desktop:focus-within:text-palette-beige',
         )}
         classNameForSubItems={twJoin(
-          'desktop:mt-2',
-          'desktop:py-2',
+          'border-l-palette-beige border-l-2',
+          'pl-loosest',
+          'my-looser',
+          'gap-looser',
+          'desktop:border-l-0',
+          'desktop:pl-0',
+          'desktop:gap-0',
+          'desktop:mb-0',
+          'desktop:mt-tighter',
+          'desktop:py-tighter',
           'desktop:bg-palette-beige',
           'desktop:text-background',
           'desktop:rounded-standard',
