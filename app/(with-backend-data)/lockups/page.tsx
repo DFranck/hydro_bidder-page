@@ -188,7 +188,7 @@ export default function LockupsPage() {
         <CurrentRoundVotingPowerWallet />
       </StatCardsContainer>
 
-      <ContentContainer className="gaxp-6 py-6">
+      <ContentContainer className="gap-6 py-6">
         <div
           className="
             flex
