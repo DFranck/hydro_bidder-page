@@ -23,7 +23,7 @@ const TokenDetails = ({ name, amount, usdAmount }: Props) => {
         (
         {amountToUSDString(usdAmount, {
           appendUsd: false,
-          numberOfDecimals: 3,
+          numberOfDecimals: 2,
           removeTrailingZeros: true,
         })}
         )

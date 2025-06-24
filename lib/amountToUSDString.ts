@@ -34,8 +34,7 @@ export function amountToUSDString(
 }
 
 export function formatAmountToUsd(amount: number, price: number): number {
-  const decimals = 6
-  const printableAmount = Number(amount) / 10 ** decimals
+  const printableAmount = Number(amount) * price
 
-  return printableAmount * price
+  return printableAmount
 }
