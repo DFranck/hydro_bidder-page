@@ -1,15 +1,16 @@
 "use server"
 
 import { PreHydroBid } from "@/contract-apis/types"
-import { headers } from "next/headers"
 
 export async function fetchPreHydroBidData(): Promise<PreHydroBid[]> {
-  const headersList = await headers()
-  const requestUrl = new URL(headersList.get("x-url") || "")
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://hydro.cosmos.network"
 
   const url = new URL(
-    `/data/pre-hydro-bid-deployment-overview-data.json`,
-    requestUrl.origin
+    "/data/pre-hydro-bid-deployment-overview-data.json",
+    baseUrl
   )
 
   console.log(`Fetching pre-hydro bid data from ${url.toString()}`)
