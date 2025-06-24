@@ -10,11 +10,9 @@ import {
   pastBidTributeAprMetricsPageColumnTooltip,
 } from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
-import {
-  AugmentedBidFromNumiaSlimmed,
-  BidRevampMetrics,
-} from "@/contract-apis/types"
+import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
 import { MetricsRow } from "./MetricsPage"
+import { sumBy } from "lodash"
 
 export function buildColumns(
   requestedPreHydro: boolean,
@@ -55,9 +53,17 @@ export function buildColumns(
       isSortable: true,
       initialSortDirection: "DESC",
       customValueGetter: (row) => {
-        return requestedPreHydro
-          ? (row._bid as AugmentedBidFromNumiaSlimmed).requestedAllocationAmount
-          : (row._bid as BidRevampMetrics).request_amount
+        if (requestedPreHydro) {
+          return (row._bid as PreHydroBid).current_allocation_amount
+        }
+
+        const bid = row._bid as BidRevampMetrics
+
+        return (
+          sumBy(bid.liquidityDeployment?.deployedFunds, (fund) =>
+            Number(fund.amount)
+          ) / 1e6
+        )
       },
     },
     {
@@ -76,7 +82,13 @@ export function buildColumns(
       },
       isSortable: true,
       initialSortDirection: "ASC",
-      customValueGetter: (row) => row._bidFromContract?.duration,
+      customValueGetter: (row) => {
+        if (requestedPreHydro) {
+          return (row._bid as PreHydroBid)?.duration_days ?? 0
+        }
+
+        return (row._bid as BidRevampMetrics)?.duration
+      },
     },
     {
       key: "polApr",
@@ -94,7 +106,10 @@ export function buildColumns(
       },
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bidFromContract?.apr_pol ?? 0,
+      customValueGetter: (row) =>
+        requestedPreHydro
+          ? ((row._bid as PreHydroBid)?.apr ?? 0)
+          : ((row._bid as BidRevampMetrics)?.apr_pol ?? 0),
     },
     {
       key: "tributeApr",
@@ -116,7 +131,10 @@ export function buildColumns(
       textAlign: "right",
       isSortable: true,
       initialSortDirection: "DESC",
-      customValueGetter: (row) => row._bidFromContract?.apr_tribute ?? 0,
+      customValueGetter: (row) =>
+        requestedPreHydro
+          ? 0
+          : ((row._bid as BidRevampMetrics)?.apr_tribute ?? 0),
     },
     {
       key: "status",

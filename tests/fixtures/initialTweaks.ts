@@ -6,7 +6,7 @@ export const initialTweaks: BackendDataTweak[] = [
     label: "Third Tranche ",
     json: {
       externalData: {
-        numiaBids: [],
+        preHydroBids: [],
         bidMetaDataById: {},
       },
       hydroMetaData: {

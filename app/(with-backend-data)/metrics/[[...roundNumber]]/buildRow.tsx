@@ -6,40 +6,34 @@ import {
 } from "@/components/BidLogoAndTitle"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
-import { BidStatus } from "@/components/BidStatus"
 import { BidTributeApr } from "@/components/BidTributeApr"
 import { InvisibleLink } from "@/components/InvisibleLink"
 import { StyledText } from "@/components/StyledText"
-import {
-  AugmentedBidFromNumiaSlimmed,
-  BidRevampMetrics,
-} from "@/contract-apis/types"
+import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
 import { pluralize } from "@/lib/pluralize"
 
 export function buildRow(
-  numiaBid: BidRevampMetrics | AugmentedBidFromNumiaSlimmed,
-  bidFromContract: BidRevampMetrics,
+  passedBid: BidRevampMetrics | PreHydroBid,
   requestedPreHydro: boolean
 ) {
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
 
   if (requestedPreHydro) {
-    const bid = numiaBid as AugmentedBidFromNumiaSlimmed
+    const bid = passedBid as PreHydroBid
     rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
-    projectLogoUrl = bid.projectLogoUrl
-    projectName = bid.projectName
+    projectLogoUrl = bid.project_logo_url
+    projectName = bid.project
     title = bid.title
   } else {
-    const regularBid = numiaBid as BidRevampMetrics
-    rowURL = `/bids/${numiaBid.id}`
+    const regularBid = passedBid as BidRevampMetrics
+    rowURL = `/bids/${passedBid.id}`
     projectLogoUrl = regularBid?.projectLogoUrl ?? ""
     projectName = regularBid?.projectName ?? ""
     title = regularBid?.projectTitle ?? ""
   }
 
   return {
-    _bid: numiaBid,
-    _bidFromContract: bidFromContract,
+    _bid: passedBid,
 
     logoAndTitle: (
       <InvisibleLink href={rowURL}>
@@ -50,7 +44,7 @@ export function buildRow(
             title={title}
           />
         ) : (
-          <BidLogoAndTitle bidId={Number(numiaBid.id)} />
+          <BidLogoAndTitle bidId={Number(passedBid.id)} />
         )}
       </InvisibleLink>
     ),
@@ -60,14 +54,14 @@ export function buildRow(
         {requestedPreHydro ? (
           <AmountAndUnitPair
             amount={(
-              numiaBid as AugmentedBidFromNumiaSlimmed
-            ).requestedAllocationAmount.toLocaleString(undefined, {
+              passedBid as PreHydroBid
+            ).requested_allocation_amount.toLocaleString(undefined, {
               maximumFractionDigits: 4,
             })}
             unit="ATOM"
           />
         ) : (
-          <BidPolSize bidId={Number(numiaBid.id)} />
+          <BidPolSize bidId={Number(passedBid.id)} />
         )}
       </InvisibleLink>
     ),
@@ -76,12 +70,12 @@ export function buildRow(
       <InvisibleLink href={rowURL}>
         {requestedPreHydro ? (
           pluralize({
-            count: (numiaBid as AugmentedBidFromNumiaSlimmed).durationDays,
+            count: (passedBid as PreHydroBid).duration_days ?? 0,
             prefixCount: true,
             singular: "day",
           })
         ) : (
-          <BidDuration bidId={Number(numiaBid.id)} />
+          <BidDuration bidId={Number(passedBid.id)} />
         )}
       </InvisibleLink>
     ),
@@ -90,7 +84,7 @@ export function buildRow(
       <InvisibleLink href={rowURL}>
         {requestedPreHydro ? (
           <StyledText variant="mathSymbol.container">
-            <span>{(numiaBid as AugmentedBidFromNumiaSlimmed).apr}</span>
+            <span>{(passedBid as PreHydroBid).apr}</span>
             <StyledText variant="mathSymbol">%</StyledText>
           </StyledText>
         ) : (
@@ -101,18 +95,10 @@ export function buildRow(
 
     tributeApr: (
       <InvisibleLink href={rowURL}>
-        {requestedPreHydro ? 0 : <BidTributeApr bidId={bidFromContract.id} />}
+        {requestedPreHydro ? 0 : <BidTributeApr bidId={Number(passedBid.id)} />}
       </InvisibleLink>
     ),
 
-    status: (
-      <InvisibleLink href={rowURL}>
-        {requestedPreHydro ? (
-          numiaBid.status
-        ) : (
-          <BidStatus bidId={Number(numiaBid.id)} />
-        )}
-      </InvisibleLink>
-    ),
+    status: <InvisibleLink href={rowURL}>{passedBid.status}</InvisibleLink>,
   }
 }
