@@ -9,6 +9,16 @@ export function MarkdownContainer({
   className?: string
   content?: string
 }) {
+  function insertSoftHyphens(content: string, maxLength = 20) {
+    return content.replace(new RegExp(`\\w{${maxLength},}`, "g"), (word) =>
+      word.replace(/(.{5})/g, "$1\u200B")
+    )
+  }
+
+  const formattedContent = insertSoftHyphens(
+    content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/gm, "###") ?? ""
+  )
+
   return (
     <div
       className={twMerge(
@@ -40,9 +50,7 @@ export function MarkdownContainer({
         className
       )}
     >
-      <Markdown remarkPlugins={[remarkGfm]}>
-        {content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
-      </Markdown>
+      <Markdown remarkPlugins={[remarkGfm]}>{formattedContent}</Markdown>
     </div>
   )
 }
