@@ -5,6 +5,6 @@
 
 @layer base {
   .prose > p {
-    @apply inline-grid gap-2 md:block md:gap-0;
+    @apply inline-grid gap-1 md:block md:gap-0;
   }
 }
