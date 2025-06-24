@@ -1,3 +1,4 @@
+import { useIsMobile } from "@/hooks/use-mobile"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { twMerge } from "tailwind-merge"
@@ -9,15 +10,18 @@ export function MarkdownContainer({
   className?: string
   content?: string
 }) {
+  const isMobile = useIsMobile(982)
+
   function insertSoftHyphens(content: string, maxLength = 20) {
     return content.replace(new RegExp(`\\w{${maxLength},}`, "g"), (word) =>
       word.replace(/(.{5})/g, "$1\u200B")
     )
   }
 
-  const formattedContent = insertSoftHyphens(
+  const rawContent =
     content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/gm, "###") ?? ""
-  )
+
+  const formattedContent = isMobile ? insertSoftHyphens(rawContent) : rawContent
 
   return (
     <div
