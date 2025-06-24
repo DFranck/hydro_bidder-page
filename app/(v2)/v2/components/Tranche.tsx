@@ -250,7 +250,7 @@ export function Tranche({
 
   return (
     <TokenThemeWrapper
-      sourceId={sourceId}
+      trancheId={trancheId}
       id={`tranche-container--${sourceId}-${trancheId}`}
       className={twMerge(
         isActive && 'is-active',

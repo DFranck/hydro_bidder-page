@@ -62,7 +62,7 @@ export function BidDetailsModal({
 
   return (
     <TokenThemeWrapper
-      sourceId={sourceId}
+      trancheId={currentBid?.trancheId ?? 1}
       className={twJoin(
         isBelowVoteThreshold && 'low-votes',
         'fixed inset-0 z-20',

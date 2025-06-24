@@ -67,7 +67,7 @@ export function BidDetails({
   return (
     <TokenThemeWrapper
       as="article"
-      sourceId={sourceId}
+      trancheId={bid.trancheId}
       className={twMerge(
         isBelowVoteThreshold && 'low-votes',
         userHasVotedOnThisBid && 'voted-on',

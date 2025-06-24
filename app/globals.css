@@ -48,6 +48,8 @@
 
   --color-token-atom: var(--color-palette-blue);
   --color-token-stosmo: #e50371;
+  --color-token-usdc: var(--color-palette-cyan);
+
   --color-theme-color: var(--color-palette-blue);
   --color-theme-color-to-left: var(--color-palette-blue);
   --color-theme-color-to-right: var(--color-palette-blue);

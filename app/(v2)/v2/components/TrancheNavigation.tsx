@@ -81,7 +81,7 @@ export function TrancheNavigation({
         return (
           <TokenThemeWrapper
             as={TrancheNavigationButton}
-            sourceId={sourceId}
+            trancheId={tranche.id}
             key={index}
             id={`tranche-nav-button--${sourceId}-${tranche.id}`}
             className={twMerge(

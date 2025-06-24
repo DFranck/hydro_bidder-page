@@ -18,7 +18,7 @@ export function SidebarSourcePanel({
   return (
     <TokenThemeWrapper
       as="button"
-      sourceId={sourceId}
+      trancheId={1}
       className={twMerge(
         '@container',
         'relative w-full',
