@@ -1,9 +1,10 @@
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { supabase } from '@/lib/supabase'
-import { environments, getEnvironment } from '@v2/environments'
+import { getEnvironment } from '@v2/environments'
+import { DataPromises, environments } from '@v2/types'
 import { headers } from 'next/headers'
 
-export function fetchData() {
+export function fetchData(): DataPromises {
   const environment = getEnvironment()
   const bidDescriptionsCacheDuration = environments[environment].externalDataCacheDuration
 

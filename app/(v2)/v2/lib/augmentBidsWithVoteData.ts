@@ -1,27 +1,10 @@
 import { augmentLockup } from '@/contract-apis/augmentLockup'
 import { AugmentedLockup, BidRevampMetrics, SanitizedVote } from '@/contract-apis/types'
 import { keysFromSnakeToCamelCase } from '@/lib/keysFromSnakeToCamelCase'
+import { AugmentedBidWithVoteData, AugmentedSourceData, VoteButtonData } from '@v2/types'
 import groupBy from 'lodash/groupBy'
 
-export interface VoteButtonData {
-  hasVotedForThisBid: boolean
-  hasVotedInThisTranche: boolean
-  hasVotedElsewhere: boolean
-  votingPowerAvailableByTrancheId: Record<number, number>
-  validLockups: AugmentedLockup[]
-  hasLockupThatExtendsBidsDeploymentDuration: boolean
-  votesThisRound: SanitizedVote[]
-  votesThisTranche: SanitizedVote[]
-}
-
-export interface AugmentedBidWithVoteData extends BidRevampMetrics {
-  voteButtonData: VoteButtonData
-}
-
-export interface AugmentedSourceData {
-  augmentedBids: AugmentedBidWithVoteData[]
-  augmentedLockups: AugmentedLockup[]
-}
+export type { AugmentedBidWithVoteData, AugmentedSourceData, VoteButtonData }
 
 export function augmentBidsWithVoteData(
   bids: BidRevampMetrics[],

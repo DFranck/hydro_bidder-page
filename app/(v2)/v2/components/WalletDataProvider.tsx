@@ -3,26 +3,12 @@
 import { useChain } from '@cosmos-kit/react'
 import { useWalletData } from '@v2/hooks'
 import { DataProviderOnClient } from '@v2/state/DataProviderOnClient'
+import { DataPromises } from '@v2/types'
 import { useEffect, useMemo, useState } from 'react'
 
 interface WalletDataProviderProps {
   children: React.ReactNode
-  initialDataPromises: {
-    hydroDataPromise: Promise<
-      Array<{
-        sourceId: string
-        data: {
-          constants: any
-          totalLockedTokens: number
-          currentRound: any
-          tranches: any[]
-          augmentedBids: any[]
-          walletData?: any
-        }
-      }>
-    >
-    bidDescriptionsPromise: Promise<Record<number, any>>
-  }
+  initialDataPromises: DataPromises
 }
 
 export function WalletDataProvider({

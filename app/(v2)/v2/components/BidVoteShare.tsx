@@ -7,8 +7,8 @@ import {
   voteThresholdTooltip,
 } from '@/components/ToolTips'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
-import { AugmentedBidWithVoteData } from '@v2/lib/augmentBidsWithVoteData'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import { AugmentedBidWithVoteData } from '@v2/types'
 import { twJoin } from 'tailwind-merge'
 
 interface BidVoteShareProps {

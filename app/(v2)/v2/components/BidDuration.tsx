@@ -5,8 +5,8 @@ import { polDurationTooltip } from '@/components/ToolTips'
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { getTimeUnitFromNanos } from '@/lib/getTimeUnitFromNanos'
 import { pluralize } from '@/lib/pluralize'
-import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import { SourceID } from '@v2/types'
 import { twJoin } from 'tailwind-merge'
 
 interface BidDurationProps {

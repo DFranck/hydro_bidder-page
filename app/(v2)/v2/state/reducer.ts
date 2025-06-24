@@ -1,35 +1,6 @@
-import { Tranche } from '@/app/ts_types/HydroBase.types'
-import { AppState } from '@v2/state/DataProviderOnServer'
+import { AppAction, AppState } from '@v2/types'
 
-export type AppAction =
-  | {
-      type: 'SET_IS_LOADING'
-      payload: boolean
-    }
-  | {
-      type: 'SET_ROUND_METADATA'
-      payload: {
-        currentRoundId: number
-        roundEnd: string
-        tranches: Tranche[]
-      }
-    }
-  | {
-      type: 'SET_NARROW_BUCKETS'
-      payload: boolean
-    }
-  | {
-      type: 'SET_ACTIVE_TRANCHE_INDEX'
-      payload: number
-    }
-  | {
-      type: 'SET_SIDEBAR_OPEN'
-      payload: boolean
-    }
-  | {
-      type: 'SET_STATE'
-      payload: Partial<AppState>
-    }
+export type { AppAction }
 
 export function reducer(state: AppState, action: AppAction): AppState {
   console.log('Action:', action)
@@ -42,9 +13,6 @@ export function reducer(state: AppState, action: AppAction): AppState {
 
       case 'SET_ROUND_METADATA':
         return { ...state, ...action.payload }
-
-      case 'SET_NARROW_BUCKETS':
-        return { ...state, narrowBuckets: action.payload }
 
       case 'SET_ACTIVE_TRANCHE_INDEX':
         return { ...state, activeTrancheIndex: action.payload }

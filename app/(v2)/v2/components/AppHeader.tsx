@@ -8,9 +8,9 @@ import {
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
 import { Logo } from '@v2/components/Logo'
-import { MenuItem, ResponsiveMenu } from '@v2/components/ResponsiveMenu'
+import { ResponsiveMenu } from '@v2/components/ResponsiveMenu'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import { AppAction } from '@v2/state/reducer'
+import { AppAction, MenuItem } from '@v2/types'
 import { twJoin } from 'tailwind-merge'
 
 function getMenuItems(

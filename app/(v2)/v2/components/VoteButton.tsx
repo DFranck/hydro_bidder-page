@@ -18,8 +18,8 @@ import { useGlobalLockupCapacityInfo } from '@/contract-apis/useGlobalLockupCapa
 import { revalidateTag } from '@/lib/revalidateTag'
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
-import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import { SourceID } from '@v2/types'
 import { useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 

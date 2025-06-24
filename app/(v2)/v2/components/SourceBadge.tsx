@@ -1,4 +1,4 @@
-import { SourceID } from '@v2/environments'
+import { SourceID } from '@v2/types'
 import Image from 'next/image'
 import { twMerge } from 'tailwind-merge'
 

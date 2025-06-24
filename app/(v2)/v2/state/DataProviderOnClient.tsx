@@ -3,8 +3,8 @@
 import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { BidMetaData, BidRevampMetrics } from '@/contract-apis/types'
 import { LoadingSpinner } from '@v2/components/LoadingSpinner'
-import { SourceID } from '@v2/environments'
 import { useProcessedData } from '@v2/hooks'
+import { AppAction, AppState, SourceID } from '@v2/types'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import {
@@ -15,8 +15,8 @@ import {
   useReducer,
   useRef,
 } from 'react'
-import { AppState, initialState } from './DataProviderOnServer'
-import { AppAction, reducer } from './reducer'
+import { initialState } from './DataProviderOnServer'
+import { reducer } from './reducer'
 
 const QueryClientProvider = dynamic(
   () =>

@@ -4,32 +4,8 @@ import { toastMessages } from '@/components/ToastMessages'
 import { useToasts } from '@/components/Toasts'
 import { WalletStatus } from '@cosmos-kit/core'
 import { useChain } from '@cosmos-kit/react'
+import { UseWalletConnectionOptions, UseWalletConnectionReturn } from '@v2/types'
 import { MouseEventHandler, useEffect } from 'react'
-
-export interface UseWalletConnectionOptions {
-  chainName?: string
-  notifyConnectedCB?: (isConnected: boolean) => void
-  ignoreStatus?: boolean
-}
-
-export interface UseWalletConnectionReturn {
-  // Wallet state
-  status: WalletStatus
-  address: string | undefined
-  message: string | undefined
-  isWalletConnected: boolean
-
-  // Event handlers
-  onClickConnect: MouseEventHandler
-  onClickOpenView: MouseEventHandler
-
-  // Button props generator
-  getButtonProps: () => {
-    onClick: MouseEventHandler | undefined
-    children: string
-    disabled: boolean
-  }
-}
 
 export function useWalletConnection({
   chainName = 'neutron',

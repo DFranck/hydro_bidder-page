@@ -1,4 +1,4 @@
-import { SourceID } from '@v2/environments'
+import { SourceID } from '@v2/types'
 
 const tokenColorVars: Record<string, string> = {
   atom: 'var(--color-token-atom)',

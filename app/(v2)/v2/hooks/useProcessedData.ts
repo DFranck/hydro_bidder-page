@@ -1,9 +1,8 @@
 import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { BidMetaData, RoundPrices } from '@/contract-apis/types'
-import { SourceID } from '@v2/environments'
 import { augmentBidsWithVoteData } from '@v2/lib/augmentBidsWithVoteData'
 import { calculateUserVotedInTranche } from '@v2/lib/calculateUserVotedInTranche'
-import { AugmentedTranche } from '@v2/state/DataProviderOnServer'
+import { AugmentedTranche, SourceID } from '@v2/types'
 import { useMemo } from 'react'
 
 interface RawHydroData {

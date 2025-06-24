@@ -1,9 +1,8 @@
 'use client'
 
 import { Tooltip } from '@/components/Tooltip'
-import { SourceID } from '@v2/environments'
-import { AugmentedBidWithVoteData } from '@v2/lib/augmentBidsWithVoteData'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import { AugmentedBidWithVoteData, SourceID } from '@v2/types'
 import { twJoin } from 'tailwind-merge'
 
 interface BidTributeAprProps {
