@@ -9,8 +9,13 @@ const defaultValue: GlobalLockupCapacityInfo = {
   lockedAtomIsAtCapacityGlobal: false,
 }
 
-export const GlobalLockupInfoContext =
-  createContext<GlobalLockupCapacityInfo>(defaultValue)
+export const GlobalLockupInfoContext = createContext<{
+  data: GlobalLockupCapacityInfo
+  isLoaded: boolean
+}>({
+  data: defaultValue,
+  isLoaded: false,
+})
 
 interface ProviderProps {
   children: ReactNode
@@ -21,6 +26,7 @@ export const GlobalLockupInfoProvider = ({
   children,
   pollingIntervalMs = 10000,
 }: ProviderProps) => {
+  const [isLoaded, setIsLoaded] = useState(false)
   const [globalCapacityInfo, setGlobalCapacityInfo] =
     useState<GlobalLockupCapacityInfo>(defaultValue)
 
@@ -61,6 +67,7 @@ export const GlobalLockupInfoProvider = ({
             lockedAtomPercentageGlobal,
             lockedAtomIsAtCapacityGlobal,
           })
+          setIsLoaded(true)
         }
       } catch (err) {
         console.error("Fetch error:", err)
@@ -77,7 +84,9 @@ export const GlobalLockupInfoProvider = ({
   }, [pollingIntervalMs])
 
   return (
-    <GlobalLockupInfoContext.Provider value={globalCapacityInfo}>
+    <GlobalLockupInfoContext.Provider
+      value={{ data: globalCapacityInfo, isLoaded }}
+    >
       {children}
     </GlobalLockupInfoContext.Provider>
   )

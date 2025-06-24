@@ -60,9 +60,10 @@ const initialBackendDataContext: BackendDataContextType = {
   lockedAtomPercentageWallet: 0,
   lockedAtomRemainingCapacityGlobal: 0,
   lockedAtomTotalGlobal: 0,
+  lockedAtomTotalWalletStat: 0,
   lockedAtomTotalWallet: 0,
+  hasGatekeeper: false,
   lockups: [],
-  metricsForPostHydroBids: [],
   metricsForPreHydroBids: [],
   minTributeFactor: 0,
   votes: [],
@@ -107,6 +108,7 @@ export function BackendDataContextProvider({
   rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
   children: ReactNode
 }) {
+  const { data: { lockedAtomRemainingCapacityGlobal }, isLoaded: isGlobalCapacityLoaded } = useGlobalLockupCapacityInfo()
   const pathname = usePathname()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -129,7 +131,7 @@ export function BackendDataContextProvider({
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
-  const { lockedAtomTotalGlobal } = useGlobalLockupCapacityInfo()
+  const {  data: {lockedAtomTotalGlobal} } = useGlobalLockupCapacityInfo()
 
   // Dependencies: [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
@@ -195,6 +197,7 @@ export function BackendDataContextProvider({
       augmentedBackendDataBeforeWallet
 
     ;(async () => {
+      if (!isGlobalCapacityLoaded) return
       setIsLoading(true)
 
       const walletData = await fetchWalletData({
@@ -214,6 +217,7 @@ export function BackendDataContextProvider({
         address: effectiveAddress,
         augmentedBackendDataBeforeWallet,
         walletData: tweakedWalletData,
+        lockedAtomRemainingCapacityGlobal,
       })
 
       const tweakedAugmentedBackendDataAfterWallet = mergeWithOverwrite(
@@ -238,7 +242,7 @@ export function BackendDataContextProvider({
 
       setIsLoading(false)
     })()
-  }, [address, loadedTweaks, rawBackendDataBeforeWallet])
+  }, [address, loadedTweaks, rawBackendDataBeforeWallet, isGlobalCapacityLoaded])
 
   useEffect(() => {
     refetchBackendData()

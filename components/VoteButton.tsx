@@ -49,8 +49,9 @@ export function VoteButton({
     lockedAtomEpochInNanos,
   } = useBackendData()
 
-  const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
-    useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomTotalGlobal, lockedAtomMaxGlobal },
+  } = useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
   const bid = bidsInfo[bidId]

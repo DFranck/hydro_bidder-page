@@ -11,11 +11,13 @@ import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapa
 export function CurrentRoundAtomLockedGlobal() {
   const { isLoading } = useBackendData()
   const {
-    lockedAtomTotalGlobal,
-    lockedAtomRemainingCapacityGlobal,
-    lockedAtomPercentageGlobal,
-    lockedAtomIsAtCapacityGlobal,
-    lockedAtomMaxGlobal,
+    data: {
+      lockedAtomTotalGlobal,
+      lockedAtomRemainingCapacityGlobal,
+      lockedAtomPercentageGlobal,
+      lockedAtomIsAtCapacityGlobal,
+      lockedAtomMaxGlobal,
+    },
   } = useGlobalLockupCapacityInfo()
 
   return (

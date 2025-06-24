@@ -342,19 +342,17 @@ export const lockupLimitReachedByUserTooltip = (
   <p>You&rsquo;ve reached the maximum locked tokens for this round.</p>
 )
 
-export const TotalLockupLimitTooltip = (
-  <p className="mb-3">
-    During Pilot Rounds, there is a maximum limit of ATOM you can lockup.{" "}
-    <StyledText
-      as={Link}
-      href="/docs#pilot-rounds"
-      className="inline-flex items-center gap-1"
-      target="_blank"
-      variant="link"
-    >
-      Learn More
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
+export const lockupLimitTooltip = ({
+  lockedAtomMaxWallet,
+  lockedAtomTotalWallet,
+}: {
+  lockedAtomMaxWallet: number
+  lockedAtomTotalWallet: number
+}) => (
+  <p>
+    Currently, you can lock up up to {lockedAtomMaxWallet} ATOM, and you have
+    already locked up {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")}{" "}
+    ATOM.
   </p>
 )
 

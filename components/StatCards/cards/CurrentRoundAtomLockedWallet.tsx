@@ -9,9 +9,7 @@ import { formatAmountToUsd } from "@/lib/amountToUSDString"
 
 export function CurrentRoundAtomLockedWallet() {
   const {
-    lockedAtomTotalWallet,
-    lockedAtomMaxWallet,
-    lockedAtomPercentageWallet,
+    lockedAtomTotalWalletStat,
     isLoading,
     atomPrice,
     stAtomPrice,
@@ -23,7 +21,7 @@ export function CurrentRoundAtomLockedWallet() {
       isLoading={isLoading}
       value={
         <>
-          {lockedAtomTotalWallet.toLocaleString("en-US", {
+          {lockedAtomTotalWalletStat.toLocaleString("en-US", {
             maximumFractionDigits: 4,
           })}
         </>
@@ -32,8 +30,8 @@ export function CurrentRoundAtomLockedWallet() {
         <Tooltip
           tipContents={yourTotalTokenLockedTooltip({
             atomLockedTotal: {
-              amount: lockedAtomTotalWallet,
-              usdAmount: formatAmountToUsd(lockedAtomTotalWallet, atomPrice),
+              amount: lockedAtomTotalWalletStat,
+              usdAmount: formatAmountToUsd(lockedAtomTotalWalletStat, atomPrice),
             },
             dAtomLockedTotal: {
               amount: 0,
@@ -53,12 +51,6 @@ export function CurrentRoundAtomLockedWallet() {
             <Icon name="circle-info" />
           </span>
         </Tooltip>
-      }
-      subTitle={
-        <>
-          <strong>{lockedAtomPercentageWallet}%</strong> of{" "}
-          <strong>{lockedAtomMaxWallet}</strong> max
-        </>
       }
     />
   )

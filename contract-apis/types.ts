@@ -4,7 +4,7 @@ import {
   Coin,
   Constants,
   LiquidityDeployment,
-  LockEntry,
+  LockEntryV2 as LockEntry,
   LockEntryWithPower,
   LockupWithPerTrancheInfo,
   PerTrancheLockupInfo,
@@ -30,13 +30,16 @@ export interface AugmentedBackendDataAfterWallet
   isWalletConnected: boolean
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
+  lockedAtomTotalWalletStat: number
   lockedAtomTotalWallet: number
+  lockedAtomMaxWallet: number
   lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
   votingPowerAvailableByTrancheId: Record<number, number>
   votingPowerSpentByTrancheId: Record<number, number>
   votingPowerTotal: number
+  hasGatekeeper: boolean
 }
 
 export interface AugmentedBackendDataBeforeWallet {
@@ -56,37 +59,10 @@ export interface AugmentedBackendDataBeforeWallet {
   lockedAtomPercentageGlobal: number
   lockedAtomRemainingCapacityGlobal: number
   lockedAtomTotalGlobal: number
-  metricsForPostHydroBids: AugmentedBidFromNumiaSlimmed[]
-  metricsForPreHydroBids: AugmentedBidFromNumiaSlimmed[]
+  metricsForPreHydroBids: PreHydroBid[]
   metricsGlobal: SanitizedMetricsFromNumia
   minTributeFactor: number
 }
-
-export type AugmentedBidFromNumia = Omit<
-  CamelCaseKeys<RawNumiaBid>,
-  | "durationDays"
-  | "offchainTribute"
-  | "onchainTributeAssets"
-  | "project"
-  | "round"
-  | "tranche"
-> & {
-  durationDays: number
-  isOngoing: boolean
-  isPending: boolean
-  isRejected: boolean
-  isVoting: boolean
-  offchainTribute: SanitizedOffchainTributeFromNumia[]
-  onchainTributeAssets: SanitizedOnchainTributeFromNumia[]
-  projectName: string
-  roundId: number | "pre-hydro"
-  tranche: number
-}
-
-export type AugmentedBidFromNumiaSlimmed = Omit<
-  AugmentedBidFromNumia,
-  "description"
->
 
 export type AugmentedClaim = Omit<SanitizedClaim, "amount"> & {
   amount: AugmentedCoin
@@ -249,12 +225,6 @@ export interface MetricsFromNumia {
   current_users_avg_tokens_locked: number
 }
 
-export type OnchainTributeFromNumia = {
-  amount: number
-  denom?: string
-  asset?: string
-}
-
 export interface PriceDetails {
   token_symbol: string
   token_exponent: number
@@ -265,16 +235,16 @@ export type ProposalSlimmed = Omit<Proposal, "description">
 
 export type RawExternalData = {
   bidMetaDataById: BidMetaDataById
-  numiaBids: RawNumiaBid[]
+  preHydroBids: PreHydroBid[]
   numiaMetrics: MetricsFromNumia
 }
 
 export type RawExternalDataSlimmed = Omit<
   RawExternalData,
-  "bidMetaDataById" | "numiaBids"
+  "bidMetaDataById" | "preHydroBids"
 > & {
   bidMetaDataById: BidMetaDataByIdSlimmed
-  numiaBids: RawNumiaBidSlimmed[]
+  preHydroBids: PreHydroBid[]
 }
 
 export type RawHydroMetaData = {
@@ -297,7 +267,7 @@ export type RawHydroRoundDataSlimmed = Omit<RawHydroRoundData, "round_bids"> & {
   round_bids: ProposalSlimmed[]
 }
 
-export interface RawNumiaBid {
+export interface PreHydroBid {
   // Needed to link data
   id: string
   round: string
@@ -329,10 +299,6 @@ export interface RawNumiaBid {
   yield: number
 }
 
-export type RawNumiaBidSlimmed = Omit<
-  RawNumiaBid,
-  "comments" | "description" | "project_about"
->
 
 export interface AugmentedLockupWithPerTrancheInfo {
   lock_with_power: LockEntryWithPower & {
@@ -349,6 +315,9 @@ export interface RawWalletData {
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]
+  currently_locked: number | string
+  maxUserCanLock: string
+  hasGatekeeper: boolean
 }
 
 export interface RoundPrices {
@@ -357,16 +326,6 @@ export interface RoundPrices {
 
 export interface SanitizedMetricsFromNumia
   extends CamelCaseKeys<MetricsFromNumia> {}
-
-export type SanitizedOffchainTributeFromNumia = {
-  amount: number
-  type: string
-}
-
-export type SanitizedOnchainTributeFromNumia = {
-  amount: number
-  denom: string
-}
 
 export type TokenBasedTribute = Omit<
   CamelCaseKeys<Tribute>,
@@ -465,6 +424,17 @@ export interface ExperimentalRow extends BaseRowObject {
   additionalStatus?: ReactNode
   additionalInitialAdressHoldings?: ReactNode
   additionalDeploymentAPR?: ReactNode
+}
+
+export interface ProofResponse {
+  address: string
+  amount: string
+  proofs: string[]
+}
+
+export interface MaxUserCanLockResponse {
+  address: string
+  amount: string
 }
 
 type WithOverwrites<T> = T extends object

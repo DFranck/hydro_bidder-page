@@ -33,8 +33,9 @@ export function NewLockUpButton({
   handleDAtom: () => void
 }) {
   const { isWalletConnected, lockedAtomPercentageWallet } = useBackendData()
-  const { lockedAtomPercentageGlobal, lockedAtomRemainingCapacityGlobal } =
-    useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomPercentageGlobal, lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const amountOfdAtomInWallet = useAmountOfTokenInWallet("dATOM")
   const amountOfsTAtomInWallet = useAmountOfTokenInWallet("stATOM")
 

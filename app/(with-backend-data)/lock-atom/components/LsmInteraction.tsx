@@ -36,8 +36,9 @@ export function LsmInteraction({
   validatorLiquidStakingCap: string
 }) {
   const { lockedAtomIsAtCapacityWallet } = useBackendData()
-  const { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal } =
-    useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const { incompleteNotices } = useIncompleteNotices()
   const { hubChain, hubSigner, neutronChain, neutronSigner } =
     useChainsAndSigners()

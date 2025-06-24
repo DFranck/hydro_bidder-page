@@ -47,7 +47,7 @@ export async function fetchRoundTributes({
     return tributes
   } else {
     const response = await fetch(
-      `${numiaTributesEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
+      `${numiaTributesEndpoint}?round_id=${roundId}&tribute_contract=${tributeContractAddress}&time=${new Date().getTime()}`,
       {
         headers: {
           Accept: "application/json",
@@ -63,7 +63,17 @@ export async function fetchRoundTributes({
     }
 
     // Clean up the response
-    const responseJson = await response.json()
+    let responseJson
+    try {
+      responseJson = await response.json()
+    } catch (error) {
+      throw new Error(`Error converting response to JSON: ${error}`)
+    }
+
+    if (!responseJson || responseJson.length === 0) {
+      return []
+    }
+
     const tributes = JSON.parse(responseJson[0].response).data.tributes
     return tributes as Tribute[]
   }

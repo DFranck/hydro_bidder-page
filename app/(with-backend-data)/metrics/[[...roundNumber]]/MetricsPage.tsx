@@ -11,10 +11,7 @@ import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledText } from "@/components/StyledText"
 import { Tooltip } from "@/components/Tooltip"
 import { metricsPageNoDataTooltip } from "@/components/ToolTips"
-import {
-  AugmentedBidFromNumiaSlimmed,
-  BidRevampMetrics,
-} from "@/contract-apis/types"
+import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import max from "lodash/max"
 import range from "lodash/range"
@@ -28,8 +25,7 @@ export const PRE_HYDRO_ROUND_ID = -1
 export const EXPERIMENTAL_ROUND_ID = -2
 
 export interface MetricsRow {
-  _bid: BidRevampMetrics | AugmentedBidFromNumiaSlimmed
-  _bidFromContract: BidRevampMetrics
+  _bid: BidRevampMetrics | PreHydroBid
   logoAndTitle: ReactNode
   amount: ReactNode
   duration: ReactNode
@@ -134,7 +130,7 @@ export function MetricsPage({
             <Menu
               className="relative z-[100]"
               items={menuItems}
-              classNameForPopup="left-auto -right-10"
+              classNameForPopup="left-auto -right-10 max-h-80 overflow-y-auto"
             >
               <StyledText
                 variant="button.secondary"

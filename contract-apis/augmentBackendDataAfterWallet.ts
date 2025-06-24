@@ -16,15 +16,20 @@ export function augmentBackendDataAfterWallet({
   address,
   augmentedBackendDataBeforeWallet,
   walletData,
+  lockedAtomRemainingCapacityGlobal,
 }: {
   address: string
   augmentedBackendDataBeforeWallet: AugmentedBackendDataBeforeWallet
   walletData: Awaited<
     ReturnType<typeof import("./fetchWalletData").fetchWalletData>
   >
+  lockedAtomRemainingCapacityGlobal: number
 }): AugmentedBackendDataAfterWallet {
-  const { bidsInfo, currentRoundId, lockedAtomMaxWallet, currentRoundPrices } =
-    augmentedBackendDataBeforeWallet
+  const {
+    bidsInfo,
+    currentRoundId,
+    currentRoundPrices,
+  } = augmentedBackendDataBeforeWallet
 
   const {
     historical_tribute_claims,
@@ -32,7 +37,17 @@ export function augmentBackendDataAfterWallet({
     outstanding_tribute_claims,
     votes,
     voting_power,
+    currently_locked,
+    maxUserCanLock,
+    hasGatekeeper,
   } = walletData
+
+  let lockedAtomMaxWallet = 0
+  if (!hasGatekeeper) {
+    lockedAtomMaxWallet = lockedAtomRemainingCapacityGlobal
+  } else {
+    lockedAtomMaxWallet = maxUserCanLock ? Number(maxUserCanLock) / 1e6 : 0
+  }
 
   const allBids = Object.values(bidsInfo)
 
@@ -84,7 +99,7 @@ export function augmentBackendDataAfterWallet({
 
   const votesByRoundId = groupBy(
     sanitizedVotes,
-    (vote) => bidsInfo[vote.bidId]?.roundId
+    (vote) => bidsInfo[vote.bidId]?.roundId,
   )
 
   const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>
@@ -101,7 +116,8 @@ export function augmentBackendDataAfterWallet({
     })
   )
 
-  const lockedAtomTotalWallet = sumBy(augmentedLockups, "funds.amount")
+  const lockedAtomTotalWalletStat = sumBy(augmentedLockups, "funds.amount")
+  const lockedAtomTotalWallet = Number(currently_locked) / 1e6
   const lockedAtomPercentageWallet = Math.floor(
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
   )
@@ -161,6 +177,7 @@ export function augmentBackendDataAfterWallet({
     lockedAtomIsAtCapacityWallet: lockedAtomTotalWallet === lockedAtomMaxWallet,
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
+    lockedAtomTotalWalletStat,
     lockedAtomTotalWallet,
     lockups: augmentedLockups,
     votes: sanitizedVotes,
@@ -168,5 +185,6 @@ export function augmentBackendDataAfterWallet({
     votingPowerSpentByTrancheId,
     votingPowerAvailableByTrancheId,
     votingPowerTotal,
+    hasGatekeeper,
   }
 }

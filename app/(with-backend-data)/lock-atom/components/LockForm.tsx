@@ -36,8 +36,9 @@ export function LockForm({
   const router = useRouter()
   const { lockedAtomEpochInNanos, lockedAtomMaxWallet, lockedAtomTotalWallet } =
     useBackendData()
-  const { lockedAtomTotalGlobal, lockedAtomRemainingCapacityGlobal } =
-    useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomTotalGlobal, lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const { setToasts } = useToasts()
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(

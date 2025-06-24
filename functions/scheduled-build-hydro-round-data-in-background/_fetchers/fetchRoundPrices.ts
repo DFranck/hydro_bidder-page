@@ -18,7 +18,7 @@ export async function fetchRoundPrices({
   )
 
   const response = await fetch(
-    `${numiaPricesEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
+    `${numiaPricesEndpoint}?round_id=${roundId}&time=${new Date().getTime()}&chain_id=neutron-1`,
     {
       headers: {
         Accept: "application/json",
