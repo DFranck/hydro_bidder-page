@@ -11,7 +11,13 @@ export function BidPolSize({ bidId }: { bidId: number }) {
 
   const { liquidityDeployment } = bid
 
-  if (!liquidityDeployment) return null
+  if (!liquidityDeployment) {
+    return (
+      <StyledText variant="footnote" className="whitespace-nowrap">
+        No data yet
+      </StyledText>
+    )
+  }
 
   const { deployedFunds } = liquidityDeployment
 
@@ -28,7 +34,7 @@ export function BidPolSize({ bidId }: { bidId: number }) {
       amount={currentAllocationAmount.toLocaleString("en-US", {
         maximumFractionDigits: 4,
       })}
-      unit="ATOM"
+      unit={bid.trancheId === 1 ? "ATOM" : "USDC"}
     />
   ) : (
     <StyledText variant="footnote" className="whitespace-nowrap">
