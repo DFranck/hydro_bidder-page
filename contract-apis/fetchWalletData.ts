@@ -93,12 +93,12 @@ export async function fetchWalletData({
             ...lockup.lock_with_power.lock_entry,
             funds: {
               ...funds,
-              denom: funds.denom,
-              denomInfo: getCoinWithRoundPrices({
+              ...getCoinWithRoundPrices({
                 coin: funds,
                 roundPrices: currentRoundPrices,
                 validator: denomTrace?.validator,
               }),
+              denom: funds.denom,
             },
           },
         },

@@ -4,7 +4,10 @@ import {
   Coin,
   Constants,
   LiquidityDeployment,
+  LockEntry,
+  LockEntryWithPower,
   LockupWithPerTrancheInfo,
+  PerTrancheLockupInfo,
   Proposal,
   Tranche,
   VoteWithPower,
@@ -331,9 +334,18 @@ export type RawNumiaBidSlimmed = Omit<
   "comments" | "description" | "project_about"
 >
 
+export interface AugmentedLockupWithPerTrancheInfo {
+  lock_with_power: LockEntryWithPower & {
+    lock_entry: LockEntry & {
+      funds: AugmentedCoin
+    }
+  }
+  per_tranche_info: PerTrancheLockupInfo[]
+}
+
 export interface RawWalletData {
   voting_power: number
-  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
+  lockups_with_per_tranche_infos: AugmentedLockupWithPerTrancheInfo[]
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]

@@ -17,7 +17,7 @@ export function augmentNumiaBids(rawNumiaBids: RawNumiaBidSlimmed[]): {
   preHydroBids: AugmentedBidFromNumiaSlimmed[]
   postHydroBids: AugmentedBidFromNumiaSlimmed[]
 } {
-  const augmentedNumiaBids = rawNumiaBids.map(
+  const augmentedNumiaBids = rawNumiaBids?.map(
     ({
       duration_days,
       offchain_tribute,

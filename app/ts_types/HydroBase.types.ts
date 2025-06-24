@@ -4,8 +4,6 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { AugmentedCoin } from "@/contract-apis/types"
-
 export type Uint128 = string
 export type Timestamp = Uint64
 export type Uint64 = string
@@ -25,7 +23,6 @@ export interface LockEntry {
 export interface Coin {
   amount: Uint128
   denom: string
-  denomInfo?: AugmentedCoin
 }
 export interface AllUserLockupsWithTrancheInfosResponse {
   lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
