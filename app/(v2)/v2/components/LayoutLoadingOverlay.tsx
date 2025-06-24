@@ -10,17 +10,10 @@ export function LayoutLoadingOverlay() {
   const { isLoading } = state
 
   useEffect(() => {
-    if (isLoading) {
-      document.documentElement.style.overflow = 'hidden'
-      document.body.style.overflow = 'hidden'
-      document.body.style.height = '100dvh'
-      document.body.style.width = '100dvw'
-    } else {
-      document.documentElement.style.overflow = 'auto'
-      document.body.style.overflow = 'auto'
-      document.body.style.height = 'auto'
-      document.body.style.width = 'auto'
-    }
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+    document.body.style.height = '100dvh'
+    document.body.style.width = '100dvw'
 
     return () => {
       document.documentElement.style.overflow = 'auto'
@@ -28,7 +21,7 @@ export function LayoutLoadingOverlay() {
       document.body.style.height = 'auto'
       document.body.style.width = 'auto'
     }
-  }, [isLoading])
+  }, [])
 
   if (!isLoading) return null
 

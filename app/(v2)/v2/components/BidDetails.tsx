@@ -53,6 +53,15 @@ export function BidDetails({
   const isBelowVoteThreshold =
     bid && voteThreshold ? bid.vote_perc < voteThreshold : false
 
+  const walletData = currentRoundDataPerSource?.[sourceId]?.walletData
+  const userVotes = walletData?.votes || []
+
+  const userVotedOnBidIds = userVotes
+    .filter((vote: any) => vote.prop_id === bidId)
+    .map((vote: any) => vote.prop_id)
+
+  const userHasVotedOnThisBid = userVotedOnBidIds.includes(bidId)
+
   const bidDescription = bidDescriptionsById[bidId]
 
   return (
@@ -61,17 +70,22 @@ export function BidDetails({
       sourceId={sourceId}
       className={twMerge(
         isBelowVoteThreshold && 'low-votes',
+        userHasVotedOnThisBid && 'voted-on',
         'grid grid-rows-[min-content_auto]',
         'h-full overflow-hidden',
         'relative',
         className,
       )}
       style={
-        isBelowVoteThreshold
+        userHasVotedOnThisBid
           ? ({
-              '--color-theme-color': 'var(--color-palette-beige)',
+              '--color-theme-color': 'var(--color-palette-green)',
             } as React.CSSProperties)
-          : undefined
+          : isBelowVoteThreshold
+            ? ({
+                '--color-theme-color': 'var(--color-palette-beige)',
+              } as React.CSSProperties)
+            : undefined
       }
     >
       <header
@@ -81,6 +95,7 @@ export function BidDetails({
           'px-loosest py-standard',
           'bg-theme-color',
           'low-votes:text-background',
+          'voted-on:text-background',
         )}
       >
         <h1 className="title">{bidDescription?.title}</h1>

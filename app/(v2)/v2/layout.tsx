@@ -1,7 +1,7 @@
 import { WalletButton } from '@/app/(v2)/v2/components/WalletButton'
-import { WalletProvider } from '@/components/WalletProvider'
 import { AppHeader } from '@v2/components/AppHeader'
 import { AppPageContainer } from '@v2/components/AppPageContainer'
+import { ClientWalletProvider } from '@v2/components/ClientWalletProvider'
 import { LayoutLoadingOverlay } from '@v2/components/LayoutLoadingOverlay'
 import { WalletDataProvider } from '@v2/components/WalletDataProvider'
 import { fetchData } from '@v2/state/fetchData'
@@ -17,7 +17,7 @@ export default async function Layout({
   const initialDataPromises = fetchData()
 
   return (
-    <WalletProvider>
+    <ClientWalletProvider>
       <WalletDataProvider initialDataPromises={initialDataPromises}>
         <div
           className={twJoin(
@@ -45,6 +45,6 @@ export default async function Layout({
         <WalletButton />
         <LayoutLoadingOverlay />
       </WalletDataProvider>
-    </WalletProvider>
+    </ClientWalletProvider>
   )
 }

@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 const WAVE_CYCLE_DURATION = 2000
 const WAVE_DURATION = 1000
 const WAVE_COUNT = 12
-
-let globalAnimationStartTime = Date.now()
+const MIN_HEIGHT = 8 // 0.5rem in pixels (8px)
+const MAX_HEIGHT = 64 // 4rem in pixels (64px)
 
 let globalLoadingCount = 0
 let globalLoadingStartTime = 0
@@ -29,6 +29,57 @@ export function LoadingSpinner({
 }: LoadingSpinnerProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [loadingCount, setLoadingCount] = useState(0)
+  const [barHeights, setBarHeights] = useState<number[]>(
+    Array.from({ length: WAVE_COUNT }, () => MIN_HEIGHT),
+  )
+  const heightHistoryRef = useRef<number[]>([])
+  const animationFrameRef = useRef<number | undefined>(undefined)
+  const startTimeRef = useRef<number>(0)
+
+  const updateBarHeights = useCallback(() => {
+    const now = Date.now()
+    if (startTimeRef.current === 0) {
+      startTimeRef.current = now
+    }
+
+    const elapsed = now - startTimeRef.current
+    const progress = (elapsed % waveDuration) / waveDuration
+
+    // Calculate the current height based on the wave function
+    const currentHeight =
+      MIN_HEIGHT +
+      (Math.sin(progress * Math.PI * 2) * 0.5 + 0.5) * (MAX_HEIGHT - MIN_HEIGHT)
+
+    // Store the current height in history
+    heightHistoryRef.current.push(currentHeight)
+
+    // Keep only the history we need (enough for all bars with delays)
+    const maxHistoryLength = Math.ceil(WAVE_COUNT * 2) // Extra buffer
+    if (heightHistoryRef.current.length > maxHistoryLength) {
+      heightHistoryRef.current =
+        heightHistoryRef.current.slice(-maxHistoryLength)
+    }
+
+    const newHeights = Array.from({ length: WAVE_COUNT }, () => 0)
+
+    // Calculate delay for each bar (in frames, roughly 60fps)
+    const framesPerBar = Math.max(
+      1,
+      Math.floor(heightHistoryRef.current.length / WAVE_COUNT),
+    )
+
+    for (let i = 0; i < WAVE_COUNT; i++) {
+      const delayFrames = i * framesPerBar
+      const historyIndex = Math.max(
+        0,
+        heightHistoryRef.current.length - 1 - delayFrames,
+      )
+      newHeights[i] = heightHistoryRef.current[historyIndex] || MIN_HEIGHT
+    }
+
+    setBarHeights(newHeights)
+    animationFrameRef.current = requestAnimationFrame(updateBarHeights)
+  }, [waveDuration])
 
   useEffect(() => {
     if (useGlobalState) {
@@ -52,15 +103,19 @@ export function LoadingSpinner({
     }
   }, [useGlobalState])
 
-  const getAnimationDelay = (index: number) => {
-    const elapsed = Date.now() - globalAnimationStartTime
-    const cycleProgress = (elapsed % WAVE_CYCLE_DURATION) / WAVE_CYCLE_DURATION
+  useEffect(() => {
+    if (isVisible) {
+      startTimeRef.current = 0
+      heightHistoryRef.current = []
+      updateBarHeights()
+    }
 
-    const baseDelay = (index * waveDuration) / WAVE_COUNT
-    const adjustedDelay = baseDelay - cycleProgress * waveDuration
-
-    return ((adjustedDelay % waveDuration) + waveDuration) % waveDuration
-  }
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [isVisible, updateBarHeights])
 
   if (useGlobalState && !isVisible) return null
 
@@ -82,28 +137,15 @@ export function LoadingSpinner({
             key={index}
             className={twMerge(
               'w-4 rounded-full',
-              'transition-all duration-300',
+              'transition-all duration-75',
               color,
             )}
             style={{
-              animation: `wave ${waveDuration}ms ease-in-out infinite alternate`,
-              animationDelay: `${getAnimationDelay(index)}ms`,
-              animationPlayState: 'running',
+              height: `${barHeights[index]}px`,
             }}
           />
         ))}
       </div>
-
-      <style jsx>{`
-        @keyframes wave {
-          0% {
-            height: 0.5rem;
-          }
-          100% {
-            height: 4rem;
-          }
-        }
-      `}</style>
     </div>
   )
 }
