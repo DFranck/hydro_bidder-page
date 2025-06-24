@@ -6,4 +6,8 @@
   .prose p:has(a):has(code) {
     @apply inline-grid gap-1 md:block md:gap-0;
   }
+
+  .prose p:has(code) {
+    @apply inline-grid gap-1 md:block md:gap-0;
+  }
 }

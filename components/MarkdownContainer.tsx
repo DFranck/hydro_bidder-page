@@ -12,7 +12,7 @@ export function MarkdownContainer({
 }) {
   const isMobile = useIsMobile(982)
 
-  function insertSoftHyphens(content: string, maxLength = 20) {
+  function insertSoftHyphens(content: string, maxLength = 5) {
     return content.replace(new RegExp(`\\w{${maxLength},}`, "g"), (word) =>
       word.replace(/(.{5})/g, "$1\u200B")
     )
