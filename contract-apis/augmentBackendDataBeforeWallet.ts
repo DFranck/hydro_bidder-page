@@ -1,12 +1,9 @@
-import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
-import { augmentNumiaBids } from "@/contract-apis/augmentNumiaBids"
 import {
   AugmentedBackendDataBeforeWallet,
   BackendDataBeforeWalletSlimmed,
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import keyBy from "lodash/keyBy"
-import round from "lodash/round"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
 
 export function augmentBackendDataBeforeWallet(
@@ -19,16 +16,13 @@ export function augmentBackendDataBeforeWallet(
   const { constants, round_end, round_id, tranches, liquidity_deployments } =
     hydroMetaData
 
-  const { bidMetaDataById, numiaBids, numiaMetrics } = externalData
+  const { bidMetaDataById, preHydroBids, numiaMetrics } = externalData
 
   const hydroRoundsData = hydroRoundData
   const currentRoundId = round_id
 
   // Aux Fields
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
-
-  // Legacy Info
-  const { postHydroBids, preHydroBids } = augmentNumiaBids(numiaBids)
 
   // New Bids Info
   const bidsInfo = hydroRoundsData
@@ -68,7 +62,6 @@ export function augmentBackendDataBeforeWallet(
     currentRoundId: round_id,
     currentRoundIsPilot: true,
     lockedAtomEpochInNanos: constants.lock_epoch_length,
-    metricsForPostHydroBids: postHydroBids,
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: keysFromSnakeToCamelCase(numiaMetrics),
     minTributeFactor: 0.0001, // TODO: get this from contract

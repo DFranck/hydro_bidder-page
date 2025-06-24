@@ -27,5 +27,5 @@ export async function fetchNumiaMetricsData(): Promise<MetricsFromNumia> {
   })
 
   const metrics = (await response.json()) as MetricsFromNumia[]
-  return metrics[0]
+  return metrics?.[0] ?? {}
 }

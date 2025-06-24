@@ -1,10 +1,10 @@
 import { Config } from "@netlify/functions"
 import { fetchBidMetaDataById } from "../contract-apis/fetchBidMetaDataById"
-import { fetchNumiaBidData } from "../contract-apis/fetchNumiaBidData"
 import { fetchNumiaMetricsData } from "../contract-apis/fetchNumiaMetricsData"
 import { RawExternalData } from "../contract-apis/types"
 import { getSupabaseNamespacedFilename } from "../lib/getSupabaseNamespacedFilename"
 import { supabase } from "../lib/supabase"
+import { fetchPreHydroBidData } from "@/contract-apis/fetchPreHydroBidData"
 
 export const config: Config = {
   schedule: "* * * * *", // every minute
@@ -13,16 +13,16 @@ export const config: Config = {
 export default async function () {
   console.log("Building external data...")
 
-  const [bidMetaDataById, numiaBids, numiaMetrics] =
+  const [bidMetaDataById, preHydroBids, numiaMetrics] =
     await Promise.all([
       fetchBidMetaDataById(),
-      fetchNumiaBidData(),
+      fetchPreHydroBidData(),
       fetchNumiaMetricsData(),
     ])
 
   const rawExternalData: RawExternalData = {
     bidMetaDataById,
-    numiaBids,
+    preHydroBids,
     numiaMetrics,
   }
 

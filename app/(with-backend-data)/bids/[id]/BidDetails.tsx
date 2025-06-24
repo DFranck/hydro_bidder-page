@@ -3,7 +3,6 @@
 import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
-import { BidStatus } from "@/components/BidStatus"
 import { BidTributeApr } from "@/components/BidTributeApr"
 import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
@@ -43,14 +42,8 @@ export function BidDetails({
 }) {
   const backendData = useBackendData()
 
-  const {
-    atomPrice,
-    bidsInfo,
-    currentRoundId,
-    votes,
-    metricsForPostHydroBids,
-    minTributeFactor,
-  } = backendData
+  const { atomPrice, bidsInfo, currentRoundId, votes, minTributeFactor } =
+    backendData
 
   const {
     aboutProject,
@@ -67,15 +60,6 @@ export function BidDetails({
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
-  }
-
-  const bidMetricsFromNumia = metricsForPostHydroBids.find(
-    (metric) => Number(metric.id) === bidId
-  ) ?? {
-    offchainTribute: [],
-    status: "unknown",
-    currentAllocationAmount: 0,
-    onchainTributeUsdc: 0,
   }
 
   if (!bid.isWhitelisted && process.env.NODE_ENV !== "development") {
@@ -104,8 +88,7 @@ export function BidDetails({
 
   const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
 
-  const isTokenBased =
-    points.length === 0 && bidMetricsFromNumia?.offchainTribute.length === 0
+  const isTokenBased = points.length === 0
 
   const bidsInRound = Object.values(bidsInfo).filter(
     (bid) => bid.roundId === bid.roundId
@@ -221,10 +204,7 @@ export function BidDetails({
                   >
                     Bid Description
                   </StyledText>
-                  <MarkdownContainer
-                    content={description}
-                    className="break-all"
-                  />
+                  <MarkdownContainer content={description} />
                 </div>
               )}
               {committeeComments && (
@@ -282,7 +262,7 @@ export function BidDetails({
             <div className="max-w-64 overflow-x-auto text-xl font-bold">
               Round {bid.roundId + 1}
             </div>
-            {Boolean(bidMetricsFromNumia.currentAllocationAmount) && (
+            {(bid.liquidityDeployment?.totalRounds ?? 0) > 0 && (
               <div>
                 <Tooltip tipContents={bidDetailsPolSizeTooltip}>
                   <StyledText
@@ -313,13 +293,11 @@ export function BidDetails({
               </Tooltip>
 
               <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize text-palette-green">
-                <BidStatus bidId={bidId} />
+                {bid.status}
               </div>
             </div>
 
-            {["ongoing", "completed"].includes(
-              bidMetricsFromNumia.status?.toLowerCase()
-            ) && (
+            {["ongoing", "completed"].includes(bid.status?.toLowerCase()) && (
               <>
                 <div>
                   <Tooltip tipContents={metricsDurationColumnTooltip}>
@@ -385,28 +363,22 @@ export function BidDetails({
 
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
             {/* And if there are any point-based tribute amounts, we can't show this */}
-            {bid.roundId >= 2 &&
-              bidMetricsFromNumia.offchainTribute.length === 0 && (
-                <Tooltip tipContents={bidDetailsMaxDeploymentAmountTooltip}>
-                  <StyledText
-                    as="h3"
-                    variant="label"
-                    className="flex cursor-default items-center gap-1"
-                  >
-                    <span>Max Deployment Amount</span>
-                    <Icon name="circle-info" />
-                  </StyledText>
-                  <div className="max-w-64 overflow-x-auto text-xl font-bold">
-                    ~
-                    {formatAmount(
-                      maxDeploymentAmountInAtom * 1e6,
-                      undefined,
-                      0
-                    )}{" "}
-                    ATOM
-                  </div>
-                </Tooltip>
-              )}
+            {bid.roundId >= 2 && !bid.points?.length && (
+              <Tooltip tipContents={bidDetailsMaxDeploymentAmountTooltip}>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1"
+                >
+                  <span>Max Deployment Amount</span>
+                  <Icon name="circle-info" />
+                </StyledText>
+                <div className="max-w-64 overflow-x-auto text-xl font-bold">
+                  ~{formatAmount(maxDeploymentAmountInAtom * 1e6, undefined, 0)}{" "}
+                  ATOM
+                </div>
+              </Tooltip>
+            )}
 
             <div>
               <Tooltip
