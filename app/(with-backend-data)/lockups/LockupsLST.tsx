@@ -65,6 +65,8 @@ export function LockupsLST({
 
     setIsCreationModalOpen(false)
 
+    setToasts([toastMessages.lockingTokens])
+
     try {
       await signLockTokens(
         neutronChain,
