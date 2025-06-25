@@ -3,13 +3,13 @@ import { TD, TR } from "@/components/StyledTable"
 import { BaseRowObject, RowRenderProps } from "@/components/StyledTable/types"
 import { Tooltip } from "@/components/Tooltip"
 import { voteThresholdTooltip } from "@/components/ToolTips"
-import { AugmentedBidFromNumiaSlimmed } from "@/contract-apis/types"
+import { BidRevampMetrics } from "@/contract-apis/types"
 import { Fragment } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 
 export function RowComponent<
   Row extends BaseRowObject & {
-    _bid: AugmentedBidFromNumiaSlimmed
+    _bid: BidRevampMetrics
   },
 >({
   children,
@@ -30,8 +30,8 @@ export function RowComponent<
     !requestedPreHydro &&
     sortDirection === "DESC" &&
     sortedColumnKey === "tributeApr" &&
-    row._bidFromContract.vote_perc !== null &&
-    row._bidFromContract.vote_perc < voteThreshold
+    row._bid.vote_perc !== null &&
+    row._bid.vote_perc < voteThreshold
 
   return (
     <Fragment key={row._bid.id}>

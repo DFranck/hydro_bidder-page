@@ -54,7 +54,6 @@ const initialBackendDataContext: BackendDataContextType = {
   lockedAtomPercentageWallet: 0,
   lockedAtomTotalWallet: 0,
   lockups: [],
-  metricsForPostHydroBids: [],
   metricsForPreHydroBids: [],
   minTributeFactor: 0,
   votes: [],
