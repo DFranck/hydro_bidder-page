@@ -129,9 +129,12 @@ function FloatingCardElements({
         <div
           className={twMerge(
             'voted-on:block hidden',
+            'change-focus:block',
             '-inset-tightest absolute',
             'border-theme-color border-(length:--spacing-tightest)',
             'rounded-[calc(var(--radius-standard)+var(--spacing-tightest))]',
+            // Dim the border for voted-on bids when in change focus mode
+            'has-change-focus:voted-on:opacity-50',
             isFirstCell &&
               '@card-is-row:rounded-r-none @card-is-row:border-r-0',
             isLastCell && '@card-is-row:rounded-l-none @card-is-row:border-l-0',

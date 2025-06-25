@@ -81,6 +81,20 @@
 @custom-variant has-voted-on-focus (&:where(:has(.is-voted-on-focused), :has(.is-voted-on-focused) *));
 @custom-variant has-change-focus (&:where(:has(.is-change-focused), :has(.is-change-focused) *));
 
+/* Change focus interaction styles */
+@layer utilities {
+  /* Change voted-on bid theme color to beige during change-focus */
+  .has-change-focus .voted-on {
+    --color-theme-color: var(--color-palette-beige);
+  }
+
+  /* Hide vote button glow for voted-on bids during change-focus */
+  .has-change-focus .voted-on .glow {
+    opacity: 0 !important;
+    transform: translate(-50%, -50%) scale(0) !important;
+  }
+}
+
 @utility border-theme-color {
   border-color: var(--color-theme-color);
 }
