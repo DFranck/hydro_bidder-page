@@ -30,22 +30,22 @@ export function fetchData(): DataPromises {
 
           const [constants, currentRound, totalLockedTokens, tranches] =
             await Promise.all([
-              fetch(new URL(`${urlPrefix}/constants`, baseUrl), {
+              fetch(new URL(`${urlPrefix}?operation=constants`, baseUrl), {
                 next: { revalidate: cacheDuration },
               }).then(
                 (response) => response.json(),
               ),
-              fetch(new URL(`${urlPrefix}/current_round`, baseUrl), {
+              fetch(new URL(`${urlPrefix}?operation=current_round`, baseUrl), {
                 next: { revalidate: cacheDuration },
               }).then(
                 (response) => response.json(),
               ),
-              fetch(new URL(`${urlPrefix}/total_locked_tokens`, baseUrl), {
+              fetch(new URL(`${urlPrefix}?operation=total_locked_tokens`, baseUrl), {
                 next: { revalidate: cacheDuration },
               }).then(
                 (response) => response.json(),
               ),
-              fetch(new URL(`${urlPrefix}/tranches`, baseUrl), {
+              fetch(new URL(`${urlPrefix}?operation=tranches`, baseUrl), {
                 next: { revalidate: cacheDuration },
               }).then(
                 (response) => response.json(),

@@ -13,7 +13,7 @@ export async function fetchWalletData(address: string) {
       let walletData = null
       try {
         const walletDataResponse = await fetch(
-          `${urlPrefix}/wallet_data?address=${address}`
+          `${urlPrefix}?operation=wallet_data&address=${address}`
         )
         if (walletDataResponse.ok) {
           walletData = await walletDataResponse.json()

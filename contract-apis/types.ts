@@ -1,13 +1,13 @@
 import { BaseRowObject } from "@/components/StyledTable/types"
 import { ReactNode } from "react"
 import {
-  Coin,
-  Constants,
-  LiquidityDeployment,
-  LockupWithPerTrancheInfo,
-  Proposal,
-  Tranche,
-  VoteWithPower,
+    Coin,
+    Constants,
+    LiquidityDeployment,
+    LockupWithPerTrancheInfo,
+    Proposal,
+    Tranche,
+    VoteWithPower,
 } from "../app/ts_types/HydroBase.types"
 import { Tribute, TributeClaim } from "../app/ts_types/TributeBase.types"
 import { CamelCaseKeys } from "../lib/keysFromSnakeToCamelCase"

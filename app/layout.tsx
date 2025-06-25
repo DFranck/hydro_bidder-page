@@ -62,11 +62,6 @@ export default async function RootLayout({
                 gtag('config', 'G-JXM6TCWTSW')
               `}
             </Script>
-            <Script
-              type="text/javascript"
-              src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
-              async
-            />
           </>
         )}
       </head>

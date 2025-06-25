@@ -1,6 +1,6 @@
+import { getHydroQueryClient } from "@/app/api/v2/_helpers/getHydroQueryClient"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
 import { Environment, getSource, SourceID } from "@v2/environments"
-import { getHydroQueryClient } from "../../../../_helpers/getHydroQueryClient"
 
 export async function GET(
   request: Request,
