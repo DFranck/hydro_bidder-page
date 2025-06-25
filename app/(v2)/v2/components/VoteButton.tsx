@@ -230,10 +230,19 @@ export function VoteButton({
               'voted-on:text-background',
             )}
           >
-            <Icon name="light:circle-dashed" className="voted-on:hidden" />
+            <Icon
+              name="light:circle-dashed"
+              className={twJoin(
+                'voted-on:hidden',
+                'has-change-focus:voted-on:inline-block!',
+              )}
+            />
             <Icon
               name="solid:circle"
-              className="voted-on:inline-block hidden"
+              className={twJoin(
+                'voted-on:inline-block hidden',
+                'has-change-focus:voted-on:hidden!',
+              )}
             />
           </span>
 
@@ -249,6 +258,8 @@ export function VoteButton({
               'group-focus/vote-button:opacity-100',
               'voted-on:scale-100',
               'voted-on:opacity-100',
+              'has-change-focus:voted-on:scale-0!',
+              'has-change-focus:voted-on:opacity-0!',
             )}
           >
             <Icon name="solid:check" />
