@@ -247,18 +247,14 @@ export function VoteButton({
             <Icon name="solid:check" />
           </span>
 
-          <span
+          <div
             className={twJoin(
-              'pointer-events-none z-0 size-12',
-              'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-              'transition-all',
+              'glow size-12',
               'scale-0 opacity-0',
               'group-hover/vote-button:scale-300',
               'group-hover/vote-button:opacity-100',
               'group-focus/vote-button:scale-300',
               'group-focus/vote-button:opacity-100',
-              'bg-radial to-50%',
-              'from-palette-green to-transparent',
               'voted-on:scale-300',
               'voted-on:opacity-100',
             )}

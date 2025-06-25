@@ -78,7 +78,7 @@ export function WalletButton() {
   }
 
   return (
-    <div className="p-standard fixed top-0 left-1/2 z-50 -translate-x-1/2">
+    <div className={twJoin('p-standard', 'fixed top-0 right-16')}>
       <Tooltip tipContents="Manage Wallet">
         <button
           onClick={buttonProps.onClick}

@@ -37,18 +37,24 @@
   --palette-blue-rgb: 0, 97, 255; /* #0061ff */
   --palette-green-rgb: 0, 255, 194; /* #00ffc2 */
   --palette-red-rgb: 255, 123, 81; /* #ff7b51 */
+  --palette-purple-rgb: 147, 51, 234; /* #9333ea */
+  --palette-pink-rgb: 229, 3, 113; /* #e50371 */
   --palette-text-rgb: 8, 8, 21; /* #080815 */
+  --palette-usdc-rgb: 39, 117, 202; /* #2775ca */
 
   --color-palette-beige: rgb(var(--palette-beige-rgb));
   --color-palette-cyan: rgb(var(--palette-cyan-rgb));
   --color-palette-blue: rgb(var(--palette-blue-rgb));
   --color-palette-green: rgb(var(--palette-green-rgb));
   --color-palette-red: rgb(var(--palette-red-rgb));
+  --color-palette-purple: rgb(var(--palette-purple-rgb));
+  --color-palette-pink: rgb(var(--palette-pink-rgb));
   --color-palette-text: rgb(var(--palette-text-rgb));
+  --color-palette-usdc: rgb(var(--palette-usdc-rgb));
 
   --color-token-atom: var(--color-palette-blue);
-  --color-token-stosmo: #e50371;
-  --color-token-usdc: var(--color-palette-cyan);
+  --color-token-stosmo: var(--color-palette-pink);
+  --color-token-usdc: var(--color-palette-blue);
 
   --color-theme-color: var(--color-palette-blue);
   --color-theme-color-to-left: var(--color-palette-blue);
@@ -276,4 +282,13 @@
 @utility has-tooltip {
   @apply border-palette-beige/50 border-b-2 border-dotted;
   @apply hover:border-palette-beige;
+}
+
+@utility glow {
+  @apply pointer-events-none;
+  @apply absolute top-1/2 left-1/2;
+  @apply -translate-x-1/2 -translate-y-1/2;
+  @apply size-10 transition-all;
+  @apply bg-radial;
+  @apply from-palette-green via-transparent to-transparent;
 }

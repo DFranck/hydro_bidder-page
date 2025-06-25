@@ -73,9 +73,6 @@ export function Tranche({
     'rounded-standard absolute inset-0 overflow-hidden',
     'grid grid-rows-[min-content_auto]',
     'opacity-100 transition-opacity duration-200',
-    'voted-within:border-palette-green',
-    'voted-within:scrollbar-thumb-palette-green',
-    'voted-within:scrollbar-track-transparent',
   )
 
   const contentContainerClassName = twMerge('h-full', 'overflow-y-auto')
@@ -89,34 +86,21 @@ export function Tranche({
           'h-bar-height-standard',
           'flex items-center justify-between',
           'px-standard gap-standard',
+          'font-bold **:font-bold!',
           'transition-colors',
           'bg-gradient-to-b',
           'is-active:from-theme-color',
           'is-active:to-theme-color/50',
-          'voted-within:font-black',
         )}
       >
         <MarkdownContainer
           content={description}
-          className={twJoin(
-            'text-xs text-balance',
-            'voted-within:prose-headings:text-background',
-            'voted-within:prose-a:text-foreground',
-            'voted-within:prose-a:font-black',
-            'voted-within:prose-strong:text-background',
-            'voted-within:prose-code:text-foreground',
-            'voted-within:prose-ol:text-background',
-            'voted-within:prose-li:text-background',
-            'voted-within:prose-thead:bg-foreground/10',
-            'voted-within:[&_a:hover]:text-foreground/70',
-            'voted-within:text-background',
-            'voted-within:marker:text-background',
-          )}
+          className={twJoin('text-xs text-balance')}
         />
 
         <div
           className={twJoin(
-            'footnote whitespace-nowrap',
+            'footnote relative z-10 whitespace-nowrap',
             'voted-within:text-background',
           )}
         >
@@ -124,11 +108,20 @@ export function Tranche({
             <span>Haven&rsquo;t voted</span>
             <Icon name="solid:circle-dashed" />
           </div>
-          <div className="voted-within:flex hidden gap-1">
+
+          <div className="voted-within:flex relative hidden gap-1">
             <span>You&rsquo;ve voted!</span>
             <Icon name="solid:circle-check" />
           </div>
         </div>
+
+        <div
+          className={twJoin(
+            'voted-within:block hidden',
+            'absolute inset-y-0 right-0 left-1/2 z-0',
+            'from-palette-green bg-linear-to-l to-transparent',
+          )}
+        />
       </div>
 
       <div
@@ -176,6 +169,7 @@ export function Tranche({
                 className={twJoin(
                   'gap-standard flex flex-col',
                   '@card-is-row:table-row-group',
+                  '@card-is-row:h-full',
                 )}
               >
                 {bidsInTranche.map((bid, index) => {
@@ -261,13 +255,6 @@ export function Tranche({
         'is-active:z-10',
         className,
       )}
-      style={
-        userVotedInTranche
-          ? ({
-              '--color-theme-color': 'var(--color-palette-green)',
-            } as React.CSSProperties)
-          : undefined
-      }
       {...otherProps}
     >
       {renderViewbox ? (

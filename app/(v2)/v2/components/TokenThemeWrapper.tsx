@@ -6,6 +6,7 @@ const tokenColorVars: Record<number, string> = {
 type TokenThemeWrapperProps<C extends React.ElementType> = {
   as?: C
   trancheId: number
+  themeColor?: string
   children: React.ReactNode
   className?: string
 } & Omit<React.ComponentPropsWithoutRef<C>, 'as'>
@@ -13,13 +14,14 @@ type TokenThemeWrapperProps<C extends React.ElementType> = {
 export const TokenThemeWrapper = <C extends React.ElementType = 'div'>({
   as,
   trancheId,
+  themeColor,
   children,
   className,
   ...otherProps
 }: TokenThemeWrapperProps<C>) => {
   const Component = as || 'div'
   const style = {
-    '--color-theme-color': tokenColorVars[trancheId],
+    '--color-theme-color': themeColor || tokenColorVars[trancheId],
   } as React.CSSProperties
 
   return (

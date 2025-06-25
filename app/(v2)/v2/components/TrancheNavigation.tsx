@@ -27,9 +27,9 @@ function TrancheNavigationButton({
         'transition-all',
         'flex-col gap-1',
         'truncate',
-        'desktop:flex-row',
-        'desktop:gap-2',
-        'desktop:px-standard',
+        '@4xs:flex-row',
+        '@4xs:gap-2',
+        '@4xs:px-standard',
         disabled && 'cursor-not-allowed',
         disabled && 'opacity-50',
         className,
@@ -87,13 +87,13 @@ export function TrancheNavigation({
             className={twMerge(
               userVotedInTranche && 'voted-within',
               isActiveTranche && 'is-active',
-              '@container/tranche-nav-button',
+              '@container',
               'relative items-center',
               'justify-center',
-              'desktop:justify-between',
               'text-white',
               'border-standard transition-all duration-500',
               'overflow-visible',
+              '@4xs:justify-between',
 
               // Base styles
               'border-theme-color',
@@ -107,37 +107,74 @@ export function TrancheNavigation({
               'is-active:bg-theme-color',
               'is-active:cursor-default',
               'is-active:rounded-b-none',
-
-              // Voted state
-              'voted-within:text-background',
             )}
-            style={
-              userVotedInTranche
-                ? ({
-                    '--color-theme-color': 'var(--color-palette-green)',
-                  } as React.CSSProperties)
-                : undefined
-            }
             onClick={(e) => {
               spreadProps.onClick?.(e)
             }}
             {...spreadProps}
           >
             <div
+              className={twJoin(
+                'w-full',
+                'flex items-center justify-center',
+                'px-standard gap-standard',
+                '@4xs:justify-between',
+              )}
+            >
+              <span
+                className={twMerge('relative z-10 flex items-center gap-2')}
+              >
+                <span
+                  className={twMerge(
+                    'relative size-6',
+                    'flex items-center justify-center',
+                    'shrink-0',
+                  )}
+                >
+                  <span className="absolute inset-0">
+                    <Image
+                      src={`/images/logo-${logo}.svg`}
+                      alt={name}
+                      fill={true}
+                      sizes="10vw"
+                    />
+                  </span>
+                </span>
+                <span className={twJoin('label', 'hidden', '@4xs:block')}>
+                  {name}
+                </span>
+              </span>
+
+              <div
+                className={twJoin(
+                  'footnote relative z-10 whitespace-nowrap',
+                  'voted-within:text-background',
+                )}
+              >
+                <div className="voted-within:hidden flex gap-1">
+                  <span className="sr-only">Haven&rsquo;t voted</span>
+                  <Icon name="solid:circle-dashed" />
+                </div>
+
+                <div className="voted-within:flex relative hidden gap-1">
+                  <span className="sr-only">You&rsquo;ve voted!</span>
+                  <Icon name="solid:circle-check" />
+                </div>
+              </div>
+            </div>
+
+            {/* Bridging element to join with the content area */}
+            <div
               className={twMerge(
                 '-bottom-tight absolute right-0 left-0',
                 'bg-theme-color',
                 'origin-bottom',
-                isMounted
-                  ? [
-                      'transition-all',
-                      isActiveTranche
-                        ? 'scale-x-100 duration-500 ease-out'
-                        : 'scale-x-0 duration-200 ease-in',
-                    ]
-                  : isActiveTranche
-                    ? 'scale-x-100'
-                    : 'scale-x-0',
+                'scale-x-0',
+                'transition-all',
+                'duration-200 ease-in',
+                'is-active:scale-x-100',
+                'is-active:duration-500',
+                'is-active:ease-out',
               )}
               style={{
                 height: 'var(--spacing-tight)',
@@ -145,27 +182,25 @@ export function TrancheNavigation({
               }}
             />
 
-            <span className={twMerge('flex items-center gap-2')}>
-              <span
-                className={twMerge(
-                  'relative size-6',
-                  'flex items-center justify-center',
-                  'shrink-0',
-                )}
-              >
-                <span className="absolute inset-0">
-                  <Image
-                    src={`/images/logo-${logo}.svg`}
-                    alt={name}
-                    fill={true}
-                    sizes="10vw"
-                  />
-                </span>
-              </span>
-              <span className={twJoin('label', 'hidden', '@4xs:block')}>
-                {name}
-              </span>
-            </span>
+            {/* Right-side green highlight when voted within */}
+            <div
+              className={twJoin(
+                'absolute inset-0 z-0',
+                'bg-linear-to-b',
+                'from-palette-green/50 via-transparent to-transparent',
+                'is-active:from-palette-green',
+                'voted-within:opacity-100',
+                'opacity-0 transition-all',
+                'delay-200',
+                'is-active:delay-500',
+                'rounded-t-[calc(var(--spacing)*2)]',
+                'is-active:rounded-br-none',
+                'is-active:rounded-t-[calc(var(--spacing)*2)]',
+                '@4xs:is-active:rounded-tr-[calc(var(--spacing)*2)]',
+                '@4xs:rounded-r-[calc(var(--spacing)*2)]',
+                '@4xs:bg-linear-to-bl',
+              )}
+            />
           </TokenThemeWrapper>
         )
       }}
@@ -176,7 +211,7 @@ export function TrancheNavigation({
               <TrancheNavigationButton
                 id="tranche-nav-previous"
                 disabled={!canGoPrevious}
-                className={twJoin('px-standard w-min shrink-0', 'desktop:w-12')}
+                className={twJoin('px-standard w-min shrink-0', '@4xs:w-12')}
                 onClick={onPrevious}
               >
                 <Icon name="solid:chevron-left" />
@@ -193,7 +228,7 @@ export function TrancheNavigation({
               <TrancheNavigationButton
                 id="tranche-nav-next"
                 disabled={!canGoNext}
-                className={twJoin('px-standard w-min shrink-0', 'desktop:w-12')}
+                className={twJoin('px-standard w-min shrink-0', '@4xs:w-12')}
                 onClick={onNext}
               >
                 <Icon name="solid:chevron-right" />

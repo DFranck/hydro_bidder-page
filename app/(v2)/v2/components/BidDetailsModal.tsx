@@ -63,6 +63,9 @@ export function BidDetailsModal({
   return (
     <TokenThemeWrapper
       trancheId={currentBid?.trancheId ?? 1}
+      themeColor={
+        isBelowVoteThreshold ? 'var(--color-palette-beige)' : undefined
+      }
       className={twJoin(
         isBelowVoteThreshold && 'low-votes',
         'fixed inset-0 z-20',
@@ -71,13 +74,6 @@ export function BidDetailsModal({
         'bg-theme-color/20 backdrop-blur-sm',
       )}
       onClick={closeModal}
-      style={
-        isBelowVoteThreshold
-          ? ({
-              '--color-theme-color': 'var(--color-palette-beige)',
-            } as React.CSSProperties)
-          : undefined
-      }
     >
       <div
         className={twJoin(
