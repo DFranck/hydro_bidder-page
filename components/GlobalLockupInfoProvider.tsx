@@ -1,5 +1,5 @@
 import { GlobalLockupCapacityInfo } from "@/contract-apis/types"
-import { createContext, ReactNode, useEffect, useState } from "react"
+import { createContext, ReactNode, useEffect, useRef, useState } from "react"
 
 const defaultValue: GlobalLockupCapacityInfo = {
   lockedAtomTotalGlobal: 0,
@@ -23,13 +23,23 @@ export const GlobalLockupInfoProvider = ({
 }: ProviderProps) => {
   const [globalCapacityInfo, setGlobalCapacityInfo] =
     useState<GlobalLockupCapacityInfo>(defaultValue)
+  const [isLoading, setIsLoading] = useState(false)
+  const fetchPromiseRef = useRef<Promise<void> | null>(null)
 
-  useEffect(() => {
-    let isMounted = true
+  const fetchData = async () => {
+    if (isLoading || fetchPromiseRef.current) {
+      return
+    }
 
-    const fetchData = async () => {
+    setIsLoading(true)
+
+    const fetchPromise = (async () => {
       try {
-        const res = await fetch("/api/total-locked-tokens")
+        const res = await fetch("/api/total-locked-tokens", {
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        })
         const data = await res.json()
 
         if (
@@ -53,22 +63,34 @@ export const GlobalLockupInfoProvider = ({
         )
         const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal >= 100
 
-        if (isMounted) {
-          setGlobalCapacityInfo({
-            lockedAtomTotalGlobal,
-            lockedAtomMaxGlobal,
-            lockedAtomRemainingCapacityGlobal,
-            lockedAtomPercentageGlobal,
-            lockedAtomIsAtCapacityGlobal,
-          })
-        }
+        setGlobalCapacityInfo({
+          lockedAtomTotalGlobal,
+          lockedAtomMaxGlobal,
+          lockedAtomRemainingCapacityGlobal,
+          lockedAtomPercentageGlobal,
+          lockedAtomIsAtCapacityGlobal,
+        })
       } catch (err) {
         console.error("Fetch error:", err)
+      } finally {
+        setIsLoading(false)
+        fetchPromiseRef.current = null
       }
-    }
+    })()
+
+    fetchPromiseRef.current = fetchPromise
+    await fetchPromise
+  }
+
+  useEffect(() => {
+    let isMounted = true
 
     fetchData()
-    const interval = setInterval(fetchData, pollingIntervalMs)
+    const interval = setInterval(() => {
+      if (isMounted) {
+        fetchData()
+      }
+    }, pollingIntervalMs)
 
     return () => {
       isMounted = false
