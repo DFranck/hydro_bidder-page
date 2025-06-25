@@ -8,7 +8,6 @@ NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS=neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc
 # Numia Data
 NUMIA_COSMOS_HYDRO_APP_API_KEY=
 NUMIA_METRICS_ENDPOINT=https://cosmos.numia.xyz/hydro/metrics
-NUMIA_DEPLOYMENTS_OVERVIEW_ENDPOINT=https://cosmos.numia.xyz/hydro/deployments_overview_staging
 
 NUMIA_BIDS_ENDPOINT=https://cosmos.numia.xyz/hydro/round_bids
 NUMIA_LOCKUPS_ENDPOINT=https://cosmos.numia.xyz/hydro/round_lockups

@@ -6,10 +6,7 @@ import { RowRenderFunction } from "@/components/StyledTable/types"
 import { voteThresholdTooltip } from "@/components/ToolTips"
 import { TrancheTitle } from "@/components/TrancheTitle"
 import { voteThresholdByTrancheId } from "@/config"
-import {
-  AugmentedBidFromNumiaSlimmed,
-  BidRevampMetrics,
-} from "@/contract-apis/types"
+import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import max from "lodash/max"
 import uniq from "lodash/uniq"
@@ -53,12 +50,11 @@ export function MetricsTable({
       ? metricsForPreHydroBids
       : bids.filter((bid) => bid.roundId === requestedRoundId)
 
-    const bidsInTranche = bidsToRender.filter((bid) => {
-      if (requestedPreHydro) {
-        return (bid as AugmentedBidFromNumiaSlimmed).tranche === trancheId
-      }
-      return (bid as BidRevampMetrics).trancheId === trancheId
-    })
+    const bidsInTranche = requestedPreHydro
+      ? bidsToRender
+      : bidsToRender.filter((bid) => {
+          return (bid as BidRevampMetrics).trancheId === trancheId
+        })
 
     const filteredBidsInTranche = bidsInTranche.filter((x) => {
       if (requestedPreHydro || showBidsWithoutTributes) {
@@ -72,8 +68,7 @@ export function MetricsTable({
     })
 
     return filteredBidsInTranche.map((bid) => {
-      const bidFromContract = bidsInfo[Number(bid.id)] ?? null
-      return buildRow(bid, bidFromContract, requestedPreHydro)
+      return buildRow(bid, requestedPreHydro)
     })
   }, [bidsInfo, currentRoundId, trancheId, showBidsWithoutTributes])
 
@@ -87,11 +82,11 @@ export function MetricsTable({
         return 0
       }
       const aExceedsThreshold =
-        a._bidFromContract.vote_perc &&
-        a._bidFromContract.vote_perc >= voteThreshold
+        (a._bid as BidRevampMetrics).vote_perc &&
+        (a._bid as BidRevampMetrics).vote_perc >= voteThreshold
       const bExceedsThreshold =
-        b._bidFromContract.vote_perc &&
-        b._bidFromContract.vote_perc >= voteThreshold
+        (b._bid as BidRevampMetrics).vote_perc &&
+        (b._bid as BidRevampMetrics).vote_perc >= voteThreshold
       return Number(bExceedsThreshold) - Number(aExceedsThreshold)
     })
   }
