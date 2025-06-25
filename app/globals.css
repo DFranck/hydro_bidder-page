@@ -74,6 +74,12 @@
 @custom-variant voted-on (&:where(.voted-on, .voted-on *));
 @custom-variant voted-within (&:where(.voted-within, .voted-within *));
 @custom-variant low-votes (&:where(.low-votes, .low-votes *));
+@custom-variant vote-focus (&:where(.is-vote-focused, .is-vote-focused *));
+@custom-variant voted-on-focus (&:where(.is-voted-on-focused, .is-voted-on-focused *));
+@custom-variant change-focus (&:where(.is-change-focused, .is-change-focused *));
+@custom-variant has-vote-focus (&:where(:has(.is-vote-focused), :has(.is-vote-focused) *));
+@custom-variant has-voted-on-focus (&:where(:has(.is-voted-on-focused), :has(.is-voted-on-focused) *));
+@custom-variant has-change-focus (&:where(:has(.is-change-focused), :has(.is-change-focused) *));
 
 @utility border-theme-color {
   border-color: var(--color-theme-color);

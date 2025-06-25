@@ -173,6 +173,13 @@ export function VoteButton({
     buttonProps = {
       onClick: (e: React.MouseEvent) => {
         e.preventDefault()
+        // On mobile, require focus before click (double-tap behavior)
+        const target = e.currentTarget as HTMLElement
+        if (document.activeElement !== target) {
+          target.focus()
+          return
+        }
+
         if (hasVotedElsewhere) {
           setOpenChangeVoteModal(true)
         } else {

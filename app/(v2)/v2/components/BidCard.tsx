@@ -96,6 +96,17 @@ function FloatingCardElements({
           'group-hover/bid-card:bg-theme-color/40',
           'group-focus-within/bid-card:bg-theme-color/60!',
           '@card-is-row:block hidden',
+          // Dimming when other bids are focused
+          'has-vote-focus:opacity-50',
+          'has-voted-on-focus:opacity-50',
+          'has-change-focus:opacity-50',
+          // But not when this bid is the focused one
+          'vote-focus:opacity-100!',
+          'voted-on-focus:opacity-100!',
+          'change-focus:opacity-100!',
+          // Highlight voted bids when in change-focus mode
+          'has-change-focus:voted-on:bg-theme-color/60',
+          'has-change-focus:voted-on:opacity-100!',
           isFirstCell
             ? [
                 'block',
@@ -162,6 +173,28 @@ export function BidCard({
   const [isVoteButtonFocused, setIsVoteButtonFocused] = useState(false)
   const isHoveringVoteButton = isVoteButtonHovered || isVoteButtonFocused
 
+  // Check if user has voted on any bid in this tranche
+  const userHasVotedInThisTranche = bid
+    ? userVotes.some((vote: any) => {
+        const votedBid = augmentedBids.find((b) => b.id === vote.prop_id)
+        return votedBid && votedBid.trancheId === bid.trancheId
+      })
+    : false
+
+  // Determine focus state for CSS variants
+  let focusStateClass = ''
+  if (isHoveringVoteButton) {
+    if (userHasVotedOnThisBid) {
+      focusStateClass = 'is-voted-on-focused'
+    } else if (userHasVotedInThisTranche) {
+      // User has voted on another bid in this tranche, so this is a "change vote" interaction
+      focusStateClass = 'is-change-focused'
+    } else {
+      // Normal vote focus
+      focusStateClass = 'is-vote-focused'
+    }
+  }
+
   if (!bid) return null
 
   const bidDescription = bidDescriptionsById[bidId]
@@ -181,6 +214,7 @@ export function BidCard({
       className={twMerge(
         userHasVotedOnThisBid && 'voted-on',
         isBelowVoteThreshold && 'low-votes',
+        focusStateClass,
         'group/bid-card',
         'grid',
         'relative z-10',
@@ -311,7 +345,7 @@ export function BidCard({
             type="button"
             className={twMerge(
               'group/action-button',
-              'btn h-full',
+              'btn h-full rounded-l-none',
               'flex items-center justify-center',
               'px-standard',
               'hover:bg-darkened',
