@@ -129,7 +129,6 @@ function FloatingCardElements({
         <div
           className={twMerge(
             'voted-on:block hidden',
-            'change-focus:block',
             '-inset-tightest absolute',
             'border-theme-color border-(length:--spacing-tightest)',
             'rounded-[calc(var(--radius-standard)+var(--spacing-tightest))]',

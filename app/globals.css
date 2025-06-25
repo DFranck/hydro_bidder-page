@@ -85,7 +85,7 @@
 @layer utilities {
   /* Change voted-on bid theme color to beige during change-focus */
   .has-change-focus .voted-on {
-    --color-theme-color: var(--color-palette-beige);
+    --color-theme-color: var(--color-palette-beige) !important;
   }
 
   /* Hide vote button glow for voted-on bids during change-focus */
