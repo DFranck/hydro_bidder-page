@@ -12,6 +12,7 @@ import { useChain } from "@cosmos-kit/react"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { toastMessages } from "@/components/ToastMessages"
 import { configDenom } from "@/contract-apis/useAmountOfTokenInWallet"
+import { useBackendData } from "@/contract-apis/useBackendData"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -40,6 +41,7 @@ export function LockupsLST({
   const [neutronSigner, setNeutronSigner] = useState<
     SigningStargateClient | undefined
   >(undefined)
+  const { hasGatekeeper } = useBackendData()
 
   function handleChangeAmount(event: ChangeEvent<HTMLInputElement>) {
     const numericValue = Number(event.target.value)
@@ -63,23 +65,22 @@ export function LockupsLST({
 
     setIsCreationModalOpen(false)
 
-    setToasts([toastMessages.lockingUnavailableTokens])
+    try {
+      await signLockTokens(
+        neutronChain,
+        neutronSigner,
+        selectedLockDurationInEpochs,
+        neutronTokenDenom,
+        String(amount * 1e6),
+        hasGatekeeper
+      )
 
-    // try {
-    //   await signLockTokens(
-    //     neutronChain,
-    //     neutronSigner,
-    //     selectedLockDurationInEpochs,
-    //     neutronTokenDenom,
-    //     String(amount * 1e6)
-    //   )
-
-    //   // setToasts([toastMessages.lockingTokensSuccess])
-    // } catch (error) {
-    //   console.error("Error locking tokens:", error)
-    //   setToasts([toastMessages.lockingTokensError(error as Error)])
-    //   setIsCreationModalOpen(true)
-    // }
+      setToasts([toastMessages.lockingTokensSuccess])
+    } catch (error) {
+      console.error("Error locking tokens:", error)
+      setToasts([toastMessages.lockingTokensError(error as Error)])
+      setIsCreationModalOpen(true)
+    }
   }
 
   useEffect(() => {
