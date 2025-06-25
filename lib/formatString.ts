@@ -10,5 +10,5 @@ export function truncateString({
   if (!string) return ""
   return string.length <= minLength
     ? string
-    : `${string.slice(0, 7)}...${string.slice(-afterDotsStringLength)}`
+    : `${string.slice(0, 3)}..${string.slice(-afterDotsStringLength)}`
 }
