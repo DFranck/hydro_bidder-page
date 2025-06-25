@@ -1,17 +1,9 @@
 "use client"
 
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 import { WalletStatus } from "@cosmos-kit/core"
 import { useChain } from "@cosmos-kit/react"
 import { useEffect, useState } from "react"
-
-export const configDenom = {
-  tokenDenom: {
-    dATOM:
-      "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom",
-    stATOM:
-      "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
-  },
-}
 
 export function useAmountOfTokenInWallet(denom: "stATOM" | "dATOM") {
   const [amountOfTokenInWallet, setAmountOfTokenInWallet] = useState(0)
@@ -27,7 +19,7 @@ export function useAmountOfTokenInWallet(denom: "stATOM" | "dATOM") {
       const client = await getStargateClient()
       const balance = await client.getBalance(
         address,
-        configDenom.tokenDenom[denom]
+        TOKEN_DENOMS[denom]
       )
 
       setAmountOfTokenInWallet(Number(balance.amount) / 1e6)

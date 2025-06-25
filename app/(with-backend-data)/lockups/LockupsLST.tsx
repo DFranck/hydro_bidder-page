@@ -11,8 +11,8 @@ import { signLockTokens } from "../lock-atom/transactions/signLockTokens"
 import { useChain } from "@cosmos-kit/react"
 import { SigningStargateClient } from "@cosmjs/stargate"
 import { toastMessages } from "@/components/ToastMessages"
-import { configDenom } from "@/contract-apis/useAmountOfTokenInWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -53,7 +53,7 @@ export function LockupsLST({
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const neutronTokenDenom = configDenom.tokenDenom[votingTokenName]
+    const neutronTokenDenom = TOKEN_DENOMS[votingTokenName]
 
     if (!neutronTokenDenom) {
       throw new Error("Denom is not set")

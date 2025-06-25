@@ -31,6 +31,9 @@ export interface AugmentedBackendDataAfterWallet
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
   lockedAtomTotalWalletStat: number
+  lockedStAtomTotalWalletStat: number
+  lockedDAtomTotalWalletStat: number
+  lockedTokenTotalWalletStat: number
   lockedAtomTotalWallet: number
   lockedAtomMaxWallet: number
   lockups: AugmentedLockup[]

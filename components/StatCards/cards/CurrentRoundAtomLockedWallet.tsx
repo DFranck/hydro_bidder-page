@@ -10,6 +10,9 @@ import { formatAmountToUsd } from "@/lib/amountToUSDString"
 export function CurrentRoundAtomLockedWallet() {
   const {
     lockedAtomTotalWalletStat,
+    lockedTokenTotalWalletStat,
+    lockedDAtomTotalWalletStat,
+    lockedStAtomTotalWalletStat,
     isLoading,
     atomPrice,
     stAtomPrice,
@@ -21,7 +24,7 @@ export function CurrentRoundAtomLockedWallet() {
       isLoading={isLoading}
       value={
         <>
-          {lockedAtomTotalWalletStat.toLocaleString("en-US", {
+          {lockedTokenTotalWalletStat.toLocaleString("en-US", {
             maximumFractionDigits: 4,
           })}
         </>
@@ -31,15 +34,24 @@ export function CurrentRoundAtomLockedWallet() {
           tipContents={yourTotalTokenLockedTooltip({
             atomLockedTotal: {
               amount: lockedAtomTotalWalletStat,
-              usdAmount: formatAmountToUsd(lockedAtomTotalWalletStat, atomPrice),
+              usdAmount: formatAmountToUsd(
+                lockedAtomTotalWalletStat,
+                atomPrice
+              ),
             },
             dAtomLockedTotal: {
-              amount: 0,
-              usdAmount: formatAmountToUsd(0, dAtomPrice),
+              amount: lockedDAtomTotalWalletStat,
+              usdAmount: formatAmountToUsd(
+                lockedDAtomTotalWalletStat,
+                dAtomPrice
+              ),
             },
             stAtomLockedTotal: {
-              amount: 0,
-              usdAmount: formatAmountToUsd(0, stAtomPrice),
+              amount: lockedStAtomTotalWalletStat,
+              usdAmount: formatAmountToUsd(
+                lockedStAtomTotalWalletStat,
+                stAtomPrice
+              ),
             },
           })}
           classNamesForTooltip="w-80"

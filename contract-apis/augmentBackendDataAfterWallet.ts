@@ -11,6 +11,7 @@ import groupBy from "lodash/groupBy"
 import keyBy from "lodash/keyBy"
 import sumBy from "lodash/sumBy"
 import { augmentClaimWithRoundPrices } from "./augmentClaimWithRoundPrices"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function augmentBackendDataAfterWallet({
   address,
@@ -25,11 +26,8 @@ export function augmentBackendDataAfterWallet({
   >
   lockedAtomRemainingCapacityGlobal: number
 }): AugmentedBackendDataAfterWallet {
-  const {
-    bidsInfo,
-    currentRoundId,
-    currentRoundPrices,
-  } = augmentedBackendDataBeforeWallet
+  const { bidsInfo, currentRoundId, currentRoundPrices } =
+    augmentedBackendDataBeforeWallet
 
   const {
     historical_tribute_claims,
@@ -99,7 +97,7 @@ export function augmentBackendDataAfterWallet({
 
   const votesByRoundId = groupBy(
     sanitizedVotes,
-    (vote) => bidsInfo[vote.bidId]?.roundId,
+    (vote) => bidsInfo[vote.bidId]?.roundId
   )
 
   const augmentedHistoricalClaims = historical_tribute_claims.map((o) =>
@@ -116,7 +114,34 @@ export function augmentBackendDataAfterWallet({
     })
   )
 
-  const lockedAtomTotalWalletStat = sumBy(augmentedLockups, "funds.amount")
+  const lockedAtomTotalWalletStat = sumBy(
+    augmentedLockups.filter(
+      (lockup) =>
+        ![TOKEN_DENOMS.stATOM, TOKEN_DENOMS.dATOM].includes(lockup.funds.denom)
+    ),
+    "funds.amount"
+  )
+
+  const lockedStAtomTotalWalletStat = sumBy(
+    augmentedLockups.filter(
+      (lockup) => lockup.funds.denom === TOKEN_DENOMS.stATOM
+    ),
+    "funds.amount"
+  )
+
+  const lockedDAtomTotalWalletStat = sumBy(
+    augmentedLockups.filter(
+      (lockup) => lockup.funds.denom === TOKEN_DENOMS.dATOM
+    ),
+    "funds.amount"
+  )
+
+  const lockedTokenTotalWalletStat =
+    lockedAtomTotalWalletStat +
+    lockedStAtomTotalWalletStat +
+    lockedDAtomTotalWalletStat
+
+
   const lockedAtomTotalWallet = Number(currently_locked) / 1e6
   const lockedAtomPercentageWallet = Math.floor(
     (lockedAtomTotalWallet / lockedAtomMaxWallet) * 100
@@ -178,6 +203,9 @@ export function augmentBackendDataAfterWallet({
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     lockedAtomTotalWalletStat,
+    lockedStAtomTotalWalletStat,
+    lockedDAtomTotalWalletStat,
+    lockedTokenTotalWalletStat,
     lockedAtomTotalWallet,
     lockups: augmentedLockups,
     votes: sanitizedVotes,
