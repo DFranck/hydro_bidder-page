@@ -68,16 +68,11 @@ export function BidDetails({
     <TokenThemeWrapper
       as="article"
       trancheId={bid.trancheId}
-      themeColor={
-        userHasVotedOnThisBid
-          ? 'var(--color-palette-green)'
-          : isBelowVoteThreshold
-            ? 'var(--color-palette-beige)'
-            : undefined
-      }
       className={twMerge(
         isBelowVoteThreshold && 'low-votes',
         userHasVotedOnThisBid && 'voted-on',
+        'voted-on:theme-color-green',
+        'low-votes:theme-color-beige',
         'grid grid-rows-[min-content_auto]',
         'h-full overflow-hidden',
         'relative',

@@ -228,20 +228,21 @@ export function VoteButton({
               'voted-on:scale-200',
               'voted-on:opacity-100',
               'voted-on:text-background',
+              'voted-on:vote-changing:scale-100',
             )}
           >
             <Icon
               name="light:circle-dashed"
               className={twJoin(
                 'voted-on:hidden',
-                'has-change-focus:voted-on:inline-block!',
+                'voted-on:vote-changing:inline-block!',
               )}
             />
             <Icon
               name="solid:circle"
               className={twJoin(
                 'voted-on:inline-block hidden',
-                'has-change-focus:voted-on:hidden!',
+                'voted-on:vote-changing:hidden!',
               )}
             />
           </span>
@@ -258,8 +259,8 @@ export function VoteButton({
               'group-focus/vote-button:opacity-100',
               'voted-on:scale-100',
               'voted-on:opacity-100',
-              'has-change-focus:voted-on:scale-0!',
-              'has-change-focus:voted-on:opacity-0!',
+              'voted-on:vote-changing:scale-0',
+              'voted-on:vote-changing:opacity-0',
             )}
           >
             <Icon name="solid:check" />
@@ -275,6 +276,8 @@ export function VoteButton({
               'group-focus/vote-button:opacity-100',
               'voted-on:scale-300',
               'voted-on:opacity-100',
+              'voted-on:vote-changing:scale-0',
+              'voted-on:vote-changing:opacity-0',
             )}
           />
         </span>

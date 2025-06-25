@@ -2,8 +2,8 @@
 
 import dynamic from 'next/dynamic'
 
-const WalletProvider = dynamic(
-  () => import('@/components/WalletProvider').then((mod) => mod.WalletProvider),
+const V2WalletProvider = dynamic(
+  () => import('./V2WalletProvider').then((mod) => mod.V2WalletProvider),
   {
     ssr: false,
   },
@@ -14,5 +14,5 @@ export function ClientWalletProvider({
 }: {
   children: React.ReactNode
 }) {
-  return <WalletProvider>{children}</WalletProvider>
+  return <V2WalletProvider>{children}</V2WalletProvider>
 }

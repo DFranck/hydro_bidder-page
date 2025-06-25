@@ -63,11 +63,9 @@ export function BidDetailsModal({
   return (
     <TokenThemeWrapper
       trancheId={currentBid?.trancheId ?? 1}
-      themeColor={
-        isBelowVoteThreshold ? 'var(--color-palette-beige)' : undefined
-      }
       className={twJoin(
         isBelowVoteThreshold && 'low-votes',
+        'low-votes:theme-color-beige',
         'fixed inset-0 z-20',
         'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-loose))]',
         'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tight))]',

@@ -105,8 +105,9 @@ function FloatingCardElements({
           'voted-on-focus:opacity-100!',
           'change-focus:opacity-100!',
           // Highlight voted bids when in change-focus mode
-          'has-change-focus:voted-on:bg-theme-color/60',
-          'has-change-focus:voted-on:opacity-100!',
+          'voted-on:vote-changing:theme-color-beige',
+          'voted-on:vote-changing:bg-theme-color/60',
+          'voted-on:vote-changing:opacity-100!',
           isFirstCell
             ? [
                 'block',
@@ -118,22 +119,15 @@ function FloatingCardElements({
           isLastCell ? 'rounded-r-standard' : '',
           !isFirstCell && !isLastCell ? 'rounded-none' : '',
         )}
-        style={{
-          ...(isHoveringVoteButton
-            ? ({
-                '--color-theme-color': 'var(--color-palette-green)',
-              } as React.CSSProperties)
-            : {}),
-        }}
       >
         <div
           className={twMerge(
             'voted-on:block hidden',
+            'vote-focus:block',
+            'change-focus:block',
             '-inset-tightest absolute',
             'border-theme-color border-(length:--spacing-tightest)',
             'rounded-[calc(var(--radius-standard)+var(--spacing-tightest))]',
-            // Dim the border for voted-on bids when in change focus mode
-            'has-change-focus:voted-on:opacity-50',
             isFirstCell &&
               '@card-is-row:rounded-r-none @card-is-row:border-r-0',
             isLastCell && '@card-is-row:rounded-l-none @card-is-row:border-l-0',
@@ -217,6 +211,10 @@ export function BidCard({
         userHasVotedOnThisBid && 'voted-on',
         isBelowVoteThreshold && 'low-votes',
         focusStateClass,
+        'voted-on:theme-color-green',
+        'low-votes:theme-color-beige',
+        'vote-focus:theme-color-green',
+        'change-focus:theme-color-green',
         'group/bid-card',
         'grid',
         'relative z-10',
@@ -234,17 +232,6 @@ export function BidCard({
         isLoading && 'opacity-75',
         className,
       )}
-      style={
-        userHasVotedOnThisBid
-          ? ({
-              '--color-theme-color': 'var(--color-palette-green)',
-            } as React.CSSProperties)
-          : isBelowVoteThreshold
-            ? ({
-                '--color-theme-color': 'var(--color-palette-beige)',
-              } as React.CSSProperties)
-            : undefined
-      }
       {...otherProps}
     >
       <TD className="grid-in-logo @card-is-row:h-24">
