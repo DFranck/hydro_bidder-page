@@ -31,29 +31,35 @@ export async function fetchWalletData({
     trancheIds.map((trancheId) => ({ roundId, trancheId }))
   )
 
-  const [
-    { voting_power },
-    { lockups_with_per_tranche_infos },
-    { claims: historical_tribute_claims },
-  ] = await Promise.all([
-    hydroQueryClient
-      .userVotingPower({ address })
-      .catch(() => ({ voting_power: 0 })),
-    hydroQueryClient
-      .allUserLockupsWithTrancheInfos({
-        address,
-        limit: 10_000,
-        startFrom: 0,
-      })
-      .catch(() => ({ lockups_with_per_tranche_infos: [] })),
-    tributeQueryClient
-      .historicalTributeClaims({
-        limit: 100,
-        startFrom: 0,
-        userAddress: address,
-      })
-      .catch(() => ({ claims: [] })),
-  ])
+  const [{ voting_power }, { claims: historical_tribute_claims }] =
+    await Promise.all([
+      hydroQueryClient
+        .userVotingPower({ address })
+        .catch(() => ({ voting_power: 0 })),
+      tributeQueryClient
+        .historicalTributeClaims({
+          limit: 100,
+          startFrom: 0,
+          userAddress: address,
+        })
+        .catch(() => ({ claims: [] })),
+    ])
+
+  // Manual pagination for lockups_with_per_tranche_infos
+  const limit = 8
+  let startFrom = 0
+  const accumulatedLockups = []
+
+  while (true) {
+    const { lockups_with_per_tranche_infos } = await hydroQueryClient
+      .allUserLockupsWithTrancheInfos({ address, limit, startFrom })
+      .catch(() => ({ lockups_with_per_tranche_infos: [] }))
+
+    if (!lockups_with_per_tranche_infos.length) break
+
+    accumulatedLockups.push(...lockups_with_per_tranche_infos)
+    startFrom += limit
+  }
 
   let currently_locked: number | string = "0"
   let maxUserCanLockResponse: MaxUserCanLockResponse | undefined
@@ -101,7 +107,7 @@ export async function fetchWalletData({
 
   return {
     voting_power,
-    lockups_with_per_tranche_infos,
+    lockups_with_per_tranche_infos: accumulatedLockups,
     votes,
     outstanding_tribute_claims,
     historical_tribute_claims,

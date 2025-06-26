@@ -43,15 +43,27 @@ export async function fetchRoundLockups({
       const userBatch = users.slice(i, i + 10)
       const batchLockups = await Promise.all(
         userBatch.map(async (address) => {
-          const query = {
-            address,
-            limit: 1000,
-            startFrom: 0,
-          }
+          const accumulatedLockups = []
+          let startFrom = 0
+          const limit = 8
 
-          const { lockups_with_per_tranche_infos } =
-            await hydroQueryClient.allUserLockupsWithTrancheInfos(query)
-          return lockups_with_per_tranche_infos
+          while (true) {
+            const query = {
+              address,
+              limit,
+              startFrom,
+            }
+
+            const { lockups_with_per_tranche_infos } =
+              await hydroQueryClient.allUserLockupsWithTrancheInfos(query)
+
+            if (!lockups_with_per_tranche_infos.length) break
+
+            accumulatedLockups.push(...lockups_with_per_tranche_infos)
+
+            startFrom += limit
+          }
+          return accumulatedLockups
         })
       )
       allUserLockupsWithTrancheInfos.push(...batchLockups)
