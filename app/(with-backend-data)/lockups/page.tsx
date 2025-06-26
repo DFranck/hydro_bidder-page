@@ -29,6 +29,7 @@ import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
 import { NewLockupButton } from "./NewLockupButton"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -152,8 +153,10 @@ export default function LockupsPage() {
               >
                 <div className="flex items-center gap-1 opacity-60">
                   <span>
-                    {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                    {lockedAtomMaxWallet} ATOM max
+                    {lockedAtomTotalWallet.toFixed(
+                      DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                    )}{" "}
+                    / {lockedAtomMaxWallet} ATOM max
                   </span>
                   <span>
                     <Icon name="circle-info" />

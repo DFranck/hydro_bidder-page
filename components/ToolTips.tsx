@@ -4,13 +4,11 @@ import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import {
+  DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS,
   HYDRO_TELEGRAM_COMMUNITY_URL,
   voteThresholdByTrancheId,
 } from "@/config"
-import {
-  AugmentedBidAfterWallet,
-  BidMetaDataSlimmed,
-} from "@/contract-apis/types"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
@@ -926,7 +924,12 @@ export const globalTotalAtomLockedTooltip = ({
       )}
     >
       {lockedAtomRemainingCapacityGlobal > 0 ? (
-        <>Available capacity: {lockedAtomRemainingCapacityGlobal}</>
+        <>
+          Available capacity:{" "}
+          {lockedAtomRemainingCapacityGlobal.toFixed(
+            DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+          )}
+        </>
       ) : (
         "Currently at capacity."
       )}

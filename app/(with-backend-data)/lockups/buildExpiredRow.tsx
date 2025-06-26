@@ -1,4 +1,5 @@
 import { StyledText } from "@/components/StyledText"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
 import { getTimeBetweenDates } from "@/lib/getTimeBetweenDates"
@@ -19,7 +20,11 @@ export function buildExpiredRow({
 
     amount: (
       <>
-        {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}{" "}
+        {formatAmount(
+          lockup.funds.amount * 1e6,
+          undefined,
+          DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+        )}{" "}
         <StyledText variant="footnote">ATOM</StyledText>
       </>
     ),
