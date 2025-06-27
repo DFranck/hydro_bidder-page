@@ -1,10 +1,12 @@
 import {
   AugmentedBackendDataBeforeWallet,
   BackendDataBeforeWalletSlimmed,
+  GlobalLockupCapacityInfo,
 } from "@/contract-apis/types"
 import { keysFromSnakeToCamelCase } from "@/lib/keysFromSnakeToCamelCase"
 import keyBy from "lodash/keyBy"
 import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploymentMetrics"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function augmentBackendDataBeforeWallet(
   rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
@@ -50,13 +52,21 @@ export function augmentBackendDataBeforeWallet(
     .flat()
 
   const atomPrice =
-    hydroRoundsData[round_id]?.round_prices[
-      "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
-    ]?.token_price ?? 0
+    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.ATOM]?.token_price ?? 0
+
+  const dAtomPrice =
+    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.dATOM]?.token_price ??
+    0
+
+  const stAtomPrice =
+    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.stATOM]?.token_price ??
+    0
 
   return {
     currentRoundPrices: hydroRoundsData[round_id]?.round_prices,
     atomPrice,
+    dAtomPrice,
+    stAtomPrice,
     bidsInfo: keyBy(bidsInfo, "id"),
     currentRoundEndDate,
     currentRoundId: round_id,

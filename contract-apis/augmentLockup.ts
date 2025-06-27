@@ -1,9 +1,11 @@
-import { LockupWithPerTrancheInfo } from "@/app/ts_types/HydroBase.types"
-import { AugmentedLockup } from "@/contract-apis/types"
+import {
+  AugmentedLockup,
+  AugmentedLockupWithPerTrancheInfo,
+} from "@/contract-apis/types"
 import { getDaysAway } from "@/lib/getDaysAway"
 
 export function augmentLockup(
-  lockup: LockupWithPerTrancheInfo,
+  lockup: AugmentedLockupWithPerTrancheInfo,
   currentRoundId: number
 ): AugmentedLockup {
   const dateEnd = new Date(
@@ -29,6 +31,7 @@ export function augmentLockup(
     funds: {
       amount: Number(lockup.lock_with_power.lock_entry.funds.amount) / 1e6,
       denom: lockup.lock_with_power.lock_entry.funds.denom,
+      denomInfo: lockup.lock_with_power.lock_entry.funds,
     },
     isEligibleToVote,
     isExpired,

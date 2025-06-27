@@ -32,3 +32,9 @@ export function amountToUSDString(
 
   return amountWithUsd.join(nonBreakingSpaceCharacter)
 }
+
+export function formatAmountToUsd(amount: number, price: number): number {
+  const printableAmount = Number(amount) * price
+
+  return printableAmount
+}

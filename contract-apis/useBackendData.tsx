@@ -40,6 +40,8 @@ const initialBackendDataContext: BackendDataContextType = {
   address: "",
   currentRoundPrices: {},
   atomPrice: 0,
+  dAtomPrice: 0,
+  stAtomPrice: 0,
   bidsInfo: {},
   claimsHistorical: [],
   claimsOutstanding: [],
@@ -54,6 +56,9 @@ const initialBackendDataContext: BackendDataContextType = {
   lockedAtomMaxWallet: 0,
   lockedAtomPercentageWallet: 0,
   lockedAtomTotalWalletStat: 0,
+  lockedStAtomTotalWalletStat: 0,
+  lockedDAtomTotalWalletStat: 0,
+  lockedTokenTotalWalletStat: 0,
   lockedAtomTotalWallet: 0,
   hasGatekeeper: false,
   lockups: [],
@@ -124,6 +129,8 @@ export function BackendDataContextProvider({
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
+  const {  data: {lockedAtomTotalGlobal} } = useGlobalLockupCapacityInfo()
+
   // Dependencies: [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
     const enabledTweaks: BackendDataTweak["json"] = merge(
@@ -183,7 +190,8 @@ export function BackendDataContextProvider({
       return
     }
 
-    const { currentRoundId, tranches } = augmentedBackendDataBeforeWallet
+    const { currentRoundId, tranches, currentRoundPrices } =
+      augmentedBackendDataBeforeWallet
 
     ;(async () => {
       if (!isGlobalCapacityLoaded) return
@@ -193,6 +201,7 @@ export function BackendDataContextProvider({
         address: effectiveAddress,
         currentRoundId,
         tranches,
+        currentRoundPrices,
       })
 
       const tweakedWalletData = mergeWithOverwrite(

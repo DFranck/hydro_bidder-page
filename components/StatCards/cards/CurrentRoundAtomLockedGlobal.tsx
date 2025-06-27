@@ -2,7 +2,7 @@
 
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { globalTotalAtomLockedTooltip } from "@/components/ToolTips"
+import { globalTotalTokenLockedTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
@@ -35,11 +35,11 @@ export function CurrentRoundAtomLockedGlobal() {
       title={
         <Tooltip
           className="w-full"
-          tipContents={globalTotalAtomLockedTooltip({
+          tipContents={globalTotalTokenLockedTooltip({
             lockedAtomRemainingCapacityGlobal,
           })}
         >
-          Total ATOM in{" "}
+          Total Tokens in{" "}
           <span className="inline-flex items-center gap-1">
             Hydro
             <Icon name="circle-info" />

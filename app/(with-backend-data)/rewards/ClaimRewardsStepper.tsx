@@ -203,7 +203,7 @@ export default function ClaimRewardsStepper({
                     })}
                     &nbsp;
                     <StyledText variant="footnote">
-                      {claimAmount?.humanReadableDenom?.slice(0, 12) ??
+                      {claimAmount?.humanReadableDenom ??
                         tribute!.denom?.slice(0, 12)}
                     </StyledText>
                   </StyledText>
