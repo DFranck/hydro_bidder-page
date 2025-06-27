@@ -56,12 +56,6 @@ export interface AugmentedBackendDataBeforeWallet {
   currentRoundIsPilot: boolean
   tranches: Tranche[]
   lockedAtomEpochInNanos: number
-  lockedAtomIsAtCapacityGlobal: boolean
-  lockedAtomMaxGlobal: number
-  lockedAtomMaxWallet: number
-  lockedAtomPercentageGlobal: number
-  lockedAtomRemainingCapacityGlobal: number
-  lockedAtomTotalGlobal: number
   metricsForPreHydroBids: PreHydroBid[]
   metricsGlobal: SanitizedMetricsFromNumia
   minTributeFactor: number

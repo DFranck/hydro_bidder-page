@@ -52,14 +52,9 @@ const initialBackendDataContext: BackendDataContextType = {
   isLoading: false,
   isWalletConnected: false,
   lockedAtomEpochInNanos: 0,
-  lockedAtomIsAtCapacityGlobal: false,
   lockedAtomIsAtCapacityWallet: false,
-  lockedAtomMaxGlobal: 0,
   lockedAtomMaxWallet: 0,
-  lockedAtomPercentageGlobal: 0,
   lockedAtomPercentageWallet: 0,
-  lockedAtomRemainingCapacityGlobal: 0,
-  lockedAtomTotalGlobal: 0,
   lockedAtomTotalWalletStat: 0,
   lockedStAtomTotalWalletStat: 0,
   lockedDAtomTotalWalletStat: 0,
@@ -170,8 +165,7 @@ export function BackendDataContextProvider({
     )
 
     const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(
-      tweakedRawBackendDataBeforeWallet,
-      lockedAtomTotalGlobal
+      tweakedRawBackendDataBeforeWallet
     )
 
     const effectiveAddress = patchData?.address ?? address

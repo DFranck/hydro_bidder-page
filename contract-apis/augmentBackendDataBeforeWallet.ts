@@ -9,8 +9,7 @@ import { augmentRoundDeploymentMetrics } from "./testingFiles/augmentRoundDeploy
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function augmentBackendDataBeforeWallet(
-  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed,
-  total_locked_tokens: number
+  rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
 ): AugmentedBackendDataBeforeWallet {
   // Extract data
   const { hydroMetaData, hydroRoundData, externalData } =
@@ -26,24 +25,6 @@ export function augmentBackendDataBeforeWallet(
 
   // Aux Fields
   const currentRoundEndDate = new Date(Number(round_end) / 1e6)
-  // Hydro Capacity Info
-  const lockedAtomMaxGlobal = constants.max_locked_tokens / 1e6
-  const lockedAtomTotalGlobal = total_locked_tokens / 1e6
-  const lockedAtomRemainingCapacityGlobal = Number(
-    (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
-  )
-  const lockedAtomPercentageGlobal = Math.floor(
-    (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
-  )
-  const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal === 100
-
-  const globalLockupCapacityInfo: GlobalLockupCapacityInfo = {
-    lockedAtomMaxGlobal,
-    lockedAtomTotalGlobal,
-    lockedAtomRemainingCapacityGlobal,
-    lockedAtomIsAtCapacityGlobal,
-    lockedAtomPercentageGlobal,
-  }
 
   // New Bids Info
   const bidsInfo = hydroRoundsData
@@ -92,10 +73,8 @@ export function augmentBackendDataBeforeWallet(
     currentRoundIsPilot: true,
     lockedAtomEpochInNanos: constants.lock_epoch_length,
     metricsForPreHydroBids: preHydroBids,
-    lockedAtomMaxWallet: lockedAtomMaxGlobal,
     metricsGlobal: keysFromSnakeToCamelCase(numiaMetrics),
     minTributeFactor: 0.0001, // TODO: get this from contract
     tranches,
-    ...globalLockupCapacityInfo,
   }
 }
