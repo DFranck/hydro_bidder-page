@@ -13,6 +13,8 @@ import { SigningStargateClient } from "@cosmjs/stargate"
 import { toastMessages } from "@/components/ToastMessages"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
+import { cn } from "@/lib/utils"
+import { TriangleAlert } from "lucide-react"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -132,19 +134,33 @@ export function LockupsLST({
                     step={minTokenBeLocked}
                     onChange={handleChangeAmount}
                   />
+
+                  {!NFT_SIZES.includes(amount) ? (
+                    <StyledText
+                      variant="footnote"
+                      className="flex items-center gap-1 text-palette-red"
+                    >
+                      <TriangleAlert className="size-4" /> {amount} will not be
+                      tradeable on the NFT marketplace
+                    </StyledText>
+                  ) : null}
                   <div className="flex flex-wrap  items-center justify-start gap-2 md:flex-nowrap ">
-                    {NFT_SIZES.map((value) => (
+                    {NFT_SIZES.map((size) => (
                       <StyledText
                         variant={
-                          amount === value
+                          amount === size
                             ? "button.primary"
                             : "button.secondary"
                         }
                         as="button"
-                        key={value}
-                        onClick={() => setAmount(value)}
+                        key={size}
+                        disabled={size === 1000}
+                        onClick={() => setAmount(size)}
+                        className={cn({
+                          "cursor-not-allowed": size === 1000,
+                        })}
                       >
-                        <span>{value}</span>
+                        <span>{size}</span>
                       </StyledText>
                     ))}
                   </div>
