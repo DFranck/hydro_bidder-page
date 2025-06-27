@@ -17,6 +17,7 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
 import {
+  initializingLockupsTooltip,
   lockupLimitTooltip,
   needsWalletConnectionTooltip,
 } from "@/components/ToolTips"
@@ -54,6 +55,7 @@ export default function LockupsPage() {
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
     hasGatekeeper,
+    isLoading,
   } = useBackendData()
 
   const {
@@ -258,12 +260,16 @@ export default function LockupsPage() {
               </StyledText>
             )}
             <ConditionalWrapper
-              condition={!isWalletConnected}
+              condition={!isWalletConnected || isLoading}
               wrapper={(children) => (
                 <Tooltip
                   className="w-auto"
                   classNamesForTooltip="sm:-ml-12"
-                  tipContents={needsWalletConnectionTooltip}
+                  tipContents={
+                    !isWalletConnected
+                      ? needsWalletConnectionTooltip
+                      : initializingLockupsTooltip
+                  }
                 >
                   <div className="pointer-events-none cursor-not-allowed opacity-50">
                     {children}

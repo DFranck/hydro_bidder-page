@@ -529,6 +529,8 @@ export const needsWalletConnectionTooltip = (
   <p>Connect your wallet to access this feature.</p>
 )
 
+export const initializingLockupsTooltip = <p>initializing lockups...</p>
+
 export const notEnoughTokenInWalletTooltip = (
   <p>You do not have enough tokens in your wallet to lock up.</p>
 )
