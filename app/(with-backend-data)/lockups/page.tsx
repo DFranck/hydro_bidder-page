@@ -36,6 +36,7 @@ import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWall
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 
 const minTokenToBeLocked = 1 / 1e6
 
@@ -218,8 +219,10 @@ export default function LockupsPage() {
               >
                 <div className="flex items-center gap-1 opacity-60">
                   <span>
-                    {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                    {lockedAtomMaxWallet} ATOM max
+                    {lockedAtomTotalWallet.toFixed(
+                      DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                    )}{" "}
+                    / {lockedAtomMaxWallet} ATOM max
                   </span>
                   <span>
                     <Icon name="circle-info" />

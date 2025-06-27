@@ -4,6 +4,7 @@ import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
 import { LockupStatus } from "./LockupStatus"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 
 export function buildActiveRow({
   lockup,
@@ -35,7 +36,11 @@ export function buildActiveRow({
     amount: (
       <div className="flex items-center gap-1">
         <StyledText>
-          {formatAmount(lockup.funds.amount * 1e6, undefined, 6)}
+          {formatAmount(
+            lockup.funds.amount * 1e6,
+            undefined,
+            DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+          )}
         </StyledText>
         <StyledText variant="footnote">
           {lockup.funds.denomInfo?.humanReadableDenom}
