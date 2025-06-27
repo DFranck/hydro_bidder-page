@@ -13,14 +13,14 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 import { cn } from "@/lib/utils"
 import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
+import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
+import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
   setIsCreationModalOpen: (isOpen: boolean) => void
-  maxTokenToBeLocked: number
   handleCreationModalWindowClose: () => void
   handleModalWindowCloseComplete: () => void
-  minTokenBeLocked: number
   votingTokenName: "stATOM" | "dATOM"
 }
 
@@ -29,18 +29,32 @@ export function LockupsLST({
   setIsCreationModalOpen,
   handleCreationModalWindowClose,
   handleModalWindowCloseComplete,
-  maxTokenToBeLocked,
-  minTokenBeLocked,
   votingTokenName,
 }: LockupsLSTProps) {
+  const minTokenToBeLocked = 1 / 1e6
   const NFT_SIZES = [25, 50, 100, 250, 500, 1000]
   const { setToasts } = useToasts()
+  const {
+    data: { lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const [selectedLockDurationInEpochs, setSelectedLockDurationInEpochs] =
     useState(3)
-  const [amount, setAmount] = useState(maxTokenToBeLocked)
 
-  const { hasGatekeeper } = useBackendData()
+  const { hasGatekeeper, lockedAtomMaxWallet, lockedAtomTotalWallet } =
+    useBackendData()
   const { neutronSigner, neutronChain } = useChainsAndSigners()
+
+  const amountOfTokenInWallet = useAmountOfTokenInWallet(votingTokenName)
+
+  const usersLimitRemainder = lockedAtomMaxWallet - lockedAtomTotalWallet
+
+  const maxTokenToBeLocked = Math.min(
+    lockedAtomRemainingCapacityGlobal, // no more than the global limit
+    amountOfTokenInWallet, // no more than they have
+    usersLimitRemainder // no more than their limit
+  )
+
+  const [amount, setAmount] = useState(maxTokenToBeLocked)
 
   function handleChangeAmount(event: ChangeEvent<HTMLInputElement>) {
     const numericValue = Number(event.target.value)
@@ -124,9 +138,9 @@ export function LockupsLST({
                     id="amount"
                     as="input"
                     type="number"
-                    min={minTokenBeLocked}
+                    min={minTokenToBeLocked}
                     max={maxTokenToBeLocked}
-                    step={minTokenBeLocked}
+                    step={minTokenToBeLocked}
                     onChange={handleChangeAmount}
                   />
 

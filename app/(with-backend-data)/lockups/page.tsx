@@ -33,13 +33,10 @@ import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
 import { NewLockUpButton } from "@/components/NewLockUpButton"
 import { LockupsLST } from "./LockupsLST"
-import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
-import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 
-const minTokenToBeLocked = 1 / 1e6
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -58,10 +55,6 @@ export default function LockupsPage() {
     isLoading,
   } = useBackendData()
 
-  const {
-    data: { lockedAtomRemainingCapacityGlobal },
-  } = useGlobalLockupCapacityInfo()
-
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
   const expiredLockups = lockups.filter(
@@ -71,48 +64,16 @@ export default function LockupsPage() {
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
-  const [token, setToken] = useState<{
-    name: "stATOM" | "dATOM"
-    amount: number
-    minAmount: number
-    maxAmount: number
-  }>({
-    name: "dATOM",
-    amount: 0,
-    minAmount: 0,
-    maxAmount: 0,
-  })
-
-  const amountOfTokenInWallet = useAmountOfTokenInWallet(
-    token.name as "stATOM" | "dATOM"
-  )
-
-  const usersLimitRemainder = lockedAtomMaxWallet - lockedAtomTotalWallet
-
-  const maxTokenToBeLocked = Math.min(
-    lockedAtomRemainingCapacityGlobal, // no more than the global limit
-    token.amount, // no more than they have
-    usersLimitRemainder // no more than their limit
-  )
+  const [tokenName, setTokenName] = useState<"stATOM" | "dATOM">("dATOM")
 
   function handleStAtom() {
     setIsOpen(true)
-    setToken({
-      name: "stATOM",
-      amount: amountOfTokenInWallet,
-      minAmount: minTokenToBeLocked,
-      maxAmount: maxTokenToBeLocked,
-    })
+    setTokenName("stATOM")
   }
 
   function handleDAtom() {
     setIsOpen(true)
-    setToken({
-      name: "dATOM",
-      amount: amountOfTokenInWallet,
-      minAmount: minTokenToBeLocked,
-      maxAmount: maxTokenToBeLocked,
-    })
+    setTokenName("dATOM")
   }
 
   function handleCreationModalWindowClose() {
@@ -397,9 +358,7 @@ export default function LockupsPage() {
       </ModalWindow>
 
       <LockupsLST
-        minTokenBeLocked={minTokenToBeLocked}
-        maxTokenToBeLocked={maxTokenToBeLocked}
-        votingTokenName={token.name}
+        votingTokenName={tokenName}
         isCreationModalOpen={isOpen}
         setIsCreationModalOpen={setIsOpen}
         handleCreationModalWindowClose={handleCreationModalWindowClose}
