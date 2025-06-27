@@ -5,14 +5,13 @@ import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
-import { ChangeEvent, FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { twJoin } from "tailwind-merge"
 import { signLockTokens } from "../lock-atom/transactions/signLockTokens"
 import { toastMessages } from "@/components/ToastMessages"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 import { cn } from "@/lib/utils"
-import { TriangleAlert } from "lucide-react"
 import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 
 interface LockupsLSTProps {
@@ -38,7 +37,7 @@ export function LockupsLST({
   const { setToasts } = useToasts()
   const [selectedLockDurationInEpochs, setSelectedLockDurationInEpochs] =
     useState(3)
-  const [amount, setAmount] = useState(NFT_SIZES[0])
+  const [amount, setAmount] = useState(maxTokenToBeLocked)
 
   const { hasGatekeeper } = useBackendData()
   const { neutronSigner, neutronChain } = useChainsAndSigners()
@@ -85,21 +84,26 @@ export function LockupsLST({
     }
   }
 
+  useEffect(() => {
+    setAmount(
+      maxTokenToBeLocked >= NFT_SIZES[0] ? NFT_SIZES[0] : maxTokenToBeLocked
+    )
+  }, [maxTokenToBeLocked])
+
   return (
     <>
       <ModalWindow
         isOpen={isCreationModalOpen}
         onClose={() => {
           handleCreationModalWindowClose()
-          setAmount(NFT_SIZES[0])
+          setAmount(maxTokenToBeLocked)
           setSelectedLockDurationInEpochs(3)
         }}
         onCloseComplete={() => {
           handleModalWindowCloseComplete()
-          setAmount(NFT_SIZES[0])
+          setAmount(maxTokenToBeLocked)
           setSelectedLockDurationInEpochs(3)
         }}
-        title="Create New Lockup"
       >
         <form onSubmit={handleSubmitCreationForm}>
           <Card>
@@ -126,13 +130,15 @@ export function LockupsLST({
                     onChange={handleChangeAmount}
                   />
 
-                  {!NFT_SIZES.includes(amount) ? (
+                  {amount <= NFT_SIZES[0] ? (
                     <StyledText
                       variant="footnote"
                       className="flex items-center gap-1 text-palette-red"
                     >
-                      <TriangleAlert className="size-4" /> {amount} will not be
-                      tradeable on the NFT marketplace
+                      Locking up a custom amount will result in a lockup that
+                      cannot be traded on the upcoming NFT marketplace right
+                      away. If you intend to sell your lockup, please use one of
+                      the suggested amounts.
                     </StyledText>
                   ) : null}
                   <div className="flex flex-wrap  items-center justify-start gap-2 md:flex-nowrap ">
@@ -145,10 +151,10 @@ export function LockupsLST({
                         }
                         as="button"
                         key={size}
-                        disabled={size === 1000}
+                        disabled={maxTokenToBeLocked < size || size === 1000}
                         onClick={() => setAmount(size)}
                         className={cn({
-                          "cursor-not-allowed": size === 1000,
+                          "!cursor-not-allowed": size === 1000,
                         })}
                       >
                         <span>{size}</span>
@@ -158,20 +164,17 @@ export function LockupsLST({
 
                   <StyledText
                     variant="footnote"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 font-bold"
                   >
                     <span>
                       Max: {maxTokenToBeLocked} {votingTokenName}
                     </span>
-                    {amount < maxTokenToBeLocked && (
-                      <StyledText
-                        as="button"
-                        variant="link"
-                        onClick={() => setAmount(maxTokenToBeLocked)}
-                      >
-                        Set to max
-                      </StyledText>
-                    )}
+                    <StyledText
+                      variant="link"
+                      onClick={() => setAmount(maxTokenToBeLocked)}
+                    >
+                      Set to max
+                    </StyledText>
                   </StyledText>
                 </div>
               </label>
