@@ -5,16 +5,15 @@ import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
-import { ChangeEvent, FormEvent, useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, useState } from "react"
 import { twJoin } from "tailwind-merge"
 import { signLockTokens } from "../lock-atom/transactions/signLockTokens"
-import { useChain } from "@cosmos-kit/react"
-import { SigningStargateClient } from "@cosmjs/stargate"
 import { toastMessages } from "@/components/ToastMessages"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 import { cn } from "@/lib/utils"
 import { TriangleAlert } from "lucide-react"
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -36,15 +35,13 @@ export function LockupsLST({
   votingTokenName,
 }: LockupsLSTProps) {
   const NFT_SIZES = [25, 50, 100, 250, 500, 1000]
-  const neutronChain = useChain("neutron")
   const { setToasts } = useToasts()
   const [selectedLockDurationInEpochs, setSelectedLockDurationInEpochs] =
     useState(3)
   const [amount, setAmount] = useState(NFT_SIZES[0])
-  const [neutronSigner, setNeutronSigner] = useState<
-    SigningStargateClient | undefined
-  >(undefined)
+
   const { hasGatekeeper } = useBackendData()
+  const { neutronSigner, neutronChain } = useChainsAndSigners()
 
   function handleChangeAmount(event: ChangeEvent<HTMLInputElement>) {
     const numericValue = Number(event.target.value)
@@ -87,12 +84,6 @@ export function LockupsLST({
       setIsCreationModalOpen(true)
     }
   }
-
-  useEffect(() => {
-    if (neutronChain.address) {
-      neutronChain.getSigningStargateClient().then(setNeutronSigner)
-    }
-  }, [neutronChain.address])
 
   return (
     <>
