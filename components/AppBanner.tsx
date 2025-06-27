@@ -26,7 +26,9 @@ const JoinOurTelegramGroupForUpdates = (
 export function AppBanner() {
   const backendData = useBackendData()
   const { currentRoundId: currentRoundIdFromBackend } = backendData
-  const { lockedAtomIsAtCapacityGlobal } = useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomIsAtCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const [currentRoundId, setCurrentRoundId] = useState<number>(
     currentRoundIdFromBackend
   )

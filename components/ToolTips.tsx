@@ -4,13 +4,11 @@ import { BidTribute } from "@/components/BidTribute"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import {
+  DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS,
   HYDRO_TELEGRAM_COMMUNITY_URL,
   voteThresholdByTrancheId,
 } from "@/config"
-import {
-  AugmentedBidAfterWallet,
-  BidMetaDataSlimmed,
-} from "@/contract-apis/types"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
@@ -336,19 +334,16 @@ export const lockupLimitReachedByUserTooltip = (
   <p>You&rsquo;ve reached the maximum locked tokens for this round.</p>
 )
 
-export const lockupLimitTooltip = (
+export const lockupLimitTooltip = ({
+  lockedAtomMaxWallet,
+  lockedAtomTotalWallet,
+}: {
+  lockedAtomMaxWallet: number
+  lockedAtomTotalWallet: number
+}) => (
   <p>
-    During Pilot Rounds, there is a maximum limit of ATOM you can lockup.{" "}
-    <StyledText
-      as={Link}
-      href="/docs#pilot-rounds"
-      className="inline-flex items-center gap-1"
-      target="_blank"
-      variant="link"
-    >
-      Learn More
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>
+    Currently, you can lock up up to {lockedAtomMaxWallet} ATOM, and you have
+    already locked up {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} ATOM.
   </p>
 )
 
@@ -929,7 +924,12 @@ export const globalTotalAtomLockedTooltip = ({
       )}
     >
       {lockedAtomRemainingCapacityGlobal > 0 ? (
-        <>Available capacity: {lockedAtomRemainingCapacityGlobal}</>
+        <>
+          Available capacity:{" "}
+          {lockedAtomRemainingCapacityGlobal.toFixed(
+            DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+          )}
+        </>
       ) : (
         "Currently at capacity."
       )}

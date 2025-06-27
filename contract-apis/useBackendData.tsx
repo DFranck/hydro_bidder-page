@@ -20,6 +20,7 @@ import {
   useState,
 } from "react"
 import { BackendDataTweak } from "./types"
+import { useGlobalLockupCapacityInfo } from "./useGlobalLockupCapacityInfo"
 
 // Declare backendData property on Window interface
 declare global {
@@ -52,7 +53,9 @@ const initialBackendDataContext: BackendDataContextType = {
   lockedAtomIsAtCapacityWallet: false,
   lockedAtomMaxWallet: 0,
   lockedAtomPercentageWallet: 0,
+  lockedAtomTotalWalletStat: 0,
   lockedAtomTotalWallet: 0,
+  hasGatekeeper: false,
   lockups: [],
   metricsForPreHydroBids: [],
   minTributeFactor: 0,
@@ -98,6 +101,7 @@ export function BackendDataContextProvider({
   rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
   children: ReactNode
 }) {
+  const { data: { lockedAtomRemainingCapacityGlobal }, isLoaded: isGlobalCapacityLoaded } = useGlobalLockupCapacityInfo()
   const pathname = usePathname()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -182,6 +186,7 @@ export function BackendDataContextProvider({
     const { currentRoundId, tranches } = augmentedBackendDataBeforeWallet
 
     ;(async () => {
+      if (!isGlobalCapacityLoaded) return
       setIsLoading(true)
 
       const walletData = await fetchWalletData({
@@ -200,6 +205,7 @@ export function BackendDataContextProvider({
         address: effectiveAddress,
         augmentedBackendDataBeforeWallet,
         walletData: tweakedWalletData,
+        lockedAtomRemainingCapacityGlobal,
       })
 
       const tweakedAugmentedBackendDataAfterWallet = mergeWithOverwrite(
@@ -224,7 +230,7 @@ export function BackendDataContextProvider({
 
       setIsLoading(false)
     })()
-  }, [address, loadedTweaks, rawBackendDataBeforeWallet])
+  }, [address, loadedTweaks, rawBackendDataBeforeWallet, isGlobalCapacityLoaded])
 
   useEffect(() => {
     refetchBackendData()

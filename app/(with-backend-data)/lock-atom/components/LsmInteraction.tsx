@@ -9,7 +9,10 @@ import { StyledText } from "@/components/StyledText"
 import { Toast } from "@/components/Toasts/Toast"
 import { Tooltip } from "@/components/Tooltip"
 import { cannotContinueLockupTooltip } from "@/components/ToolTips"
-import { HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
+import {
+  DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS,
+  HYDRO_TELEGRAM_COMMUNITY_URL,
+} from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
@@ -36,8 +39,9 @@ export function LsmInteraction({
   validatorLiquidStakingCap: string
 }) {
   const { lockedAtomIsAtCapacityWallet } = useBackendData()
-  const { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal } =
-    useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const { incompleteNotices } = useIncompleteNotices()
   const { hubChain, hubSigner, neutronChain, neutronSigner } =
     useChainsAndSigners()
@@ -174,8 +178,15 @@ export function LsmInteraction({
                         },
                       }}
                     >
-                      <strong>{formatAmount(notice.amount)} ATOM</strong> staked
-                      with{" "}
+                      <strong>
+                        {formatAmount(
+                          notice.amount,
+                          undefined,
+                          DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                        )}{" "}
+                        ATOM
+                      </strong>{" "}
+                      staked with{" "}
                       <strong>
                         {getValidatorMoniker(notice.validator, validatorMap)}
                       </strong>{" "}

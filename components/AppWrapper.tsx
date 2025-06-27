@@ -67,11 +67,11 @@ export function AppWrapper({
                   rawBackendDataBeforeWallet !== null
               )}
               wrapper={(children) => (
-                <BackendDataContextProvider
-                  rawBackendDataBeforeWallet={rawBackendDataBeforeWallet!}
-                >
-                  <ChainsAndSignersProvider>
-                    <GlobalLockupInfoProvider>
+                <GlobalLockupInfoProvider>
+                  <BackendDataContextProvider
+                    rawBackendDataBeforeWallet={rawBackendDataBeforeWallet!}
+                  >
+                    <ChainsAndSignersProvider>
                       <IncompleteNoticesProvider>
                         {children}
                         <Suspense
@@ -84,9 +84,9 @@ export function AppWrapper({
                           <BackendDataTweaker />
                         </Suspense>
                       </IncompleteNoticesProvider>
-                    </GlobalLockupInfoProvider>
-                  </ChainsAndSignersProvider>
-                </BackendDataContextProvider>
+                    </ChainsAndSignersProvider>
+                  </BackendDataContextProvider>
+                </GlobalLockupInfoProvider>
               )}
             >
               <Header />

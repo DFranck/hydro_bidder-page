@@ -62,7 +62,6 @@ export function augmentBackendDataBeforeWallet(
     currentRoundId: round_id,
     currentRoundIsPilot: true,
     lockedAtomEpochInNanos: constants.lock_epoch_length,
-    lockedAtomMaxWallet: 250, // TODO: get this from contract
     metricsForPreHydroBids: preHydroBids,
     metricsGlobal: keysFromSnakeToCamelCase(numiaMetrics),
     minTributeFactor: 0.0001, // TODO: get this from contract

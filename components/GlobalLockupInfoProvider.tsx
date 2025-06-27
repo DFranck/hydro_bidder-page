@@ -9,8 +9,13 @@ const defaultValue: GlobalLockupCapacityInfo = {
   lockedAtomIsAtCapacityGlobal: false,
 }
 
-export const GlobalLockupInfoContext =
-  createContext<GlobalLockupCapacityInfo>(defaultValue)
+export const GlobalLockupInfoContext = createContext<{
+  data: GlobalLockupCapacityInfo
+  isLoaded: boolean
+}>({
+  data: defaultValue,
+  isLoaded: false,
+})
 
 interface ProviderProps {
   children: ReactNode
@@ -21,6 +26,7 @@ export const GlobalLockupInfoProvider = ({
   children,
   pollingIntervalMs = 10000,
 }: ProviderProps) => {
+  const [isLoaded, setIsLoaded] = useState(false)
   const [globalCapacityInfo, setGlobalCapacityInfo] =
     useState<GlobalLockupCapacityInfo>(defaultValue)
 
@@ -44,13 +50,21 @@ export const GlobalLockupInfoProvider = ({
         const rawLockedAtomMaxGlobal = Number(data.rawLockedAtomMaxGlobal)
         const totalLockedRaw = Number(data.rawTotalLockedTokens)
         const lockedAtomMaxGlobal = rawLockedAtomMaxGlobal / 1e6
-        const lockedAtomTotalGlobal = totalLockedRaw / 1e6
-        const lockedAtomRemainingCapacityGlobal = Number(
+        let lockedAtomTotalGlobal = totalLockedRaw / 1e6
+        let lockedAtomRemainingCapacityGlobal = Number(
           (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
         )
-        const lockedAtomPercentageGlobal = Math.floor(
-          (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
-        )
+
+        if (lockedAtomRemainingCapacityGlobal < 0.001) {
+          lockedAtomRemainingCapacityGlobal = 0
+          lockedAtomTotalGlobal = lockedAtomMaxGlobal
+        }
+
+        const lockedAtomPercentageGlobal =
+          lockedAtomRemainingCapacityGlobal === 0
+            ? 100
+            : Math.floor((lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100)
+
         const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal >= 100
 
         if (isMounted) {
@@ -61,6 +75,7 @@ export const GlobalLockupInfoProvider = ({
             lockedAtomPercentageGlobal,
             lockedAtomIsAtCapacityGlobal,
           })
+          setIsLoaded(true)
         }
       } catch (err) {
         console.error("Fetch error:", err)
@@ -77,7 +92,9 @@ export const GlobalLockupInfoProvider = ({
   }, [pollingIntervalMs])
 
   return (
-    <GlobalLockupInfoContext.Provider value={globalCapacityInfo}>
+    <GlobalLockupInfoContext.Provider
+      value={{ data: globalCapacityInfo, isLoaded }}
+    >
       {children}
     </GlobalLockupInfoContext.Provider>
   )

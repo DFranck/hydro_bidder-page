@@ -12,7 +12,9 @@ import Link from "next/link"
 
 export function NewLockupButton() {
   const { isWalletConnected, lockedAtomPercentageWallet } = useBackendData()
-  const { lockedAtomPercentageGlobal } = useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomPercentageGlobal },
+  } = useGlobalLockupCapacityInfo()
 
   return (
     <ConditionalWrapper
