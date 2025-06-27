@@ -33,11 +33,12 @@ export function LockupsLST({
   minTokenBeLocked,
   votingTokenName,
 }: LockupsLSTProps) {
+  const NFT_SIZES = [25, 50, 100, 250, 500, 1000]
   const neutronChain = useChain("neutron")
   const { setToasts } = useToasts()
   const [selectedLockDurationInEpochs, setSelectedLockDurationInEpochs] =
     useState(3)
-  const [amount, setAmount] = useState(minTokenBeLocked)
+  const [amount, setAmount] = useState(NFT_SIZES[0])
   const [neutronSigner, setNeutronSigner] = useState<
     SigningStargateClient | undefined
   >(undefined)
@@ -86,10 +87,6 @@ export function LockupsLST({
   }
 
   useEffect(() => {
-    setAmount(maxTokenToBeLocked)
-  }, [maxTokenToBeLocked])
-
-  useEffect(() => {
     if (neutronChain.address) {
       neutronChain.getSigningStargateClient().then(setNeutronSigner)
     }
@@ -101,12 +98,12 @@ export function LockupsLST({
         isOpen={isCreationModalOpen}
         onClose={() => {
           handleCreationModalWindowClose()
-          setAmount(maxTokenToBeLocked)
+          setAmount(NFT_SIZES[0])
           setSelectedLockDurationInEpochs(3)
         }}
         onCloseComplete={() => {
           handleModalWindowCloseComplete()
-          setAmount(maxTokenToBeLocked)
+          setAmount(NFT_SIZES[0])
           setSelectedLockDurationInEpochs(3)
         }}
         title="Create New Lockup"
@@ -115,7 +112,7 @@ export function LockupsLST({
           <Card>
             <Card.Header title="Create New Lockup" />
 
-            <Card.Body className="grid grid-cols-[1fr_3fr] gap-6">
+            <Card.Body className="grid-cols-[1fr_3fr] gap-6 md:grid">
               <label
                 className={twJoin(
                   "col-span-2 grid grid-cols-subgrid",
@@ -135,6 +132,22 @@ export function LockupsLST({
                     step={minTokenBeLocked}
                     onChange={handleChangeAmount}
                   />
+                  <div className="flex flex-wrap  items-center justify-start gap-2 md:flex-nowrap ">
+                    {NFT_SIZES.map((value) => (
+                      <StyledText
+                        variant={
+                          amount === value
+                            ? "button.primary"
+                            : "button.secondary"
+                        }
+                        as="button"
+                        key={value}
+                        onClick={() => setAmount(value)}
+                      >
+                        <span>{value}</span>
+                      </StyledText>
+                    ))}
+                  </div>
 
                   <StyledText
                     variant="footnote"
