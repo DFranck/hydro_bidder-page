@@ -33,6 +33,7 @@ import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
 import { NewLockUpButton } from "@/components/NewLockUpButton"
 import { LockupsLST } from "./LockupsLST"
+import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
@@ -64,16 +65,32 @@ export default function LockupsPage() {
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
-  const [tokenName, setTokenName] = useState<"stATOM" | "dATOM">("dATOM")
+  const [token, setToken] = useState<{
+    name: "stATOM" | "dATOM"
+    amount: number
+  }>({
+    name: "dATOM",
+    amount: 0,
+  })
+
+  const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
+
+  const amountOfStAtomInWallet = useAmountOfTokenInWallet("stATOM")
 
   function handleStAtom() {
     setIsOpen(true)
-    setTokenName("stATOM")
+    setToken({
+      name: "stATOM",
+      amount: amountOfStAtomInWallet,
+    })
   }
 
   function handleDAtom() {
     setIsOpen(true)
-    setTokenName("dATOM")
+    setToken({
+      name: "dATOM",
+      amount: amountOfDAtomInWallet,
+    })
   }
 
   function handleCreationModalWindowClose() {
@@ -358,7 +375,7 @@ export default function LockupsPage() {
       </ModalWindow>
 
       <LockupsLST
-        votingTokenName={tokenName}
+        tokenInfo={token}
         isCreationModalOpen={isOpen}
         setIsCreationModalOpen={setIsOpen}
         handleCreationModalWindowClose={handleCreationModalWindowClose}

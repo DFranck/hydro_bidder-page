@@ -13,7 +13,6 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 import { cn } from "@/lib/utils"
 import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
-import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 
 interface LockupsLSTProps {
@@ -21,7 +20,10 @@ interface LockupsLSTProps {
   setIsCreationModalOpen: (isOpen: boolean) => void
   handleCreationModalWindowClose: () => void
   handleModalWindowCloseComplete: () => void
-  votingTokenName: "stATOM" | "dATOM"
+  tokenInfo: {
+    name: "stATOM" | "dATOM"
+    amount: number
+  }
 }
 
 export function LockupsLST({
@@ -29,7 +31,7 @@ export function LockupsLST({
   setIsCreationModalOpen,
   handleCreationModalWindowClose,
   handleModalWindowCloseComplete,
-  votingTokenName,
+  tokenInfo,
 }: LockupsLSTProps) {
   const minTokenToBeLocked = 1 / 1e6
   const NFT_SIZES = [25, 50, 100, 250, 500, 1000]
@@ -44,13 +46,11 @@ export function LockupsLST({
     useBackendData()
   const { neutronSigner, neutronChain } = useChainsAndSigners()
 
-  const amountOfTokenInWallet = useAmountOfTokenInWallet(votingTokenName)
-
   const usersLimitRemainder = lockedAtomMaxWallet - lockedAtomTotalWallet
 
   const maxTokenToBeLocked = Math.min(
     lockedAtomRemainingCapacityGlobal, // no more than the global limit
-    amountOfTokenInWallet, // no more than they have
+    tokenInfo.amount, // no more than they have
     usersLimitRemainder // no more than their limit
   )
 
@@ -66,7 +66,7 @@ export function LockupsLST({
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const neutronTokenDenom = TOKEN_DENOMS[votingTokenName]
+    const neutronTokenDenom = TOKEN_DENOMS[tokenInfo.name]
 
     if (!neutronTokenDenom) {
       throw new Error("Denom is not set")
@@ -181,7 +181,7 @@ export function LockupsLST({
                     className="flex items-center gap-2 font-bold"
                   >
                     <span>
-                      Max: {maxTokenToBeLocked} {votingTokenName}
+                      Max: {maxTokenToBeLocked} {tokenInfo.name}
                     </span>
                     <StyledText
                       variant="link"
@@ -212,7 +212,7 @@ export function LockupsLST({
                 as="button"
                 type="submit"
               >
-                Lock {votingTokenName}
+                Lock {tokenInfo.name}
               </StyledText>
 
               <StyledText
