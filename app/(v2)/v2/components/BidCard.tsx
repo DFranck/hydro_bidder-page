@@ -18,6 +18,13 @@ export const bidCardFields = [
   {
     key: 'duration',
     label: 'Duration',
+    className: twJoin(
+      'text-left',
+      'ml-[calc(var(--spacing-bar-height-standard)+var(--spacing-tight)+var(--spacing-standard))]',
+      '@card-is-row:text-center',
+      '@card-is-row:ml-0',
+      '@card-is-row:w-24',
+    ),
     value: (bid: BidRevampMetrics, sourceId: SourceID) => (
       <BidDuration bidId={bid.id} sourceId={sourceId} />
     ),
@@ -25,6 +32,7 @@ export const bidCardFields = [
   {
     key: 'apr',
     label: 'APR',
+    className: twJoin('text-center', '@card-is-row:w-24'),
     value: (bid: BidRevampMetrics, sourceId: SourceID) => (
       <BidTributeApr bidId={bid.id} sourceId={sourceId} />
     ),
@@ -32,6 +40,11 @@ export const bidCardFields = [
   {
     key: 'vote-percentage',
     label: 'Vote %',
+    className: twJoin(
+      'text-right',
+      '@card-is-row:w-24',
+      '@card-is-row:text-center',
+    ),
     value: (bid: BidRevampMetrics, sourceId: SourceID) => (
       <BidVoteShare bidId={bid.id} sourceId={sourceId} />
     ),
@@ -66,14 +79,12 @@ function FloatingCardElements({
   sourceId,
   bidId,
   isLoading,
-  isHoveringVoteButton,
   isFirstCell = false,
   isLastCell = false,
 }: {
   sourceId: SourceID
   bidId: number
   isLoading: boolean
-  isHoveringVoteButton: boolean
   isFirstCell?: boolean
   isLastCell?: boolean
 }) {
@@ -239,7 +250,6 @@ export function BidCard({
           sourceId={sourceId}
           bidId={bidId}
           isLoading={isLoading}
-          isHoveringVoteButton={isHoveringVoteButton}
           isFirstCell={true}
         />
         <BidCardLogo
@@ -260,7 +270,6 @@ export function BidCard({
           sourceId={sourceId}
           bidId={bidId}
           isLoading={isLoading}
-          isHoveringVoteButton={isHoveringVoteButton}
         />
         <h3 className="title">
           <OrphanController disabledInPortrait={false}>
@@ -287,7 +296,6 @@ export function BidCard({
                 sourceId={sourceId}
                 bidId={bidId}
                 isLoading={isLoading}
-                isHoveringVoteButton={isHoveringVoteButton}
               />
               <div
                 className={twJoin(
@@ -309,7 +317,6 @@ export function BidCard({
           sourceId={sourceId}
           bidId={bidId}
           isLoading={isLoading}
-          isHoveringVoteButton={isHoveringVoteButton}
           isLastCell={true}
         />
         <div

@@ -29,6 +29,7 @@ export function ResponsiveMenu({
   classNameForSubItem,
   classNameForSubItems,
   classNameForSubItemActive,
+  classNameForMenuButton,
   ...otherProps
 }: React.ComponentProps<'nav'> & {
   menuItems: MenuItem[]
@@ -40,6 +41,7 @@ export function ResponsiveMenu({
   classNameForSubItem?: string
   classNameForSubItems?: string
   classNameForSubItemActive?: string
+  classNameForMenuButton?: string
 }) {
   const pathname = usePathname()
 
@@ -66,12 +68,12 @@ export function ResponsiveMenu({
     >
       <button
         className={twJoin(
-          'top-tight right-tight fixed z-40 size-12',
-          'flex cursor-pointer',
+          'cursor-pointer',
           'transition-all duration-500',
           'group-focus-within/navbar:rotate-180',
-          'pointer-events-auto block',
+          'pointer-events-auto',
           'desktop:hidden',
+          classNameForMenuButton,
         )}
       >
         <span

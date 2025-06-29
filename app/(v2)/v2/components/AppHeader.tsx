@@ -9,15 +9,9 @@ import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
 import { Logo } from '@v2/components/Logo'
 import { MenuItem, ResponsiveMenu } from '@v2/components/ResponsiveMenu'
-import { useAppState } from '@v2/state/DataProviderOnClient'
-import { AppAction } from '@v2/types'
 import { twJoin } from 'tailwind-merge'
 
-function getMenuItems(
-  isWalletConnected: boolean,
-  narrowBuckets: boolean,
-  dispatch: React.Dispatch<AppAction>,
-): MenuItem[] {
+function getMenuItems(isWalletConnected: boolean): MenuItem[] {
   return [
     {
       label: 'Bids',
@@ -97,22 +91,22 @@ function getMenuItems(
 }
 
 export function AppHeader() {
-  const { state, dispatch } = useAppState()
-  const { narrowBuckets } = state
   const { isWalletConnected } = useChain('neutron')
-  const menuItems = getMenuItems(isWalletConnected, narrowBuckets, dispatch)
+  const menuItems = getMenuItems(isWalletConnected)
 
   return (
     <header
-      className={twJoin('grid-in-header', 'flex items-center justify-between')}
+      className={twJoin(
+        'grid-in-header',
+        'flex items-center justify-center',
+        'desktop:justify-between',
+      )}
     >
-      <div
-        className={twJoin(
-          'h-bar-height-standard w-full',
-          'pl-loose desktop:pl-tight py-1',
-        )}
-      >
-        <InternalLink href="/v2" className={twJoin('relative block h-full')}>
+      <div className="h-bar-height-standard">
+        <InternalLink
+          href="/v2"
+          className={twJoin('relative block h-full scale-90')}
+        >
           <Logo />
         </InternalLink>
       </div>
@@ -126,6 +120,11 @@ export function AppHeader() {
         )}
         classNameForBackdrop="bg-shaded backdrop-blur-sm"
         classNameForBackground="bg-gradient-to-l from-palette-blue to-background"
+        classNameForMenuButton={twJoin(
+          'w-12',
+          'h-bar-height-standard',
+          'top-standard left-standard fixed z-40',
+        )}
         classNameForItems={twJoin(
           'flex flex-col justify-between',
           'p-loosest',

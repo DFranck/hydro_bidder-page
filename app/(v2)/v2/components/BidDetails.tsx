@@ -1,14 +1,16 @@
 'use client'
 
+import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
+import { Tooltip } from '@/components/Tooltip'
 import { useIsMobile } from '@/lib/useIsMobile'
-import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { getEnvironment, getSource, SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import sumBy from 'lodash/sumBy'
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 import { BidDuration } from './BidDuration'
+import { BidMaxDeployment } from './BidMaxDeployment'
+import { BidPolSize } from './BidPolSize'
 import { BidTributeApr } from './BidTributeApr'
 import { BidVoteShare } from './BidVoteShare'
 
@@ -24,9 +26,8 @@ export function BidDetails({
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById } = state
   const source = getSource(getEnvironment(), sourceId)
-  const bid = currentRoundDataPerSource?.[sourceId]?.augmentedBids?.find(
-    (bid) => bid.id === bidId,
-  )
+  const sourceData = currentRoundDataPerSource?.[sourceId]
+  const bid = sourceData?.augmentedBids?.find((bid) => bid.id === bidId)
   const isMobile = useIsMobile()
   const sidebarRef = useRef<HTMLElement>(null)
   const mainRef = useRef<HTMLElement>(null)
@@ -64,10 +65,74 @@ export function BidDetails({
 
   const bidDescription = bidDescriptionsById[bidId]
 
+  const isOngoing = bid.status?.toLowerCase().includes('ongoing')
+  const isCompleted = bid.status?.toLowerCase().includes('completed')
+  const hasLiquidityDeployment = (bid.liquidityDeployment?.totalRounds ?? 0) > 0
+
+  const tooltipContent = (content: string) => (
+    <div className="flex flex-col gap-2">
+      <p className="text-sm">{content}</p>
+    </div>
+  )
+
+  const sidebarFields = [
+    // No tooltip for basic fields
+    { label: 'Project Name', value: bidDescription?.projectName },
+    { label: 'Bid in Round', value: bid.roundId + 1 },
+
+    // Amount - only show if has liquidity deployment
+    ...(hasLiquidityDeployment
+      ? [
+          {
+            label: 'Amount',
+            value: <BidPolSize bidId={bid.id} sourceId={sourceId} />,
+            tooltip: 'Total amount of liquidity deployed for this bid.',
+          },
+        ]
+      : []),
+
+    {
+      label: 'Status',
+      value: <span className="capitalize">{bid.status}</span>,
+      tooltip: 'Current status of this bid in the protocol.',
+    },
+
+    // Duration - only show for ongoing/completed bids
+    ...(isOngoing || isCompleted
+      ? [
+          {
+            label: 'Duration',
+            value: <BidDuration bidId={bid.id} sourceId={sourceId} />,
+            tooltip:
+              'Length of time tokens will be locked when voting for this bid.',
+          },
+        ]
+      : []),
+
+    {
+      label: 'Vote %',
+      value: <BidVoteShare bidId={bid.id} sourceId={sourceId} />,
+      tooltip: 'Percentage of total voting power received by this bid.',
+    },
+
+    {
+      label: 'Voter APR',
+      value: <BidTributeApr bidId={bid.id} sourceId={sourceId} />,
+      tooltip:
+        'Annual percentage return voters can expect from tribute rewards.',
+    },
+
+    // Max Deployment Amount - conditionally rendered by the component itself
+    {
+      label: 'Max Deployment',
+      value: <BidMaxDeployment bidId={bid.id} sourceId={sourceId} />,
+      tooltip:
+        'Estimated maximum amount that could be deployed based on tribute value and minimum tribute factor.',
+    },
+  ].filter((field) => field.value !== null && field.value !== undefined)
+
   return (
-    <TokenThemeWrapper
-      as="article"
-      trancheId={bid.trancheId}
+    <article
       className={twMerge(
         isBelowVoteThreshold && 'low-votes',
         userHasVotedOnThisBid && 'voted-on',
@@ -115,49 +180,48 @@ export function BidDetails({
             'desktop:overflow-y-auto',
           )}
         >
-          {[
-            ['Project Name', bidDescription?.projectName],
-            ['Bid in Round', bid.roundId + 1],
-            ['Status', bid.status],
-            [
-              'Duration',
-              <BidDuration key="duration" bidId={bid.id} sourceId={sourceId} />,
-            ],
-            [
-              'Vote %',
-              <BidVoteShare
-                key="vote-share"
-                bidId={bid.id}
-                sourceId={sourceId}
-              />,
-            ],
-            [
-              'Voter APR',
-              <BidTributeApr
-                key="tribute-apr"
-                bidId={bid.id}
-                sourceId={sourceId}
-              />,
-            ],
-            [
-              'Max Deployment Amount',
-              sumBy(
-                bid.liquidityDeployment?.deployedFunds,
-                'printableAmount',
-              )?.toFixed(2) || '–',
-            ],
-          ].map(([label, value]) => (
-            <div
-              key={String(label)}
-              className={twJoin(
-                'gap-tighter flex flex-col',
-                'desktop:items-end',
-              )}
-            >
-              <div className="label">{label}</div>
-              <div className="important-value">{value}</div>
-            </div>
-          ))}
+          {sidebarFields.map((field, index) => {
+            const content = (
+              <div
+                className={twJoin(
+                  'gap-tighter flex flex-col',
+                  'desktop:items-end',
+                )}
+              >
+                <div
+                  className={twJoin(
+                    'w-full',
+                    'label flex items-center gap-1',
+                    'desktop:justify-end',
+                    field.tooltip && [
+                      'desktop:flex-row-reverse',
+                      'desktop:justify-start',
+                    ],
+                  )}
+                >
+                  <span>{field.label}</span>
+                  {field.tooltip && (
+                    <Icon name="circle-info" className="text-xs opacity-60" />
+                  )}
+                </div>
+                <div className="important-value">{field.value}</div>
+              </div>
+            )
+
+            return field.tooltip ? (
+              <Tooltip
+                key={String(field.label)}
+                tipContents={tooltipContent(field.tooltip)}
+                className="has-tooltip relative z-20 w-full"
+              >
+                {content}
+              </Tooltip>
+            ) : (
+              <React.Fragment key={String(field.label)}>
+                {content}
+              </React.Fragment>
+            )
+          })}
         </aside>
 
         <div className="p-loosest desktop:pr-80 text-balance">
@@ -167,6 +231,6 @@ export function BidDetails({
           />
         </div>
       </main>
-    </TokenThemeWrapper>
+    </article>
   )
 }

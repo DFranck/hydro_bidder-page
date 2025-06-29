@@ -1,6 +1,5 @@
 import { Icon } from '@/components/Icon'
 import { SourceBadge } from '@v2/components/SourceBadge'
-import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { type SourceID } from '@v2/environments'
 import { twJoin, twMerge } from 'tailwind-merge'
 
@@ -16,9 +15,7 @@ export function SidebarSourcePanel({
   currentRoundId,
 }: SidebarSourcePanelProps) {
   return (
-    <TokenThemeWrapper
-      as="button"
-      trancheId={1}
+    <button
       className={twMerge(
         '@container',
         'relative w-full',
@@ -85,6 +82,6 @@ export function SidebarSourcePanel({
           </span>
         </span>
       </div>
-    </TokenThemeWrapper>
+    </button>
   )
 }

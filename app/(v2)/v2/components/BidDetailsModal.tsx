@@ -4,7 +4,6 @@ import { Icon } from '@/components/Icon'
 import { IconString } from '@/components/Icon/types'
 import { BidDetails } from '@v2/components/BidDetails'
 import { useInternalLink } from '@v2/components/InternalLink'
-import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { sortBidsInTranche } from '@v2/lib/sortBidsInTranche'
 import { useAppState } from '@v2/state/DataProviderOnClient'
@@ -61,8 +60,7 @@ export function BidDetailsModal({
     currentBid && voteThreshold ? currentBid.vote_perc < voteThreshold : false
 
   return (
-    <TokenThemeWrapper
-      trancheId={currentBid?.trancheId ?? 1}
+    <div
       className={twJoin(
         isBelowVoteThreshold && 'low-votes',
         'low-votes:theme-color-beige',
@@ -131,6 +129,6 @@ export function BidDetailsModal({
 
         <BidDetails sourceId={sourceId} bidId={parseInt(bidId)} />
       </div>
-    </TokenThemeWrapper>
+    </div>
   )
 }

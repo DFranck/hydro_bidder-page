@@ -3,8 +3,7 @@
 import { Icon } from '@/components/Icon'
 import { useIsMobile } from '@/lib/useIsMobile'
 import { ScrollIndicator } from '@v2/components/ScrollIndicator'
-import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
-import { SourceID } from '@v2/environments'
+import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { AugmentedTranche } from '@v2/types'
 import Image from 'next/image'
@@ -78,10 +77,16 @@ export function TrancheNavigation({
         const { sourceId, name, metadata, userVotedInTranche } = tranche
         const { logo, description } = JSON.parse(metadata)
 
+        const environment = getEnvironment()
+        const source = getSource(environment, sourceId)
+        const baseName = name.replace(
+          new RegExp(` ${source.trancheSuffix}`, 'i'),
+          '',
+        )
+        const suffix = source.trancheSuffix
+
         return (
-          <TokenThemeWrapper
-            as={TrancheNavigationButton}
-            trancheId={tranche.id}
+          <TrancheNavigationButton
             key={index}
             id={`tranche-nav-button--${sourceId}-${tranche.id}`}
             className={twMerge(
@@ -141,14 +146,15 @@ export function TrancheNavigation({
                   </span>
                 </span>
                 <span className={twJoin('label', 'hidden', '@4xs:block')}>
-                  {name}
+                  {baseName}
+                  <span className="@4xs:inline hidden"> {suffix}</span>
                 </span>
               </span>
 
               <div
                 className={twJoin(
                   'footnote relative z-10 whitespace-nowrap',
-                  'voted-within:text-background',
+                  'voted-within:text-foreground',
                 )}
               >
                 <div className="voted-within:hidden flex gap-1">
@@ -188,20 +194,20 @@ export function TrancheNavigation({
                 'absolute inset-0 z-0',
                 'bg-linear-to-b',
                 'from-palette-green/50 via-transparent to-transparent',
-                'is-active:from-palette-green',
-                'voted-within:opacity-100',
                 'opacity-0 transition-all',
                 'delay-200',
-                'is-active:delay-500',
                 'rounded-t-[calc(var(--spacing)*2)]',
                 'is-active:rounded-br-none',
                 'is-active:rounded-t-[calc(var(--spacing)*2)]',
+                'is-active:from-palette-green/80',
+                'is-active:delay-500',
+                'voted-within:opacity-100',
                 '@4xs:is-active:rounded-tr-[calc(var(--spacing)*2)]',
                 '@4xs:rounded-r-[calc(var(--spacing)*2)]',
                 '@4xs:bg-linear-to-bl',
               )}
             />
-          </TokenThemeWrapper>
+          </TrancheNavigationButton>
         )
       }}
       renderDots={({ dots, onPrevious, onNext, canGoPrevious, canGoNext }) => {

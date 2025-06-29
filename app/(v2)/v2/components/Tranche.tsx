@@ -1,11 +1,9 @@
 'use client'
 
-import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
-import { Tooltip } from '@/components/Tooltip'
-import { voteThresholdTooltip } from '@/components/ToolTips'
 import { BidCard, bidCardFields } from '@v2/components/BidCard'
-import { TokenThemeWrapper } from '@v2/components/TokenThemeWrapper'
+import { VoteStatusIndicator } from '@v2/components/VoteStatusIndicator'
+import { VoteThresholdIndicator } from '@v2/components/VoteThresholdIndicator'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { sortBidsInTranche } from '@v2/lib/sortBidsInTranche'
 import { useAppState } from '@v2/state/DataProviderOnClient'
@@ -21,10 +19,11 @@ function TH({
 }) {
   return (
     <div
-      className={twJoin(
-        'label whitespace-nowrap',
+      className={twMerge(
+        'label py-standard whitespace-nowrap',
         '@card-is-row:table-cell',
         '@card-is-row:px-tight',
+        '@card-is-row:py-0',
         className,
       )}
     >
@@ -98,28 +97,13 @@ export function Tranche({
           className={twJoin('text-xs text-balance')}
         />
 
-        <div
-          className={twJoin(
-            'footnote relative z-10 whitespace-nowrap',
-            'voted-within:text-background',
-          )}
-        >
-          <div className="voted-within:hidden flex gap-1">
-            <span>Haven&rsquo;t voted</span>
-            <Icon name="solid:circle-dashed" />
-          </div>
-
-          <div className="voted-within:flex relative hidden gap-1">
-            <span>You&rsquo;ve voted!</span>
-            <Icon name="solid:circle-check" />
-          </div>
-        </div>
+        <VoteStatusIndicator />
 
         <div
           className={twJoin(
             'voted-within:block hidden',
             'absolute inset-y-0 right-0 left-1/2 z-0',
-            'from-palette-green bg-linear-to-l to-transparent',
+            'from-palette-green/80 bg-linear-to-l to-transparent',
           )}
         />
       </div>
@@ -154,15 +138,30 @@ export function Tranche({
               )}
             >
               <div className="@card-is-row:table-header-group">
-                <div className={twJoin('hidden', '@card-is-row:table-row')}>
-                  <TH className="w-24">Logo</TH>
-                  <TH className="w-auto">Title</TH>
-                  {bidCardFields.map(({ key, label }) => (
-                    <TH key={key} className="w-24 text-center">
+                <div
+                  className={twJoin(
+                    'gap-standard grid w-full',
+                    'grid-cols-[auto_auto_auto_calc(var(--spacing)*24)]',
+                    '@card-is-row:table-row',
+                    '@card-is-row:gap-0',
+                  )}
+                >
+                  <TH className="hidden w-24">Logo</TH>
+                  <TH className="hidden w-auto">Title</TH>
+                  {bidCardFields.map(({ key, label, className }, index) => (
+                    <TH
+                      key={`${sourceId}-${trancheId}-${key}`}
+                      className={className}
+                    >
                       {label}
                     </TH>
                   ))}
-                  <TH className="w-24 text-right">Actions</TH>
+                  <TH
+                    key={`${sourceId}-${trancheId}-actions`}
+                    className={twJoin('text-right', '@card-is-row:w-24')}
+                  >
+                    Actions
+                  </TH>
                 </div>
               </div>
               <div
@@ -183,46 +182,10 @@ export function Tranche({
                   return (
                     <React.Fragment key={bid.id}>
                       {isFirstBelowThreshold && (
-                        <div className="@card-is-row:table-row">
-                          <div
-                            className={twJoin(
-                              '@card-is-row:relative @card-is-row:table-cell',
-                              'h-bar-height-standard',
-                            )}
-                          >
-                            <div
-                              className={twJoin(
-                                'h-full w-[100cqw]',
-                                'flex items-center justify-between',
-                                'gap-standard',
-                                'text-palette-beige text-xs whitespace-nowrap',
-                                '@card-is-row:absolute',
-                                '@card-is-row:top-1/2',
-                                '@card-is-row:-translate-y-1/2',
-                              )}
-                            >
-                              <div className="border-palette-beige w-full border-t-2" />
-                              <Tooltip
-                                tipContents={voteThresholdTooltip({
-                                  trancheId,
-                                })}
-                              >
-                                <div className="gap-tightest flex items-center">
-                                  <Icon name="solid:circle-exclamation" />
-                                  <span>
-                                    These are below the{' '}
-                                    <strong className="has-tooltip">
-                                      {voteThreshold * 100}% vote share
-                                      threshold
-                                    </strong>
-                                  </span>
-                                  <Icon name="circle-info" />
-                                </div>
-                              </Tooltip>
-                              <div className="border-palette-beige w-full border-t-2" />
-                            </div>
-                          </div>
-                        </div>
+                        <VoteThresholdIndicator
+                          trancheId={trancheId}
+                          voteThreshold={voteThreshold}
+                        />
                       )}
                       <BidCard sourceId={sourceId} bidId={bid.id} />
                     </React.Fragment>
@@ -243,8 +206,7 @@ export function Tranche({
   )
 
   return (
-    <TokenThemeWrapper
-      trancheId={trancheId}
+    <div
       id={`tranche-container--${sourceId}-${trancheId}`}
       className={twMerge(
         isActive && 'is-active',
@@ -272,6 +234,6 @@ export function Tranche({
           {viewboxContent}
         </div>
       )}
-    </TokenThemeWrapper>
+    </div>
   )
 }

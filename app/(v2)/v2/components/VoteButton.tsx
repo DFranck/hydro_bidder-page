@@ -205,46 +205,55 @@ export function VoteButton({
         onClick={buttonProps.onClick}
         className={twMerge(
           'group/vote-button',
-          'btn h-full',
+          'btn relative h-full w-8',
           'flex items-center justify-center',
           'transition-all',
           'px-standard',
-          buttonProps.disabled && 'pointer-events-none opacity-60',
+          buttonProps.disabled && 'pointer-events-none',
           className,
         )}
         {...otherProps}
       >
-        <span className={twJoin('relative block')}>
+        <span
+          className={twJoin(
+            'size-8',
+            '-translate-x-1/2 -translate-y-1/2',
+            'absolute top-1/2 left-1/2',
+          )}
+        >
           <span
             className={twJoin(
-              'z-10 transition-all',
-              'absolute top-1/2 left-1/2',
-              '-translate-x-1/2 -translate-y-1/2',
-              'scale-100 opacity-100',
+              'absolute inset-0',
+              'flex items-center justify-center',
+              'transition-all',
+              'voted-on:hidden',
+              'voted-on:vote-changing:flex',
+              'group-hover/vote-button:flex',
               'group-hover/vote-button:scale-200',
-              'group-hover/vote-button:animate-spin',
               'group-focus/vote-button:scale-200',
+              'group-hover/vote-button:animate-spin',
               'group-focus/vote-button:animate-spin',
-              'voted-on:scale-200',
-              'voted-on:opacity-100',
-              'voted-on:text-background',
-              'voted-on:vote-changing:scale-100',
             )}
           >
-            <Icon
-              name="light:circle-dashed"
-              className={twJoin(
-                'voted-on:hidden',
-                'voted-on:vote-changing:inline-block!',
-              )}
-            />
-            <Icon
-              name="solid:circle"
-              className={twJoin(
-                'voted-on:inline-block hidden',
-                'voted-on:vote-changing:hidden!',
-              )}
-            />
+            <Icon name="light:circle-dashed" />
+          </span>
+
+          <span
+            className={twJoin(
+              'absolute inset-0 z-10 items-center justify-center',
+              'transition-all',
+              'hidden',
+              'voted-on:flex',
+              'voted-on:scale-200',
+              'voted-on:text-foreground!',
+              'voted-on:vote-changing:scale-0',
+              'group-hover/vote-button:flex',
+              'group-focus/vote-button:flex',
+              'group-hover/vote-button:scale-150',
+              'group-focus/vote-button:scale-150',
+            )}
+          >
+            <Icon name="solid:circle" />
           </span>
 
           <span
@@ -253,22 +262,24 @@ export function VoteButton({
               'absolute top-1/2 left-1/2',
               '-translate-x-1/2 -translate-y-1/2',
               'scale-0 opacity-0',
+              'voted-on:scale-100',
+              'voted-on:opacity-100',
+              'voted-on:text-background',
+              'voted-on:vote-changing:scale-0',
+              'voted-on:vote-changing:opacity-0',
+              'group-hover/vote-button:text-background',
               'group-hover/vote-button:scale-100',
               'group-hover/vote-button:opacity-100',
               'group-focus/vote-button:scale-100',
               'group-focus/vote-button:opacity-100',
-              'voted-on:scale-100',
-              'voted-on:opacity-100',
-              'voted-on:vote-changing:scale-0',
-              'voted-on:vote-changing:opacity-0',
             )}
           >
             <Icon name="solid:check" />
           </span>
 
-          <div
+          <span
             className={twJoin(
-              'glow size-12',
+              'glow z-0',
               'scale-0 opacity-0',
               'group-hover/vote-button:scale-300',
               'group-hover/vote-button:opacity-100',
@@ -300,7 +311,9 @@ export function VoteButton({
       <ConditionalWrapper
         condition={!!buttonProps.tooltip}
         wrapper={(children) => (
-          <Tooltip tipContents={buttonProps.tooltip}>{children}</Tooltip>
+          <Tooltip tipContents={buttonProps.tooltip} className="size-10">
+            {children}
+          </Tooltip>
         )}
       >
         {renderButtonContent()}

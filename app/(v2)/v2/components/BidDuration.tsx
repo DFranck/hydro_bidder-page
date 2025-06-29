@@ -30,11 +30,15 @@ export function BidDuration({ bidId, sourceId, className }: BidDurationProps) {
 
   if (!bid || !constants) return null
 
+  const isRejected = bid?.status?.toLowerCase().includes('rejected')
+
   const { value: durationNumber, unit: durationUnit } = getTimeUnitFromNanos(
     bid.duration * constants.lock_epoch_length,
   )
 
-  return (
+  return isRejected ? null : !durationNumber ? (
+    <span className="text-footnote">No data yet</span>
+  ) : (
     <Tooltip
       className={twJoin(
         'has-tooltip',

@@ -10,7 +10,7 @@
   --breakpoint-2xl: 1400px;
   --breakpoint-desktop: 768px;
 
-  --container-4xs: 10rem;
+  --container-4xs: 12rem;
   --container-card-is-row: 500px;
 
   --spacing-tightest: 2px;
@@ -52,7 +52,7 @@
   --color-palette-text: rgb(var(--palette-text-rgb));
   --color-palette-usdc: rgb(var(--palette-usdc-rgb));
 
-  --color-token-atom: var(--color-palette-blue);
+  --color-token-atom: var(--color-palette-purple);
   --color-token-stosmo: var(--color-palette-pink);
   --color-token-usdc: var(--color-palette-blue);
 
