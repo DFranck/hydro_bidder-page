@@ -1,4 +1,6 @@
 export { useAtomPrice } from './useAtomPrice'
+export { useConfettiCannon } from './useConfettiCannon'
+export { useHydroConfettiCannon } from './useHydroConfettiCannon'
 export { useProcessedData } from './useProcessedData'
 export { useWalletConnection } from './useWalletConnection'
 export { useWalletData } from './useWalletData'

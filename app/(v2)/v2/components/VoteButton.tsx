@@ -2,7 +2,6 @@
 
 import { Card } from '@/components/Card'
 import { ConditionalWrapper } from '@/components/ConditionalWrapper'
-import { Confetti } from '@/components/Confetti'
 import { Icon } from '@/components/Icon'
 import { ModalWindow } from '@/components/ModalWindow'
 import { toastMessages } from '@/components/ToastMessages'
@@ -18,6 +17,7 @@ import { useGlobalLockupCapacityInfo } from '@/contract-apis/useGlobalLockupCapa
 import { revalidateTag } from '@/lib/revalidateTag'
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
+import { useHydroConfettiCannon } from '@v2/hooks'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { useState } from 'react'
@@ -45,12 +45,12 @@ export function VoteButton({
     isTryingToVoteWithExpiredLockups,
     setIsTryingToVoteWithExpiredLockups,
   ] = useState(false)
-  const [isCelebrating, setIsCelebrating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const { toasts, setToasts } = useToasts()
   const { state } = useAppState()
   const { currentRoundDataPerSource } = state
+  const { blastConfetti } = useHydroConfettiCannon()
 
   const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
     useGlobalLockupCapacityInfo()
@@ -85,7 +85,7 @@ export function VoteButton({
 
       await revalidateTag('backendData')
 
-      setIsCelebrating(true)
+      blastConfetti()
 
       setToasts([toastMessages.votingSuccess])
 
@@ -386,11 +386,6 @@ export function VoteButton({
           </Card.Footer>
         </Card>
       </ModalWindow>
-
-      <Confetti
-        trigger={isCelebrating}
-        onComplete={() => setIsCelebrating(false)}
-      />
     </>
   )
 }
