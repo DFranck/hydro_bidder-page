@@ -19,6 +19,7 @@ import { useIsMobile } from '@/lib/useIsMobile'
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
 import { useHydroConfettiCannon } from '@v2/hooks'
+import { useDoubleTapProtection } from '@v2/hooks/useDoubleTapProtection'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { useState } from 'react'
@@ -68,43 +69,26 @@ export function VoteButton({
   const isLoadingState =
     toasts.some((toast) => toast.variant === 'working') || isLoading
 
-  // Utility function to wrap click handlers with double-tap behavior on mobile
-  function withDoubleTapProtection(
-    handler: (e: React.MouseEvent) => void | Promise<void>,
-  ): React.MouseEventHandler {
-    return (e: React.MouseEvent) => {
-      e.preventDefault()
+  const connectWalletProtection = useDoubleTapProtection(async () => {
+    await connect()
+  })
 
-      if (!isMobile) {
-        // On desktop, execute immediately
-        handler(e)
-        return
-      }
+  const expiredLockupsProtection = useDoubleTapProtection(() => {
+    setIsTryingToVoteWithExpiredLockups(true)
+  })
 
-      // On mobile, implement double-tap behavior
-      const target = e.currentTarget as HTMLElement
-      const lastTapTime = target.dataset.lastTap
-      const currentTime = Date.now().toString()
+  const noValidLockupsProtection = useDoubleTapProtection(() => {
+    setIsTryingToVoteWithExpiredLockups(true)
+  })
 
-      if (!lastTapTime || Date.now() - parseInt(lastTapTime) > 500) {
-        // First tap or taps are too far apart - just focus
-        target.dataset.lastTap = currentTime
-        target.focus()
-        e.stopPropagation()
-
-        // Clear the tap state after 500ms
-        setTimeout(() => {
-          delete target.dataset.lastTap
-        }, 500)
-
-        return
-      }
-
-      // Second tap within 500ms - execute the handler
-      delete target.dataset.lastTap
-      handler(e)
+  const voteProtection = useDoubleTapProtection(() => {
+    const hasVotedElsewhere = voteButtonData?.hasVotedElsewhere ?? false
+    if (hasVotedElsewhere) {
+      setOpenChangeVoteModal(true)
+    } else {
+      handleClickVote()
     }
-  }
+  })
 
   async function handleClickVote() {
     if (!bid || !address) {
@@ -148,9 +132,7 @@ export function VoteButton({
 
   if (!isWalletConnected) {
     buttonProps = {
-      onClick: withDoubleTapProtection(async () => {
-        await connect()
-      }),
+      onClick: connectWalletProtection.handleClick,
       tooltip: 'Connect Wallet to Vote',
       disabled: false,
       isLink: false,
@@ -179,9 +161,7 @@ export function VoteButton({
     }
   } else if (!voteButtonData?.hasLockupThatExtendsBidsDeploymentDuration) {
     buttonProps = {
-      onClick: withDoubleTapProtection(() => {
-        setIsTryingToVoteWithExpiredLockups(true)
-      }),
+      onClick: expiredLockupsProtection.handleClick,
       tooltip: extendLockupsToVoteTooltip,
       disabled: false,
       isLink: false,
@@ -189,9 +169,7 @@ export function VoteButton({
     }
   } else if (voteButtonData?.validLockups.length === 0) {
     buttonProps = {
-      onClick: withDoubleTapProtection(() => {
-        setIsTryingToVoteWithExpiredLockups(true)
-      }),
+      onClick: noValidLockupsProtection.handleClick,
       tooltip: lockAtomToVoteTooltip,
       disabled: false,
       isLink: false,
@@ -206,15 +184,8 @@ export function VoteButton({
       href: undefined,
     }
   } else {
-    const hasVotedElsewhere = voteButtonData?.hasVotedElsewhere ?? false
     buttonProps = {
-      onClick: withDoubleTapProtection(() => {
-        if (hasVotedElsewhere) {
-          setOpenChangeVoteModal(true)
-        } else {
-          handleClickVote()
-        }
-      }),
+      onClick: voteProtection.handleClick,
       tooltip: undefined,
       disabled: false,
       isLink: false,
@@ -229,8 +200,18 @@ export function VoteButton({
         tabIndex={0}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        onFocus={onFocus}
-        onBlur={onBlur}
+        onFocus={(e) => {
+          // Don't change counter on focus - let the click handler manage it
+          onFocus?.(e)
+        }}
+        onBlur={(e) => {
+          // Reset all counters when element loses focus
+          connectWalletProtection.resetCounter()
+          expiredLockupsProtection.resetCounter()
+          noValidLockupsProtection.resetCounter()
+          voteProtection.resetCounter()
+          onBlur?.(e)
+        }}
         onClick={buttonProps.onClick}
         className={twMerge(
           'btn relative h-full w-8',
