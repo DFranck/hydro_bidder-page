@@ -12,6 +12,7 @@ import range from "lodash/range"
 import { getCoinWithRoundPrices } from "./getCoinWithRoundPrices"
 import { CurrentEpochUserLockedResponse } from "@/app/ts_types/GatekeeperBase.types"
 import { getMaxUserCanLock } from "./getMaxUserCanLock"
+import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
 
 export async function fetchWalletData({
   address,
@@ -50,7 +51,7 @@ export async function fetchWalletData({
     ])
 
   // Manual pagination for lockups_with_per_tranche_infos
-  const limit = 8
+  const limit = SMART_CONTRACT_LOCKUPS_PAGE_LIMIT
   let startFrom = 0
   const accumulatedLockups = []
 
