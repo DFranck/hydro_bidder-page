@@ -12,7 +12,7 @@ export function MarkdownContainer({
 }) {
   const isMobile = useIsMobile(982)
 
-  function insertSoftHyphens(content: string, maxLength = 5) {
+  function insertZeroWidthSpaces(content: string, maxLength = 5) {
     return content.replace(new RegExp(`\\w{${maxLength},}`, "g"), (word) =>
       word.replace(/(.{5})/g, "$1\u200B")
     )
@@ -21,7 +21,7 @@ export function MarkdownContainer({
   const rawContent =
     content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/gm, "###") ?? ""
 
-  const formattedContent = isMobile ? insertSoftHyphens(rawContent) : rawContent
+  const formattedContent = isMobile ? insertZeroWidthSpaces(rawContent) : rawContent
 
   return (
     <div
