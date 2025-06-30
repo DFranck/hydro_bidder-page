@@ -210,8 +210,7 @@ export function Tranche({
       id={`tranche-container--${sourceId}-${trancheId}`}
       className={twMerge(
         isActive && 'is-active',
-        userVotedInTranche && 'has-voted-within',
-        !userVotedInTranche && 'has-not-voted-within',
+        userVotedInTranche ? 'has-voted-within' : 'has-not-voted-within',
         'relative w-full',
         'h-full shrink-0 grow-0',
         'snap-start',

@@ -93,8 +93,10 @@ export function augmentBidsWithVoteData(
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
 
   const augmentedBids = bids.map((bid) => {
+    const bidsInThisTranche = bids.filter(b => b.trancheId === bid.trancheId)
+    const bidIdsInThisTranche = bidsInThisTranche.map(b => b.id)
     const votesThisTranche = votesThisRound.filter(
-      (vote: SanitizedVote) => vote.bidId === bid.id,
+      (vote: SanitizedVote) => bidIdsInThisTranche.includes(vote.bidId),
     )
     const hasVotedInThisTranche = votesThisTranche.length > 0
     const hasVotedForThisBid = votesThisTranche.some(
@@ -135,18 +137,24 @@ export function augmentBidsWithVoteData(
       },
     )
 
+    const voteButtonData: VoteButtonData = {
+      hasVotedForThisBid,
+      hasVotedInThisTranche,
+      hasVotedElsewhere,
+      votingPowerAvailableByTrancheId,
+      validLockups,
+      hasLockupThatExtendsBidsDeploymentDuration,
+      votesThisRound,
+      votesThisTranche,
+    }
+
+    if (bid.id === 60) {
+      console.log({ voteButtonData, votesThisRound, })
+    }
+
     return {
       ...bid,
-      voteButtonData: {
-        hasVotedForThisBid,
-        hasVotedInThisTranche,
-        hasVotedElsewhere,
-        votingPowerAvailableByTrancheId,
-        validLockups,
-        hasLockupThatExtendsBidsDeploymentDuration,
-        votesThisRound,
-        votesThisTranche,
-      },
+      voteButtonData,
     }
   })
 

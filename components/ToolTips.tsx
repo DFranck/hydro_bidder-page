@@ -7,17 +7,14 @@ import {
   HYDRO_TELEGRAM_COMMUNITY_URL,
   voteThresholdByTrancheId,
 } from "@/config"
-import {
-  AugmentedBidAfterWallet,
-  BidMetaDataSlimmed,
-} from "@/contract-apis/types"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
-import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
@@ -390,6 +387,13 @@ export const extendLockupsToVoteTooltip = (
       <span>Learn More</span>
       <Icon name="arrow-up-right-from-square" />
     </StyledText>
+  </p>
+)
+
+export const changeVoteTooltip = (
+  <p>
+    You have already voted for another bid in this tranche. Click to change your
+    vote to this bid instead.
   </p>
 )
 
@@ -831,7 +835,7 @@ export const yourVotingPowerTooltip = ({
         <div
           className={twJoin(
             "-mx-4 -mb-2 px-4 py-2",
-            "bg-palette-green text-center font-bold text-palette-text"
+            "bg-palette-green text-palette-text text-center font-bold"
           )}
         >
           {trancheMessage}
@@ -891,7 +895,7 @@ export const bidDetailsVoteReceivedTooltip = ({
     <div
       className={twJoin(
         "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
-        "whitespace-nowrap border-b border-white/20 pb-2"
+        "border-b border-white/20 pb-2 whitespace-nowrap"
       )}
     >
       {[

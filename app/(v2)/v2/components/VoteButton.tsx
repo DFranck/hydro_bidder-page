@@ -8,6 +8,7 @@ import { toastMessages } from '@/components/ToastMessages'
 import { useToasts } from '@/components/Toasts'
 import { Tooltip } from '@/components/Tooltip'
 import {
+  changeVoteTooltip,
   extendLockupsToVoteTooltip,
   lockAtomToVoteTooltip,
   lockupLimitReachedByNetworkTooltip,
@@ -15,7 +16,6 @@ import {
 import { executeWalletVote } from '@/contract-apis/executeWalletVote'
 import { useGlobalLockupCapacityInfo } from '@/contract-apis/useGlobalLockupCapacityInfo'
 import { revalidateTag } from '@/lib/revalidateTag'
-import { useIsMobile } from '@/lib/useIsMobile'
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
 import { useHydroConfettiCannon } from '@v2/hooks'
@@ -42,7 +42,7 @@ export function VoteButton({
   onBlur,
   ...otherProps
 }: VoteButtonProps) {
-  const [openChangeVoteModal, setOpenChangeVoteModal] = useState(false)
+  const [isChangeVoteModalOpen, setIsChangeVoteModalOpen] = useState(false)
   const [
     isTryingToVoteWithExpiredLockups,
     setIsTryingToVoteWithExpiredLockups,
@@ -53,7 +53,6 @@ export function VoteButton({
   const { state } = useAppState()
   const { currentRoundDataPerSource } = state
   const { blastConfetti } = useHydroConfettiCannon()
-  const isMobile = useIsMobile()
 
   const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
     useGlobalLockupCapacityInfo()
@@ -82,15 +81,14 @@ export function VoteButton({
   })
 
   const voteProtection = useDoubleTapProtection(() => {
-    const hasVotedElsewhere = voteButtonData?.hasVotedElsewhere ?? false
-    if (hasVotedElsewhere) {
-      setOpenChangeVoteModal(true)
-    } else {
-      handleClickVote()
-    }
+    executeVote()
   })
 
-  async function handleClickVote() {
+  const changeVoteProtection = useDoubleTapProtection(() => {
+    setIsChangeVoteModalOpen(true)
+  })
+
+  async function executeVote() {
     if (!bid || !address) {
       return
     }
@@ -118,7 +116,7 @@ export function VoteButton({
       setToasts([toastMessages.votingError(err as Error)])
     } finally {
       setIsLoading(false)
-      setOpenChangeVoteModal(false)
+      setIsChangeVoteModalOpen(false)
     }
   }
 
@@ -183,6 +181,14 @@ export function VoteButton({
       isLink: false,
       href: undefined,
     }
+  } else if (voteButtonData?.hasVotedElsewhere) {
+    buttonProps = {
+      onClick: changeVoteProtection.handleClick,
+      tooltip: changeVoteTooltip,
+      disabled: false,
+      isLink: false,
+      href: undefined,
+    }
   } else {
     buttonProps = {
       onClick: voteProtection.handleClick,
@@ -200,16 +206,13 @@ export function VoteButton({
         tabIndex={0}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        onFocus={(e) => {
-          // Don't change counter on focus - let the click handler manage it
-          onFocus?.(e)
-        }}
         onBlur={(e) => {
           // Reset all counters when element loses focus
           connectWalletProtection.resetCounter()
           expiredLockupsProtection.resetCounter()
           noValidLockupsProtection.resetCounter()
           voteProtection.resetCounter()
+          changeVoteProtection.resetCounter()
           onBlur?.(e)
         }}
         onClick={buttonProps.onClick}
@@ -256,8 +259,11 @@ export function VoteButton({
               'is-voted-on:scale-0',
               'has-not-voted-within:scale-0',
               'has-not-voted-within:is-vote-focused-elsewhere:scale-100',
-              'is-vote-focused:scale-200!',
+              'is-vote-focused:scale-200',
               'is-vote-focused:animate-spin',
+              'is-change-vote-focused:scale-200',
+              'is-change-vote-focused:animate-spin',
+              'is-change-vote-focused-elsewhere:scale-100',
               'desktop:has-not-voted-within:scale-100',
             )}
           >
@@ -275,6 +281,8 @@ export function VoteButton({
               'is-voted-on:is-change-vote-focused-elsewhere:scale-0',
               'is-vote-focused:flex',
               'is-vote-focused:scale-150',
+              'is-change-vote-focused:flex',
+              'is-change-vote-focused:scale-150',
             )}
           >
             <Icon name="solid:circle" />
@@ -294,6 +302,9 @@ export function VoteButton({
               'is-vote-focused:text-background',
               'is-vote-focused:scale-100',
               'is-vote-focused:opacity-100',
+              'is-change-vote-focused:text-background',
+              'is-change-vote-focused:scale-100',
+              'is-change-vote-focused:opacity-100',
             )}
           >
             <Icon name="solid:check" />
@@ -305,6 +316,8 @@ export function VoteButton({
               'scale-0 opacity-0',
               'is-vote-focused:scale-300',
               'is-vote-focused:opacity-100',
+              'is-change-vote-focused:scale-300',
+              'is-change-vote-focused:opacity-100',
               'is-voted-on:scale-300',
               'is-voted-on:opacity-100',
               'is-voted-on:is-change-vote-focused-elsewhere:scale-0',
@@ -328,20 +341,22 @@ export function VoteButton({
 
   return (
     <>
-      <ConditionalWrapper
-        condition={!!buttonProps.tooltip}
-        wrapper={(children) => (
-          <Tooltip tipContents={buttonProps.tooltip} className="size-10">
-            {children}
-          </Tooltip>
-        )}
-      >
-        {renderButtonContent()}
-      </ConditionalWrapper>
+      <div className="relative size-10">
+        <ConditionalWrapper
+          condition={!!buttonProps.tooltip}
+          wrapper={(children) => (
+            <Tooltip tipContents={buttonProps.tooltip} className="size-10">
+              {children}
+            </Tooltip>
+          )}
+        >
+          {renderButtonContent()}
+        </ConditionalWrapper>
+      </div>
 
       <ModalWindow
-        isOpen={openChangeVoteModal}
-        onClose={() => setOpenChangeVoteModal(false)}
+        isOpen={isChangeVoteModalOpen}
+        onClose={() => setIsChangeVoteModalOpen(false)}
       >
         <Card>
           <Card.Body>
@@ -353,11 +368,11 @@ export function VoteButton({
             </div>
           </Card.Body>
           <Card.Footer>
-            <button onClick={handleClickVote} className="btn btn-primary">
+            <button onClick={executeVote} className="btn btn-primary">
               Change
             </button>
             <button
-              onClick={() => setOpenChangeVoteModal(false)}
+              onClick={() => setIsChangeVoteModalOpen(false)}
               className="btn btn-secondary"
             >
               Don&rsquo;t Change
