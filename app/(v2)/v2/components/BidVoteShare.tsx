@@ -1,11 +1,11 @@
 'use client'
 
 import { ConditionalWrapper } from '@/components/ConditionalWrapper'
-import { Tooltip } from '@/components/Tooltip'
 import {
   bidLiquidityReceivedTooltip,
   voteThresholdTooltip,
 } from '@/components/ToolTips'
+import { Tooltip } from '@v2/components/Tooltip'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { AugmentedBidWithVoteData } from '@v2/types'

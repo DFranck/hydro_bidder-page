@@ -1,8 +1,8 @@
 'use client'
 
 import { Icon } from '@/components/Icon'
-import { Tooltip } from '@/components/Tooltip'
 import { useChain } from '@cosmos-kit/react'
+import { Tooltip } from '@v2/components/Tooltip'
 import { useWalletConnection } from '@v2/hooks/useWalletConnection'
 import { useEffect, useRef } from 'react'
 import { twJoin } from 'tailwind-merge'

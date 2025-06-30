@@ -69,6 +69,7 @@
 }
 
 @custom-variant is-active (&:where(.is-active, .is-active *));
+@custom-variant is-open (&:where(.is-open, .is-open *));
 @custom-variant sidebar-open (&:where(.sidebar-open *));
 @custom-variant sidebar-closed (&:where(.sidebar-closed *));
 

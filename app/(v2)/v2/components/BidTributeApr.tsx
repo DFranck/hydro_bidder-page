@@ -1,6 +1,6 @@
 'use client'
 
-import { Tooltip } from '@/components/Tooltip'
+import { Tooltip } from '@v2/components/Tooltip'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { AugmentedBidWithVoteData, SourceID } from '@v2/types'
 import { twJoin } from 'tailwind-merge'

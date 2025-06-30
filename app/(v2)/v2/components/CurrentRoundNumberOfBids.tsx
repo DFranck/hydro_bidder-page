@@ -1,8 +1,8 @@
 'use client'
 
-import { Tooltip } from '@/components/Tooltip'
 import { currentRoundNumLiveBidsTooltip } from '@/components/ToolTips'
 import { pluralize } from '@/lib/pluralize'
+import { Tooltip } from '@v2/components/Tooltip'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twJoin } from 'tailwind-merge'
 

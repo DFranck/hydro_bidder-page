@@ -1,8 +1,8 @@
 'use client'
 
-import { Tooltip } from '@/components/Tooltip'
 import { averageAPRTooltip } from '@/components/ToolTips'
 import { voteThresholdByTrancheId } from '@/config'
+import { Tooltip } from '@v2/components/Tooltip'
 import { useAtomPrice } from '@v2/hooks'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import sumBy from 'lodash/sumBy'

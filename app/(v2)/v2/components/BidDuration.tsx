@@ -1,10 +1,10 @@
 'use client'
 
-import { Tooltip } from '@/components/Tooltip'
 import { polDurationTooltip } from '@/components/ToolTips'
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { getTimeUnitFromNanos } from '@/lib/getTimeUnitFromNanos'
 import { pluralize } from '@/lib/pluralize'
+import { Tooltip } from '@v2/components/Tooltip'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { twJoin } from 'tailwind-merge'

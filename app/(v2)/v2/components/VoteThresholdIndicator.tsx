@@ -1,6 +1,6 @@
 import { Icon } from '@/components/Icon'
-import { Tooltip } from '@/components/Tooltip'
 import { voteThresholdTooltip } from '@/components/ToolTips'
+import { Tooltip } from '@v2/components/Tooltip'
 import { twJoin } from 'tailwind-merge'
 
 interface VoteThresholdIndicatorProps {

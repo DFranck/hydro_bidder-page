@@ -1,7 +1,7 @@
 'use client'
 
-import { Tooltip } from '@/components/Tooltip'
 import { BidRevampMetrics } from '@/contract-apis/types'
+import { Tooltip } from '@v2/components/Tooltip'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { sumBy } from 'lodash'

@@ -6,7 +6,6 @@ import { Icon } from '@/components/Icon'
 import { ModalWindow } from '@/components/ModalWindow'
 import { toastMessages } from '@/components/ToastMessages'
 import { useToasts } from '@/components/Toasts'
-import { Tooltip } from '@/components/Tooltip'
 import {
   changeVoteTooltip,
   extendLockupsToVoteTooltip,
@@ -18,6 +17,7 @@ import { useGlobalLockupCapacityInfo } from '@/contract-apis/useGlobalLockupCapa
 import { revalidateTag } from '@/lib/revalidateTag'
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
+import { Tooltip } from '@v2/components/Tooltip'
 import { useHydroConfettiCannon } from '@v2/hooks'
 import { useDoubleTapProtection } from '@v2/hooks/useDoubleTapProtection'
 import { useAppState } from '@v2/state/DataProviderOnClient'
@@ -202,10 +202,12 @@ export function VoteButton({
   function renderButtonContent() {
     const buttonElement = (
       <div
+        ref={voteProtection.ref as React.RefObject<HTMLDivElement>}
         role="button"
         tabIndex={0}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        onFocus={onFocus}
         onBlur={(e) => {
           // Reset all counters when element loses focus
           connectWalletProtection.resetCounter()

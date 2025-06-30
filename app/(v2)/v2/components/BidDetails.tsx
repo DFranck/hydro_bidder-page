@@ -2,8 +2,8 @@
 
 import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
-import { Tooltip } from '@/components/Tooltip'
 import { useIsMobile } from '@/lib/useIsMobile'
+import { Tooltip } from '@v2/components/Tooltip'
 import { getEnvironment, getSource, SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import React, { useEffect, useRef } from 'react'
