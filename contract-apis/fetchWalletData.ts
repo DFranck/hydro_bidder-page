@@ -1,24 +1,29 @@
 "use server"
 
+import { fetchDenomTrace } from "@/app/(with-backend-data)/lock-atom/transactions/fetchDenomTrace"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
 import {
   getGatekeeperQueryClient,
   getHydroQueryClient,
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
-import { MaxUserCanLockResponse, RawWalletData } from "@/contract-apis/types"
+import { RawWalletData, RoundPrices, MaxUserCanLockResponse } from "@/contract-apis/types"
 import range from "lodash/range"
-import { getMaxUserCanLock } from "./getMaxUserCanLock"
+import { getCoinWithRoundPrices } from "./getCoinWithRoundPrices"
 import { CurrentEpochUserLockedResponse } from "@/app/ts_types/GatekeeperBase.types"
+import { getMaxUserCanLock } from "./getMaxUserCanLock"
+import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
 
 export async function fetchWalletData({
   address,
   currentRoundId,
   tranches,
+  currentRoundPrices,
 }: {
   address: string
   currentRoundId: number
   tranches: Tranche[]
+  currentRoundPrices: RoundPrices
 }): Promise<RawWalletData> {
   const hydroQueryClient = await getHydroQueryClient()
   const tributeQueryClient = await getTributeQueryClient()
@@ -46,7 +51,7 @@ export async function fetchWalletData({
     ])
 
   // Manual pagination for lockups_with_per_tranche_infos
-  const limit = 8
+  const limit = SMART_CONTRACT_LOCKUPS_PAGE_LIMIT
   let startFrom = 0
   const accumulatedLockups = []
 
@@ -105,9 +110,33 @@ export async function fetchWalletData({
   const votes = votesAndClaims.flatMap((o) => o.votes)
   const outstanding_tribute_claims = votesAndClaims.flatMap((o) => o.claims)
 
+  const LOCKUPS_WITH_TRANCHES_INFO = await Promise.all(
+    accumulatedLockups.map(async (lockup) => {
+      const funds = lockup.lock_with_power.lock_entry.funds
+      const denomTrace = await fetchDenomTrace(funds)
+
+      return {
+        ...lockup,
+        lock_with_power: {
+          ...lockup.lock_with_power,
+          lock_entry: {
+            ...lockup.lock_with_power.lock_entry,
+            funds: {
+              ...getCoinWithRoundPrices({
+                coin: funds,
+                roundPrices: currentRoundPrices,
+                validator: denomTrace?.validator,
+              }),
+            },
+          },
+        },
+      }
+    })
+  )
+
   return {
     voting_power,
-    lockups_with_per_tranche_infos: accumulatedLockups,
+    lockups_with_per_tranche_infos: LOCKUPS_WITH_TRANCHES_INFO,
     votes,
     outstanding_tribute_claims,
     historical_tribute_claims,

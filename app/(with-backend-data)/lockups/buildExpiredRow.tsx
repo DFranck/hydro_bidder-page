@@ -19,14 +19,18 @@ export function buildExpiredRow({
     _lockup: { ...lockup, daysLeft },
 
     amount: (
-      <>
-        {formatAmount(
-          lockup.funds.amount * 1e6,
-          undefined,
-          DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
-        )}{" "}
-        <StyledText variant="footnote">ATOM</StyledText>
-      </>
+      <div className="flex items-center gap-1">
+        <StyledText>
+          {formatAmount(
+            lockup.funds.amount * 1e6,
+            undefined,
+            DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+          )}
+        </StyledText>
+        <StyledText variant="footnote">
+          {lockup.funds.denomInfo?.humanReadableDenom}
+        </StyledText>
+      </div>
     ),
 
     originalDuration,

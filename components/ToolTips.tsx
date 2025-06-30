@@ -16,6 +16,12 @@ import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
+import TokenDetails from "./TokenDetails"
+
+type TokenLockedTotal = {
+  amount: number
+  usdAmount: number
+}
 
 export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
@@ -343,7 +349,8 @@ export const lockupLimitTooltip = ({
 }) => (
   <p>
     Currently, you can lock up up to {lockedAtomMaxWallet} ATOM, and you have
-    already locked up {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} ATOM.
+    already locked up {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")}{" "}
+    ATOM.
   </p>
 )
 
@@ -520,6 +527,12 @@ export const pastBidTributeAprBidsPageColumnTooltip = (
 
 export const needsWalletConnectionTooltip = (
   <p>Connect your wallet to access this feature.</p>
+)
+
+export const initializingLockupsTooltip = <p>initializing lockups...</p>
+
+export const notEnoughTokenInWalletTooltip = (
+  <p>You do not have enough tokens in your wallet to lock up.</p>
 )
 
 export const lockupLimitReachedByNetworkTooltip = (
@@ -701,12 +714,43 @@ export const yourRoundAprTooltip = (
   </p>
 )
 
-export const yourTotalAtomLockedTooltip = (
-  <p>
-    Your staked ATOM locked in Hydro. The more ATOM you lock, the higher your
-    voting power will be.
-  </p>
-)
+export const yourTotalTokenLockedTooltip = ({
+  atomLockedTotal,
+  dAtomLockedTotal,
+  stAtomLockedTotal,
+}: {
+  atomLockedTotal: TokenLockedTotal
+  dAtomLockedTotal: TokenLockedTotal
+  stAtomLockedTotal: TokenLockedTotal
+}) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <StyledText variant="label" className="whitespace-pre-wrap">
+        Your tokens locked in Hydro. The more tokens you lock, the higher your
+        voting power will be.
+      </StyledText>
+      <StyledText>You have currently locked:</StyledText>
+
+      <TokenDetails
+        name="ATOM"
+        amount={atomLockedTotal.amount}
+        usdAmount={atomLockedTotal.usdAmount}
+      />
+
+      <TokenDetails
+        name="stATOM"
+        amount={stAtomLockedTotal.amount}
+        usdAmount={stAtomLockedTotal.usdAmount}
+      />
+
+      <TokenDetails
+        name="dATOM"
+        amount={dAtomLockedTotal.amount}
+        usdAmount={dAtomLockedTotal.usdAmount}
+      />
+    </div>
+  )
+}
 
 export const yourTotalRewardsAllTimeTooltip = (
   <p>
@@ -911,7 +955,7 @@ export const bidDetailsVoteReceivedTooltip = ({
   </div>
 )
 
-export const globalTotalAtomLockedTooltip = ({
+export const globalTotalTokenLockedTooltip = ({
   lockedAtomRemainingCapacityGlobal = 0,
 }) => (
   <p className="text-center">

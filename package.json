@@ -25,6 +25,7 @@
     "@interchain-ui/react": "^1.26.2",
     "@netlify/blobs": "^8.1.1",
     "@netlify/functions": "^3.0.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@skip-go/client": "^0.16.17",
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/container-queries": "^0.1.1",

@@ -171,7 +171,7 @@ export default function RewardsPage() {
                     }
                   )}
                   &nbsp;
-                  {matchingClaimAmount?.humanReadableDenom?.slice(0, 12) ??
+                  {matchingClaimAmount?.humanReadableDenom ??
                     tribute.denom?.slice(0, 12)}
                 </ConditionalWrapper>
               )}

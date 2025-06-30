@@ -27,6 +27,8 @@ export const voteThresholdByTrancheId = {
   2: 0.35,
 } as const
 
+export const SMART_CONTRACT_LOCKUPS_PAGE_LIMIT = 7
+
 export const sharedEndpoints = {
   neutron: {
     rpc: ["https://hydro-neutron-rpc.citadel.one/"],

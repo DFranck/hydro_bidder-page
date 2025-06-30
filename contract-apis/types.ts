@@ -4,7 +4,10 @@ import {
   Coin,
   Constants,
   LiquidityDeployment,
+  LockEntryV2 as LockEntry,
+  LockEntryWithPower,
   LockupWithPerTrancheInfo,
+  PerTrancheLockupInfo,
   Proposal,
   Tranche,
   VoteWithPower,
@@ -28,6 +31,9 @@ export interface AugmentedBackendDataAfterWallet
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
   lockedAtomTotalWalletStat: number
+  lockedStAtomTotalWalletStat: number
+  lockedDAtomTotalWalletStat: number
+  lockedTokenTotalWalletStat: number
   lockedAtomTotalWallet: number
   lockedAtomMaxWallet: number
   lockups: AugmentedLockup[]
@@ -42,6 +48,8 @@ export interface AugmentedBackendDataAfterWallet
 export interface AugmentedBackendDataBeforeWallet {
   currentRoundPrices: RoundPrices
   atomPrice: number
+  dAtomPrice: number
+  stAtomPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
   currentRoundEndDate: Date
   currentRoundId: number
@@ -83,6 +91,7 @@ export interface AugmentedLockup {
   funds: {
     amount: number
     denom: string
+    denomInfo?: AugmentedCoin
   }
   isEligibleToVote: boolean
   isExpired: boolean
@@ -287,9 +296,19 @@ export interface PreHydroBid {
   yield: number
 }
 
+
+export interface AugmentedLockupWithPerTrancheInfo {
+  lock_with_power: LockEntryWithPower & {
+    lock_entry: LockEntry & {
+      funds: AugmentedCoin
+    }
+  }
+  per_tranche_info: PerTrancheLockupInfo[]
+}
+
 export interface RawWalletData {
   voting_power: number
-  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
+  lockups_with_per_tranche_infos: AugmentedLockupWithPerTrancheInfo[]
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]

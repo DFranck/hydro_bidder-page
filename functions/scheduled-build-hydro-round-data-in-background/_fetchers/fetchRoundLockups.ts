@@ -3,6 +3,7 @@ import { HydroBaseQueryClient } from "../../../app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "../../../app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
 import { fetchHistoricUsers } from "./fetchHistoricUsers"
+import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
 
 export async function fetchRoundLockups({
   roundId,
@@ -45,7 +46,7 @@ export async function fetchRoundLockups({
         userBatch.map(async (address) => {
           const accumulatedLockups = []
           let startFrom = 0
-          const limit = 8
+          const limit = SMART_CONTRACT_LOCKUPS_PAGE_LIMIT
 
           while (true) {
             const query = {
