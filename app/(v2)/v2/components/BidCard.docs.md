@@ -21,7 +21,7 @@ The component supports two layout modes via container queries:
 
 ### Existing Vote States
 
-#### `voted-on`
+#### `is-voted-on`
 
 Applied when the user has voted on this specific bid.
 
@@ -32,7 +32,7 @@ Applied when the user has voted on this specific bid.
   - Vote button shows completed state (solid circle with checkmark)
   - Background highlight with theme color
 
-#### `low-votes`
+#### `is-below-threshold`
 
 Applied when a bid is below the vote threshold for its tranche.
 
@@ -41,7 +41,7 @@ Applied when a bid is below the vote threshold for its tranche.
   - Beige theme color override (`--color-theme-color: var(--color-palette-beige)`)
   - Indicates the bid may not receive funding due to insufficient vote share
 
-#### `voted-within` (Tranche Level)
+#### `has-voted-within` (Tranche Level)
 
 Applied at the tranche level when user has voted on any bid within that tranche.
 
@@ -72,7 +72,7 @@ The component automatically detects three types of vote button interactions:
 userHasVotedOnThisBid && isHoveringVoteButton
 ```
 
-#### 3. `is-change-focused`
+#### 3. `is-change-vote-focused`
 
 **When**: User hovers/focuses a vote button on an unvoted bid in a tranche where they've already voted elsewhere
 
@@ -87,9 +87,9 @@ The focus states work with CSS `:has()` selectors to create container-level effe
 
 #### Container Variants
 
-- `has-vote-focus`: Container has a child with `is-vote-focused`
-- `has-voted-on-focus`: Container has a child with `is-voted-on-focused`
-- `has-change-focus`: Container has a child with `is-change-focused`
+- `is-vote-focused-elsewhere`: Container has a child with `is-vote-focused`
+- `is-voted-on-focused-elsewhere`: Container has a child with `is-voted-on-focused`
+- `is-change-vote-focused-elsewhere`: Container has a child with `is-change-vote-focused`
 
 #### Visual Effects
 
@@ -97,13 +97,13 @@ The focus states work with CSS `:has()` selectors to create container-level effe
 
 ```css
 /* All bids dim when any vote button is focused */
-.has-vote-focus .bid-card {
+.is-vote-focused-elsewhere .bid-card {
   opacity: 0.5;
 }
-.has-voted-on-focus .bid-card {
+.is-voted-on-focused-elsewhere .bid-card {
   opacity: 0.5;
 }
-.has-change-focus .bid-card {
+.is-change-vote-focused-elsewhere .bid-card {
   opacity: 0.5;
 }
 
@@ -114,7 +114,7 @@ The focus states work with CSS `:has()` selectors to create container-level effe
 .is-voted-on-focused {
   opacity: 1 !important;
 }
-.is-change-focused {
+.is-change-vote-focused {
   opacity: 1 !important;
 }
 ```
@@ -122,8 +122,8 @@ The focus states work with CSS `:has()` selectors to create container-level effe
 **Change Vote Highlighting**:
 
 ```css
-/* In change-focus mode, highlight voted bids */
-.has-change-focus .voted-on {
+/* In change-vote-focus mode, highlight voted bids */
+.is-change-vote-focused-elsewhere .is-voted-on {
   background-color: theme-color/60;
   opacity: 1 !important;
 }

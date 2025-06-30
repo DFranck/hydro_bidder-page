@@ -15,6 +15,7 @@ import {
 import { executeWalletVote } from '@/contract-apis/executeWalletVote'
 import { useGlobalLockupCapacityInfo } from '@/contract-apis/useGlobalLockupCapacityInfo'
 import { revalidateTag } from '@/lib/revalidateTag'
+import { useIsMobile } from '@/lib/useIsMobile'
 import { useChain } from '@cosmos-kit/react'
 import { InternalLink } from '@v2/components/InternalLink'
 import { useHydroConfettiCannon } from '@v2/hooks'
@@ -51,6 +52,7 @@ export function VoteButton({
   const { state } = useAppState()
   const { currentRoundDataPerSource } = state
   const { blastConfetti } = useHydroConfettiCannon()
+  const isMobile = useIsMobile()
 
   const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
     useGlobalLockupCapacityInfo()
@@ -65,6 +67,44 @@ export function VoteButton({
 
   const isLoadingState =
     toasts.some((toast) => toast.variant === 'working') || isLoading
+
+  // Utility function to wrap click handlers with double-tap behavior on mobile
+  function withDoubleTapProtection(
+    handler: (e: React.MouseEvent) => void | Promise<void>,
+  ): React.MouseEventHandler {
+    return (e: React.MouseEvent) => {
+      e.preventDefault()
+
+      if (!isMobile) {
+        // On desktop, execute immediately
+        handler(e)
+        return
+      }
+
+      // On mobile, implement double-tap behavior
+      const target = e.currentTarget as HTMLElement
+      const lastTapTime = target.dataset.lastTap
+      const currentTime = Date.now().toString()
+
+      if (!lastTapTime || Date.now() - parseInt(lastTapTime) > 500) {
+        // First tap or taps are too far apart - just focus
+        target.dataset.lastTap = currentTime
+        target.focus()
+        e.stopPropagation()
+
+        // Clear the tap state after 500ms
+        setTimeout(() => {
+          delete target.dataset.lastTap
+        }, 500)
+
+        return
+      }
+
+      // Second tap within 500ms - execute the handler
+      delete target.dataset.lastTap
+      handler(e)
+    }
+  }
 
   async function handleClickVote() {
     if (!bid || !address) {
@@ -108,10 +148,9 @@ export function VoteButton({
 
   if (!isWalletConnected) {
     buttonProps = {
-      onClick: async (e: React.MouseEvent) => {
-        e.preventDefault()
+      onClick: withDoubleTapProtection(async () => {
         await connect()
-      },
+      }),
       tooltip: 'Connect Wallet to Vote',
       disabled: false,
       isLink: false,
@@ -140,10 +179,9 @@ export function VoteButton({
     }
   } else if (!voteButtonData?.hasLockupThatExtendsBidsDeploymentDuration) {
     buttonProps = {
-      onClick: (e: React.MouseEvent) => {
-        e.preventDefault()
+      onClick: withDoubleTapProtection(() => {
         setIsTryingToVoteWithExpiredLockups(true)
-      },
+      }),
       tooltip: extendLockupsToVoteTooltip,
       disabled: false,
       isLink: false,
@@ -151,10 +189,9 @@ export function VoteButton({
     }
   } else if (voteButtonData?.validLockups.length === 0) {
     buttonProps = {
-      onClick: (e: React.MouseEvent) => {
-        e.preventDefault()
+      onClick: withDoubleTapProtection(() => {
         setIsTryingToVoteWithExpiredLockups(true)
-      },
+      }),
       tooltip: lockAtomToVoteTooltip,
       disabled: false,
       isLink: false,
@@ -171,21 +208,13 @@ export function VoteButton({
   } else {
     const hasVotedElsewhere = voteButtonData?.hasVotedElsewhere ?? false
     buttonProps = {
-      onClick: (e: React.MouseEvent) => {
-        e.preventDefault()
-        // On mobile, require focus before click (double-tap behavior)
-        const target = e.currentTarget as HTMLElement
-        if (document.activeElement !== target) {
-          target.focus()
-          return
-        }
-
+      onClick: withDoubleTapProtection(() => {
         if (hasVotedElsewhere) {
           setOpenChangeVoteModal(true)
         } else {
           handleClickVote()
         }
-      },
+      }),
       tooltip: undefined,
       disabled: false,
       isLink: false,
@@ -204,7 +233,6 @@ export function VoteButton({
         onBlur={onBlur}
         onClick={buttonProps.onClick}
         className={twMerge(
-          'group/vote-button',
           'btn relative h-full w-8',
           'flex items-center justify-center',
           'transition-all',
@@ -223,16 +251,33 @@ export function VoteButton({
         >
           <span
             className={twJoin(
+              'label hidden',
+              'absolute inset-0',
+              'rounded-full',
+              'border-foreground border border-dashed',
+              'items-center justify-center',
+              'transition-all',
+              'has-not-voted-within:flex',
+              'is-vote-focused:scale-0',
+              'is-vote-focused-elsewhere:scale-0',
+              'text-[6px]',
+              'desktop:hidden!',
+            )}
+          >
+            Vote
+          </span>
+
+          <span
+            className={twJoin(
               'absolute inset-0',
               'flex items-center justify-center',
               'transition-all',
-              'voted-on:hidden',
-              'voted-on:vote-changing:flex',
-              'group-hover/vote-button:flex',
-              'group-hover/vote-button:scale-200',
-              'group-focus/vote-button:scale-200',
-              'group-hover/vote-button:animate-spin',
-              'group-focus/vote-button:animate-spin',
+              'is-voted-on:scale-0',
+              'has-not-voted-within:scale-0',
+              'has-not-voted-within:is-vote-focused-elsewhere:scale-100',
+              'is-vote-focused:scale-200!',
+              'is-vote-focused:animate-spin',
+              'desktop:has-not-voted-within:scale-100',
             )}
           >
             <Icon name="light:circle-dashed" />
@@ -243,14 +288,12 @@ export function VoteButton({
               'absolute inset-0 z-10 items-center justify-center',
               'transition-all',
               'hidden',
-              'voted-on:flex',
-              'voted-on:scale-200',
-              'voted-on:text-foreground!',
-              'voted-on:vote-changing:scale-0',
-              'group-hover/vote-button:flex',
-              'group-focus/vote-button:flex',
-              'group-hover/vote-button:scale-150',
-              'group-focus/vote-button:scale-150',
+              'is-voted-on:flex',
+              'is-voted-on:scale-200',
+              'is-voted-on:text-foreground!',
+              'is-voted-on:is-change-vote-focused-elsewhere:scale-0',
+              'is-vote-focused:flex',
+              'is-vote-focused:scale-150',
             )}
           >
             <Icon name="solid:circle" />
@@ -262,16 +305,14 @@ export function VoteButton({
               'absolute top-1/2 left-1/2',
               '-translate-x-1/2 -translate-y-1/2',
               'scale-0 opacity-0',
-              'voted-on:scale-100',
-              'voted-on:opacity-100',
-              'voted-on:text-background',
-              'voted-on:vote-changing:scale-0',
-              'voted-on:vote-changing:opacity-0',
-              'group-hover/vote-button:text-background',
-              'group-hover/vote-button:scale-100',
-              'group-hover/vote-button:opacity-100',
-              'group-focus/vote-button:scale-100',
-              'group-focus/vote-button:opacity-100',
+              'is-voted-on:scale-100',
+              'is-voted-on:opacity-100',
+              'is-voted-on:text-background',
+              'is-voted-on:is-change-vote-focused-elsewhere:scale-0',
+              'is-voted-on:is-change-vote-focused-elsewhere:opacity-0',
+              'is-vote-focused:text-background',
+              'is-vote-focused:scale-100',
+              'is-vote-focused:opacity-100',
             )}
           >
             <Icon name="solid:check" />
@@ -281,14 +322,12 @@ export function VoteButton({
             className={twJoin(
               'glow z-0',
               'scale-0 opacity-0',
-              'group-hover/vote-button:scale-300',
-              'group-hover/vote-button:opacity-100',
-              'group-focus/vote-button:scale-300',
-              'group-focus/vote-button:opacity-100',
-              'voted-on:scale-300',
-              'voted-on:opacity-100',
-              'voted-on:vote-changing:scale-0',
-              'voted-on:vote-changing:opacity-0',
+              'is-vote-focused:scale-300',
+              'is-vote-focused:opacity-100',
+              'is-voted-on:scale-300',
+              'is-voted-on:opacity-100',
+              'is-voted-on:is-change-vote-focused-elsewhere:scale-0',
+              'is-voted-on:is-change-vote-focused-elsewhere:opacity-0',
             )}
           />
         </span>

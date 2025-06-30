@@ -90,7 +90,7 @@ export function TrancheNavigation({
             key={index}
             id={`tranche-nav-button--${sourceId}-${tranche.id}`}
             className={twMerge(
-              userVotedInTranche && 'voted-within',
+              userVotedInTranche && 'has-voted-within',
               isActiveTranche && 'is-active',
               '@container',
               'relative items-center',
@@ -154,15 +154,15 @@ export function TrancheNavigation({
               <div
                 className={twJoin(
                   'footnote relative z-10 whitespace-nowrap',
-                  'voted-within:text-foreground',
+                  'has-voted-within:text-foreground',
                 )}
               >
-                <div className="voted-within:hidden flex gap-1">
+                <div className="has-voted-within:hidden flex gap-1">
                   <span className="sr-only">Haven&rsquo;t voted</span>
                   <Icon name="solid:circle-dashed" />
                 </div>
 
-                <div className="voted-within:flex relative hidden gap-1">
+                <div className="has-voted-within:flex relative hidden gap-1">
                   <span className="sr-only">You&rsquo;ve voted!</span>
                   <Icon name="solid:circle-check" />
                 </div>
@@ -201,7 +201,7 @@ export function TrancheNavigation({
                 'is-active:rounded-t-[calc(var(--spacing)*2)]',
                 'is-active:from-palette-green/80',
                 'is-active:delay-500',
-                'voted-within:opacity-100',
+                'has-voted-within:opacity-100',
                 '@4xs:is-active:rounded-tr-[calc(var(--spacing)*2)]',
                 '@4xs:rounded-r-[calc(var(--spacing)*2)]',
                 '@4xs:bg-linear-to-bl',

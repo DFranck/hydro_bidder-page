@@ -71,16 +71,18 @@
 @custom-variant is-active (&:where(.is-active, .is-active *));
 @custom-variant sidebar-open (&:where(.sidebar-open *));
 @custom-variant sidebar-closed (&:where(.sidebar-closed *));
-@custom-variant voted-on (&:where(.voted-on, .voted-on *));
-@custom-variant voted-within (&:where(.voted-within, .voted-within *));
-@custom-variant low-votes (&:where(.low-votes, .low-votes *));
-@custom-variant vote-focus (&:where(.is-vote-focused, .is-vote-focused *));
-@custom-variant voted-on-focus (&:where(.is-voted-on-focused, .is-voted-on-focused *));
-@custom-variant change-focus (&:where(.is-change-focused, .is-change-focused *));
-@custom-variant has-vote-focus (&:where(:has(.is-vote-focused), :has(.is-vote-focused) *));
-@custom-variant has-voted-on-focus (&:where(:has(.is-voted-on-focused), :has(.is-voted-on-focused) *));
-@custom-variant has-change-focus (&:where(:has(.is-change-focused), :has(.is-change-focused) *));
-@custom-variant vote-changing (&:where(:has(.is-change-focused) *, :has(.is-change-focused)));
+
+@custom-variant is-voted-on (&:where(.is-voted-on, .is-voted-on *));
+@custom-variant is-below-threshold (&:where(.is-below-threshold, .is-below-threshold *));
+@custom-variant is-vote-focused (&:where(.is-vote-focused, .is-vote-focused *));
+@custom-variant is-vote-focused-elsewhere (&:where(:has(.is-vote-focused), :has(.is-vote-focused) *));
+@custom-variant is-voted-on-focused (&:where(.is-voted-on-focused, .is-voted-on-focused *));
+@custom-variant is-voted-on-focused-elsewhere (&:where(:has(.is-voted-on-focused), :has(.is-voted-on-focused) *));
+@custom-variant is-change-vote-focused (&:where(.is-change-vote-focused, .is-change-vote-focused *));
+@custom-variant is-change-vote-focused-elsewhere (&:where(:has(.is-change-vote-focused), :has(.is-change-vote-focused) *));
+
+@custom-variant has-voted-within (&:where(.has-voted-within, .has-voted-within *));
+@custom-variant has-not-voted-within (&:not(:where(.has-voted-within, .has-voted-within *)));
 
 @utility theme-color-beige {
   --color-theme-color: var(--color-palette-beige);

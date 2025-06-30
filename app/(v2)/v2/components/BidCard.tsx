@@ -108,17 +108,17 @@ function FloatingCardElements({
           'group-focus-within/bid-card:bg-theme-color/60!',
           '@card-is-row:block hidden',
           // Dimming when other bids are focused
-          'has-vote-focus:opacity-50',
-          'has-voted-on-focus:opacity-50',
-          'has-change-focus:opacity-50',
+          'is-vote-focused-elsewhere:opacity-50',
+          'is-voted-on-focused-elsewhere:opacity-50',
+          'is-change-vote-focused-elsewhere:opacity-50',
           // But not when this bid is the focused one
-          'vote-focus:opacity-100!',
-          'voted-on-focus:opacity-100!',
-          'change-focus:opacity-100!',
-          // Highlight voted bids when in change-focus mode
-          'voted-on:vote-changing:theme-color-beige',
-          'voted-on:vote-changing:bg-theme-color/60',
-          'voted-on:vote-changing:opacity-100!',
+          'is-vote-focused:opacity-100!',
+          'is-voted-on-focused:opacity-100!',
+          'is-change-vote-focused:opacity-100!',
+          // Highlight voted bids when in change-vote-focused mode
+          'is-voted-on:is-change-vote-focused-elsewhere:theme-color-beige',
+          'is-voted-on:is-change-vote-focused-elsewhere:bg-theme-color/60',
+          'is-voted-on:is-change-vote-focused-elsewhere:opacity-100!',
           isFirstCell
             ? [
                 'block',
@@ -133,9 +133,9 @@ function FloatingCardElements({
       >
         <div
           className={twMerge(
-            'voted-on:block hidden',
-            'vote-focus:block',
-            'change-focus:block',
+            'is-voted-on:block hidden',
+            'is-vote-focused:block',
+            'is-change-vote-focused:block',
             '-inset-tightest absolute',
             'border-theme-color border-(length:--spacing-tightest)',
             'rounded-[calc(var(--radius-standard)+var(--spacing-tightest))]',
@@ -195,7 +195,7 @@ export function BidCard({
       focusStateClass = 'is-voted-on-focused'
     } else if (userHasVotedInThisTranche) {
       // User has voted on another bid in this tranche, so this is a "change vote" interaction
-      focusStateClass = 'is-change-focused'
+      focusStateClass = 'is-change-vote-focused'
     } else {
       // Normal vote focus
       focusStateClass = 'is-vote-focused'
@@ -219,13 +219,10 @@ export function BidCard({
       id={`bid-card--${sourceId}-${bidId}`}
       tabIndex={0}
       className={twMerge(
-        userHasVotedOnThisBid && 'voted-on',
-        isBelowVoteThreshold && 'low-votes',
+        isLoading && 'opacity-75',
+        userHasVotedOnThisBid && 'is-voted-on',
+        isBelowVoteThreshold && 'is-below-threshold',
         focusStateClass,
-        'voted-on:theme-color-green',
-        'low-votes:theme-color-beige',
-        'vote-focus:theme-color-green',
-        'change-focus:theme-color-green',
         'group/bid-card',
         'grid',
         'relative z-10',
@@ -234,13 +231,16 @@ export function BidCard({
         'transition-all',
         'p-tighter',
         'grid-areas-bid-card',
+        '[&_.important-value]:text-base',
+        'is-below-threshold:theme-color-beige',
+        'is-change-vote-focused:theme-color-green',
+        'is-vote-focused:theme-color-green',
+        'is-voted-on:theme-color-green',
         '@card-is-row:table-row',
         '@card-is-row:grid-cols-none',
         '@card-is-row:grid-rows-none',
         '@card-is-row:gap-0',
         '@card-is-row:p-0',
-        '[&_.important-value]:text-base',
-        isLoading && 'opacity-75',
         className,
       )}
       {...otherProps}

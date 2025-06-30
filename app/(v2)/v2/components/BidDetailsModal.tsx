@@ -62,8 +62,8 @@ export function BidDetailsModal({
   return (
     <div
       className={twJoin(
-        isBelowVoteThreshold && 'low-votes',
-        'low-votes:theme-color-beige',
+        isBelowVoteThreshold && 'is-below-threshold',
+        'is-below-threshold:theme-color-beige',
         'fixed inset-0 z-20',
         'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-loose))]',
         'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tight))]',

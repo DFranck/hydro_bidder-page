@@ -134,10 +134,10 @@ export function BidDetails({
   return (
     <article
       className={twMerge(
-        isBelowVoteThreshold && 'low-votes',
-        userHasVotedOnThisBid && 'voted-on',
-        'voted-on:theme-color-green',
-        'low-votes:theme-color-beige',
+        isBelowVoteThreshold && 'is-below-threshold',
+        userHasVotedOnThisBid && 'is-voted-on',
+        'is-voted-on:theme-color-green',
+        'is-below-threshold:theme-color-beige',
         'grid grid-rows-[min-content_auto]',
         'h-full overflow-hidden',
         'relative',
@@ -150,8 +150,8 @@ export function BidDetails({
           'flex items-center',
           'px-loosest py-standard',
           'bg-theme-color',
-          'low-votes:text-background',
-          'voted-on:text-background',
+          'is-below-threshold:text-background',
+          'is-voted-on:text-background',
         )}
       >
         <h1 className="title">{bidDescription?.title}</h1>

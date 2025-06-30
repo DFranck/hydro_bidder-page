@@ -101,7 +101,7 @@ export function Tranche({
 
         <div
           className={twJoin(
-            'voted-within:block hidden',
+            'has-voted-within:block hidden',
             'absolute inset-y-0 right-0 left-1/2 z-0',
             'from-palette-green/80 bg-linear-to-l to-transparent',
           )}
@@ -210,7 +210,8 @@ export function Tranche({
       id={`tranche-container--${sourceId}-${trancheId}`}
       className={twMerge(
         isActive && 'is-active',
-        userVotedInTranche && 'voted-within',
+        userVotedInTranche && 'has-voted-within',
+        !userVotedInTranche && 'has-not-voted-within',
         'relative w-full',
         'h-full shrink-0 grow-0',
         'snap-start',
