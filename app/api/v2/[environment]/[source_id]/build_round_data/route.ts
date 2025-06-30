@@ -17,7 +17,7 @@ export async function GET(
   const urlPrefix = `/api/v2/${environment}/${source_id}`
 
   const currentRoundIdResponse = await fetch(
-    new URL(`${urlPrefix}/current_round`, request.url)
+    new URL(`${urlPrefix}?operation=current_round`, request.url)
   )
   const { round_id: currentRoundId } = await currentRoundIdResponse.json()
 

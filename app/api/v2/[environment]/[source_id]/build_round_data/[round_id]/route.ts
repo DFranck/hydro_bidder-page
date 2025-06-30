@@ -33,12 +33,12 @@ export async function GET(
   ).then((res) => res.json())) as LiquidityDeployment[]
 
   const currentRoundIdResponse = await fetch(
-    new URL(`${urlPrefix}/current_round`, request.url)
+    new URL(`${urlPrefix}?operation=current_round`, request.url)
   )
   const { round_id: currentRoundId } = await currentRoundIdResponse.json()
 
   const tranchesResponse = await fetch(
-    new URL(`${urlPrefix}/tranches`, request.url)
+    new URL(`${urlPrefix}?operation=tranches`, request.url)
   )
   const tranches = (await tranchesResponse.json()) as Tranche[]
 

@@ -26,7 +26,7 @@ export async function GET(
 
   // Get the tranches
   const tranchesResponse = await fetch(
-    new URL(`/api/v2/${environment}/${source_id}/tranches`, request.url)
+    new URL(`/api/v2/${environment}/${source_id}?operation=tranches`, request.url)
   )
   const tranches = (await tranchesResponse.json()) as Tranche[]
 

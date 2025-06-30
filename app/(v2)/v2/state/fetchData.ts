@@ -1,7 +1,7 @@
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { supabase } from '@/lib/supabase'
-import { getEnvironment } from '@v2/environments'
-import { DataPromises, environments } from '@v2/types'
+import { environments, getEnvironment } from '@v2/environments'
+import { DataPromises } from '@v2/types'
 import { headers } from 'next/headers'
 
 export function fetchData(): DataPromises {

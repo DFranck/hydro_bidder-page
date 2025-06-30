@@ -1,5 +1,4 @@
-import { getEnvironment } from '@v2/environments'
-import { environments } from '@v2/types'
+import { environments, getEnvironment } from '@v2/environments'
 
 export async function fetchWalletData(address: string) {
   const environment = getEnvironment()
