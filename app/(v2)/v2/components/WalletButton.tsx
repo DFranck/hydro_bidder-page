@@ -78,27 +78,20 @@ export function WalletButton() {
   }
 
   return (
-    <div className={twJoin('p-standard', 'fixed top-0 right-16')}>
-      <Tooltip tipContents="Manage Wallet">
-        <button
-          onClick={buttonProps.onClick}
-          disabled={buttonProps.disabled}
-          className={twJoin(
-            'btn btn-secondary',
-            'flex items-center justify-center',
-            'size-12',
-            'rounded-full',
-            'shadow-lg',
-            'transition-all',
-            'hover:shadow-xl',
-            'focus:shadow-xl',
-            'bg-background/80 backdrop-blur-sm',
-            'border-palette-beige/20 border',
-          )}
-        >
-          <Icon name="solid:wallet" className="size-5" />
-        </button>
-      </Tooltip>
-    </div>
+    <Tooltip
+      tipContents="Manage Wallet"
+      className="top-standard right-standard fixed"
+    >
+      <button
+        disabled={buttonProps.disabled}
+        className={twJoin(
+          'btn-essentials size-bar-height-standard',
+          'text-palette-green',
+        )}
+        onClick={buttonProps.onClick}
+      >
+        <Icon name="solid:wallet" />
+      </button>
+    </Tooltip>
   )
 }

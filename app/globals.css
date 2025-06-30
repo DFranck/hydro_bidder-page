@@ -132,14 +132,19 @@
   }
 }
 
-@utility btn {
+@utility btn-essentials {
   @apply h-bar-height-standard;
   @apply inline-flex items-center justify-center;
-  @apply gap-tightest px-loose;
-  @apply rounded-small border-0;
-  @apply text-center leading-[1.1em] whitespace-nowrap;
+  @apply border-0;
   @apply cursor-pointer touch-manipulation;
   @apply transition-all;
+}
+
+@utility btn {
+  @apply btn-essentials;
+  @apply gap-tightest px-loose;
+  @apply rounded-small;
+  @apply text-center leading-[1.1em] whitespace-nowrap;
 }
 
 @utility btn-primary {

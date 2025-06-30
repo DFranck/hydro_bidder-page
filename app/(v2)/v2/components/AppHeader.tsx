@@ -121,8 +121,7 @@ export function AppHeader() {
         classNameForBackdrop="bg-shaded backdrop-blur-sm"
         classNameForBackground="bg-gradient-to-l from-palette-blue to-background"
         classNameForMenuButton={twJoin(
-          'w-12',
-          'h-bar-height-standard',
+          'size-bar-height-standard',
           'top-standard left-standard fixed z-40',
         )}
         classNameForItems={twJoin(

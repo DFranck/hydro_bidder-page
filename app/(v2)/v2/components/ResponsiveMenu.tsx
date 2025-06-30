@@ -123,7 +123,9 @@ export function ResponsiveMenu({
         className={twMerge(
           'pointer-events-none',
           'absolute inset-0 z-20',
-          'opacity-0 transition-all duration-500',
+          'transition-all duration-500',
+          'translate-x-full opacity-0',
+          'group-focus-within/navbar:translate-x-0',
           'group-focus-within/navbar:opacity-100',
           'block',
           'desktop:hidden',
@@ -135,7 +137,9 @@ export function ResponsiveMenu({
       <div
         className={twMerge(
           'relative z-30',
-          'opacity-0 transition-all duration-500',
+          'transition-all duration-500',
+          'translate-x-full opacity-0',
+          'group-focus-within/navbar:translate-x-0',
           'group-focus-within/navbar:opacity-100',
           classNameForItems,
         )}
