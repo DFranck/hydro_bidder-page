@@ -1,5 +1,5 @@
 import { GlobalLockupCapacityInfo } from "@/contract-apis/types"
-import { createContext, ReactNode, useEffect, useRef, useState } from "react"
+import { createContext, ReactNode, useEffect, useState } from "react"
 
 const defaultValue: GlobalLockupCapacityInfo = {
   lockedAtomTotalGlobal: 0,
@@ -9,8 +9,13 @@ const defaultValue: GlobalLockupCapacityInfo = {
   lockedAtomIsAtCapacityGlobal: false,
 }
 
-export const GlobalLockupInfoContext =
-  createContext<GlobalLockupCapacityInfo>(defaultValue)
+export const GlobalLockupInfoContext = createContext<{
+  data: GlobalLockupCapacityInfo
+  isLoaded: boolean
+}>({
+  data: defaultValue,
+  isLoaded: false,
+})
 
 interface ProviderProps {
   children: ReactNode
@@ -21,25 +26,16 @@ export const GlobalLockupInfoProvider = ({
   children,
   pollingIntervalMs = 10000,
 }: ProviderProps) => {
+  const [isLoaded, setIsLoaded] = useState(false)
   const [globalCapacityInfo, setGlobalCapacityInfo] =
     useState<GlobalLockupCapacityInfo>(defaultValue)
-  const [isLoading, setIsLoading] = useState(false)
-  const fetchPromiseRef = useRef<Promise<void> | null>(null)
 
-  const fetchData = async () => {
-    if (isLoading || fetchPromiseRef.current) {
-      return
-    }
+  useEffect(() => {
+    let isMounted = true
 
-    setIsLoading(true)
-
-    const fetchPromise = (async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("/api/total-locked-tokens", {
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        })
+        const res = await fetch("/api/total-locked-tokens")
         const data = await res.json()
 
         if (
@@ -54,43 +50,40 @@ export const GlobalLockupInfoProvider = ({
         const rawLockedAtomMaxGlobal = Number(data.rawLockedAtomMaxGlobal)
         const totalLockedRaw = Number(data.rawTotalLockedTokens)
         const lockedAtomMaxGlobal = rawLockedAtomMaxGlobal / 1e6
-        const lockedAtomTotalGlobal = totalLockedRaw / 1e6
-        const lockedAtomRemainingCapacityGlobal = Number(
+        let lockedAtomTotalGlobal = totalLockedRaw / 1e6
+        let lockedAtomRemainingCapacityGlobal = Number(
           (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
         )
-        const lockedAtomPercentageGlobal = Math.floor(
-          (lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100
-        )
+
+        if (lockedAtomRemainingCapacityGlobal < 0.001) {
+          lockedAtomRemainingCapacityGlobal = 0
+          lockedAtomTotalGlobal = lockedAtomMaxGlobal
+        }
+
+        const lockedAtomPercentageGlobal =
+          lockedAtomRemainingCapacityGlobal === 0
+            ? 100
+            : Math.floor((lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100)
+
         const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal >= 100
 
-        setGlobalCapacityInfo({
-          lockedAtomTotalGlobal,
-          lockedAtomMaxGlobal,
-          lockedAtomRemainingCapacityGlobal,
-          lockedAtomPercentageGlobal,
-          lockedAtomIsAtCapacityGlobal,
-        })
+        if (isMounted) {
+          setGlobalCapacityInfo({
+            lockedAtomTotalGlobal,
+            lockedAtomMaxGlobal,
+            lockedAtomRemainingCapacityGlobal,
+            lockedAtomPercentageGlobal,
+            lockedAtomIsAtCapacityGlobal,
+          })
+          setIsLoaded(true)
+        }
       } catch (err) {
         console.error("Fetch error:", err)
-      } finally {
-        setIsLoading(false)
-        fetchPromiseRef.current = null
       }
-    })()
-
-    fetchPromiseRef.current = fetchPromise
-    await fetchPromise
-  }
-
-  useEffect(() => {
-    let isMounted = true
+    }
 
     fetchData()
-    const interval = setInterval(() => {
-      if (isMounted) {
-        fetchData()
-      }
-    }, pollingIntervalMs)
+    const interval = setInterval(fetchData, pollingIntervalMs)
 
     return () => {
       isMounted = false
@@ -99,7 +92,9 @@ export const GlobalLockupInfoProvider = ({
   }, [pollingIntervalMs])
 
   return (
-    <GlobalLockupInfoContext.Provider value={globalCapacityInfo}>
+    <GlobalLockupInfoContext.Provider
+      value={{ data: globalCapacityInfo, isLoaded }}
+    >
       {children}
     </GlobalLockupInfoContext.Provider>
   )

@@ -14,7 +14,6 @@ import { ChainContext } from "@cosmos-kit/core"
 import floor from "lodash/floor"
 import isNumber from "lodash/isNumber"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { ChangeEvent, useEffect, useState } from "react"
 import { classNames } from "../classNames"
 import { ValidatorListItem } from "../components/ValidatorListItem"
@@ -33,11 +32,11 @@ export function LockForm({
   validatorMap: Map<string, Validator>
   validatorLiquidStakingCap: string
 }) {
-  const router = useRouter()
   const { lockedAtomEpochInNanos, lockedAtomMaxWallet, lockedAtomTotalWallet } =
     useBackendData()
-  const { lockedAtomTotalGlobal, lockedAtomRemainingCapacityGlobal } =
-    useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomTotalGlobal, lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const { setToasts } = useToasts()
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(
@@ -79,7 +78,6 @@ export function LockForm({
     ) {
       setAmount(String(0))
       setToasts([toastMessages.lockupCapacityFull])
-      router.push("/lockups")
     }
   }, [maxAtomToBeLocked, lockedAtomRemainingCapacityGlobal])
 

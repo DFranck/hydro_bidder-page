@@ -47,7 +47,7 @@ export async function fetchRoundTributes({
     return tributes
   } else {
     const response = await fetch(
-      `${numiaTributesEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
+      `${numiaTributesEndpoint}?round_id=${roundId}&tribute_contract=${tributeContractAddress}&time=${new Date().getTime()}`,
       {
         headers: {
           Accept: "application/json",
@@ -63,27 +63,18 @@ export async function fetchRoundTributes({
     }
 
     // Clean up the response
-    const responseJson = await response.json()
-    
-    // Add debugging and proper error handling
-    console.log("fetchRoundTributes responseJson:", JSON.stringify(responseJson, null, 2))
-    
-    if (!Array.isArray(responseJson) || responseJson.length === 0) {
-      console.warn(`No tribute data found for round ${roundId}`)
-      return []
-    }
-    
-    if (!responseJson[0] || !responseJson[0].response) {
-      console.warn(`Invalid tribute response format for round ${roundId}:`, responseJson[0])
-      return []
-    }
-    
+    let responseJson
     try {
-      const tributes = JSON.parse(responseJson[0].response).data.tributes
-      return tributes as Tribute[]
+      responseJson = await response.json()
     } catch (error) {
-      console.error(`Failed to parse tribute response for round ${roundId}:`, error)
+      throw new Error(`Error converting response to JSON: ${error}`)
+    }
+
+    if (!responseJson || responseJson.length === 0) {
       return []
     }
+
+    const tributes = JSON.parse(responseJson[0].response).data.tributes
+    return tributes as Tribute[]
   }
 }

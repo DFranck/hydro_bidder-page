@@ -16,7 +16,12 @@ import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { Tooltip } from "@/components/Tooltip"
-import { lockupLimitTooltip } from "@/components/ToolTips"
+import {
+  initializingLockupsTooltip,
+  lockupLimitTooltip,
+  needsWalletConnectionTooltip,
+  notEligibleTooltip,
+} from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -27,8 +32,13 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LockupsTables } from "./LockupsTables"
-import { NewLockupButton } from "./NewLockupButton"
+import { NewLockUpButton } from "@/components/NewLockUpButton"
+import { LockupsLST } from "./LockupsLST"
+import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
+import { cn } from "@/lib/utils"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -43,7 +53,10 @@ export default function LockupsPage() {
     lockedAtomMaxWallet,
     lockedAtomPercentageWallet,
     lockedAtomTotalWallet,
+    hasGatekeeper,
+    isLoading,
   } = useBackendData()
+
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
   const expiredLockups = lockups.filter(
@@ -52,6 +65,42 @@ export default function LockupsPage() {
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [token, setToken] = useState<{
+    name: "stATOM" | "dATOM"
+    amount: number
+  }>({
+    name: "dATOM",
+    amount: 0,
+  })
+
+  const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
+
+  const amountOfStAtomInWallet = useAmountOfTokenInWallet("stATOM")
+
+  function handleStAtom() {
+    setIsOpen(true)
+    setToken({
+      name: "stATOM",
+      amount: amountOfStAtomInWallet,
+    })
+  }
+
+  function handleDAtom() {
+    setIsOpen(true)
+    setToken({
+      name: "dATOM",
+      amount: amountOfDAtomInWallet,
+    })
+  }
+
+  function handleCreationModalWindowClose() {
+    setIsOpen(false)
+  }
+
+  function handleModalWindowCloseComplete() {
+    setIsOpen(false)
+  }
 
   async function handleClickToNextUnlockingStep() {
     router.push("/lock-atom")
@@ -136,27 +185,46 @@ export default function LockupsPage() {
           "
         >
           <h2 className="sr-only">Your Lockups</h2>
-
-          <Tooltip
-            tipContents={lockupLimitTooltip}
-            className="block w-96 shrink-0"
-          >
-            <ProgressBar
-              percentage={lockedAtomPercentageWallet}
-              warningZone={(percentage) => percentage >= 75}
-              dangerZone={(percentage) => percentage >= 95}
+          {hasGatekeeper ? (
+            <Tooltip
+              tipContents={
+                lockedAtomMaxWallet === 0
+                  ? notEligibleTooltip
+                  : lockupLimitTooltip({
+                      lockedAtomMaxWallet,
+                      lockedAtomTotalWallet,
+                    })
+              }
+              className="block w-96 shrink-0"
             >
-              <div className="flex items-center gap-1 opacity-60">
-                <span>
-                  {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedAtomMaxWallet} ATOM max
-                </span>
-                <span>
-                  <Icon name="circle-info" />
-                </span>
-              </div>
-            </ProgressBar>
-          </Tooltip>
+              <ProgressBar
+                percentage={lockedAtomPercentageWallet}
+                warningZone={(percentage) => percentage >= 75}
+                dangerZone={(percentage) => percentage >= 95}
+                className={cn({
+                  "!gap-2": lockedAtomMaxWallet === 0,
+                })}
+              >
+                <div className="flex items-center gap-1 opacity-60">
+                  {lockedAtomMaxWallet === 0 ? (
+                    <span>Not Eligible</span>
+                  ) : (
+                    <span>
+                      {lockedAtomTotalWallet.toFixed(
+                        DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                      )}{" "}
+                      / {lockedAtomMaxWallet} ATOM max
+                    </span>
+                  )}
+                  <span>
+                    <Icon name="circle-info" />
+                  </span>
+                </div>
+              </ProgressBar>
+            </Tooltip>
+          ) : (
+            <div />
+          )}
 
           <div
             className="
@@ -181,8 +249,29 @@ export default function LockupsPage() {
                 Unlock {expiredLockups.length} Expired
               </StyledText>
             )}
-
-            <NewLockupButton />
+            <ConditionalWrapper
+              condition={!isWalletConnected || isLoading}
+              wrapper={(children) => (
+                <Tooltip
+                  className="w-auto"
+                  classNamesForTooltip="sm:-ml-12"
+                  tipContents={
+                    !isWalletConnected
+                      ? needsWalletConnectionTooltip
+                      : initializingLockupsTooltip
+                  }
+                >
+                  <div className="pointer-events-none cursor-not-allowed opacity-50">
+                    {children}
+                  </div>
+                </Tooltip>
+              )}
+            >
+              <NewLockUpButton
+                handleStAtom={handleStAtom}
+                handleDAtom={handleDAtom}
+              />
+            </ConditionalWrapper>
           </div>
         </div>
 
@@ -296,6 +385,14 @@ export default function LockupsPage() {
           </Card.Footer>
         </Card>
       </ModalWindow>
+
+      <LockupsLST
+        tokenInfo={token}
+        isCreationModalOpen={isOpen}
+        setIsCreationModalOpen={setIsOpen}
+        handleCreationModalWindowClose={handleCreationModalWindowClose}
+        handleModalWindowCloseComplete={handleModalWindowCloseComplete}
+      />
     </>
   )
 }

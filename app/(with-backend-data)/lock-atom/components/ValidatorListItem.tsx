@@ -3,6 +3,7 @@ import { Delegation, Validator } from "@/contract-apis/fetchWalletValidators"
 import { formatAmount } from "@/lib/formatAmount"
 import { classNames } from "../classNames"
 import { calculateLsmCapacity } from "../functions/calculateLsmCapacity"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 
 export interface ValidatorListItemProps {
   validator: {
@@ -39,7 +40,7 @@ export function ValidatorListItem({
           <span className="text-sm text-gray-400">
             {isDisabled
               ? "(Insufficient validator bond)"
-              : `${formatAmount(v.delegation_balance.amount)} ATOM staked`}
+              : `${formatAmount(v.delegation_balance.amount, undefined, DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS)} ATOM staked`}
           </span>
         </div>
         <StyledText

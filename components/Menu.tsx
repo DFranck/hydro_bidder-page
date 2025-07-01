@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon"
 import { IconString } from "@/components/Icon/types"
+import Link from "next/link"
 import { ComponentProps, ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 interface MenuProps extends ComponentProps<"div"> {
@@ -12,7 +13,7 @@ export interface MenuItem {
   icon?: IconString
   isActive?: boolean
   label: ReactNode
-  href?: string
+  href: string
 }
 
 export function Menu({
@@ -52,7 +53,7 @@ export function Menu({
         )}
       >
         {items.map((item) => (
-          <a
+          <Link
             key={item.href}
             href={item.href}
             className={twMerge(
@@ -73,7 +74,7 @@ export function Menu({
               className={!item.icon ? "opacity-0" : undefined}
             />
             {item.label}
-          </a>
+          </Link>
         ))}
       </div>
     </div>

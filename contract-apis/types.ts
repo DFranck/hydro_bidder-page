@@ -1,13 +1,16 @@
 import { BaseRowObject } from "@/components/StyledTable/types"
 import { ReactNode } from "react"
 import {
-    Coin,
-    Constants,
-    LiquidityDeployment,
-    LockupWithPerTrancheInfo,
-    Proposal,
-    Tranche,
-    VoteWithPower,
+  Coin,
+  Constants,
+  LiquidityDeployment,
+  LockEntryV2 as LockEntry,
+  LockEntryWithPower,
+  LockupWithPerTrancheInfo,
+  PerTrancheLockupInfo,
+  Proposal,
+  Tranche,
+  VoteWithPower,
 } from "../app/ts_types/HydroBase.types"
 import { Tribute, TributeClaim } from "../app/ts_types/TributeBase.types"
 import { CamelCaseKeys } from "../lib/keysFromSnakeToCamelCase"
@@ -27,25 +30,32 @@ export interface AugmentedBackendDataAfterWallet
   isWalletConnected: boolean
   lockedAtomIsAtCapacityWallet: boolean
   lockedAtomPercentageWallet: number
+  lockedAtomTotalWalletStat: number
+  lockedStAtomTotalWalletStat: number
+  lockedDAtomTotalWalletStat: number
+  lockedTokenTotalWalletStat: number
   lockedAtomTotalWallet: number
+  lockedAtomMaxWallet: number
   lockups: AugmentedLockup[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
   votingPowerAvailableByTrancheId: Record<number, number>
   votingPowerSpentByTrancheId: Record<number, number>
   votingPowerTotal: number
+  hasGatekeeper: boolean
 }
 
 export interface AugmentedBackendDataBeforeWallet {
   currentRoundPrices: RoundPrices
   atomPrice: number
+  dAtomPrice: number
+  stAtomPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
   tranches: Tranche[]
   lockedAtomEpochInNanos: number
-  lockedAtomMaxWallet: number
   metricsForPreHydroBids: PreHydroBid[]
   metricsGlobal: SanitizedMetricsFromNumia
   minTributeFactor: number
@@ -81,6 +91,7 @@ export interface AugmentedLockup {
   funds: {
     amount: number
     denom: string
+    denomInfo?: AugmentedCoin
   }
   isEligibleToVote: boolean
   isExpired: boolean
@@ -285,12 +296,25 @@ export interface PreHydroBid {
   yield: number
 }
 
+
+export interface AugmentedLockupWithPerTrancheInfo {
+  lock_with_power: LockEntryWithPower & {
+    lock_entry: LockEntry & {
+      funds: AugmentedCoin
+    }
+  }
+  per_tranche_info: PerTrancheLockupInfo[]
+}
+
 export interface RawWalletData {
   voting_power: number
-  lockups_with_per_tranche_infos: LockupWithPerTrancheInfo[]
+  lockups_with_per_tranche_infos: AugmentedLockupWithPerTrancheInfo[]
   historical_tribute_claims: TributeClaim[]
   outstanding_tribute_claims: TributeClaim[]
   votes: VoteWithPower[]
+  currently_locked: number | string
+  maxUserCanLock: string
+  hasGatekeeper: boolean
 }
 
 export interface RoundPrices {
@@ -397,6 +421,17 @@ export interface ExperimentalRow extends BaseRowObject {
   additionalStatus?: ReactNode
   additionalInitialAdressHoldings?: ReactNode
   additionalDeploymentAPR?: ReactNode
+}
+
+export interface ProofResponse {
+  address: string
+  amount: string
+  proofs: string[]
+}
+
+export interface MaxUserCanLockResponse {
+  address: string
+  amount: string
 }
 
 type WithOverwrites<T> = T extends object

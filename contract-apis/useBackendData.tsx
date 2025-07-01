@@ -20,6 +20,7 @@ import {
   useState,
 } from "react"
 import { BackendDataTweak } from "./types"
+import { useGlobalLockupCapacityInfo } from "./useGlobalLockupCapacityInfo"
 
 // Declare backendData property on Window interface
 declare global {
@@ -39,6 +40,8 @@ const initialBackendDataContext: BackendDataContextType = {
   address: "",
   currentRoundPrices: {},
   atomPrice: 0,
+  dAtomPrice: 0,
+  stAtomPrice: 0,
   bidsInfo: {},
   claimsHistorical: [],
   claimsOutstanding: [],
@@ -52,7 +55,12 @@ const initialBackendDataContext: BackendDataContextType = {
   lockedAtomIsAtCapacityWallet: false,
   lockedAtomMaxWallet: 0,
   lockedAtomPercentageWallet: 0,
+  lockedAtomTotalWalletStat: 0,
+  lockedStAtomTotalWalletStat: 0,
+  lockedDAtomTotalWalletStat: 0,
+  lockedTokenTotalWalletStat: 0,
   lockedAtomTotalWallet: 0,
+  hasGatekeeper: false,
   lockups: [],
   metricsForPreHydroBids: [],
   minTributeFactor: 0,
@@ -98,6 +106,7 @@ export function BackendDataContextProvider({
   rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
   children: ReactNode
 }) {
+  const { data: { lockedAtomRemainingCapacityGlobal }, isLoaded: isGlobalCapacityLoaded } = useGlobalLockupCapacityInfo()
   const pathname = usePathname()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -119,6 +128,8 @@ export function BackendDataContextProvider({
   const isWalletConnectedOrForceConnected =
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
+
+  const {  data: {lockedAtomTotalGlobal} } = useGlobalLockupCapacityInfo()
 
   // Dependencies: [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
@@ -179,15 +190,18 @@ export function BackendDataContextProvider({
       return
     }
 
-    const { currentRoundId, tranches } = augmentedBackendDataBeforeWallet
+    const { currentRoundId, tranches, currentRoundPrices } =
+      augmentedBackendDataBeforeWallet
 
     ;(async () => {
+      if (!isGlobalCapacityLoaded) return
       setIsLoading(true)
 
       const walletData = await fetchWalletData({
         address: effectiveAddress,
         currentRoundId,
         tranches,
+        currentRoundPrices,
       })
 
       const tweakedWalletData = mergeWithOverwrite(
@@ -200,6 +214,7 @@ export function BackendDataContextProvider({
         address: effectiveAddress,
         augmentedBackendDataBeforeWallet,
         walletData: tweakedWalletData,
+        lockedAtomRemainingCapacityGlobal,
       })
 
       const tweakedAugmentedBackendDataAfterWallet = mergeWithOverwrite(
@@ -224,7 +239,7 @@ export function BackendDataContextProvider({
 
       setIsLoading(false)
     })()
-  }, [address, loadedTweaks, rawBackendDataBeforeWallet])
+  }, [address, loadedTweaks, rawBackendDataBeforeWallet, isGlobalCapacityLoaded])
 
   useEffect(() => {
     refetchBackendData()

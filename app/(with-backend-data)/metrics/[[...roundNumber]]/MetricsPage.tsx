@@ -130,7 +130,7 @@ export function MetricsPage({
             <Menu
               className="relative z-100"
               items={menuItems}
-              classNameForPopup="left-auto -right-10"
+              classNameForPopup="left-auto -right-10 max-h-80 overflow-y-auto"
             >
               <StyledText
                 variant="button.secondary"
