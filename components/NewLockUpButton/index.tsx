@@ -121,7 +121,7 @@ export function NewLockUpButton({
                   as={"span"}
                   variant="button.primary"
                   onClick={item.isDisabled ? () => {} : item.action}
-                  className="min-w-full"
+                  className="!min-w-full"
                 >
                   Lock {item.label}
                 </StyledText>
