@@ -1,27 +1,27 @@
 import Image from 'next/image'
-import { twJoin } from 'tailwind-merge'
+import { twJoin, twMerge } from 'tailwind-merge'
 
 interface BidCardLogoProps {
+  className?: string
   projectLogoUrl: string
   projectName?: string
   title?: string
 }
 
-export function BidCardLogo({
+export function BidLogo({
+  className,
   projectLogoUrl,
   projectName,
   title,
 }: BidCardLogoProps) {
   return (
     <div
-      className={twJoin(
+      className={twMerge(
         'relative',
         'flex items-center justify-center',
         'bg-background overflow-hidden',
-        'rounded-[calc(var(--radius-standard)-var(--spacing-tightest))]',
         'p-standard',
-        '@card-is-row:inset-tight',
-        '@card-is-row:absolute',
+        className,
       )}
     >
       <div

@@ -1,10 +1,12 @@
 'use client'
 
+import { BidLogo } from '@/app/(v2)/v2/components/BidLogo'
+import { VoteButton } from '@/app/(v2)/v2/components/VoteButton'
 import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
+import { Tooltip } from '@/components/Tooltip'
 import { useIsMobile } from '@/lib/useIsMobile'
-import { Tooltip } from '@v2/components/Tooltip'
-import { getEnvironment, getSource, SourceID } from '@v2/environments'
+import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import React, { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
@@ -13,6 +15,7 @@ import { BidMaxDeployment } from './BidMaxDeployment'
 import { BidPolSize } from './BidPolSize'
 import { BidTributeApr } from './BidTributeApr'
 import { BidVoteShare } from './BidVoteShare'
+import { BidWrapper } from './BidWrapper'
 
 export function BidDetails({
   sourceId,
@@ -25,12 +28,15 @@ export function BidDetails({
 }) {
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById } = state
-  const source = getSource(getEnvironment(), sourceId)
-  const sourceData = currentRoundDataPerSource?.[sourceId]
-  const bid = sourceData?.augmentedBids?.find((bid) => bid.id === bidId)
+  const currentRoundData = currentRoundDataPerSource?.[sourceId]
+  const { augmentedBids } = currentRoundData ?? {}
+
+  const bid = augmentedBids?.find((bid) => bid.id === bidId)
+
+  const mainRef = useRef<HTMLDivElement>(null)
+  const sidebarRef = useRef<HTMLDivElement>(null)
+
   const isMobile = useIsMobile()
-  const sidebarRef = useRef<HTMLElement>(null)
-  const mainRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const main = mainRef.current
@@ -48,22 +54,8 @@ export function BidDetails({
 
   if (!bid) return null
 
-  const voteThreshold = bid?.trancheId
-    ? source.voteThresholds[bid.trancheId as keyof typeof source.voteThresholds]
-    : null
-  const isBelowVoteThreshold =
-    bid && voteThreshold ? bid.vote_perc < voteThreshold : false
-
-  const walletData = currentRoundDataPerSource?.[sourceId]?.walletData
-  const userVotes = walletData?.votes || []
-
-  const userVotedOnBidIds = userVotes
-    .filter((vote: any) => vote.prop_id === bidId)
-    .map((vote: any) => vote.prop_id)
-
-  const userHasVotedOnThisBid = userVotedOnBidIds.includes(bidId)
-
   const bidDescription = bidDescriptionsById[bidId]
+  const { projectLogoUrl = '/images/logo-drop.png' } = bidDescription ?? {}
 
   const isOngoing = bid.status?.toLowerCase().includes('ongoing')
   const isCompleted = bid.status?.toLowerCase().includes('completed')
@@ -132,30 +124,55 @@ export function BidDetails({
   ].filter((field) => field.value !== null && field.value !== undefined)
 
   return (
-    <article
+    <BidWrapper
+      sourceId={sourceId}
+      bidId={bidId}
       className={twMerge(
-        isBelowVoteThreshold && 'is-below-threshold',
-        userHasVotedOnThisBid && 'is-voted-on',
-        'is-voted-on:theme-color-green',
-        'is-below-threshold:theme-color-beige',
         'grid grid-rows-[min-content_auto]',
         'h-full overflow-hidden',
         'relative',
+        'is-voted-on:theme-color-green',
+        'is-below-threshold:theme-color-beige',
+        'is-vote-focused:theme-color-green',
+        'is-change-vote-focused:theme-color-green',
         className,
       )}
     >
-      <header
+      <div
         className={twJoin(
-          'h-bar-height-large',
-          'flex items-center',
-          'px-loosest py-standard',
+          'min-h-bar-height-large',
+          'grid grid-cols-[min-content_auto_min-content]',
           'bg-theme-color',
           'is-below-threshold:text-background',
           'is-voted-on:text-background',
         )}
       >
-        <h1 className="title">{bidDescription?.title}</h1>
-      </header>
+        <div className="w-bar-height-large relative h-full">
+          <BidLogo
+            projectLogoUrl={projectLogoUrl}
+            projectName={bidDescription?.projectName}
+            title={bidDescription?.title}
+            className={twJoin(
+              'inset-tighter absolute overflow-hidden',
+              'rounded-tl-[calc(var(--radius-standard)-var(--spacing-tightest))]',
+            )}
+          />
+        </div>
+        <h1
+          className={twJoin(
+            'title',
+            'px-loose py-standard',
+            'flex items-center',
+            'is-vote-focused:text-background',
+            'is-change-vote-focused:text-background',
+          )}
+        >
+          {bidDescription?.title}
+        </h1>
+        <div className="flex h-full items-center">
+          <VoteButton bidId={bidId} sourceId={sourceId} />
+        </div>
+      </div>
 
       <main ref={mainRef} className="relative min-h-0 overflow-y-auto">
         <aside
@@ -231,6 +248,6 @@ export function BidDetails({
           />
         </div>
       </main>
-    </article>
+    </BidWrapper>
   )
 }

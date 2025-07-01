@@ -24,6 +24,7 @@ import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
+import { useVoteButtonFocus } from './BidWrapper'
 
 interface VoteButtonProps extends React.ComponentProps<'div'> {
   bidId: number
@@ -36,10 +37,10 @@ export function VoteButton({
   sourceId,
   onVote,
   className,
-  onMouseEnter,
-  onMouseLeave,
   onFocus,
   onBlur,
+  onMouseEnter,
+  onMouseLeave,
   ...otherProps
 }: VoteButtonProps) {
   const [isChangeVoteModalOpen, setIsChangeVoteModalOpen] = useState(false)
@@ -53,6 +54,7 @@ export function VoteButton({
   const { state } = useAppState()
   const { currentRoundDataPerSource } = state
   const { blastConfetti } = useHydroConfettiCannon()
+  const { setVoteButtonHovered, setVoteButtonFocused } = useVoteButtonFocus()
 
   const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
     useGlobalLockupCapacityInfo()
@@ -205,9 +207,18 @@ export function VoteButton({
         ref={voteProtection.ref as React.RefObject<HTMLDivElement>}
         role="button"
         tabIndex={0}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onFocus={onFocus}
+        onMouseEnter={(e) => {
+          setVoteButtonHovered(true)
+          onMouseEnter?.(e)
+        }}
+        onMouseLeave={(e) => {
+          setVoteButtonHovered(false)
+          onMouseLeave?.(e)
+        }}
+        onFocus={(e) => {
+          setVoteButtonFocused(true)
+          onFocus?.(e)
+        }}
         onBlur={(e) => {
           // Reset all counters when element loses focus
           connectWalletProtection.resetCounter()
@@ -215,6 +226,7 @@ export function VoteButton({
           noValidLockupsProtection.resetCounter()
           voteProtection.resetCounter()
           changeVoteProtection.resetCounter()
+          setVoteButtonFocused(false)
           onBlur?.(e)
         }}
         onClick={buttonProps.onClick}

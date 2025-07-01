@@ -22,7 +22,7 @@ export default async function Layout({
         <div
           className={twJoin(
             'relative h-screen w-screen',
-            'bg-background gap-tight',
+            'bg-background gap-standard',
             'p-standard',
             'grid-areas-mobile-no-sidebar',
             'desktop:grid-areas-desktop-no-sidebar',

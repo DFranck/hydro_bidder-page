@@ -23,8 +23,8 @@
 
   --spacing-md: 800px;
 
-  --spacing-bar-height-large: calc(var(--spacing) * 18);
-  --spacing-bar-height-standard: calc(var(--spacing) * 12);
+  --spacing-bar-height-large: 72px;
+  --spacing-bar-height-standard: 48px;
 
   --radius-small: 6px;
   --radius-standard: 9px;

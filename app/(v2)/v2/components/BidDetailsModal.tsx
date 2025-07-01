@@ -1,10 +1,10 @@
 'use client'
 
 import { Icon } from '@/components/Icon'
-import { IconString } from '@/components/Icon/types'
 import { BidDetails } from '@v2/components/BidDetails'
+import { BidWrapper } from '@v2/components/BidWrapper'
 import { useInternalLink } from '@v2/components/InternalLink'
-import { SourceID, getEnvironment, getSource } from '@v2/environments'
+import { SourceID } from '@v2/environments'
 import { sortBidsInTranche } from '@v2/lib/sortBidsInTranche'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twJoin } from 'tailwind-merge'
@@ -49,27 +49,17 @@ export function BidDetailsModal({
     navigate(`/v2/bids/${sourceId}/${targetBidId}`)
   }
 
-  const environment = getEnvironment()
-  const source = getSource(environment, sourceId)
-  const voteThreshold = currentBid?.trancheId
-    ? source.voteThresholds[
-        currentBid.trancheId as keyof typeof source.voteThresholds
-      ]
-    : null
-  const isBelowVoteThreshold =
-    currentBid && voteThreshold ? currentBid.vote_perc < voteThreshold : false
-
   return (
-    <div
+    <BidWrapper
+      sourceId={sourceId}
+      bidId={parseInt(bidId)}
       className={twJoin(
-        isBelowVoteThreshold && 'is-below-threshold',
         'is-below-threshold:theme-color-beige',
         'fixed inset-0 z-20',
-        'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-loose))]',
-        'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tight))]',
         'bg-theme-color/20 backdrop-blur-sm',
+        'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-looser))]',
+        'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tight))]',
       )}
-      onClick={closeModal}
     >
       <div
         className={twJoin(
@@ -77,58 +67,67 @@ export function BidDetailsModal({
           'rounded-standard',
           'overflow-hidden',
           'bg-background',
-          'grid grid-rows-[min-content_auto]',
         )}
-        onClick={(e) => e.stopPropagation()}
       >
         <div
           className={twJoin(
-            'h-bar-height-standard',
-            'flex items-center justify-between',
-            'bg-theme-color/50',
+            'h-bar-height-large',
+            'absolute top-0 right-0 z-10',
+            'flex items-center justify-end',
           )}
         >
-          {(
-            [
-              [
-                previousBidInTranche
-                  ? () => navigateToBid(previousBidInTranche.id)
-                  : closeModal,
-                'Previous',
-                'solid:chevron-left',
-                'flex-row-reverse',
-                !previousBidInTranche,
-              ],
-              [closeModal, 'Close', 'solid:xmark', undefined, false],
-              [
-                nextBidInTranche
-                  ? () => navigateToBid(nextBidInTranche.id)
-                  : closeModal,
-                'Next',
-                'solid:chevron-right',
-                undefined,
-                !nextBidInTranche,
-              ],
-            ] as const
-          ).map(([onClick, label, icon, className, disabled]) => (
+          <div className="gap-tight flex items-center">
             <button
-              key={label}
               className={twJoin(
                 'btn label',
-                className,
-                disabled && 'opacity-50',
+                'flex-row-reverse',
+                !previousBidInTranche && 'opacity-50',
               )}
-              onClick={onClick}
-              disabled={disabled}
+              onClick={
+                previousBidInTranche
+                  ? () => navigateToBid(previousBidInTranche.id)
+                  : undefined
+              }
+              disabled={!previousBidInTranche}
             >
-              <span>{label}</span>
-              <Icon name={icon as IconString} />
+              <span>Previous</span>
+              <Icon name="solid:chevron-left" />
             </button>
-          ))}
+
+            <div className="gap-x-xs flex items-center">
+              {bidsInSameTranche.map((_, index) => (
+                <Icon
+                  key={index}
+                  name={
+                    index === currentBidIndex ? 'solid:circle' : 'light:circle'
+                  }
+                  className="text-xs"
+                />
+              ))}
+            </div>
+
+            <button
+              className={twJoin('btn label', !nextBidInTranche && 'opacity-50')}
+              onClick={
+                nextBidInTranche
+                  ? () => navigateToBid(nextBidInTranche.id)
+                  : undefined
+              }
+              disabled={!nextBidInTranche}
+            >
+              <span>Next</span>
+              <Icon name="solid:chevron-right" />
+            </button>
+          </div>
+
+          <button className="btn label" onClick={closeModal}>
+            <span>Close</span>
+            <Icon name="solid:xmark" />
+          </button>
         </div>
 
         <BidDetails sourceId={sourceId} bidId={parseInt(bidId)} />
       </div>
-    </div>
+    </BidWrapper>
   )
 }

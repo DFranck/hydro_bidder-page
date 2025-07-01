@@ -3,14 +3,14 @@
 import { Icon } from '@/components/Icon'
 import { OrphanController } from '@/components/OrphanController'
 import { BidRevampMetrics } from '@/contract-apis/types'
-import { SourceID, getEnvironment, getSource } from '@v2/environments'
+import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import { useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
-import { BidCardLogo } from './BidCardLogo'
 import { BidDuration } from './BidDuration'
+import { BidLogo } from './BidLogo'
 import { BidTributeApr } from './BidTributeApr'
 import { BidVoteShare } from './BidVoteShare'
+import { BidWrapper } from './BidWrapper'
 import { InternalLink } from './InternalLink'
 import { VoteButton } from './VoteButton'
 
@@ -166,41 +166,15 @@ export function BidCard({
   const walletData = currentRoundDataPerSource?.[sourceId]?.walletData
   const userVotes = walletData?.votes || []
 
+  const augmentedBids =
+    currentRoundDataPerSource?.[sourceId]?.augmentedBids ?? []
+  const bid = augmentedBids?.find((bid) => bid.id === bidId)
+
   const userVotedOnBidIds = userVotes
     .filter((vote: any) => vote.prop_id === bidId)
     .map((vote: any) => vote.prop_id)
 
   const userHasVotedOnThisBid = userVotedOnBidIds.includes(bidId)
-
-  const augmentedBids =
-    currentRoundDataPerSource?.[sourceId]?.augmentedBids ?? []
-  const bid = augmentedBids?.find((bid) => bid.id === bidId)
-
-  const [isVoteButtonHovered, setIsVoteButtonHovered] = useState(false)
-  const [isVoteButtonFocused, setIsVoteButtonFocused] = useState(false)
-  const isHoveringVoteButton = isVoteButtonHovered || isVoteButtonFocused
-
-  // Check if user has voted on any bid in this tranche
-  const userHasVotedInThisTranche = bid
-    ? userVotes.some((vote: any) => {
-        const votedBid = augmentedBids.find((b) => b.id === vote.prop_id)
-        return votedBid && votedBid.trancheId === bid.trancheId
-      })
-    : false
-
-  // Determine focus state for CSS variants
-  let focusStateClass = ''
-  if (isHoveringVoteButton) {
-    if (userHasVotedOnThisBid) {
-      focusStateClass = 'is-voted-on-focused'
-    } else if (userHasVotedInThisTranche) {
-      // User has voted on another bid in this tranche, so this is a "change vote" interaction
-      focusStateClass = 'is-change-vote-focused'
-    } else {
-      // Normal vote focus
-      focusStateClass = 'is-vote-focused'
-    }
-  }
 
   if (!bid) return null
 
@@ -208,21 +182,14 @@ export function BidCard({
 
   const { projectLogoUrl = '/images/logo-drop.png' } = bidDescription ?? {}
 
-  const environment = getEnvironment()
-  const source = getSource(environment, sourceId)
-  const voteThreshold =
-    source.voteThresholds[bid.trancheId as keyof typeof source.voteThresholds]
-  const isBelowVoteThreshold = bid.vote_perc < voteThreshold
-
   return (
-    <div
+    <BidWrapper
+      sourceId={sourceId}
+      bidId={bidId}
       id={`bid-card--${sourceId}-${bidId}`}
       tabIndex={0}
       className={twMerge(
         isLoading && 'opacity-75',
-        userHasVotedOnThisBid && 'is-voted-on',
-        isBelowVoteThreshold && 'is-below-threshold',
-        focusStateClass,
         'group/bid-card',
         'grid',
         'relative z-10',
@@ -252,7 +219,12 @@ export function BidCard({
           isLoading={isLoading}
           isFirstCell={true}
         />
-        <BidCardLogo
+        <BidLogo
+          className={twJoin(
+            'rounded-tl-[calc(var(--radius-standard)-var(--spacing-tightest))]',
+            '@card-is-row:inset-tight',
+            '@card-is-row:absolute',
+          )}
           projectLogoUrl={projectLogoUrl}
           projectName={bidDescription?.projectName}
           title={bidDescription?.title}
@@ -328,14 +300,7 @@ export function BidCard({
             '*:last:rounded-r-[calc(var(--radius-standard)-var(--spacing-tightest))]',
           )}
         >
-          <VoteButton
-            bidId={bidId}
-            sourceId={sourceId}
-            onMouseEnter={() => setIsVoteButtonHovered(true)}
-            onMouseLeave={() => setIsVoteButtonHovered(false)}
-            onFocus={() => setIsVoteButtonFocused(true)}
-            onBlur={() => setIsVoteButtonFocused(false)}
-          />
+          <VoteButton bidId={bidId} sourceId={sourceId} />
 
           <button
             type="button"
@@ -358,6 +323,6 @@ export function BidCard({
           </button>
         </div>
       </TD>
-    </div>
+    </BidWrapper>
   )
 }
