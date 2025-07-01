@@ -147,6 +147,7 @@ export default function LockupsPage() {
 
   useEffect(() => {
     if (!incompleteNotices.length) {
+      setToasts([])
       return
     }
 
