@@ -118,8 +118,10 @@ export function NewLockUpButton({
                 )}
               >
                 <StyledText
-                  variant="h4"
+                  as={"span"}
+                  variant="button.primary"
                   onClick={item.isDisabled ? () => {} : item.action}
+                  className="min-w-full"
                 >
                   Lock {item.label}
                 </StyledText>
