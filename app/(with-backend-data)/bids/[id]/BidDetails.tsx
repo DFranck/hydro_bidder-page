@@ -1,5 +1,6 @@
 "use client"
 
+import Loading from "@/app/loading"
 import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
@@ -55,6 +56,10 @@ export function BidDetails({
     projectUrl,
     title,
   } = bidMetaData ?? {}
+
+  if (Object.keys(bidsInfo).length === 0) {
+    return <Loading />
+  }
 
   const bid = bidsInfo[bidId]
 
