@@ -24,6 +24,7 @@ import {
 } from "../ToolTips"
 import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWallet"
 import { Icon } from "../Icon"
+import { cn } from "@/lib/utils"
 
 export function NewLockUpButton({
   handleStAtom,
@@ -58,7 +59,7 @@ export function NewLockUpButton({
     {
       label: "dATOM",
       action: () => handleDAtom(),
-      isDisabled: verifyLockupCapacity || amountOfdAtomInWallet === 0,
+      isDisabled: true,
       cta: {
         label: "Get",
         href: "https://go.skip.build?src_asset=uatom&src_chain=cosmoshub-4&dest_asset=factory%2Fneutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa%2Fudatom&dest_chain=neutron-1&amount_in=&amount_out=",
@@ -97,7 +98,9 @@ export function NewLockUpButton({
                 condition={item.isDisabled}
                 wrapper={(children) => (
                   <Tooltip
-                    className="w-auto"
+                    className={cn("w-auto", {
+                      "w-full": item.isDisabled
+                    })}
                     classNamesForTooltip="sm:-ml-12"
                     tipContents={
                       !isWalletConnected
@@ -118,8 +121,10 @@ export function NewLockUpButton({
                 )}
               >
                 <StyledText
-                  variant="h4"
+                  as={"span"}
+                  variant="button.primary"
                   onClick={item.isDisabled ? () => {} : item.action}
+                  className="w-full sm:w-full"
                 >
                   Lock {item.label}
                 </StyledText>

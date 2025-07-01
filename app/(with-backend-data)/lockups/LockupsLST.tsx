@@ -14,6 +14,8 @@ import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 import { cn } from "@/lib/utils"
 import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
+import { useIsMobile } from "@/hooks/use-mobile"
+import AccordionWrapper from "@/components/Accordion"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -45,6 +47,7 @@ export function LockupsLST({
   const { hasGatekeeper, lockedAtomMaxWallet, lockedAtomTotalWallet } =
     useBackendData()
   const { neutronSigner, neutronChain } = useChainsAndSigners()
+  const isMobile = useIsMobile()
 
   const usersLimitRemainder = lockedAtomMaxWallet - lockedAtomTotalWallet
 
@@ -105,128 +108,139 @@ export function LockupsLST({
   }, [maxTokenToBeLocked])
 
   return (
-    <>
-      <ModalWindow
-        isOpen={isCreationModalOpen}
-        onClose={() => {
-          handleCreationModalWindowClose()
-          setAmount(maxTokenToBeLocked)
-          setSelectedLockDurationInEpochs(3)
-        }}
-        onCloseComplete={() => {
-          handleModalWindowCloseComplete()
-          setAmount(maxTokenToBeLocked)
-          setSelectedLockDurationInEpochs(3)
-        }}
-      >
-        <form onSubmit={handleSubmitCreationForm}>
-          <Card>
-            <Card.Header title="Create New Lockup" />
+    <ModalWindow
+      isOpen={isCreationModalOpen}
+      onClose={() => {
+        handleCreationModalWindowClose()
+        setAmount(maxTokenToBeLocked)
+        setSelectedLockDurationInEpochs(3)
+      }}
+      onCloseComplete={() => {
+        handleModalWindowCloseComplete()
+        setAmount(maxTokenToBeLocked)
+        setSelectedLockDurationInEpochs(3)
+      }}
+      className="w-5/6 md:w-auto"
+    >
+      <form onSubmit={handleSubmitCreationForm}>
+        <Card>
+          <Card.Header title="Create New Lockup" />
 
-            <Card.Body className="grid-cols-[1fr_3fr] gap-6 md:grid">
-              <label
-                className={twJoin(
-                  "col-span-2 grid grid-cols-subgrid",
-                  "items-baseline"
-                )}
-              >
-                <span>Amount:</span>
-                <div className="flex flex-col gap-2">
-                  <StyledText
-                    value={amount}
-                    variant="input.text"
-                    id="amount"
-                    as="input"
-                    type="number"
-                    min={minTokenToBeLocked}
-                    max={maxTokenToBeLocked}
-                    step={minTokenToBeLocked}
-                    onChange={handleChangeAmount}
-                  />
+          <Card.Body className="grid-cols-[1fr_3fr] gap-6 md:grid">
+            <label
+              className={twJoin(
+                "col-span-2 grid grid-cols-subgrid",
+                "items-baseline"
+              )}
+            >
+              <span>Amount:</span>
+              <div className="flex flex-col gap-2">
+                <StyledText
+                  value={amount}
+                  variant="input.text"
+                  id="amount"
+                  as="input"
+                  type="number"
+                  min={minTokenToBeLocked}
+                  max={maxTokenToBeLocked}
+                  step={minTokenToBeLocked}
+                  onChange={handleChangeAmount}
+                />
 
-                  {amount <= NFT_SIZES[0] ? (
-                    <StyledText
-                      variant="footnote"
-                      className="flex items-center gap-1 text-palette-red"
-                    >
-                      Locking up a custom amount will result in a lockup that
+                {amount <= NFT_SIZES[0] ? (
+                  <>
+                    {!isMobile ? (
+                      <StyledText
+                        variant="footnote"
+                        className="flex items-center gap-1 text-palette-red"
+                      >
+                        Locking up a custom amount will result in a lockup that
+                        cannot be traded on the upcoming NFT marketplace right
+                        away. If you intend to sell your lockup, please use one
+                        of the suggested amounts.
+                      </StyledText>
+                    ) : (
+                      <AccordionWrapper
+                        title="Custom Lockups Are Not Tradable"
+                        content="Locking up a custom amount will result in a lockup that
                       cannot be traded on the upcoming NFT marketplace right
                       away. If you intend to sell your lockup, please use one of
-                      the suggested amounts.
-                    </StyledText>
-                  ) : null}
-                  <div className="flex flex-wrap  items-center justify-start gap-2 md:flex-nowrap ">
-                    {NFT_SIZES.map((size) => (
-                      <StyledText
-                        variant={
-                          amount === size
-                            ? "button.primary"
-                            : "button.secondary"
-                        }
-                        as="button"
-                        key={size}
-                        disabled={maxTokenToBeLocked < size || size === 1000}
-                        onClick={() => setAmount(size)}
-                        className={cn({
-                          "!cursor-not-allowed": size === 1000,
-                        })}
-                      >
-                        <span>{size}</span>
-                      </StyledText>
-                    ))}
-                  </div>
+                      the suggested amounts."
+                        className="text-palette-red"
+                      />
+                    )}
+                  </>
+                ) : null}
 
-                  <StyledText
-                    variant="footnote"
-                    className="flex items-center gap-2 font-bold"
-                  >
-                    <span>
-                      Max: {maxTokenToBeLocked} {tokenInfo.name}
-                    </span>
+                <div className="flex flex-wrap  items-center justify-start gap-2 md:flex-nowrap ">
+                  {NFT_SIZES.map((size) => (
                     <StyledText
-                      variant="link"
-                      onClick={() => setAmount(maxTokenToBeLocked)}
+                      variant={
+                        amount === size ? "button.primary" : "button.secondary"
+                      }
+                      as="button"
+                      key={size}
+                      disabled={maxTokenToBeLocked < size || size === 1000}
+                      onClick={() => setAmount(size)}
+                      className={cn({
+                        "!cursor-not-allowed": size === 1000,
+                      })}
                     >
-                      Set to max
+                      <span>{size}</span>
                     </StyledText>
-                  </StyledText>
+                  ))}
                 </div>
-              </label>
 
-              <label className="col-span-2 grid grid-cols-subgrid items-center">
-                <span>Lockup Duration:</span>
+                <StyledText
+                  variant="footnote"
+                  className="flex flex-nowrap items-center gap-2 font-bold"
+                >
+                  <span className="whitespace-nowrap">
+                    Max: {maxTokenToBeLocked} {tokenInfo.name}
+                  </span>
+                  <StyledText
+                    variant="link"
+                    onClick={() => setAmount(maxTokenToBeLocked)}
+                  >
+                    Set to max
+                  </StyledText>
+                </StyledText>
+              </div>
+            </label>
 
-                <InputForLockupPeriod
-                  selectedDuration={selectedLockDurationInEpochs}
-                  className="w-full"
-                  classNamesForButtons="!w-full"
-                  onChange={setSelectedLockDurationInEpochs}
-                />
-              </label>
-            </Card.Body>
+            <label className="col-span-2 grid grid-cols-subgrid items-center">
+              <span>Lockup Duration:</span>
 
-            <Card.Footer>
-              <StyledText
-                disabled={selectedLockDurationInEpochs === 3}
-                variant="button.primary"
-                as="button"
-                type="submit"
-              >
-                Lock {tokenInfo.name}
-              </StyledText>
+              <InputForLockupPeriod
+                selectedDuration={selectedLockDurationInEpochs}
+                className="w-full"
+                classNamesForButtons="!w-full"
+                onChange={setSelectedLockDurationInEpochs}
+              />
+            </label>
+          </Card.Body>
 
-              <StyledText
-                variant="button.secondary"
-                as="button"
-                type="button"
-                onClick={handleCreationModalWindowClose}
-              >
-                Cancel
-              </StyledText>
-            </Card.Footer>
-          </Card>
-        </form>
-      </ModalWindow>
-    </>
+          <Card.Footer>
+            <StyledText
+              disabled={selectedLockDurationInEpochs === 3}
+              variant="button.primary"
+              as="button"
+              type="submit"
+            >
+              Lock {tokenInfo.name}
+            </StyledText>
+
+            <StyledText
+              variant="button.secondary"
+              as="button"
+              type="button"
+              onClick={handleCreationModalWindowClose}
+            >
+              Cancel
+            </StyledText>
+          </Card.Footer>
+        </Card>
+      </form>
+    </ModalWindow>
   )
 }
