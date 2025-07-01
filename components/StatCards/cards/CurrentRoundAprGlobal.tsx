@@ -5,11 +5,10 @@ import { Tooltip } from "@/components/Tooltip"
 import { averageAPRTooltip } from "@/components/ToolTips"
 import { voteThresholdByTrancheId } from "@/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import sumBy from "lodash/sumBy"
 import { StatCard } from "../StatCard"
 
 export function CurrentRoundAprGlobal() {
-  const { atomPrice, bidsInfo, currentRoundId, isLoading } = useBackendData()
+  const { bidsInfo, currentRoundId, isLoading } = useBackendData()
 
   const tokenBasedBidsInRoundAboveThreshold = Object.values(bidsInfo).filter(
     (bid) => {
@@ -23,19 +22,16 @@ export function CurrentRoundAprGlobal() {
         !bid.points?.length &&
         bid.vote_perc >= voteThreshold
       )
+    }
+  )
+
+  const totalAverageApr = tokenBasedBidsInRoundAboveThreshold.reduce(
+    (sum, bid) => {
+      const bidApr = (bid.apr_tribute ?? 0) * (bid.vote_perc ?? 0)
+      return sum + bidApr
     },
+    0
   )
-
-  const summedTributeOverDuration = sumBy(
-    tokenBasedBidsInRoundAboveThreshold,
-    (bid) => bid.totalTokenBasedTributeValue / bid.duration,
-  )
-
-  const summedVotingPowerInUsd =
-    sumBy(tokenBasedBidsInRoundAboveThreshold, (bid) => bid.power / 1e6) *
-    atomPrice
-
-  const averageApr = (summedTributeOverDuration / summedVotingPowerInUsd) * 12
 
   return (
     <StatCard
@@ -50,7 +46,7 @@ export function CurrentRoundAprGlobal() {
         </Tooltip>
       }
       subTitle={`Pilot Round ${currentRoundId + 1}`}
-      value={(averageApr || 0).toLocaleString("en-US", {
+      value={(totalAverageApr || 0).toLocaleString("en-US", {
         style: "percent",
       })}
     />

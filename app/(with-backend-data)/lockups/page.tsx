@@ -20,6 +20,7 @@ import {
   initializingLockupsTooltip,
   lockupLimitTooltip,
   needsWalletConnectionTooltip,
+  notEligibleTooltip,
 } from "@/components/ToolTips"
 import { executeWalletUnlockExpired } from "@/contract-apis/executeWalletUnlockExpired"
 import { AugmentedLockup } from "@/contract-apis/types"
@@ -37,7 +38,7 @@ import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWall
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
-
+import { cn } from "@/lib/utils"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -187,24 +188,35 @@ export default function LockupsPage() {
           <h2 className="sr-only">Your Lockups</h2>
           {hasGatekeeper ? (
             <Tooltip
-              tipContents={lockupLimitTooltip({
-                lockedAtomMaxWallet,
-                lockedAtomTotalWallet,
-              })}
+              tipContents={
+                lockedAtomMaxWallet === 0
+                  ? notEligibleTooltip
+                  : lockupLimitTooltip({
+                      lockedAtomMaxWallet,
+                      lockedAtomTotalWallet,
+                    })
+              }
               className="block w-96 shrink-0"
             >
               <ProgressBar
                 percentage={lockedAtomPercentageWallet}
                 warningZone={(percentage) => percentage >= 75}
                 dangerZone={(percentage) => percentage >= 95}
+                className={cn({
+                  "!gap-2": lockedAtomMaxWallet === 0,
+                })}
               >
                 <div className="flex items-center gap-1 opacity-60">
-                  <span>
-                    {lockedAtomTotalWallet.toFixed(
-                      DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
-                    )}{" "}
-                    / {lockedAtomMaxWallet} ATOM max
-                  </span>
+                  {lockedAtomMaxWallet === 0 ? (
+                    <span>Not Eligible</span>
+                  ) : (
+                    <span>
+                      {lockedAtomTotalWallet.toFixed(
+                        DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                      )}{" "}
+                      / {lockedAtomMaxWallet} ATOM max
+                    </span>
+                  )}
                   <span>
                     <Icon name="circle-info" />
                   </span>

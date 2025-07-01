@@ -354,6 +354,23 @@ export const lockupLimitTooltip = ({
   </p>
 )
 
+export const notEligibleTooltip = (
+  <div>
+    You are currently not eligible to lock up in Hydro.
+    <StyledText
+      as={Link}
+      href="https://t.me/hydro_community"
+      target="_blank"
+      rel="noopener noreferrer"
+      variant="link"
+      className="flex justify-start gap-1 my-1"
+    >
+      Join our Telegram group
+    </StyledText>
+    for updates on when this might change.
+  </div>
+)
+
 export const lockupsTableTimeLeftColumnTooltip = (
   <p>
     Voting power decays over time as the lockup period gets closer to
