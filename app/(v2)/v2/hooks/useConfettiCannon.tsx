@@ -53,8 +53,15 @@ export function useConfettiCannon({
     rootRef.current = createRoot(container)
 
     return () => {
-      rootRef.current?.unmount()
-      document.body.removeChild(container)
+      setTimeout(() => {
+        rootRef.current?.unmount()
+        if (
+          containerRef.current &&
+          document.body.contains(containerRef.current)
+        ) {
+          document.body.removeChild(containerRef.current)
+        }
+      }, 0)
     }
   }, [isClient])
 

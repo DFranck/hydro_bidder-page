@@ -158,6 +158,11 @@
   @apply active:bg-palette-beige;
 }
 
+@utility centered {
+  @apply absolute top-1/2 left-1/2;
+  @apply -translate-x-1/2 -translate-y-1/2;
+}
+
 @utility btn-icon {
   @apply btn;
   @apply size-bar-height-standard;
@@ -277,6 +282,16 @@
   @apply grid-rows-[auto_auto];
 }
 
+@utility grid-areas-bid-details {
+  grid-template-areas:
+    "navigation"
+    "header"
+    "main";
+  @apply grid;
+  @apply grid-cols-1;
+  @apply grid-rows-[min-content_min-content_1fr];
+}
+
 @utility grid-in-logo {
   grid-area: logo;
 }
@@ -291,6 +306,14 @@
 
 @utility grid-in-fields {
   grid-area: fields;
+}
+
+@utility grid-in-navigation {
+  grid-area: navigation;
+}
+
+@utility grid-in-main {
+  grid-area: main;
 }
 
 @utility math-symbol {

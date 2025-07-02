@@ -2,12 +2,16 @@
 
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import { createContext, useContext, useState } from 'react'
+import { ElementType, createContext, useContext, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 interface VoteButtonFocusContextValue {
-  setVoteButtonHovered: (hovered: boolean) => void
-  setVoteButtonFocused: (focused: boolean) => void
+  setIsVoteButtonHovered: (hovered: boolean) => void
+  setIsVoteButtonFocused: (focused: boolean) => void
+  isVoteButtonHovered: boolean
+  isVoteButtonFocused: boolean
+  bidId: number
+  sourceId: SourceID
 }
 
 const VoteButtonFocusContext =
@@ -16,26 +20,34 @@ const VoteButtonFocusContext =
 export function useVoteButtonFocus() {
   const context = useContext(VoteButtonFocusContext)
   if (!context) {
-    // Return no-op functions if context is not available (e.g., when nested)
+    // Return no-op functions if context is not available
     return {
-      setVoteButtonHovered: () => {},
-      setVoteButtonFocused: () => {},
+      setIsVoteButtonHovered: () => {},
+      setIsVoteButtonFocused: () => {},
+      isVoteButtonHovered: false,
+      isVoteButtonFocused: false,
+      bidId: 0,
+      sourceId: '' as SourceID,
     }
   }
   return context
 }
 
-export function BidWrapper({
+type PolymorphicProps<E extends ElementType> = {
+  as?: E
+  sourceId: SourceID
+  bidId: number
+  children: React.ReactNode
+} & React.ComponentPropsWithoutRef<E>
+
+export function BidWrapper<E extends ElementType = 'article'>({
+  as,
   sourceId,
   bidId,
   children,
   className,
   ...otherProps
-}: React.ComponentProps<'div'> & {
-  sourceId: SourceID
-  bidId: number
-  children: React.ReactNode
-}) {
+}: PolymorphicProps<E>) {
   const { state } = useAppState()
   const { currentRoundDataPerSource } = state
 
@@ -43,8 +55,11 @@ export function BidWrapper({
   const existingContext = useContext(VoteButtonFocusContext)
   const shouldProvideContext = !existingContext
 
+  // Context state - each BidWrapper manages its own
   const [isVoteButtonHovered, setIsVoteButtonHovered] = useState(false)
   const [isVoteButtonFocused, setIsVoteButtonFocused] = useState(false)
+
+  const Component = as || 'article'
   const isHoveringVoteButton = isVoteButtonHovered || isVoteButtonFocused
 
   const walletData = currentRoundDataPerSource?.[sourceId]?.walletData
@@ -91,12 +106,16 @@ export function BidWrapper({
   }
 
   const contextValue: VoteButtonFocusContextValue = {
-    setVoteButtonHovered: (hovered: boolean) => setIsVoteButtonHovered(hovered),
-    setVoteButtonFocused: (focused: boolean) => setIsVoteButtonFocused(focused),
+    setIsVoteButtonHovered,
+    setIsVoteButtonFocused,
+    isVoteButtonHovered,
+    isVoteButtonFocused,
+    bidId,
+    sourceId,
   }
 
-  const articleElement = (
-    <article
+  const element = (
+    <Component
       className={twMerge(
         userHasVotedOnThisBid && 'is-voted-on',
         isBelowVoteThreshold && 'is-below-threshold',
@@ -106,15 +125,15 @@ export function BidWrapper({
       {...otherProps}
     >
       {children}
-    </article>
+    </Component>
   )
 
   // Only provide context if we're the innermost BidWrapper
   return shouldProvideContext ? (
     <VoteButtonFocusContext.Provider value={contextValue}>
-      {articleElement}
+      {element}
     </VoteButtonFocusContext.Provider>
   ) : (
-    articleElement
+    element
   )
 }

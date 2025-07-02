@@ -184,6 +184,7 @@ export function BidCard({
 
   return (
     <BidWrapper
+      as="div"
       sourceId={sourceId}
       bidId={bidId}
       id={`bid-card--${sourceId}-${bidId}`}

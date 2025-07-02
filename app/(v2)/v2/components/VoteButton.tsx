@@ -16,6 +16,7 @@ import { executeWalletVote } from '@/contract-apis/executeWalletVote'
 import { useGlobalLockupCapacityInfo } from '@/contract-apis/useGlobalLockupCapacityInfo'
 import { revalidateTag } from '@/lib/revalidateTag'
 import { useChain } from '@cosmos-kit/react'
+import { useVoteButtonFocus } from '@v2/components/BidWrapper'
 import { InternalLink } from '@v2/components/InternalLink'
 import { Tooltip } from '@v2/components/Tooltip'
 import { useHydroConfettiCannon } from '@v2/hooks'
@@ -24,7 +25,6 @@ import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { useState } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
-import { useVoteButtonFocus } from './BidWrapper'
 
 interface VoteButtonProps extends React.ComponentProps<'div'> {
   bidId: number
@@ -54,10 +54,14 @@ export function VoteButton({
   const { state } = useAppState()
   const { currentRoundDataPerSource } = state
   const { blastConfetti } = useHydroConfettiCannon()
-  const { setVoteButtonHovered, setVoteButtonFocused } = useVoteButtonFocus()
+  const {
+    setIsVoteButtonHovered: setVoteButtonHovered,
+    setIsVoteButtonFocused: setVoteButtonFocused,
+  } = useVoteButtonFocus()
 
-  const { lockedAtomTotalGlobal, lockedAtomMaxGlobal } =
-    useGlobalLockupCapacityInfo()
+  const {
+    data: { lockedAtomTotalGlobal, lockedAtomMaxGlobal },
+  } = useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient, address, isWalletConnected, connect } =
     useChain('neutron')

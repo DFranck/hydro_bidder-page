@@ -1,6 +1,5 @@
 'use client'
 
-import { BidLogo } from '@/app/(v2)/v2/components/BidLogo'
 import { VoteButton } from '@/app/(v2)/v2/components/VoteButton'
 import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
@@ -10,7 +9,9 @@ import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import React, { useEffect, useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
+import { BidDetailsNavigation } from './BidDetailsNavigation'
 import { BidDuration } from './BidDuration'
+import { BidLogo } from './BidLogo'
 import { BidMaxDeployment } from './BidMaxDeployment'
 import { BidPolSize } from './BidPolSize'
 import { BidTributeApr } from './BidTributeApr'
@@ -21,10 +22,12 @@ export function BidDetails({
   sourceId,
   bidId,
   className,
+  isModal = false,
 }: {
   sourceId: SourceID
   bidId: number
   className?: string
+  isModal?: boolean
 }) {
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById } = state
@@ -125,10 +128,11 @@ export function BidDetails({
 
   return (
     <BidWrapper
+      as="div"
       sourceId={sourceId}
       bidId={bidId}
       className={twMerge(
-        'grid grid-rows-[min-content_auto]',
+        'grid grid-rows-[min-content_min-content_1fr]',
         'h-full overflow-hidden',
         'relative',
         'is-voted-on:theme-color-green',
@@ -138,6 +142,12 @@ export function BidDetails({
         className,
       )}
     >
+      <BidDetailsNavigation
+        sourceId={sourceId}
+        bidId={bidId}
+        isModal={isModal}
+      />
+
       <div
         className={twJoin(
           'min-h-bar-height-large',
