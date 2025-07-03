@@ -1,3 +1,4 @@
+import { useIsMobile } from "@/hooks/use-mobile"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { twMerge } from "tailwind-merge"
@@ -9,6 +10,19 @@ export function MarkdownContainer({
   className?: string
   content?: string
 }) {
+  const isMobile = useIsMobile(982)
+
+  function insertZeroWidthSpaces(content: string, maxLength = 5) {
+    return content.replace(new RegExp(`\\w{${maxLength},}`, "g"), (word) =>
+      word.replace(/(.{5})/g, "$1\u200B")
+    )
+  }
+
+  const rawContent =
+    content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/gm, "###") ?? ""
+
+  const formattedContent = isMobile ? insertZeroWidthSpaces(rawContent) : rawContent
+
   return (
     <div
       className={twMerge(
@@ -40,9 +54,7 @@ export function MarkdownContainer({
         className
       )}
     >
-      <Markdown remarkPlugins={[remarkGfm]}>
-        {content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
-      </Markdown>
+      <Markdown remarkPlugins={[remarkGfm]}>{formattedContent}</Markdown>
     </div>
   )
 }
