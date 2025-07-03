@@ -155,7 +155,7 @@ export function EditLockupDurationModal({
 
             <div className="flex items-center justify-around gap-3">
               <div className="flex flex-col items-center text-center">
-                <div>Locked ATOM</div>
+                <div>Locked {lockup?.funds.denomInfo?.humanReadableDenom}</div>
                 <div className="text-4xl font-bold text-palette-beige">
                   {formatAmount(lockup?.funds.amount ?? 0, 0)}
                 </div>
