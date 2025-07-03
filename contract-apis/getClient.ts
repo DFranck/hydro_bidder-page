@@ -1,3 +1,4 @@
+import { GatekeeperBaseQueryClient } from "@/app/ts_types/GatekeeperBase.client"
 import { HydroBaseQueryClient } from "@/app/ts_types/HydroBase.client"
 import {
   TributeBaseClient,
@@ -66,4 +67,28 @@ export async function getTributeSigningClient({
   )
 
   return tributeClient
+}
+
+export async function getGatekeeperQueryClient() {
+  invariant(
+    nextPublicHydroContractAddress,
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
+  )
+
+  const client = await getCosmWasmClient()
+
+  const hydroQueryClient = new HydroBaseQueryClient(
+    client,
+    nextPublicHydroContractAddress
+  )
+
+  const { gatekeeper: gatekeeperContractAddress } =
+    await hydroQueryClient.gatekeeper()
+
+  const gatekeeperQueryClient = new GatekeeperBaseQueryClient(
+    client,
+    gatekeeperContractAddress
+  )
+
+  return gatekeeperQueryClient
 }

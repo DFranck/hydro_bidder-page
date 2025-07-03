@@ -3,6 +3,7 @@ import { HydroBaseQueryClient } from "../../../app/ts_types/HydroBase.client"
 import { LockupWithPerTrancheInfo } from "../../../app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
 import { fetchHistoricUsers } from "./fetchHistoricUsers"
+import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
 
 export async function fetchRoundLockups({
   roundId,
@@ -30,7 +31,7 @@ export async function fetchRoundLockups({
   )
 
   if (currentRoundId == roundId) {
-    const { users } = await fetchHistoricUsers()
+    const { users = [] } = await fetchHistoricUsers()
 
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
@@ -43,15 +44,27 @@ export async function fetchRoundLockups({
       const userBatch = users.slice(i, i + 10)
       const batchLockups = await Promise.all(
         userBatch.map(async (address) => {
-          const query = {
-            address,
-            limit: 1000,
-            startFrom: 0,
-          }
+          const accumulatedLockups = []
+          let startFrom = 0
+          const limit = SMART_CONTRACT_LOCKUPS_PAGE_LIMIT
 
-          const { lockups_with_per_tranche_infos } =
-            await hydroQueryClient.allUserLockupsWithTrancheInfos(query)
-          return lockups_with_per_tranche_infos
+          while (true) {
+            const query = {
+              address,
+              limit,
+              startFrom,
+            }
+
+            const { lockups_with_per_tranche_infos } =
+              await hydroQueryClient.allUserLockupsWithTrancheInfos(query)
+
+            if (!lockups_with_per_tranche_infos.length) break
+
+            accumulatedLockups.push(...lockups_with_per_tranche_infos)
+
+            startFrom += limit
+          }
+          return accumulatedLockups
         })
       )
       allUserLockupsWithTrancheInfos.push(...batchLockups)
@@ -60,7 +73,7 @@ export async function fetchRoundLockups({
     return allUserLockupsWithTrancheInfos
   } else {
     const response = await fetch(
-      `${numiaLockupsEndpoint}?round_id=${roundId}&time=${new Date().getTime()}`,
+      `${numiaLockupsEndpoint}?round_id=${roundId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`,
       {
         headers: {
           Accept: "application/json",

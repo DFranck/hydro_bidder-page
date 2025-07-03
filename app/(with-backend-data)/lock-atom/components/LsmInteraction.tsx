@@ -8,14 +8,19 @@ import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { Toast } from "@/components/Toasts/Toast"
 import { Tooltip } from "@/components/Tooltip"
-import { cannotContinueLockupTooltip } from "@/components/ToolTips"
-import { HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
+import {
+  cannotContinueLockupTooltip,
+  notEligibleTooltip,
+} from "@/components/ToolTips"
+import {
+  DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS,
+  HYDRO_TELEGRAM_COMMUNITY_URL,
+} from "@/config"
 import { Validator } from "@/contract-apis/fetchWalletValidators"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import Link from "next/link"
 import { useState } from "react"
-import { twJoin } from "tailwind-merge"
 import { classNames } from "../classNames"
 import { ContinueFromHubStepper } from "../steppers/ContinueFromHubStepper"
 import { ContinueFromNeutronStepper } from "../steppers/ContinueFromNeutronStepper"
@@ -27,6 +32,7 @@ import { LoaderCard } from "./LoaderCard"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
+import { cn } from "@/lib/utils"
 
 export function LsmInteraction({
   validatorMap,
@@ -35,14 +41,18 @@ export function LsmInteraction({
   validatorMap: Map<string, Validator>
   validatorLiquidStakingCap: string
 }) {
-  const { lockedAtomIsAtCapacityWallet } = useBackendData()
-  const { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal } =
-    useGlobalLockupCapacityInfo()
+  const { lockedAtomIsAtCapacityWallet, lockedAtomMaxWallet, hasGatekeeper } =
+    useBackendData()
+  const {
+    data: { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal },
+  } = useGlobalLockupCapacityInfo()
   const { incompleteNotices } = useIncompleteNotices()
   const { hubChain, hubSigner, neutronChain, neutronSigner } =
     useChainsAndSigners()
   const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
   const [numVisibleNotices, setVisibleNotices] = useState(2)
+
+  const notEligible = hasGatekeeper && lockedAtomMaxWallet === 0
 
   return (
     (hubSigner && neutronSigner && (
@@ -138,20 +148,26 @@ export function LsmInteraction({
                       actionButtonPrimary={{
                         label: (
                           <ConditionalWrapper
-                            condition={!canFinalizeLockup}
+                            condition={notEligible || !canFinalizeLockup}
                             wrapper={(children) => (
                               <Tooltip
-                                tipContents={cannotContinueLockupTooltip}
+                                tipContents={
+                                  notEligible
+                                    ? notEligibleTooltip
+                                    : cannotContinueLockupTooltip
+                                }
                               >
                                 {children}
                               </Tooltip>
                             )}
                           >
                             <div
-                              className={twJoin(
+                              className={cn(
                                 "flex items-center justify-center gap-1",
-                                !canFinalizeLockup &&
-                                  "cursor-default opacity-60"
+                                {
+                                  "cursor-default opacity-60":
+                                    notEligible || !canFinalizeLockup,
+                                }
                               )}
                             >
                               Resume <Icon name="arrow-right-long" />
@@ -159,7 +175,7 @@ export function LsmInteraction({
                           </ConditionalWrapper>
                         ),
                         onClick: () => {
-                          if (!canFinalizeLockup) return
+                          if (notEligible || !canFinalizeLockup) return
                           setStepper(getStepperConfigForAction("continue"))
                         },
                       }}
@@ -174,8 +190,15 @@ export function LsmInteraction({
                         },
                       }}
                     >
-                      <strong>{formatAmount(notice.amount)} ATOM</strong> staked
-                      with{" "}
+                      <strong>
+                        {formatAmount(
+                          notice.amount,
+                          undefined,
+                          DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                        )}{" "}
+                        ATOM
+                      </strong>{" "}
+                      staked with{" "}
                       <strong>
                         {getValidatorMoniker(notice.validator, validatorMap)}
                       </strong>{" "}
