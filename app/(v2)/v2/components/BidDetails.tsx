@@ -1,59 +1,44 @@
 'use client'
 
-import { VoteButton } from '@/app/(v2)/v2/components/VoteButton'
 import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
-import { Tooltip } from '@/components/Tooltip'
-import { useIsMobile } from '@/lib/useIsMobile'
+import { BidDuration } from '@v2/components/BidDuration'
+import { BidLogo } from '@v2/components/BidLogo'
+import { BidMaxDeployment } from '@v2/components/BidMaxDeployment'
+import { BidPolSize } from '@v2/components/BidPolSize'
+import { BidTributeApr } from '@v2/components/BidTributeApr'
+import { BidVoteShare } from '@v2/components/BidVoteShare'
+import { BidWrapper } from '@v2/components/BidWrapper'
+import { useInternalLink } from '@v2/components/InternalLink'
+import { Tooltip } from '@v2/components/Tooltip'
+import { VoteButton } from '@v2/components/VoteButton'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
-import { BidDetailsNavigation } from './BidDetailsNavigation'
-import { BidDuration } from './BidDuration'
-import { BidLogo } from './BidLogo'
-import { BidMaxDeployment } from './BidMaxDeployment'
-import { BidPolSize } from './BidPolSize'
-import { BidTributeApr } from './BidTributeApr'
-import { BidVoteShare } from './BidVoteShare'
-import { BidWrapper } from './BidWrapper'
 
 export function BidDetails({
   sourceId,
   bidId,
   className,
   isModal = false,
+  slotBeforeActions,
+  slotAfterActions,
 }: {
   sourceId: SourceID
   bidId: number
   className?: string
   isModal?: boolean
+  slotBeforeActions?: React.ReactNode
+  slotAfterActions?: React.ReactNode
 }) {
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById } = state
   const currentRoundData = currentRoundDataPerSource?.[sourceId]
   const { augmentedBids } = currentRoundData ?? {}
 
+  const { navigate } = useInternalLink()
   const bid = augmentedBids?.find((bid) => bid.id === bidId)
-
-  const mainRef = useRef<HTMLDivElement>(null)
-  const sidebarRef = useRef<HTMLDivElement>(null)
-
-  const isMobile = useIsMobile()
-
-  useEffect(() => {
-    const main = mainRef.current
-    const sidebar = sidebarRef.current
-
-    if (!main || !sidebar || isMobile) return
-
-    const handleScroll = () => {
-      sidebar.style.transform = `translateY(${main.scrollTop}px)`
-    }
-
-    main.addEventListener('scroll', handleScroll)
-    return () => main.removeEventListener('scroll', handleScroll)
-  }, [isMobile])
 
   if (!bid) return null
 
@@ -132,8 +117,9 @@ export function BidDetails({
       sourceId={sourceId}
       bidId={bidId}
       className={twMerge(
-        'grid grid-rows-[min-content_min-content_1fr]',
+        'grid grid-rows-[min-content_1fr]',
         'h-full overflow-hidden',
+        'gap-tight',
         'relative',
         'is-voted-on:theme-color-green',
         'is-below-threshold:theme-color-beige',
@@ -142,36 +128,19 @@ export function BidDetails({
         className,
       )}
     >
-      <BidDetailsNavigation
-        sourceId={sourceId}
-        bidId={bidId}
-        isModal={isModal}
-      />
-
       <div
         className={twJoin(
           'min-h-bar-height-large',
-          'grid grid-cols-[min-content_auto_min-content]',
+          'flex items-center justify-between',
           'bg-theme-color',
           'is-below-threshold:text-background',
           'is-voted-on:text-background',
         )}
       >
-        <div className="w-bar-height-large relative h-full">
-          <BidLogo
-            projectLogoUrl={projectLogoUrl}
-            projectName={bidDescription?.projectName}
-            title={bidDescription?.title}
-            className={twJoin(
-              'inset-tighter absolute overflow-hidden',
-              'rounded-tl-[calc(var(--radius-standard)-var(--spacing-tightest))]',
-            )}
-          />
-        </div>
         <h1
           className={twJoin(
             'title',
-            'px-loose py-standard',
+            'px-loosest',
             'flex items-center',
             'is-vote-focused:text-background',
             'is-change-vote-focused:text-background',
@@ -179,14 +148,53 @@ export function BidDetails({
         >
           {bidDescription?.title}
         </h1>
-        <div className="flex h-full items-center">
+
+        <div className="gap-tight flex h-full items-center">
+          {slotBeforeActions}
           <VoteButton bidId={bidId} sourceId={sourceId} />
+          {slotAfterActions}
+          {!slotAfterActions &&
+            (isModal ? (
+              <button
+                className="btn-icon"
+                onClick={() => window.history.back()}
+              >
+                <Icon name="solid:xmark" />
+              </button>
+            ) : (
+              <Tooltip tipContents={<div>Back to bids</div>}>
+                <button className="btn-icon" onClick={() => navigate('/v2')}>
+                  <Icon name="solid:list-ul" />
+                </button>
+              </Tooltip>
+            ))}
         </div>
       </div>
 
-      <main ref={mainRef} className="relative min-h-0 overflow-y-auto">
+      <div
+        className={twJoin(
+          'min-h-0',
+          'grid',
+          'grid-rows-[min-content_auto]',
+          'gap-tight',
+          'desktop:grid-rows-1',
+          'desktop:grid-cols-[3fr_1fr]',
+        )}
+      >
+        <div
+          className={twJoin(
+            'text-balance',
+            'py-loose px-loosest',
+            'overflow-y-auto',
+          )}
+        >
+          <MarkdownContainer
+            breakThreshold={24}
+            content={bidDescription?.description}
+          />
+        </div>
+
         <aside
-          ref={sidebarRef}
           className={twJoin(
             'bg-theme-color/20',
             'grid grid-cols-2',
@@ -194,25 +202,33 @@ export function BidDetails({
             'py-looser',
             'gap-x-loosest',
             'gap-y-looser',
-            'transition-all ease-out',
-            'desktop:absolute',
-            'desktop:grid-cols-1',
-            'desktop:top-loosest',
-            'desktop:right-loosest',
-            'desktop:w-64',
-            'desktop:p-loose',
-            'desktop:gap-loosest',
-            'desktop:rounded-standard',
-            'desktop:max-h-[calc(100%-var(--spacing-loosest)*2)]',
+            'desktop:h-full',
+            'desktop:flex',
+            'desktop:flex-col',
+            'desktop:p-0',
+            'desktop:gap-0',
             'desktop:overflow-y-auto',
           )}
         >
+          <div className="h-bar-height-large relative">
+            <BidLogo
+              projectLogoUrl={projectLogoUrl}
+              projectName={bidDescription?.projectName}
+              title={bidDescription?.title}
+              className="absolute inset-0"
+            />
+          </div>
+
           {sidebarFields.map((field, index) => {
             const content = (
               <div
                 className={twJoin(
-                  'gap-tighter flex flex-col',
+                  'flex flex-col',
+                  'gap-tighter',
+                  'px-loosest',
+                  'py-looser',
                   'desktop:items-end',
+                  index % 2 === 0 && 'bg-darkened',
                 )}
               >
                 <div
@@ -226,7 +242,9 @@ export function BidDetails({
                     ],
                   )}
                 >
-                  <span>{field.label}</span>
+                  <span className={twJoin(field.tooltip && 'has-tooltip')}>
+                    {field.label}
+                  </span>
                   {field.tooltip && (
                     <Icon name="circle-info" className="text-xs opacity-60" />
                   )}
@@ -239,7 +257,7 @@ export function BidDetails({
               <Tooltip
                 key={String(field.label)}
                 tipContents={tooltipContent(field.tooltip)}
-                className="has-tooltip relative z-20 w-full"
+                className="relative z-20 w-full"
               >
                 {content}
               </Tooltip>
@@ -250,14 +268,7 @@ export function BidDetails({
             )
           })}
         </aside>
-
-        <div className="p-loosest desktop:pr-80 text-balance">
-          <MarkdownContainer
-            breakThreshold={24}
-            content={bidDescription?.description}
-          />
-        </div>
-      </main>
+      </div>
     </BidWrapper>
   )
 }

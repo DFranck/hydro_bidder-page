@@ -1,4 +1,5 @@
 export { useAtomPrice } from './useAtomPrice'
+export { useBidThemeColor } from './useBidThemeColor'
 export { useConfettiCannon } from './useConfettiCannon'
 export { useHydroConfettiCannon } from './useHydroConfettiCannon'
 export { useProcessedData } from './useProcessedData'

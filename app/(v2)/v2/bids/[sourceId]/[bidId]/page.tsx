@@ -1,5 +1,5 @@
 import { AppPageContainer } from '@v2/components/AppPageContainer'
-import { BidDetails } from '@v2/components/BidDetails'
+import { BidBrowser } from '@v2/components/BidBrowser'
 import { SourceID } from '@v2/environments'
 
 export default async function BidsRoundPage({
@@ -11,10 +11,11 @@ export default async function BidsRoundPage({
 
   return (
     <AppPageContainer className="h-full">
-      <BidDetails
+      <BidBrowser
         sourceId={sourceId}
         bidId={parseInt(bidId)}
-        className="rounded-standard h-full overflow-hidden"
+        isModal={false}
+        className="rounded-standard"
       />
     </AppPageContainer>
   )

@@ -1,11 +1,11 @@
 'use client'
 
-import { BidDetails } from '@v2/components/BidDetails'
+import { BidBrowser } from '@v2/components/BidBrowser'
 import { BidWrapper } from '@v2/components/BidWrapper'
 import { SourceID } from '@v2/environments'
 import { twJoin } from 'tailwind-merge'
 
-export function BidDetailsModal({
+export function BidBrowserModal({
   sourceId,
   bidId,
 }: {
@@ -31,12 +31,14 @@ export function BidDetailsModal({
           'rounded-standard',
           'overflow-hidden',
           'bg-background',
+          'p-standard',
         )}
       >
-        <BidDetails
+        <BidBrowser
           sourceId={sourceId}
           bidId={parseInt(bidId)}
           isModal={true}
+          className="h-full overflow-hidden"
         />
       </div>
     </BidWrapper>

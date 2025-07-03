@@ -27,8 +27,8 @@ export function GradientOverlay({
     direction === 'down'
       ? 'from-theme-color/40 to-transparent'
       : direction === 'left'
-        ? 'from-theme-color-to-left/20 to-transparent'
-        : 'from-theme-color-to-right/20 to-transparent'
+        ? 'from-theme-color-previous/20 to-transparent'
+        : 'from-theme-color-next/20 to-transparent'
 
   return (
     <div

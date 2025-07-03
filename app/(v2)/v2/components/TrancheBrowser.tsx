@@ -79,7 +79,7 @@ export function TrancheBrowser() {
           .getPropertyValue('--color-theme-color')
           .trim()
         currentTranche.style.setProperty(
-          '--color-theme-color-to-left',
+          '--color-theme-color-previous',
           leftColor,
         )
       }
@@ -88,10 +88,7 @@ export function TrancheBrowser() {
         const rightColor = getComputedStyle(rightTranche)
           .getPropertyValue('--color-theme-color')
           .trim()
-        currentTranche.style.setProperty(
-          '--color-theme-color-to-right',
-          rightColor,
-        )
+        currentTranche.style.setProperty('--color-theme-color-next', rightColor)
       }
     })
   }, [allTranchesSorted.length])

@@ -1,9 +1,9 @@
 'use client'
 
-import { InternalLink } from '@/app/(v2)/v2/components/InternalLink'
 import { Icon } from '@/components/Icon'
 import { IconString } from '@/components/Icon/types'
 import { StyledText } from '@/components/StyledText'
+import { InternalLink } from '@v2/components/InternalLink'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { twJoin, twMerge } from 'tailwind-merge'

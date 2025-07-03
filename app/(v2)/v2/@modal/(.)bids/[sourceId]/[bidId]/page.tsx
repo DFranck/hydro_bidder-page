@@ -1,4 +1,4 @@
-import { BidDetailsModal } from '@v2/components/BidDetailsModal'
+import { BidBrowserModal } from '@v2/components/BidBrowserModal'
 import { SourceID } from '@v2/environments'
 
 export default async function BidPage({
@@ -8,5 +8,5 @@ export default async function BidPage({
 }) {
   const { bidId, sourceId } = await params
 
-  return <BidDetailsModal sourceId={sourceId} bidId={bidId} />
+  return <BidBrowserModal sourceId={sourceId} bidId={bidId} />
 }
