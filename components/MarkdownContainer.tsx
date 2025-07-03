@@ -12,11 +12,14 @@ export function MarkdownContainer({
 }) {
   const isMobile = useIsMobile(982)
 
-  function insertZeroWidthSpaces(content: string, maxLength = 5) {
-    return content.replace(new RegExp(`\\w{${maxLength},}`, "g"), (word) =>
-      word.replace(/(.{5})/g, "$1\u200B")
-    )
-  }
+function insertZeroWidthSpaces(content: string, maxLength = 20, breakEvery = 10) {
+  return content.replace(
+    new RegExp(`[^\\s]{${maxLength},}`, "g"),
+    (segment) =>
+      segment.replace(new RegExp(`(.{${breakEvery}})`, "g"), "$1\u200B")
+  )
+}
+
 
   const rawContent =
     content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/gm, "###") ?? ""
