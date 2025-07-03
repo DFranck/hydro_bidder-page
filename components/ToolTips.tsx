@@ -694,6 +694,35 @@ export const totalRevenueTooltip = (
   </p>
 )
 
+export const atomicBidPairToolTip = ({
+  bidId,
+  bidTitle,
+}: {
+  bidId: number
+  bidTitle: string
+}) => {
+  return (
+    <div>
+      <p>
+        This bid is part of an atomic bid, where a bidder is requesting an
+        export of not one asset, but a pair of two assets. Be aware that if
+        either of the atomic bids fails to meet the threshold, both bids will
+        fail, and rewards will not be paid out. This bid is paired with
+      </p>
+      <StyledText
+        as="a"
+        href={`/bids/${bidId}`}
+        variant="link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {bidTitle}
+        <Icon name="solid:arrow-up-right" />
+      </StyledText>
+    </div>
+  )
+}
+
 export const voteThresholdTooltip = ({ trancheId = 0 }) => {
   const voteThreshold =
     voteThresholdByTrancheId[trancheId as keyof typeof voteThresholdByTrancheId]

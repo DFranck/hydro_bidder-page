@@ -2,6 +2,7 @@ import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Image from "next/image"
 import { twJoin } from "tailwind-merge"
+import { AtomicBidPairIcon } from "./BidAtomicPairIcon"
 
 export function BidLogoAndTitle({ bidId }: { bidId: number }) {
   const { bidsInfo } = useBackendData()
@@ -9,13 +10,28 @@ export function BidLogoAndTitle({ bidId }: { bidId: number }) {
 
   if (!bid) return null
 
-  const { projectLogoUrl, projectName, projectTitle, title } = bid
+  const {
+    id,
+    projectLogoUrl,
+    projectName,
+    projectTitle,
+    title,
+    atomic_bid_pair,
+    vote_perc,
+    trancheId,
+  } = bid
 
   return (
     <BidLogoAndTitleLayout
       projectLogoUrl={projectLogoUrl}
       projectName={projectName}
       title={projectTitle || title}
+      atomic_bid_pair={atomic_bid_pair}
+      bidInfo={{
+        id,
+        vote_perc,
+        trancheId,
+      }}
     />
   )
 }
@@ -24,13 +40,24 @@ export function BidLogoAndTitleLayout({
   projectLogoUrl,
   projectName,
   title,
+  atomic_bid_pair,
+  bidInfo,
 }: {
   projectLogoUrl?: string
   projectName: string
   title: string
+  atomic_bid_pair?: number
+  bidInfo?: {
+    id: number
+    vote_perc: number
+    trancheId: number
+  }
 }) {
   return (
-    <div className="flex items-center gap-2 sm:gap-6">
+    <div
+      id={`#${String(bidInfo?.id)}`}
+      className="flex scroll-my-16 items-center gap-3 sm:gap-6"
+    >
       <div
         className={twJoin(
           "relative shrink-0",
@@ -49,9 +76,17 @@ export function BidLogoAndTitleLayout({
         ) : null}
       </div>
 
-      <StyledText variant="h4" className="max-sm:text-sm">
-        {title}
-      </StyledText>
+      <div className="flex gap-1">
+        <StyledText variant="h4" className="max-sm:text-sm">
+          {title}
+          {atomic_bid_pair && bidInfo?.id ? (
+            <AtomicBidPairIcon
+              bidInfo={bidInfo}
+              atomic_bid_pair={atomic_bid_pair}
+            />
+          ) : null}
+        </StyledText>
+      </div>
     </div>
   )
 }

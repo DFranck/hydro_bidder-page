@@ -1,6 +1,7 @@
 "use client"
 
 import Loading from "@/app/loading"
+import { AtomicBidPairIcon } from "@/components/BidAtomicPairIcon"
 import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
@@ -340,6 +341,20 @@ export function BidDetails({
                 )}
               </>
             )}
+
+            {!!bid.atomic_bid_pair ? (
+              <StyledText
+                as="h3"
+                variant="label"
+                className="flex cursor-default items-center gap-1"
+              >
+                <span>Atomic Bid</span>
+                <AtomicBidPairIcon
+                  bidInfo={bid}
+                  atomic_bid_pair={bid.atomic_bid_pair}
+                />
+              </StyledText>
+            ) : null}
 
             <div>
               <Tooltip
