@@ -344,7 +344,7 @@ export function BidDetails({
               </>
             )}
 
-            {!!bid.atomic_bid_pair && atomicBid ? (
+            {!!bid.atomic_bid_pair && !!atomicBid.atomic_bid_pair ? (
               <div>
                 <StyledText
                   as="h3"
