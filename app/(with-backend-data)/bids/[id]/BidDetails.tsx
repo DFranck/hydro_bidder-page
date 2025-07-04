@@ -397,7 +397,8 @@ export function BidDetails({
 
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
             {/* And if there are any point-based tribute amounts, we can't show this */}
-            {bid.roundId >= 2 && !bid.points?.length && (
+            {/* hide Max Deployment Amount for now */}
+            {/* {bid.roundId >= 2 && !bid.points?.length && (
               <Tooltip tipContents={bidDetailsMaxDeploymentAmountTooltip}>
                 <StyledText
                   as="h3"
@@ -412,7 +413,7 @@ export function BidDetails({
                   ATOM
                 </div>
               </Tooltip>
-            )}
+            )} */}
 
             <div>
               <Tooltip
