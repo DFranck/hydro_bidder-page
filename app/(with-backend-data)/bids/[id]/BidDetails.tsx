@@ -64,6 +64,8 @@ export function BidDetails({
 
   const bid = bidsInfo[bidId]
 
+  const atomicBid = bidsInfo[bid.atomic_bid_pair]
+
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
@@ -342,18 +344,30 @@ export function BidDetails({
               </>
             )}
 
-            {!!bid.atomic_bid_pair ? (
-              <StyledText
-                as="h3"
-                variant="label"
-                className="flex cursor-default items-center gap-1"
-              >
-                <span>Atomic Bid</span>
-                <AtomicBidPairIcon
-                  bidInfo={bid}
-                  atomic_bid_pair={bid.atomic_bid_pair}
-                />
-              </StyledText>
+            {!!bid.atomic_bid_pair && atomicBid ? (
+              <div>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1"
+                >
+                  <span>Atomic Bid</span>
+                  <AtomicBidPairIcon
+                    bidInfo={bid}
+                    atomic_bid_pair={bid.atomic_bid_pair}
+                  />
+                </StyledText>
+                <StyledText
+                  as={Link}
+                  href={`/bids/${atomicBid.id}`}
+                  target="_blank"
+                  variant="link"
+                  className="flex justify-start gap-2 text-xs"
+                >
+                  <Icon name="solid:arrow-up-right" />
+                  {atomicBid.projectTitle || atomicBid.title}
+                </StyledText>
+              </div>
             ) : null}
 
             <div>
