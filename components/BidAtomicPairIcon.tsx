@@ -1,8 +1,7 @@
-import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { Tooltip } from "./Tooltip"
 import { atomicBidPairToolTip } from "./ToolTips"
-import { Link2 } from "lucide-react"
+import { Link2, TriangleAlert } from "lucide-react"
 import { voteThresholdByTrancheId } from "@/config"
 
 export function AtomicBidPairIcon({
@@ -56,9 +55,9 @@ export function AtomicBidPairIcon({
         classNamesForTooltip="w-64 md:-ml-24 md:w-96"
       >
         {isBelowThreshold ? (
-          <StyledText variant="mathSymbol">‼️</StyledText>
+          <TriangleAlert className="text-palette-yellow size-4 mt-1" />
         ) : (
-          <Link2 className="text-palette-green" />
+          <Link2 className="text-palette-green size-4 mt-1" />
         )}
       </Tooltip>
     </span>
