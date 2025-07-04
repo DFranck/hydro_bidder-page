@@ -1,6 +1,12 @@
 import type { Config } from "tailwindcss"
 import plugin from "tailwindcss/plugin"
 import { PluginUtils } from "tailwindcss/types/config"
+import { denomsForNFTMarketplace } from "./app/(with-backend-data)/lockups/marketplace/config/denomsForNFTMarketplace"
+
+const safelist = denomsForNFTMarketplace.flatMap((d) => {
+  if (!d.color) return []
+  return [`from-${d.color}/0`, `to-${d.color}/30`, `text-${d.color}`]
+})
 
 const config = {
   darkMode: ["class"],
@@ -11,6 +17,7 @@ const config = {
     "./src/**/*.{ts,tsx,js,jsx,mdx}",
   ],
   prefix: "",
+  safelist,
   theme: {
     extend: {
       container: {
@@ -35,6 +42,10 @@ const config = {
           green: "#00FFC2",
           red: "#FF7B51",
           text: "#080815",
+        },
+        tokens: {
+          atom: "#9747FF",
+          stosmo: "#E50371",
         },
       },
       containers: {

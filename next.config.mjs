@@ -1,4 +1,14 @@
 import Nextra from "nextra"
+import { dirname, resolve as pathResolve } from "path"
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const fileSystemCachePath = pathResolve(
+  __dirname,
+  "node_modules/next/dist/server/lib/incremental-cache/file-system-cache.js",
+)
 
 const withNextra = Nextra({
   theme: "nextra-theme-docs",
@@ -30,6 +40,7 @@ const nextConfig = withNextra({
       },
     ],
   },
+  cacheHandler: fileSystemCachePath,
 })
 
 export default nextConfig

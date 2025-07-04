@@ -1,0 +1,1 @@
+export const allowedListAmounts = [25, 50, 100, 250, 500, 1000]

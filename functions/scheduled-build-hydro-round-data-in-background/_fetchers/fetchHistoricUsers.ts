@@ -11,7 +11,7 @@ export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
 
   invariant(
     numiaCosmosHydroAppApiKey,
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set",
   )
 
   invariant(
@@ -32,6 +32,8 @@ export async function fetchHistoricUsers(): Promise<{ users: string[] }> {
 
   // Clean up the response
   const responseJson = await response.json()
-  const users = responseJson[0]
+
+  const users = responseJson?.[0] ?? []
+
   return users
 }

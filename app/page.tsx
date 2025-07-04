@@ -11,19 +11,19 @@ const howHydroWorksTiles = [
   {
     title: "1. Connect Wallet",
     description:
-      "Connect your compatible wallet to Hydro to get started. You will need ATOM to pay for gas.",
+      "Connect your compatible wallet to Hydro to get started.",
     icon: "/images/Wallet_Light.svg",
   },
   {
     title: "2. Get Voting Power",
     description:
-      "Use your staked ATOM to obtain Voting Power. You need at least 0.001 ATOM staked.",
+      `Use your staked ${process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME} to obtain Voting Power. You need at least 0.001 ${process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME} staked.`,
     icon: "/images/Lock_Light.svg",
   },
   {
     title: "3. Vote for Projects",
     description:
-      "Review the bids for liquidity and pick the project with the tribute you want to receive.",
+      "Review the bids for liquidity and pick the project with the reward you want to receive.",
     icon: "/images/Vote_Light.svg",
   },
   {
@@ -41,14 +41,13 @@ const howHydroWorksTiles = [
   {
     title: "6. Renew  Lockups",
     description:
-      "Optionally increase your voting power by extending or creating new ATOM lockups.",
+      `Optionally increase your voting power by extending or creating new lockups.`,
     icon: "/images/Repeat_Light.svg",
   },
 ]
 
 const benefitsCheckList = [
-  "Stake ATOM",
-  "Lock your staked ATOM",
+  `Lock your ${process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}`,
   "Vote for projects",
   "Receive tributes",
 ]
@@ -63,7 +62,7 @@ const howItWorksForProjectsTiles = [
   {
     title: "Add a Tribute",
     description:
-      "Your tribute will incentivize ATOM holders to vote on your bid",
+      `Your tribute will incentivize ${process.env.NEXT_PUBLIC_BASE_VOTING_TOKEN_NAME} holders to vote on your bid`,
     icon: "/images/Graphic_Offer.svg",
   },
   {
@@ -165,11 +164,11 @@ export default function Home() {
             <div className={`max-w-[64ch] space-y-6`}>
               <StyledText as="h1" variant="h1">
                 Get More From{" "}
-                <span className="sm:whitespace-nowrap">Your ATOM</span>
+                <span className="sm:whitespace-nowrap">Your {process.env.NEXT_PUBLIC_BASE_VOTING_TOKEN_NAME}</span>
               </StyledText>
               <p className={`text-balance text-xl font-normal`}>
-                An opportunity for Cosmos Hub stakers to earn yield on top of
-                their staking rewards. Lock your staked ATOM, vote, and allocate
+                An opportunity for {process.env.NEXT_PUBLIC_HOST_PROJECT_NAME} stakers to earn yield on top of
+                their staking rewards. Lock your {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}, vote, and allocate
                 liquidity across{" "}
                 <span className="whitespace-nowrap">the Interchain.</span>
               </p>
@@ -220,8 +219,7 @@ export default function Home() {
                   </StyledText>
                 </div>
                 <div className={`text-balance text-lg`}>
-                  Hydro gives ATOM stakers the opportunity to allocate the
-                  Hub&rsquo;s liquidity by voting on bids submitted by projects,
+                  Hydro gives {process.env.NEXT_PUBLIC_HOST_PROJECT_NAME} stakers the opportunity to allocate liquidity by voting on bids submitted by projects,
                   and receive tributes for{" "}
                   <span className="whitespace-nowrap">their support.</span>
                 </div>
@@ -265,7 +263,7 @@ export default function Home() {
                 for projects
               </StyledText>
               <StyledText as="h2" variant="h2">
-                Get Liquidity from the Hub
+                Get Liquidity from {process.env.NEXT_PUBLIC_HOST_PROJECT_NAME_FULL}
               </StyledText>
             </div>
             <p

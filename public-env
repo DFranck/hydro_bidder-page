@@ -4,21 +4,21 @@ NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS=30
 # The address of the Hydro contracts
 NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS=neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp
 NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS=neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t
+NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS=neutron1...
 
 # Numia Data
 NUMIA_COSMOS_HYDRO_APP_API_KEY=
 NUMIA_METRICS_ENDPOINT=https://cosmos.numia.xyz/hydro/metrics
 
-NUMIA_BIDS_ENDPOINT=https://cosmos.numia.xyz/hydro/round_bids
-NUMIA_LOCKUPS_ENDPOINT=https://cosmos.numia.xyz/hydro/round_lockups
-NUMIA_PRICES_ENDPOINT=https://cosmos.numia.xyz/hydro/round_prices
-NUMIA_TRIBUTES_ENDPOINT=https://cosmos.numia.xyz/hydro/round_tributes
-NUMIA_USERS_ENDPOINT=https://cosmos.numia.xyz/hydro/historic_users
+NUMIA_BIDS_ENDPOINT=https://cosmos.numia.xyz/hydro/v2/round_bids
+NUMIA_LOCKUPS_ENDPOINT=https://cosmos.numia.xyz/hydro/v2/round_lockups
+NUMIA_PRICES_ENDPOINT=https://cosmos.numia.xyz/hydro/v2/round_prices
+NUMIA_TRIBUTES_ENDPOINT=https://cosmos.numia.xyz/hydro/v2/round_tributes
+NUMIA_USERS_ENDPOINT=https://cosmos.numia.xyz/hydro/v2/historic_users
 
 # Supabase
 SUPABASE_SERVICE_ROLE_KEY=
-NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaGh3amdlb3R0YWhmYXNqemh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI1MDA1NjYsImV4cCI6MjA1ODA3NjU2Nn0.KMRC5YicVfQfBK8HV5408qa9_ETGIPU4kXZ4bV2Nk38
-NEXT_PUBLIC_SUPABASE_DATA_NAMESPACE=your-name
+NEXT_PUBLIC_SUPABASE_DATA_NAMESPACE=bucket-name
 
 # Toggles the backend data tweaking UI / functionality
 NEXT_PUBLIC_USE_FIXTURE_DATA=true
@@ -26,7 +26,46 @@ NEXT_PUBLIC_USE_FIXTURE_DATA=true
 # Skip API
 NEXT_PUBLIC_SKIP_API_RPC_ENDPOINT=https://neutron-rpc.publicnode.com
 NEXT_PUBLIC_ATOM_DENOM=uatom
+NEXT_PUBLIC_NEUTRON_STOSMO_DENOM=ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93
 
 # Used in @/lib/clearNetlifyCache.ts
 NETLIFY_API_TOKEN=
 NETLIFY_SITE_ID=f4b41b58-6e2b-426c-9678-dab77a7caf83
+
+# The basic, full name of the voting token. either ATOM or OSMO
+# used in sentences like
+# Your tribute will incentivize ${process.env.NEXT_PUBLIC_BASE_VOTING_TOKEN_NAME} holders to vote on your bid
+# NEXT_PUBLIC_BASE_VOTING_TOKEN_NAME=ATOM
+NEXT_PUBLIC_BASE_VOTING_TOKEN_NAME=OSMO
+
+# Voting Token (either ATOM or stOSMO at the moment)
+# NEXT_PUBLIC_VOTING_TOKEN_NAME=ATOM
+NEXT_PUBLIC_VOTING_TOKEN_NAME=stOSMO
+
+# Stake Token name (used for text replacements in the app, either staked ATOM or stOSMO at the moment)
+# NEXT_PUBLIC_STAKED_TOKEN_NAME=staked ATOM
+NEXT_PUBLIC_STAKED_TOKEN_NAME=stOSMO
+
+# The name of the project that is providing the funds for this voting power source (Cosmos Hub or Osmosis at the moment)
+# Used in sentences like
+# "Cosmos Hub stakers can earn more yield"
+# "Osmosis stakers can earn more yield"
+# NEXT_PUBLIC_HOST_PROJECT_NAME=Cosmos Hub
+NEXT_PUBLIC_HOST_PROJECT_NAME=Osmosis
+
+# The name of the project, with an article when necessary. Used for sentences like
+# "Hydro received funding from the Cosmos Hub"
+# "Hydro received funding from Osmosis"
+# NEXT_PUBLIC_HOST_PROJECT_NAME_FULL=the Cosmos Hub
+NEXT_PUBLIC_HOST_PROJECT_NAME_FULL=Osmosis
+
+# The Lockup denoms that can be considered as NFTs. This is used to know which lockup we allow for:
+# - Transferring
+# - Listing on Marketplace
+# - Buying options on Marketplace
+NEXT_PUBLIC_ALLOWED_NFT_DENOMS='["ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93"]'
+
+# TODO: Remove these notes after we move to config files
+# Assuming just "Osmosis" and "The Cosmos Hub":
+# Stakers on {blank} can earn more yield (or just {tokenName} stakers can earn more yield)
+# {blank} has partially funded Hydro

@@ -22,19 +22,19 @@ export async function fetchRoundBids({
 
   invariant(
     numiaCosmosHydroAppApiKey,
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set",
   )
 
   invariant(
     hydroContractAddress,
-    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set",
   )
 
   if (currentRoundId === roundId) {
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
       client,
-      hydroContractAddress
+      hydroContractAddress,
     )
 
     const query = {
@@ -51,7 +51,7 @@ export async function fetchRoundBids({
     try {
       const url = `${numiaBidsEndpoint}?round_id=${roundId}&tranche_id=${trancheId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`
 
-      console.log(url)
+      console.log("Fetching bids from", url)
 
       const response = await fetch(url, {
         headers: {
@@ -62,16 +62,15 @@ export async function fetchRoundBids({
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch numia bids data: ${response.statusText}`
+          `Failed to fetch numia bids data: ${response.statusText}`,
         )
       }
 
       // Clean up the response
-      let responseJson
-      try {
-        responseJson = await response.json()
-      } catch (error) {
-        throw new Error(`Error converting response to JSON: ${error}`)
+      const responseJson = await response.json()
+
+      if (!Array.isArray(responseJson) || responseJson.length === 0) {
+        return []
       }
 
       if (!responseJson || responseJson.length === 0) {

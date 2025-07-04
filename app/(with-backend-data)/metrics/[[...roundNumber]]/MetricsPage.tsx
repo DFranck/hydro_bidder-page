@@ -4,6 +4,7 @@ import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { Menu, MenuItem } from "@/components/Menu"
+import { EmptyBox } from "@/components/EmptyBox"
 import { AllTimeBidCount } from "@/components/StatCards/cards/AllTimeBidCount"
 import { AllTimePoLDeployed } from "@/components/StatCards/cards/AllTimePoLDeployed"
 import { AllTimeRevenue } from "@/components/StatCards/cards/AllTimeRevenue"
@@ -23,6 +24,9 @@ import { MetricsTable } from "./MetricsTable"
 
 export const PRE_HYDRO_ROUND_ID = -1
 export const EXPERIMENTAL_ROUND_ID = -2
+export const ATOM_BUCKET_STARTING_ROUND = 0
+export const USDC_BUCKET_STARTING_ROUND = 4
+export const STOSMO_VOTE_TOKEN_STARTING_ROUND = 6
 
 export interface MetricsRow {
   _bid: BidRevampMetrics | PreHydroBid
@@ -63,7 +67,8 @@ export function MetricsPage({
   const allRoundIds = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
 
   const displayTranches = tranches.map((x) => {
-    const displayTrancheFromRound = x.id === 2 ? 4 : 0
+    const displayTrancheFromRound =
+      x.id === 2 ? USDC_BUCKET_STARTING_ROUND : ATOM_BUCKET_STARTING_ROUND
     return { ...x, displayTrancheFromRound }
   })
 
@@ -167,10 +172,17 @@ export function MetricsPage({
           <>
             {requestedPreHydro ? (
               <MetricsTable
-                key={`tranche_0`}
+                key="tranche_0"
                 trancheId={0}
                 requestedRoundNumber={requestedRoundNumber as number | null}
               />
+            ) : process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME !== "ATOM" &&
+              requestedRoundId < STOSMO_VOTE_TOKEN_STARTING_ROUND ? (
+              <EmptyBox>
+                <StyledText>
+                  Hydro was not active for this voting token at this point!
+                </StyledText>
+              </EmptyBox>
             ) : (
               displayTranches.map(
                 ({ id: trancheId, displayTrancheFromRound }) => {

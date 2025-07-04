@@ -6,6 +6,8 @@ export async function fetchRoundPrices({
 }: {
   roundId: number
 }): Promise<RoundPrices> {
+  const chainId = "neutron-1" // TODO: this should likely be in an env var
+
   const numiaPricesEndpoint = process.env.NUMIA_PRICES_ENDPOINT
 
   const numiaCosmosHydroAppApiKey = process.env.NUMIA_COSMOS_HYDRO_APP_API_KEY
@@ -14,7 +16,7 @@ export async function fetchRoundPrices({
 
   invariant(
     numiaCosmosHydroAppApiKey,
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set",
   )
 
   const response = await fetch(

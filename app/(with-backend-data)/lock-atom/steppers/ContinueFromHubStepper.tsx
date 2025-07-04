@@ -43,7 +43,7 @@ export const ContinueFromHubStepper = ({
   const { deleteIncompleteNotice } = useIncompleteNotices()
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
     useChainsAndSigners()
-  const { lockedAtomEpochInNanos, hasGatekeeper } = useBackendData()
+  const { lockedTokenEpochInNanos, hasGatekeeper } = useBackendData()
   const [step, setStep] = useState<ContinueFromHubStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("ContinueFromHubStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -54,7 +54,7 @@ export const ContinueFromHubStepper = ({
   const execute = async () => {
     try {
       setErrorLog(
-        `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`
+        `Starting execution with amount: ${amount}, validator: ${validator}, denom: ${denom}, lockDuration: ${lockDuration}`,
       )
 
       if (
@@ -73,7 +73,7 @@ export const ContinueFromHubStepper = ({
         hubSigner,
         neutronChain,
         amount,
-        denom
+        denom,
       )
 
       // Broadcast the IBC transfer transaction
@@ -84,7 +84,7 @@ export const ContinueFromHubStepper = ({
         neutronSigner,
         neutronChain,
         denom,
-        signedIBCTx
+        signedIBCTx,
       )
 
       // Wait for the user to sign the lock tokens transaction
@@ -119,7 +119,7 @@ export const ContinueFromHubStepper = ({
         validator,
         validatorMap,
         lockDuration,
-        lockedAtomEpochInNanos,
+        lockedTokenEpochInNanos,
         errorLog,
         showErrorLog,
         setShowErrorLog,

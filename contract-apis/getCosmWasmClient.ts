@@ -14,6 +14,8 @@ async function connectWithRetry({
   attempts?: number
   initialDelay?: number
 } = {}): Promise<CosmWasmClient> {
+  const endpoint = sharedEndpoints.neutron.rpc[0]
+  console.log("🔗 Connecting to RPC endpoint:", endpoint)
   for (let i = 0; i < attempts; i++) {
     try {
       return await CosmWasmClient.connect(sharedEndpoints.neutron.rpc[0])

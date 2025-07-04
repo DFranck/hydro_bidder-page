@@ -17,7 +17,7 @@ export default async function LayoutWithContext({
       ...rawBackendDataBeforeWallet.externalData,
       bidMetaDataById: Object.fromEntries(
         Object.entries(
-          rawBackendDataBeforeWallet.externalData?.bidMetaDataById ?? {}
+          rawBackendDataBeforeWallet.externalData?.bidMetaDataById ?? {},
         ).map(([bidId, bidMetaData]) => [
           bidId,
           omit(bidMetaData, [
@@ -26,7 +26,7 @@ export default async function LayoutWithContext({
             "committeeComments",
             "description",
           ]),
-        ])
+        ]),
       ),
     },
     hydroMetaData: rawBackendDataBeforeWallet.hydroMetaData,
@@ -34,8 +34,10 @@ export default async function LayoutWithContext({
       ({ round_bids, ...roundData }) => ({
         ...roundData,
         round_bids: round_bids.map((bid) => omit(bid, "description")),
-      })
+      }),
     ),
+    hydroLockups: rawBackendDataBeforeWallet.hydroLockups,
+    hydroListings: rawBackendDataBeforeWallet.hydroListings,
   }
 
   return (

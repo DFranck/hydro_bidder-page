@@ -20,23 +20,24 @@ export async function fetchRoundLockups({
 
   invariant(
     numiaCosmosHydroAppApiKey,
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set",
   )
 
   invariant(numiaLockupsEndpoint, "NUMIA_LOCKUPS_ENDPOINT is not set")
 
   invariant(
     hydroContractAddress,
-    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set",
   )
 
   if (currentRoundId == roundId) {
     const { users = [] } = await fetchHistoricUsers()
 
     const client = await getCosmWasmClient()
+
     const hydroQueryClient = new HydroBaseQueryClient(
       client,
-      hydroContractAddress
+      hydroContractAddress,
     )
 
     const allUserLockupsWithTrancheInfos = []
@@ -84,19 +85,21 @@ export async function fetchRoundLockups({
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch numia lockups data: ${response.statusText}`
+        `Failed to fetch numia lockups data: ${response.statusText}`,
       )
     }
 
     // Clean up the response
     const responseJson = await response.json()
-    if (responseJson.length == 0) {
+
+    if (!Array.isArray(responseJson) || responseJson.length === 0) {
       return []
     }
 
     const tributes = responseJson.map((response: { response: string }) => {
       return (
-        JSON.parse(response.response).data?.lockups_with_per_tranche_infos ?? []
+        JSON.parse(response?.response ?? "{}").data
+          ?.lockups_with_per_tranche_infos ?? []
       )
     })
     return tributes as LockupWithPerTrancheInfo[][]

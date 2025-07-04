@@ -25,9 +25,8 @@ export type WalletProps = {
 
 export function Wallet({ chainName, notifyConnectedCB, variant, ignoreStatus }: WalletProps) {
   const { addToast } = useToasts()
-
   const { connect, openView, status, address, message } = useChain(
-    chainName || "neutron"
+    chainName || "neutron",
   )
 
   // Events

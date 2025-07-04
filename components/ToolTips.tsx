@@ -27,8 +27,8 @@ export const averageAPRTooltip = (
   <div className="flex flex-col gap-2">
     <p>
       The average APR available to Hydro voters during the current active round.
-      Hydro APR is separate and additional to your staking APR as an ATOM
-      staker.{" "}
+      Hydro APR is separate and additional to your staking APR as an{" "}
+      {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} staker.{" "}
       <StyledText
         variant="link"
         as={Link}
@@ -44,9 +44,9 @@ export const averageAPRTooltip = (
 
 export const averageAtomLockedPerWalletTooltip = (
   <>
-    The average amount of ATOM that has been locked by each participating wallet
-    across all Hydro rounds. This helps illustrate the typical commitment level
-    per user.
+    The average amount of {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} that has
+    been locked by each participating wallet across all Hydro rounds. This helps
+    illustrate the typical commitment level per user.
   </>
 )
 
@@ -239,7 +239,8 @@ export const currentVoteShareTooltip = (
 export const cannotContinueLockupTooltip = (
   <p>
     This lockup is larger than the remaining capacity. You may either revert it
-    to get back your staked ATOM, or wait and continue when there is capacity.
+    to get back your {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}, or wait and
+    continue when there is capacity.
   </p>
 )
 
@@ -341,15 +342,15 @@ export const lockupLimitReachedByUserTooltip = (
 )
 
 export const lockupLimitTooltip = ({
-  lockedAtomMaxWallet,
-  lockedAtomTotalWallet,
+  lockedTokenMaxWallet,
+  lockedTokenTotalWallet,
 }: {
-  lockedAtomMaxWallet: number
-  lockedAtomTotalWallet: number
+  lockedTokenMaxWallet: number
+  lockedTokenTotalWallet: number
 }) => (
   <p>
-    Currently, you can lock up up to {lockedAtomMaxWallet} ATOM, and you have
-    already locked up {lockedAtomTotalWallet.toFixed(4).replace(".0000", "")}{" "}
+    Currently, you can lock up up to {lockedTokenMaxWallet} ATOM, and you have
+    already locked up {lockedTokenTotalWallet.toFixed(4).replace(".0000", "")}{" "}
     ATOM.
   </p>
 )
@@ -363,7 +364,7 @@ export const notEligibleTooltip = (
       target="_blank"
       rel="noopener noreferrer"
       variant="link"
-      className="flex justify-start gap-1 my-1"
+      className="my-1 flex justify-start gap-1"
     >
       Join our Telegram group
     </StyledText>
@@ -381,8 +382,8 @@ export const lockupsTableTimeLeftColumnTooltip = (
 
 export const lockAtomToVoteTooltip = (
   <p>
-    All of your lockups are in use or expired. Lock more ATOM to vote for this
-    bid.{" "}
+    All of your lockups are in use or expired. Lock more{" "}
+    {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to vote for this bid.{" "}
     <StyledText
       as={Link}
       href="/docs/users/voting-for-projects"
@@ -449,7 +450,8 @@ export const metricsPolRewardsColumnTooltip = (
 
 export const metricsPolSizeColumnTooltip = (
   <p>
-    The total amount of ATOM allocated to this bid during the specified round.{" "}
+    The total amount of {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} allocated to
+    this bid during the specified round.{" "}
     <StyledText
       as={Link}
       href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
@@ -578,8 +580,8 @@ export const currentRoundUniqueWalletsTooltip = (
 
 export const polAvailableTooltip = (
   <p>
-    The total ATOM available to be deployed across all bids from the Hydro
-    Committee as PoL.{" "}
+    The total {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} available to be
+    deployed across all bids from the Hydro Committee as PoL.{" "}
     <StyledText
       as={Link}
       href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
@@ -899,8 +901,8 @@ export const yourVotingPowerTooltip = ({
 
 export const bidDetailsPolSizeTooltip = (
   <p>
-    The total amount of ATOM allocated to this bid as PoL during the specified
-    round.{" "}
+    The total amount of {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} allocated to
+    this bid as PoL during the specified round.{" "}
     <StyledText
       as={Link}
       href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
@@ -973,21 +975,21 @@ export const bidDetailsVoteReceivedTooltip = ({
 )
 
 export const globalTotalTokenLockedTooltip = ({
-  lockedAtomRemainingCapacityGlobal = 0,
+  lockedTokenRemainingCapacityGlobal = 0,
 }) => (
   <p className="text-center">
-    Total ATOM locked in Hydro.{" "}
+    Total {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} locked in Hydro.{" "}
     <strong
       className={twJoin(
-        lockedAtomRemainingCapacityGlobal > 0
+        lockedTokenRemainingCapacityGlobal > 0
           ? "text-palette-green"
           : "text-palette-red"
       )}
     >
-      {lockedAtomRemainingCapacityGlobal > 0 ? (
+      {lockedTokenRemainingCapacityGlobal > 0 ? (
         <>
           Available capacity:{" "}
-          {lockedAtomRemainingCapacityGlobal.toFixed(
+          {lockedTokenRemainingCapacityGlobal.toFixed(
             DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
           )}
         </>
@@ -1035,7 +1037,6 @@ export const experimentalTableDeploymentAprTooltip = ({
 )
 
 // Tooltip: Claim staking rewards from tokenized shares
-// Added by Poly on 2025-04-08
 export const claimStakingRewardsTooltip = (
   <p>
     Claim your pending staking rewards from tokenized ATOM shares. Rewards
@@ -1121,4 +1122,27 @@ export const liquidationBonusTooltip = (
     a rough guidance is that it lies between 10 and 50%. To increase the
     liquidation bonus, increase the upper and lower bounds of the range.
   </p>
+)
+// Tooltip: Transfer lockup
+export const toTransferConfirmTooltip = (
+  <p>The address should be a valid neutron address.</p>
+)
+// Tooltip: actions is disabled
+export const lockupIsLSM = (
+  <p>The LSM-backed lockups cannot be sold or transferred at the moment.</p>
+)
+export const lockupNotListable = (
+  <p>
+    This lockup cannot be sold in its current size. Please split or merge it to
+    create a standard sellable amount, then try again.
+  </p>
+)
+export const toListConfirmTooltip = (
+  <p>To list a lockup, please fill a valid price.</p>
+)
+
+// Tooltip: Buy lockup
+export const toBuyConfirmTooltip = <p>You don&apos;t have enough balance</p>
+export const lockupNotBuyableTooltip = (
+  <p>This lockup is not currently buyable</p>
 )

@@ -6,7 +6,8 @@ export function CommonSteps(stepName: string) {
         title: "Transfer your Tokenized ATOM to Hydro",
         contents: (
           <p>
-            Approve the transaction in your wallet to continue.
+            Approve the transaction in your wallet to continue. This will start
+            the transfer of your tokenized {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to Hydro.
           </p>
         ),
       }
@@ -17,7 +18,9 @@ export function CommonSteps(stepName: string) {
         title: "Lock your ATOM, get voting power",
         contents: (
           <p>
-            Approve the transaction in your wallet to continue.
+            Approve in your wallet again to lock your {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}. This will initiate
+            the locking of your {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME} into the Hydro contract to receive
+            voting power.
           </p>
         ),
       }
@@ -25,8 +28,8 @@ export function CommonSteps(stepName: string) {
     case "WaitingForLockingBroadcast":
       return {
         isWorking: true,
-        title: "Lock your ATOM, get voting power",
-        contents: <p>Wait until your transaction is included in a block. This should only take a few seconds.</p>,
+        title: `Locking Your ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}...`,
+        contents: <p>Just a few seconds, unless the network is congested</p>,
       }
 
     case "WaitingForIBCBroadcastAndRelay":

@@ -17,9 +17,9 @@ import { useToasts } from "@/components/Toasts"
 
 import { Tooltip } from "@/components/Tooltip"
 import { claimStakingRewardsTooltip } from "@/components/ToolTips"
+import { fetchLSMStakingRewards } from "@/contract-apis/fetchTokenizeShareRewards"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
-import { fetchLSMStakingRewards } from "@/contract-apis/fetchTokenizeShareRewards"
 import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
 import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 

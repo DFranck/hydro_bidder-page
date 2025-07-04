@@ -17,7 +17,7 @@ const WalletProvider = dynamic(
   {
     loading: () => <Loading />,
     ssr: false,
-  }
+  },
 )
 
 import { BackendDataTweaker } from "@/components/BackendDataTweakerLoader"
@@ -28,12 +28,12 @@ import { IncompleteNoticesProvider } from "./IncompleteNoticesProvider"
 const QueryClientProvider = dynamic(
   () =>
     import("@/components/QueryClientProvider").then(
-      (mod) => mod.QueryClientProvider
+      (mod) => mod.QueryClientProvider,
     ),
   {
     loading: () => <Loading />,
     ssr: false, // Since react-query needs browser APIs
-  }
+  },
 )
 
 export function AppWrapper({
@@ -50,7 +50,7 @@ export function AppWrapper({
           <div
             className={twJoin(
               "fixed inset-0 -z-10",
-              "bg-black bg-[url('/images/hydro-bg-quality-half.jpg')] bg-cover bg-no-repeat"
+              "bg-black bg-[url('/images/hydro-bg-quality-half.jpg')] bg-cover bg-no-repeat",
             )}
           />
 
@@ -64,7 +64,7 @@ export function AppWrapper({
             <ConditionalWrapper
               condition={Boolean(
                 rawBackendDataBeforeWallet &&
-                  rawBackendDataBeforeWallet !== null
+                  rawBackendDataBeforeWallet !== null,
               )}
               wrapper={(children) => (
                 <GlobalLockupInfoProvider>

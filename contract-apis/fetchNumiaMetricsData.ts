@@ -11,7 +11,7 @@ export async function fetchNumiaMetricsData(): Promise<MetricsFromNumia> {
 
   invariant(
     numiaCosmosHydroAppApiKey,
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set",
   )
 
   const response = await fetchWithRetry(numiaMetricsEndpoint, {

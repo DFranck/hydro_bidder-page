@@ -6,8 +6,8 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { executeWalletClaimRewards } from "@/contract-apis/executeWalletClaimRewards"
 import {
-  AugmentedCoin,
   AugmentedBidAfterWallet,
+  AugmentedCoin,
   TokenBasedTribute,
 } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -23,10 +23,11 @@ import {
   assets as neutronAssets,
   chain as neutronChain,
 } from "chain-registry/mainnet/neutron"
+import { assets as strideAssets } from "chain-registry/mainnet/stride"
 import { ReactNode, useEffect, useState } from "react"
 import { Step } from "../lock-atom/steppers/Step"
 
-export type ClaimRewardsStep = "Init" | "ConvertToAtom"
+export type ClaimRewardsStep = "Init" | "Convert"
 
 export default function ClaimRewardsStepper({
   tribute,
@@ -43,7 +44,7 @@ export default function ClaimRewardsStepper({
   const [step, setStep] = useState<ClaimRewardsStep>("Init")
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [skipApiRoute, setSkipApiRoute] = useState<RouteResponse | null>(null)
-  const { address, atomPrice } = useBackendData()
+  const { address, atomPrice, stOsmoPrice } = useBackendData()
   const {
     getOfflineSigner,
     getSigningCosmWasmClient,
@@ -76,7 +77,7 @@ export default function ClaimRewardsStepper({
 
   const { title, contents, buttons, isWorking } = getStepContents()
 
-  const claimRewards = async (convertToAtom: boolean) => {
+  const claimRewards = async (shouldConvert: boolean) => {
     if (!bid || !tribute || !address) return
 
     try {
@@ -91,21 +92,31 @@ export default function ClaimRewardsStepper({
         getSigningCosmWasmClient,
       })
 
-      if (convertToAtom) {
-        if (!process.env.NEXT_PUBLIC_ATOM_DENOM) return
+      if (shouldConvert) {
+        if (
+          !process.env.NEXT_PUBLIC_ATOM_DENOM ||
+          !process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM
+        )
+          return
         setToasts([toastMessages.searchingConvertRoute])
 
         const route = await skipClient.route({
           amountIn: claimAmount.amount,
           sourceAssetDenom: claimAmount.denom || tribute.denomOriginal,
           sourceAssetChainID: neutronChainId,
-          destAssetDenom: process.env.NEXT_PUBLIC_ATOM_DENOM,
-          destAssetChainID: cosmosHubChainId,
+          destAssetDenom:
+            process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+              ? process.env.NEXT_PUBLIC_ATOM_DENOM
+              : process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM,
+          destAssetChainID:
+            process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+              ? cosmosHubChainId
+              : neutronChainId,
         })
         setToasts([])
 
         setSkipApiRoute(route)
-        setStep("ConvertToAtom")
+        setStep("Convert")
       } else {
         setToasts([toastMessages.claimingRewardsSuccess])
         onExit(true)
@@ -120,17 +131,17 @@ export default function ClaimRewardsStepper({
     }
   }
 
-  async function convertToAtom() {
+  async function makeConversion() {
     if (!skipApiRoute) return
 
     setIsLoading(true)
-    setToasts([toastMessages.convertingToAtom])
+    setToasts([toastMessages.converting])
 
     const userAddresses = await Promise.all(
       skipApiRoute.requiredChainAddresses.map(async (chainID) => ({
         chainID,
         address: await getAddress(chainID),
-      }))
+      })),
     )
 
     try {
@@ -220,18 +231,25 @@ export default function ClaimRewardsStepper({
                     name="claimType"
                     checked={claimType === "convert"}
                     onChange={() => setClaimType("convert")}
-                    disabled={!process.env.NEXT_PUBLIC_ATOM_DENOM}
+                    disabled={
+                      !process.env.NEXT_PUBLIC_ATOM_DENOM ||
+                      !process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM
+                    }
                   />
                   <StyledText>
-                    {((claimAmount?.valueUsd || 0) / atomPrice).toLocaleString(
-                      "en-US",
-                      {
-                        maximumFractionDigits: 4,
-                        trailingZeroDisplay: "stripIfInteger",
-                      }
-                    )}
+                    {(
+                      (claimAmount?.valueUsd || 0) /
+                      (process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+                        ? atomPrice
+                        : stOsmoPrice)
+                    ).toLocaleString("en-US", {
+                      maximumFractionDigits: 4,
+                      trailingZeroDisplay: "stripIfInteger",
+                    })}
                     &nbsp;
-                    <StyledText variant="footnote">ATOM</StyledText>
+                    <StyledText variant="footnote">
+                      {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                    </StyledText>
                   </StyledText>
                 </StyledText>
               </div>
@@ -240,7 +258,9 @@ export default function ClaimRewardsStepper({
           buttons: [
             {
               label:
-                claimType === "native" ? "Claim" : "Claim + Convert to ATOM",
+                claimType === "native"
+                  ? "Claim"
+                  : `Claim + Convert to ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
               onClick: () => {
                 claimRewards(claimType === "convert")
               },
@@ -256,44 +276,55 @@ export default function ClaimRewardsStepper({
             },
           ],
         }
-      case "ConvertToAtom":
+      case "Convert":
         if (!skipApiRoute) {
           return {
-            title: "Convert to ATOM",
+            title: `Convert to ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
             contents: <p>Route is not set</p>,
           }
         }
 
         const tributeAsset = neutronAssets.assets.find(
-          (x: { base: string }) => x.base === tribute!.denomOriginal
+          (x: { base: string }) => x.base === tribute!.denomOriginal,
         )
         const srcTokenImgUrl = tributeAsset?.logo_URIs?.svg
 
         const atomAsset = hubAssets.assets.find(
-          (x: { base: string }) => x.base === process.env.NEXT_PUBLIC_ATOM_DENOM
+          (x: { base: string }) =>
+            x.base === process.env.NEXT_PUBLIC_ATOM_DENOM,
         )
-        const destTokenImgUrl = atomAsset?.logo_URIs?.svg
+        const strideAsset = strideAssets.assets.find(
+          (x: { base: string }) => x.base === "stuosmo",
+        )
+
+        const destTokenImgUrl =
+          process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+            ? atomAsset?.logo_URIs?.svg
+            : strideAsset?.logo_URIs?.svg
 
         const srcExplorer = neutronChain?.explorers?.find(
-          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan"
+          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan",
         )
         const srcAddressUrl = srcExplorer?.account_page?.replace(
           "${accountAddress}",
-          address
+          address,
         )
 
         const destExplorer = hubChain?.explorers?.find(
-          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan"
+          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan",
         )
-        const destAddressUrl = cosmosHubAddress
-          ? destExplorer?.account_page?.replace(
-              "${accountAddress}",
-              cosmosHubAddress
-            )
-          : ""
+        const destAddressUrl =
+          process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME !== "ATOM"
+            ? srcAddressUrl
+            : cosmosHubAddress
+              ? destExplorer?.account_page?.replace(
+                  "${accountAddress}",
+                  cosmosHubAddress,
+                )
+              : ""
 
         return {
-          title: "Convert to ATOM",
+          title: `Convert to ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
           contents: (
             <div className="flex flex-row gap-6">
               <div className="flex flex-col items-center justify-between gap-3">
@@ -343,10 +374,16 @@ export default function ClaimRewardsStepper({
                 <div className="flex flex-col gap-1">
                   <StyledText>
                     {formatAmount(skipApiRoute.amountOut)}&nbsp;
-                    <StyledText variant="footnote">ATOM</StyledText>
+                    <StyledText variant="footnote">
+                      {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                    </StyledText>
                   </StyledText>
                   <StyledText>
-                    on {cosmosChainName}&nbsp;
+                    on{" "}
+                    {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+                      ? cosmosChainName
+                      : neutronChainName}
+                    &nbsp;
                     <StyledText
                       as="a"
                       variant="link"
@@ -354,7 +391,9 @@ export default function ClaimRewardsStepper({
                       target="_blank"
                       className="break-all"
                     >
-                      {cosmosHubAddress}
+                      {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+                        ? cosmosHubAddress
+                        : address}
                     </StyledText>
                   </StyledText>
                 </div>
@@ -364,7 +403,7 @@ export default function ClaimRewardsStepper({
           buttons: [
             {
               label: "Convert",
-              onClick: convertToAtom,
+              onClick: makeConversion,
               className: "bg-palette-green",
               disabled: isLoading,
             },

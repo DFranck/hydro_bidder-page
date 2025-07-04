@@ -20,8 +20,11 @@ export function LockupsTables({
 }: {
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
 }) {
-  const { lockups, tranches } = useBackendData()
-
+  const { lockups, tranches, marketplaceLockups } = useBackendData()
+  const marketplaceLockupById = useMemo(
+    () => new Map(marketplaceLockups.map((l) => [l.id, l])),
+    [marketplaceLockups],
+  )
   type ActiveRow = (typeof activeLockupRows)[number]
   type ExpiredRow = (typeof expiredLockupRows)[number]
 
@@ -34,8 +37,15 @@ export function LockupsTables({
   )
 
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
-    const activeLockups = lockups.filter((lockup) => !lockup.isExpired)
-    const expiredLockups = lockups.filter((lockup) => lockup.isExpired)
+    const getLockup = (lockup: AugmentedLockup) =>
+      marketplaceLockupById.get(lockup.id) || lockup
+
+    const activeLockups = lockups
+      .filter((lockup) => !lockup.isExpired)
+      .map(getLockup)
+    const expiredLockups = lockups
+      .filter((lockup) => lockup.isExpired)
+      .map(getLockup)
 
     return [
       activeLockups.map((lockup) =>
@@ -91,10 +101,10 @@ export function LockupsTables({
   }, [tranches])
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12 ">
       <BlurryBackdropBox
         id="active-lockups"
-        className="group flex flex-col gap-3"
+        className="group z-10 flex flex-col gap-3 overflow-visible"
       >
         <TableHeader
           leftSlot={
@@ -113,7 +123,7 @@ export function LockupsTables({
         />
 
         {activeLockupRows.length === 0 ? (
-          <EmptyBox className="flex flex-col gap-1">
+          <EmptyBox className="flex flex-col gap-1 overflow-visible">
             <div>
               You don&rsquo;t have any active lockups. To create one, click the
               &ldquo;New Lockup&rdquo; button&nbsp;
@@ -137,7 +147,7 @@ export function LockupsTables({
       {expiredLockupRows.length > 0 && (
         <BlurryBackdropBox
           id="expired-lockups"
-          className="group flex flex-col gap-3"
+          className="group flex flex-col gap-3 overflow-visible"
         >
           <TableHeader
             leftSlot={<StyledText variant="h4">Expired Lockups</StyledText>}

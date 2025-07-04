@@ -2,6 +2,10 @@ import { getHydroQueryClient } from "../../../contract-apis/getClient"
 import { RawHydroMetaData } from "../../../contract-apis/types"
 
 export async function fetchHydroMetaData(): Promise<RawHydroMetaData> {
+  console.log(
+    `Fetching hydro meta data from contract ending ${process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS?.slice(-6)}`,
+  )
+
   const hydroQueryClient = await getHydroQueryClient()
 
   const [{ constants }, { round_end, round_id }, { tranches }] =
@@ -14,14 +18,14 @@ export async function fetchHydroMetaData(): Promise<RawHydroMetaData> {
   const currentRoundId = round_id
   const allRoundIds = Array.from(
     { length: currentRoundId + 1 },
-    (_, index) => index
+    (_, index) => index,
   )
 
   const everyRoundAndTranchePair = allRoundIds.flatMap((roundId) =>
     tranches.map((tranche) => ({
       roundId,
       trancheId: tranche.id,
-    }))
+    })),
   )
 
   const liquidity_deployments = (
@@ -36,7 +40,7 @@ export async function fetchHydroMetaData(): Promise<RawHydroMetaData> {
           }),
         ])
         return liquidity_deployments
-      })
+      }),
     )
   ).flat()
 

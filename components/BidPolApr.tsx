@@ -1,7 +1,7 @@
 import { StyledText } from "@/components/StyledText"
+import { twJoin } from "tailwind-merge"
 import { Tooltip } from "./Tooltip"
 import { bidPolAprTooltip } from "./ToolTips"
-import { twJoin } from "tailwind-merge"
 
 export function BidPolApr() {
   return (

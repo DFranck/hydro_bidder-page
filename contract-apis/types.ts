@@ -1,6 +1,9 @@
+import { MarketplaceLockup } from "@/app/(with-backend-data)/lockups/marketplace/types"
+import { CollectionConfig, Listing } from "@/app/ts_types/MarketplaceBase.types"
 import { BaseRowObject } from "@/components/StyledTable/types"
 import { ReactNode } from "react"
 import {
+  AllNftInfoResponse,
   Coin,
   Constants,
   LiquidityDeployment,
@@ -9,6 +12,7 @@ import {
   LockupWithPerTrancheInfo,
   PerTrancheLockupInfo,
   Proposal,
+  RoundWithBid,
   Tranche,
   VoteWithPower,
 } from "../app/ts_types/HydroBase.types"
@@ -28,15 +32,17 @@ export interface AugmentedBackendDataAfterWallet
   claimsOutstanding: AugmentedClaim[]
   isLoading: boolean
   isWalletConnected: boolean
-  lockedAtomIsAtCapacityWallet: boolean
-  lockedAtomPercentageWallet: number
+  lockedTokenIsAtCapacityWallet: boolean
+  lockedTokenPercentageWallet: number
   lockedAtomTotalWalletStat: number
   lockedStAtomTotalWalletStat: number
   lockedDAtomTotalWalletStat: number
   lockedTokenTotalWalletStat: number
-  lockedAtomTotalWallet: number
-  lockedAtomMaxWallet: number
+  lockedTokenTotalWallet: number
+  lockedTokenMaxWallet: number
   lockups: AugmentedLockup[]
+  marketplaceLockups: MarketplaceLockup[]
+  collections: CollectionConfig[]
   votes: SanitizedVote[]
   votesByRoundId: Record<number, SanitizedVote[]>
   votingPowerAvailableByTrancheId: Record<number, number>
@@ -50,12 +56,15 @@ export interface AugmentedBackendDataBeforeWallet {
   atomPrice: number
   dAtomPrice: number
   stAtomPrice: number
+  stOsmoPrice: number
   bidsInfo: Record<number, BidRevampMetrics>
   currentRoundEndDate: Date
   currentRoundId: number
   currentRoundIsPilot: boolean
   tranches: Tranche[]
-  lockedAtomEpochInNanos: number
+  hydroLockups: AugmentedLockup[]
+  hydroListings: Listing[]
+  lockedTokenEpochInNanos: number
   metricsForPreHydroBids: PreHydroBid[]
   metricsGlobal: SanitizedMetricsFromNumia
   minTributeFactor: number
@@ -96,6 +105,7 @@ export interface AugmentedLockup {
   isEligibleToVote: boolean
   isExpired: boolean
   multiplier: number
+  outstanding: Coin[]
   metaDataByTrancheId: Record<
     number,
     {
@@ -106,6 +116,7 @@ export interface AugmentedLockup {
       nextRoundEligibleToVote: number | null
       numRoundsLeftOnDeployment: number | null
       votedOnBidId: number | null
+      historicVotedOnProposals: RoundWithBid[]
     }
   >
 }
@@ -114,12 +125,16 @@ export type BackendDataBeforeWallet = {
   externalData: RawExternalData
   hydroMetaData: RawHydroMetaData
   hydroRoundData: RawHydroRoundData[]
+  hydroLockups: RawHydroLockups
+  hydroListings: RawHydroListings
 }
 
 export type BackendDataBeforeWalletSlimmed = {
   externalData: RawExternalDataSlimmed
   hydroMetaData: RawHydroMetaData
   hydroRoundData: RawHydroRoundDataSlimmed[]
+  hydroLockups: RawHydroLockups
+  hydroListings: RawHydroListings
 }
 
 export interface BackendDataTweak {
@@ -188,11 +203,11 @@ export interface AugmentedBidAfterWallet extends BidRevampMetrics {
 }
 
 export interface GlobalLockupCapacityInfo {
-  lockedAtomIsAtCapacityGlobal: boolean
-  lockedAtomMaxGlobal: number
-  lockedAtomPercentageGlobal: number
-  lockedAtomRemainingCapacityGlobal: number
-  lockedAtomTotalGlobal: number
+  lockedTokenIsAtCapacityGlobal: boolean
+  lockedTokenMaxGlobal: number
+  lockedTokenPercentageGlobal: number
+  lockedTokenRemainingCapacityGlobal: number
+  lockedTokenTotalGlobal: number
 }
 
 export interface MetricsFromNumia {
@@ -251,6 +266,9 @@ export type RawHydroMetaData = {
   round_id: number
   tranches: Tranche[]
 }
+export type RawHydroLockups = AllNftInfoResponse[]
+
+export type RawHydroListings = Listing[]
 
 export type RawHydroRoundData = {
   round_id: number
@@ -296,7 +314,6 @@ export interface PreHydroBid {
   yield: number
 }
 
-
 export interface AugmentedLockupWithPerTrancheInfo {
   lock_with_power: LockEntryWithPower & {
     lock_entry: LockEntry & {
@@ -315,6 +332,8 @@ export interface RawWalletData {
   currently_locked: number | string
   maxUserCanLock: string
   hasGatekeeper: boolean
+  listings: Listing[]
+  collections: CollectionConfig[]
 }
 
 export interface RoundPrices {

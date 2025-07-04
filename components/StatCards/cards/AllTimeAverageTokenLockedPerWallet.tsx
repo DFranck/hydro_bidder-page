@@ -6,7 +6,7 @@ import { averageAtomLockedPerWalletTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 
-export function AllTimeAverageAtomLockedPerWallet() {
+export function AllTimeAverageTokenLockedPerWallet() {
   const { isLoading, metricsGlobal } = useBackendData()
   const { allTimeUsersAvgTokensLocked } = metricsGlobal
 
@@ -14,15 +14,14 @@ export function AllTimeAverageAtomLockedPerWallet() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip
-          tipContents={averageAtomLockedPerWalletTooltip}
-          className="w-full"
-        >
-          Average ATOM Locked Per{" "}
-          <span className="inline-flex items-center gap-1">
-            Wallet
+        <Tooltip tipContents={averageAtomLockedPerWalletTooltip}>
+          <div className="flex items-center gap-1">
+            <span>
+              Average {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} Locked Per
+              Wallet
+            </span>
             <Icon name="circle-info" />
-          </span>
+          </div>
         </Tooltip>
       }
       subTitle="All Time"

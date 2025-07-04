@@ -33,7 +33,7 @@ export function Icon({
             `
             : `
               fa-${iconVariant}
-            `
+            `,
         )}
       />
     </span>

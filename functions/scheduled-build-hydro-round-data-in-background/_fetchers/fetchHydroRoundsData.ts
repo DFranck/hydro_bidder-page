@@ -42,7 +42,7 @@ export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
               trancheId: tranche_id,
               currentRoundId: round_id,
             })
-          })
+          }),
         )
       ).flat()
 
@@ -53,7 +53,7 @@ export async function fetchHydroRoundsData(): Promise<RawHydroRoundData[]> {
         round_tributes: roundTributes,
         round_prices: roundPrices,
       }
-    })
+    }),
   )
 
   return rawRoundData

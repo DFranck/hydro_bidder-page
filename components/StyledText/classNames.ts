@@ -29,7 +29,7 @@ const buttonStyles = {
   ),
   tertiaryBase: twJoin(
     commonBaseButtonStyles,
-    "border-palette-cyan bg-palette-cyan text-palette-text"
+    "border-palette-cyan bg-palette-cyan text-palette-text",
   ),
   circularPrimary: twMerge(
     commonBaseButtonStyles,
@@ -147,7 +147,9 @@ export const classNames = {
     "whitespace-nowrap text-sm text-white/80",
     "has-[:checked]:font-bold has-[:checked]:text-white"
   ),
-
+  "label.meta.faded": twJoin(
+    "text-[10px] font-bold uppercase leading-4 tracking-[0.1em] text-white opacity-60",
+  ),
   "mathSymbol.container": twJoin(
     "inline-flex items-center gap-0.5 whitespace-nowrap"
   ),

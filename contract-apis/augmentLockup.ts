@@ -3,11 +3,14 @@ import {
   AugmentedLockupWithPerTrancheInfo,
 } from "@/contract-apis/types"
 import { getDaysAway } from "@/lib/getDaysAway"
+import { Coin } from "@cosmjs/amino"
 
 export function augmentLockup(
-  lockup: AugmentedLockupWithPerTrancheInfo,
+  lockup: AugmentedLockupWithPerTrancheInfo & {
+    outstanding?: { coins?: Coin[] }
+  },
   currentRoundId: number
-): AugmentedLockup {
+): AugmentedLockup & { outstanding?: Coin[] } {
   const dateEnd = new Date(
     Number(lockup.lock_with_power.lock_entry.lock_end) / 1e6
   )
@@ -19,7 +22,6 @@ export function augmentLockup(
   const isEligibleToVote = lockup.per_tranche_info.some(
     (trancheInfo) => trancheInfo.next_round_lockup_can_vote <= currentRoundId
   )
-
   return {
     id: lockup.lock_with_power.lock_entry.lock_id,
     currentVotingPower: Number(lockup.lock_with_power.current_voting_power),
@@ -41,6 +43,7 @@ export function augmentLockup(
         Number(lockup.lock_with_power.lock_entry.funds.amount)
       ).toFixed(2)
     ),
+    outstanding: lockup.outstanding?.coins ?? [],
     metaDataByTrancheId: Object.fromEntries(
       lockup.per_tranche_info.map((trancheInfo) => {
         const votedOnBidId = trancheInfo.current_voted_on_proposal || null
@@ -77,6 +80,7 @@ export function augmentLockup(
             nextRoundEligibleToVote:
               trancheInfo.next_round_lockup_can_vote ?? null,
             votedOnBidId: trancheInfo.current_voted_on_proposal ?? null,
+            historicVotedOnProposals: trancheInfo.historic_voted_on_proposals,
           },
         ]
       })

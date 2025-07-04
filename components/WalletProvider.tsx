@@ -55,7 +55,11 @@ export function WalletProvider({
     <ChainProvider
       throwErrors={false}
       chains={[...chains, hubChain, neutronChain]}
-      assetLists={[...assets, hubAssets, neutronAssets]}
+      assetLists={[
+        ...assets,
+        hubAssets,
+        neutronAssets,
+      ]}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
       walletConnectOptions={{
         signClient: { projectId: "24cc0bf3e131070ae871552c32ea0cec" },

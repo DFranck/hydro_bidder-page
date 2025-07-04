@@ -39,20 +39,20 @@ export function LockupsLST({
   const NFT_SIZES = [25, 50, 100, 250, 500, 1000]
   const { setToasts } = useToasts()
   const {
-    data: { lockedAtomRemainingCapacityGlobal },
+    data: { lockedTokenRemainingCapacityGlobal },
   } = useGlobalLockupCapacityInfo()
   const [selectedLockDurationInEpochs, setSelectedLockDurationInEpochs] =
     useState(3)
 
-  const { hasGatekeeper, lockedAtomMaxWallet, lockedAtomTotalWallet } =
+  const { hasGatekeeper, lockedTokenMaxWallet, lockedTokenTotalWallet } =
     useBackendData()
   const { neutronSigner, neutronChain } = useChainsAndSigners()
   const isMobile = useIsMobile()
 
-  const usersLimitRemainder = lockedAtomMaxWallet - lockedAtomTotalWallet
+  const usersLimitRemainder = lockedTokenMaxWallet - lockedTokenTotalWallet
 
   const maxTokenToBeLocked = Math.min(
-    lockedAtomRemainingCapacityGlobal, // no more than the global limit
+    lockedTokenRemainingCapacityGlobal, // no more than the global limit
     tokenInfo.amount, // no more than they have
     usersLimitRemainder // no more than their limit
   )

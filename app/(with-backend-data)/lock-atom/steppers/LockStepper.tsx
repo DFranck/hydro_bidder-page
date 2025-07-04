@@ -54,7 +54,7 @@ export const LockStepper = ({
 }) => {
   const { hubChain, neutronChain, hubSigner, neutronSigner } =
     useChainsAndSigners()
-  const { lockedAtomEpochInNanos, hasGatekeeper } = useBackendData()
+  const { lockedTokenEpochInNanos, hasGatekeeper } = useBackendData()
   const [step, setStep] = useState<LockStep>("Init")
   const [errorLog, setErrorLog] = useState<string>("LockStepper: ")
   const [showErrorLog, setShowErrorLog] = useState(false)
@@ -63,7 +63,7 @@ export const LockStepper = ({
   const execute = async () => {
     try {
       setErrorLog(
-        `Starting execution with amount: ${amount}, validator: ${validator}, lockDuration: ${lockDuration}`
+        `Starting execution with amount: ${amount}, validator: ${validator}, lockDuration: ${lockDuration}`,
       )
       if (
         !hubChain.address ||
@@ -88,14 +88,14 @@ export const LockStepper = ({
         const signedTx = await signATOMGasTransferToNeutron(
           hubChain,
           hubSigner,
-          neutronChain
+          neutronChain,
         )
 
         setStep("WaitingForNeutronGasBroadcastAndRelay")
         await broadcastAndRelayIBCGasToNeutron(
           hubSigner,
           neutronChain,
-          signedTx
+          signedTx,
         )
       }
 
@@ -105,7 +105,7 @@ export const LockStepper = ({
         hubChain,
         hubSigner,
         amount,
-        validator
+        validator,
       )
 
       // Broadcast the transaction
@@ -113,7 +113,7 @@ export const LockStepper = ({
       const broadcastResult = await broadcastTx(
         hubSigner,
         neutronSigner,
-        signedTokenizeTx
+        signedTokenizeTx,
       )
 
       // Extract the LSM denom
@@ -126,7 +126,7 @@ export const LockStepper = ({
         hubSigner,
         neutronChain,
         lsm.amount,
-        lsm.denom
+        lsm.denom,
       )
 
       // Wait for the IBC transfer to be broadcast and relayed
@@ -137,7 +137,7 @@ export const LockStepper = ({
         neutronSigner,
         neutronChain,
         lsm.denom,
-        signedIBCTx
+        signedIBCTx,
       )
 
       // Wait for the user to sign the lock tokens transaction
@@ -179,13 +179,13 @@ export const LockStepper = ({
         const { value, unit } = getTimeUnitFromNanos(lockDuration)
 
         return {
-          title: "Review your Lockup",
+          title: `Locking your ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
           contents: (
             <div className="flex flex-col items-center gap-6">
               <div className="grid grid-cols-3 items-center">
                 <div className="flex flex-col-reverse items-center justify-center gap-1">
                   <div className="whitespace-nowrap text-10 text-palette-beige">
-                    ATOM Amount
+                    {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} Amount
                   </div>
                   <div className="text-sm font-bold">
                     {formatAmount(amount)}
@@ -208,24 +208,24 @@ export const LockStepper = ({
                 <div
                   className={twJoin(
                     "flex flex-col-reverse items-center justify-center gap-1",
-                    "rounded-md bg-palette-green/10 px-6 py-3"
+                    "rounded-md bg-palette-green/10 px-6 py-3",
                   )}
                 >
                   <div className="whitespace-nowrap text-10 text-palette-beige">
                     Voting Power (
                     {getLockupPeriodMultiplier({
                       lockupTime: lockDuration,
-                      lockedAtomEpochInNanos,
+                      lockedTokenEpochInNanos,
                     })}
                     &thinsp;&times;)
                   </div>
                   <div className="text-sm font-bold">
                     {formatAmount(
                       scaleLockupPower({
-                        lockedAtomEpochInNanos,
+                        lockedTokenEpochInNanos,
                         lockupTime: lockDuration,
                         rawPower: BigInt(amount),
-                      })
+                      }),
                     )}
                   </div>
                 </div>
@@ -258,7 +258,8 @@ export const LockStepper = ({
           contents: (
             <p>
               You do not have enough gas to complete the transaction. Please
-              transfer more ATOM to your wallet and try again.
+              transfer more {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to your
+              wallet and try again.
             </p>
           ),
           buttons: [
@@ -279,8 +280,11 @@ export const LockStepper = ({
             <p>
               You do not have enough gas on Neutron (Hydro&rsquo;s host chain).
               Approve the transaction in your wallet to transfer.{" "}
-              <strong>{formatAmount(minimumUATOMGas)} ATOM</strong> to your
-              Neutron wallet to continue.
+              <strong>
+                {formatAmount(minimumUATOMGas)}{" "}
+                {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+              </strong>{" "}
+              to your Neutron wallet to continue.
             </p>
           ),
         }
@@ -290,28 +294,35 @@ export const LockStepper = ({
           title: "Transferring to Neutron",
           contents: (
             <p>
-              Transferring your ATOM to your Neutron wallet. This may take a
-              minute or two, depending on network congestion. If you exit Hydro
-              now, this status may not be visible when you return, but the
-              transfer will continue. Once the transfer is complete, you will
-              need to return to initiate the staking process.
+              Transferring your {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to
+              your Neutron wallet. This may take a minute or two, depending on
+              network congestion. If you exit Hydro now, this status may not be
+              visible when you return, but the transfer will continue. Once the
+              transfer is complete, you will need to return to initiate the
+              staking process.
             </p>
           ),
         }
       case "WaitingForTokenizeSigning":
         return {
           isWorking: true,
-          title: "Tokenize your Staked ATOM",
-          contents: <p>Approve the transaction in your wallet to continue.</p>,
+          title: "Waiting for Wallet Approval",
+          contents: (
+            <p>
+              Approve the transaction in your wallet to continue. This will
+              start the tokenization of your{" "}
+              {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}.
+            </p>
+          ),
         }
       case "WaitingForTokenizeBroadcast":
         return {
           isWorking: true,
-          title: "Tokenize your Staked ATOM",
+          title: `Tokenizing your ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
           contents: (
             <p>
-              Wait until your transaction is included in a block. This should
-              only take a few seconds.
+              Tokenizing your {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}. This
+              should only take a few seconds (unless the network is congested)
             </p>
           ),
         }
@@ -320,7 +331,12 @@ export const LockStepper = ({
           title: "Transaction Error",
           contents: (
             <>
-              <div className="mt-4 overflow-hidden">
+              <p>
+                This transaction could not be completed. Your{" "}
+                {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME} has not been locked
+                in Hydro. Refresh the page to try again.
+              </p>
+              <div className="mt-4">
                 {!showErrorLog ? (
                   <>
                     <p>
@@ -368,15 +384,19 @@ export const LockStepper = ({
           contents: (
             <>
               <p>
-                You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro
-                and received{" "}
+                You locked{" "}
+                <strong>
+                  {formatAmount(amount)}{" "}
+                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                </strong>{" "}
+                in Hydro and received{" "}
                 <strong>
                   {formatAmount(
                     scaleLockupPower({
-                      lockedAtomEpochInNanos,
+                      lockedTokenEpochInNanos,
                       lockupTime: lockDuration,
                       rawPower: BigInt(amount),
-                    })
+                    }),
                   )}{" "}
                   voting power.
                 </strong>

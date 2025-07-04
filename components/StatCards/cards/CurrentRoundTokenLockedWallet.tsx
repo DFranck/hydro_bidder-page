@@ -7,7 +7,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 import { formatAmountToUsd } from "@/lib/amountToUSDString"
 
-export function CurrentRoundAtomLockedWallet() {
+export function CurrentRoundTokenLockedWallet() {
   const {
     lockedAtomTotalWalletStat,
     lockedTokenTotalWalletStat,

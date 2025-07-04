@@ -21,19 +21,19 @@ export async function fetchRoundTributes({
 
   invariant(
     numiaCosmosHydroAppApiKey,
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set",
   )
 
   invariant(
     tributeContractAddress,
-    "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set"
+    "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set",
   )
 
   if (currentRoundId === roundId) {
     const client = await getCosmWasmClient()
     const tributeQueryClient = new TributeBaseQueryClient(
       client,
-      tributeContractAddress
+      tributeContractAddress,
     )
 
     const query = {
@@ -58,7 +58,7 @@ export async function fetchRoundTributes({
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch numia tribute data: ${response.statusText}`
+        `Failed to fetch numia tribute data: ${response.statusText}`,
       )
     }
 

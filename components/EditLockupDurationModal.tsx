@@ -39,18 +39,18 @@ export function EditLockupDurationModal({
   onCloseComplete: outerOnCloseComplete,
 }: EditLockupDurationProps) {
   const router = useRouter()
-  const { address, lockedAtomEpochInNanos } = useBackendData()
+  const { address, lockedTokenEpochInNanos } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { setToasts } = useToasts()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const [selectedDuration, setSelectedDuration] = useState(
-    AllowedLockupPeriodInEpochs.ONE_EPOCH
+    AllowedLockupPeriodInEpochs.ONE_EPOCH,
   )
   const originalPower = lockup?.currentVotingPower ?? 0
   const newPower = calculateLockupVotingPower(
     (lockup?.funds.amount ?? 0) * 1e6,
-    selectedDuration / lockedAtomEpochInNanos
+    selectedDuration / lockedTokenEpochInNanos,
   )
   const currentLockupEndDate = lockup?.dateEnd ?? new Date()
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
@@ -155,7 +155,7 @@ export function EditLockupDurationModal({
 
             <div className="flex items-center justify-around gap-3">
               <div className="flex flex-col items-center text-center">
-                <div>Locked ATOM</div>
+                <div>Locked {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}</div>
                 <div className="text-4xl font-bold text-palette-beige">
                   {formatAmount(lockup?.funds.amount ?? 0, 0)}
                 </div>
@@ -166,7 +166,7 @@ export function EditLockupDurationModal({
                 <div
                   className={twMerge(
                     "text-4xl font-bold text-palette-beige",
-                    powerDifference > 0 && "text-palette-green"
+                    powerDifference > 0 && "text-palette-green",
                   )}
                 >
                   {formatAmount(hasChanged ? newPower : originalPower)}
