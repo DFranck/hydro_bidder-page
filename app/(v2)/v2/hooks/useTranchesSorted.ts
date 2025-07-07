@@ -25,7 +25,7 @@ export function useTranchesSorted() {
     const allSources = Object.values(currentRoundDataPerSource ?? {})
     return sortBy(
       allSources.flatMap(({ sourceId, tranches }) =>
-        tranches.map((tranche) => ({
+        (Array.isArray(tranches) ? tranches : []).map((tranche) => ({
           ...tranche,
           sourceId: sourceId,
         })),

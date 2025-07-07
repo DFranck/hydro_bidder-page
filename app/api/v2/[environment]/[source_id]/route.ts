@@ -57,7 +57,7 @@ export async function GET(
         const hydroQueryClient = await getHydroQueryClient({ hydroContract })
         const { tranches } = await hydroQueryClient.tranches()
 
-        return Response.json(tranches, {
+        return Response.json(Array.isArray(tranches) ? tranches : [], {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
           },
@@ -95,7 +95,7 @@ export async function GET(
         const { tranches } = tranchesResult
 
         const tributeQueryClient = await getTributeQueryClient({ tributeContract })
-        const trancheIds = tranches.map((tranche: Tranche) => tranche.id)
+        const trancheIds = (Array.isArray(tranches) ? tranches : []).map((tranche: Tranche) => tranche.id)
 
         const [votingPowerResult, lockupsResult] = await Promise.all([
           hydroQueryClient
