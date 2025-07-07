@@ -111,12 +111,11 @@ export function Tranche({
           className={twJoin(
             '@container',
             'mx-auto flex h-full flex-col',
-            'px-tight',
             'gap-tight',
             'desktop:gap-loose',
             bidsInTranche.length && [
-              'py-tight',
-              'desktop:py-loose',
+              'p-tight',
+              'desktop:p-loose',
               'md:max-w-[70vw]',
             ],
           )}

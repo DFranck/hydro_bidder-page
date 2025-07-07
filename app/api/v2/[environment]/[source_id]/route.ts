@@ -46,7 +46,7 @@ export async function GET(
         const hydroQueryClient = await getHydroQueryClient({ hydroContract })
         const { round_id, round_end } = await hydroQueryClient.currentRound()
 
-        return Response.json({ round_id: 7, round_end }, {
+        return Response.json({ round_id, round_end }, {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
           },
