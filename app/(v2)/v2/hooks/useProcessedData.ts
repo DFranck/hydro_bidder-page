@@ -69,7 +69,7 @@ export function useProcessedData(
         const staticData = staticDataPerSource[sourceId]
 
         const augmentedTranches: AugmentedTranche[] =
-          staticData.tranches?.map((tranche: Tranche) => {
+          (Array.isArray(staticData.tranches) ? staticData.tranches : []).map((tranche: Tranche) => {
             const { userVotedInTranche, userVotedOnBidId } =
               calculateUserVotedInTranche(
                 tranche,
@@ -82,7 +82,7 @@ export function useProcessedData(
               userVotedInTranche,
               userVotedOnBidId,
             }
-          }) ?? []
+          })
 
         const { augmentedBids, augmentedLockups } = augmentBidsWithVoteData(
           staticData.augmentedBids ?? [],
