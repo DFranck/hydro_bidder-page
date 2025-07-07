@@ -30,7 +30,7 @@ export function useProcessedData(
   bidDescriptions: Record<number, BidMetaData>,
 ): ProcessedData {
   const staticDataPerSource = useMemo(() => {
-    if (!hydroData) return null
+    if (!hydroData || !Array.isArray(hydroData)) return null
 
     const result = Object.fromEntries(
       hydroData.map(({ sourceId, data }) => {
@@ -62,7 +62,7 @@ export function useProcessedData(
   }, [hydroData])
 
   const currentRoundDataPerSource = useMemo(() => {
-    if (!staticDataPerSource || !hydroData) return null
+    if (!staticDataPerSource || !hydroData || !Array.isArray(hydroData)) return null
 
     const result = Object.fromEntries(
       hydroData.map(({ sourceId, data }) => {

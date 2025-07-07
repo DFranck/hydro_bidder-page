@@ -13,9 +13,11 @@ export function augmentBidsWithVoteData(
   currentRoundEndDate: Date,
   lockedAtomEpochInNanos: number,
 ): AugmentedSourceData {
+  const safeBids = Array.isArray(bids) ? bids : []
+
   if (!walletData) {
     return {
-      augmentedBids: bids.map((bid) => ({
+      augmentedBids: safeBids.map((bid) => ({
         ...bid,
         voteButtonData: {
           hasVotedForThisBid: false,
@@ -46,7 +48,7 @@ export function augmentBidsWithVoteData(
     : []
 
   const votesByRoundId = groupBy(votes, (vote: SanitizedVote) => {
-    const bidInfo = bids.find((b) => b.id === vote.bidId)
+    const bidInfo = safeBids.find((b) => b.id === vote.bidId)
     return bidInfo?.roundId
   })
 
@@ -92,8 +94,8 @@ export function augmentBidsWithVoteData(
 
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
 
-  const augmentedBids = bids.map((bid) => {
-    const bidsInThisTranche = bids.filter(b => b.trancheId === bid.trancheId)
+  const augmentedBids = safeBids.map((bid) => {
+    const bidsInThisTranche = safeBids.filter(b => b.trancheId === bid.trancheId)
     const bidIdsInThisTranche = bidsInThisTranche.map(b => b.id)
     const votesThisTranche = votesThisRound.filter(
       (vote: SanitizedVote) => bidIdsInThisTranche.includes(vote.bidId),

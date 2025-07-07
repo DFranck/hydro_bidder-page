@@ -47,14 +47,18 @@ export function WalletDataProvider({
   }, [initialDataPromises])
 
   const walletDataBySourceId = useMemo(() => {
-    if (!isWalletConnected || !walletDataResults) {
+    if (
+      !isWalletConnected ||
+      !walletDataResults ||
+      !Array.isArray(walletDataResults)
+    ) {
       return new Map()
     }
     return new Map(walletDataResults.map((wd) => [wd.sourceId, wd.walletData]))
   }, [isWalletConnected, walletDataResults])
 
   const mergedHydroData = useMemo(() => {
-    if (!hydroData) {
+    if (!hydroData || !Array.isArray(hydroData)) {
       return null
     }
 
