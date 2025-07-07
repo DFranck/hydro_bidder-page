@@ -59,8 +59,6 @@
   --color-token-usdc: var(--color-palette-blue);
 
   --color-theme-color: var(--color-palette-blue);
-  --color-theme-color-previous: var(--color-palette-blue);
-  --color-theme-color-next: var(--color-palette-blue);
 
   --color-foreground: rgb(255, 255, 255);
   --color-background: var(--color-palette-text);
