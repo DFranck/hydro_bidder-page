@@ -140,9 +140,7 @@ export async function GET(
                     .catch(() => ({ votes: [] })),
                   tributeQueryClient
                     .outstandingTributeClaims({
-                      limit: 100,
                       roundId,
-                      startFrom: 0,
                       trancheId,
                       userAddress: address,
                     })

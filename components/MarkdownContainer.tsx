@@ -87,7 +87,7 @@ export function MarkdownContainer({
         className
       )}
     >
-      <Markdown remarkPlugins={[remarkGfm]}>{formattedContent}</Markdown>
+      <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
     </div>
   )
 }
