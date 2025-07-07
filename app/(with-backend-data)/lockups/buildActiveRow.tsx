@@ -37,12 +37,10 @@ export function buildActiveRow({
 
   const handleCheckboxChange = (checked: boolean) => {
     if (checked) {
-      // Add lockup ID to selectedLockups if not already present
       if (!selectedLockups.includes(lockup.id)) {
         setSelectedLockups([...selectedLockups, lockup.id])
       }
     } else {
-      // Remove lockup ID from selectedLockups
       setSelectedLockups(selectedLockups.filter((id) => id !== lockup.id))
     }
   }

@@ -26,8 +26,6 @@ export function LockupsTables({
   type ActiveRow = (typeof activeLockupRows)[number]
   type ExpiredRow = (typeof expiredLockupRows)[number]
 
-  console.log(selectedLockups)
-
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
     const activeLockups = lockups.filter((lockup) => !lockup.isExpired)
     const expiredLockups = lockups.filter((lockup) => lockup.isExpired)
