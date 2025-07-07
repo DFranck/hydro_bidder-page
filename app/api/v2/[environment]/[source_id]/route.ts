@@ -38,6 +38,7 @@ export async function GET(
         return Response.json(constants, {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
+            'Vary': 'Accept, Accept-Encoding, Accept-Language',
           },
         })
       }
@@ -49,6 +50,7 @@ export async function GET(
         return Response.json({ round_id, round_end }, {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
+            'Vary': 'Accept, Accept-Encoding, Accept-Language',
           },
         })
       }
@@ -60,6 +62,7 @@ export async function GET(
         return Response.json(Array.isArray(tranches) ? tranches : [], {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
+            'Vary': 'Accept, Accept-Encoding, Accept-Language',
           },
         })
       }
@@ -71,6 +74,7 @@ export async function GET(
         return Response.json(total_locked_tokens, {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
+            'Vary': 'Accept, Accept-Encoding, Accept-Language',
           },
         })
       }
@@ -169,6 +173,7 @@ export async function GET(
           headers: {
             'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
             'Content-Type': 'application/json',
+            'Vary': 'Accept, Accept-Encoding, Accept-Language',
           },
         })
       }
