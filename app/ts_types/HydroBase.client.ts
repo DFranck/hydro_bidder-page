@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Timestamp, Uint64, Binary, Uint128, Decimal, TokenInfoProviderInstantiateMsg, InstantiateMsg, InstantiateContractMsg, TrancheInfo, ExecuteMsg, LockTokensProof, SignatureInfo, ProposalToLockups, Coin, QueryMsg, Addr, AllUserLockupsResponse, LockEntryWithPower, LockEntryV2, AllUserLockupsWithTrancheInfosResponse, LockupWithPerTrancheInfo, PerTrancheLockupInfo, AllVotesResponse, VoteEntry, Vote, AllVotesRoundTrancheResponse, CanLockDenomResponse, ConstantsResponse, Constants, RoundLockPowerSchedule, LockPowerEntry, CurrentRoundResponse, ExpiredUserLockupsResponse, GatekeeperResponse, ICQManagersResponse, LiquidityDeploymentResponse, LiquidityDeployment, ProposalResponse, Proposal, RegisteredValidatorQueriesResponse, RoundEndResponse, RoundProposalsResponse, RoundTotalVotingPowerResponse, RoundTrancheLiquidityDeploymentsResponse, SpecificUserLockupsResponse, SpecificUserLockupsWithTrancheInfosResponse, TokenInfoProvider, TokenInfoProvidersResponse, TokenInfoProviderLSM, TokenInfoProviderDerivative, TopNProposalsResponse, TotalLockedTokensResponse, TotalPowerAtHeightResponse, TranchesResponse, Tranche, UserVotesResponse, VoteWithPower, UserVotingPowerResponse, VotingPowerAtHeightResponse, WhitelistResponse, WhitelistAdminsResponse } from "./HydroBase.types";
+import { Timestamp, Uint64, Binary, Uint128, Decimal, TokenInfoProviderInstantiateMsg, InstantiateMsg, CollectionInfo, InstantiateContractMsg, TrancheInfo, ExecuteMsg, Expiration, LockTokensProof, SignatureInfo, ProposalToLockups, Coin, QueryMsg, Addr, AllNftInfoResponse, OwnerOfResponse, Approval, NftInfoResponse, LockupWithPerTrancheInfo, LockEntryWithPower, LockEntryV2, PerTrancheLockupInfo, RoundWithBid, OperatorsResponse, TokensResponse, AllUserLockupsResponse, AllUserLockupsWithTrancheInfosResponse, AllVotesResponse, VoteEntry, Vote, AllVotesRoundTrancheResponse, ApprovalResponse, ApprovalsResponse, CanLockDenomResponse, ConstantsResponse, Constants, RoundLockPowerSchedule, LockPowerEntry, CurrentRoundResponse, ExpiredUserLockupsResponse, GatekeeperResponse, ICQManagersResponse, LiquidityDeploymentResponse, LiquidityDeployment, LockVotesHistoryResponse, LockVotesHistoryEntry, NumTokensResponse, ProposalResponse, Proposal, RegisteredValidatorQueriesResponse, RoundEndResponse, RoundProposalsResponse, RoundTotalVotingPowerResponse, RoundTrancheLiquidityDeploymentsResponse, DtokenAmountsResponse, DtokenAmountResponse, SpecificUserLockupsResponse, SpecificUserLockupsWithTrancheInfosResponse, TokenInfoProvider, TokenInfoProvidersResponse, TokenInfoProviderLSM, TokenInfoProviderDerivative, TopNProposalsResponse, TotalLockedTokensResponse, TotalPowerAtHeightResponse, TranchesResponse, Tranche, UserVotedLocksResponse, VotedLockInfo, UserVotesResponse, VoteWithPower, UserVotingPowerResponse, VotingPowerAtHeightResponse, WhitelistResponse, WhitelistAdminsResponse } from "./HydroBase.types";
 export interface HydroBaseReadOnlyInterface {
   contractAddress: string;
   constants: () => Promise<ConstantsResponse>;
@@ -68,6 +68,28 @@ export interface HydroBaseReadOnlyInterface {
     roundId: number;
     trancheId: number;
   }) => Promise<UserVotesResponse>;
+  userVotedLocks: ({
+    proposalId,
+    roundId,
+    trancheId,
+    userAddress
+  }: {
+    proposalId?: number;
+    roundId: number;
+    trancheId: number;
+    userAddress: string;
+  }) => Promise<UserVotedLocksResponse>;
+  lockVotesHistory: ({
+    lockId,
+    startFromRoundId,
+    stopAtRoundId,
+    trancheId
+  }: {
+    lockId: number;
+    startFromRoundId?: number;
+    stopAtRoundId?: number;
+    trancheId?: number;
+  }) => Promise<LockVotesHistoryResponse>;
   allVotes: ({
     limit,
     startFrom
@@ -168,6 +190,77 @@ export interface HydroBaseReadOnlyInterface {
     address: string;
     height?: number;
   }) => Promise<VotingPowerAtHeightResponse>;
+  ownerOf: ({
+    includeExpired,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    tokenId: string;
+  }) => Promise<OwnerOfResponse>;
+  approval: ({
+    includeExpired,
+    spender,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    spender: string;
+    tokenId: string;
+  }) => Promise<ApprovalResponse>;
+  approvals: ({
+    includeExpired,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    tokenId: string;
+  }) => Promise<ApprovalsResponse>;
+  allOperators: ({
+    includeExpired,
+    limit,
+    owner,
+    startAfter
+  }: {
+    includeExpired?: boolean;
+    limit?: number;
+    owner: string;
+    startAfter?: string;
+  }) => Promise<OperatorsResponse>;
+  numTokens: () => Promise<NumTokensResponse>;
+  collectionInfo: () => Promise<CollectionInfo>;
+  nftInfo: ({
+    tokenId
+  }: {
+    tokenId: string;
+  }) => Promise<NftInfoResponse>;
+  allNftInfo: ({
+    includeExpired,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    tokenId: string;
+  }) => Promise<AllNftInfoResponse>;
+  tokens: ({
+    limit,
+    owner,
+    startAfter
+  }: {
+    limit?: number;
+    owner: string;
+    startAfter?: string;
+  }) => Promise<TokensResponse>;
+  allTokens: ({
+    limit,
+    startAfter
+  }: {
+    limit?: number;
+    startAfter?: string;
+  }) => Promise<TokensResponse>;
+  simulateDtokenAmounts: ({
+    address,
+    lockIds
+  }: {
+    address: string;
+    lockIds: number[];
+  }) => Promise<DtokenAmountsResponse>;
 }
 export class HydroBaseQueryClient implements HydroBaseReadOnlyInterface {
   client: CosmWasmClient;
@@ -186,6 +279,8 @@ export class HydroBaseQueryClient implements HydroBaseReadOnlyInterface {
     this.expiredUserLockups = this.expiredUserLockups.bind(this);
     this.userVotingPower = this.userVotingPower.bind(this);
     this.userVotes = this.userVotes.bind(this);
+    this.userVotedLocks = this.userVotedLocks.bind(this);
+    this.lockVotesHistory = this.lockVotesHistory.bind(this);
     this.allVotes = this.allVotes.bind(this);
     this.allVotesRoundTranche = this.allVotesRoundTranche.bind(this);
     this.currentRound = this.currentRound.bind(this);
@@ -204,6 +299,17 @@ export class HydroBaseQueryClient implements HydroBaseReadOnlyInterface {
     this.roundTrancheLiquidityDeployments = this.roundTrancheLiquidityDeployments.bind(this);
     this.totalPowerAtHeight = this.totalPowerAtHeight.bind(this);
     this.votingPowerAtHeight = this.votingPowerAtHeight.bind(this);
+    this.ownerOf = this.ownerOf.bind(this);
+    this.approval = this.approval.bind(this);
+    this.approvals = this.approvals.bind(this);
+    this.allOperators = this.allOperators.bind(this);
+    this.numTokens = this.numTokens.bind(this);
+    this.collectionInfo = this.collectionInfo.bind(this);
+    this.nftInfo = this.nftInfo.bind(this);
+    this.allNftInfo = this.allNftInfo.bind(this);
+    this.tokens = this.tokens.bind(this);
+    this.allTokens = this.allTokens.bind(this);
+    this.simulateDtokenAmounts = this.simulateDtokenAmounts.bind(this);
   }
   constants = async (): Promise<ConstantsResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
@@ -328,6 +434,46 @@ export class HydroBaseQueryClient implements HydroBaseReadOnlyInterface {
       user_votes: {
         address,
         round_id: roundId,
+        tranche_id: trancheId
+      }
+    });
+  };
+  userVotedLocks = async ({
+    proposalId,
+    roundId,
+    trancheId,
+    userAddress
+  }: {
+    proposalId?: number;
+    roundId: number;
+    trancheId: number;
+    userAddress: string;
+  }): Promise<UserVotedLocksResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      user_voted_locks: {
+        proposal_id: proposalId,
+        round_id: roundId,
+        tranche_id: trancheId,
+        user_address: userAddress
+      }
+    });
+  };
+  lockVotesHistory = async ({
+    lockId,
+    startFromRoundId,
+    stopAtRoundId,
+    trancheId
+  }: {
+    lockId: number;
+    startFromRoundId?: number;
+    stopAtRoundId?: number;
+    trancheId?: number;
+  }): Promise<LockVotesHistoryResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      lock_votes_history: {
+        lock_id: lockId,
+        start_from_round_id: startFromRoundId,
+        stop_at_round_id: stopAtRoundId,
         tranche_id: trancheId
       }
     });
@@ -545,6 +691,151 @@ export class HydroBaseQueryClient implements HydroBaseReadOnlyInterface {
       }
     });
   };
+  ownerOf = async ({
+    includeExpired,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    tokenId: string;
+  }): Promise<OwnerOfResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      owner_of: {
+        include_expired: includeExpired,
+        token_id: tokenId
+      }
+    });
+  };
+  approval = async ({
+    includeExpired,
+    spender,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    spender: string;
+    tokenId: string;
+  }): Promise<ApprovalResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      approval: {
+        include_expired: includeExpired,
+        spender,
+        token_id: tokenId
+      }
+    });
+  };
+  approvals = async ({
+    includeExpired,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    tokenId: string;
+  }): Promise<ApprovalsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      approvals: {
+        include_expired: includeExpired,
+        token_id: tokenId
+      }
+    });
+  };
+  allOperators = async ({
+    includeExpired,
+    limit,
+    owner,
+    startAfter
+  }: {
+    includeExpired?: boolean;
+    limit?: number;
+    owner: string;
+    startAfter?: string;
+  }): Promise<OperatorsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_operators: {
+        include_expired: includeExpired,
+        limit,
+        owner,
+        start_after: startAfter
+      }
+    });
+  };
+  numTokens = async (): Promise<NumTokensResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      num_tokens: {}
+    });
+  };
+  collectionInfo = async (): Promise<CollectionInfo> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      collection_info: {}
+    });
+  };
+  nftInfo = async ({
+    tokenId
+  }: {
+    tokenId: string;
+  }): Promise<NftInfoResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      nft_info: {
+        token_id: tokenId
+      }
+    });
+  };
+  allNftInfo = async ({
+    includeExpired,
+    tokenId
+  }: {
+    includeExpired?: boolean;
+    tokenId: string;
+  }): Promise<AllNftInfoResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_nft_info: {
+        include_expired: includeExpired,
+        token_id: tokenId
+      }
+    });
+  };
+  tokens = async ({
+    limit,
+    owner,
+    startAfter
+  }: {
+    limit?: number;
+    owner: string;
+    startAfter?: string;
+  }): Promise<TokensResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      tokens: {
+        limit,
+        owner,
+        start_after: startAfter
+      }
+    });
+  };
+  allTokens = async ({
+    limit,
+    startAfter
+  }: {
+    limit?: number;
+    startAfter?: string;
+  }): Promise<TokensResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      all_tokens: {
+        limit,
+        start_after: startAfter
+      }
+    });
+  };
+  simulateDtokenAmounts = async ({
+    address,
+    lockIds
+  }: {
+    address: string;
+    lockIds: number[];
+  }): Promise<DtokenAmountsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      simulate_dtoken_amounts: {
+        address,
+        lock_ids: lockIds
+      }
+    });
+  };
 }
 export interface HydroBaseInterface extends HydroBaseReadOnlyInterface {
   contractAddress: string;
@@ -609,11 +900,13 @@ export interface HydroBaseInterface extends HydroBaseReadOnlyInterface {
   }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
   updateConfig: ({
     activateAt,
+    cw721CollectionInfo,
     knownUsersCap,
     maxDeploymentDuration,
     maxLockedTokens
   }: {
     activateAt: Timestamp;
+    cw721CollectionInfo?: CollectionInfo;
     knownUsersCap?: number;
     maxDeploymentDuration?: number;
     maxLockedTokens?: number;
@@ -710,6 +1003,64 @@ export interface HydroBaseInterface extends HydroBaseReadOnlyInterface {
   }: {
     gatekeeperAddr?: string;
   }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  transferNft: ({
+    recipient,
+    tokenId
+  }: {
+    recipient: string;
+    tokenId: string;
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  sendNft: ({
+    contract,
+    msg,
+    tokenId
+  }: {
+    contract: string;
+    msg: Binary;
+    tokenId: string;
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  approve: ({
+    expires,
+    spender,
+    tokenId
+  }: {
+    expires?: Expiration;
+    spender: string;
+    tokenId: string;
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  revoke: ({
+    spender,
+    tokenId
+  }: {
+    spender: string;
+    tokenId: string;
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  approveAll: ({
+    expires,
+    operator
+  }: {
+    expires?: Expiration;
+    operator: string;
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  revokeAll: ({
+    operator
+  }: {
+    operator: string;
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  setDropTokenInfo: ({
+    coreAddress,
+    dTokenDenom,
+    puppeteerAddress
+  }: {
+    coreAddress: string;
+    dTokenDenom: string;
+    puppeteerAddress: string;
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
+  convertLockupToDtoken: ({
+    lockIds
+  }: {
+    lockIds: number[];
+  }, fee_?: number | StdFee | "auto", memo_?: string, funds_?: Coin[]) => Promise<ExecuteResult>;
 }
 export class HydroBaseClient extends HydroBaseQueryClient implements HydroBaseInterface {
   client: SigningCosmWasmClient;
@@ -743,6 +1094,14 @@ export class HydroBaseClient extends HydroBaseQueryClient implements HydroBaseIn
     this.addTokenInfoProvider = this.addTokenInfoProvider.bind(this);
     this.removeTokenInfoProvider = this.removeTokenInfoProvider.bind(this);
     this.setGatekeeper = this.setGatekeeper.bind(this);
+    this.transferNft = this.transferNft.bind(this);
+    this.sendNft = this.sendNft.bind(this);
+    this.approve = this.approve.bind(this);
+    this.revoke = this.revoke.bind(this);
+    this.approveAll = this.approveAll.bind(this);
+    this.revokeAll = this.revokeAll.bind(this);
+    this.setDropTokenInfo = this.setDropTokenInfo.bind(this);
+    this.convertLockupToDtoken = this.convertLockupToDtoken.bind(this);
   }
   lockTokens = async ({
     lockDuration,
@@ -861,11 +1220,13 @@ export class HydroBaseClient extends HydroBaseQueryClient implements HydroBaseIn
   };
   updateConfig = async ({
     activateAt,
+    cw721CollectionInfo,
     knownUsersCap,
     maxDeploymentDuration,
     maxLockedTokens
   }: {
     activateAt: Timestamp;
+    cw721CollectionInfo?: CollectionInfo;
     knownUsersCap?: number;
     maxDeploymentDuration?: number;
     maxLockedTokens?: number;
@@ -873,6 +1234,7 @@ export class HydroBaseClient extends HydroBaseQueryClient implements HydroBaseIn
     return await this.client.execute(this.sender, this.contractAddress, {
       update_config: {
         activate_at: activateAt,
+        cw721_collection_info: cw721CollectionInfo,
         known_users_cap: knownUsersCap,
         max_deployment_duration: maxDeploymentDuration,
         max_locked_tokens: maxLockedTokens
@@ -1063,6 +1425,121 @@ export class HydroBaseClient extends HydroBaseQueryClient implements HydroBaseIn
     return await this.client.execute(this.sender, this.contractAddress, {
       set_gatekeeper: {
         gatekeeper_addr: gatekeeperAddr
+      }
+    }, fee_, memo_, funds_);
+  };
+  transferNft = async ({
+    recipient,
+    tokenId
+  }: {
+    recipient: string;
+    tokenId: string;
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      transfer_nft: {
+        recipient,
+        token_id: tokenId
+      }
+    }, fee_, memo_, funds_);
+  };
+  sendNft = async ({
+    contract,
+    msg,
+    tokenId
+  }: {
+    contract: string;
+    msg: Binary;
+    tokenId: string;
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      send_nft: {
+        contract,
+        msg,
+        token_id: tokenId
+      }
+    }, fee_, memo_, funds_);
+  };
+  approve = async ({
+    expires,
+    spender,
+    tokenId
+  }: {
+    expires?: Expiration;
+    spender: string;
+    tokenId: string;
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      approve: {
+        expires,
+        spender,
+        token_id: tokenId
+      }
+    }, fee_, memo_, funds_);
+  };
+  revoke = async ({
+    spender,
+    tokenId
+  }: {
+    spender: string;
+    tokenId: string;
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      revoke: {
+        spender,
+        token_id: tokenId
+      }
+    }, fee_, memo_, funds_);
+  };
+  approveAll = async ({
+    expires,
+    operator
+  }: {
+    expires?: Expiration;
+    operator: string;
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      approve_all: {
+        expires,
+        operator
+      }
+    }, fee_, memo_, funds_);
+  };
+  revokeAll = async ({
+    operator
+  }: {
+    operator: string;
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      revoke_all: {
+        operator
+      }
+    }, fee_, memo_, funds_);
+  };
+  setDropTokenInfo = async ({
+    coreAddress,
+    dTokenDenom,
+    puppeteerAddress
+  }: {
+    coreAddress: string;
+    dTokenDenom: string;
+    puppeteerAddress: string;
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      set_drop_token_info: {
+        core_address: coreAddress,
+        d_token_denom: dTokenDenom,
+        puppeteer_address: puppeteerAddress
+      }
+    }, fee_, memo_, funds_);
+  };
+  convertLockupToDtoken = async ({
+    lockIds
+  }: {
+    lockIds: number[];
+  }, fee_: number | StdFee | "auto" = "auto", memo_?: string, funds_?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      convert_lockup_to_dtoken: {
+        lock_ids: lockIds
       }
     }, fee_, memo_, funds_);
   };
