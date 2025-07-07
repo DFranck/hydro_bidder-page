@@ -4,8 +4,3 @@ node_bundler = "esbuild"
 
 [build.environment]
 NODE_VERSION = "18"
-
-[[headers]]
-for = "/api/v2/*"
-[headers.values]
-Vary = "Accept, Accept-Encoding, Accept-Language, X-Operation, X-Query-String"
