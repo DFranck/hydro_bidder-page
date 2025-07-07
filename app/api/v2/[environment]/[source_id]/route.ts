@@ -21,6 +21,7 @@ export async function GET(
 
   const { searchParams } = new URL(request.url)
   const operation = searchParams.get('operation')
+  const queryString = request.url.split('?')[1] || ''
 
   if (!operation) {
     return Response.json(
@@ -38,7 +39,9 @@ export async function GET(
         return Response.json(constants, {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
-            'Vary': 'Accept, Accept-Encoding, Accept-Language',
+            'Vary': 'Accept, Accept-Encoding, Accept-Language, X-Operation, X-Query-String',
+            'X-Operation': operation,
+            'X-Query-String': queryString,
           },
         })
       }
@@ -50,7 +53,9 @@ export async function GET(
         return Response.json({ round_id, round_end }, {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
-            'Vary': 'Accept, Accept-Encoding, Accept-Language',
+            'Vary': 'Accept, Accept-Encoding, Accept-Language, X-Operation, X-Query-String',
+            'X-Operation': operation,
+            'X-Query-String': queryString,
           },
         })
       }
@@ -62,7 +67,9 @@ export async function GET(
         return Response.json(Array.isArray(tranches) ? tranches : [], {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
-            'Vary': 'Accept, Accept-Encoding, Accept-Language',
+            'Vary': 'Accept, Accept-Encoding, Accept-Language, X-Operation, X-Query-String',
+            'X-Operation': operation,
+            'X-Query-String': queryString,
           },
         })
       }
@@ -74,7 +81,9 @@ export async function GET(
         return Response.json(total_locked_tokens, {
           headers: {
             'Cache-Control': `public, s-maxage=${cacheDuration}, stale-while-revalidate=${cacheDuration * 2}`,
-            'Vary': 'Accept, Accept-Encoding, Accept-Language',
+            'Vary': 'Accept, Accept-Encoding, Accept-Language, X-Operation, X-Query-String',
+            'X-Operation': operation,
+            'X-Query-String': queryString,
           },
         })
       }
@@ -173,7 +182,9 @@ export async function GET(
           headers: {
             'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
             'Content-Type': 'application/json',
-            'Vary': 'Accept, Accept-Encoding, Accept-Language',
+            'Vary': 'Accept, Accept-Encoding, Accept-Language, X-Operation, X-Query-String',
+            'X-Operation': operation,
+            'X-Query-String': queryString,
           },
         })
       }
