@@ -93,6 +93,7 @@ export function EditLockupDurationModal({
         address,
         lockId: lockup.id,
         lockDurationInNanos: selectedDuration,
+        type: "single"
       })
 
       await revalidateTag("backendData")

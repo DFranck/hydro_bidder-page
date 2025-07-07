@@ -7,11 +7,13 @@ export async function executeWalletExtendLockup({
   getSigningCosmWasmClient,
   lockId,
   lockDurationInNanos,
+  type = "single",
 }: {
   address: string
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
-  lockId: number
+  lockId: number | number[]
   lockDurationInNanos: number
+  type: "single" | "multiple"
 }) {
   const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
 
@@ -27,7 +29,7 @@ export async function executeWalletExtendLockup({
   const response = await hydroClient.refreshLockDuration(
     {
       lockDuration: lockDurationInNanos,
-      lockIds: [lockId],
+      lockIds: type === "single" ? [lockId as number] : (lockId as number[]),
     },
     "auto"
   )

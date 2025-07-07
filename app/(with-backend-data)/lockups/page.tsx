@@ -39,6 +39,7 @@ import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { cn } from "@/lib/utils"
+import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -62,10 +63,13 @@ export default function LockupsPage() {
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
+  const activeLockups = lockups.filter((lockup) => !lockup.isExpired)
+
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [refreshMultipleLockups, setRefreshMultipleLockups] = useState(false)
   const [token, setToken] = useState<{
     name: "stATOM" | "dATOM"
     amount: number
@@ -73,6 +77,8 @@ export default function LockupsPage() {
     name: "dATOM",
     amount: 0,
   })
+
+  const [selectedLockups, setSelectedLockups] = useState<number[]>([])
 
   const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
 
@@ -239,6 +245,18 @@ export default function LockupsPage() {
               md:items-center
             "
           >
+            {activeLockups.length > 0 && (
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                className="flex items-center gap-1"
+                onClick={() => setRefreshMultipleLockups(true)}
+                disabled={selectedLockups.length <= 1}
+              >
+                Refresh{" "}
+                {selectedLockups.length <= 1 ? null : `(${selectedLockups.length})`}
+              </StyledText>
+            )}
             {expiredLockups.length > 0 && (
               <StyledText
                 as="button"
@@ -307,6 +325,8 @@ export default function LockupsPage() {
           </BlurryBackdropBox>
         ) : (
           <LockupsTables
+            selectedLockups={selectedLockups}
+            setSelectedLockups={setSelectedLockups}
             onClickEdit={({ lockup }) => {
               setIsEditModalOpen(true)
               setLockupBeingEdited(lockup)
@@ -393,6 +413,15 @@ export default function LockupsPage() {
         setIsCreationModalOpen={setIsOpen}
         handleCreationModalWindowClose={handleCreationModalWindowClose}
         handleModalWindowCloseComplete={handleModalWindowCloseComplete}
+      />
+
+      <RefreshMultipleLockups
+        activeLockups={activeLockups}
+        selectedLockups={selectedLockups}
+        isCreationModalOpen={refreshMultipleLockups}
+        setIsCreationModalOpen={setRefreshMultipleLockups}
+        handleCreationModalWindowClose={() => setRefreshMultipleLockups(false)}
+        handleModalWindowCloseComplete={() => setRefreshMultipleLockups(false)}
       />
     </>
   )

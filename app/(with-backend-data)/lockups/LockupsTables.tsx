@@ -7,7 +7,7 @@ import { TableHeader } from "@/components/TableHeader"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
-import { Fragment, useMemo, useState } from "react"
+import { Fragment, useMemo } from "react"
 import { twMerge } from "tailwind-merge"
 import { buildActiveColumns } from "./buildActiveColumns"
 import { buildActiveRow } from "./buildActiveRow"
@@ -17,11 +17,14 @@ import { RowComponent } from "./RowComponent"
 
 export function LockupsTables({
   onClickEdit,
+  selectedLockups,
+  setSelectedLockups,
 }: {
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
+  selectedLockups: number[]
+  setSelectedLockups: (lockups: number[]) => void
 }) {
   const { lockups, tranches } = useBackendData()
-  const [selectedLockups, setSelectedLockups] = useState<number[]>([])
 
   type ActiveRow = (typeof activeLockupRows)[number]
   type ExpiredRow = (typeof expiredLockupRows)[number]
