@@ -56,31 +56,32 @@ export function useDropdownMenu({
     whileElementsMounted: autoUpdate,
   })
 
+  // Always call hooks to maintain consistent order
+  const clickInteraction = useClick(context)
+  const hoverInteraction = useHover(context, {
+    delay: {
+      open: 200,
+      close: 300,
+    },
+  })
+  const dismissInteraction = useDismiss(context, {
+    enabled: true, // Always enable dismiss for outside clicks and escape key
+    outsidePress: true, // Close when clicking outside
+    outsidePressEvent: 'pointerdown', // Use pointerdown for better mobile support
+  })
+  const roleInteraction = useRole(context, { role: 'menu' })
+
   const interactions = []
 
   if (interaction === 'click' || interaction === 'both') {
-    interactions.push(useClick(context))
+    interactions.push(clickInteraction)
   }
 
   if (interaction === 'hover' || interaction === 'both') {
-    interactions.push(
-      useHover(context, {
-        delay: {
-          open: 200,
-          close: 300,
-        },
-      }),
-    )
+    interactions.push(hoverInteraction)
   }
 
-  interactions.push(
-    useDismiss(context, {
-      enabled: true, // Always enable dismiss for outside clicks and escape key
-      outsidePress: true, // Close when clicking outside
-      outsidePressEvent: 'pointerdown', // Use pointerdown for better mobile support
-    }),
-    useRole(context, { role: 'menu' }),
-  )
+  interactions.push(dismissInteraction, roleInteraction)
 
   const { getReferenceProps, getFloatingProps } = useInteractions(interactions)
 

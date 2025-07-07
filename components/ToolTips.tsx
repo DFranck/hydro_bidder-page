@@ -398,7 +398,7 @@ export const lockAtomToVoteTooltip = (
 
 export const extendLockupsToVoteTooltip = (
   <p>
-    Your current lockups do not extend long enough to cover this bid's
+    Your current lockups do not extend long enough to cover this bid&apos;s
     deployment duration. You can extend your lockups to vote for this bid.{" "}
     <StyledText
       as={Link}

@@ -41,15 +41,22 @@ export function TrancheCarousel({
     targetSelector,
   })
 
+  // Get all adjacent theme colors upfront to avoid calling hooks in callbacks
+  const adjacentThemeColorsMap = allTranchesSorted.reduce(
+    (acc, { id, sourceId }) => {
+      acc[`${sourceId}-${id}`] = useAdjacentTrancheThemeColors(sourceId, id)
+      return acc
+    },
+    {} as Record<string, ReturnType<typeof useAdjacentTrancheThemeColors>>,
+  )
+
   // Default content renderer for TrancheBrowser
   const renderDefaultContent = ({ activeIndex }: { activeIndex: number }) => (
     <CarouselContainer ref={containerRef} id={containerId}>
       {allTranchesSorted.map(({ id, sourceId }, index) => {
         const hasTrancheToLeft = index > 0
         const hasTrancheToRight = index < allTranchesSorted.length - 1
-
-        // Get adjacent theme colors for this tranche
-        const adjacentThemeColors = useAdjacentTrancheThemeColors(sourceId, id)
+        const adjacentThemeColors = adjacentThemeColorsMap[`${sourceId}-${id}`]
 
         return (
           <Tranche
