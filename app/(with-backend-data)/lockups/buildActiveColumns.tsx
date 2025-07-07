@@ -3,13 +3,24 @@ import { Icon } from "@/components/Icon"
 import { BaseRowObject, ColumnObject } from "@/components/StyledTable/types"
 import { Tooltip } from "@/components/Tooltip"
 import { lockupsTableTimeLeftColumnTooltip } from "@/components/ToolTips"
+import { Checkbox } from "@/components/ui/checkbox"
 import { AugmentedLockup } from "@/contract-apis/types"
 
 export function buildActiveColumns<
   Row extends BaseRowObject & {
     _lockup: AugmentedLockup
   },
->({ tranches }: { tranches: Tranche[] }): ColumnObject<Row, keyof Row>[] {
+>({
+  tranches,
+  lockups,
+  selectedLockups,
+  setSelectedLockups,
+}: {
+  tranches: Tranche[]
+  lockups: AugmentedLockup[]
+  selectedLockups: number[]
+  setSelectedLockups: (lockups: number[]) => void
+}): ColumnObject<Row, keyof Row>[] {
   const statusColumnDescriptors = tranches.map(({ id, name }) => ({
     key: `trancheStatus${id}` as const,
     label: name,
@@ -33,7 +44,24 @@ export function buildActiveColumns<
     },
   }))
 
+  const handleSelectAllChange = (checked: boolean) => {
+    if (checked) {
+      setSelectedLockups([...lockups.map((lockup) => lockup.id)])
+    } else {
+      setSelectedLockups([])
+    }
+  }
+
   return [
+    {
+      key: "select",
+      label: (
+        <Checkbox
+          checked={selectedLockups?.length === lockups.length}
+          onCheckedChange={handleSelectAllChange}
+        />
+      ),
+    },
     {
       key: "amount",
       label: "Amount",

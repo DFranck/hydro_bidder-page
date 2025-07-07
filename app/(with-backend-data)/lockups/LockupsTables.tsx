@@ -7,7 +7,7 @@ import { TableHeader } from "@/components/TableHeader"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
-import { Fragment, useMemo } from "react"
+import { Fragment, useMemo, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { buildActiveColumns } from "./buildActiveColumns"
 import { buildActiveRow } from "./buildActiveRow"
@@ -21,17 +21,12 @@ export function LockupsTables({
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
 }) {
   const { lockups, tranches } = useBackendData()
+  const [selectedLockups, setSelectedLockups] = useState<number[]>([])
 
   type ActiveRow = (typeof activeLockupRows)[number]
   type ExpiredRow = (typeof expiredLockupRows)[number]
 
-  const [activeColumnDescriptors, expiredColumnDescriptors] = useMemo(
-    () => [
-      buildActiveColumns<ActiveRow>({ tranches }),
-      buildExpiredColumns<ExpiredRow>(),
-    ],
-    [tranches],
-  )
+  console.log(selectedLockups)
 
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
     const activeLockups = lockups.filter((lockup) => !lockup.isExpired)
@@ -43,16 +38,31 @@ export function LockupsTables({
           lockup,
           tranches,
           onClickEdit,
-        }),
+          selectedLockups,
+          setSelectedLockups,
+        })
       ),
       expiredLockups.map((lockup) =>
         buildExpiredRow({
           lockup,
           onClickEdit,
-        }),
+        })
       ),
     ]
-  }, [lockups, tranches, onClickEdit])
+  }, [lockups, selectedLockups, tranches, onClickEdit])
+
+  const [activeColumnDescriptors, expiredColumnDescriptors] = useMemo(
+    () => [
+      buildActiveColumns<ActiveRow>({
+        tranches,
+        lockups: lockups.filter((lockup) => !lockup.isExpired),
+        selectedLockups,
+        setSelectedLockups,
+      }),
+      buildExpiredColumns<ExpiredRow>(),
+    ],
+    [tranches, selectedLockups]
+  )
 
   const activeCellRenderers = useMemo(() => {
     return {
@@ -65,7 +75,12 @@ export function LockupsTables({
             className={twMerge(cellProps.className, isExpired && "border-x-0")}
             colSpan={isExpired ? tranches.length : undefined}
           >
-            <StyledText key={`text_cell_${row._lockup.id}-1`} as="div" variant="label" className="mb-1 sm:hidden">
+            <StyledText
+              key={`text_cell_${row._lockup.id}-1`}
+              as="div"
+              variant="label"
+              className="mb-1 sm:hidden"
+            >
               {tranches[0].name}
             </StyledText>
 
