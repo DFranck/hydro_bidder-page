@@ -18,20 +18,19 @@ export function BidBrowserModal({
       sourceId={sourceId}
       bidId={parseInt(bidId)}
       className={twJoin(
-        'is-below-threshold:theme-color-beige',
+        'is-below-threshold:theme-color-beige text-foreground',
         'fixed inset-0 z-20',
-        'bg-theme-color/20 backdrop-blur-sm',
+        'bg-background/80 backdrop-blur-sm',
         'top-[calc(var(--spacing-bar-height-standard)+var(--spacing-looser))]',
         'desktop:top-[calc(var(--spacing-bar-height-large)+var(--spacing-tight))]',
       )}
     >
       <div
         className={twJoin(
-          'inset-loose absolute',
+          'h-full',
+          'inset-x-loose absolute',
           'rounded-standard',
           'overflow-hidden',
-          'bg-background',
-          'p-standard',
         )}
       >
         <BidBrowser

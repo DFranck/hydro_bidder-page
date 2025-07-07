@@ -1,7 +1,7 @@
 'use client'
 
-import { LoadingSpinner } from '@v2/components/LoadingSpinner'
+import { LoadingScreen } from '@v2/components/LoadingScreen'
 
 export default function ModalLoading() {
-  return <LoadingSpinner />
+  return <LoadingScreen />
 }

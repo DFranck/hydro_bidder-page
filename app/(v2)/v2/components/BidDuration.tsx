@@ -4,7 +4,7 @@ import { polDurationTooltip } from '@/components/ToolTips'
 import { BidRevampMetrics } from '@/contract-apis/types'
 import { getTimeUnitFromNanos } from '@/lib/getTimeUnitFromNanos'
 import { pluralize } from '@/lib/pluralize'
-import { Tooltip } from '@v2/components/Tooltip'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { twJoin } from 'tailwind-merge'
@@ -39,20 +39,20 @@ export function BidDuration({ bidId, sourceId, className }: BidDurationProps) {
   return isRejected ? null : !durationNumber ? (
     <span className="text-footnote">No data yet</span>
   ) : (
-    <Tooltip
+    <Tooltipped
       className={twJoin(
         'has-tooltip',
         'relative z-20',
         'gap-tighter flex items-center',
         className,
       )}
-      tipContents={polDurationTooltip}
+      tip={polDurationTooltip}
     >
       <span className="important-value">{durationNumber}</span>{' '}
       {pluralize({
         count: durationNumber,
         singular: durationUnit,
       })}
-    </Tooltip>
+    </Tooltipped>
   )
 }

@@ -1,9 +1,8 @@
 'use client'
 
-import { LoadingSpinner } from '@v2/components/LoadingSpinner'
+import { LoadingScreen } from '@v2/components/LoadingScreen'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { useEffect } from 'react'
-import { twJoin } from 'tailwind-merge'
 
 export function LayoutLoadingOverlay() {
   const { state } = useAppState()
@@ -25,14 +24,5 @@ export function LayoutLoadingOverlay() {
 
   if (!isLoading) return null
 
-  return (
-    <div
-      className={twJoin(
-        'fixed inset-0 z-50',
-        'bg-background/50 backdrop-blur-md',
-      )}
-    >
-      <LoadingSpinner />
-    </div>
-  )
+  return <LoadingScreen />
 }

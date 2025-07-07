@@ -1,7 +1,7 @@
 'use client'
 
 import { useChain } from '@cosmos-kit/react'
-import { useWalletData } from '@v2/hooks'
+import { useWalletData } from '@v2/hooks/useWalletData'
 import { DataProviderOnClient } from '@v2/state/DataProviderOnClient'
 import { DataPromises } from '@v2/types'
 import { useEffect, useMemo, useState } from 'react'

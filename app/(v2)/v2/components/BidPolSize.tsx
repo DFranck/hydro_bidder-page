@@ -1,7 +1,7 @@
 'use client'
 
 import { BidRevampMetrics } from '@/contract-apis/types'
-import { Tooltip } from '@v2/components/Tooltip'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { sumBy } from 'lodash'
@@ -95,19 +95,19 @@ export function BidPolSize({ bidId, sourceId, className }: BidPolSizeProps) {
   )
 
   return (
-    <Tooltip
+    <Tooltipped
       className={twJoin(
         'has-tooltip',
         'relative z-20',
         'inline-flex items-center gap-1',
         className,
       )}
-      tipContents={tooltipContent}
+      tip={tooltipContent}
       classNamesForTooltip="-ml-24"
     >
       <span className="@card-is-row:flex-col flex items-center gap-1">
         {renderPolSizeValue()}
       </span>
-    </Tooltip>
+    </Tooltipped>
   )
 }

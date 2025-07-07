@@ -2,7 +2,7 @@
 
 import { Icon } from '@/components/Icon'
 import { useChain } from '@cosmos-kit/react'
-import { Tooltip } from '@v2/components/Tooltip'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { useWalletConnection } from '@v2/hooks/useWalletConnection'
 import { useEffect, useRef } from 'react'
 import { twJoin } from 'tailwind-merge'
@@ -31,6 +31,16 @@ export function WalletButton() {
     }
   }, [isWalletConnected, address])
 
+  // Manage is-connected data attribute on html element
+  useEffect(() => {
+    const htmlElement = document.documentElement
+    if (isWalletConnected && address) {
+      htmlElement.setAttribute('data-is-connected', 'true')
+    } else {
+      htmlElement.removeAttribute('data-is-connected')
+    }
+  }, [isWalletConnected, address])
+
   const { getButtonProps } = useWalletConnection({
     chainName: 'neutron',
   })
@@ -38,11 +48,12 @@ export function WalletButton() {
   const buttonProps = getButtonProps()
 
   if (!isWalletConnected) {
+    // When not connected, render the full-screen overlay button
     return (
       <div
         className={twJoin(
           'h-bar-height-large',
-          'fixed right-0 bottom-0 left-0 z-50',
+          'fixed right-0 bottom-0 left-0 z-40',
           'desktop:bottom-auto',
           'desktop:top-0',
         )}
@@ -77,21 +88,24 @@ export function WalletButton() {
     )
   }
 
+  // When connected, render a button that adapts based on context
   return (
-    <Tooltip
-      tipContents="Manage Wallet"
-      className="top-standard right-standard fixed"
+    <Tooltipped
+      tip="Manage Wallet"
+      className="top-standard right-standard desktop:relative desktop:top-auto desktop:right-auto fixed"
     >
       <button
         disabled={buttonProps.disabled}
         className={twJoin(
           'btn-essentials size-bar-height-standard',
           'text-palette-green',
+          'hover:text-palette-beige',
+          'focus-within:text-palette-beige',
         )}
         onClick={buttonProps.onClick}
       >
         <Icon name="solid:wallet" />
       </button>
-    </Tooltip>
+    </Tooltipped>
   )
 }

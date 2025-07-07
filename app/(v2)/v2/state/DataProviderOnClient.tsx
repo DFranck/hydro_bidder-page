@@ -2,8 +2,8 @@
 
 import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { BidMetaData, BidRevampMetrics } from '@/contract-apis/types'
-import { LoadingSpinner } from '@v2/components/LoadingSpinner'
-import { useProcessedData } from '@v2/hooks'
+import { LoadingScreen } from '@v2/components/LoadingScreen'
+import { useProcessedData } from '@v2/hooks/useProcessedData'
 import { AppAction, AppState, SourceID } from '@v2/types'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
@@ -24,7 +24,7 @@ const QueryClientProvider = dynamic(
       (mod) => mod.QueryClientProvider,
     ),
   {
-    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
+    loading: () => <LoadingScreen useGlobalState />,
     ssr: false, // Since react-query needs browser APIs
   },
 )
@@ -32,7 +32,7 @@ const QueryClientProvider = dynamic(
 const ToastContextProvider = dynamic(
   () => import('@/components/Toasts').then((mod) => mod.ToastContextProvider),
   {
-    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
+    loading: () => <LoadingScreen useGlobalState />,
     ssr: false,
   },
 )
@@ -43,7 +43,7 @@ const ChainsAndSignersProvider = dynamic(
       (mod) => mod.ChainsAndSignersProvider,
     ),
   {
-    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
+    loading: () => <LoadingScreen useGlobalState />,
     ssr: false,
   },
 )
@@ -54,7 +54,7 @@ const GlobalLockupInfoProvider = dynamic(
       (mod) => mod.GlobalLockupInfoProvider,
     ),
   {
-    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
+    loading: () => <LoadingScreen useGlobalState />,
     ssr: false,
   },
 )
@@ -65,7 +65,7 @@ const IncompleteNoticesProvider = dynamic(
       (mod) => mod.IncompleteNoticesProvider,
     ),
   {
-    loading: () => <LoadingSpinner isFullscreen useGlobalState />,
+    loading: () => <LoadingScreen useGlobalState />,
     ssr: false,
   },
 )

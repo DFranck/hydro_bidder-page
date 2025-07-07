@@ -5,7 +5,7 @@ import { BidCard, bidCardFields } from '@v2/components/BidCard'
 import { VoteStatusIndicator } from '@v2/components/VoteStatusIndicator'
 import { VoteThresholdIndicator } from '@v2/components/VoteThresholdIndicator'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
-import { sortBidsInTranche } from '@v2/lib/sortBidsInTranche'
+import { useBidsInTranche } from '@v2/hooks/useBidsNavigationOrder'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import React, { useRef } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
@@ -57,11 +57,7 @@ export function Tranche({
 
   const { name, metadata, userVotedInTranche } = tranche ?? {}
   const { logo, description } = JSON.parse(metadata ?? '{}')
-  const allBids = currentRoundDataPerSource?.[sourceId].augmentedBids ?? []
-
-  const bidsInTranche = sortBidsInTranche(
-    allBids.filter((bid) => bid.trancheId === trancheId),
-  )
+  const bidsInTranche = useBidsInTranche(sourceId, trancheId)
 
   const environment = getEnvironment()
   const source = getSource(environment, sourceId)
@@ -69,7 +65,7 @@ export function Tranche({
     source.voteThresholds[trancheId as keyof typeof source.voteThresholds]
 
   const viewboxClassName = twMerge(
-    'rounded-standard absolute inset-0 overflow-hidden',
+    'rounded-standard relative h-full overflow-hidden',
     'grid grid-rows-[min-content_auto]',
     'opacity-100 transition-opacity duration-200',
   )
@@ -87,9 +83,7 @@ export function Tranche({
           'px-standard gap-standard',
           'font-bold **:font-bold!',
           'transition-colors',
-          'bg-gradient-to-b',
-          'is-active:from-theme-color',
-          'is-active:to-theme-color/50',
+          'from-theme-color to-theme-color/50 bg-linear-to-b',
         )}
       >
         <MarkdownContainer
@@ -208,15 +202,17 @@ export function Tranche({
   return (
     <div
       id={`tranche-container--${sourceId}-${trancheId}`}
+      data-carousel-section="tranche"
       className={twMerge(
         isActive && 'is-active',
-        userVotedInTranche ? 'has-voted-within' : 'has-not-voted-within',
         'relative w-full',
         'h-full shrink-0 grow-0',
         'snap-start',
         'is-active:z-10',
+        'overflow-hidden',
         className,
       )}
+      data-has-voted-within={userVotedInTranche ? 'true' : undefined}
       {...otherProps}
     >
       {renderViewbox ? (

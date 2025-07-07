@@ -1,6 +1,6 @@
 import { Icon } from '@/components/Icon'
 import { voteThresholdTooltip } from '@/components/ToolTips'
-import { Tooltip } from '@v2/components/Tooltip'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { twJoin } from 'tailwind-merge'
 
 interface VoteThresholdIndicatorProps {
@@ -32,8 +32,8 @@ export function VoteThresholdIndicator({
           )}
         >
           <div className="border-palette-beige w-full border-t-2" />
-          <Tooltip
-            tipContents={voteThresholdTooltip({
+          <Tooltipped
+            tip={voteThresholdTooltip({
               trancheId,
             })}
           >
@@ -47,7 +47,7 @@ export function VoteThresholdIndicator({
               </span>
               <Icon name="circle-info" />
             </div>
-          </Tooltip>
+          </Tooltipped>
           <div className="border-palette-beige w-full border-t-2" />
         </div>
       </div>

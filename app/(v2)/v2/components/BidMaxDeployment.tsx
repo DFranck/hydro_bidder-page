@@ -28,13 +28,13 @@ export function BidMaxDeployment({
   )
   const atomPrice = sourceData?.atomPrice || 0
 
-  if (!bid) return null
+  if (!bid) return <span className={className}>–</span>
 
   // Only relevant from round 3 onwards (rounds are 0-indexed)
   // And if there are any point-based tribute amounts, we can't show this
   const isTokenBased = !bid.points || bid.points.length === 0
   if (bid.roundId < 2 || !isTokenBased || atomPrice <= 0) {
-    return null
+    return <span className={className}>–</span>
   }
 
   // Calculate max deployment amount (same logic as main)

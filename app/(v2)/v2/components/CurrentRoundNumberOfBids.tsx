@@ -2,7 +2,7 @@
 
 import { currentRoundNumLiveBidsTooltip } from '@/components/ToolTips'
 import { pluralize } from '@/lib/pluralize'
-import { Tooltip } from '@v2/components/Tooltip'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twJoin } from 'tailwind-merge'
 
@@ -23,7 +23,7 @@ export function CurrentRoundNumberOfBids() {
   })
 
   return (
-    <Tooltip tipContents={tooltipContent} className="cursor-help">
+    <Tooltipped tip={tooltipContent} className="cursor-help">
       <div className="desktop:gap-3 flex items-center justify-center gap-2">
         <var className="important-value">
           {isLoading ? '...' : bidsInRound.length}
@@ -36,6 +36,6 @@ export function CurrentRoundNumberOfBids() {
           })}
         </span>
       </div>
-    </Tooltip>
+    </Tooltipped>
   )
 }

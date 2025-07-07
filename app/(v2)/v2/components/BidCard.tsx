@@ -3,16 +3,16 @@
 import { Icon } from '@/components/Icon'
 import { OrphanController } from '@/components/OrphanController'
 import { BidRevampMetrics } from '@/contract-apis/types'
+import { BidDuration } from '@v2/components/BidDuration'
+import { BidLogo } from '@v2/components/BidLogo'
+import { BidTributeApr } from '@v2/components/BidTributeApr'
+import { BidVoteShare } from '@v2/components/BidVoteShare'
+import { BidWrapper } from '@v2/components/BidWrapper'
+import { InternalLink } from '@v2/components/InternalLink'
+import { VoteButton } from '@v2/components/VoteButton'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { twJoin, twMerge } from 'tailwind-merge'
-import { BidDuration } from './BidDuration'
-import { BidLogo } from './BidLogo'
-import { BidTributeApr } from './BidTributeApr'
-import { BidVoteShare } from './BidVoteShare'
-import { BidWrapper } from './BidWrapper'
-import { InternalLink } from './InternalLink'
-import { VoteButton } from './VoteButton'
 
 export const bidCardFields = [
   {
@@ -116,7 +116,7 @@ function FloatingCardElements({
           'is-voted-on-focused:opacity-100!',
           'is-change-vote-focused:opacity-100!',
           // Highlight voted bids when in change-vote-focused mode
-          'is-voted-on:is-change-vote-focused-elsewhere:theme-color-beige',
+          'is-voted-on:is-change-vote-focused-elsewhere:theme-color-beige text-foreground',
           'is-voted-on:is-change-vote-focused-elsewhere:bg-theme-color/60',
           'is-voted-on:is-change-vote-focused-elsewhere:opacity-100!',
           isFirstCell
@@ -204,6 +204,7 @@ export function BidCard({
         'is-change-vote-focused:theme-color-green',
         'is-vote-focused:theme-color-green',
         'is-voted-on:theme-color-green',
+        'text-foreground',
         '@card-is-row:table-row',
         '@card-is-row:grid-cols-none',
         '@card-is-row:grid-rows-none',
@@ -239,16 +240,17 @@ export function BidCard({
           '@card-is-row:w-auto',
         )}
       >
+        <h3 className="title-1">
+          <OrphanController disabledInPortrait={false}>
+            {bid.title}
+          </OrphanController>
+        </h3>
+
         <FloatingCardElements
           sourceId={sourceId}
           bidId={bidId}
           isLoading={isLoading}
         />
-        <h3 className="title">
-          <OrphanController disabledInPortrait={false}>
-            {bid.title}
-          </OrphanController>
-        </h3>
       </TD>
 
       <div

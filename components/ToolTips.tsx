@@ -381,8 +381,8 @@ export const lockupsTableTimeLeftColumnTooltip = (
 
 export const lockAtomToVoteTooltip = (
   <p>
-    All of your lockups are in use or expired. Lock more ATOM to vote for this
-    bid.{" "}
+    All of your lockups are in use or expired. You need to lock more ATOM tokens
+    to gain voting power for this bid.{" "}
     <StyledText
       as={Link}
       href="/docs/users/voting-for-projects"
@@ -398,7 +398,8 @@ export const lockAtomToVoteTooltip = (
 
 export const extendLockupsToVoteTooltip = (
   <p>
-    You can extend your lockups to vote for this bid.{" "}
+    Your current lockups do not extend long enough to cover this bid's
+    deployment duration. You can extend your lockups to vote for this bid.{" "}
     <StyledText
       as={Link}
       href="/docs/users/voting-for-projects"
@@ -550,13 +551,21 @@ export const pastBidTributeAprBidsPageColumnTooltip = (
 )
 
 export const needsWalletConnectionTooltip = (
-  <p>Connect your wallet to access this feature.</p>
+  <p>
+    Connect your wallet to access this feature and interact with the
+    application.
+  </p>
 )
 
-export const initializingLockupsTooltip = <p>initializing lockups...</p>
+export const initializingLockupsTooltip = (
+  <p>Initializing your lockups. Please wait while we load your data.</p>
+)
 
 export const notEnoughTokenInWalletTooltip = (
-  <p>You do not have enough tokens in your wallet to lock up.</p>
+  <p>
+    You do not have enough tokens in your wallet to complete this lockup
+    transaction.
+  </p>
 )
 
 export const lockupLimitReachedByNetworkTooltip = (
@@ -1129,3 +1138,28 @@ export const liquidationBonusTooltip = (
     liquidation bonus, increase the upper and lower bounds of the range.
   </p>
 )
+
+// VoteButton tooltips
+export const connectWalletToVoteTooltip = (
+  <p>Connect your wallet to vote on this bid.</p>
+)
+
+export const votingInProgressTooltip = (
+  <p>
+    Voting is currently in progress. Please wait for the transaction to
+    complete.
+  </p>
+)
+
+export const noVotingPowerAvailableTooltip = (
+  <p>
+    You have no voting power available. Lock ATOM tokens to gain voting power
+    for this bid.
+  </p>
+)
+
+export const alreadyVotedForBidTooltip = (
+  <p>You have already voted for this bid in the current round.</p>
+)
+
+export const castVoteForBidTooltip = <p>Cast your vote for this bid.</p>

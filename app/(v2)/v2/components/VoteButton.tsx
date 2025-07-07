@@ -1,16 +1,20 @@
 'use client'
 
 import { Card } from '@/components/Card'
-import { ConditionalWrapper } from '@/components/ConditionalWrapper'
 import { Icon } from '@/components/Icon'
 import { ModalWindow } from '@/components/ModalWindow'
 import { toastMessages } from '@/components/ToastMessages'
 import { useToasts } from '@/components/Toasts'
 import {
+  alreadyVotedForBidTooltip,
+  castVoteForBidTooltip,
   changeVoteTooltip,
+  connectWalletToVoteTooltip,
   extendLockupsToVoteTooltip,
   lockAtomToVoteTooltip,
   lockupLimitReachedByNetworkTooltip,
+  noVotingPowerAvailableTooltip,
+  votingInProgressTooltip,
 } from '@/components/ToolTips'
 import { executeWalletVote } from '@/contract-apis/executeWalletVote'
 import { useGlobalLockupCapacityInfo } from '@/contract-apis/useGlobalLockupCapacityInfo'
@@ -18,9 +22,9 @@ import { revalidateTag } from '@/lib/revalidateTag'
 import { useChain } from '@cosmos-kit/react'
 import { useVoteButtonFocus } from '@v2/components/BidWrapper'
 import { InternalLink } from '@v2/components/InternalLink'
-import { Tooltip } from '@v2/components/Tooltip'
-import { useHydroConfettiCannon } from '@v2/hooks'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { useDoubleTapProtection } from '@v2/hooks/useDoubleTapProtection'
+import { useHydroConfettiCannon } from '@v2/hooks/useHydroConfettiCannon'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { SourceID } from '@v2/types'
 import { useState } from 'react'
@@ -94,6 +98,30 @@ export function VoteButton({
     setIsChangeVoteModalOpen(true)
   })
 
+  // Helper function to create tooltips with action footnotes
+  function createTooltipWithMobileNote(
+    message: string | React.ReactNode,
+    action?: string,
+  ) {
+    if (!action) {
+      return message
+    }
+
+    return (
+      <div className="gap-y-tight flex flex-col">
+        <div>{message}</div>
+        <div className="footnote text-xs">
+          <span className="can-hover:inline can-hover:block cannot-hover:hidden">
+            Click to {action}
+          </span>
+          <span className="can-hover:hidden cannot-hover:inline cannot-hover:block">
+            Tap again to {action}
+          </span>
+        </div>
+      </div>
+    )
+  }
+
   async function executeVote() {
     if (!bid || !address) {
       return
@@ -137,7 +165,10 @@ export function VoteButton({
   if (!isWalletConnected) {
     buttonProps = {
       onClick: connectWalletProtection.handleClick,
-      tooltip: 'Connect Wallet to Vote',
+      tooltip: createTooltipWithMobileNote(
+        connectWalletToVoteTooltip,
+        'connect',
+      ),
       disabled: false,
       isLink: false,
       href: undefined,
@@ -145,7 +176,7 @@ export function VoteButton({
   } else if (isLoadingState) {
     buttonProps = {
       onClick: undefined,
-      tooltip: undefined,
+      tooltip: votingInProgressTooltip,
       disabled: true,
       isLink: false,
       href: undefined,
@@ -158,7 +189,10 @@ export function VoteButton({
       tooltip:
         lockedAtomTotalGlobal >= lockedAtomMaxGlobal
           ? lockupLimitReachedByNetworkTooltip
-          : undefined,
+          : createTooltipWithMobileNote(
+              noVotingPowerAvailableTooltip,
+              'lock ATOM',
+            ),
       disabled: lockedAtomTotalGlobal >= lockedAtomMaxGlobal,
       isLink: true,
       href: '/lock-atom',
@@ -166,7 +200,10 @@ export function VoteButton({
   } else if (!voteButtonData?.hasLockupThatExtendsBidsDeploymentDuration) {
     buttonProps = {
       onClick: expiredLockupsProtection.handleClick,
-      tooltip: extendLockupsToVoteTooltip,
+      tooltip: createTooltipWithMobileNote(
+        extendLockupsToVoteTooltip,
+        'extend lockups',
+      ),
       disabled: false,
       isLink: false,
       href: undefined,
@@ -174,7 +211,7 @@ export function VoteButton({
   } else if (voteButtonData?.validLockups.length === 0) {
     buttonProps = {
       onClick: noValidLockupsProtection.handleClick,
-      tooltip: lockAtomToVoteTooltip,
+      tooltip: createTooltipWithMobileNote(lockAtomToVoteTooltip, 'lock ATOM'),
       disabled: false,
       isLink: false,
       href: undefined,
@@ -182,7 +219,7 @@ export function VoteButton({
   } else if (voteButtonData?.hasVotedForThisBid) {
     buttonProps = {
       onClick: undefined,
-      tooltip: undefined,
+      tooltip: alreadyVotedForBidTooltip,
       disabled: true,
       isLink: false,
       href: undefined,
@@ -190,7 +227,7 @@ export function VoteButton({
   } else if (voteButtonData?.hasVotedElsewhere) {
     buttonProps = {
       onClick: changeVoteProtection.handleClick,
-      tooltip: changeVoteTooltip,
+      tooltip: createTooltipWithMobileNote(changeVoteTooltip, 'change vote'),
       disabled: false,
       isLink: false,
       href: undefined,
@@ -198,7 +235,7 @@ export function VoteButton({
   } else {
     buttonProps = {
       onClick: voteProtection.handleClick,
-      tooltip: undefined,
+      tooltip: createTooltipWithMobileNote(castVoteForBidTooltip, 'vote'),
       disabled: false,
       isLink: false,
       href: undefined,
@@ -235,10 +272,12 @@ export function VoteButton({
         }}
         onClick={buttonProps.onClick}
         className={twMerge(
-          'btn relative h-full w-8',
+          'btn centered',
           'flex items-center justify-center',
           'transition-all',
           'px-standard',
+          'text-inherit',
+          'text-shadow-none',
           buttonProps.disabled && 'pointer-events-none',
           className,
         )}
@@ -253,17 +292,16 @@ export function VoteButton({
         >
           <span
             className={twJoin(
-              'label hidden',
+              'label flex scale-0',
               'absolute inset-0',
               'rounded-full',
               'border-foreground border border-dashed',
               'items-center justify-center',
               'transition-all',
-              'has-not-voted-within:flex',
+              'has-not-voted-within:scale-100',
               'is-vote-focused:scale-0',
-              'is-vote-focused-elsewhere:scale-0',
+              'is-vote-focused-elsewhere:scale-0!',
               'text-[6px]',
-              'desktop:hidden!',
             )}
           >
             Vote
@@ -271,18 +309,17 @@ export function VoteButton({
 
           <span
             className={twJoin(
-              'absolute inset-0',
+              'absolute inset-0 z-10',
               'flex items-center justify-center',
               'transition-all',
               'is-voted-on:scale-0',
               'has-not-voted-within:scale-0',
               'has-not-voted-within:is-vote-focused-elsewhere:scale-100',
-              'is-vote-focused:scale-200',
-              'is-vote-focused:animate-spin',
-              'is-change-vote-focused:scale-200',
-              'is-change-vote-focused:animate-spin',
               'is-change-vote-focused-elsewhere:scale-100',
-              'desktop:has-not-voted-within:scale-100',
+              'is-change-vote-focused:scale-200!',
+              'is-change-vote-focused:animate-spin',
+              'is-vote-focused:scale-200!',
+              'is-vote-focused:animate-spin',
             )}
           >
             <Icon name="light:circle-dashed" />
@@ -290,12 +327,11 @@ export function VoteButton({
 
           <span
             className={twJoin(
-              'absolute inset-0 z-10 items-center justify-center',
+              'centered z-10',
               'transition-all',
               'hidden',
               'is-voted-on:flex',
               'is-voted-on:scale-200',
-              'is-voted-on:text-foreground!',
               'is-voted-on:is-change-vote-focused-elsewhere:scale-0',
               'is-vote-focused:flex',
               'is-vote-focused:scale-150',
@@ -314,15 +350,13 @@ export function VoteButton({
               'scale-0 opacity-0',
               'is-voted-on:scale-100',
               'is-voted-on:opacity-100',
-              'is-voted-on:text-background',
               'is-voted-on:is-change-vote-focused-elsewhere:scale-0',
               'is-voted-on:is-change-vote-focused-elsewhere:opacity-0',
-              'is-vote-focused:text-background',
               'is-vote-focused:scale-100',
               'is-vote-focused:opacity-100',
-              'is-change-vote-focused:text-background',
               'is-change-vote-focused:scale-100',
               'is-change-vote-focused:opacity-100',
+              'text-background',
             )}
           >
             <Icon name="solid:check" />
@@ -360,16 +394,9 @@ export function VoteButton({
   return (
     <>
       <div className="relative size-10">
-        <ConditionalWrapper
-          condition={!!buttonProps.tooltip}
-          wrapper={(children) => (
-            <Tooltip tipContents={buttonProps.tooltip} className="size-10">
-              {children}
-            </Tooltip>
-          )}
-        >
+        <Tooltipped tip={buttonProps.tooltip} className="size-10">
           {renderButtonContent()}
-        </ConditionalWrapper>
+        </Tooltipped>
       </div>
 
       <ModalWindow

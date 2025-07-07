@@ -5,6 +5,7 @@ import {
   flip,
   offset,
   shift,
+  size,
   useDismiss,
   useFloating,
   useFocus,
@@ -17,16 +18,16 @@ import { createPortal } from 'react-dom'
 import { twMerge } from 'tailwind-merge'
 import { useIsClient } from 'usehooks-ts'
 
-export function Tooltip({
+export function Tooltipped({
   children,
   className,
   classNamesForTooltip,
-  tipContents,
+  tip,
   mouseEnterDelay = 350,
   mouseLeaveDelay = 350,
 }: ComponentProps<'div'> & {
   classNamesForTooltip?: string
-  tipContents: ReactNode
+  tip: ReactNode
   mouseEnterDelay?: number
   mouseLeaveDelay?: number
 }) {
@@ -40,10 +41,20 @@ export function Tooltip({
     middleware: [
       offset(8),
       flip({
-        fallbackAxisSideDirection: 'start',
+        mainAxis: false, // Don't flip vertically (stay at bottom)
+        crossAxis: true, // Only flip horizontally when needed
       }),
       shift({
         padding: 8,
+      }),
+      size({
+        apply({ availableWidth, elements }) {
+          // Set max-width to 14rem (equivalent to w-56) but allow content to be narrower
+          Object.assign(elements.floating.style, {
+            maxWidth: `${Math.min(224, availableWidth)}px`, // 224px = 14rem = w-56
+            width: 'max-content',
+          })
+        },
       }),
     ],
     whileElementsMounted: autoUpdate,
@@ -95,7 +106,6 @@ export function Tooltip({
                 bg-background
                 pointer-events-auto
                 z-50
-                w-56
                 rounded-sm
                 border
                 p-2
@@ -110,7 +120,7 @@ export function Tooltip({
               classNamesForTooltip,
             )}
           >
-            {tipContents}
+            {tip}
           </div>,
           document.body,
         )}

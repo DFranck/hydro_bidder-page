@@ -4,7 +4,10 @@ import { toastMessages } from '@/components/ToastMessages'
 import { useToasts } from '@/components/Toasts'
 import { WalletStatus } from '@cosmos-kit/core'
 import { useChain } from '@cosmos-kit/react'
-import { UseWalletConnectionOptions, UseWalletConnectionReturn } from '@v2/types'
+import {
+  UseWalletConnectionOptions,
+  UseWalletConnectionReturn,
+} from '@v2/types/hooks'
 import { MouseEventHandler, useEffect } from 'react'
 
 export function useWalletConnection({

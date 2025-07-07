@@ -5,7 +5,7 @@ import {
   bidLiquidityReceivedTooltip,
   voteThresholdTooltip,
 } from '@/components/ToolTips'
-import { Tooltip } from '@v2/components/Tooltip'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { AugmentedBidWithVoteData } from '@v2/types'
@@ -53,21 +53,21 @@ export function BidVoteShare({
       percentage === 0 ? '0' : Math.floor(percentage * 100) / 100
 
     return (
-      <Tooltip
+      <Tooltipped
         className={twJoin(
           'has-tooltip',
           'relative z-20',
           'inline-flex items-center gap-1',
           className,
         )}
-        tipContents={voteThresholdTooltip({ trancheId: bid.trancheId })}
+        tip={voteThresholdTooltip({ trancheId: bid.trancheId })}
         classNamesForTooltip="-ml-24"
       >
         <div className="math-symbol">
           <span className="important-value">{formattedPercentage}</span>
           <span className="math-symbol-text">%</span>
         </div>
-      </Tooltip>
+      </Tooltipped>
     )
   }
 
@@ -78,13 +78,13 @@ export function BidVoteShare({
     <ConditionalWrapper
       condition={totalBidLiquidity > 0}
       wrapper={(children) => (
-        <Tooltip
+        <Tooltipped
           className={twJoin(
             'has-tooltip',
             'relative z-20',
             'gap-tighter inline-flex items-center',
           )}
-          tipContents={bidLiquidityReceivedTooltip({
+          tip={bidLiquidityReceivedTooltip({
             votePercentage: bid.vote_perc,
             totalBidLiquidity,
             denom,
@@ -92,7 +92,7 @@ export function BidVoteShare({
           classNamesForTooltip="-ml-24"
         >
           {children}
-        </Tooltip>
+        </Tooltipped>
       )}
     >
       <div className={twJoin('math-symbol', className)}>

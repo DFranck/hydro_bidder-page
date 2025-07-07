@@ -3,6 +3,7 @@ import { twJoin, twMerge } from 'tailwind-merge'
 
 interface BidCardLogoProps {
   className?: string
+  classNameForClearLogoContainer?: string
   projectLogoUrl: string
   projectName?: string
   title?: string
@@ -10,6 +11,7 @@ interface BidCardLogoProps {
 
 export function BidLogo({
   className,
+  classNameForClearLogoContainer,
   projectLogoUrl,
   projectName,
   title,
@@ -19,15 +21,16 @@ export function BidLogo({
       className={twMerge(
         'relative',
         'flex items-center justify-center',
-        'bg-background overflow-hidden',
+        'overflow-hidden',
         'p-standard',
         className,
       )}
     >
       <div
-        className={twJoin(
+        className={twMerge(
           'inset-tight absolute z-10',
           'flex items-center justify-center',
+          classNameForClearLogoContainer,
         )}
       >
         <Image
@@ -37,7 +40,13 @@ export function BidLogo({
           height={48}
         />
       </div>
-      <div className={twJoin('absolute inset-0 z-0', 'opacity-50 blur-lg')}>
+      <div
+        className={twJoin(
+          'bg-background',
+          'absolute inset-0 z-0',
+          'opacity-50 blur-lg',
+        )}
+      >
         <Image
           src={projectLogoUrl}
           alt="Decorative Shadow"

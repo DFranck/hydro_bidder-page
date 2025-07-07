@@ -3,11 +3,17 @@ import { twJoin } from 'tailwind-merge'
 interface GradientOverlayProps {
   direction: 'left' | 'right' | 'down'
   className?: string
+  previousThemeColor?: string
+  nextThemeColor?: string
+  currentThemeColor?: string
 }
 
 export function GradientOverlay({
   direction,
   className,
+  previousThemeColor = 'var(--color-palette-blue)',
+  nextThemeColor = 'var(--color-palette-blue)',
+  currentThemeColor = 'var(--color-palette-blue)',
 }: GradientOverlayProps) {
   const baseClasses = ['pointer-events-none', 'absolute inset-y-0 z-0']
 
@@ -23,12 +29,15 @@ export function GradientOverlay({
         ? 'bg-gradient-to-r'
         : 'bg-gradient-to-l'
 
-  const gradientColors =
-    direction === 'down'
-      ? 'from-theme-color/40 to-transparent'
-      : direction === 'left'
-        ? 'from-theme-color-previous/20 to-transparent'
-        : 'from-theme-color-next/20 to-transparent'
+  const getGradientColors = () => {
+    if (direction === 'down') {
+      return `from-[${currentThemeColor}]/40 to-transparent`
+    } else if (direction === 'left') {
+      return `from-[${previousThemeColor}]/20 to-transparent`
+    } else {
+      return `from-[${nextThemeColor}]/20 to-transparent`
+    }
+  }
 
   return (
     <div
@@ -36,7 +45,7 @@ export function GradientOverlay({
         baseClasses,
         positionClasses,
         gradientDirection,
-        gradientColors,
+        getGradientColors(),
         className,
       )}
     />

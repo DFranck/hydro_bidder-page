@@ -2,10 +2,11 @@
 
 import { Icon } from '@/components/Icon'
 import { IconString } from '@/components/Icon/types'
-import { StyledText } from '@/components/StyledText'
+import { useIsMobile } from '@/lib/useIsMobile'
 import { InternalLink } from '@v2/components/InternalLink'
-import Link from 'next/link'
+import { SubmenuDropdown } from '@v2/components/SubmenuDropdown'
 import { usePathname } from 'next/navigation'
+import { ReactNode } from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
 export interface MenuItem extends React.ComponentProps<'a'> {
@@ -13,10 +14,10 @@ export interface MenuItem extends React.ComponentProps<'a'> {
   href?: string
   iconLeft?: IconString
   iconRight?: IconString
-  label: React.ReactNode
+  label: ReactNode
   menuItems?: MenuItem[]
   target?: string
-  tooltip?: React.ReactNode
+  tooltip?: ReactNode
 }
 
 export function ResponsiveMenu({
@@ -44,6 +45,7 @@ export function ResponsiveMenu({
   classNameForMenuButton?: string
 }) {
   const pathname = usePathname()
+  const isMobile = useIsMobile()
 
   function blurActiveElement() {
     ;(document.activeElement as HTMLDivElement)?.blur()
@@ -62,6 +64,7 @@ export function ResponsiveMenu({
         'desktop:pointer-events-auto',
         'desktop:relative',
         'desktop:flex',
+        'desktop:w-auto',
         className,
       )}
       {...otherProps}
@@ -141,6 +144,7 @@ export function ResponsiveMenu({
           'translate-x-full opacity-0',
           'group-focus-within/navbar:translate-x-0',
           'group-focus-within/navbar:opacity-100',
+          'desktop:translate-x-0',
           classNameForItems,
         )}
       >
@@ -165,7 +169,6 @@ export function ResponsiveMenu({
               <InternalLink
                 key={href ?? index}
                 href={href ?? '#'}
-                // tooltip={tooltip}
                 className={twJoin(
                   disabled && 'pointer-events-none opacity-60',
                   classNameForItem,
@@ -185,33 +188,90 @@ export function ResponsiveMenu({
                 className="group/nav-item relative cursor-pointer"
                 key={index}
               >
-                <a
-                  href={href ?? '#'}
-                  className={twJoin(
-                    'flex items-center gap-2',
-                    'w-full justify-between',
-                    'desktop:w-auto',
-                  )}
-                >
-                  {iconLeft && <Icon name={iconLeft} />}
-                  <span>{label}</span>
-                  {iconRight && <Icon name={iconRight} />}
-                </a>
+                {isMobile ? (
+                  // Mobile: Simple link with inline submenu
+                  <>
+                    <a
+                      href={href ?? '#'}
+                      tabIndex={0}
+                      className={twJoin(
+                        'flex items-center gap-2',
+                        'w-full justify-between',
+                      )}
+                    >
+                      {iconLeft && <Icon name={iconLeft} />}
+                      <span>{label}</span>
+                      {iconRight && <Icon name={iconRight} />}
+                    </a>
 
-                <div
-                  className={twJoin(
-                    'desktop:absolute',
-                    'desktop:top-full',
-                    'desktop:right-0',
-                    'desktop:pointer-events-none',
-                    'desktop:opacity-0',
-                    'desktop:transition-all',
-                    'desktop:group-focus-within/nav-item:opacity-100',
-                    'desktop:group-focus-within/nav-item:pointer-events-auto',
-                  )}
-                >
-                  <div
-                    className={twJoin('flex flex-col', classNameForSubItems)}
+                    {/* Mobile: Inline submenu list */}
+                    <div
+                      className={twJoin(
+                        'flex flex-col',
+                        'border-l-palette-beige border-l-2', // Only for mobile
+                        classNameForSubItems,
+                      )}
+                    >
+                      {subMenuItems.map(
+                        (
+                          {
+                            label,
+                            href,
+                            disabled,
+                            tooltip,
+                            iconLeft,
+                            iconRight,
+                            menuItems,
+                            onClick,
+                            ...otherProps
+                          },
+                          subIndex,
+                        ) => (
+                          <InternalLink
+                            key={subIndex}
+                            href={href ?? '#'}
+                            disabled={disabled}
+                            className={twJoin(
+                              'flex items-center gap-2',
+                              disabled && 'pointer-events-none opacity-60',
+                              classNameForSubItem,
+                              href &&
+                                pathname?.startsWith(href) &&
+                                classNameForSubItemActive,
+                            )}
+                            onClick={(event) => {
+                              onClick?.(event)
+                              blurActiveElement()
+                            }}
+                            {...otherProps}
+                          >
+                            {iconLeft && <Icon name={iconLeft} />}
+                            <span>{label}</span>
+                            {iconRight && <Icon name={iconRight} />}
+                          </InternalLink>
+                        ),
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  // Desktop: SubmenuDropdown component
+                  <SubmenuDropdown
+                    trigger={
+                      <a
+                        href={href ?? '#'}
+                        tabIndex={0}
+                        className={twJoin(
+                          'flex items-center gap-2',
+                          'w-full justify-between',
+                          'desktop:w-auto',
+                        )}
+                      >
+                        {iconLeft && <Icon name={iconLeft} />}
+                        <span>{label}</span>
+                        {iconRight && <Icon name={iconRight} />}
+                      </a>
+                    }
+                    classNameForMenu={classNameForSubItems}
                   >
                     {subMenuItems.map(
                       (
@@ -228,12 +288,12 @@ export function ResponsiveMenu({
                         },
                         subIndex,
                       ) => (
-                        <StyledText
+                        <InternalLink
                           key={subIndex}
-                          as={Link}
                           href={href ?? '#'}
-                          tooltip={tooltip}
+                          disabled={disabled}
                           className={twJoin(
+                            'flex items-center gap-2',
                             disabled && 'pointer-events-none opacity-60',
                             classNameForSubItem,
                             href &&
@@ -246,12 +306,14 @@ export function ResponsiveMenu({
                           }}
                           {...otherProps}
                         >
-                          {label}
-                        </StyledText>
+                          {iconLeft && <Icon name={iconLeft} />}
+                          <span>{label}</span>
+                          {iconRight && <Icon name={iconRight} />}
+                        </InternalLink>
                       ),
                     )}
-                  </div>
-                </div>
+                  </SubmenuDropdown>
+                )}
               </div>
             )
           },

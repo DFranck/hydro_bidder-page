@@ -3,7 +3,6 @@
 import { SourceID, getEnvironment, getSource } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { ElementType, createContext, useContext, useState } from 'react'
-import { twMerge } from 'tailwind-merge'
 
 interface VoteButtonFocusContextValue {
   setIsVoteButtonHovered: (hovered: boolean) => void
@@ -92,16 +91,16 @@ export function BidWrapper<E extends ElementType = 'article'>({
     : false
 
   // Determine focus state for CSS variants - only apply if we should provide context
-  let focusStateClass = ''
+  let focusStateDataAttribute = ''
   if (shouldProvideContext && isHoveringVoteButton) {
     if (userHasVotedOnThisBid) {
-      focusStateClass = 'is-voted-on-focused'
+      focusStateDataAttribute = 'is-voted-on-focused'
     } else if (userHasVotedInThisTranche) {
       // User has voted on another bid in this tranche, so this is a "change vote" interaction
-      focusStateClass = 'is-change-vote-focused'
+      focusStateDataAttribute = 'is-change-vote-focused'
     } else {
       // Normal vote focus
-      focusStateClass = 'is-vote-focused'
+      focusStateDataAttribute = 'is-vote-focused'
     }
   }
 
@@ -116,12 +115,20 @@ export function BidWrapper<E extends ElementType = 'article'>({
 
   const element = (
     <Component
-      className={twMerge(
-        userHasVotedOnThisBid && 'is-voted-on',
-        isBelowVoteThreshold && 'is-below-threshold',
-        focusStateClass,
-        className,
-      )}
+      className={className}
+      data-is-voted-on={userHasVotedOnThisBid ? 'true' : undefined}
+      data-is-below-threshold={isBelowVoteThreshold ? 'true' : undefined}
+      data-is-vote-focused={
+        focusStateDataAttribute === 'is-vote-focused' ? 'true' : undefined
+      }
+      data-is-voted-on-focused={
+        focusStateDataAttribute === 'is-voted-on-focused' ? 'true' : undefined
+      }
+      data-is-change-vote-focused={
+        focusStateDataAttribute === 'is-change-vote-focused'
+          ? 'true'
+          : undefined
+      }
       {...otherProps}
     >
       {children}

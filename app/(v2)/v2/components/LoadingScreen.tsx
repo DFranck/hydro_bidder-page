@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twJoin, twMerge } from 'tailwind-merge'
 
 const WAVE_CYCLE_DURATION = 2000
 const WAVE_DURATION = 1000
@@ -12,21 +12,21 @@ const MAX_HEIGHT = 64 // 4rem in pixels (64px)
 let globalLoadingCount = 0
 let globalLoadingStartTime = 0
 
-type LoadingSpinnerProps = {
+type LoadingScreenProps = {
   className?: string
   color?: string
   waveDuration?: number
-  isFullscreen?: boolean
   useGlobalState?: boolean
+  isFullscreen?: boolean
 }
 
-export function LoadingSpinner({
+export function LoadingScreen({
   className,
   color = 'bg-palette-blue',
   waveDuration = WAVE_DURATION,
-  isFullscreen = false,
   useGlobalState = false,
-}: LoadingSpinnerProps) {
+  isFullscreen = false,
+}: LoadingScreenProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [loadingCount, setLoadingCount] = useState(0)
   const [barHeights, setBarHeights] = useState<number[]>(
@@ -121,10 +121,11 @@ export function LoadingSpinner({
 
   return (
     <div
-      className={twMerge(
+      className={twJoin(
         isFullscreen
           ? 'bg-background fixed inset-0 z-50'
-          : 'absolute inset-0 z-50',
+          : 'fixed inset-0 z-50',
+        'bg-background/50 backdrop-blur-md',
         'flex items-center justify-center',
         'transition-opacity duration-300 ease-in-out',
         isVisible ? 'opacity-100' : 'opacity-0',

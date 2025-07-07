@@ -10,7 +10,7 @@
   --breakpoint-2xl: 1400px;
   --breakpoint-desktop: 768px;
 
-  --container-4xs: 12rem;
+  --container-4xs: 14rem;
   --container-card-is-row: 500px;
 
   --spacing-tightest: 2px;
@@ -68,22 +68,30 @@
   --color-darkened: rgba(var(--palette-text-rgb), 0.25);
 }
 
-@custom-variant is-active (&:where(.is-active, .is-active *));
-@custom-variant is-open (&:where(.is-open, .is-open *));
-@custom-variant sidebar-open (&:where(.sidebar-open *));
-@custom-variant sidebar-closed (&:where(.sidebar-closed *));
+@custom-variant is-active (&:where([data-is-active="true"], [data-is-active="true"] *));
+@custom-variant is-open (&:where([data-is-open="true"], [data-is-open="true"] *));
+@custom-variant is-sidebar-open (&:where([data-is-sidebar-open="true"] *));
+@custom-variant is-sidebar-closed (&:where([data-is-sidebar-closed="true"] *));
+@custom-variant is-connected (&:where([data-is-connected="true"], [data-is-connected="true"] *));
 
-@custom-variant is-voted-on (&:where(.is-voted-on, .is-voted-on *));
-@custom-variant is-below-threshold (&:where(.is-below-threshold, .is-below-threshold *));
-@custom-variant is-vote-focused (&:where(.is-vote-focused, .is-vote-focused *));
-@custom-variant is-vote-focused-elsewhere (&:where(:has(.is-vote-focused), :has(.is-vote-focused) *));
-@custom-variant is-voted-on-focused (&:where(.is-voted-on-focused, .is-voted-on-focused *));
-@custom-variant is-voted-on-focused-elsewhere (&:where(:has(.is-voted-on-focused), :has(.is-voted-on-focused) *));
-@custom-variant is-change-vote-focused (&:where(.is-change-vote-focused, .is-change-vote-focused *));
-@custom-variant is-change-vote-focused-elsewhere (&:where(:has(.is-change-vote-focused), :has(.is-change-vote-focused) *));
+@custom-variant is-voted-on (&:where([data-is-voted-on="true"], [data-is-voted-on="true"] *));
+@custom-variant is-below-threshold (&:where([data-is-below-threshold="true"], [data-is-below-threshold="true"] *));
+@custom-variant is-vote-focused (&:where([data-is-vote-focused="true"], [data-is-vote-focused="true"] *));
+@custom-variant is-vote-focused-elsewhere (&:where(:has([data-is-vote-focused="true"]), :has([data-is-vote-focused="true"]) *));
+@custom-variant is-voted-on-focused (&:where([data-is-voted-on-focused="true"], [data-is-voted-on-focused="true"] *));
+@custom-variant is-voted-on-focused-elsewhere (&:where(:has([data-is-voted-on-focused="true"]), :has([data-is-voted-on-focused="true"]) *));
+@custom-variant is-change-vote-focused (&:where([data-is-change-vote-focused="true"], [data-is-change-vote-focused="true"] *));
+@custom-variant is-change-vote-focused-elsewhere (&:where(:has([data-is-change-vote-focused="true"]), :has([data-is-change-vote-focused="true"]) *));
 
-@custom-variant has-voted-within (&:where(.has-voted-within, .has-voted-within *));
-@custom-variant has-not-voted-within (&:not(:where(.has-voted-within, .has-voted-within *)));
+@custom-variant has-voted-within (&:where([data-has-voted-within="true"], [data-has-voted-within="true"] *));
+@custom-variant has-not-voted-within (&:not(:where([data-has-voted-within="true"], [data-has-voted-within="true"] *)));
+
+@custom-variant can-hover (@media (hover: hover));
+@custom-variant cannot-hover (@media (hover: none));
+
+@utility theme-color-default {
+  --color-theme-color: var(--color-palette-blue);
+}
 
 @utility theme-color-beige {
   --color-theme-color: var(--color-palette-beige);
@@ -141,12 +149,13 @@
   @apply border-0;
   @apply cursor-pointer touch-manipulation;
   @apply transition-all;
+  @apply shrink-0 grow-0;
 }
 
 @utility btn {
   @apply btn-essentials;
   @apply gap-tightest px-loose;
-  @apply rounded-small;
+  @apply rounded-sm;
   @apply text-center leading-[1.1em] whitespace-nowrap;
 }
 
@@ -158,14 +167,24 @@
   @apply active:bg-palette-beige;
 }
 
-@utility centered {
-  @apply absolute top-1/2 left-1/2;
-  @apply -translate-x-1/2 -translate-y-1/2;
+@utility btn-tool {
+  @apply btn;
+  @apply hover:text-palette-beige;
+  @apply focus:text-palette-beige;
+  @apply active:text-palette-beige;
 }
 
 @utility btn-icon {
   @apply btn;
   @apply size-bar-height-standard;
+  @apply hover:text-palette-beige;
+  @apply focus:text-palette-beige;
+  @apply active:text-palette-beige;
+}
+
+@utility centered {
+  @apply absolute top-1/2 left-1/2;
+  @apply -translate-x-1/2 -translate-y-1/2;
 }
 
 @utility empty-box {
@@ -179,11 +198,20 @@
   @apply text-xs leading-[1.1em] font-bold tracking-widest uppercase;
 }
 
-@utility title {
+@utility title-1 {
+  @apply font-bold;
+  @apply text-2xl;
+  @apply normal-case;
+  @apply tracking-wide;
+  @apply text-balance;
+}
+
+@utility title-2 {
   @apply font-bold;
   @apply text-lg;
   @apply normal-case;
   @apply tracking-wide;
+  @apply text-balance;
 }
 
 @utility footnote {
@@ -337,4 +365,12 @@
   @apply size-10 transition-all;
   @apply bg-radial;
   @apply from-palette-green via-transparent to-transparent;
+}
+
+@utility popover {
+  @apply bg-background;
+  @apply border-palette-beige;
+  @apply border-2;
+  @apply rounded-standard;
+  @apply shadow-lg;
 }

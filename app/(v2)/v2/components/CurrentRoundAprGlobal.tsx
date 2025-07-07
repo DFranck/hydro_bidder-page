@@ -2,8 +2,8 @@
 
 import { averageAPRTooltip } from '@/components/ToolTips'
 import { voteThresholdByTrancheId } from '@/config'
-import { Tooltip } from '@v2/components/Tooltip'
-import { useAtomPrice } from '@v2/hooks'
+import { Tooltipped } from '@v2/components/Tooltipped'
+import { useAtomPrice } from '@v2/hooks/useAtomPrice'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import sumBy from 'lodash/sumBy'
 import { twJoin } from 'tailwind-merge'
@@ -42,7 +42,7 @@ export function CurrentRoundAprGlobal() {
       : 0
 
   return (
-    <Tooltip tipContents={averageAPRTooltip} className="cursor-help">
+    <Tooltipped tip={averageAPRTooltip} className="cursor-help">
       <div className="desktop:gap-3 flex items-center justify-center gap-2">
         <var className="important-value">
           {isLoading
@@ -55,6 +55,6 @@ export function CurrentRoundAprGlobal() {
           Average APR
         </span>
       </div>
-    </Tooltip>
+    </Tooltipped>
   )
 }

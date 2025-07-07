@@ -9,8 +9,7 @@ import { BidPolSize } from '@v2/components/BidPolSize'
 import { BidTributeApr } from '@v2/components/BidTributeApr'
 import { BidVoteShare } from '@v2/components/BidVoteShare'
 import { BidWrapper } from '@v2/components/BidWrapper'
-import { useInternalLink } from '@v2/components/InternalLink'
-import { Tooltip } from '@v2/components/Tooltip'
+import { Tooltipped } from '@v2/components/Tooltipped'
 import { VoteButton } from '@v2/components/VoteButton'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
@@ -22,22 +21,17 @@ export function BidDetails({
   bidId,
   className,
   isModal = false,
-  slotBeforeActions,
-  slotAfterActions,
 }: {
   sourceId: SourceID
   bidId: number
   className?: string
   isModal?: boolean
-  slotBeforeActions?: React.ReactNode
-  slotAfterActions?: React.ReactNode
 }) {
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById } = state
   const currentRoundData = currentRoundDataPerSource?.[sourceId]
   const { augmentedBids } = currentRoundData ?? {}
 
-  const { navigate } = useInternalLink()
   const bid = augmentedBids?.find((bid) => bid.id === bidId)
 
   if (!bid) return null
@@ -130,105 +124,95 @@ export function BidDetails({
     >
       <div
         className={twJoin(
-          'min-h-bar-height-large',
+          'relative',
           'flex items-center justify-between',
-          'bg-theme-color',
-          'is-below-threshold:text-background',
-          'is-voted-on:text-background',
+          'px-loose',
+          'pt-bar-height-large',
+          'bg-background',
         )}
       >
-        <h1
-          className={twJoin(
-            'title',
-            'px-loosest',
-            'flex items-center',
-            'is-vote-focused:text-background',
-            'is-change-vote-focused:text-background',
-          )}
-        >
-          {bidDescription?.title}
-        </h1>
+        <h1 className="title-1 relative z-10">{bidDescription?.title}</h1>
 
-        <div className="gap-tight flex h-full items-center">
-          {slotBeforeActions}
-          <VoteButton bidId={bidId} sourceId={sourceId} />
-          {slotAfterActions}
-          {!slotAfterActions &&
-            (isModal ? (
-              <button
-                className="btn-icon"
-                onClick={() => window.history.back()}
-              >
-                <Icon name="solid:xmark" />
-              </button>
-            ) : (
-              <Tooltip tipContents={<div>Back to bids</div>}>
-                <button className="btn-icon" onClick={() => navigate('/v2')}>
-                  <Icon name="solid:list-ul" />
-                </button>
-              </Tooltip>
-            ))}
-        </div>
+        <VoteButton
+          bidId={bidId}
+          sourceId={sourceId}
+          className="relative z-10"
+        />
+
+        <BidLogo
+          projectLogoUrl={projectLogoUrl}
+          projectName={bidDescription?.projectName}
+          title={bidDescription?.title}
+          className="absolute inset-0"
+          classNameForClearLogoContainer={twJoin(
+            'inset-x-loose top-loose bottom-auto',
+            'justify-start',
+          )}
+        />
+
+        <div
+          className={twJoin(
+            'absolute inset-x-0 bottom-0 h-3/4',
+            'from-background bg-linear-to-t to-transparent',
+          )}
+        />
+
+        <div
+          className={twJoin(
+            'absolute inset-x-0 bottom-0 h-1/2',
+            'from-theme-color/20 bg-linear-to-t to-transparent',
+            'opacity-0 transition-all',
+            'is-vote-focused:opacity-100',
+          )}
+        />
       </div>
 
       <div
         className={twJoin(
-          'min-h-0',
+          'h-full',
           'grid',
           'grid-rows-[min-content_auto]',
           'gap-tight',
+          'overflow-y-auto',
+          'desktop:overflow-hidden',
           'desktop:grid-rows-1',
-          'desktop:grid-cols-[3fr_1fr]',
+          'desktop:grid-cols-[5fr_3fr]',
         )}
       >
-        <div
-          className={twJoin(
-            'text-balance',
-            'py-loose px-loosest',
-            'overflow-y-auto',
-          )}
-        >
-          <MarkdownContainer
-            breakThreshold={24}
-            content={bidDescription?.description}
-          />
-        </div>
-
         <aside
           className={twJoin(
+            'transition-all',
+            'relative',
+            'col-start-1 col-end-2',
+            'row-start-1 row-end-2',
             'bg-theme-color/20',
             'grid grid-cols-2',
-            'px-loosest',
-            'py-looser',
-            'gap-x-loosest',
-            'gap-y-looser',
+            'px-loose',
+            'py-standard',
+            'gap-x-loose',
+            'gap-y-standard',
+            'text-foreground',
             'desktop:h-full',
             'desktop:flex',
             'desktop:flex-col',
             'desktop:p-0',
             'desktop:gap-0',
             'desktop:overflow-y-auto',
+            'desktop:col-start-2',
+            'desktop:col-end-3',
+            'desktop:**:shrink-0',
           )}
         >
-          <div className="h-bar-height-large relative">
-            <BidLogo
-              projectLogoUrl={projectLogoUrl}
-              projectName={bidDescription?.projectName}
-              title={bidDescription?.title}
-              className="absolute inset-0"
-            />
-          </div>
-
           {sidebarFields.map((field, index) => {
             const content = (
               <div
                 className={twJoin(
                   'flex flex-col',
                   'gap-tighter',
-                  'px-loosest',
-                  'py-looser',
+                  'py-standard',
+                  'desktop:px-loose',
                   'desktop:items-end',
-                  index % 2 === 0 && 'bg-darkened',
+                  index % 2 !== 0 && 'desktop:bg-darkened',
                 )}
               >
                 <div
@@ -254,13 +238,13 @@ export function BidDetails({
             )
 
             return field.tooltip ? (
-              <Tooltip
+              <Tooltipped
                 key={String(field.label)}
-                tipContents={tooltipContent(field.tooltip)}
+                tip={tooltipContent(field.tooltip)}
                 className="relative z-20 w-full"
               >
                 {content}
-              </Tooltip>
+              </Tooltipped>
             ) : (
               <React.Fragment key={String(field.label)}>
                 {content}
@@ -268,6 +252,24 @@ export function BidDetails({
             )
           })}
         </aside>
+
+        <div
+          className={twJoin(
+            'col-start-1 col-end-2',
+            'row-start-2 row-end-3',
+            'text-balance',
+            'px-loose',
+            'py-standard',
+            'desktop:overflow-y-auto',
+            'desktop:row-start-1',
+            'desktop:row-end-2',
+          )}
+        >
+          <MarkdownContainer
+            breakThreshold={24}
+            content={bidDescription?.description}
+          />
+        </div>
       </div>
     </BidWrapper>
   )
