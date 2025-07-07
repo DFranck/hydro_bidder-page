@@ -9,8 +9,13 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts/useToasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
+import {
+  getHydroQueryClient,
+  getLSTQueryClient,
+} from "@/contract-apis/getClient"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { useRatioQuery } from "@/hooks/use-ratio"
 import { calculateLockupVotingPower } from "@/lib/calculateLockupVotingPower"
 import { formatAmount } from "@/lib/formatAmount"
 import { getDaysAway } from "@/lib/getDaysAway"
@@ -39,7 +44,7 @@ export function EditLockupDurationModal({
   onCloseComplete: outerOnCloseComplete,
 }: EditLockupDurationProps) {
   const router = useRouter()
-  const { address, lockedAtomEpochInNanos } = useBackendData()
+  const { address, lockedAtomEpochInNanos, currentRoundId } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { setToasts } = useToasts()
@@ -47,11 +52,13 @@ export function EditLockupDurationModal({
   const [selectedDuration, setSelectedDuration] = useState(
     AllowedLockupPeriodInEpochs.ONE_EPOCH
   )
+  const { data: ratio = 1 } = useRatioQuery(lockup, currentRoundId)
   const originalPower = lockup?.currentVotingPower ?? 0
-  const newPower = calculateLockupVotingPower(
-    (lockup?.funds.amount ?? 0) * 1e6,
-    selectedDuration / lockedAtomEpochInNanos
-  )
+  const newPower =
+    calculateLockupVotingPower(
+      (lockup?.funds.amount ?? 0) * 1e6,
+      selectedDuration / lockedAtomEpochInNanos
+    ) * ratio
   const currentLockupEndDate = lockup?.dateEnd ?? new Date()
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
@@ -155,7 +162,7 @@ export function EditLockupDurationModal({
 
             <div className="flex items-center justify-around gap-3">
               <div className="flex flex-col items-center text-center">
-                <div>Locked ATOM</div>
+                <div>Locked {lockup?.funds.denomInfo?.humanReadableDenom}</div>
                 <div className="text-4xl font-bold text-palette-beige">
                   {formatAmount(lockup?.funds.amount ?? 0, 0)}
                 </div>

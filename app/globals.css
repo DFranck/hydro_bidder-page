@@ -38,6 +38,7 @@
   --palette-green-rgb: 0, 255, 194; /* #00ffc2 */
   --palette-red-rgb: 255, 123, 81; /* #ff7b51 */
   --palette-purple-rgb: 147, 51, 234; /* #9333ea */
+  --palette-yellow-rgb: 255, 206, 4; /* #FFCE04 */
   --palette-pink-rgb: 229, 3, 113; /* #e50371 */
   --palette-text-rgb: 8, 8, 21; /* #080815 */
   --palette-usdc-rgb: 39, 117, 202; /* #2775ca */
@@ -47,6 +48,7 @@
   --color-palette-blue: rgb(var(--palette-blue-rgb));
   --color-palette-green: rgb(var(--palette-green-rgb));
   --color-palette-red: rgb(var(--palette-red-rgb));
+  --color-palette-yellow: rgb(var(--palette-yellow-rgb));
   --color-palette-purple: rgb(var(--palette-purple-rgb));
   --color-palette-pink: rgb(var(--palette-pink-rgb));
   --color-palette-text: rgb(var(--palette-text-rgb));
@@ -373,4 +375,14 @@
   @apply border-2;
   @apply rounded-standard;
   @apply shadow-lg;
+}
+
+@layer base {
+  .prose p:has(a):has(code) {
+    @apply inline-grid gap-1;
+  }
+
+  .prose p:has(code) {
+    @apply inline-grid gap-1;
+  }
 }

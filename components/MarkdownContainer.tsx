@@ -87,9 +87,7 @@ export function MarkdownContainer({
         className
       )}
     >
-      <Markdown remarkPlugins={[remarkGfm]}>
-        {content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/g, "###")}
-      </Markdown>
+      <Markdown remarkPlugins={[remarkGfm]}>{formattedContent}</Markdown>
     </div>
   )
 }
