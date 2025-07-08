@@ -65,12 +65,12 @@ export const toastMessages = {
 
   extendingLockup: {
     variant: "working",
-    message: "Extending your lockups in progress.",
+    message: "Extending your lockup in progress.",
   },
 
   extendingLockups: {
     variant: "working",
-    message: "Extending your lockup in progress.",
+    message: "Extending your lockups in progress.",
   },
 
   extendingLockupSuccess: {
@@ -83,14 +83,9 @@ export const toastMessages = {
     message: "Lockups extended successfully! Reloading in progress.",
   },
 
-  extendingLockupError: (error: Error) => ({
+  extendingLockupError: (error: Error, type: "single" | "multiple") => ({
     variant: "error",
-    message: `Error extending lockup: ${error}`,
-  }),
-
-   extendingLockupsError: (error: Error) => ({
-    variant: "error",
-    message: `Error extending lockups: ${error}`,
+    message: `Error extending lockup${type === "single" ? null : "s"}: ${error}`,
   }),
 
   unlockingExpiredLockups: (count: number) => {
