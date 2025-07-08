@@ -691,6 +691,13 @@ export const totalRevenueTooltip = (
   </p>
 )
 
+export const totalBidsTooltip = (
+  <p>
+    The total number of bids posted on Hydro across all rounds and in all
+    buckets and tranches.
+  </p>
+)
+
 export const atomicBidPairToolTip = ({
   bidId,
   bidTitle,
