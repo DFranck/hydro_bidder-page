@@ -101,7 +101,7 @@ export function RefreshMultipleLockups({
 
   function handleCloseModal() {
     handleCreationModalWindowClose()
-    setSelectedDuration(1)
+    setSelectedDuration(AllowedLockupPeriodInEpochs.ONE_EPOCH)
   }
 
   return (
@@ -136,7 +136,7 @@ export function RefreshMultipleLockups({
 
             <div className="flex items-center gap-2 opacity-60">
               <p>{selectedLockups.length} lockups will be extended to end on</p>
-              {selectedDuration === 1 ? (
+              {selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH ? (
                 <div className="h-5 w-24 animate-pulse rounded bg-gray-300"></div>
               ) : (
                 <div className="flex items-center gap-2">
@@ -167,7 +167,10 @@ export function RefreshMultipleLockups({
               variant="button.primary"
               as="button"
               type="submit"
-              disabled={isLoading || selectedDuration === 1}
+              disabled={
+                isLoading ||
+                selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH
+              }
             >
               Confirm
             </StyledText>
