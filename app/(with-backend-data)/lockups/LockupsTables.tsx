@@ -59,9 +59,6 @@ export function LockupsTables({
     () => [
       buildActiveColumns<ActiveRow>({
         tranches,
-        lockups: allActiveLockups,
-        selectedLockups,
-        setSelectedLockups,
       }),
       buildExpiredColumns<ExpiredRow>(),
     ],
@@ -125,11 +122,10 @@ export function LockupsTables({
       >
         <TableHeader
           leftSlot={
-            <div className="flex gap-4 justify-between items-center">
+            <div className="flex items-center justify-between gap-4">
               <Checkbox
                 checked={selectedLockups?.length === allActiveLockups.length}
                 onCheckedChange={handleSelectAllChange}
-                className="block md:hidden"
               />
               <StyledText variant="h4">
                 {expiredLockupRows.length > 0 && "Active "}Lockups
