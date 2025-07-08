@@ -29,7 +29,7 @@ export const toastMessages = {
     message: "Locking tokens...",
   },
 
-   lockingUnavailableTokens: {
+  lockingUnavailableTokens: {
     variant: "error",
     message: "Tokens are not available for locking. Please try again later.",
   },
@@ -65,6 +65,11 @@ export const toastMessages = {
 
   extendingLockup: {
     variant: "working",
+    message: "Extending your lockups in progress.",
+  },
+
+  extendingLockups: {
+    variant: "working",
     message: "Extending your lockup in progress.",
   },
 
@@ -73,9 +78,14 @@ export const toastMessages = {
     message: "Lockup extended successfully! Reloading in progress.",
   },
 
-  extendingLockupError: (error: Error) => ({
+  extendingLockupsSuccess: {
+    variant: "success",
+    message: "Lockups extended successfully! Reloading in progress.",
+  },
+
+  extendingLockupError: (error: Error, type: "single" | "multiple") => ({
     variant: "error",
-    message: `Error extending lockup: ${error}`,
+    message: `Error extending lockup${type === "single" ? null : "s"}: ${error}`,
   }),
 
   unlockingExpiredLockups: (count: number) => {

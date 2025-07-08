@@ -73,8 +73,6 @@ export function RefreshMultipleLockups({
 
     setIsCreationModalOpen(false)
 
-    setToasts([toastMessages.lockingTokens])
-
     try {
       setToasts([toastMessages.extendingLockup])
 
@@ -88,10 +86,12 @@ export function RefreshMultipleLockups({
 
       await revalidateTag("backendData")
 
-      setToasts([toastMessages.extendingLockupSuccess])
+      setToasts([toastMessages.extendingLockupsSuccess])
     } catch (error) {
       console.error("Error locking tokens:", error)
-      setToasts([toastMessages.lockingTokensError(error as Error)])
+      setToasts([
+        toastMessages.extendingLockupError(error as Error, "multiple"),
+      ])
       setIsCreationModalOpen(true)
     }
   }

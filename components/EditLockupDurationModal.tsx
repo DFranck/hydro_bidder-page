@@ -107,7 +107,7 @@ export function EditLockupDurationModal({
         return
       }
 
-      setToasts([toastMessages.extendingLockupError(err as Error)])
+      setToasts([toastMessages.extendingLockupError(err as Error, "single")])
     } finally {
       onClose()
     }
