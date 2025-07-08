@@ -35,6 +35,7 @@ const config = {
           green: "#00FFC2",
           red: "#FF7B51",
           text: "#080815",
+          yellow: "#FFCE04",
         },
       },
       containers: {

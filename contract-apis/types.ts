@@ -147,6 +147,7 @@ export interface BidMetaData {
   requestAmount: ArbitraryAmountWithDescription[]
   title: string
   minMaxTargetPolApr?: [min: number, max: number]
+  atomic_bid_pair: number
 }
 
 export type BidMetaDataById = Record<string, BidMetaData>
@@ -180,6 +181,7 @@ export interface BidRevampMetrics {
   tokenBasedTributes: TokenBasedTribute[]
   liquidityDeployment: AugmentedLiquidityDeployment | null
   vote_perc: number
+  atomic_bid_pair: number
 }
 
 export interface AugmentedBidAfterWallet extends BidRevampMetrics {

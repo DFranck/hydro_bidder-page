@@ -33,7 +33,7 @@ export function NewLockUpButton({
   handleStAtom: () => void
   handleDAtom: () => void
 }) {
-  const { isWalletConnected, lockedAtomPercentageWallet, lockedAtomMaxWallet } =
+  const { isWalletConnected, lockedAtomPercentageWallet, lockedAtomMaxWallet, hasGatekeeper } =
     useBackendData()
   const {
     data: { lockedAtomPercentageGlobal, lockedAtomRemainingCapacityGlobal },
@@ -47,7 +47,7 @@ export function NewLockUpButton({
 
   const verifyLockupCapacity = lockedAtomRemainingCapacityGlobal === 0
 
-  const notEligible = lockedAtomMaxWallet === 0
+  const notEligible = hasGatekeeper && lockedAtomMaxWallet === 0
 
   const MENU_ITEMS = [
     {

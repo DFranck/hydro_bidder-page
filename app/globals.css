@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  .prose p:has(a):has(code) {
+    @apply inline-grid gap-1;
+  }
+
+  .prose p:has(code) {
+    @apply inline-grid gap-1;
+  }
+}
