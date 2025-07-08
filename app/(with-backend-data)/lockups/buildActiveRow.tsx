@@ -52,6 +52,7 @@ export function buildActiveRow({
       <Checkbox
         checked={selectedLockups.includes(lockup.id)}
         onCheckedChange={handleCheckboxChange}
+        className="mt-2"
       />
     ),
 
