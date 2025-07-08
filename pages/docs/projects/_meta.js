@@ -1,11 +1,11 @@
 const meta = {
-  overview: {
+  bidderoverview: {
     title: "Bidder overview",
   },
-  bids: {
+  bidding: {
     title: "Bid process",
   },
-   deployments: {
+   "deployment-process": {
     title: "Deployment process",
   },
   faq: {
