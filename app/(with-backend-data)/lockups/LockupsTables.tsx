@@ -14,6 +14,7 @@ import { buildActiveRow } from "./buildActiveRow"
 import { buildExpiredColumns } from "./buildExpiredColumns"
 import { buildExpiredRow } from "./buildExpiredRow"
 import { RowComponent } from "./RowComponent"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export function LockupsTables({
   onClickEdit,
@@ -28,6 +29,8 @@ export function LockupsTables({
 
   type ActiveRow = (typeof activeLockupRows)[number]
   type ExpiredRow = (typeof expiredLockupRows)[number]
+
+  const allActiveLockups = lockups.filter((lockup) => !lockup.isExpired)
 
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
     const activeLockups = lockups.filter((lockup) => !lockup.isExpired)
@@ -56,7 +59,7 @@ export function LockupsTables({
     () => [
       buildActiveColumns<ActiveRow>({
         tranches,
-        lockups: lockups.filter((lockup) => !lockup.isExpired),
+        lockups: allActiveLockups,
         selectedLockups,
         setSelectedLockups,
       }),
@@ -106,6 +109,14 @@ export function LockupsTables({
     } as any
   }, [tranches])
 
+  const handleSelectAllChange = (checked: boolean) => {
+    if (checked) {
+      setSelectedLockups([...allActiveLockups.map((lockup) => lockup.id)])
+    } else {
+      setSelectedLockups([])
+    }
+  }
+
   return (
     <div className="flex flex-col gap-12">
       <BlurryBackdropBox
@@ -114,9 +125,16 @@ export function LockupsTables({
       >
         <TableHeader
           leftSlot={
-            <StyledText variant="h4">
-              {expiredLockupRows.length > 0 && "Active "}Lockups
-            </StyledText>
+            <div className="flex gap-4 justify-between items-center">
+              <Checkbox
+                checked={selectedLockups?.length === allActiveLockups.length}
+                onCheckedChange={handleSelectAllChange}
+                className="block md:hidden"
+              />
+              <StyledText variant="h4">
+                {expiredLockupRows.length > 0 && "Active "}Lockups
+              </StyledText>
+            </div>
           }
           rightSlot={
             expiredLockupRows.length > 0 && (

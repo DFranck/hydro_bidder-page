@@ -59,7 +59,7 @@ export function buildActiveColumns<
         <Checkbox
           checked={selectedLockups?.length === lockups.length}
           onCheckedChange={handleSelectAllChange}
-          className="mt-2"
+          className="mt-2 hidden md:block"
         />
       ),
     },
