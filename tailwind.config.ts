@@ -43,6 +43,7 @@ const config = {
       },
       width: {
         "md": "800px",
+        "base": "550px",
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

@@ -40,6 +40,7 @@ import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { cn } from "@/lib/utils"
 import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
+import { RotateCw } from "lucide-react"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -249,10 +250,11 @@ export default function LockupsPage() {
               <StyledText
                 as="button"
                 variant="button.secondary"
-                className="flex items-center gap-1"
+                className="flex items-center gap-2"
                 onClick={() => setRefreshMultipleLockups(true)}
                 disabled={selectedLockups.length <= 1}
               >
+                <RotateCw className="text-palette-green size-4" />
                 Refresh {`(${selectedLockups.length})`}
               </StyledText>
             )}
@@ -416,8 +418,9 @@ export default function LockupsPage() {
 
       <RefreshMultipleLockups
         activeLockups={activeLockups}
-        selectedLockups={selectedLockups}
         isCreationModalOpen={refreshMultipleLockups}
+        selectedLockups={selectedLockups}
+        setSelectedLockups={setSelectedLockups}
         setIsCreationModalOpen={setRefreshMultipleLockups}
         handleCreationModalWindowClose={() => setRefreshMultipleLockups(false)}
         handleModalWindowCloseComplete={() => setRefreshMultipleLockups(false)}

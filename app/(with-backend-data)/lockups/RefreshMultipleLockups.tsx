@@ -24,6 +24,7 @@ interface RefreshMultipleLockupsProps {
   handleCreationModalWindowClose: () => void
   handleModalWindowCloseComplete: () => void
   selectedLockups: number[]
+  setSelectedLockups: (lockups: number[]) => void
 }
 
 export function RefreshMultipleLockups({
@@ -33,6 +34,7 @@ export function RefreshMultipleLockups({
   handleCreationModalWindowClose,
   handleModalWindowCloseComplete,
   selectedLockups,
+  setSelectedLockups,
 }: RefreshMultipleLockupsProps) {
   const { setToasts } = useToasts()
 
@@ -87,6 +89,7 @@ export function RefreshMultipleLockups({
       await revalidateTag("backendData")
 
       setToasts([toastMessages.extendingLockupsSuccess])
+      setSelectedLockups([])
     } catch (error) {
       console.error("Error locking tokens:", error)
       setToasts([
@@ -110,7 +113,7 @@ export function RefreshMultipleLockups({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="w-5/6 md:w-7/12"
+      className="md:w-base w-5/6"
     >
       <form onSubmit={handleSubmitCreationForm}>
         <Card>
