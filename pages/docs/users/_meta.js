@@ -1,14 +1,14 @@
 const meta = {
-  lockups: {
+  "lockups": {
     title: "Lockups",
   },
-  bids: {
+  "bids": {
     title: "Bids",
   },
-  aprs: {
+  "aprs": {
     title: "Hydro APR",
   },
-  faq: {
+  "faq": {
     title: "FAQ",
   },
 }
