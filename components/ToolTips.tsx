@@ -363,7 +363,7 @@ export const notEligibleTooltip = (
       target="_blank"
       rel="noopener noreferrer"
       variant="link"
-      className="flex justify-start gap-1 my-1"
+      className="my-1 flex justify-start gap-1"
     >
       Join our Telegram group
     </StyledText>
@@ -594,10 +594,7 @@ export const polAvailableTooltip = (
 )
 
 export const polDeployedTooltip = (
-  <p>
-    The total amount of liquidity that has been deployed to bids over time. It
-    is the sum of all deployments from pre-hydro to the latest&nbsp;round.
-  </p>
+  <p>The total amount of ATOM liquidity that has been deployed to projects.</p>
 )
 
 export const polDurationTooltip = (
@@ -689,8 +686,8 @@ export const timeLeftTooltip = (currentRoundEndDate: Date) => {
 
 export const totalRevenueTooltip = (
   <p>
-    The sum of all tributes paid by bidders, excluding bids that didn&rsquo;t
-    meet the vote&nbsp;threshold.
+    The value of the rewards paid by projects to voters at the time these
+    rewards became claimable. This doesn&rsquo;t include points.
   </p>
 )
 
