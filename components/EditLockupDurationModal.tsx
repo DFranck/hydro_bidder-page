@@ -9,8 +9,13 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts/useToasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
+import {
+  getHydroQueryClient,
+  getLSTQueryClient,
+} from "@/contract-apis/getClient"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { useRatioQuery } from "@/hooks/use-ratio"
 import { calculateLockupVotingPower } from "@/lib/calculateLockupVotingPower"
 import { formatAmount } from "@/lib/formatAmount"
 import { getDaysAway } from "@/lib/getDaysAway"
@@ -39,19 +44,21 @@ export function EditLockupDurationModal({
   onCloseComplete: outerOnCloseComplete,
 }: EditLockupDurationProps) {
   const router = useRouter()
-  const { address, lockedTokenEpochInNanos } = useBackendData()
+  const { address, lockedTokenEpochInNanos, currentRoundId } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { setToasts } = useToasts()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const [selectedDuration, setSelectedDuration] = useState(
-    AllowedLockupPeriodInEpochs.ONE_EPOCH,
+    AllowedLockupPeriodInEpochs.ONE_EPOCH
   )
+  const { data: ratio = 1 } = useRatioQuery(lockup, currentRoundId)
   const originalPower = lockup?.currentVotingPower ?? 0
-  const newPower = calculateLockupVotingPower(
-    (lockup?.funds.amount ?? 0) * 1e6,
-    selectedDuration / lockedTokenEpochInNanos,
-  )
+  const newPower =
+    calculateLockupVotingPower(
+      (lockup?.funds.amount ?? 0) * 1e6,
+      selectedDuration / lockedTokenEpochInNanos
+    ) * ratio
   const currentLockupEndDate = lockup?.dateEnd ?? new Date()
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
@@ -155,7 +162,7 @@ export function EditLockupDurationModal({
 
             <div className="flex items-center justify-around gap-3">
               <div className="flex flex-col items-center text-center">
-                <div>Locked {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}</div>
+                <div>Locked {lockup?.funds.denomInfo?.humanReadableDenom}</div>
                 <div className="text-4xl font-bold text-palette-beige">
                   {formatAmount(lockup?.funds.amount ?? 0, 0)}
                 </div>
@@ -166,7 +173,7 @@ export function EditLockupDurationModal({
                 <div
                   className={twMerge(
                     "text-4xl font-bold text-palette-beige",
-                    powerDifference > 0 && "text-palette-green",
+                    powerDifference > 0 && "text-palette-green"
                   )}
                 >
                   {formatAmount(hasChanged ? newPower : originalPower)}

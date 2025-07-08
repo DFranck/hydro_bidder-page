@@ -1,6 +1,7 @@
 "use client"
 
 import Loading from "@/app/loading"
+import { AtomicBidPairIcon } from "@/components/BidAtomicPairIcon"
 import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
@@ -68,6 +69,8 @@ export function BidDetails({
   }
 
   const bid = bidsInfo[bidId]
+
+  const atomicBid = bidsInfo[bid.atomic_bid_pair]
 
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
@@ -352,6 +355,32 @@ export function BidDetails({
               </>
             )}
 
+            {!!bid.atomic_bid_pair && !!atomicBid.atomic_bid_pair ? (
+              <div>
+                <StyledText
+                  as="h3"
+                  variant="label"
+                  className="flex cursor-default items-center gap-1"
+                >
+                  <span>Atomic Bid</span>
+                  <AtomicBidPairIcon
+                    bidInfo={bid}
+                    atomic_bid_pair={bid.atomic_bid_pair}
+                  />
+                </StyledText>
+                <StyledText
+                  as={Link}
+                  href={`/bids/${atomicBid.id}`}
+                  target="_blank"
+                  variant="link"
+                  className="flex justify-start gap-2 text-xs"
+                >
+                  <Icon name="solid:arrow-up-right" />
+                  {atomicBid.projectTitle || atomicBid.title}
+                </StyledText>
+              </div>
+            ) : null}
+
             <div>
               <Tooltip
                 tipContents={
@@ -379,7 +408,8 @@ export function BidDetails({
 
             {/* Only relevant from round 3 onwards; rounds are 0-indexed */}
             {/* And if there are any point-based tribute amounts, we can't show this */}
-            {bid.roundId >= 2 && !bid.points?.length && (
+            {/* hide Max Deployment Amount for now */}
+            {/* {bid.roundId >= 2 && !bid.points?.length && (
               <Tooltip tipContents={bidDetailsMaxDeploymentAmountTooltip}>
                 <StyledText
                   as="h3"
@@ -399,7 +429,7 @@ export function BidDetails({
                   {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                 </div>
               </Tooltip>
-            )}
+            )} */}
 
             <div>
               <Tooltip

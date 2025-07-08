@@ -104,6 +104,10 @@ export function augmentRoundDeploymentMetrics(
 
     // Github fields
     const proposalGithubFields = bidDescriptions[proposalId]
+    const proposalAtomicBidPair = proposalGithubFields
+      ? proposalGithubFields.atomic_bid_pair
+      : null
+
     const proposalProjectName = proposalGithubFields
       ? proposalGithubFields.projectName
       : ""
@@ -223,6 +227,7 @@ export function augmentRoundDeploymentMetrics(
       // Description
       title: proposalTitle,
       request_amount: requestAmount,
+      atomic_bid_pair: proposalAtomicBidPair,
       // Offchain tributes
       points: proposalPoints,
       pointProgramUrl: proposalPointProgramUrl,

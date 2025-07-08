@@ -1,3 +1,4 @@
+import { DTokenInfoProviderBaseQueryClient } from "@/app/ts_types/DTokenInfoProviderBase.client"
 import { GatekeeperBaseQueryClient } from "@/app/ts_types/GatekeeperBase.client"
 import {
   HydroBaseClient,
@@ -39,6 +40,19 @@ export async function getHydroQueryClient() {
   )
 
   return hydroQueryClient
+}
+
+
+export async function getLSTQueryClient(
+  contract: string | undefined
+) {
+  invariant(contract, "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set")
+
+  const client = await getCosmWasmClient()
+
+  const lstQueryClient = new DTokenInfoProviderBaseQueryClient(client, contract)
+
+  return lstQueryClient
 }
 
 export async function getTributeQueryClient() {

@@ -37,6 +37,7 @@ export function NewLockUpButton({
     isWalletConnected,
     lockedTokenPercentageWallet,
     lockedTokenMaxWallet,
+    hasGatekeeper,
   } = useBackendData()
   const {
     data: { lockedTokenPercentageGlobal, lockedTokenRemainingCapacityGlobal },
@@ -50,7 +51,7 @@ export function NewLockUpButton({
 
   const verifyLockupCapacity = lockedTokenRemainingCapacityGlobal === 0
 
-  const notEligible = lockedTokenMaxWallet === 0
+  const notEligible = hasGatekeeper && lockedTokenMaxWallet === 0
 
   const MENU_ITEMS = [
     {
