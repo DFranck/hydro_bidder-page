@@ -253,8 +253,7 @@ export default function LockupsPage() {
                 onClick={() => setRefreshMultipleLockups(true)}
                 disabled={selectedLockups.length <= 1}
               >
-                Refresh{" "}
-                {selectedLockups.length <= 1 ? null : `(${selectedLockups.length})`}
+                Refresh {`(${selectedLockups.length})`}
               </StyledText>
             )}
             {expiredLockups.length > 0 && (

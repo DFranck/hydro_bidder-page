@@ -14,6 +14,8 @@ import { revalidateTag } from "@/lib/revalidateTag"
 import { pluralize } from "@/lib/pluralize"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { AllowedLockupPeriodInEpochs } from "@/config"
+import { formatAmount } from "@/lib/formatAmount"
+import { getDaysAway } from "@/lib/getDaysAway"
 
 interface RefreshMultipleLockupsProps {
   activeLockups: AugmentedLockup[]
@@ -41,16 +43,26 @@ export function RefreshMultipleLockups({
     AllowedLockupPeriodInEpochs.ONE_EPOCH
   )
 
+  const dateFormatter = new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+  })
+
+  const newEndDate = new Date((Date.now() * 1e6 + selectedDuration) / 1e6)
+
+  const daysUntilEndDate = getDaysAway(newEndDate)
+
   const filteredLockups = activeLockups.filter((lockup) =>
     selectedLockups.includes(lockup.id)
   )
 
-  const maxDateEnd = filteredLockups.reduce((max, current) => {
+  const currentLockupEndDate = filteredLockups.reduce((max, current) => {
     const currentDate = current.dateEnd
     return currentDate > max ? currentDate : max
-  }, new Date(0))
+  }, new Date())
 
-  const currentLockupEndDate = maxDateEnd ?? new Date()
+  const totalAmount = filteredLockups.reduce((sum, lockup) => {
+    return sum + Number(lockup.funds.amount)
+  }, 0)
 
   async function handleChange(newDuration: number) {
     setSelectedDuration(newDuration)
@@ -84,6 +96,11 @@ export function RefreshMultipleLockups({
     }
   }
 
+  function handleCloseModal() {
+    handleCreationModalWindowClose()
+    setSelectedDuration(1)
+  }
+
   return (
     <ModalWindow
       isOpen={isCreationModalOpen}
@@ -93,29 +110,53 @@ export function RefreshMultipleLockups({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="w-5/6 md:w-auto"
+      className="w-5/6 md:w-7/12"
     >
       <form onSubmit={handleSubmitCreationForm}>
         <Card>
           <Card.Header title="Edit Lockups" />
 
           <Card.Body>
-            <InputForLockupPeriod
-              currentLockupEndDate={currentLockupEndDate}
-              selectedDuration={selectedDuration}
-              className="w-full"
-              classNamesForButtons="!w-full"
-              onChange={handleChange}
-            />
-            <p>
-              Refresh{" "}
-              {pluralize({
-                count: selectedLockups.length,
-                prefixCount: true,
-                singular: "lockup",
-              })}
-              ?
-            </p>
+            <div className="flex flex-col gap-2">
+              <StyledText className="font-bold">
+                New Lockup Duration:
+              </StyledText>
+
+              <InputForLockupPeriod
+                currentLockupEndDate={currentLockupEndDate}
+                selectedDuration={selectedDuration}
+                className="w-full"
+                classNamesForButtons="!w-full"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex items-center gap-2 opacity-60">
+              <p>{selectedLockups.length} lockups will be extended to end on</p>
+              {selectedDuration === 1 ? (
+                <div className="h-5 w-24 animate-pulse rounded bg-gray-300"></div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  {dateFormatter.format(newEndDate)} (
+                  <>
+                    {pluralize({
+                      count: Math.abs(daysUntilEndDate),
+                      singular: "day",
+                      prefixCount: true,
+                    })}{" "}
+                    {daysUntilEndDate > 0 ? "away" : "ago"}
+                  </>
+                  )
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col">
+              <StyledText className="font-semibold">Locked Tokens</StyledText>
+              <StyledText className="text-4xl font-bold text-palette-beige">
+                {formatAmount(totalAmount, 0)}
+              </StyledText>
+            </div>
           </Card.Body>
 
           <Card.Footer>
@@ -123,7 +164,7 @@ export function RefreshMultipleLockups({
               variant="button.primary"
               as="button"
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || selectedDuration === 1}
             >
               Confirm
             </StyledText>
@@ -132,7 +173,7 @@ export function RefreshMultipleLockups({
               variant="button.secondary"
               as="button"
               type="button"
-              onClick={handleCreationModalWindowClose}
+              onClick={handleCloseModal}
             >
               Cancel
             </StyledText>

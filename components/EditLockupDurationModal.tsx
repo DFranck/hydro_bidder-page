@@ -9,10 +9,6 @@ import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts/useToasts"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
-import {
-  getHydroQueryClient,
-  getLSTQueryClient,
-} from "@/contract-apis/getClient"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useRatioQuery } from "@/hooks/use-ratio"
