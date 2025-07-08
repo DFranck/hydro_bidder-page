@@ -93,7 +93,7 @@ export function RefreshMultipleLockups({
     } catch (error) {
       console.error("Error locking tokens:", error)
       setToasts([
-        toastMessages.extendingLockupError(error as Error, "multiple"),
+        toastMessages.extendingLockupsError(error as Error),
       ])
       setIsCreationModalOpen(true)
     }
