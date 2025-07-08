@@ -16,6 +16,7 @@ import { AugmentedLockup } from "@/contract-apis/types"
 import { AllowedLockupPeriodInEpochs } from "@/config"
 import { formatAmount } from "@/lib/formatAmount"
 import { getDaysAway } from "@/lib/getDaysAway"
+import { Icon } from "@/components/Icon"
 
 interface RefreshMultipleLockupsProps {
   activeLockups: AugmentedLockup[]
@@ -38,12 +39,14 @@ export function RefreshMultipleLockups({
 }: RefreshMultipleLockupsProps) {
   const { setToasts } = useToasts()
 
-  const { address, isLoading } = useBackendData()
+  const { address } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
 
   const [selectedDuration, setSelectedDuration] = useState(
     AllowedLockupPeriodInEpochs.ONE_EPOCH
   )
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const dateFormatter = new Intl.DateTimeFormat("en", {
     dateStyle: "medium",
@@ -73,7 +76,7 @@ export function RefreshMultipleLockups({
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    setIsCreationModalOpen(false)
+    setIsLoading(true)
 
     try {
       setToasts([toastMessages.extendingLockup])
@@ -90,12 +93,13 @@ export function RefreshMultipleLockups({
 
       setToasts([toastMessages.extendingLockupsSuccess])
       setSelectedLockups([])
+      setIsLoading(false)
+      setIsCreationModalOpen(false)
     } catch (error) {
-      console.error("Error locking tokens:", error)
+      setIsLoading(false)
       setToasts([
         toastMessages.extendingLockupError(error as Error, "multiple"),
       ])
-      setIsCreationModalOpen(true)
     }
   }
 
@@ -172,7 +176,13 @@ export function RefreshMultipleLockups({
                 selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH
               }
             >
-              Confirm
+              {isLoading ? (
+                <div className="animate-spin text-lg">
+                  <Icon name="solid:loader" />
+                </div>
+              ) : (
+                "Confirm"
+              )}
             </StyledText>
 
             <StyledText
