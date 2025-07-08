@@ -2,7 +2,7 @@ import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Image from "next/image"
 import { twJoin } from "tailwind-merge"
-import { AtomicBidPairIcon } from "./BidAtomicPairIcon"
+import { AtomicBidPairIcon } from "./AtomicBidPairIcon"
 
 export function BidLogoAndTitle({ bidId }: { bidId: number }) {
   const { bidsInfo } = useBackendData()

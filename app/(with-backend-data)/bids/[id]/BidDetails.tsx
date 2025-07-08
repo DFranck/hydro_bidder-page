@@ -1,7 +1,7 @@
 "use client"
 
 import Loading from "@/app/loading"
-import { AtomicBidPairIcon } from "@/components/BidAtomicPairIcon"
+import { AtomicBidPairIcon } from "@/components/AtomicBidPairIcon"
 import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"

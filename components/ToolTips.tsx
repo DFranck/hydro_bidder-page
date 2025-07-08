@@ -17,6 +17,7 @@ import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import TokenDetails from "./TokenDetails"
+import { TriangleAlert } from "lucide-react"
 
 type TokenLockedTotal = {
   amount: number
@@ -701,12 +702,20 @@ export const totalBidsTooltip = (
 export const atomicBidPairToolTip = ({
   bidId,
   bidTitle,
+  isBelowThreshold,
 }: {
   bidId: number
   bidTitle: string
+  isBelowThreshold: boolean
 }) => {
   return (
     <div>
+      {isBelowThreshold ? (
+        <div className="flex items-center gap-1">
+          <TriangleAlert className="text-palette-yellow size-4" />
+          <p className="opacity-60">Below Threshold</p>
+        </div>
+      ) : null}
       <p>
         This bid is part of an atomic bid, where a bidder is requesting an
         export of not one asset, but a pair of two assets. Be aware that if
