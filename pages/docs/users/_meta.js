@@ -1,14 +1,14 @@
 const meta = {
-  lockups: {
+  "locking-lsm-shares": {
     title: "Lockups",
   },
-  bids: {
+  "voting-for-projects": {
     title: "Bids",
   },
-  aprs: {
+  "calculating-staking-apr": {
     title: "Hydro APR",
   },
-  faq: {
+  "user-faq": {
     title: "FAQ",
   },
 }
