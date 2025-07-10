@@ -16,7 +16,7 @@ export function StatCardsContainer({
     <div
       className={twMerge(
         `
-          bg-gradient-to-t
+          bg-linear-to-t
           from-palette-blue/80
           to-palette-blue/20
           backdrop-blur-md

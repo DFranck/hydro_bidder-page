@@ -15,7 +15,7 @@ export function Icon({
   const [iconVariant = variant, iconName] = iconStringToVariantAndName(name)
 
   return (
-    <span className={twMerge(`!no-underline`, className)} {...otherProps}>
+    <span className={twMerge(`no-underline!`, className)} {...otherProps}>
       <i
         className={twMerge(
           `

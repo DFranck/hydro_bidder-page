@@ -1,6 +1,17 @@
+import { twJoin } from "tailwind-merge"
+
 export default function Loading() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center bg-palette-text text-2xl text-white opacity-100 transition-opacity duration-100">
+    <div
+      className={twJoin(
+        "fixed inset-0 z-30",
+        "flex items-center justify-center",
+        "pointer-events-none",
+        "bg-palette-text",
+        "text-2xl text-white",
+        "opacity-100 transition-opacity duration-100"
+      )}
+    >
       <div className="animate-spin">
         <svg
           width="30px"

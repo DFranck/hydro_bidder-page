@@ -1,18 +1,18 @@
 "use server"
 
 import { fetchDenomTrace } from "@/app/(with-backend-data)/lock-atom/transactions/fetchDenomTrace"
+import { CurrentEpochUserLockedResponse } from "@/app/ts_types/GatekeeperBase.types"
 import { Tranche } from "@/app/ts_types/HydroBase.types"
+import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
 import {
   getGatekeeperQueryClient,
   getHydroQueryClient,
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
-import { RawWalletData, RoundPrices, MaxUserCanLockResponse } from "@/contract-apis/types"
+import { MaxUserCanLockResponse, RawWalletData, RoundPrices } from "@/contract-apis/types"
 import range from "lodash/range"
 import { getCoinWithRoundPrices } from "./getCoinWithRoundPrices"
-import { CurrentEpochUserLockedResponse } from "@/app/ts_types/GatekeeperBase.types"
 import { getMaxUserCanLock } from "./getMaxUserCanLock"
-import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
 
 export async function fetchWalletData({
   address,
@@ -95,9 +95,7 @@ export async function fetchWalletData({
           .catch(() => ({ votes: [] })),
         tributeQueryClient
           .outstandingTributeClaims({
-            limit: 100,
             roundId,
-            startFrom: 0,
             trancheId,
             userAddress: address,
           })
