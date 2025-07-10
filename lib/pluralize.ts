@@ -5,15 +5,18 @@ interface PluralizeOptions {
   singular: string
 }
 
-const pluralize = ({
-  count,
-  prefixCount = false,
-  plural,
-  singular,
-}: PluralizeOptions) => {
+export function pluralize({
+  count, prefixCount = false, plural, singular,
+}: PluralizeOptions) {
   const label = count === 1 ? singular : plural || singular + 's'
 
   return `${(prefixCount ?? true) ? `${count} ` : ''}${label}`
 }
 
-export { pluralize }
+export function plural(
+  count: number,
+  singular: string,
+  plural: string = `${singular}s`,
+) {
+  return pluralize({ count, singular, plural })
+}

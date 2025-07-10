@@ -16,6 +16,19 @@ export function middleware(request: NextRequest) {
     return response
   }
 
+  // redirecting touchscreen devices from /bids to /v2
+  if (pathname.startsWith("/bids")) {
+    const userAgent = request.headers.get("user-agent") || ""
+    const isTouchscreen = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+
+    if (isTouchscreen) {
+      const response = NextResponse.redirect(
+        new URL(pathname.replace("/bids", "/v2"), request.url)
+      )
+      return response
+    }
+  }
+
   return NextResponse.next({
     request: { headers: requestHeaders },
   })

@@ -73,7 +73,7 @@ export function InputForLockupPeriod({
                   key={duration + index}
                   onClick={handleClick.bind(null, duration)}
                   className={twMerge(
-                    `!scale-100`,
+                    `scale-100!`,
                     `flex flex-col items-center justify-center gap-0`,
                     `rounded-none border-r-0 backdrop-blur-none`,
                     `first:rounded-l-md last:rounded-r-md last:border-r-2`,

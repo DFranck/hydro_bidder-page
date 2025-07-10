@@ -5,6 +5,7 @@ import sortBy from "lodash/sortBy"
 import { Inter } from "next/font/google"
 import { headers } from "next/headers"
 import Script from "next/script"
+import { twJoin } from "tailwind-merge"
 import "./globals.css"
 
 const InterFont = Inter({ subsets: ["latin"], preload: true })
@@ -18,12 +19,12 @@ export async function generateMetadata() {
 
   const sortedMetadataByRoute = sortBy(
     Object.entries(metadataByRoute),
-    ([route]) => route.length,
+    ([route]) => route.length
   )
 
   const routeMetadataEntry =
     sortedMetadataByRoute.find(([pathname]) =>
-      pathname.startsWith(requestedPathname),
+      pathname.startsWith(requestedPathname)
     )?.[1] ?? defaultMetadata
 
   return routeMetadataEntry
@@ -37,10 +38,15 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-pt-32">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"
+        />
         <Script
           crossOrigin="anonymous"
           src="https://kit.fontawesome.com/401fb1e734.js"
+          strategy="lazyOnload"
         />
         {process.env.NEXT_PUBLIC_SHOW_HIDDEN_FEATURES !== "true" && (
           <>
@@ -56,15 +62,16 @@ export default async function RootLayout({
                 gtag('config', 'G-JXM6TCWTSW')
               `}
             </Script>
-            <Script
-              type="text/javascript"
-              src="https://www.bugherd.com/sidebarv2.js?apikey=mdyh8j9rijiqijf1qow8tw"
-              async
-            />
           </>
         )}
       </head>
-      <body className={`${InterFont.className} relative overflow-x-hidden`}>
+      <body
+        className={twJoin(
+          InterFont.className,
+          "relative overflow-x-hidden",
+          "bg-palette-text text-white"
+        )}
+      >
         {children}
       </body>
     </html>
