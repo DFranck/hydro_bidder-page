@@ -113,7 +113,6 @@ export function BidDetails({
       className={twMerge(
         'grid grid-rows-[min-content_1fr]',
         'h-full overflow-hidden',
-        'gap-tight',
         'relative',
         'is-voted-on:theme-color-green',
         'is-below-threshold:theme-color-beige',
@@ -128,6 +127,7 @@ export function BidDetails({
           'flex items-center justify-between',
           'px-loose',
           'pt-bar-height-large',
+          'pb-standard',
           'bg-background',
         )}
       >
