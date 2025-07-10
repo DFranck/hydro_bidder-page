@@ -5,7 +5,7 @@ const meta = {
   "bids": {
     title: "Bids",
   },
-  "calculating-staking-apr": {
+  "aprs": {
     title: "Hydro APR",
   },
   "user-faq": {
