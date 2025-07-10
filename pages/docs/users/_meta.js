@@ -8,7 +8,7 @@ const meta = {
   "aprs": {
     title: "Hydro APR",
   },
-  "user-faq": {
+  "faq": {
     title: "FAQ",
   },
 }
