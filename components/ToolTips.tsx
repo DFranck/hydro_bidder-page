@@ -17,6 +17,7 @@ import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
 import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import TokenDetails from "./TokenDetails"
+import { TriangleAlert } from "lucide-react"
 
 type TokenLockedTotal = {
   amount: number
@@ -701,9 +702,11 @@ export const totalBidsTooltip = (
 export const atomicBidPairToolTip = ({
   bidId,
   bidTitle,
+  isBelowThreshold,
 }: {
   bidId: number
   bidTitle: string
+  isBelowThreshold: boolean
 }) => {
   return (
     <div>
@@ -723,6 +726,15 @@ export const atomicBidPairToolTip = ({
         {bidTitle}
         <Icon name="solid:arrow-up-right" />
       </StyledText>
+      {isBelowThreshold ? (
+        <p className="mt-4">
+          <TriangleAlert className="text-palette-yellow inline-block size-4" />
+          <span className="opacity-60 mx-1">
+            One of the bids of this atomic bid pair is currently below the vote
+            threshold in its tranche.
+          </span>
+        </p>
+      ) : null}
     </div>
   )
 }
