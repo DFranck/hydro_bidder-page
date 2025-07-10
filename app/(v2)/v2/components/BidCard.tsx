@@ -305,8 +305,8 @@ export function BidCard({
         >
           <VoteButton bidId={bidId} sourceId={sourceId} />
 
-          <button
-            type="button"
+          <InternalLink
+            href={`/v2/bids/${sourceId}/${bidId}`}
             className={twMerge(
               'group/action-button',
               'btn h-full rounded-l-none',
@@ -323,7 +323,7 @@ export function BidCard({
             >
               <Icon name="solid:chevron-right" />
             </span>
-          </button>
+          </InternalLink>
         </div>
       </TD>
     </BidWrapper>
