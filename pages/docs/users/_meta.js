@@ -1,5 +1,5 @@
 const meta = {
-  "locking-lsm-shares": {
+  "lockups": {
     title: "Lockups",
   },
   "voting-for-projects": {
