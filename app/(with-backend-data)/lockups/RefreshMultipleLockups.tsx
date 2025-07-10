@@ -19,23 +19,23 @@ import { getDaysAway } from "@/lib/getDaysAway"
 import { Icon } from "@/components/Icon"
 
 interface RefreshMultipleLockupsProps {
-  activeLockups: AugmentedLockup[]
+  lockups: AugmentedLockup[]
   isCreationModalOpen: boolean
   setIsCreationModalOpen: (isOpen: boolean) => void
   handleCreationModalWindowClose: () => void
   handleModalWindowCloseComplete: () => void
-  selectedLockups: number[]
-  setSelectedLockups: (lockups: number[]) => void
+  multipleLockups: number[]
+  handleMultipleLockups: () => void
 }
 
 export function RefreshMultipleLockups({
-  activeLockups,
+  lockups,
   isCreationModalOpen,
   setIsCreationModalOpen,
   handleCreationModalWindowClose,
   handleModalWindowCloseComplete,
-  selectedLockups,
-  setSelectedLockups,
+  multipleLockups,
+  handleMultipleLockups,
 }: RefreshMultipleLockupsProps) {
   const { setToasts } = useToasts()
 
@@ -56,8 +56,8 @@ export function RefreshMultipleLockups({
 
   const daysUntilEndDate = getDaysAway(newEndDate)
 
-  const filteredLockups = activeLockups.filter((lockup) =>
-    selectedLockups.includes(lockup.id)
+  const filteredLockups = lockups.filter((lockup) =>
+    multipleLockups.includes(lockup.id)
   )
 
   const currentLockupEndDate = filteredLockups.reduce((max, current) => {
@@ -79,12 +79,12 @@ export function RefreshMultipleLockups({
     setIsLoading(true)
 
     try {
-      setToasts([toastMessages.extendingLockup])
+      setToasts([toastMessages.extendingLockups])
 
       await executeWalletExtendLockup({
         getSigningCosmWasmClient,
         address,
-        lockId: selectedLockups,
+        lockId: multipleLockups,
         lockDurationInNanos: selectedDuration,
         type: "multiple",
       })
@@ -92,7 +92,7 @@ export function RefreshMultipleLockups({
       await revalidateTag("backendData")
 
       setToasts([toastMessages.extendingLockupsSuccess])
-      setSelectedLockups([])
+      handleMultipleLockups()
       setIsLoading(false)
       setIsCreationModalOpen(false)
     } catch (error) {
@@ -139,7 +139,10 @@ export function RefreshMultipleLockups({
             </div>
 
             <div className="flex items-center gap-2 opacity-60">
-              <p>{selectedLockups.length} lockups will be extended to end on</p>
+              <p>
+                {multipleLockups.length} lockups will be extended to end
+                on
+              </p>
               {selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH ? (
                 <div className="h-5 w-24 animate-pulse rounded bg-gray-300"></div>
               ) : (

@@ -11,14 +11,14 @@ export function buildActiveRow({
   lockup,
   tranches,
   onClickEdit,
-  selectedLockups,
-  setSelectedLockups,
+  selectedActiveLockups,
+  setSelectedActiveLockups,
 }: {
   lockup: AugmentedLockup
   tranches: Tranche[]
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
-  selectedLockups: number[]
-  setSelectedLockups: (lockups: number[]) => void
+  selectedActiveLockups: number[]
+  setSelectedActiveLockups: (lockups: number[]) => void
 }) {
   const { daysLeft } = lockup
 
@@ -37,11 +37,13 @@ export function buildActiveRow({
 
   const handleCheckboxChange = (checked: boolean) => {
     if (checked) {
-      if (!selectedLockups.includes(lockup.id)) {
-        setSelectedLockups([...selectedLockups, lockup.id])
+      if (!selectedActiveLockups.includes(lockup.id)) {
+        setSelectedActiveLockups([...selectedActiveLockups, lockup.id])
       }
     } else {
-      setSelectedLockups(selectedLockups.filter((id) => id !== lockup.id))
+      setSelectedActiveLockups(
+        selectedActiveLockups.filter((id) => id !== lockup.id)
+      )
     }
   }
 
@@ -50,7 +52,7 @@ export function buildActiveRow({
 
     select: (
       <Checkbox
-        checked={selectedLockups.includes(lockup.id)}
+        checked={selectedActiveLockups?.includes(lockup.id)}
         onCheckedChange={handleCheckboxChange}
         className="mt-2"
       />
