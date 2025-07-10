@@ -1,7 +1,7 @@
 "use client"
 
 import { Tooltip } from "@/components/Tooltip"
-import { totalRevenueTooltip } from "@/components/ToolTips"
+import { totalBidsTooltip } from "@/components/ToolTips"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { StatCard } from "../StatCard"
 import { Icon } from "@/components/Icon"
@@ -14,7 +14,7 @@ export function AllTimeBidCount() {
     <StatCard
       isLoading={isLoading}
       title={
-        <Tooltip tipContents={totalRevenueTooltip} className="w-full">
+        <Tooltip tipContents={totalBidsTooltip} className="w-full">
           Total{" "}
           <span className="inline-flex items-center gap-1">
             Bids
