@@ -2,7 +2,7 @@ const meta = {
   "lockups": {
     title: "Lockups",
   },
-  "voting-for-projects": {
+  "bids": {
     title: "Bids",
   },
   "calculating-staking-apr": {
