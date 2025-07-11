@@ -265,10 +265,7 @@ export function BidDetails({
             'desktop:row-end-2',
           )}
         >
-          <MarkdownContainer
-            breakThreshold={24}
-            content={bidDescription?.description}
-          />
+          <MarkdownContainer content={bidDescription?.description} />
         </div>
       </div>
     </BidWrapper>
