@@ -24,8 +24,8 @@ interface RefreshMultipleLockupsProps {
   setIsCreationModalOpen: (isOpen: boolean) => void
   handleCreationModalWindowClose: () => void
   handleModalWindowCloseComplete: () => void
-  multipleLockups: number[]
-  handleMultipleLockups: () => void
+  refreshLockups: number[]
+  handleRefreshLockups: () => void
 }
 
 export function RefreshMultipleLockups({
@@ -34,8 +34,8 @@ export function RefreshMultipleLockups({
   setIsCreationModalOpen,
   handleCreationModalWindowClose,
   handleModalWindowCloseComplete,
-  multipleLockups,
-  handleMultipleLockups,
+  refreshLockups,
+  handleRefreshLockups,
 }: RefreshMultipleLockupsProps) {
   const { setToasts } = useToasts()
 
@@ -57,7 +57,7 @@ export function RefreshMultipleLockups({
   const daysUntilEndDate = getDaysAway(newEndDate)
 
   const filteredLockups = lockups.filter((lockup) =>
-    multipleLockups.includes(lockup.id)
+    refreshLockups.includes(lockup.id)
   )
 
   const currentLockupEndDate = filteredLockups.reduce((max, current) => {
@@ -84,7 +84,7 @@ export function RefreshMultipleLockups({
       await executeWalletExtendLockup({
         getSigningCosmWasmClient,
         address,
-        lockId: multipleLockups,
+        lockId: refreshLockups,
         lockDurationInNanos: selectedDuration,
         type: "multiple",
       })
@@ -92,7 +92,7 @@ export function RefreshMultipleLockups({
       await revalidateTag("backendData")
 
       setToasts([toastMessages.extendingLockupsSuccess])
-      handleMultipleLockups()
+      handleRefreshLockups()
       setIsLoading(false)
       setIsCreationModalOpen(false)
     } catch (error) {
@@ -140,7 +140,7 @@ export function RefreshMultipleLockups({
 
             <div className="flex items-center gap-2 opacity-60">
               <p>
-                {multipleLockups.length} lockups will be extended to end
+                {refreshLockups.length} lockups will be extended to end
                 on
               </p>
               {selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH ? (

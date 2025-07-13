@@ -86,12 +86,7 @@ export default function LockupsPage() {
     number[]
   >([])
 
-  const multipleLockups =
-    selectedActiveLockups.length >= 1
-      ? selectedActiveLockups
-      : selectedExpiredLockups.length >= 1
-        ? selectedExpiredLockups
-        : []
+  const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
   const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
 
@@ -165,19 +160,13 @@ export default function LockupsPage() {
     setIsConfirmingUnlockExpired(false)
   }
 
-  function handleMultipleLockups() {
+  function handleRefreshLockups() {
     setSelectedExpiredLockups([])
     setSelectedActiveLockups([])
   }
 
-  function handleExpired() {
+  function handleRefreshModal() {
     setRefreshMultipleLockups(true)
-    setSelectedActiveLockups([])
-  }
-
-  function handleActive() {
-    setRefreshMultipleLockups(true)
-    setSelectedExpiredLockups([])
   }
 
   useEffect(() => {
@@ -199,6 +188,12 @@ export default function LockupsPage() {
       },
     ])
   }, [incompleteNotices])
+
+  useEffect(() => {
+    if (isLoading) {
+      handleRefreshLockups()
+    }
+  }, [isLoading])
 
   return (
     <>
@@ -273,28 +268,16 @@ export default function LockupsPage() {
               md:items-center
             "
           >
-            {activeLockups.length > 0 && (
+            {lockups.length > 0 && (
               <StyledText
                 as="button"
                 variant="button.secondary"
                 className="flex items-center gap-2"
-                onClick={handleActive}
-                disabled={selectedActiveLockups.length <= 1}
+                onClick={handleRefreshModal}
+                disabled={refreshLockups.length <= 1}
               >
                 <RotateCw className="size-4 text-palette-green" />
-                Refresh Active{`(${selectedActiveLockups.length})`}
-              </StyledText>
-            )}
-            {expiredLockups.length > 0 && (
-              <StyledText
-                as="button"
-                variant="button.secondary"
-                className="flex items-center gap-2"
-                onClick={handleExpired}
-                disabled={selectedExpiredLockups.length <= 1}
-              >
-                <RotateCw className="size-4 text-palette-green" />
-                Refresh Expired{`(${selectedExpiredLockups.length})`}
+                Refresh {`(${refreshLockups.length})`} Lockups
               </StyledText>
             )}
             {expiredLockups.length > 0 && (
@@ -460,8 +443,8 @@ export default function LockupsPage() {
       <RefreshMultipleLockups
         lockups={lockups}
         isCreationModalOpen={refreshMultipleLockups}
-        multipleLockups={multipleLockups}
-        handleMultipleLockups={handleMultipleLockups}
+        refreshLockups={refreshLockups}
+        handleRefreshLockups={handleRefreshLockups}
         setIsCreationModalOpen={setRefreshMultipleLockups}
         handleCreationModalWindowClose={() => setRefreshMultipleLockups(false)}
         handleModalWindowCloseComplete={() => setRefreshMultipleLockups(false)}
