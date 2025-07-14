@@ -226,8 +226,29 @@ export function BidDetails({
           )}
         >
           {sidebarFields.map((field, index) => {
-            const content = (
+            const labelContent = (
               <div
+                className={twJoin(
+                  'w-full',
+                  'label flex items-center gap-1',
+                  'desktop:justify-end',
+                  field.tooltip && [
+                    'desktop:flex-row-reverse',
+                    'desktop:justify-start',
+                  ],
+                )}
+              >
+                <span className={twJoin(field.tooltip && 'has-tooltip')}>
+                  {field.label}
+                </span>
+                {field.tooltip && (
+                  <Icon name="circle-info" className="text-xs opacity-60" />
+                )}
+              </div>
+            )
+            return (
+              <div
+                key={String(field.label)}
                 className={twJoin(
                   'flex flex-col',
                   'gap-tighter',
@@ -237,40 +258,18 @@ export function BidDetails({
                   index % 2 !== 0 && 'desktop:bg-darkened',
                 )}
               >
-                <div
-                  className={twJoin(
-                    'w-full',
-                    'label flex items-center gap-1',
-                    'desktop:justify-end',
-                    field.tooltip && [
-                      'desktop:flex-row-reverse',
-                      'desktop:justify-start',
-                    ],
-                  )}
-                >
-                  <span className={twJoin(field.tooltip && 'has-tooltip')}>
-                    {field.label}
-                  </span>
-                  {field.tooltip && (
-                    <Icon name="circle-info" className="text-xs opacity-60" />
-                  )}
-                </div>
+                {field.tooltip ? (
+                  <Tooltipped
+                    tip={tooltipContent(field.tooltip)}
+                    className="relative z-20 w-full"
+                  >
+                    {labelContent}
+                  </Tooltipped>
+                ) : (
+                  <React.Fragment>{labelContent}</React.Fragment>
+                )}
                 <div className="important-value">{field.value}</div>
               </div>
-            )
-
-            return field.tooltip ? (
-              <Tooltipped
-                key={String(field.label)}
-                tip={tooltipContent(field.tooltip)}
-                className="relative z-20 w-full"
-              >
-                {content}
-              </Tooltipped>
-            ) : (
-              <React.Fragment key={String(field.label)}>
-                {content}
-              </React.Fragment>
             )
           })}
         </aside>
