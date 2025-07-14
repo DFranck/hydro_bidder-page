@@ -1,6 +1,6 @@
 # User FAQ
 
-## What is Protocol-owned Liquidity? 
+## What is Protocol-owned Liquidity?
 
 Protocol-owned liquidity (PoL for short) refers to the liquidity controlled by the Hydro voters and deployed strategically to support DeFi projects across the interchain ecosystem. Hydro uses an auction system to allocate liquidity to projects offering the most value to voters. This ensures sustainable liquidity management and generates a yield (e.g., swap fees, lending, staking) that can be returned to the Cosmos Hub community.
 
@@ -38,7 +38,7 @@ Bidding is the process by which projects compete for liquidity on Hydro. Each bi
 
 ## What is APR, and why is it relevant to voting?
 
-APR (Annual Percentage Rate) shows the potential return you can earn from your locked ATOM, including rewards from tributes. It gives you a snapshot of how much you could gain by participating in the Hydro voting process. Remember that this APR may fluctuate as more voters participate or as bidders adjust their tribute. You'll see a real-time APR when locking your ATOM and voting on bids. For more details on the Hydro APR, check out the [dedicated page](https://hydro.cosmos.network/docs/users/aprs) in the user documentation.
+APR (Annual Percentage Rate) shows the potential return you can earn from your locked ATOM, including rewards from tributes. It gives you a snapshot of how much you could gain by participating in the Hydro voting process. Remember that this APR may fluctuate as more voters participate or as bidders adjust their tribute. You'll see a real-time APR when locking your ATOM and voting on bids. For more details on the Hydro APR, check out the [dedicated page](https://hydro.markets/docs/users/aprs) in the user documentation.
 
 ## Can I change my vote after I’ve locked my ATOM?
 

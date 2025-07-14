@@ -19,7 +19,7 @@ This is how to get LSM Shares:
 
 ### 2. Convert to LSM Shares:
 
-* Navigate to the Hydro website at [hydro.cosmos.network](https://hydro.cosmos.network).
+* Navigate to the Hydro website at [hydro.markets](https://hydro.markets).
 * Click "Connect Wallet" in the menu or click one of the "Get Started" buttons on the homepage.
 * In the first modal that appears, select one of the validators that you are currently staking ATOM with.
 * In the next modal, choose the amount of ATOM that you want to use to obtain voting power.
@@ -49,7 +49,7 @@ This means that a user's voting power decays over time in steps, and behaves lik
 
 ![Remaining scaling explained](/doc/remaining-lockup.png)
 
-**Note**: The Pilot Round of Hydro will have certain restrictions around lockups. Specifically, users will not be allowed in the first round to lock for more than 1 month. To learn more about the Pilot Rounds please read the Pilot Rounds [documentation](https://hydro.cosmos.network/docs#pilot-rounds).
+**Note**: The Pilot Round of Hydro will have certain restrictions around lockups. Specifically, users will not be allowed in the first round to lock for more than 1 month. To learn more about the Pilot Rounds please read the Pilot Rounds [documentation](https://hydro.markets/docs#pilot-rounds).
 
 **Key Points**:
 
