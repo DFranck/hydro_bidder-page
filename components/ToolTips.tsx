@@ -480,7 +480,7 @@ export const metricsTributeColumnTooltip = (
     tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -498,7 +498,7 @@ export const liveBidTributeAprColumnTooltip = (
     adjust tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -515,7 +515,7 @@ export const pastBidTributeAprMetricsPageColumnTooltip = (
     at the end of the round.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -532,7 +532,7 @@ export const pastBidTributeAprBidsPageColumnTooltip = (
     this round. It updates as bidders adjust tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -673,7 +673,7 @@ export const timeLeftTooltip = (currentRoundEndDate: Date) => {
       the round to receive tributes.{" "}
       <StyledText
         as="a"
-        href="/docs/users/voting-for-projects"
+        href="/docs/users/bids"
         variant="link"
         target="_blank"
         className="whitespace-nowrap"
