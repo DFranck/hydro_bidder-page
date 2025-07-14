@@ -64,8 +64,6 @@ export function EditLockupDurationModal({
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
 
-  console.log({ originalPower, newPower })
-
   function onClose() {
     setIsLoading(false)
     outerOnClose()
