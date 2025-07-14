@@ -38,7 +38,7 @@ Bidding is the process by which projects compete for liquidity on Hydro. Each bi
 
 ## What is APR, and why is it relevant to voting?
 
-APR (Annual Percentage Rate) shows the potential return you can earn from your locked ATOM, including rewards from tributes. It gives you a snapshot of how much you could gain by participating in the Hydro voting process. Remember that this APR may fluctuate as more voters participate or as bidders adjust their tribute. You'll see a real-time APR when locking your ATOM and voting on bids. For more details on the Hydro APR, check out the [dedicated page](https://hydro.cosmos.network/docs/users/calculating-staking-apr) in the user documentation.
+APR (Annual Percentage Rate) shows the potential return you can earn from your locked ATOM, including rewards from tributes. It gives you a snapshot of how much you could gain by participating in the Hydro voting process. Remember that this APR may fluctuate as more voters participate or as bidders adjust their tribute. You'll see a real-time APR when locking your ATOM and voting on bids. For more details on the Hydro APR, check out the [dedicated page](https://hydro.cosmos.network/docs/users/aprs) in the user documentation.
 
 ## Can I change my vote after I’ve locked my ATOM?
 

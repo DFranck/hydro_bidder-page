@@ -49,7 +49,7 @@ This means that a user's voting power decays over time in steps, and behaves lik
 
 ![Remaining scaling explained](/doc/remaining-lockup.png)
 
-**Note**: The Pilot Round of Hydro will have certain restrictions around lockups. Specifically, users will not be allowed in the first round to lock for more than 1 month. To learn more about the Pilot Rounds please read the Pilot Rounds [documentation](https://hydro.cosmos.network/docs/hydro-launch).
+**Note**: The Pilot Round of Hydro will have certain restrictions around lockups. Specifically, users will not be allowed in the first round to lock for more than 1 month. To learn more about the Pilot Rounds please read the Pilot Rounds [documentation](https://hydro.cosmos.network/docs#pilot-rounds).
 
 **Key Points**:
 

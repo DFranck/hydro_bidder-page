@@ -237,7 +237,7 @@ export default function Home() {
                   <StyledText
                     as="a"
                     variant="button.secondary.large"
-                    href="/docs/users/calculating-staking-apr"
+                    href="/docs/users/aprs"
                     target="_blank"
                   >
                     Learn More
@@ -304,7 +304,7 @@ export default function Home() {
               <StyledText
                 as="a"
                 variant="button.secondary.large"
-                href="/docs/projects/whitelisting"
+                href="/docs/projects/bids#bid-submission"
                 target="_blank"
               >
                 Learn More <Icon name="solid:arrow-up-right" />
