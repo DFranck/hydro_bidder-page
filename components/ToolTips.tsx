@@ -676,7 +676,7 @@ export const rewardsYourTributeTooltip = (
 
 export const timeLeftTooltip = (currentRoundEndDate: Date) => {
   const formattedEndDate = currentRoundEndDate
-    ? currentRoundEndDate.toLocaleString(undefined, {
+    ? currentRoundEndDate.toLocaleString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
