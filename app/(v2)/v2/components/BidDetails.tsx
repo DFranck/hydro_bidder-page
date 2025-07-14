@@ -2,6 +2,16 @@
 
 import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
+import {
+  bidDetailsPolSizeTooltip,
+  bidDetailsStatusTooltip,
+  bidDetailsVoteReceivedTooltip,
+  liveBidTributeAprColumnTooltip,
+  metricsDurationColumnTooltip,
+  metricsTributeColumnTooltip,
+  pastBidTributeAprBidsPageColumnTooltip,
+} from '@/components/ToolTips'
+import { formatAmount } from '@/lib/formatAmount'
 import { BidDuration } from '@v2/components/BidDuration'
 import { BidLogo } from '@v2/components/BidLogo'
 import { BidMaxDeployment } from '@v2/components/BidMaxDeployment'
@@ -13,6 +23,7 @@ import { Tooltipped } from '@v2/components/Tooltipped'
 import { VoteButton } from '@v2/components/VoteButton'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
+import { sumBy } from 'lodash'
 import React from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
@@ -30,7 +41,7 @@ export function BidDetails({
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById } = state
   const currentRoundData = currentRoundDataPerSource?.[sourceId]
-  const { augmentedBids } = currentRoundData ?? {}
+  const { augmentedBids, currentRoundId } = currentRoundData ?? {}
 
   const bid = augmentedBids?.find((bid) => bid.id === bidId)
 
@@ -42,10 +53,18 @@ export function BidDetails({
   const isOngoing = bid.status?.toLowerCase().includes('ongoing')
   const isCompleted = bid.status?.toLowerCase().includes('completed')
   const hasLiquidityDeployment = (bid.liquidityDeployment?.totalRounds ?? 0) > 0
+  const totalPowerInRound = sumBy(augmentedBids, 'power')
+  const isTokenBased = !bid.points || bid.points.length === 0
 
-  const tooltipContent = (content: string) => (
+  const votingStats = {
+    bidPower: formatAmount(bid.power, 6, 0),
+    totalPower: formatAmount(totalPowerInRound, 6, 0),
+    percentage: formatAmount(bid.vote_perc * 100, 0, 2),
+  }
+
+  const tooltipContent = (content: string | React.ReactNode) => (
     <div className="flex flex-col gap-2">
-      <p className="text-sm">{content}</p>
+      <div className="text-sm">{content}</div>
     </div>
   )
 
@@ -60,7 +79,7 @@ export function BidDetails({
           {
             label: 'Amount',
             value: <BidPolSize bidId={bid.id} sourceId={sourceId} />,
-            tooltip: 'Total amount of liquidity deployed for this bid.',
+            tooltip: bidDetailsPolSizeTooltip,
           },
         ]
       : []),
@@ -68,7 +87,7 @@ export function BidDetails({
     {
       label: 'Status',
       value: <span className="capitalize">{bid.status}</span>,
-      tooltip: 'Current status of this bid in the protocol.',
+      tooltip: bidDetailsStatusTooltip,
     },
 
     // Duration - only show for ongoing/completed bids
@@ -77,8 +96,7 @@ export function BidDetails({
           {
             label: 'Duration',
             value: <BidDuration bidId={bid.id} sourceId={sourceId} />,
-            tooltip:
-              'Length of time tokens will be locked when voting for this bid.',
+            tooltip: metricsDurationColumnTooltip,
           },
         ]
       : []),
@@ -86,23 +104,27 @@ export function BidDetails({
     {
       label: 'Vote %',
       value: <BidVoteShare bidId={bid.id} sourceId={sourceId} />,
-      tooltip: 'Percentage of total voting power received by this bid.',
+      tooltip: bidDetailsVoteReceivedTooltip(votingStats),
     },
 
     {
       label: 'Voter APR',
       value: <BidTributeApr bidId={bid.id} sourceId={sourceId} />,
-      tooltip:
-        'Annual percentage return voters can expect from tribute rewards.',
+      tooltip: !isTokenBased
+        ? metricsTributeColumnTooltip
+        : bid.roundId === currentRoundId
+          ? liveBidTributeAprColumnTooltip
+          : pastBidTributeAprBidsPageColumnTooltip,
     },
 
     // Max Deployment Amount - conditionally rendered by the component itself
-    {
-      label: 'Max Deployment',
-      value: <BidMaxDeployment bidId={bid.id} sourceId={sourceId} />,
-      tooltip:
-        'Estimated maximum amount that could be deployed based on tribute value and minimum tribute factor.',
-    },
+    // hidden on main currently
+    // {
+    //   label: 'Max Deployment',
+    //   value: <BidMaxDeployment bidId={bid.id} sourceId={sourceId} />,
+    //   tooltip:
+    //     'Estimated maximum amount that could be deployed based on tribute value and minimum tribute factor.',
+    // },
   ].filter((field) => field.value !== null && field.value !== undefined)
 
   return (
