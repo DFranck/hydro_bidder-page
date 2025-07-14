@@ -21,6 +21,7 @@ import { formatAmount } from "@/lib/formatAmount"
 import { getDaysAway } from "@/lib/getDaysAway"
 import { pluralize } from "@/lib/pluralize"
 import { revalidateTag } from "@/lib/revalidateTag"
+import { cn } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
@@ -62,6 +63,8 @@ export function EditLockupDurationModal({
   const currentLockupEndDate = lockup?.dateEnd ?? new Date()
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)
   const powerDifference = newPower - originalPower
+
+  console.log({ originalPower, newPower })
 
   function onClose() {
     setIsLoading(false)
@@ -121,7 +124,7 @@ export function EditLockupDurationModal({
       isOpen={isOpen}
       onClose={onClose}
       onCloseComplete={onCloseComplete}
-      className="w-96"
+      className="w-96 md:min-w-max"
     >
       <Card>
         <Card.Header title="Edit Lockup" />
@@ -160,23 +163,36 @@ export function EditLockupDurationModal({
               />
             </div>
 
-            <div className="flex items-center justify-around gap-3">
+            <div className="grid grid-cols-2 gap-4  md:grid-cols-3">
               <div className="flex flex-col items-center text-center">
-                <div>Locked {lockup?.funds.denomInfo?.humanReadableDenom}</div>
-                <div className="text-4xl font-bold text-palette-beige">
+                <div className="text-sm md:text-lg">
+                  Locked {lockup?.funds.denomInfo?.humanReadableDenom}
+                </div>
+                <div className="text-xl font-bold text-palette-beige md:text-3xl">
                   {formatAmount(lockup?.funds.amount ?? 0, 0)}
                 </div>
               </div>
 
               <div className="relative flex flex-col items-center text-center">
-                <div>{hasChanged && "New "}Voting Power</div>
+                <div className="text-sm md:text-lg"> Voting Power</div>
+
                 <div
-                  className={twMerge(
-                    "text-4xl font-bold text-palette-beige",
+                  className={cn(
+                    "text-xl font-bold text-palette-beige md:text-3xl"
+                  )}
+                >
+                  {formatAmount(originalPower)}
+                </div>
+              </div>
+              <div className="relative flex flex-col items-center text-center">
+                <div className="text-sm md:text-lg">New Voting Power</div>
+                <div
+                  className={cn(
+                    "text-xl font-bold text-palette-beige md:text-3xl",
                     powerDifference > 0 && "text-palette-green"
                   )}
                 >
-                  {formatAmount(hasChanged ? newPower : originalPower)}
+                  {formatAmount(newPower)}
                 </div>
               </div>
             </div>
