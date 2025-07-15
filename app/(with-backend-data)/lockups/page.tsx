@@ -64,7 +64,6 @@ export default function LockupsPage() {
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
-  const activeLockups = lockups.filter((lockup) => !lockup.isExpired)
 
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
