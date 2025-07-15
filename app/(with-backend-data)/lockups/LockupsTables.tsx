@@ -37,6 +37,14 @@ export function LockupsTables({
   const allActiveLockups = lockups.filter((lockup) => !lockup.isExpired)
   const allExpiredLockups = lockups.filter((lockup) => lockup.isExpired)
 
+  const allSelectedActive =
+    selectedActiveLockups?.length === allActiveLockups.length &&
+    selectedActiveLockups?.length > 0
+
+  const allSelectedExpired =
+    selectedExpiredLockups?.length === allExpiredLockups.length &&
+    selectedExpiredLockups?.length > 0
+
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
     return [
       allActiveLockups.map((lockup) =>
@@ -136,14 +144,6 @@ export function LockupsTables({
     }
   }
 
-  const allSelectedActive =
-    selectedActiveLockups?.length === allActiveLockups.length &&
-    selectedActiveLockups?.length > 0
-
-  const allSelectedExpired =
-    selectedExpiredLockups?.length === allExpiredLockups.length &&
-    selectedExpiredLockups?.length > 0
-
   return (
     <div className="flex flex-col gap-12">
       <BlurryBackdropBox
@@ -155,6 +155,7 @@ export function LockupsTables({
             <div className="flex items-center justify-between gap-4">
               <Checkbox
                 checked={allSelectedActive}
+                disabled={allActiveLockups.length === 0}
                 onCheckedChange={handleSelectAllActiveChange}
               />
               <StyledText variant="h4">
@@ -204,6 +205,7 @@ export function LockupsTables({
               <div className="flex items-center justify-between gap-4">
                 <Checkbox
                   checked={allSelectedExpired}
+                  disabled={allExpiredLockups.length === 0}
                   onCheckedChange={handleSelectAllExpiredChange}
                 />
                 <StyledText variant="h4">Expired Lockups</StyledText>
