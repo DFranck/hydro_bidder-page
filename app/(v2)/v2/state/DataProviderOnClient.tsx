@@ -2,10 +2,8 @@
 
 import { Tranche } from '@/app/ts_types/HydroBase.types'
 import { BidMetaData, BidRevampMetrics } from '@/contract-apis/types'
-import { LoadingScreen } from '@v2/components/LoadingScreen'
 import { useProcessedData } from '@v2/hooks/useProcessedData'
 import { AppAction, AppState, SourceID } from '@v2/types'
-import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import {
   createContext,
@@ -18,57 +16,11 @@ import {
 import { initialState } from './DataProviderOnServer'
 import { reducer } from './reducer'
 
-const QueryClientProvider = dynamic(
-  () =>
-    import('@/components/QueryClientProvider').then(
-      (mod) => mod.QueryClientProvider,
-    ),
-  {
-    loading: () => <LoadingScreen useGlobalState />,
-    ssr: false, // Since react-query needs browser APIs
-  },
-)
-
-const ToastContextProvider = dynamic(
-  () => import('@/components/Toasts').then((mod) => mod.ToastContextProvider),
-  {
-    loading: () => <LoadingScreen useGlobalState />,
-    ssr: false,
-  },
-)
-
-const ChainsAndSignersProvider = dynamic(
-  () =>
-    import('@/components/ChainsAndSignersProvider').then(
-      (mod) => mod.ChainsAndSignersProvider,
-    ),
-  {
-    loading: () => <LoadingScreen useGlobalState />,
-    ssr: false,
-  },
-)
-
-const GlobalLockupInfoProvider = dynamic(
-  () =>
-    import('@/components/GlobalLockupInfoProvider').then(
-      (mod) => mod.GlobalLockupInfoProvider,
-    ),
-  {
-    loading: () => <LoadingScreen useGlobalState />,
-    ssr: false,
-  },
-)
-
-const IncompleteNoticesProvider = dynamic(
-  () =>
-    import('@/components/IncompleteNoticesProvider').then(
-      (mod) => mod.IncompleteNoticesProvider,
-    ),
-  {
-    loading: () => <LoadingScreen useGlobalState />,
-    ssr: false,
-  },
-)
+import { QueryClientProvider } from '@/components/QueryClientProvider'
+import { ToastContextProvider } from '@/components/Toasts'
+import { ChainsAndSignersProvider } from '@/components/ChainsAndSignersProvider'
+import { GlobalLockupInfoProvider } from '@/components/GlobalLockupInfoProvider'
+import { IncompleteNoticesProvider } from '@/components/IncompleteNoticesProvider'
 
 export const AppContext = createContext<{
   state: AppState
@@ -112,10 +64,10 @@ export function DataProviderOnClient({
   const combinedIsLoading = isLoading || isWalletDataLoading
 
   const hydroDataKey = useMemo(() => {
-    if (!hydroData) return 'no-data'
+    if (!hydroData) return `no-data-${pathname}`
     const hasWalletData = hydroData.some((data) => data.data.walletData)
-    return `hydro-${hasWalletData ? 'with-wallet' : 'no-wallet'}-${JSON.stringify(hydroData).length}`
-  }, [hydroData])
+    return `hydro-${hasWalletData ? 'with-wallet' : 'no-wallet'}-${JSON.stringify(hydroData).length}-${pathname}`
+  }, [hydroData, pathname])
 
   const initialStateWithData = useMemo(
     () => ({
@@ -136,20 +88,20 @@ export function DataProviderOnClient({
         ...initialState,
         bidDescriptionsById: filteredBidDescriptions,
         currentRoundDataPerSource,
-        isLoading: combinedIsLoading,
       },
     })
   }, [
     hydroDataKey,
     filteredBidDescriptions,
     currentRoundDataPerSource,
-    combinedIsLoading,
     isWalletDataLoading,
   ])
 
   useEffect(() => {
-    dispatch({ type: 'SET_IS_LOADING', payload: combinedIsLoading })
-  }, [combinedIsLoading])
+    if (state.isLoading !== combinedIsLoading) {
+      dispatch({ type: 'SET_IS_LOADING', payload: combinedIsLoading })
+    }
+  }, [combinedIsLoading, state.isLoading])
 
   useEffect(() => {
     if (state.isLoading && pathname !== previousPathnameRef.current) {
@@ -165,7 +117,9 @@ export function DataProviderOnClient({
           <ChainsAndSignersProvider>
             <GlobalLockupInfoProvider>
               <IncompleteNoticesProvider>
-                <AppContext value={{ state, dispatch }}>{children}</AppContext>
+                <AppContext.Provider value={{ state, dispatch }}>
+                  {children}
+                </AppContext.Provider>
               </IncompleteNoticesProvider>
             </GlobalLockupInfoProvider>
           </ChainsAndSignersProvider>
