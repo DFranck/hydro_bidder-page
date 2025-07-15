@@ -1,7 +1,7 @@
 "use client"
 
 import { CollapsibleBox } from "@/components/CollapsibleBox"
-import { Toast, ToastDescriptor } from "@/components/Toasts"
+import { Toast, ToastDescriptor, Toasts } from "@/components/Toasts"
 import {
   createContext,
   ReactNode,
@@ -13,7 +13,6 @@ import {
 import { createPortal } from "react-dom"
 import { twJoin } from "tailwind-merge"
 import { useIsClient } from "usehooks-ts"
-import { Toasts } from "./Toasts"
 
 export interface DismissibleToastDescriptor extends ToastDescriptor {
   isDismissible?: boolean
@@ -171,10 +170,10 @@ export function ToastContextProvider({ children }: { children: ReactNode }) {
           return (
             <CollapsibleBox
               className={twJoin(
-                "[&:nth-child(4)]:opacity-75",
-                "[&:nth-child(5)]:opacity-50",
-                "[&:nth-child(6)]:opacity-25",
-                "[&:nth-child(n+7)]:opacity-0"
+                "nth-4:opacity-75",
+                "nth-5:opacity-50",
+                "nth-6:opacity-25",
+                "nth-[n+7]:opacity-0"
               )}
               key={_id}
               isCollapsed={isCollapsed}

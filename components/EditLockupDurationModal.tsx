@@ -156,7 +156,7 @@ export function EditLockupDurationModal({
                 currentLockupEndDate={currentLockupEndDate}
                 selectedDuration={selectedDuration}
                 className="w-full"
-                classNamesForButtons="!w-full"
+                classNamesForButtons="w-full!"
                 onChange={handleChange}
               />
             </div>

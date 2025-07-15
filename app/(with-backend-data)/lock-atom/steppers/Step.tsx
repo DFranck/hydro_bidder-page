@@ -6,15 +6,15 @@ import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 import { revalidateTag } from "@/lib/revalidateTag"
+import { cn } from "@/lib/utils"
+import { AlertCircle, Check, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { ReactNode, use, useEffect, useState } from "react"
-import { LockStep } from "./LockStepper"
-import { X, Check, AlertCircle, Loader2 } from "lucide-react"
-import { RevertFromHubStep } from "./RevertFromHubStepper"
-import { RevertFromNeutronStep } from "./RevertFromNeutronStepper"
+import { ReactNode, useEffect, useState } from "react"
 import { ClaimRewardsStep } from "../../rewards/ClaimRewardsStepper"
 import { ContinueFromNeutronStep } from "./ContinueFromNeutronStepper"
-import { cn } from "@/lib/utils"
+import { LockStep } from "./LockStepper"
+import { RevertFromHubStep } from "./RevertFromHubStepper"
+import { RevertFromNeutronStep } from "./RevertFromNeutronStepper"
 
 interface StakingStep {
   id: number
@@ -228,7 +228,7 @@ export function Step({
         <div className="col-span-12 md:col-span-4">
           {!!amount && (
             <div className="mb-4 hidden md:flex md:flex-col">
-              <StyledText className="uppercase leading-6 tracking-wide">
+              <StyledText className="leading-6 tracking-wide uppercase">
                 {modalTitle ?? " Lock Amount"}
               </StyledText>
               <StyledText variant="h4">{amount}</StyledText>

@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/subframe/*": ["./app\\subframe/*"]
+      "@/subframe/*": ["./app\\subframe/*"],
+      "@v2/*": ["./app/(v2)/v2/*"]
     },
     "target": "ES2017"
   },
