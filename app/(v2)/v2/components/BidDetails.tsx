@@ -37,6 +37,7 @@ export function BidDetails({
   if (!bid) return null
 
   const bidDescription = bidDescriptionsById[bidId]
+
   const { projectLogoUrl = '/images/logo-drop.png' } = bidDescription ?? {}
 
   const isOngoing = bid.status?.toLowerCase().includes('ongoing')
@@ -50,11 +51,9 @@ export function BidDetails({
   )
 
   const sidebarFields = [
-    // No tooltip for basic fields
     { label: 'Project Name', value: bidDescription?.projectName },
     { label: 'Bid in Round', value: bid.roundId + 1 },
 
-    // Amount - only show if has liquidity deployment
     ...(hasLiquidityDeployment
       ? [
           {
@@ -71,7 +70,6 @@ export function BidDetails({
       tooltip: 'Current status of this bid in the protocol.',
     },
 
-    // Duration - only show for ongoing/completed bids
     ...(isOngoing || isCompleted
       ? [
           {
@@ -96,7 +94,6 @@ export function BidDetails({
         'Annual percentage return voters can expect from tribute rewards.',
     },
 
-    // Max Deployment Amount - conditionally rendered by the component itself
     {
       label: 'Max Deployment',
       value: <BidMaxDeployment bidId={bid.id} sourceId={sourceId} />,
@@ -111,9 +108,13 @@ export function BidDetails({
       sourceId={sourceId}
       bidId={bidId}
       className={twMerge(
-        'grid grid-rows-[min-content_1fr]',
+        'grid grid-cols-1 grid-rows-[min-content_1fr]',
         'h-full overflow-hidden',
         'relative',
+        'gap-tight',
+        'overflow-y-auto',
+        'desktop:overflow-hidden',
+        'desktop:grid-cols-[5fr_3fr]',
         'is-voted-on:theme-color-green',
         'is-below-threshold:theme-color-beige',
         'is-vote-focused:theme-color-green',
@@ -121,7 +122,7 @@ export function BidDetails({
         className,
       )}
     >
-      <div
+      <header
         className={twJoin(
           'relative',
           'flex items-center justify-between',
@@ -165,22 +166,18 @@ export function BidDetails({
             'is-vote-focused:opacity-100',
           )}
         />
-      </div>
+      </header>
 
       <div
         className={twJoin(
-          'h-full',
-          'grid',
-          'grid-rows-[min-content_auto]',
-          'gap-tight',
           'overflow-y-auto',
+          'desktop:contents',
           'desktop:overflow-hidden',
-          'desktop:grid-rows-1',
-          'desktop:grid-cols-[5fr_3fr]',
         )}
       >
         <aside
           className={twJoin(
+            '@container/sidebar',
             'transition-all',
             'relative',
             'col-start-1 col-end-2',
@@ -194,36 +191,39 @@ export function BidDetails({
             'text-foreground',
             'desktop:h-full',
             'desktop:flex',
-            'desktop:flex-col',
+            'desktop:flex-wrap',
             'desktop:p-0',
             'desktop:gap-0',
             'desktop:overflow-y-auto',
             'desktop:col-start-2',
             'desktop:col-end-3',
+            'desktop:row-start-1',
+            'desktop:row-end-3',
             'desktop:**:shrink-0',
           )}
         >
-          {sidebarFields.map((field, index) => {
+          {sidebarFields.map((field) => {
+            const containerClassName = twJoin(
+              'flex flex-col',
+              'gap-tighter',
+              'py-standard',
+              'items-start',
+              'justify-center',
+              '[&:nth-child(4n+2)]:bg-darkened',
+              '[&:nth-child(4n+3)]:bg-darkened',
+              'desktop:px-loose',
+              'desktop:basis-1/2',
+              'desktop:items-center',
+              'desktop:text-center',
+            )
+
             const content = (
-              <div
-                className={twJoin(
-                  'flex flex-col',
-                  'gap-tighter',
-                  'py-standard',
-                  'desktop:px-loose',
-                  'desktop:items-end',
-                  index % 2 !== 0 && 'desktop:bg-darkened',
-                )}
-              >
+              <React.Fragment>
                 <div
                   className={twJoin(
                     'w-full',
                     'label flex items-center gap-1',
-                    'desktop:justify-end',
-                    field.tooltip && [
-                      'desktop:flex-row-reverse',
-                      'desktop:justify-start',
-                    ],
+                    'desktop:justify-center',
                   )}
                 >
                   <span className={twJoin(field.tooltip && 'has-tooltip')}>
@@ -234,42 +234,69 @@ export function BidDetails({
                   )}
                 </div>
                 <div className="important-value">{field.value}</div>
-              </div>
+              </React.Fragment>
             )
 
             return field.tooltip ? (
               <Tooltipped
                 key={String(field.label)}
                 tip={tooltipContent(field.tooltip)}
-                className="relative z-20 w-full"
+                className={containerClassName}
               >
                 {content}
               </Tooltipped>
             ) : (
-              <React.Fragment key={String(field.label)}>
+              <div className={containerClassName} key={String(field.label)}>
                 {content}
-              </React.Fragment>
+              </div>
             )
           })}
         </aside>
 
-        <div
+        <main
           className={twJoin(
             'col-start-1 col-end-2',
             'row-start-2 row-end-3',
             'text-balance',
             'px-loose',
-            'py-standard',
+            'pb-loosest',
+            'gap-standard flex flex-col',
             'desktop:overflow-y-auto',
-            'desktop:row-start-1',
-            'desktop:row-end-2',
+            'desktop:row-start-2',
+            'desktop:row-end-3',
           )}
         >
-          <MarkdownContainer
-            breakThreshold={24}
-            content={bidDescription?.description}
-          />
-        </div>
+          {[
+            {
+              label: 'About the Project',
+              content: bidDescription?.aboutProject,
+            },
+            {
+              label: 'Bid Description',
+              content: bidDescription?.description,
+            },
+            {
+              label: 'Committee Review',
+              content: bidDescription?.committeeComments,
+            },
+          ].map(({ label, content }) => (
+            <React.Fragment key={label}>
+              <div className="sticky top-0">
+                <div
+                  className={twJoin(
+                    'h-bar-height-standard',
+                    'flex items-center',
+                    'label text-palette-beige',
+                    'bg-background',
+                  )}
+                >
+                  {label}
+                </div>
+              </div>
+              <MarkdownContainer breakThreshold={24} content={content} />
+            </React.Fragment>
+          ))}
+        </main>
       </div>
     </BidWrapper>
   )

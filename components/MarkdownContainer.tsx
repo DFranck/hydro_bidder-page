@@ -1,5 +1,5 @@
 import { breakLongStringsEvery } from "@/lib/breakLongStringsEvery"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { twMerge } from "tailwind-merge"
@@ -13,10 +13,14 @@ export function MarkdownContainer({
   content?: string
   breakThreshold?: number
 }) {
+  const fixedContent = useMemo(() => {
+    return content?.replace(/\\n/g, "\n")
+  }, [content])
+
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (containerRef.current && content) {
+    if (containerRef.current && fixedContent) {
       // Apply string breaking to the rendered HTML content
       const container = containerRef.current
       const textNodes = getTextNodes(container)
@@ -36,7 +40,7 @@ export function MarkdownContainer({
         }
       })
     }
-  }, [content, breakThreshold])
+  }, [fixedContent, breakThreshold])
 
   // Helper function to get all text nodes in the container
   const getTextNodes = (element: Node): Text[] => {
@@ -87,7 +91,7 @@ export function MarkdownContainer({
         className
       )}
     >
-      <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
+      <Markdown remarkPlugins={[remarkGfm]}>{fixedContent}</Markdown>
     </div>
   )
 }
