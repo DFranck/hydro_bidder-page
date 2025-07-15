@@ -190,7 +190,7 @@ export function EditLockupDurationModal({
                     powerDifference > 0 && "text-palette-green"
                   )}
                 >
-                  {formatAmount(newPower)}
+                  {hasChanged ? formatAmount(newPower) : "-"}
                 </div>
               </div>
             </div>
