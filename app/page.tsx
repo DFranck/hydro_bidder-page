@@ -304,7 +304,7 @@ export default function Home() {
               <StyledText
                 as="a"
                 variant="button.secondary.large"
-                href="/docs/projects/bids#bid-submission"
+                href="/docs/projects/overview"
                 target="_blank"
               >
                 Learn More <Icon name="solid:arrow-up-right" />
