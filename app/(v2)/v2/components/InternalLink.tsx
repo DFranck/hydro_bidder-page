@@ -29,10 +29,8 @@ export function useInternalLink() {
     (href: string) => {
       if (isLoading || !href) return
 
-      // Set global loading state
       dispatch({ type: 'SET_IS_LOADING', payload: true })
 
-      // Navigate
       router.push(href)
     },
     [isLoading, dispatch, router],
@@ -87,10 +85,8 @@ export function InternalLink({
 
     if (disabled || isLoading || !href) return
 
-    // Call custom onClick if provided
     onClick?.(e)
 
-    // Navigate using the hook
     navigate(href)
   }
 

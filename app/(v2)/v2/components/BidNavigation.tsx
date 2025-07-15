@@ -39,29 +39,23 @@ export function BidNavigation({
 
   const currentBidTrancheIndex = useBidTrancheIndex(bidId)
 
-  const {
-    refs,
-    getReferenceProps,
-    renderMenu,
-    setIsOpen,
-    isOpen,
-    floatingStyles,
-  } = useDropdownMenu({
-    modalOnMobile: true, // Now properly centers popup on mobile
-    placement: 'bottom',
-    onOpenChange: (isOpen) => {
-      if (isOpen) {
-        // Temporarily disable intersection observer to prevent conflicts
-        setDisableIntersectionObserver(true)
-        setActiveTrancheIndex(currentBidTrancheIndex)
+  const { refs, getReferenceProps, renderMenu, setIsOpen, isOpen } =
+    useDropdownMenu({
+      modalOnMobile: true,
+      placement: 'bottom',
+      onOpenChange: (isOpen) => {
+        if (isOpen) {
+          // Temporarily disable intersection observer to prevent conflicts
+          setDisableIntersectionObserver(true)
+          setActiveTrancheIndex(currentBidTrancheIndex)
 
-        // Re-enable after a short delay to allow the state to settle
-        setTimeout(() => {
-          setDisableIntersectionObserver(false)
-        }, 500)
-      }
-    },
-  })
+          // Re-enable after a short delay to allow the state to settle
+          setTimeout(() => {
+            setDisableIntersectionObserver(false)
+          }, 500)
+        }
+      },
+    })
 
   // Reset active tranche when menu closes or when current bid changes
   useEffect(() => {

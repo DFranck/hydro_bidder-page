@@ -28,7 +28,6 @@ export function LoadingScreen({
   isFullscreen = false,
 }: LoadingScreenProps) {
   const [isVisible, setIsVisible] = useState(false)
-  const [loadingCount, setLoadingCount] = useState(0)
   const [barHeights, setBarHeights] = useState<number[]>(
     Array.from({ length: WAVE_COUNT }, () => MIN_HEIGHT),
   )
@@ -86,12 +85,10 @@ export function LoadingScreen({
       globalLoadingCount++
       globalLoadingStartTime = globalLoadingStartTime || Date.now()
 
-      setLoadingCount(globalLoadingCount)
       setIsVisible(true)
 
       return () => {
         globalLoadingCount = Math.max(0, globalLoadingCount - 1)
-        setLoadingCount(globalLoadingCount)
 
         if (globalLoadingCount === 0) {
           setIsVisible(false)
