@@ -14,7 +14,7 @@ These APRs fluctuate based on market conditions, bidder incentives, and liquidit
 
 ### Average APR
 
-The [Hydro bids page](https://hydro.cosmos.network/bids) displays the average APR available to Hydro voters. It is calculated by dividing the dollar value of the sum of all available tributes posted during the active round by the total dollar value of the locked voting power in Hydro. The exact formula is:
+The [Hydro bids page](https://hydro.markets/bids) displays the average APR available to Hydro voters. It is calculated by dividing the dollar value of the sum of all available tributes posted during the active round by the total dollar value of the locked voting power in Hydro. The exact formula is:
 
 $\text{Average APR} = \left(\frac{\sum_{\substack{i \in \text{current round bids}}} \text{tribute value}_i}{\text{total current round locked atom}_i}\right) \times 12$
 
