@@ -277,7 +277,7 @@ export default function LockupsPage() {
                 disabled={refreshLockups.length <= 1}
               >
                 <RotateCw className="size-4 text-palette-green" />
-                Refresh {`(${refreshLockups.length})`} Lockups
+                Refresh {refreshLockups.length} Lockups
               </StyledText>
             )}
             {expiredLockups.length > 0 && (
