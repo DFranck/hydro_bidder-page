@@ -117,7 +117,7 @@ export function RefreshMultipleLockups({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="md:w-base w-5/6"
+      className="md:w-[550px] w-5/6"
     >
       <form onSubmit={handleSubmitCreationForm}>
         <Card>
