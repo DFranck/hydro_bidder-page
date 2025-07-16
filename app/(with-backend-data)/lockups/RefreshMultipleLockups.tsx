@@ -110,6 +110,7 @@ export function RefreshMultipleLockups({
           : toastMessages.extendingLockupsSuccess,
       ])
       handleRefreshLockups()
+      setSelectedDuration(AllowedLockupPeriodInEpochs.ONE_EPOCH)
       setIsLoading(false)
       setIsCreationModalOpen(false)
     } catch (error) {
@@ -136,7 +137,7 @@ export function RefreshMultipleLockups({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="md:w-[550px] w-5/6"
+      className="w-5/6 md:w-[550px]"
     >
       <form onSubmit={handleSubmitCreationForm}>
         <Card>
@@ -180,7 +181,7 @@ export function RefreshMultipleLockups({
 
             <div className="flex flex-col">
               <StyledText className="font-semibold">Locked Tokens</StyledText>
-              <StyledText className="text-4xl font-bold text-palette-beige">
+              <StyledText className="text-palette-beige text-4xl font-bold">
                 {formatAmount(totalAmount, 0)}
               </StyledText>
             </div>
