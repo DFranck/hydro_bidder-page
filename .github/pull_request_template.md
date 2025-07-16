@@ -4,6 +4,8 @@ Before merging, please make sure you _and someone else_ have completed the follo
 
 - [ ] Created a new Lockup
 - [ ] Extended an existing Lockup
+- [ ] Split an existing Lockup
+- [ ] Merge existing Lockups
 
 **Bid Tests**
 
