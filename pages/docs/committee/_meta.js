@@ -2,22 +2,22 @@ const meta = {
   "members": {
     title: "Members",
   },
-  "risk-management": {
+  "risk": {
     title: "Risk Management",
   },
-  "deployment-performance": {
+  "performance": {
     title: "Deployment Performance",
   },
   "security": {
     title: "Security",
   },
-  "auction-performance": {
+  "auctions": {
     title: "Auction Performance",
   },
-  "deployment-execution": {
+  "execution": {
     title: "Deployment Execution",
   },
-  "coi-policy": {
+  "coi": {
     title: "COI Policy",
   },
 }

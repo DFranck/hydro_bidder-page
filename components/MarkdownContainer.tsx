@@ -12,27 +12,30 @@ export function MarkdownContainer({
 }) {
   const isMobile = useIsMobile(982)
 
-function insertZeroWidthSpaces(content: string, maxLength = 20, breakEvery = 10) {
-  return content.replace(
-    new RegExp(`[^\\s]{${maxLength},}`, "g"),
-    (segment) =>
-      segment.replace(new RegExp(`(.{${breakEvery}})`, "g"), "$1\u200B")
-  )
-}
-
+  function insertZeroWidthSpaces(
+    content: string,
+    maxLength = 20,
+    breakEvery = 10
+  ) {
+    return content.replace(
+      new RegExp(`[^\\s]{${maxLength},}`, "g"),
+      (segment) =>
+        segment.replace(new RegExp(`(.{${breakEvery}})`, "g"), "$1\u200B")
+    )
+  }
 
   const rawContent =
     content?.replaceAll(/\\n/g, "\n").replaceAll(/^#+/gm, "###") ?? ""
 
-  const formattedContent = isMobile ? insertZeroWidthSpaces(rawContent) : rawContent
+  const formattedContent = isMobile
+    ? insertZeroWidthSpaces(rawContent)
+    : rawContent
 
   return (
     <div
       className={twMerge(
         `
           prose
-          text-white
-          marker:text-white
           prose-headings:text-white
           prose-h1:tracking-normal
           prose-a:font-normal
@@ -53,6 +56,8 @@ function insertZeroWidthSpaces(content: string, maxLength = 20, breakEvery = 10)
           prose-td:px-3
           prose-td:py-1
           [&_a:hover]:text-palette-green
+          text-white
+          marker:text-white
         `,
         className
       )}

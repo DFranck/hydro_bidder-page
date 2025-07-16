@@ -335,7 +335,7 @@ export default function LockupsPage() {
                 <StyledText
                   as={Link}
                   variant="link"
-                  href="/docs/users/locking-lsm-shares"
+                  href="/docs/users/lockups"
                   target="_blank"
                   className="flex items-center gap-1 text-xs"
                 >

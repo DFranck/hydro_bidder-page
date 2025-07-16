@@ -9,7 +9,7 @@ export const classNames = {
   button: "cursor-pointer border-none bg-transparent text-white underline",
   formContainer: "space-y-8",
   radio:
-    "peer flex items-center text-sm opacity-60 appearance-none rounded-full size-5 border-2 border-gray-300 checked:bg-palette-green checked:border-palette-green checked:shadow-[0_0_0_2px_theme('colors.palette.text')_inset] checked:opacity-100",
+    "peer flex items-center text-sm opacity-60 appearance-none rounded-full size-5 border-2 border-gray-300 checked:bg-palette-green checked:border-palette-green checked:shadow-[0_0_0_2px_var(--color-palette-text)_inset] checked:opacity-100",
   radioLabel:
     "opacity-60 cursor-pointer peer-checked:opacity-100 peer-checked:font-bold whitespace-nowrap",
   infoBox:

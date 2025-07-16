@@ -157,7 +157,7 @@ export default function Home() {
     <AppWrapper>
       <main className={`flex min-h-screen w-full flex-col overflow-hidden`}>
         <div
-          className={`bg-gradient-to-t from-palette-text via-transparent to-transparent`}
+          className={`bg-linear-to-t from-palette-text via-transparent to-transparent`}
         >
           <ContentContainer
             className={`relative z-10 min-h-[70vh] justify-center gap-6`}
@@ -237,7 +237,7 @@ export default function Home() {
                   <StyledText
                     as="a"
                     variant="button.secondary.large"
-                    href="/docs/users/calculating-staking-apr"
+                    href="/docs/users/aprs"
                     target="_blank"
                   >
                     Learn More
@@ -258,7 +258,7 @@ export default function Home() {
           <HorizontalDivider />
         </div>
 
-        <div className={`bg-gradient-to-b from-palette-text to-[#0B1C45]`}>
+        <div className={`bg-linear-to-b from-palette-text to-[#0B1C45]`}>
           <ContentContainer className={`items-center space-y-6 py-20 lg:py-40`}>
             <div className="space-y-2 text-center">
               <StyledText as="div" variant="superHeading">
@@ -304,7 +304,7 @@ export default function Home() {
               <StyledText
                 as="a"
                 variant="button.secondary.large"
-                href="/docs/projects/whitelisting"
+                href="/docs/projects/overview"
                 target="_blank"
               >
                 Learn More <Icon name="solid:arrow-up-right" />

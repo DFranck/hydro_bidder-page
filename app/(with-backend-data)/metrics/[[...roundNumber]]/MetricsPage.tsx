@@ -128,7 +128,7 @@ export function MetricsPage({
 
           <div className="flex items-center backdrop-blur-sm">
             <Menu
-              className="relative z-[100]"
+              className="relative z-100"
               items={menuItems}
               classNameForPopup="left-auto -right-10 max-h-80 overflow-y-auto"
             >
