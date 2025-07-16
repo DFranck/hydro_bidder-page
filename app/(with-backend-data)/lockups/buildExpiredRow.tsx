@@ -10,20 +10,31 @@ import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
 import { getTimeBetweenDates } from "@/lib/getTimeBetweenDates"
-import { CircleSlash2, MoreHorizontal, RotateCw } from "lucide-react"
+import {
+  CircleSlash2,
+  MoreHorizontal,
+  RotateCw,
+  SquaresUnite,
+} from "lucide-react"
 
 export function buildExpiredRow({
   lockup,
+  mergeableLockups,
+  selectedExpiredLockups,
+  initMerge,
   onClickEdit,
   onClickSplit,
-  selectedExpiredLockups,
   setSelectedExpiredLockups,
+  findMergeableLockup,
 }: {
   lockup: AugmentedLockup
+  mergeableLockups: number[]
+  selectedExpiredLockups: number[]
+  initMerge: boolean
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
   onClickSplit: ({ lockup }: { lockup: AugmentedLockup }) => void
-  selectedExpiredLockups: number[]
   setSelectedExpiredLockups: (lockups: number[]) => void
+  findMergeableLockup: (lockups: number[]) => AugmentedLockup
 }) {
   const { daysLeft, dateStart, dateEnd } = lockup
 
@@ -33,14 +44,14 @@ export function buildExpiredRow({
     {
       label: "Refresh",
       icon: (
-        <RotateCw className="size-2 text-palette-red group-hover:text-white" />
+        <RotateCw className="text-palette-red size-2 group-hover:text-white" />
       ),
       cta: (lockup: AugmentedLockup) => onClickEdit({ lockup }),
     },
     {
       label: "Split",
       icon: (
-        <CircleSlash2 className="size-2 text-palette-red group-hover:text-white" />
+        <CircleSlash2 className="text-palette-red size-2 group-hover:text-white" />
       ),
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
@@ -57,15 +68,27 @@ export function buildExpiredRow({
     }
   }
 
+  const mergePair =
+    mergeableLockups.length > 0 &&
+    findMergeableLockup(mergeableLockups).funds.denom ===
+      lockup.funds.denom
+
   const cells = {
     _lockup: { ...lockup, daysLeft },
 
     select: (
-      <Checkbox
-        checked={selectedExpiredLockups?.includes(lockup.id)}
-        onCheckedChange={handleCheckboxChange}
-        className="mt-2"
-      />
+      <div className="flex w-10 items-center gap-2">
+        <Checkbox
+          checked={selectedExpiredLockups?.includes(lockup.id)}
+          onCheckedChange={handleCheckboxChange}
+          disabled={
+            initMerge && mergeableLockups.length !== 0 && !mergePair
+          }
+        />
+        {mergePair && initMerge ? (
+          <SquaresUnite className="size-3.5 animate-pulse" />
+        ) : null}
+      </div>
     ),
 
     amount: (
@@ -100,7 +123,7 @@ export function buildExpiredRow({
             <DropdownMenuItem
               key={item.label}
               onClick={() => item.cta(lockup)}
-              className="group text-palette-red hover:bg-palette-red hover:text-white"
+              className="text-palette-red hover:bg-palette-red group hover:text-white"
             >
               {item.icon}
               {item.label}

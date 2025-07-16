@@ -63,6 +63,21 @@ export const toastMessages = {
     message: "Reloading in progress.",
   },
 
+  mergingLockups: {
+    variant: "working",
+    message: "Merging your lockups in progress.",
+  },
+
+  mergingLockupsSuccess: {
+    variant: "success",
+    message: "Your merge was successful! Reloading in progress.",
+  },
+
+  mergingLockupsError: (error: Error) => ({
+    variant: "error",
+    message: `Error merging lockups: ${error}`,
+  }),
+
   extendingLockup: {
     variant: "working",
     message: "Extending your lockup in progress.",

@@ -11,23 +11,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { CircleSlash2, MoreHorizontal, RotateCw } from "lucide-react"
+import {
+  CircleSlash2,
+  MoreHorizontal,
+  RotateCw,
+  SquaresUnite,
+} from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 
 export function buildActiveRow({
   lockup,
+  mergeableLockups,
+  selectedActiveLockups,
+  initMerge,
   tranches,
   onClickEdit,
   onClickSplit,
-  selectedActiveLockups,
   setSelectedActiveLockups,
+  findMergeableLockup,
 }: {
   lockup: AugmentedLockup
+  selectedActiveLockups: number[]
+  mergeableLockups: number[]
+  initMerge: boolean
   tranches: Tranche[]
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
   onClickSplit: ({ lockup }: { lockup: AugmentedLockup }) => void
-  selectedActiveLockups: number[]
   setSelectedActiveLockups: (lockups: number[]) => void
+  findMergeableLockup: (lockups: number[]) => AugmentedLockup
 }) {
   const { daysLeft } = lockup
 
@@ -48,14 +59,14 @@ export function buildActiveRow({
     {
       label: "Refresh",
       icon: (
-        <RotateCw className="size-2 text-palette-green group-hover:text-white" />
+        <RotateCw className="text-palette-green size-2 group-hover:text-white" />
       ),
       cta: (lockup: AugmentedLockup) => onClickEdit({ lockup }),
     },
     {
       label: "Split",
       icon: (
-        <CircleSlash2 className="size-2 text-palette-green group-hover:text-white" />
+        <CircleSlash2 className="text-palette-green size-2 group-hover:text-white" />
       ),
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
@@ -72,15 +83,27 @@ export function buildActiveRow({
     }
   }
 
+  const mergePair =
+    mergeableLockups.length > 0 &&
+    findMergeableLockup(mergeableLockups).funds.denom ===
+      lockup.funds.denom
+
   const cells = {
     _lockup: { ...lockup, daysLeft },
 
     select: (
-      <Checkbox
-        checked={selectedActiveLockups?.includes(lockup.id)}
-        onCheckedChange={handleCheckboxChange}
-        className="mt-2"
-      />
+      <div className="flex w-10 items-center gap-2">
+        <Checkbox
+          checked={selectedActiveLockups?.includes(lockup.id)}
+          onCheckedChange={handleCheckboxChange}
+          disabled={
+            initMerge && mergeableLockups.length !== 0 && !mergePair
+          }
+        />
+        {mergePair && initMerge ? (
+          <SquaresUnite className="size-3.5 animate-pulse" />
+        ) : null}
+      </div>
     ),
 
     amount: (
@@ -119,7 +142,7 @@ export function buildActiveRow({
             <DropdownMenuItem
               key={item.label}
               onClick={() => item.cta(lockup)}
-              className="group hover:bg-palette-green/70"
+              className="hover:bg-palette-green/70 group"
             >
               {item.icon}
               {item.label}

@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils"
 import { SplitLockupModal } from "@/components/SplitLockupModal"
 import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
 import { RotateCw } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -86,6 +87,8 @@ export default function LockupsPage() {
   const [selectedExpiredLockups, setSelectedExpiredLockups] = useState<
     number[]
   >([])
+
+  const [initMerge, setInitMerge] = useState(false)
 
   const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
@@ -164,6 +167,7 @@ export default function LockupsPage() {
   function handleRefreshLockups() {
     setSelectedExpiredLockups([])
     setSelectedActiveLockups([])
+    setInitMerge(false)
   }
 
   function handleRefreshModal() {
@@ -278,7 +282,8 @@ export default function LockupsPage() {
                 disabled={refreshLockups.length <= 1}
               >
                 <RotateCw className="size-4 text-palette-green" />
-                Refresh {refreshLockups.length} Lockups
+                {initMerge ? "Merge" : "Refresh"} {refreshLockups.length}{" "}
+                Lockups
               </StyledText>
             )}
             {expiredLockups.length > 0 && (
@@ -317,7 +322,22 @@ export default function LockupsPage() {
             </ConditionalWrapper>
           </div>
         </div>
-
+        {lockups.length > 1 ? (
+          <div className="flex items-center justify-end space-x-2">
+            <Switch
+              checked={initMerge}
+              onCheckedChange={() => setInitMerge(!initMerge)}
+              disabled={refreshLockups.length > 1}
+            />
+            <StyledText
+              className={cn("w-28 text-sm", {
+                "text-gray-400": !initMerge,
+              })}
+            >
+              Merge {initMerge ? "enabled" : "disabled"}
+            </StyledText>
+          </div>
+        ) : null}
         {lockups.length === 0 ? (
           <BlurryBackdropBox className="flex flex-col gap-6">
             <EmptyBox className="flex flex-col gap-1">
@@ -349,6 +369,7 @@ export default function LockupsPage() {
           </BlurryBackdropBox>
         ) : (
           <LockupsTables
+            initMerge={initMerge}
             selectedActiveLockups={selectedActiveLockups}
             selectedExpiredLockups={selectedExpiredLockups}
             setSelectedActiveLockups={setSelectedActiveLockups}
@@ -453,6 +474,7 @@ export default function LockupsPage() {
       />
 
       <RefreshMultipleLockups
+        initMerge={initMerge}
         lockups={lockups}
         isCreationModalOpen={refreshMultipleLockups}
         refreshLockups={refreshLockups}
