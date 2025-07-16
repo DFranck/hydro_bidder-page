@@ -17,8 +17,10 @@ import { RowComponent } from "./RowComponent"
 
 export function LockupsTables({
   onClickEdit,
+  onClickSplit,
 }: {
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
+  onClickSplit: ({ lockup }: { lockup: AugmentedLockup }) => void
 }) {
   const { lockups, tranches } = useBackendData()
 
@@ -30,7 +32,7 @@ export function LockupsTables({
       buildActiveColumns<ActiveRow>({ tranches }),
       buildExpiredColumns<ExpiredRow>(),
     ],
-    [tranches],
+    [tranches]
   )
 
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
@@ -43,16 +45,18 @@ export function LockupsTables({
           lockup,
           tranches,
           onClickEdit,
-        }),
+          onClickSplit,
+        })
       ),
       expiredLockups.map((lockup) =>
         buildExpiredRow({
           lockup,
           onClickEdit,
-        }),
+          onClickSplit,
+        })
       ),
     ]
-  }, [lockups, tranches, onClickEdit])
+  }, [lockups, tranches, onClickEdit, onClickSplit])
 
   const activeCellRenderers = useMemo(() => {
     return {
@@ -65,7 +69,12 @@ export function LockupsTables({
             className={twMerge(cellProps.className, isExpired && "border-x-0")}
             colSpan={isExpired ? tranches.length : undefined}
           >
-            <StyledText key={`text_cell_${row._lockup.id}-1`} as="div" variant="label" className="mb-1 sm:hidden">
+            <StyledText
+              key={`text_cell_${row._lockup.id}-1`}
+              as="div"
+              variant="label"
+              className="mb-1 sm:hidden"
+            >
               {tranches[0].name}
             </StyledText>
 

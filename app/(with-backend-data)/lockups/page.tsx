@@ -39,6 +39,7 @@ import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { cn } from "@/lib/utils"
+import { SplitLockupModal } from "@/components/SplitLockupModal"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -65,6 +66,7 @@ export default function LockupsPage() {
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isSplitModalOpen, setIsSplitModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [token, setToken] = useState<{
     name: "stATOM" | "dATOM"
@@ -311,6 +313,10 @@ export default function LockupsPage() {
               setIsEditModalOpen(true)
               setLockupBeingEdited(lockup)
             }}
+            onClickSplit={({ lockup }) => {
+              setIsSplitModalOpen(true)
+              setLockupBeingEdited(lockup)
+            }}
           />
         )}
       </ContentContainer>
@@ -319,6 +325,13 @@ export default function LockupsPage() {
         lockup={lockupBeingEdited}
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
+        onCloseComplete={() => setLockupBeingEdited(null)}
+      />
+
+      <SplitLockupModal
+        lockup={lockupBeingEdited}
+        isOpen={isSplitModalOpen}
+        onClose={() => setIsSplitModalOpen(false)}
         onCloseComplete={() => setLockupBeingEdited(null)}
       />
 
