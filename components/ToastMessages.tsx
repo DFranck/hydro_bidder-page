@@ -103,6 +103,16 @@ export const toastMessages = {
     message: `Error extending lockup${type === "single" ? null : "s"}: ${error}`,
   }),
 
+  splittingLockup: {
+    variant: "working",
+    message: "Splitting your lockup in progress.",
+  },
+
+  splittingLockupSuccess: {
+    variant: "success",
+    message: "Lockup has been split successfully! Reloading in progress.",
+  },
+
   splittingLockupError: (error: Error) => ({
     variant: "error",
     message: `Error splitting lockup: ${error}`,
