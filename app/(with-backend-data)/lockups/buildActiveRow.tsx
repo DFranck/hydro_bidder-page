@@ -18,6 +18,12 @@ import {
   SquaresUnite,
 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Tooltip } from "@/components/Tooltip"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import {
+  mergeableDenomTooltip,
+  mergeIndicatorTooltip,
+} from "@/components/ToolTips"
 
 export function buildActiveRow({
   lockup,
@@ -85,23 +91,53 @@ export function buildActiveRow({
 
   const mergePair =
     mergeableLockups.length > 0 &&
-    findMergeableLockup(mergeableLockups).funds.denom ===
-      lockup.funds.denom
+    findMergeableLockup(mergeableLockups).funds.denom === lockup.funds.denom
 
   const cells = {
     _lockup: { ...lockup, daysLeft },
 
     select: (
       <div className="flex w-10 items-center gap-2">
-        <Checkbox
-          checked={selectedActiveLockups?.includes(lockup.id)}
-          onCheckedChange={handleCheckboxChange}
-          disabled={
-            initMerge && mergeableLockups.length !== 0 && !mergePair
-          }
-        />
+        <ConditionalWrapper
+          condition={initMerge && mergeableLockups.length !== 0 && !mergePair}
+          wrapper={(children) => (
+            <Tooltip
+              classNamesForTooltip="md:w-96"
+              tipContents={mergeableDenomTooltip({
+                lockup: {
+                  denom: lockup.funds.denomInfo?.humanReadableDenom,
+                  validator: lockup.funds.denomInfo?.validator,
+                },
+                selectedLockup: {
+                  denom:
+                    findMergeableLockup(mergeableLockups).funds.denomInfo
+                      ?.humanReadableDenom,
+                  validator:
+                    findMergeableLockup(mergeableLockups).funds.denomInfo
+                      ?.validator,
+                },
+              })}
+            >
+              <div className="pointer-events-none cursor-not-allowed opacity-50">
+                {children}
+              </div>
+            </Tooltip>
+          )}
+        >
+          <Checkbox
+            checked={selectedActiveLockups?.includes(lockup.id)}
+            onCheckedChange={handleCheckboxChange}
+            disabled={initMerge && mergeableLockups.length !== 0 && !mergePair}
+          />
+        </ConditionalWrapper>
+
         {mergePair && initMerge ? (
-          <SquaresUnite className="size-3.5 animate-pulse" />
+          <Tooltip
+            tipContents={mergeIndicatorTooltip}
+            classNamesForTooltip="md:w-96"
+          >
+            <SquaresUnite className="size-3.5 animate-pulse" />
+          </Tooltip>
         ) : null}
       </div>
     ),

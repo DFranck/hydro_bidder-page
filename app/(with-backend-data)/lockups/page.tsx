@@ -19,6 +19,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   initializingLockupsTooltip,
   lockupLimitTooltip,
+  mergingTooltip,
   needsWalletConnectionTooltip,
   notEligibleTooltip,
 } from "@/components/ToolTips"
@@ -281,7 +282,7 @@ export default function LockupsPage() {
                 onClick={handleRefreshModal}
                 disabled={refreshLockups.length <= 1}
               >
-                <RotateCw className="size-4 text-palette-green" />
+                <RotateCw className="text-palette-green size-4" />
                 {initMerge ? "Merge" : "Refresh"} {refreshLockups.length}{" "}
                 Lockups
               </StyledText>
@@ -323,19 +324,26 @@ export default function LockupsPage() {
           </div>
         </div>
         {lockups.length > 1 ? (
-          <div className="flex items-center justify-end space-x-2">
-            <Switch
-              checked={initMerge}
-              onCheckedChange={() => setInitMerge(!initMerge)}
-              disabled={refreshLockups.length > 1}
-            />
-            <StyledText
-              className={cn("w-28 text-sm", {
-                "text-gray-400": !initMerge,
-              })}
+          <div className="flex justify-end">
+            <Tooltip
+              classNamesForTooltip="w-96  -translate-x-10/12 md:w-5/12"
+              tipContents={mergingTooltip}
             >
-              Merge {initMerge ? "enabled" : "disabled"}
-            </StyledText>
+              <div className="flex items-center  space-x-2">
+                <Switch
+                  checked={initMerge}
+                  onCheckedChange={() => setInitMerge(!initMerge)}
+                  disabled={refreshLockups.length > 1}
+                />
+                <StyledText
+                  className={cn("w-28 text-sm", {
+                    "text-gray-400": !initMerge,
+                  })}
+                >
+                  Merge {initMerge ? "enabled" : "disabled"}
+                </StyledText>
+              </div>
+            </Tooltip>
           </div>
         ) : null}
         {lockups.length === 0 ? (
