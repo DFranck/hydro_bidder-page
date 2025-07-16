@@ -12,17 +12,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { CircleSlash2, MoreHorizontal, RotateCw } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export function buildActiveRow({
   lockup,
   tranches,
   onClickEdit,
   onClickSplit,
+  selectedActiveLockups,
+  setSelectedActiveLockups,
 }: {
   lockup: AugmentedLockup
   tranches: Tranche[]
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
   onClickSplit: ({ lockup }: { lockup: AugmentedLockup }) => void
+  selectedActiveLockups: number[]
+  setSelectedActiveLockups: (lockups: number[]) => void
 }) {
   const { daysLeft } = lockup
 
@@ -55,9 +60,28 @@ export function buildActiveRow({
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
   ]
+  const handleCheckboxChange = (checked: boolean) => {
+    if (checked) {
+      if (!selectedActiveLockups.includes(lockup.id)) {
+        setSelectedActiveLockups([...selectedActiveLockups, lockup.id])
+      }
+    } else {
+      setSelectedActiveLockups(
+        selectedActiveLockups.filter((id) => id !== lockup.id)
+      )
+    }
+  }
 
   const cells = {
     _lockup: { ...lockup, daysLeft },
+
+    select: (
+      <Checkbox
+        checked={selectedActiveLockups?.includes(lockup.id)}
+        onCheckedChange={handleCheckboxChange}
+        className="mt-2"
+      />
+    ),
 
     amount: (
       <div className="flex items-center gap-1">

@@ -40,6 +40,8 @@ import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { cn } from "@/lib/utils"
 import { SplitLockupModal } from "@/components/SplitLockupModal"
+import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
+import { RotateCw } from "lucide-react"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -63,11 +65,13 @@ export default function LockupsPage() {
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
+
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isSplitModalOpen, setIsSplitModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [refreshMultipleLockups, setRefreshMultipleLockups] = useState(false)
   const [token, setToken] = useState<{
     name: "stATOM" | "dATOM"
     amount: number
@@ -75,6 +79,15 @@ export default function LockupsPage() {
     name: "dATOM",
     amount: 0,
   })
+
+  const [selectedActiveLockups, setSelectedActiveLockups] = useState<number[]>(
+    []
+  )
+  const [selectedExpiredLockups, setSelectedExpiredLockups] = useState<
+    number[]
+  >([])
+
+  const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
   const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
 
@@ -148,6 +161,15 @@ export default function LockupsPage() {
     setIsConfirmingUnlockExpired(false)
   }
 
+  function handleRefreshLockups() {
+    setSelectedExpiredLockups([])
+    setSelectedActiveLockups([])
+  }
+
+  function handleRefreshModal() {
+    setRefreshMultipleLockups(true)
+  }
+
   useEffect(() => {
     if (!incompleteNotices.length) {
       setToasts([])
@@ -167,6 +189,12 @@ export default function LockupsPage() {
       },
     ])
   }, [incompleteNotices])
+
+  useEffect(() => {
+    if (isLoading) {
+      handleRefreshLockups()
+    }
+  }, [isLoading])
 
   return (
     <>
@@ -241,6 +269,18 @@ export default function LockupsPage() {
               md:items-center
             "
           >
+            {lockups.length > 0 && (
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                className="flex items-center gap-2"
+                onClick={handleRefreshModal}
+                disabled={refreshLockups.length <= 1}
+              >
+                <RotateCw className="size-4 text-palette-green" />
+                Refresh {refreshLockups.length} Lockups
+              </StyledText>
+            )}
             {expiredLockups.length > 0 && (
               <StyledText
                 as="button"
@@ -297,7 +337,7 @@ export default function LockupsPage() {
                 <StyledText
                   as={Link}
                   variant="link"
-                  href="/docs/users/locking-lsm-shares"
+                  href="/docs/users/lockups"
                   target="_blank"
                   className="flex items-center gap-1 text-xs"
                 >
@@ -309,6 +349,10 @@ export default function LockupsPage() {
           </BlurryBackdropBox>
         ) : (
           <LockupsTables
+            selectedActiveLockups={selectedActiveLockups}
+            selectedExpiredLockups={selectedExpiredLockups}
+            setSelectedActiveLockups={setSelectedActiveLockups}
+            setSelectedExpiredLockups={setSelectedExpiredLockups}
             onClickEdit={({ lockup }) => {
               setIsEditModalOpen(true)
               setLockupBeingEdited(lockup)
@@ -406,6 +450,16 @@ export default function LockupsPage() {
         setIsCreationModalOpen={setIsOpen}
         handleCreationModalWindowClose={handleCreationModalWindowClose}
         handleModalWindowCloseComplete={handleModalWindowCloseComplete}
+      />
+
+      <RefreshMultipleLockups
+        lockups={lockups}
+        isCreationModalOpen={refreshMultipleLockups}
+        refreshLockups={refreshLockups}
+        handleRefreshLockups={handleRefreshLockups}
+        setIsCreationModalOpen={setRefreshMultipleLockups}
+        handleCreationModalWindowClose={() => setRefreshMultipleLockups(false)}
+        handleModalWindowCloseComplete={() => setRefreshMultipleLockups(false)}
       />
     </>
   )

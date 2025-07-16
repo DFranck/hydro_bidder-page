@@ -221,7 +221,7 @@ export function Step({
       className={cn("m-6 grid gap-4 md:m-auto", {
         "h-auto  w-[350px] md:h-[300px] md:w-[650px] md:grid-cols-1":
           !currentStep,
-        "w-md md:grid-cols-12": !!currentStep,
+        "w-[800px] md:grid-cols-12": !!currentStep,
       })}
     >
       {!!currentStep && (

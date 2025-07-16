@@ -33,7 +33,7 @@ export const averageAPRTooltip = (
       <StyledText
         variant="link"
         as={Link}
-        href="/docs/users/calculating-staking-apr"
+        href="/docs/users/aprs"
         target="_blank"
       >
         <span>Learn More</span>
@@ -221,7 +221,7 @@ export const currentRoundNumLiveBidsTooltip = ({
       <StyledText
         variant="link"
         as={Link}
-        href="/docs/users/voting-for-projects#tribute"
+        href="/docs/users/projects/bids#tribute-additions"
         target="_blank"
       >
         Learn More
@@ -386,7 +386,7 @@ export const lockAtomToVoteTooltip = (
     to gain voting power for this bid.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/voting-for-projects"
+      href="/docs/users/lockups#liquid-staking-module"
       target="_blank"
       variant="link"
       className="inline-flex items-center gap-1"
@@ -403,7 +403,7 @@ export const extendLockupsToVoteTooltip = (
     deployment duration. You can extend your lockups to vote for this bid.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/voting-for-projects"
+      href="/docs/users/bids#custom-durations"
       target="_blank"
       variant="link"
       className="inline-flex items-center gap-1"
@@ -445,7 +445,7 @@ export const metricsPolRewardsColumnTooltip = (
     distributed to voters at the end of the round.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/calculating-staking-apr"
+      href="/docs/users/aprs"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -461,7 +461,7 @@ export const metricsPolSizeColumnTooltip = (
     The total amount of ATOM allocated to this bid during the specified round.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/users/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -488,7 +488,7 @@ export const metricsTributeColumnTooltip = (
     tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -506,7 +506,7 @@ export const liveBidTributeAprColumnTooltip = (
     adjust tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -523,7 +523,7 @@ export const pastBidTributeAprMetricsPageColumnTooltip = (
     at the end of the round.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -540,7 +540,7 @@ export const pastBidTributeAprBidsPageColumnTooltip = (
     this round. It updates as bidders adjust tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -599,7 +599,7 @@ export const polAvailableTooltip = (
     Committee as PoL.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -622,7 +622,7 @@ export const polDurationTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href="docs/users/voting-for-projects#voting-eligibility-based-on-pol-duration"
+      href="docs/users/bids#custom-durations"
       target="_blank"
       className="inline-flex items-center gap-1"
     >
@@ -638,7 +638,7 @@ export const polRevenueTooltip = (
     including rewards and tribute from funded bids.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/users/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -674,7 +674,7 @@ export const rewardsYourTributeTooltip = (
 
 export const timeLeftTooltip = (currentRoundEndDate: Date) => {
   const formattedEndDate = currentRoundEndDate
-    ? currentRoundEndDate.toLocaleString(undefined, {
+    ? currentRoundEndDate.toLocaleString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -689,7 +689,7 @@ export const timeLeftTooltip = (currentRoundEndDate: Date) => {
       the round to receive tributes.{" "}
       <StyledText
         as="a"
-        href="/docs/users/voting-for-projects"
+        href="/docs/users/bids"
         variant="link"
         target="_blank"
         className="whitespace-nowrap"
@@ -964,7 +964,7 @@ export const bidDetailsPolSizeTooltip = (
     round.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/users/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -990,7 +990,7 @@ export const bidDetailsMaxDeploymentAmountTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href="/docs/projects/bidding#minimum-tribute-floor-and-maximum-deployment-amount"
+      href="/docs#tribute-floor"
       target="_blank"
     >
       <span>Learn More</span>

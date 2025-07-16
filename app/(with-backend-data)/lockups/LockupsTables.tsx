@@ -14,49 +14,80 @@ import { buildActiveRow } from "./buildActiveRow"
 import { buildExpiredColumns } from "./buildExpiredColumns"
 import { buildExpiredRow } from "./buildExpiredRow"
 import { RowComponent } from "./RowComponent"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export function LockupsTables({
   onClickEdit,
   onClickSplit,
+  selectedActiveLockups,
+  selectedExpiredLockups,
+  setSelectedActiveLockups,
+  setSelectedExpiredLockups,
 }: {
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
   onClickSplit: ({ lockup }: { lockup: AugmentedLockup }) => void
+  selectedActiveLockups: number[]
+  selectedExpiredLockups: number[]
+  setSelectedActiveLockups: (lockups: number[]) => void
+  setSelectedExpiredLockups: (lockups: number[]) => void
 }) {
   const { lockups, tranches } = useBackendData()
 
   type ActiveRow = (typeof activeLockupRows)[number]
   type ExpiredRow = (typeof expiredLockupRows)[number]
 
-  const [activeColumnDescriptors, expiredColumnDescriptors] = useMemo(
-    () => [
-      buildActiveColumns<ActiveRow>({ tranches }),
-      buildExpiredColumns<ExpiredRow>(),
-    ],
-    [tranches]
-  )
+  const allActiveLockups = lockups.filter((lockup) => !lockup.isExpired)
+  const allExpiredLockups = lockups.filter((lockup) => lockup.isExpired)
+
+  const allSelectedActive =
+    selectedActiveLockups?.length === allActiveLockups.length &&
+    selectedActiveLockups?.length > 0
+
+  const allSelectedExpired =
+    selectedExpiredLockups?.length === allExpiredLockups.length &&
+    selectedExpiredLockups?.length > 0
 
   const [activeLockupRows, expiredLockupRows] = useMemo(() => {
-    const activeLockups = lockups.filter((lockup) => !lockup.isExpired)
-    const expiredLockups = lockups.filter((lockup) => lockup.isExpired)
-
     return [
-      activeLockups.map((lockup) =>
+      allActiveLockups.map((lockup) =>
         buildActiveRow({
           lockup,
           tranches,
           onClickEdit,
           onClickSplit,
+          selectedActiveLockups,
+          setSelectedActiveLockups,
         })
       ),
-      expiredLockups.map((lockup) =>
+      allExpiredLockups.map((lockup) =>
         buildExpiredRow({
           lockup,
           onClickEdit,
           onClickSplit,
+          selectedExpiredLockups,
+          setSelectedExpiredLockups,
         })
       ),
     ]
-  }, [lockups, tranches, onClickEdit, onClickSplit])
+  }, [
+    lockups,
+    allActiveLockups,
+    allExpiredLockups,
+    selectedActiveLockups,
+    selectedExpiredLockups,
+    tranches,
+    onClickEdit,
+  ])
+
+  const [activeColumnDescriptors, expiredColumnDescriptors] = useMemo(
+    () => [
+      buildActiveColumns<ActiveRow>({
+        tranches,
+      }),
+      buildExpiredColumns<ExpiredRow>(),
+    ],
+    [tranches]
+  )
 
   const activeCellRenderers = useMemo(() => {
     return {
@@ -99,6 +130,24 @@ export function LockupsTables({
     } as any
   }, [tranches])
 
+  const handleSelectAllActiveChange = (checked: boolean) => {
+    if (checked) {
+      setSelectedActiveLockups([...allActiveLockups.map((lockup) => lockup.id)])
+    } else {
+      setSelectedActiveLockups([])
+    }
+  }
+
+  const handleSelectAllExpiredChange = (checked: boolean) => {
+    if (checked) {
+      setSelectedExpiredLockups([
+        ...allExpiredLockups.map((lockup) => lockup.id),
+      ])
+    } else {
+      setSelectedExpiredLockups([])
+    }
+  }
+
   return (
     <div className="flex flex-col gap-12">
       <BlurryBackdropBox
@@ -107,9 +156,16 @@ export function LockupsTables({
       >
         <TableHeader
           leftSlot={
-            <StyledText variant="h4">
-              {expiredLockupRows.length > 0 && "Active "}Lockups
-            </StyledText>
+            <div className="flex items-center justify-between gap-4">
+              <Checkbox
+                checked={allSelectedActive}
+                disabled={allActiveLockups.length === 0}
+                onCheckedChange={handleSelectAllActiveChange}
+              />
+              <StyledText variant="h4">
+                {expiredLockupRows.length > 0 && "Active "}Lockups
+              </StyledText>
+            </div>
           }
           rightSlot={
             expiredLockupRows.length > 0 && (
@@ -149,7 +205,16 @@ export function LockupsTables({
           className="group flex flex-col gap-3"
         >
           <TableHeader
-            leftSlot={<StyledText variant="h4">Expired Lockups</StyledText>}
+            leftSlot={
+              <div className="flex items-center justify-between gap-4">
+                <Checkbox
+                  checked={allSelectedExpired}
+                  disabled={allExpiredLockups.length === 0}
+                  onCheckedChange={handleSelectAllExpiredChange}
+                />
+                <StyledText variant="h4">Expired Lockups</StyledText>
+              </div>
+            }
             rightSlot={
               activeLockupRows.length > 0 && (
                 <StyledText as={Link} variant="link" href="#active-lockups">

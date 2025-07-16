@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Checkbox } from "@/components/ui/checkbox"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
@@ -15,10 +16,14 @@ export function buildExpiredRow({
   lockup,
   onClickEdit,
   onClickSplit,
+  selectedExpiredLockups,
+  setSelectedExpiredLockups,
 }: {
   lockup: AugmentedLockup
   onClickEdit: ({ lockup }: { lockup: AugmentedLockup }) => void
   onClickSplit: ({ lockup }: { lockup: AugmentedLockup }) => void
+  selectedExpiredLockups: number[]
+  setSelectedExpiredLockups: (lockups: number[]) => void
 }) {
   const { daysLeft, dateStart, dateEnd } = lockup
 
@@ -40,9 +45,28 @@ export function buildExpiredRow({
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
   ]
+  const handleCheckboxChange = (checked: boolean) => {
+    if (checked) {
+      if (!selectedExpiredLockups.includes(lockup.id)) {
+        setSelectedExpiredLockups([...selectedExpiredLockups, lockup.id])
+      }
+    } else {
+      setSelectedExpiredLockups(
+        selectedExpiredLockups.filter((id) => id !== lockup.id)
+      )
+    }
+  }
 
   const cells = {
     _lockup: { ...lockup, daysLeft },
+
+    select: (
+      <Checkbox
+        checked={selectedExpiredLockups?.includes(lockup.id)}
+        onCheckedChange={handleCheckboxChange}
+        className="mt-2"
+      />
+    ),
 
     amount: (
       <div className="flex items-center gap-1">
