@@ -27,6 +27,7 @@
     "@netlify/blobs": "^8.2.0",
     "@netlify/functions": "^3.1.10",
     "@radix-ui/react-accordion": "^1.2.11",
+    "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@skip-go/client": "^0.16.17",
     "@supabase/supabase-js": "^2.50.3",
