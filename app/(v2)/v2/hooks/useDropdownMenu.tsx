@@ -57,8 +57,11 @@ export function useDropdownMenu({
   })
 
   // Always call hooks to maintain consistent order
-  const clickInteraction = useClick(context)
+  const clickInteraction = useClick(context, {
+    enabled: interaction === 'click' || interaction === 'both',
+  })
   const hoverInteraction = useHover(context, {
+    enabled: interaction === 'hover' || interaction === 'both',
     delay: {
       open: 200,
       close: 300,

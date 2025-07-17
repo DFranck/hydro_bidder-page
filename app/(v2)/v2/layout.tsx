@@ -1,3 +1,4 @@
+import { AddToHomeScreenBanner } from '@v2/components/AddToHomeScreenBanner'
 import { AppHeader } from '@v2/components/AppHeader'
 import { AppPageContainer } from '@v2/components/AppPageContainer'
 import { ClientWalletProvider } from '@v2/components/ClientWalletProvider'
@@ -39,6 +40,8 @@ export default async function Layout({
           </main>
 
           {modal}
+
+          <AddToHomeScreenBanner />
         </div>
 
         <LayoutLoadingOverlay />
