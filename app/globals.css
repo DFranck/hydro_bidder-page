@@ -72,6 +72,7 @@
 @custom-variant is-open (&:where([data-is-open="true"], [data-is-open="true"] *));
 @custom-variant is-sidebar-open (&:where([data-is-sidebar-open="true"] *));
 @custom-variant is-sidebar-closed (&:where([data-is-sidebar-closed="true"] *));
+@custom-variant is-stuck (&:where([data-is-stuck="true"], [data-is-stuck="true"] *));
 @custom-variant is-connected (&:where([data-is-connected="true"], [data-is-connected="true"] *));
 
 @custom-variant is-voted-on (&:where([data-is-voted-on="true"], [data-is-voted-on="true"] *));
@@ -149,6 +150,9 @@
   @apply gap-tightest px-loose;
   @apply rounded-sm;
   @apply text-center leading-[1.1em] whitespace-nowrap;
+  @apply disabled:cursor-not-allowed;
+  @apply disabled:pointer-events-none;
+  @apply disabled:opacity-50;
 }
 
 @utility btn-primary {
