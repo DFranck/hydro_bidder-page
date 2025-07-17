@@ -86,7 +86,7 @@ export function SplitLockupModal({
       return
     }
 
-    setInputError((prev) => false)
+    setInputError(false)
     setSplitAmount(clampedValue)
     TokenBalance(newTokenBalance)
 

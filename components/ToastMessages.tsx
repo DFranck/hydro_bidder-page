@@ -63,15 +63,45 @@ export const toastMessages = {
     message: "Reloading in progress.",
   },
 
+  mergingLockups: {
+    variant: "working",
+    message: "Merging your lockups in progress.",
+  },
+
+  mergingLockupsSuccess: {
+    variant: "success",
+    message: "Your merge was successful! Reloading in progress.",
+  },
+
+  mergingLockupsError: (error: Error) => ({
+    variant: "error",
+    message: `Error merging lockups: ${error}`,
+  }),
+
   extendingLockup: {
     variant: "working",
     message: "Extending your lockup in progress.",
+  },
+
+  extendingLockups: {
+    variant: "working",
+    message: "Extending your lockups in progress.",
   },
 
   extendingLockupSuccess: {
     variant: "success",
     message: "Lockup extended successfully! Reloading in progress.",
   },
+
+  extendingLockupsSuccess: {
+    variant: "success",
+    message: "Lockups extended successfully! Reloading in progress.",
+  },
+
+  extendingLockupError: (error: Error, type: "single" | "multiple") => ({
+    variant: "error",
+    message: `Error extending lockup${type === "single" ? null : "s"}: ${error}`,
+  }),
 
   splittingLockup: {
     variant: "working",
@@ -82,11 +112,6 @@ export const toastMessages = {
     variant: "success",
     message: "Lockup has been split successfully! Reloading in progress.",
   },
-
-  extendingLockupError: (error: Error) => ({
-    variant: "error",
-    message: `Error extending lockup: ${error}`,
-  }),
 
   splittingLockupError: (error: Error) => ({
     variant: "error",

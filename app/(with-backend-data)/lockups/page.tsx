@@ -19,6 +19,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   initializingLockupsTooltip,
   lockupLimitTooltip,
+  mergingTooltip,
   needsWalletConnectionTooltip,
   notEligibleTooltip,
 } from "@/components/ToolTips"
@@ -40,6 +41,9 @@ import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { cn } from "@/lib/utils"
 import { SplitLockupModal } from "@/components/SplitLockupModal"
+import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
+import { RotateCw } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -63,11 +67,13 @@ export default function LockupsPage() {
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
+
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isSplitModalOpen, setIsSplitModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [refreshMultipleLockups, setRefreshMultipleLockups] = useState(false)
   const [token, setToken] = useState<{
     name: "stATOM" | "dATOM"
     amount: number
@@ -75,6 +81,17 @@ export default function LockupsPage() {
     name: "dATOM",
     amount: 0,
   })
+
+  const [selectedActiveLockups, setSelectedActiveLockups] = useState<number[]>(
+    []
+  )
+  const [selectedExpiredLockups, setSelectedExpiredLockups] = useState<
+    number[]
+  >([])
+
+  const [initMerge, setInitMerge] = useState(false)
+
+  const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
   const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
 
@@ -148,6 +165,16 @@ export default function LockupsPage() {
     setIsConfirmingUnlockExpired(false)
   }
 
+  function handleRefreshLockups() {
+    setSelectedExpiredLockups([])
+    setSelectedActiveLockups([])
+    setInitMerge(false)
+  }
+
+  function handleRefreshModal() {
+    setRefreshMultipleLockups(true)
+  }
+
   useEffect(() => {
     if (!incompleteNotices.length) {
       setToasts([])
@@ -167,6 +194,12 @@ export default function LockupsPage() {
       },
     ])
   }, [incompleteNotices])
+
+  useEffect(() => {
+    if (isLoading) {
+      handleRefreshLockups()
+    }
+  }, [isLoading])
 
   return (
     <>
@@ -241,6 +274,19 @@ export default function LockupsPage() {
               md:items-center
             "
           >
+            {lockups.length > 0 && (
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                className="flex items-center gap-2"
+                onClick={handleRefreshModal}
+                disabled={refreshLockups.length <= 1}
+              >
+                <RotateCw className="text-palette-green size-4" />
+                {initMerge ? "Merge" : "Refresh"} {refreshLockups.length}{" "}
+                Lockups
+              </StyledText>
+            )}
             {expiredLockups.length > 0 && (
               <StyledText
                 as="button"
@@ -277,7 +323,29 @@ export default function LockupsPage() {
             </ConditionalWrapper>
           </div>
         </div>
-
+        {lockups.length > 1 ? (
+          <div className="flex justify-end">
+            <Tooltip
+              classNamesForTooltip="w-96  -translate-x-10/12 md:w-5/12"
+              tipContents={mergingTooltip}
+            >
+              <div className="flex items-center  space-x-2">
+                <Switch
+                  checked={initMerge}
+                  onCheckedChange={() => setInitMerge(!initMerge)}
+                  disabled={refreshLockups.length > 1}
+                />
+                <StyledText
+                  className={cn("w-28 text-sm", {
+                    "text-gray-400": !initMerge,
+                  })}
+                >
+                  Merge {initMerge ? "enabled" : "disabled"}
+                </StyledText>
+              </div>
+            </Tooltip>
+          </div>
+        ) : null}
         {lockups.length === 0 ? (
           <BlurryBackdropBox className="flex flex-col gap-6">
             <EmptyBox className="flex flex-col gap-1">
@@ -309,6 +377,11 @@ export default function LockupsPage() {
           </BlurryBackdropBox>
         ) : (
           <LockupsTables
+            initMerge={initMerge}
+            selectedActiveLockups={selectedActiveLockups}
+            selectedExpiredLockups={selectedExpiredLockups}
+            setSelectedActiveLockups={setSelectedActiveLockups}
+            setSelectedExpiredLockups={setSelectedExpiredLockups}
             onClickEdit={({ lockup }) => {
               setIsEditModalOpen(true)
               setLockupBeingEdited(lockup)
@@ -406,6 +479,17 @@ export default function LockupsPage() {
         setIsCreationModalOpen={setIsOpen}
         handleCreationModalWindowClose={handleCreationModalWindowClose}
         handleModalWindowCloseComplete={handleModalWindowCloseComplete}
+      />
+
+      <RefreshMultipleLockups
+        initMerge={initMerge}
+        lockups={lockups}
+        isCreationModalOpen={refreshMultipleLockups}
+        refreshLockups={refreshLockups}
+        handleRefreshLockups={handleRefreshLockups}
+        setIsCreationModalOpen={setRefreshMultipleLockups}
+        handleCreationModalWindowClose={() => setRefreshMultipleLockups(false)}
+        handleModalWindowCloseComplete={() => setRefreshMultipleLockups(false)}
       />
     </>
   )

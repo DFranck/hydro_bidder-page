@@ -2,18 +2,14 @@ import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { invariant } from "ts-invariant"
 
-export async function executeWalletExtendLockup({
+export async function executeWalletMergeLockups({
   address,
   getSigningCosmWasmClient,
-  lockId,
-  lockDurationInNanos,
-  type = "single",
+  lockIds,
 }: {
   address: string
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
-  lockId: number | number[]
-  lockDurationInNanos: number
-  type: "single" | "multiple"
+  lockIds: number[]
 }) {
   const hydroContractAddress = process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS
 
@@ -26,10 +22,9 @@ export async function executeWalletExtendLockup({
 
   const hydroClient = new HydroBaseClient(client, address, hydroContractAddress)
 
-  const response = await hydroClient.refreshLockDuration(
+  const response = await hydroClient.mergeLocks(
     {
-      lockDuration: lockDurationInNanos,
-      lockIds: type === "single" ? [lockId as number] : (lockId as number[]),
+      lockIds,
     },
     "auto"
   )
