@@ -8,6 +8,10 @@ export function buildExpiredColumns<
 >(): ColumnObject<Row, keyof Row>[] {
   return [
     {
+      key: "select",
+      label: null,
+    },
+    {
       key: "amount",
       label: "Amount",
       isSortable: true,
