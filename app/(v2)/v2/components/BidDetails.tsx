@@ -277,7 +277,7 @@ export function BidDetails({
             'col-start-1 col-end-2',
             'row-start-2 row-end-3',
             'text-balance',
-            'px-0 md:px-loose',
+            'md:px-loose px-0',
             'pb-loosest',
             'gap-standard flex flex-col',
             'desktop:overflow-y-auto',
