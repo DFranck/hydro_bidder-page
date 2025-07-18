@@ -106,7 +106,7 @@ export function AppHeader() {
       <div className="h-bar-height-standard">
         <InternalLink
           href="/v2"
-          className={twJoin('relative block h-full scale-90')}
+          className={twJoin('relative z-50 block h-full scale-90')}
         >
           <Logo />
         </InternalLink>
@@ -151,7 +151,7 @@ export function AppHeader() {
             'my-looser',
             'gap-looser',
             'desktop:border-l-0',
-            'desktop:border-0', // Ensure no border on desktop
+            'desktop:border-0',
             'desktop:pl-0',
             'desktop:gap-0',
             'desktop:mb-0',

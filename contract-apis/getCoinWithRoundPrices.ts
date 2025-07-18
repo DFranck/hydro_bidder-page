@@ -6,10 +6,12 @@ export function getCoinWithRoundPrices({
   coin,
   roundPrices,
   validator,
+  raw,
 }: {
   coin: Coin
   roundPrices: RoundPrices
   validator?: string
+  raw?: string
 }): AugmentedCoin {
   const asset = roundPrices?.[coin.denom]
   const assetPriceUsd = asset?.token_price ?? 0
@@ -22,6 +24,7 @@ export function getCoinWithRoundPrices({
   return {
     ...coin,
     humanReadableDenom: validator ? "ATOM" : humanReadableDenom,
+    raw: raw,
     printableAmount,
     priceUsd: assetPriceUsd,
     valueUsd: printableAmount * assetPriceUsd,

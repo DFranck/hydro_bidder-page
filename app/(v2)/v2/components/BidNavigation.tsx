@@ -9,7 +9,7 @@ import { useBidTrancheIndex } from '@v2/hooks/useBidTrancheIndex'
 import { useBidsNavigation } from '@v2/hooks/useBidsNavigationOrder'
 import { useDropdownMenu } from '@v2/hooks/useDropdownMenu'
 import { useEffect, useState } from 'react'
-import { twJoin, twMerge } from 'tailwind-merge'
+import { twJoin } from 'tailwind-merge'
 
 interface BidNavigationProps {
   bidId: number
@@ -39,29 +39,24 @@ export function BidNavigation({
 
   const currentBidTrancheIndex = useBidTrancheIndex(bidId)
 
-  const {
-    refs,
-    getReferenceProps,
-    renderMenu,
-    setIsOpen,
-    isOpen,
-    floatingStyles,
-  } = useDropdownMenu({
-    modalOnMobile: true, // Now properly centers popup on mobile
-    placement: 'bottom',
-    onOpenChange: (isOpen) => {
-      if (isOpen) {
-        // Temporarily disable intersection observer to prevent conflicts
-        setDisableIntersectionObserver(true)
-        setActiveTrancheIndex(currentBidTrancheIndex)
+  const { refs, getReferenceProps, renderMenu, setIsOpen, isOpen } =
+    useDropdownMenu({
+      modalOnMobile: true,
+      placement: 'bottom',
+      interaction: 'click',
+      onOpenChange: (isOpen) => {
+        if (isOpen) {
+          // Temporarily disable intersection observer to prevent conflicts
+          setDisableIntersectionObserver(true)
+          setActiveTrancheIndex(currentBidTrancheIndex)
 
-        // Re-enable after a short delay to allow the state to settle
-        setTimeout(() => {
-          setDisableIntersectionObserver(false)
-        }, 500)
-      }
-    },
-  })
+          // Re-enable after a short delay to allow the state to settle
+          setTimeout(() => {
+            setDisableIntersectionObserver(false)
+          }, 500)
+        }
+      },
+    })
 
   // Reset active tranche when menu closes or when current bid changes
   useEffect(() => {
@@ -131,7 +126,6 @@ export function BidNavigation({
         className={twJoin(
           'h-bar-height-standard',
           'flex items-center justify-between',
-          'px-loose',
           'bg-theme-color/10',
           className,
         )}
@@ -139,11 +133,7 @@ export function BidNavigation({
         {/* Left side: Previous button */}
         <Tooltipped tip="Previous bid">
           <button
-            className={twMerge(
-              'btn-icon',
-              !hasPreviousBid &&
-                'pointer-events-none cursor-not-allowed opacity-50',
-            )}
+            className="btn-icon"
             onClick={() => hasPreviousBid && navigateToBid(previousBid!.id)}
             disabled={!hasPreviousBid}
           >
@@ -170,14 +160,10 @@ export function BidNavigation({
         </div>
 
         {/* Right side: Next button and close/back button */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
           <Tooltipped tip="Next bid">
             <button
-              className={twMerge(
-                'btn-icon',
-                !hasNextBid &&
-                  'pointer-events-none cursor-not-allowed opacity-50',
-              )}
+              className="btn-icon"
               onClick={() => hasNextBid && navigateToBid(nextBid!.id)}
               disabled={!hasNextBid}
             >

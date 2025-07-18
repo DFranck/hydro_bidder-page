@@ -104,7 +104,7 @@ export function EditLockupDurationModal({
       }, 3000)
     } catch (err: any) {
       if (err && err?.message && err.message.includes("Request rejected")) {
-        setToasts([toastMessages.lockupExtendRequestRejected(err as Error)])
+        setToasts([toastMessages.lockupRequestRejected(err as Error)])
         return
       }
 

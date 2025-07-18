@@ -1,3 +1,4 @@
+import { isTouchscreen } from "@/lib/isTouchscreen"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
@@ -19,9 +20,8 @@ export function middleware(request: NextRequest) {
   // redirecting touchscreen devices from /bids to /v2
   if (pathname.startsWith("/bids")) {
     const userAgent = request.headers.get("user-agent") || ""
-    const isTouchscreen = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
 
-    if (isTouchscreen) {
+    if (isTouchscreen(userAgent)) {
       const response = NextResponse.redirect(
         new URL(pathname.replace("/bids", "/v2"), request.url)
       )

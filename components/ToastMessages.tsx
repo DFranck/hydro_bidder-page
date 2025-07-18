@@ -53,7 +53,7 @@ export const toastMessages = {
     message: "There's no longer capacity to create a lockup.",
   },
 
-  lockupExtendRequestRejected: (error: Error) => ({
+  lockupRequestRejected: (error: Error) => ({
     variant: "error",
     message: `Request rejected: ${error}`,
   }),
@@ -62,6 +62,21 @@ export const toastMessages = {
     variant: "working",
     message: "Reloading in progress.",
   },
+
+  mergingLockups: {
+    variant: "working",
+    message: "Merging your lockups in progress.",
+  },
+
+  mergingLockupsSuccess: {
+    variant: "success",
+    message: "Your merge was successful! Reloading in progress.",
+  },
+
+  mergingLockupsError: (error: Error) => ({
+    variant: "error",
+    message: `Error merging lockups: ${error}`,
+  }),
 
   extendingLockup: {
     variant: "working",
@@ -86,6 +101,21 @@ export const toastMessages = {
   extendingLockupError: (error: Error, type: "single" | "multiple") => ({
     variant: "error",
     message: `Error extending lockup${type === "single" ? null : "s"}: ${error}`,
+  }),
+
+  splittingLockup: {
+    variant: "working",
+    message: "Splitting your lockup in progress.",
+  },
+
+  splittingLockupSuccess: {
+    variant: "success",
+    message: "Lockup has been split successfully! Reloading in progress.",
+  },
+
+  splittingLockupError: (error: Error) => ({
+    variant: "error",
+    message: `Error splitting lockup: ${error}`,
   }),
 
   unlockingExpiredLockups: (count: number) => {
