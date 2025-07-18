@@ -19,6 +19,7 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   initializingLockupsTooltip,
   lockupLimitTooltip,
+  mergingTooltip,
   needsWalletConnectionTooltip,
   notEligibleTooltip,
 } from "@/components/ToolTips"
@@ -39,8 +40,10 @@ import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { cn } from "@/lib/utils"
+import { SplitLockupModal } from "@/components/SplitLockupModal"
 import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
-import { RotateCw } from "lucide-react"
+import { RotateCw, SquaresUnite } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 
 export default function LockupsPage() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -68,6 +71,7 @@ export default function LockupsPage() {
   const [lockupBeingEdited, setLockupBeingEdited] =
     useState<AugmentedLockup | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isSplitModalOpen, setIsSplitModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [refreshMultipleLockups, setRefreshMultipleLockups] = useState(false)
   const [token, setToken] = useState<{
@@ -84,6 +88,8 @@ export default function LockupsPage() {
   const [selectedExpiredLockups, setSelectedExpiredLockups] = useState<
     number[]
   >([])
+
+  const [initMerge, setInitMerge] = useState(false)
 
   const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
@@ -162,6 +168,7 @@ export default function LockupsPage() {
   function handleRefreshLockups() {
     setSelectedExpiredLockups([])
     setSelectedActiveLockups([])
+    setInitMerge(false)
   }
 
   function handleRefreshModal() {
@@ -275,8 +282,13 @@ export default function LockupsPage() {
                 onClick={handleRefreshModal}
                 disabled={refreshLockups.length <= 1}
               >
-                <RotateCw className="size-4 text-palette-green" />
-                Refresh {refreshLockups.length} Lockups
+                {initMerge ? (
+                  <SquaresUnite className="text-palette-green size-4" />
+                ) : (
+                  <RotateCw className="text-palette-green size-4" />
+                )}
+                {initMerge ? "Merge" : "Refresh"} {refreshLockups.length}{" "}
+                Lockups
               </StyledText>
             )}
             {expiredLockups.length > 0 && (
@@ -315,7 +327,29 @@ export default function LockupsPage() {
             </ConditionalWrapper>
           </div>
         </div>
-
+        {lockups.length > 1 ? (
+          <div className="flex items-center justify-end">
+            <Switch
+              checked={initMerge}
+              onCheckedChange={() => setInitMerge(!initMerge)}
+              disabled={refreshLockups.length > 1}
+              className="mx-2"
+            />
+            <StyledText
+              className={cn("w-28 text-sm", {
+                "text-gray-400": !initMerge,
+              })}
+            >
+              Merge {initMerge ? "enabled" : "disabled"}
+            </StyledText>
+            <Tooltip
+              classNamesForTooltip="w-80  -translate-x-12/12 md:w-5/12"
+              tipContents={mergingTooltip}
+            >
+              <Icon name="circle-info" />
+            </Tooltip>
+          </div>
+        ) : null}
         {lockups.length === 0 ? (
           <BlurryBackdropBox className="flex flex-col gap-6">
             <EmptyBox className="flex flex-col gap-1">
@@ -347,12 +381,17 @@ export default function LockupsPage() {
           </BlurryBackdropBox>
         ) : (
           <LockupsTables
+            initMerge={initMerge}
             selectedActiveLockups={selectedActiveLockups}
             selectedExpiredLockups={selectedExpiredLockups}
             setSelectedActiveLockups={setSelectedActiveLockups}
             setSelectedExpiredLockups={setSelectedExpiredLockups}
             onClickEdit={({ lockup }) => {
               setIsEditModalOpen(true)
+              setLockupBeingEdited(lockup)
+            }}
+            onClickSplit={({ lockup }) => {
+              setIsSplitModalOpen(true)
               setLockupBeingEdited(lockup)
             }}
           />
@@ -363,6 +402,13 @@ export default function LockupsPage() {
         lockup={lockupBeingEdited}
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
+        onCloseComplete={() => setLockupBeingEdited(null)}
+      />
+
+      <SplitLockupModal
+        lockup={lockupBeingEdited}
+        isOpen={isSplitModalOpen}
+        onClose={() => setIsSplitModalOpen(false)}
         onCloseComplete={() => setLockupBeingEdited(null)}
       />
 
@@ -440,6 +486,7 @@ export default function LockupsPage() {
       />
 
       <RefreshMultipleLockups
+        initMerge={initMerge}
         lockups={lockups}
         isCreationModalOpen={refreshMultipleLockups}
         refreshLockups={refreshLockups}

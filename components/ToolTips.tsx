@@ -8,7 +8,7 @@ import {
   HYDRO_TELEGRAM_COMMUNITY_URL,
   voteThresholdByTrancheId,
 } from "@/config"
-import { AugmentedBidAfterWallet } from "@/contract-apis/types"
+import { AugmentedBidAfterWallet, AugmentedLockup } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
@@ -414,6 +414,72 @@ export const extendLockupsToVoteTooltip = (
   </p>
 )
 
+export const mergeIndicatorTooltip = (
+  <p>
+    You can merge this lockup with your selected lockups, because they use ATOM
+    staked with the same validator and tokenized together.
+  </p>
+)
+
+export const mergingTooltip = (
+  <div>
+    <p>
+      You can merge your lockups in order to combine their voting power and
+      manage them together.
+    </p>
+    <p>
+      Note that merging lockups will affect whether lockups are tied to bids,
+      and their remaining lockup durations.
+    </p>
+    <ul className="ml-4 list-disc">
+      <li>
+        The remaining duration of the resulting lockup will be the maximum
+        remaining duration of the merged lockups.
+      </li>
+      <li>
+        The resulting lockup will be tied to bid deployments in all buckets
+        where at least one of the input lockups was tied to a bid deployment.
+      </li>
+    </ul>
+    <p>
+      You can only merge lockups that use the same type of underlying token:
+      stATOM, dATOM, or ATOM staked with the same validator and tokenized in the
+      same transaction.
+    </p>
+  </div>
+)
+
+export const mergeableDenomTooltip = ({
+  lockup,
+  selectedLockup,
+}: {
+  lockup: {
+    validator?: string | null
+    denom?: string
+  }
+  selectedLockup: {
+    validator?: string | null
+    denom?: string
+  }
+}) => (
+  <div className="space-x-2">
+    You can only merge lockups that use ATOM staked with the same validator and
+    tokenized together. This lockup has denom
+    <span className="font-bold break-all">
+      {" "}
+      {lockup.validator ? lockup.validator : lockup.denom}
+    </span>
+    while your selected lockups have denom
+    <span className="font-bold break-all">
+      {" "}
+      {selectedLockup.validator
+        ? selectedLockup.validator
+        : selectedLockup.denom}{" "}
+    </span>
+    .
+  </div>
+)
+
 export const changeVoteTooltip = (
   <p>
     You have already voted for another bid in this tranche. Click to change your
@@ -745,7 +811,7 @@ export const atomicBidPairToolTip = ({
       {isBelowThreshold ? (
         <p className="mt-4">
           <TriangleAlert className="text-palette-yellow inline-block size-4" />
-          <span className="opacity-60 mx-1">
+          <span className="mx-1 opacity-60">
             One of the bids of this atomic bid pair is currently below the vote
             threshold in its tranche.
           </span>

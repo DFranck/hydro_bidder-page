@@ -25,6 +25,28 @@ export const environments = {
       },
     ],
   },
+  'staging-next': {
+    externalDataCacheDuration: 300,
+    sources: [
+      {
+        id: 'atom',
+        label: 'ATOM',
+        trancheSuffix: 'bucket',
+        atomDenom:
+          'ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9',
+        hydroContract:
+          'neutron1la84jn93j6qv3lmayrc7mvr3zp0vsmxhy9uhqzmnnevhxuev72uspf7da4',
+        tributeContract:
+          'neutron1e90z4vpxufxvskz3fc80wrz0g57xg4u7zda7dsuwnwm5jp7635dsrt9r4t',
+        priceChainId: 'neutron-1',
+        voteThresholds: {
+          1: 0.05,
+          2: 0.35,
+        },
+        cacheDuration: 300,
+      },
+    ],
+  },
   production: {
     externalDataCacheDuration: 300,
     sources: [

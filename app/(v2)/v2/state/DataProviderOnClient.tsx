@@ -16,11 +16,11 @@ import {
 import { initialState } from './DataProviderOnServer'
 import { reducer } from './reducer'
 
-import { QueryClientProvider } from '@/components/QueryClientProvider'
-import { ToastContextProvider } from '@/components/Toasts'
 import { ChainsAndSignersProvider } from '@/components/ChainsAndSignersProvider'
 import { GlobalLockupInfoProvider } from '@/components/GlobalLockupInfoProvider'
 import { IncompleteNoticesProvider } from '@/components/IncompleteNoticesProvider'
+import { QueryClientProvider } from '@/components/QueryClientProvider'
+import { ToastContextProvider } from '@/components/Toasts'
 
 export const AppContext = createContext<{
   state: AppState

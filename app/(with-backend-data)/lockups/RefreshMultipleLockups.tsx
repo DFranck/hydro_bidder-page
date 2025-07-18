@@ -17,8 +17,10 @@ import { AllowedLockupPeriodInEpochs } from "@/config"
 import { formatAmount } from "@/lib/formatAmount"
 import { getDaysAway } from "@/lib/getDaysAway"
 import { Icon } from "@/components/Icon"
+import { executeWalletMergeLockups } from "@/contract-apis/executeWalletMergeLockups"
 
 interface RefreshMultipleLockupsProps {
+  initMerge: boolean
   lockups: AugmentedLockup[]
   isCreationModalOpen: boolean
   setIsCreationModalOpen: (isOpen: boolean) => void
@@ -29,6 +31,7 @@ interface RefreshMultipleLockupsProps {
 }
 
 export function RefreshMultipleLockups({
+  initMerge,
   lockups,
   isCreationModalOpen,
   setIsCreationModalOpen,
@@ -79,26 +82,43 @@ export function RefreshMultipleLockups({
     setIsLoading(true)
 
     try {
-      setToasts([toastMessages.extendingLockups])
+      if (initMerge) {
+        setToasts([toastMessages.mergingLockups])
 
-      await executeWalletExtendLockup({
-        getSigningCosmWasmClient,
-        address,
-        lockId: refreshLockups,
-        lockDurationInNanos: selectedDuration,
-        type: "multiple",
-      })
+        await executeWalletMergeLockups({
+          getSigningCosmWasmClient,
+          address,
+          lockIds: refreshLockups,
+        })
+      } else {
+        setToasts([toastMessages.extendingLockups])
+
+        await executeWalletExtendLockup({
+          getSigningCosmWasmClient,
+          address,
+          lockId: refreshLockups,
+          lockDurationInNanos: selectedDuration,
+          type: "multiple",
+        })
+      }
 
       await revalidateTag("backendData")
 
-      setToasts([toastMessages.extendingLockupsSuccess])
+      setToasts([
+        initMerge
+          ? toastMessages.mergingLockupsSuccess
+          : toastMessages.extendingLockupsSuccess,
+      ])
       handleRefreshLockups()
+      setSelectedDuration(AllowedLockupPeriodInEpochs.ONE_EPOCH)
       setIsLoading(false)
       setIsCreationModalOpen(false)
     } catch (error) {
       setIsLoading(false)
       setToasts([
-        toastMessages.extendingLockupError(error as Error, "multiple"),
+        initMerge
+          ? toastMessages.mergingLockupsError(error as Error)
+          : toastMessages.extendingLockupError(error as Error, "multiple"),
       ])
     }
   }
@@ -117,16 +137,16 @@ export function RefreshMultipleLockups({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="md:w-[550px] w-5/6"
+      className="w-5/6 md:w-[550px]"
     >
       <form onSubmit={handleSubmitCreationForm}>
         <Card>
-          <Card.Header title="Edit Lockups" />
+          <Card.Header title={`${initMerge ? "Merge" : " Edit"} Lockups`} />
 
           <Card.Body>
             <div className="flex flex-col gap-2">
               <StyledText className="font-bold">
-                New Lockup Duration:
+                {initMerge ? "Reveal Lockup details " : "New Lockup Duration"}:
               </StyledText>
 
               <InputForLockupPeriod
@@ -135,14 +155,24 @@ export function RefreshMultipleLockups({
                 className="w-full"
                 classNamesForButtons="!w-full"
                 onChange={handleChange}
+                initMerge={initMerge}
               />
             </div>
 
             <div className="flex items-center gap-2 opacity-60">
-              <p>
-                {refreshLockups.length} lockups will be extended to end
-                on
-              </p>
+              {initMerge ? (
+                <p>
+                  The new lockup amount will be {formatAmount(totalAmount, 0)}{" "}
+                  <span className="pr-1">
+                    {filteredLockups[0]?.funds?.denomInfo?.humanReadableDenom}
+                  </span>
+                  and ends at
+                </p>
+              ) : (
+                <p>
+                  {refreshLockups.length} lockups will be extended to end on
+                </p>
+              )}
               {selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH ? (
                 <div className="h-5 w-24 animate-pulse rounded bg-gray-300"></div>
               ) : (
@@ -161,12 +191,14 @@ export function RefreshMultipleLockups({
               )}
             </div>
 
-            <div className="flex flex-col">
-              <StyledText className="font-semibold">Locked Tokens</StyledText>
-              <StyledText className="text-4xl font-bold text-palette-beige">
-                {formatAmount(totalAmount, 0)}
-              </StyledText>
-            </div>
+            {!initMerge ? (
+              <div className="flex flex-col">
+                <StyledText className="font-semibold">Locked Tokens</StyledText>
+                <StyledText className="text-palette-beige text-4xl font-bold">
+                  {formatAmount(totalAmount, 0)}
+                </StyledText>
+              </div>
+            ) : null}
           </Card.Body>
 
           <Card.Footer>

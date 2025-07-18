@@ -72,6 +72,7 @@
 @custom-variant is-open (&:where([data-is-open="true"], [data-is-open="true"] *));
 @custom-variant is-sidebar-open (&:where([data-is-sidebar-open="true"] *));
 @custom-variant is-sidebar-closed (&:where([data-is-sidebar-closed="true"] *));
+@custom-variant is-stuck (&:where([data-is-stuck="true"], [data-is-stuck="true"] *));
 @custom-variant is-connected (&:where([data-is-connected="true"], [data-is-connected="true"] *));
 
 @custom-variant is-voted-on (&:where([data-is-voted-on="true"], [data-is-voted-on="true"] *));
@@ -111,14 +112,6 @@
   border-color: transparent;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   html {
     @apply touch-manipulation;
@@ -157,6 +150,9 @@
   @apply gap-tightest px-loose;
   @apply rounded-sm;
   @apply text-center leading-[1.1em] whitespace-nowrap;
+  @apply disabled:cursor-not-allowed;
+  @apply disabled:pointer-events-none;
+  @apply disabled:opacity-50;
 }
 
 @utility btn-primary {
