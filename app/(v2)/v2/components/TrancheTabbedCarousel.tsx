@@ -100,6 +100,7 @@ export function TrancheTabbedCarousel({
     <TabbedCarousel
       activeIndex={finalActiveIndex}
       className={className}
+      classNameForContent="rounded-small"
       containerId={containerId}
       disableIntersectionObserver={disableIntersectionObserver}
       renderContent={finalRenderContent}

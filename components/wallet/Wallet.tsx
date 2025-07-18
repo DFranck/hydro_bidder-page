@@ -23,7 +23,12 @@ export type WalletProps = {
   ignoreStatus?: boolean
 }
 
-export function Wallet({ chainName, notifyConnectedCB, variant, ignoreStatus }: WalletProps) {
+export function Wallet({
+  chainName,
+  notifyConnectedCB,
+  variant,
+  ignoreStatus,
+}: WalletProps) {
   const { addToast } = useToasts()
 
   const { connect, openView, status, address, message } = useChain(
@@ -42,7 +47,7 @@ export function Wallet({ chainName, notifyConnectedCB, variant, ignoreStatus }: 
   }
 
   useEffect(() => {
-    if(ignoreStatus) return;
+    if (ignoreStatus) return
     if (
       message &&
       [WalletStatus.Error, WalletStatus.Rejected].includes(status)

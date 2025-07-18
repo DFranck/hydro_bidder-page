@@ -111,10 +111,10 @@ export function VoteButton({
       <div className="gap-y-tight flex flex-col">
         <div>{message}</div>
         <div className="footnote text-xs">
-          <span className="can-hover:inline can-hover:block cannot-hover:hidden">
+          <span className="can-hover:block cannot-hover:hidden">
             Click to {action}
           </span>
-          <span className="can-hover:hidden cannot-hover:inline cannot-hover:block">
+          <span className="can-hover:hidden cannot-hover:block">
             Tap again to {action}
           </span>
         </div>
@@ -292,19 +292,39 @@ export function VoteButton({
         >
           <span
             className={twJoin(
-              'label flex scale-0',
               'absolute inset-0',
-              'rounded-full',
-              'border-foreground border border-dashed',
-              'items-center justify-center',
               'transition-all',
+              'scale-0',
               'has-not-voted-within:scale-100',
               'is-vote-focused:scale-0',
               'is-vote-focused-elsewhere:scale-0!',
-              'text-[6px]',
             )}
           >
-            Vote
+            <span
+              className={twJoin(
+                'absolute inset-0',
+                'rounded-full',
+                'border-foreground border border-dashed',
+              )}
+            />
+            <span
+              className={twJoin(
+                'absolute inset-0',
+                'label',
+                'flex items-center justify-center',
+                'text-[6px]',
+              )}
+            >
+              Vote
+            </span>
+            <span
+              className={twJoin(
+                'absolute inset-0',
+                'rounded-full',
+                'border-foreground border',
+                'animate-ping-quietly',
+              )}
+            />
           </span>
 
           <span

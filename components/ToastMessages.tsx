@@ -20,7 +20,7 @@ export const toastMessages = {
   claimingRewardsError: (error: Error) => {
     return {
       variant: "error",
-      message: `Error claiming rewards: ${error}`,
+      message: `Error claiming rewards: ${error.message || error}`,
     }
   },
 
@@ -45,7 +45,7 @@ export const toastMessages = {
 
   lockingTokensError: (error: Error) => ({
     variant: "error",
-    message: `Error locking tokens: ${error}`,
+    message: `Error locking tokens: ${error.message || error}`,
   }),
 
   lockupCapacityFull: {
@@ -55,7 +55,7 @@ export const toastMessages = {
 
   lockupRequestRejected: (error: Error) => ({
     variant: "error",
-    message: `Request rejected: ${error}`,
+    message: `Request rejected: ${error.message || error}`,
   }),
 
   reloadingTheWindow: {
@@ -85,12 +85,12 @@ export const toastMessages = {
 
   extendingLockupError: (error: Error) => ({
     variant: "error",
-    message: `Error extending lockup: ${error}`,
+    message: `Error extending lockup: ${error.message || error}`,
   }),
 
   splittingLockupError: (error: Error) => ({
     variant: "error",
-    message: `Error splitting lockup: ${error}`,
+    message: `Error splitting lockup: ${error.message || error}`,
   }),
 
   unlockingExpiredLockups: (count: number) => {
@@ -115,7 +115,7 @@ export const toastMessages = {
 
     return {
       variant: "error",
-      message: `Error unlocking ${count} ${lockupOrLockups}: ${error}`,
+      message: `Error unlocking ${count} ${lockupOrLockups}: ${error.message || error}`,
     }
   },
 
@@ -136,12 +136,12 @@ export const toastMessages = {
 
   votingError: (error: Error) => ({
     variant: "error",
-    message: `Error voting: ${error}`,
+    message: `Error voting: ${error.message || error}`,
   }),
 
   walletConnectionError: (error: Error) => ({
     variant: "error",
-    message: `Error connecting wallet: ${error}`,
+    message: `Error connecting wallet: ${error.message || error}`,
   }),
 
   transactionCompleted: {
@@ -190,7 +190,7 @@ export const toastMessages = {
   transactionError: (error: Error) => {
     return {
       variant: "error",
-      message: `Error during transaction: ${error}`,
+      message: `Error during transaction: ${error.message || error}`,
     }
   },
   // AddTribute
@@ -204,7 +204,7 @@ export const toastMessages = {
   },
   addingTributeError: (error: Error) => ({
     variant: "error",
-    message: `Error adding tribute: ${error}`,
+    message: `Error adding tribute: ${error.message || error}`,
   }),
 } satisfies Record<
   string,

@@ -24,7 +24,7 @@
   --spacing-md: 800px;
 
   --spacing-bar-height-large: 72px;
-  --spacing-bar-height-standard: 48px;
+  --spacing-bar-height-standard: 44px;
 
   --radius-small: 6px;
   --radius-standard: 9px;
@@ -66,6 +66,16 @@
   --color-shaded: rgba(255, 255, 255, 0.1);
   --color-faded: rgba(255, 255, 255, 0.7);
   --color-darkened: rgba(var(--palette-text-rgb), 0.25);
+
+  --animate-ping-quietly: ping-quietly 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  @keyframes ping-quietly {
+    75%,
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
 }
 
 @custom-variant is-active (&:where([data-is-active="true"], [data-is-active="true"] *));
@@ -176,6 +186,15 @@
   @apply hover:text-palette-beige;
   @apply focus:text-palette-beige;
   @apply active:text-palette-beige;
+}
+
+@utility link {
+  @apply btn-essentials;
+  @apply text-palette-green;
+  @apply hover:text-palette-beige;
+  @apply focus:text-palette-beige;
+  @apply active:text-palette-beige;
+  @apply underline underline-offset-4;
 }
 
 @utility centered {

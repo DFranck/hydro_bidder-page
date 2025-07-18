@@ -32,8 +32,8 @@ interface TabbedCarouselProps {
 
   // Layout configuration
   className?: string
-  tabsClassName?: string
-  contentClassName?: string
+  classNameForTabs?: string
+  classNameForContent?: string
 
   // State management
   activeIndex?: number
@@ -50,21 +50,21 @@ interface TabbedCarouselProps {
 }
 
 export function TabbedCarousel({
+  activeIndex: controlledActiveIndex,
+  className,
+  classNameForContent,
+  classNameForTabs,
   containerId,
-  targetSelector,
-  threshold = 0.5,
-  tabs,
+  disableIntersectionObserver,
+  isEnabled = true,
+  navigationButtonClassName,
   renderContent,
   showNavigationButtons = true,
-  navigationButtonClassName,
-  className,
-  tabsClassName,
-  contentClassName,
-  activeIndex: controlledActiveIndex,
-  onActiveIndexChange,
-  isEnabled = true,
   slotOnRight,
-  disableIntersectionObserver,
+  tabs,
+  targetSelector,
+  threshold = 0.5,
+  onActiveIndexChange,
 }: TabbedCarouselProps) {
   const [isMounted, setIsMounted] = useState(false)
   const [targets, setTargets] = useState<Element[]>([])
@@ -107,12 +107,12 @@ export function TabbedCarousel({
   // Use the reusable carousel intersection hook
   useCarouselIntersection({
     containerSelector: `#${containerId}`,
-    targetSelector,
-    isEnabled: isMounted && isEnabled && !(isMobile && false), // TODO: Add sidebar state if needed
-    onIndexChange: handleIndexChange,
-    threshold,
-    initialIndex: controlledActiveIndex,
     disableIntersectionObserver,
+    initialIndex: controlledActiveIndex,
+    isEnabled: isMounted && isEnabled && !(isMobile && false), // TODO: Add sidebar state if needed
+    targetSelector,
+    threshold,
+    onIndexChange: handleIndexChange,
   })
 
   const handleTabClick = (index: number) => {
@@ -143,7 +143,7 @@ export function TabbedCarousel({
       <div
         className={twMerge(
           'rounded-standard grid w-full grid-cols-[min-content_auto_min-content]',
-          tabsClassName,
+          classNameForTabs,
         )}
       >
         {/* Left navigation button */}
@@ -170,13 +170,13 @@ export function TabbedCarousel({
               return (
                 <TabButton
                   data-is-active={isActive ? 'true' : undefined}
-                  key={tab.id}
-                  isActive={isActive}
                   disabled={tab.disabled}
-                  shortLabel={shortLabel}
                   fullLabel={tab.label}
-                  voteStatus={tab.dataProps?.['data-has-voted-within']}
                   icon={tab.icon}
+                  isActive={isActive}
+                  key={tab.id}
+                  shortLabel={shortLabel}
+                  voteStatus={tab.dataProps?.['data-has-voted-within']}
                   onClick={() => handleTabClick(index)}
                   {...tab.dataProps}
                 />
@@ -204,7 +204,10 @@ export function TabbedCarousel({
 
       {/* Content */}
       <div
-        className={twMerge('min-h-0 flex-1 overflow-hidden', contentClassName)}
+        className={twMerge(
+          'min-h-0 flex-1 overflow-hidden',
+          classNameForContent,
+        )}
       >
         {renderContent({ activeIndex })}
       </div>

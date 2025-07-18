@@ -63,14 +63,6 @@ export function StickyAwareBox({ children, className }: StickyAwareBoxProps) {
 
       const isStuck = rect.top <= containerTop + topValue
 
-      console.log('StickyAwareBox debug:', {
-        element: element.textContent?.slice(0, 20),
-        topValue,
-        elementTop: rect.top,
-        containerTop,
-        isStuck,
-      })
-
       setStickyEdge(isStuck ? 'top' : null)
     } else {
       setStickyEdge(null)
