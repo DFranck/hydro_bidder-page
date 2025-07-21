@@ -85,6 +85,7 @@ export function MarkdownContainer({
           prose-td:px-3
           prose-td:py-1
           [&_a:hover]:text-palette-green
+          max-w-[calc(100vw-2rem)]
           text-white
           marker:text-white
         `,

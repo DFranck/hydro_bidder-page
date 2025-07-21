@@ -116,8 +116,8 @@ export function BidDetails({
     ]
 
   return (
-    <ContentContainer className="py-6">
-      <BlurryBackdropBox className="p-4 md:p-12">
+    <ContentContainer className="p-6">
+      <BlurryBackdropBox className="p-8 md:p-12">
         {hasVotedForBid && (
           <div
             className="
@@ -137,16 +137,9 @@ export function BidDetails({
           />
         )}
 
-        <div
-          className="
-            grid
-            grid-cols-1
-            gap-12
-            md:grid-cols-[3fr_1fr]
-          "
-        >
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
           {/* Main Content */}
-          <div className="flex flex-col gap-12">
+          <div className="col-span-2 flex flex-col gap-12">
             <StyledText
               as="button"
               variant="button.secondary.small"
@@ -238,7 +231,7 @@ export function BidDetails({
           </div>
 
           {/* Sidebar */}
-          <div className="flex flex-col gap-6">
+          <div className="col-span-1 flex flex-col gap-6">
             {bid.roundId === currentRoundId && (
               <div className="*:w-full!">
                 <VoteButton bidId={bidId} size="large" />
