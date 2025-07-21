@@ -64,7 +64,7 @@ export function VoteButton({
   } = useVoteButtonFocus()
 
   const {
-    data: { lockedAtomTotalGlobal, lockedAtomMaxGlobal },
+    data: { lockedTokenTotalGlobal, lockedTokenMaxGlobal },
   } = useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient, address, isWalletConnected, connect } =
@@ -187,13 +187,13 @@ export function VoteButton({
     buttonProps = {
       onClick: undefined,
       tooltip:
-        lockedAtomTotalGlobal >= lockedAtomMaxGlobal
+        lockedTokenTotalGlobal >= lockedTokenMaxGlobal
           ? lockupLimitReachedByNetworkTooltip
           : createTooltipWithMobileNote(
               noVotingPowerAvailableTooltip,
               'lock ATOM',
             ),
-      disabled: lockedAtomTotalGlobal >= lockedAtomMaxGlobal,
+      disabled: lockedTokenTotalGlobal >= lockedTokenMaxGlobal,
       isLink: true,
       href: '/lock-atom',
     }
