@@ -17,9 +17,6 @@ const withNextra = Nextra({
 })
 
 const nextConfig = withNextra({
-  experimental: {
-    turbo: {},
-  },
   images: {
     remotePatterns: [
       {
@@ -41,6 +38,14 @@ const nextConfig = withNextra({
     ],
   },
   cacheHandler: fileSystemCachePath,
+  experimental: {
+    optimizePackageImports: ["lodash", "@cosmjs/cosmwasm-stargate"],
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+  poweredByHeader: false,
+  compress: true,
 })
 
 export default nextConfig

@@ -224,7 +224,7 @@ export function LockForm({
               )}
 
               {validator && (
-                <div className="grid grid-cols-[min-content,auto] items-center gap-6">
+                <div className="grid grid-cols-[min-content_auto] items-center gap-6">
                   <div className="col-span-2 grid grid-cols-subgrid items-center">
                     <StyledText as="label" variant="label">
                       Your Validator:

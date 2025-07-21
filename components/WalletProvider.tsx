@@ -10,19 +10,35 @@ import { wallets as keplr } from "@cosmos-kit/keplr"
 import { wallets as leap } from "@cosmos-kit/leap"
 import { ChainProvider } from "@cosmos-kit/react"
 import "@interchain-ui/react/styles"
-import assets from "chain-registry/assets"
-import chains from "chain-registry/chains"
-import { assets as hubAssets } from "chain-registry/mainnet/cosmoshub"
-import { assets as neutronAssets } from "chain-registry/mainnet/neutron"
+import {
+  chain as cosmosHubChain,
+  assets as hubAssets,
+} from "chain-registry/mainnet/cosmoshub"
+import {
+  assets as neutronAssets,
+  chain as neutronChainRegistry,
+} from "chain-registry/mainnet/neutron"
 import { cosmwasmAminoConverters } from "interchain"
 import {
   cosmosAminoConverters,
   cosmosProtoRegistry,
+  gaiaAminoConverters,
+  gaiaProtoRegistry,
   ibcAminoConverters,
   ibcProtoRegistry,
-  gaiaProtoRegistry,
-  gaiaAminoConverters,
 } from "moonkittjs"
+
+// Conditionally import all chains only in production
+const isDevelopment = process.env.NODE_ENV === "development"
+let allChains: any[] = []
+let allAssets: any[] = []
+
+if (!isDevelopment) {
+  const chains = require("chain-registry/chains")
+  const assets = require("chain-registry/assets")
+  allChains = chains.default || chains
+  allAssets = assets.default || assets
+}
 
 function gasPrices(chain: Chain | ChainName) {
   const chainName = typeof chain === "string" ? chain : chain.chain_name
@@ -51,15 +67,19 @@ export function WalletProvider({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const chainsList = isDevelopment
+    ? [cosmosHubChain, neutronChainRegistry, hubChain, neutronChain]
+    : [...allChains, hubChain, neutronChain]
+
+  const assetsList = isDevelopment
+    ? [hubAssets, neutronAssets]
+    : [...allAssets, hubAssets, neutronAssets]
+
   return (
     <ChainProvider
       throwErrors={false}
-      chains={[...chains, hubChain, neutronChain]}
-      assetLists={[
-        ...assets,
-        hubAssets,
-        neutronAssets,
-      ]}
+      chains={chainsList}
+      assetLists={assetsList}
       wallets={[...keplr, ...leap, ...cosmostation]} // supported wallets
       walletConnectOptions={{
         signClient: { projectId: "24cc0bf3e131070ae871552c32ea0cec" },

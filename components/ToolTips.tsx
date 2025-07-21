@@ -8,15 +8,16 @@ import {
   HYDRO_TELEGRAM_COMMUNITY_URL,
   voteThresholdByTrancheId,
 } from "@/config"
-import { AugmentedBidAfterWallet } from "@/contract-apis/types"
+import { AugmentedBidAfterWallet, AugmentedLockup } from "@/contract-apis/types"
 import { amountToUSDString } from "@/lib/amountToUSDString"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import Link from "next/link"
 import { Fragment } from "react"
 import { twJoin } from "tailwind-merge"
-import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
 import TokenDetails from "./TokenDetails"
+import { TriangleAlert } from "lucide-react"
 
 type TokenLockedTotal = {
   amount: number
@@ -32,7 +33,7 @@ export const averageAPRTooltip = (
       <StyledText
         variant="link"
         as={Link}
-        href="/docs/users/calculating-staking-apr"
+        href="/docs/users/aprs"
         target="_blank"
       >
         <span>Learn More</span>
@@ -220,7 +221,7 @@ export const currentRoundNumLiveBidsTooltip = ({
       <StyledText
         variant="link"
         as={Link}
-        href="/docs/users/voting-for-projects#tribute"
+        href="/docs/users/projects/bids#tribute-additions"
         target="_blank"
       >
         Learn More
@@ -386,7 +387,7 @@ export const lockAtomToVoteTooltip = (
     {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to vote for this bid.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/voting-for-projects"
+      href="/docs/users/lockups#liquid-staking-module"
       target="_blank"
       variant="link"
       className="inline-flex items-center gap-1"
@@ -399,10 +400,11 @@ export const lockAtomToVoteTooltip = (
 
 export const extendLockupsToVoteTooltip = (
   <p>
-    You can extend your lockups to vote for this bid.{" "}
+    Your current lockups do not extend long enough to cover this bid&apos;s
+    deployment duration. You can extend your lockups to vote for this bid.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/voting-for-projects"
+      href="/docs/users/bids#custom-durations"
       target="_blank"
       variant="link"
       className="inline-flex items-center gap-1"
@@ -410,6 +412,76 @@ export const extendLockupsToVoteTooltip = (
       <span>Learn More</span>
       <Icon name="arrow-up-right-from-square" />
     </StyledText>
+  </p>
+)
+
+export const mergeIndicatorTooltip = (
+  <p>
+    You can merge this lockup with your selected lockups, because they use ATOM
+    staked with the same validator and tokenized together.
+  </p>
+)
+
+export const mergingTooltip = (
+  <div>
+    <p>
+      You can merge your lockups in order to combine their voting power and
+      manage them together.
+    </p>
+    <p>
+      Note that merging lockups will affect whether lockups are tied to bids,
+      and their remaining lockup durations.
+    </p>
+    <ul className="ml-4 list-disc">
+      <li>
+        The remaining duration of the resulting lockup will be the maximum
+        remaining duration of the merged lockups.
+      </li>
+      <li>
+        The resulting lockup will be tied to bid deployments in all buckets
+        where at least one of the input lockups was tied to a bid deployment.
+      </li>
+    </ul>
+    <p>
+      You can only merge lockups that use the same type of underlying token:
+      stATOM, dATOM, or ATOM staked with the same validator and tokenized in the
+      same transaction.
+    </p>
+  </div>
+)
+
+export const mergeableDenomTooltip = ({
+  lockup,
+  selectedLockup,
+}: {
+  lockup: {
+    validator?: string | null
+    denom?: string
+  }
+  selectedLockup: {
+    validator?: string | null
+    denom?: string
+  }
+}) => (
+  <div className="">
+    You can only merge lockups that use ATOM staked with the same validator and
+    tokenized together. This lockup is staked with
+    <span className="mx-0.5 font-bold break-all"> {lockup.validator}</span>
+    <span>{lockup.validator ? "Validator" : null}</span>
+    <span className="font-bold"> {lockup.denom} </span>
+    while your selected lockups are staked with
+    <span className="mx-0.5 font-bold break-all">
+      {selectedLockup.validator}{" "}
+    </span>
+    <span>{selectedLockup.validator ? "Validator" : null} </span>
+    <span className="font-bold">{selectedLockup.denom} </span>.
+  </div>
+)
+
+export const changeVoteTooltip = (
+  <p>
+    You have already voted for another bid in this tranche. Click to change your
+    vote to this bid instead.
   </p>
 )
 
@@ -437,7 +509,7 @@ export const metricsPolRewardsColumnTooltip = (
     distributed to voters at the end of the round.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/calculating-staking-apr"
+      href="/docs/users/aprs"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -454,7 +526,7 @@ export const metricsPolSizeColumnTooltip = (
     this bid during the specified round.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/users/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -481,7 +553,7 @@ export const metricsTributeColumnTooltip = (
     tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -499,7 +571,7 @@ export const liveBidTributeAprColumnTooltip = (
     adjust tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -516,7 +588,7 @@ export const pastBidTributeAprMetricsPageColumnTooltip = (
     at the end of the round.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -533,7 +605,7 @@ export const pastBidTributeAprBidsPageColumnTooltip = (
     this round. It updates as bidders adjust tributes or more users vote.{" "}
     <StyledText
       as={Link}
-      href="docs/users/voting-for-projects#tribute"
+      href="docs/users/bids#tribute"
       variant="link"
       className="relative z-10 inline-flex items-center gap-1"
       target="_blank"
@@ -545,13 +617,21 @@ export const pastBidTributeAprBidsPageColumnTooltip = (
 )
 
 export const needsWalletConnectionTooltip = (
-  <p>Connect your wallet to access this feature.</p>
+  <p>
+    Connect your wallet to access this feature and interact with the
+    application.
+  </p>
 )
 
-export const initializingLockupsTooltip = <p>initializing lockups...</p>
+export const initializingLockupsTooltip = (
+  <p>Initializing your lockups. Please wait while we load your data.</p>
+)
 
 export const notEnoughTokenInWalletTooltip = (
-  <p>You do not have enough tokens in your wallet to lock up.</p>
+  <p>
+    You do not have enough tokens in your wallet to complete this lockup
+    transaction.
+  </p>
 )
 
 export const lockupLimitReachedByNetworkTooltip = (
@@ -584,7 +664,7 @@ export const polAvailableTooltip = (
     deployed across all bids from the Hydro Committee as PoL.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -607,7 +687,7 @@ export const polDurationTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href="docs/users/voting-for-projects#voting-eligibility-based-on-pol-duration"
+      href="docs/users/bids#custom-durations"
       target="_blank"
       className="inline-flex items-center gap-1"
     >
@@ -623,7 +703,7 @@ export const polRevenueTooltip = (
     including rewards and tribute from funded bids.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/users/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -659,7 +739,7 @@ export const rewardsYourTributeTooltip = (
 
 export const timeLeftTooltip = (currentRoundEndDate: Date) => {
   const formattedEndDate = currentRoundEndDate
-    ? currentRoundEndDate.toLocaleString(undefined, {
+    ? currentRoundEndDate.toLocaleString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -674,7 +754,7 @@ export const timeLeftTooltip = (currentRoundEndDate: Date) => {
       the round to receive tributes.{" "}
       <StyledText
         as="a"
-        href="/docs/users/voting-for-projects"
+        href="/docs/users/bids"
         variant="link"
         target="_blank"
         className="whitespace-nowrap"
@@ -693,12 +773,21 @@ export const totalRevenueTooltip = (
   </p>
 )
 
+export const totalBidsTooltip = (
+  <p>
+    The total number of bids posted on Hydro across all rounds and in all
+    buckets and tranches.
+  </p>
+)
+
 export const atomicBidPairToolTip = ({
   bidId,
   bidTitle,
+  isBelowThreshold,
 }: {
   bidId: number
   bidTitle: string
+  isBelowThreshold: boolean
 }) => {
   return (
     <div>
@@ -718,6 +807,15 @@ export const atomicBidPairToolTip = ({
         {bidTitle}
         <Icon name="solid:arrow-up-right" />
       </StyledText>
+      {isBelowThreshold ? (
+        <p className="mt-4">
+          <TriangleAlert className="text-palette-yellow inline-block size-4" />
+          <span className="mx-1 opacity-60">
+            One of the bids of this atomic bid pair is currently below the vote
+            threshold in its tranche.
+          </span>
+        </p>
+      ) : null}
     </div>
   )
 }
@@ -915,7 +1013,7 @@ export const yourVotingPowerTooltip = ({
         <div
           className={twJoin(
             "-mx-4 -mb-2 px-4 py-2",
-            "bg-palette-green text-center font-bold text-palette-text"
+            "bg-palette-green text-palette-text text-center font-bold"
           )}
         >
           {trancheMessage}
@@ -931,7 +1029,7 @@ export const bidDetailsPolSizeTooltip = (
     this bid as PoL during the specified round.{" "}
     <StyledText
       as={Link}
-      href="/docs/users/user-faq#what-is-protocol-owned-liquidity"
+      href="/docs/users/faq#what-is-protocol-owned-liquidity"
       variant="link"
       className="inline-flex items-center gap-1"
       target="_blank"
@@ -957,7 +1055,7 @@ export const bidDetailsMaxDeploymentAmountTooltip = (
     <StyledText
       variant="link"
       as={Link}
-      href="/docs/projects/bidding#minimum-tribute-floor-and-maximum-deployment-amount"
+      href="/docs#tribute-floor"
       target="_blank"
     >
       <span>Learn More</span>
@@ -975,7 +1073,7 @@ export const bidDetailsVoteReceivedTooltip = ({
     <div
       className={twJoin(
         "grid grid-cols-[auto_min-content] gap-x-6 gap-y-1",
-        "whitespace-nowrap border-b border-white/20 pb-2"
+        "border-b border-white/20 pb-2 whitespace-nowrap"
       )}
     >
       {[
@@ -1172,3 +1270,28 @@ export const toBuyConfirmTooltip = <p>You don&apos;t have enough balance</p>
 export const lockupNotBuyableTooltip = (
   <p>This lockup is not currently buyable</p>
 )
+
+// VoteButton tooltips
+export const connectWalletToVoteTooltip = (
+  <p>Connect your wallet to vote on this bid.</p>
+)
+
+export const votingInProgressTooltip = (
+  <p>
+    Voting is currently in progress. Please wait for the transaction to
+    complete.
+  </p>
+)
+
+export const noVotingPowerAvailableTooltip = (
+  <p>
+    You have no voting power available. Lock ATOM tokens to gain voting power
+    for this bid.
+  </p>
+)
+
+export const alreadyVotedForBidTooltip = (
+  <p>You have already voted for this bid in the current round.</p>
+)
+
+export const castVoteForBidTooltip = <p>Cast your vote for this bid.</p>

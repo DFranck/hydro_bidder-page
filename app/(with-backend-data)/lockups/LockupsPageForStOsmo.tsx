@@ -22,7 +22,9 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   initializingLockupsTooltip,
   lockupLimitTooltip,
+  mergingTooltip,
   needsWalletConnectionTooltip,
+  notEligibleTooltip,
 } from "@/components/ToolTips"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useAmountOfStOsmoInWallet } from "@/contract-apis/useAmountOfStOsmoInWallet"
@@ -37,9 +39,17 @@ import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWall
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { NewLockUpButton } from "@/components/NewLockUpButton"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
+import { RotateCw } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { cn } from "@/lib/utils"
+import { SplitLockupModal } from "@/components/SplitLockupModal"
+import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
 
 export function LockupsPageForStOsmo() {
+  const [isSplitModalOpen, setIsSplitModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [refreshMultipleLockups, setRefreshMultipleLockups] = useState(false)
   const [token, setToken] = useState<{
     name: "stATOM" | "dATOM"
     amount: number
@@ -47,6 +57,17 @@ export function LockupsPageForStOsmo() {
     name: "dATOM",
     amount: 0,
   })
+
+  const [selectedActiveLockups, setSelectedActiveLockups] = useState<number[]>(
+    []
+  )
+  const [selectedExpiredLockups, setSelectedExpiredLockups] = useState<
+    number[]
+  >([])
+
+  const [initMerge, setInitMerge] = useState(false)
+
+  const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
   const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
 
@@ -120,6 +141,22 @@ export function LockupsPageForStOsmo() {
     lockedTokenPercentageGlobal < 100
 
   const [amount, setAmount] = useState(minStOsmoToBeLocked)
+
+  function handleRefreshLockups() {
+    setSelectedExpiredLockups([])
+    setSelectedActiveLockups([])
+    setInitMerge(false)
+  }
+
+  function handleRefreshModal() {
+    setRefreshMultipleLockups(true)
+  }
+
+  useEffect(() => {
+    if (isLoading) {
+      handleRefreshLockups()
+    }
+  }, [isLoading])
 
   useEffect(() => {
     setAmount(maxStOsmoToBeLocked)
@@ -233,29 +270,40 @@ export function LockupsPageForStOsmo() {
         >
           <h2 className="sr-only">Your Lockups</h2>
 
-          <Tooltip
-            tipContents={lockupLimitTooltip({
-              lockedTokenMaxWallet,
-              lockedTokenTotalWallet,
-            })}
-            className="block w-96 shrink-0"
-          >
-            <ProgressBar
-              percentage={lockedTokenPercentageWallet}
-              warningZone={(percentage) => percentage >= 75}
-              dangerZone={(percentage) => percentage >= 95}
+          {hasGatekeeper ? (
+            <Tooltip
+              tipContents={
+                lockedTokenMaxWallet === 0
+                  ? notEligibleTooltip
+                  : lockupLimitTooltip({
+                      lockedTokenMaxWallet,
+                      lockedTokenTotalWallet,
+                    })
+              }
+              className="block w-96 shrink-0"
             >
-              <div className="flex items-center gap-1 opacity-60">
-                <span>
-                  {lockedTokenTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedTokenMaxWallet} {votingTokenName} max
-                </span>
-                <span>
-                  <Icon name="circle-info" />
-                </span>
-              </div>
-            </ProgressBar>
-          </Tooltip>
+              <ProgressBar
+                percentage={lockedTokenPercentageWallet}
+                warningZone={(percentage) => percentage >= 75}
+                dangerZone={(percentage) => percentage >= 95}
+              >
+                <div className="flex items-center gap-1 opacity-60">
+                  {lockedTokenMaxWallet === 0 ? (
+                    <span>Not Eligible</span>
+                  ) : (
+                    <span>
+                      {lockedTokenTotalWallet.toFixed(
+                        DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                      )}{" "}
+                      / {lockedTokenMaxWallet} {votingTokenName} ATOM max
+                    </span>
+                  )}
+                </div>
+              </ProgressBar>
+            </Tooltip>
+          ) : (
+            <div />
+          )}
 
           <div
             className="
@@ -264,11 +312,25 @@ export function LockupsPageForStOsmo() {
               items-end
               justify-between
               gap-6
+              whitespace-nowrap
               md:flex-row
               md:items-center
             "
           >
             <GetStOsmoButtons className="[&_.border-white]:!border-tokens-stosmo" />
+            {lockups.length > 0 && (
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                className="flex items-center gap-2"
+                onClick={handleRefreshModal}
+                disabled={refreshLockups.length <= 1}
+              >
+                <RotateCw className="size-4 text-palette-green" />
+                {initMerge ? "Merge" : "Refresh"} {refreshLockups.length}{" "}
+                Lockups
+              </StyledText>
+            )}
 
             {expiredLockups.length > 0 && (
               <StyledText
@@ -320,12 +382,45 @@ export function LockupsPageForStOsmo() {
             >
               New Lockup
             </StyledText>
+
+            {lockups.length > 1 ? (
+              <div className="flex justify-end">
+                <Tooltip
+                  classNamesForTooltip="w-96  -translate-x-10/12 md:w-5/12"
+                  tipContents={mergingTooltip}
+                >
+                  <div className="flex items-center  space-x-2">
+                    <Switch
+                      checked={initMerge}
+                      onCheckedChange={() => setInitMerge(!initMerge)}
+                      disabled={refreshLockups.length > 1}
+                    />
+                    <StyledText
+                      className={cn("w-28 text-sm", {
+                        "text-gray-400": !initMerge,
+                      })}
+                    >
+                      Merge {initMerge ? "enabled" : "disabled"}
+                    </StyledText>
+                  </div>
+                </Tooltip>
+              </div>
+            ) : null}
           </div>
         </div>
 
         <LockupsTables
+          initMerge={initMerge}
+          selectedActiveLockups={selectedActiveLockups}
+          selectedExpiredLockups={selectedExpiredLockups}
+          setSelectedActiveLockups={setSelectedActiveLockups}
+          setSelectedExpiredLockups={setSelectedExpiredLockups}
           onClickEdit={({ lockup }) => {
             setIsEditModalOpen(true)
+            setLockupBeingEdited(lockup)
+          }}
+          onClickSplit={({ lockup }) => {
+            setIsSplitModalOpen(true)
             setLockupBeingEdited(lockup)
           }}
         />
@@ -343,10 +438,28 @@ export function LockupsPageForStOsmo() {
         }}
       />
 
+      <SplitLockupModal
+        lockup={lockupBeingEdited}
+        isOpen={isSplitModalOpen}
+        onClose={() => setIsSplitModalOpen(false)}
+        onCloseComplete={() => setLockupBeingEdited(null)}
+      />
+
       <ModalWindowToUnlockExpiredLockups
         isOpen={isConfirmingUnlockExpired}
         onClose={handleUnlockExpiredModalWindowClose}
         onSuccess={handleUnlockExpiredModalWindowSuccess}
+      />
+
+      <RefreshMultipleLockups
+        initMerge={initMerge}
+        lockups={lockups}
+        isCreationModalOpen={refreshMultipleLockups}
+        refreshLockups={refreshLockups}
+        handleRefreshLockups={handleRefreshLockups}
+        setIsCreationModalOpen={setRefreshMultipleLockups}
+        handleCreationModalWindowClose={() => setRefreshMultipleLockups(false)}
+        handleModalWindowCloseComplete={() => setRefreshMultipleLockups(false)}
       />
 
       <ModalWindow

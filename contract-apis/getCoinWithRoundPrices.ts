@@ -22,6 +22,7 @@ export function getCoinWithRoundPrices({
   return {
     ...coin,
     humanReadableDenom: validator ? "ATOM" : humanReadableDenom,
+    validator: validator,
     printableAmount,
     priceUsd: assetPriceUsd,
     valueUsd: printableAmount * assetPriceUsd,

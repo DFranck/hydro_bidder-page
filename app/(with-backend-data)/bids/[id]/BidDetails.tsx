@@ -1,7 +1,7 @@
 "use client"
 
 import Loading from "@/app/loading"
-import { AtomicBidPairIcon } from "@/components/BidAtomicPairIcon"
+import { AtomicBidPairIcon } from "@/components/AtomicBidPairIcon"
 import { BidDuration } from "@/components/BidDuration"
 import { BidPolApr } from "@/components/BidPolApr"
 import { BidPolSize } from "@/components/BidPolSize"
@@ -132,18 +132,18 @@ export function BidDetails({
         {hasVotedForBid && (
           <div
             className="
-              pointer-events-none
-              absolute
-              left-0
-              right-0
-              top-0
-              -z-10
-              h-96
-              rounded-md
-              bg-gradient-to-bl
               from-palette-green/30
               via-palette-green/0
               to-palette-green/0
+              pointer-events-none
+              absolute
+              top-0
+              right-0
+              left-0
+              -z-10
+              h-96
+              rounded-md
+              bg-linear-to-bl
             "
           />
         )}
@@ -170,10 +170,10 @@ export function BidDetails({
             <div className="flex flex-row items-center gap-4">
               <div
                 className="
+                  bg-palette-beige/20
                   hidden
                   size-12
                   rounded-full
-                  bg-palette-beige/20
                   md:flex
                   md:shrink-0
                   md:items-center
@@ -195,11 +195,11 @@ export function BidDetails({
                     as="h2"
                     id="about-project"
                     className="
+                      [body:has(a[href='#about-project']:focus)_&]:outline-palette-green
                       [body:has(a[href='#about-project']:focus)_&]:rounded-sm
                       [body:has(a[href='#about-project']:focus)_&]:outline
                       [body:has(a[href='#about-project']:focus)_&]:outline-2
                       [body:has(a[href='#about-project']:focus)_&]:outline-offset-4
-                      [body:has(a[href='#about-project']:focus)_&]:outline-palette-green
                     "
                   >
                     About Project
@@ -214,11 +214,11 @@ export function BidDetails({
                     as="h2"
                     id="bid-description"
                     className="
+                      [body:has(a[href='#bid-description']:focus)_&]:outline-palette-green
                       [body:has(a[href='#bid-description']:focus)_&]:rounded-sm
                       [body:has(a[href='#bid-description']:focus)_&]:outline
                       [body:has(a[href='#bid-description']:focus)_&]:outline-2
                       [body:has(a[href='#bid-description']:focus)_&]:outline-offset-4
-                      [body:has(a[href='#bid-description']:focus)_&]:outline-palette-green
                     "
                   >
                     Bid Description
@@ -233,11 +233,11 @@ export function BidDetails({
                     as="h2"
                     id="committee-review"
                     className="
+                      [body:has(a[href='#committee-review']:focus)_&]:outline-palette-green
                       [body:has(a[href='#committee-review']:focus)_&]:rounded-sm
                       [body:has(a[href='#committee-review']:focus)_&]:outline
                       [body:has(a[href='#committee-review']:focus)_&]:outline-2
                       [body:has(a[href='#committee-review']:focus)_&]:outline-offset-4
-                      [body:has(a[href='#committee-review']:focus)_&]:outline-palette-green
                     "
                   >
                     Committee Review
@@ -251,7 +251,7 @@ export function BidDetails({
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
             {bid.roundId === currentRoundId && (
-              <div className="*:!w-full">
+              <div className="*:w-full!">
                 <VoteButton bidId={bidId} size="large" />
               </div>
             )}
@@ -272,9 +272,22 @@ export function BidDetails({
                     />
                   </div>
                 )}
-                <StyledText className="text-xl font-bold not-italic">
-                  {projectName}
-                </StyledText>
+                {projectUrl ? (
+                  <StyledText
+                    as={Link}
+                    href={projectUrl}
+                    target="_blank"
+                    variant="link"
+                    className="flex items-center gap-2 text-xl font-bold  not-italic"
+                  >
+                    {projectName}
+                    <Icon name="solid:arrow-up-right" />
+                  </StyledText>
+                ) : (
+                  <StyledText className="text-xl font-bold not-italic">
+                    {projectName}
+                  </StyledText>
+                )}
               </div>
             </div>
 
@@ -287,13 +300,13 @@ export function BidDetails({
                   <StyledText
                     as="h3"
                     variant="label"
-                    className="flex cursor-default items-center gap-1 text-palette-green"
+                    className="text-palette-green flex cursor-default items-center gap-1"
                   >
                     <span>Amount</span>
                     <Icon name="circle-info" />
                   </StyledText>
                 </Tooltip>
-                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                <div className="text-palette-green max-w-64 overflow-x-auto text-xl font-bold">
                   <BidPolSize bidId={bidId} />
                 </div>
               </div>
@@ -304,14 +317,14 @@ export function BidDetails({
                 <StyledText
                   as="h3"
                   variant="label"
-                  className="flex cursor-default items-center gap-1 text-palette-green"
+                  className="text-palette-green flex cursor-default items-center gap-1"
                 >
                   <span>Status</span>
                   <Icon name="circle-info" />
                 </StyledText>
               </Tooltip>
 
-              <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize text-palette-green">
+              <div className="text-palette-green max-w-64 overflow-x-auto text-xl font-bold capitalize">
                 {bid.status}
               </div>
             </div>
@@ -468,14 +481,14 @@ export function BidDetails({
                   >
                     <span
                       className="
+                        text-palette-beige
                         flex
                         cursor-default
                         items-center
                         gap-1
-                        whitespace-nowrap
                         text-xs
                         font-normal
-                        text-palette-beige
+                        whitespace-nowrap
                       "
                     >
                       <Icon
@@ -512,25 +525,6 @@ export function BidDetails({
                       <span>{section}</span>
                     </StyledText>
                   ))}
-                {projectUrl && (
-                  <StyledText
-                    as={Link}
-                    href={projectUrl}
-                    target="_blank"
-                    variant="link"
-                    className="
-                      flex
-                      items-center
-                      gap-2
-                      border-t
-                      border-white/20
-                      pt-2
-                    "
-                  >
-                    <Icon name="solid:arrow-up-right" />
-                    Project Website
-                  </StyledText>
-                )}
               </div>
             </div>
           </div>

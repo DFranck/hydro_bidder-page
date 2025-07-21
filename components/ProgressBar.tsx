@@ -8,7 +8,7 @@ const classNamesByVariant = {
         border-2
         border-palette-red
         bg-palette-red/40
-        [box-shadow:0_0_10px_theme(colors.palette.red)]
+        [box-shadow:0_0_10px_var(--color-palette-red)]
       `
     ),
     innerBar: twJoin(`animate-pulse bg-palette-red`),
@@ -19,7 +19,7 @@ const classNamesByVariant = {
         border-2
         border-palette-beige
         bg-palette-beige/40
-        [box-shadow:0_0_10px_theme(colors.palette.beige)]
+        [box-shadow:0_0_10px_var(--color-palette-beige)]
       `
     ),
     innerBar: twJoin(`animate-pulse bg-palette-beige`),

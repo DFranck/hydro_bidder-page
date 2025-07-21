@@ -25,7 +25,7 @@ export function CurrentRoundTokenLockedGlobal() {
       className={twMerge(
         lockedTokenIsAtCapacityGlobal &&
           `
-            bg-gradient-to-t
+            bg-linear-to-t
             from-palette-red/80
             to-palette-red/0
           `

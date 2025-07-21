@@ -1,0 +1,15 @@
+{
+  "name": "Hydro",
+  "start_url": "/v2",
+  "display": "fullscreen",
+  "background_color": "#080815",
+  "theme_color": "transparent",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ]
+}

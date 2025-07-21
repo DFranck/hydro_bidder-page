@@ -1,5 +1,5 @@
 import { Card } from "@/components/Card"
-import { Icon } from "@/components/Icon"
+import PlatformRedirect from "@/components/PlatformRedirect"
 
 export function LoaderCard({
   address,
@@ -15,18 +15,7 @@ export function LoaderCard({
         {!address && haveChains ? (
           <p>
             In order to use Hydro, you will need to connect a compatible wallet.{" "}
-            If you don&rsquo;t have a wallet,{" "}
-            <a
-              className="text-palette-green underline"
-              href="https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Grab the Keplr extension{" "}
-              <span className="whitespace-nowrap">
-                here <Icon name="solid:arrow-up-right" />
-              </span>
-            </a>{" "}
+            If you don&rsquo;t have a wallet, <PlatformRedirect />
             and connect your wallet.
           </p>
         ) : haveChains ? (

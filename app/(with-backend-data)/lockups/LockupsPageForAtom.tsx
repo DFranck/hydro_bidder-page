@@ -20,11 +20,12 @@ import { Tooltip } from "@/components/Tooltip"
 import {
   initializingLockupsTooltip,
   lockupLimitTooltip,
+  mergingTooltip,
   needsWalletConnectionTooltip,
+  notEligibleTooltip,
 } from "@/components/ToolTips"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { useChain } from "@cosmos-kit/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -34,6 +35,12 @@ import { useAmountOfTokenInWallet } from "@/contract-apis/useAmountOfTokenInWall
 import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { NewLockUpButton } from "@/components/NewLockUpButton"
+import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
+import { RotateCw } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { SplitLockupModal } from "@/components/SplitLockupModal"
+import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
+import { cn } from "@/lib/utils"
 
 export function LockupsPageForAtom() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -42,16 +49,17 @@ export function LockupsPageForAtom() {
     useState(false)
   const [isShowingNextStep, setIsShowingNextStep] = useState(false)
   const {
-    address,
     isWalletConnected,
     lockups,
     lockedTokenMaxWallet,
     lockedTokenPercentageWallet,
     lockedTokenTotalWallet,
     isLoading,
+    hasGatekeeper,
   } = useBackendData()
-  const { getSigningCosmWasmClient } = useChain("neutron")
+  const [isSplitModalOpen, setIsSplitModalOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [refreshMultipleLockups, setRefreshMultipleLockups] = useState(false)
   const [token, setToken] = useState<{
     name: "stATOM" | "dATOM"
     amount: number
@@ -59,6 +67,17 @@ export function LockupsPageForAtom() {
     name: "dATOM",
     amount: 0,
   })
+
+  const [selectedActiveLockups, setSelectedActiveLockups] = useState<number[]>(
+    []
+  )
+  const [selectedExpiredLockups, setSelectedExpiredLockups] = useState<
+    number[]
+  >([])
+
+  const [initMerge, setInitMerge] = useState(false)
+
+  const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
   const amountOfDAtomInWallet = useAmountOfTokenInWallet("dATOM")
 
@@ -79,7 +98,7 @@ export function LockupsPageForAtom() {
       amount: amountOfDAtomInWallet,
     })
   }
-  const { setToasts, addToast } = useToasts()
+  const { setToasts } = useToasts()
   const expiredLockups = lockups.filter(
     (lockup) => new Date() >= lockup.dateEnd
   )
@@ -114,6 +133,22 @@ export function LockupsPageForAtom() {
       toastMessages.unlockingExpiredAtomLockupsSuccess(expiredLockups.length),
     ])
   }
+
+  function handleRefreshLockups() {
+    setSelectedExpiredLockups([])
+    setSelectedActiveLockups([])
+    setInitMerge(false)
+  }
+
+  function handleRefreshModal() {
+    setRefreshMultipleLockups(true)
+  }
+
+  useEffect(() => {
+    if (isLoading) {
+      handleRefreshLockups()
+    }
+  }, [isLoading])
 
   useEffect(() => {
     if (!incompleteNotices.length) {
@@ -156,30 +191,41 @@ export function LockupsPageForAtom() {
         >
           <h2 className="sr-only">Your Lockups</h2>
 
-          <Tooltip
-            tipContents={lockupLimitTooltip({
-              lockedTokenMaxWallet,
-              lockedTokenTotalWallet,
-            })}
-            className="block w-96 shrink-0"
-          >
-            <ProgressBar
-              percentage={lockedTokenPercentageWallet}
-              warningZone={(percentage) => percentage >= 75}
-              dangerZone={(percentage) => percentage >= 95}
+          {hasGatekeeper ? (
+            <Tooltip
+              tipContents={
+                lockedTokenMaxWallet === 0
+                  ? notEligibleTooltip
+                  : lockupLimitTooltip({
+                      lockedTokenMaxWallet,
+                      lockedTokenTotalWallet,
+                    })
+              }
+              className="block w-96 shrink-0"
             >
-              <div className="flex items-center gap-1 opacity-60">
-                <span>
-                  {lockedTokenTotalWallet.toFixed(4).replace(".0000", "")} /{" "}
-                  {lockedTokenMaxWallet}{" "}
-                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} max
-                </span>
-                <span>
-                  <Icon name="circle-info" />
-                </span>
-              </div>
-            </ProgressBar>
-          </Tooltip>
+              <ProgressBar
+                percentage={lockedTokenPercentageWallet}
+                warningZone={(percentage) => percentage >= 75}
+                dangerZone={(percentage) => percentage >= 95}
+              >
+                <div className="flex items-center gap-1 opacity-60">
+                  {lockedTokenMaxWallet === 0 ? (
+                    <span>Not Eligible</span>
+                  ) : (
+                    <span>
+                      {lockedTokenTotalWallet.toFixed(
+                        DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+                      )}{" "}
+                      / {lockedTokenMaxWallet}{" "}
+                      {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} ATOM max
+                    </span>
+                  )}
+                </div>
+              </ProgressBar>
+            </Tooltip>
+          ) : (
+            <div />
+          )}
 
           <div
             className="
@@ -188,10 +234,24 @@ export function LockupsPageForAtom() {
               items-end
               justify-between
               gap-6
+              whitespace-nowrap
               md:flex-row
               md:items-center
             "
           >
+            {lockups.length > 0 && (
+              <StyledText
+                as="button"
+                variant="button.secondary"
+                className="flex items-center gap-2"
+                onClick={handleRefreshModal}
+                disabled={refreshLockups.length <= 1}
+              >
+                <RotateCw className="size-4 text-palette-green" />
+                {initMerge ? "Merge" : "Refresh"} {refreshLockups.length}{" "}
+                Lockups
+              </StyledText>
+            )}
             {expiredLockups.length > 0 && (
               <StyledText
                 as="button"
@@ -230,6 +290,30 @@ export function LockupsPageForAtom() {
           </div>
         </div>
 
+        {lockups.length > 1 ? (
+          <div className="flex justify-end">
+            <Tooltip
+              classNamesForTooltip="w-96  -translate-x-10/12 md:w-5/12"
+              tipContents={mergingTooltip}
+            >
+              <div className="flex items-center  space-x-2">
+                <Switch
+                  checked={initMerge}
+                  onCheckedChange={() => setInitMerge(!initMerge)}
+                  disabled={refreshLockups.length > 1}
+                />
+                <StyledText
+                  className={cn("w-28 text-sm", {
+                    "text-gray-400": !initMerge,
+                  })}
+                >
+                  Merge {initMerge ? "enabled" : "disabled"}
+                </StyledText>
+              </div>
+            </Tooltip>
+          </div>
+        ) : null}
+
         {lockups.length === 0 ? (
           <BlurryBackdropBox className="flex flex-col gap-6">
             <EmptyBox className="flex flex-col gap-1">
@@ -249,7 +333,7 @@ export function LockupsPageForAtom() {
                 <StyledText
                   as={Link}
                   variant="link"
-                  href="/docs/users/locking-lsm-shares"
+                  href="/docs/users/lockups"
                   target="_blank"
                   className="flex items-center gap-1 text-xs"
                 >
@@ -261,8 +345,17 @@ export function LockupsPageForAtom() {
           </BlurryBackdropBox>
         ) : (
           <LockupsTables
+            initMerge={initMerge}
+            selectedActiveLockups={selectedActiveLockups}
+            selectedExpiredLockups={selectedExpiredLockups}
+            setSelectedActiveLockups={setSelectedActiveLockups}
+            setSelectedExpiredLockups={setSelectedExpiredLockups}
             onClickEdit={({ lockup }) => {
               setIsEditModalOpen(true)
+              setLockupBeingEdited(lockup)
+            }}
+            onClickSplit={({ lockup }) => {
+              setIsSplitModalOpen(true)
               setLockupBeingEdited(lockup)
             }}
           />
@@ -276,10 +369,28 @@ export function LockupsPageForAtom() {
         onCloseComplete={() => setLockupBeingEdited(null)}
       />
 
+      <SplitLockupModal
+        lockup={lockupBeingEdited}
+        isOpen={isSplitModalOpen}
+        onClose={() => setIsSplitModalOpen(false)}
+        onCloseComplete={() => setLockupBeingEdited(null)}
+      />
+
       <ModalWindowToUnlockExpiredLockups
         isOpen={isConfirmingUnlockExpired}
         onClose={handleModalWindowClose}
         onSuccess={handleUnlockExpiredModalWindowSuccess}
+      />
+
+      <RefreshMultipleLockups
+        initMerge={initMerge}
+        lockups={lockups}
+        isCreationModalOpen={refreshMultipleLockups}
+        refreshLockups={refreshLockups}
+        handleRefreshLockups={handleRefreshLockups}
+        setIsCreationModalOpen={setRefreshMultipleLockups}
+        handleCreationModalWindowClose={() => setRefreshMultipleLockups(false)}
+        handleModalWindowCloseComplete={() => setRefreshMultipleLockups(false)}
       />
 
       <ModalWindow

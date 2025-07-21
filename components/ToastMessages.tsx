@@ -20,7 +20,7 @@ export const toastMessages = {
   claimingRewardsError: (error: Error) => {
     return {
       variant: "error",
-      message: `Error claiming rewards: ${error}`,
+      message: `Error claiming rewards: ${error.message || error}`,
     }
   },
 
@@ -29,7 +29,7 @@ export const toastMessages = {
     message: "Locking tokens...",
   },
 
-   lockingUnavailableTokens: {
+  lockingUnavailableTokens: {
     variant: "error",
     message: "Tokens are not available for locking. Please try again later.",
   },
@@ -45,7 +45,7 @@ export const toastMessages = {
 
   lockingTokensError: (error: Error) => ({
     variant: "error",
-    message: `Error locking tokens: ${error}`,
+    message: `Error locking tokens: ${error.message || error}`,
   }),
 
   lockupCapacityFull: {
@@ -53,9 +53,9 @@ export const toastMessages = {
     message: "There's no longer capacity to create a lockup.",
   },
 
-  lockupExtendRequestRejected: (error: Error) => ({
+  lockupRequestRejected: (error: Error) => ({
     variant: "error",
-    message: `Request rejected: ${error}`,
+    message: `Request rejected: ${error.message || error}`,
   }),
 
   reloadingTheWindow: {
@@ -63,9 +63,29 @@ export const toastMessages = {
     message: "Reloading in progress.",
   },
 
+  mergingLockups: {
+    variant: "working",
+    message: "Merging your lockups in progress.",
+  },
+
+  mergingLockupsSuccess: {
+    variant: "success",
+    message: "Your merge was successful! Reloading in progress.",
+  },
+
+  mergingLockupsError: (error: Error) => ({
+    variant: "error",
+    message: `Error merging lockups: ${error}`,
+  }),
+
   extendingLockup: {
     variant: "working",
     message: "Extending your lockup in progress.",
+  },
+
+  extendingLockups: {
+    variant: "working",
+    message: "Extending your lockups in progress.",
   },
 
   extendingLockupSuccess: {
@@ -73,9 +93,29 @@ export const toastMessages = {
     message: "Lockup extended successfully! Reloading in progress.",
   },
 
-  extendingLockupError: (error: Error) => ({
+  extendingLockupsSuccess: {
+    variant: "success",
+    message: "Lockups extended successfully! Reloading in progress.",
+  },
+
+  extendingLockupError: (error: Error, type: "single" | "multiple") => ({
     variant: "error",
-    message: `Error extending lockup: ${error}`,
+    message: `Error extending lockup${type === "single" ? null : "s"}: ${error}`,
+  }),
+
+  splittingLockup: {
+    variant: "working",
+    message: "Splitting your lockup in progress.",
+  },
+
+  splittingLockupSuccess: {
+    variant: "success",
+    message: "Lockup has been split successfully! Reloading in progress.",
+  },
+
+  splittingLockupError: (error: Error) => ({
+    variant: "error",
+    message: `Error splitting lockup: ${error.message || error}`,
   }),
 
   unlockingExpiredLockups: (count: number) => {
@@ -133,7 +173,7 @@ export const toastMessages = {
 
     return {
       variant: "error",
-      message: `Error unlocking ${count} ${lockupOrLockups}: ${error}`,
+      message: `Error unlocking ${count} ${lockupOrLockups}: ${error.message || error}`,
     }
   },
 
@@ -154,12 +194,12 @@ export const toastMessages = {
 
   votingError: (error: Error) => ({
     variant: "error",
-    message: `Error voting: ${error}`,
+    message: `Error voting: ${error.message || error}`,
   }),
 
   walletConnectionError: (error: Error) => ({
     variant: "error",
-    message: `Error connecting wallet: ${error}`,
+    message: `Error connecting wallet: ${error.message || error}`,
   }),
 
   transactionCompleted: {
@@ -208,7 +248,7 @@ export const toastMessages = {
   transactionError: (error: Error) => {
     return {
       variant: "error",
-      message: `Error during transaction: ${error}`,
+      message: `Error during transaction: ${error.message || error}`,
     }
   },
   // AddTribute
@@ -223,7 +263,7 @@ export const toastMessages = {
 
   addingTributeError: (error: Error) => ({
     variant: "error",
-    message: `Error adding tribute: ${error}`,
+    message: `Error adding tribute: ${error.message || error}`,
   }),
 
   // Lockup - Transferring

@@ -1,3 +1,4 @@
+import { isTouchscreen } from "@/lib/isTouchscreen"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
@@ -14,6 +15,18 @@ export function middleware(request: NextRequest) {
       new URL(pathname.replace("/voting", "/bids"), request.url)
     )
     return response
+  }
+
+  // redirecting touchscreen devices from /bids to /v2
+  if (pathname.startsWith("/bids")) {
+    const userAgent = request.headers.get("user-agent") || ""
+
+    if (isTouchscreen(userAgent)) {
+      const response = NextResponse.redirect(
+        new URL(pathname.replace("/bids", "/v2"), request.url)
+      )
+      return response
+    }
   }
 
   return NextResponse.next({

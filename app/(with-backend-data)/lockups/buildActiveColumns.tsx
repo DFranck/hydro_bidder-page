@@ -35,6 +35,10 @@ export function buildActiveColumns<
 
   return [
     {
+      key: "select",
+      label: null,
+    },
+    {
       key: "amount",
       label: "Amount",
       isSortable: true,
