@@ -62,6 +62,7 @@ export function buildExpiredRow({
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
   ]
+
   const handleCheckboxChange = (checked: boolean) => {
     if (checked) {
       if (!selectedExpiredLockups.includes(lockup.id)) {
@@ -87,11 +88,11 @@ export function buildExpiredRow({
           condition={initMerge && mergeableLockups.length !== 0 && !mergePair}
           wrapper={(children) => (
             <Tooltip
-              classNamesForTooltip="md:w-96"
+              classNamesForTooltip="translate-x-1 md:w-96"
               tipContents={mergeableDenomTooltip({
                 lockup: {
                   denom: lockup.funds.denomInfo?.humanReadableDenom,
-                  validator: lockup.funds.denomInfo?.validator,
+                  validator: lockup.funds.denomInfo?.raw,
                 },
                 selectedLockup: {
                   denom:
@@ -99,7 +100,7 @@ export function buildExpiredRow({
                       ?.humanReadableDenom,
                   validator:
                     findMergeableLockup(mergeableLockups).funds.denomInfo
-                      ?.validator,
+                      ?.raw,
                 },
               })}
             >
@@ -119,7 +120,7 @@ export function buildExpiredRow({
         {mergePair && initMerge ? (
           <Tooltip
             tipContents={mergeIndicatorTooltip}
-            classNamesForTooltip="md:w-96"
+            classNamesForTooltip="translate-x-1 md:w-96"
           >
             <SquaresUnite className="size-3.5 animate-pulse" />
           </Tooltip>
@@ -148,18 +149,21 @@ export function buildExpiredRow({
 
     actions: (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild className="flex justify-end">
+        <DropdownMenuTrigger
+          asChild
+          className="flex  justify-start md:justify-end"
+        >
           <StyledText as={"span"} className="cursor-pointer">
             <span className="sr-only">Open menu</span>
             <MoreHorizontal />
           </StyledText>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-black ">
+        <DropdownMenuContent align="start" className="bg-black ">
           {MENU_ITEMS.map((item) => (
             <DropdownMenuItem
               key={item.label}
               onClick={() => item.cta(lockup)}
-              className="text-palette-red hover:bg-palette-red group hover:text-white"
+              className="group text-palette-red hover:bg-palette-red hover:text-white"
             >
               {item.icon}
               {item.label}

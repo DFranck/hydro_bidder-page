@@ -146,7 +146,7 @@ export function RefreshMultipleLockups({
           <Card.Body>
             <div className="flex flex-col gap-2">
               <StyledText className="font-bold">
-                New Lockup Duration:
+                {initMerge ? "Reveal Lockup details " : "New Lockup Duration"}:
               </StyledText>
 
               <InputForLockupPeriod
@@ -160,7 +160,19 @@ export function RefreshMultipleLockups({
             </div>
 
             <div className="flex items-center gap-2 opacity-60">
-              <p>{refreshLockups.length} lockups will be extended to end on</p>
+              {initMerge ? (
+                <p>
+                  The new lockup amount will be {formatAmount(totalAmount, 0)}{" "}
+                  <span className="pr-1">
+                    {filteredLockups[0]?.funds?.denomInfo?.humanReadableDenom}
+                  </span>
+                  and ends at
+                </p>
+              ) : (
+                <p>
+                  {refreshLockups.length} lockups will be extended to end on
+                </p>
+              )}
               {selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH ? (
                 <div className="h-5 w-24 animate-pulse rounded bg-gray-300"></div>
               ) : (
@@ -179,12 +191,14 @@ export function RefreshMultipleLockups({
               )}
             </div>
 
-            <div className="flex flex-col">
-              <StyledText className="font-semibold">Locked Tokens</StyledText>
-              <StyledText className="text-palette-beige text-4xl font-bold">
-                {formatAmount(totalAmount, 0)}
-              </StyledText>
-            </div>
+            {!initMerge ? (
+              <div className="flex flex-col">
+                <StyledText className="font-semibold">Locked Tokens</StyledText>
+                <StyledText className="text-palette-beige text-4xl font-bold">
+                  {formatAmount(totalAmount, 0)}
+                </StyledText>
+              </div>
+            ) : null}
           </Card.Body>
 
           <Card.Footer>

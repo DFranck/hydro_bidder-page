@@ -116,37 +116,30 @@ export function BidDetails({
     ]
 
   return (
-    <ContentContainer className="py-6">
-      <BlurryBackdropBox className="p-4 md:p-12">
+    <ContentContainer className="p-6">
+      <BlurryBackdropBox className="p-8 md:p-12">
         {hasVotedForBid && (
           <div
             className="
+              from-palette-green/30
+              via-palette-green/0
+              to-palette-green/0
               pointer-events-none
               absolute
-              left-0
-              right-0
               top-0
+              right-0
+              left-0
               -z-10
               h-96
               rounded-md
               bg-linear-to-bl
-              from-palette-green/30
-              via-palette-green/0
-              to-palette-green/0
             "
           />
         )}
 
-        <div
-          className="
-            grid
-            grid-cols-1
-            gap-12
-            md:grid-cols-[3fr_1fr]
-          "
-        >
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
           {/* Main Content */}
-          <div className="flex flex-col gap-12">
+          <div className="col-span-2 flex flex-col gap-12">
             <StyledText
               as="button"
               variant="button.secondary.small"
@@ -159,10 +152,10 @@ export function BidDetails({
             <div className="flex flex-row items-center gap-4">
               <div
                 className="
+                  bg-palette-beige/20
                   hidden
                   size-12
                   rounded-full
-                  bg-palette-beige/20
                   md:flex
                   md:shrink-0
                   md:items-center
@@ -184,11 +177,11 @@ export function BidDetails({
                     as="h2"
                     id="about-project"
                     className="
+                      [body:has(a[href='#about-project']:focus)_&]:outline-palette-green
                       [body:has(a[href='#about-project']:focus)_&]:rounded-sm
                       [body:has(a[href='#about-project']:focus)_&]:outline
                       [body:has(a[href='#about-project']:focus)_&]:outline-2
                       [body:has(a[href='#about-project']:focus)_&]:outline-offset-4
-                      [body:has(a[href='#about-project']:focus)_&]:outline-palette-green
                     "
                   >
                     About Project
@@ -203,11 +196,11 @@ export function BidDetails({
                     as="h2"
                     id="bid-description"
                     className="
+                      [body:has(a[href='#bid-description']:focus)_&]:outline-palette-green
                       [body:has(a[href='#bid-description']:focus)_&]:rounded-sm
                       [body:has(a[href='#bid-description']:focus)_&]:outline
                       [body:has(a[href='#bid-description']:focus)_&]:outline-2
                       [body:has(a[href='#bid-description']:focus)_&]:outline-offset-4
-                      [body:has(a[href='#bid-description']:focus)_&]:outline-palette-green
                     "
                   >
                     Bid Description
@@ -222,11 +215,11 @@ export function BidDetails({
                     as="h2"
                     id="committee-review"
                     className="
+                      [body:has(a[href='#committee-review']:focus)_&]:outline-palette-green
                       [body:has(a[href='#committee-review']:focus)_&]:rounded-sm
                       [body:has(a[href='#committee-review']:focus)_&]:outline
                       [body:has(a[href='#committee-review']:focus)_&]:outline-2
                       [body:has(a[href='#committee-review']:focus)_&]:outline-offset-4
-                      [body:has(a[href='#committee-review']:focus)_&]:outline-palette-green
                     "
                   >
                     Committee Review
@@ -238,7 +231,7 @@ export function BidDetails({
           </div>
 
           {/* Sidebar */}
-          <div className="flex flex-col gap-6">
+          <div className="col-span-1 flex flex-col gap-6">
             {bid.roundId === currentRoundId && (
               <div className="*:w-full!">
                 <VoteButton bidId={bidId} size="large" />
@@ -261,9 +254,22 @@ export function BidDetails({
                     />
                   </div>
                 )}
-                <StyledText className="text-xl font-bold not-italic">
-                  {projectName}
-                </StyledText>
+                {projectUrl ? (
+                  <StyledText
+                    as={Link}
+                    href={projectUrl}
+                    target="_blank"
+                    variant="link"
+                    className="flex items-center gap-2 text-xl font-bold  not-italic"
+                  >
+                    {projectName}
+                    <Icon name="solid:arrow-up-right" />
+                  </StyledText>
+                ) : (
+                  <StyledText className="text-xl font-bold not-italic">
+                    {projectName}
+                  </StyledText>
+                )}
               </div>
             </div>
 
@@ -276,13 +282,13 @@ export function BidDetails({
                   <StyledText
                     as="h3"
                     variant="label"
-                    className="flex cursor-default items-center gap-1 text-palette-green"
+                    className="text-palette-green flex cursor-default items-center gap-1"
                   >
                     <span>Amount</span>
                     <Icon name="circle-info" />
                   </StyledText>
                 </Tooltip>
-                <div className="max-w-64 overflow-x-auto text-xl font-bold text-palette-green">
+                <div className="text-palette-green max-w-64 overflow-x-auto text-xl font-bold">
                   <BidPolSize bidId={bidId} />
                 </div>
               </div>
@@ -293,14 +299,14 @@ export function BidDetails({
                 <StyledText
                   as="h3"
                   variant="label"
-                  className="flex cursor-default items-center gap-1 text-palette-green"
+                  className="text-palette-green flex cursor-default items-center gap-1"
                 >
                   <span>Status</span>
                   <Icon name="circle-info" />
                 </StyledText>
               </Tooltip>
 
-              <div className="max-w-64 overflow-x-auto text-xl font-bold capitalize text-palette-green">
+              <div className="text-palette-green max-w-64 overflow-x-auto text-xl font-bold capitalize">
                 {bid.status}
               </div>
             </div>
@@ -452,14 +458,14 @@ export function BidDetails({
                   >
                     <span
                       className="
+                        text-palette-beige
                         flex
                         cursor-default
                         items-center
                         gap-1
-                        whitespace-nowrap
                         text-xs
                         font-normal
-                        text-palette-beige
+                        whitespace-nowrap
                       "
                     >
                       <Icon
@@ -496,25 +502,6 @@ export function BidDetails({
                       <span>{section}</span>
                     </StyledText>
                   ))}
-                {projectUrl && (
-                  <StyledText
-                    as={Link}
-                    href={projectUrl}
-                    target="_blank"
-                    variant="link"
-                    className="
-                      flex
-                      items-center
-                      gap-2
-                      border-t
-                      border-white/20
-                      pt-2
-                    "
-                  >
-                    <Icon name="solid:arrow-up-right" />
-                    Project Website
-                  </StyledText>
-                )}
               </div>
             </div>
           </div>
