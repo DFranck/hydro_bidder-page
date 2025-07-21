@@ -40,7 +40,7 @@ import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapa
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { NewLockUpButton } from "@/components/NewLockUpButton"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
-import { RotateCw } from "lucide-react"
+import { RotateCw, SquaresUnite } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
 import { SplitLockupModal } from "@/components/SplitLockupModal"
@@ -326,7 +326,11 @@ export function LockupsPageForStOsmo() {
                 onClick={handleRefreshModal}
                 disabled={refreshLockups.length <= 1}
               >
-                <RotateCw className="size-4 text-palette-green" />
+                {initMerge ? (
+                  <SquaresUnite className="text-palette-green size-4" />
+                ) : (
+                  <RotateCw className="text-palette-green size-4" />
+                )}
                 {initMerge ? "Merge" : "Refresh"} {refreshLockups.length}{" "}
                 Lockups
               </StyledText>
@@ -384,25 +388,25 @@ export function LockupsPageForStOsmo() {
             </StyledText>
 
             {lockups.length > 1 ? (
-              <div className="flex justify-end">
+              <div className="flex items-center justify-end">
+                <Switch
+                  checked={initMerge}
+                  onCheckedChange={() => setInitMerge(!initMerge)}
+                  disabled={refreshLockups.length > 1}
+                  className="mx-2"
+                />
+                <StyledText
+                  className={cn("w-28 text-sm", {
+                    "text-gray-400": !initMerge,
+                  })}
+                >
+                  Merge {initMerge ? "enabled" : "disabled"}
+                </StyledText>
                 <Tooltip
-                  classNamesForTooltip="w-96  -translate-x-10/12 md:w-5/12"
+                  classNamesForTooltip="w-80  -translate-x-12/12 md:w-5/12"
                   tipContents={mergingTooltip}
                 >
-                  <div className="flex items-center  space-x-2">
-                    <Switch
-                      checked={initMerge}
-                      onCheckedChange={() => setInitMerge(!initMerge)}
-                      disabled={refreshLockups.length > 1}
-                    />
-                    <StyledText
-                      className={cn("w-28 text-sm", {
-                        "text-gray-400": !initMerge,
-                      })}
-                    >
-                      Merge {initMerge ? "enabled" : "disabled"}
-                    </StyledText>
-                  </div>
+                  <Icon name="circle-info" />
                 </Tooltip>
               </div>
             ) : null}

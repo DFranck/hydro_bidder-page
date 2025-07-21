@@ -54,14 +54,14 @@ export function buildExpiredRow({
     {
       label: "Refresh",
       icon: (
-        <RotateCw className="size-2 text-palette-red group-hover:text-white" />
+        <RotateCw className="text-palette-red size-2 group-hover:text-white" />
       ),
       cta: (lockup: AugmentedLockup) => onClickEdit({ lockup }),
     },
     {
       label: "Split",
       icon: (
-        <CircleSlash2 className="size-2 text-palette-red group-hover:text-white" />
+        <CircleSlash2 className="text-palette-red size-2 group-hover:text-white" />
       ),
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
@@ -91,11 +91,11 @@ export function buildExpiredRow({
           condition={initMerge && mergeableLockups.length !== 0 && !mergePair}
           wrapper={(children) => (
             <Tooltip
-              classNamesForTooltip="md:w-96"
+              classNamesForTooltip="translate-x-1 md:w-96"
               tipContents={mergeableDenomTooltip({
                 lockup: {
                   denom: lockup.funds.denomInfo?.humanReadableDenom,
-                  validator: lockup.funds.denomInfo?.validator,
+                  validator: lockup.funds.denomInfo?.raw,
                 },
                 selectedLockup: {
                   denom:
@@ -103,7 +103,7 @@ export function buildExpiredRow({
                       ?.humanReadableDenom,
                   validator:
                     findMergeableLockup(mergeableLockups).funds.denomInfo
-                      ?.validator,
+                      ?.raw,
                 },
               })}
             >
@@ -123,7 +123,7 @@ export function buildExpiredRow({
         {mergePair && initMerge ? (
           <Tooltip
             tipContents={mergeIndicatorTooltip}
-            classNamesForTooltip="md:w-96"
+            classNamesForTooltip="translate-x-1 md:w-96"
           >
             <SquaresUnite className="size-3.5 animate-pulse" />
           </Tooltip>

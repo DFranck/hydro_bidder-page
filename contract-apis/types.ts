@@ -77,6 +77,7 @@ export type AugmentedClaim = Omit<SanitizedClaim, "amount"> & {
 export interface AugmentedCoin extends Coin {
   humanReadableDenom: string
   validator?: string
+  raw?: string
   printableAmount: number
   priceUsd: number
   valueUsd: number

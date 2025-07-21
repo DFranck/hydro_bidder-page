@@ -132,7 +132,6 @@ export function BidDetails({
         'gap-tight',
         'overflow-y-auto',
         'desktop:overflow-hidden',
-        'desktop:gap-0',
         'desktop:grid-cols-[5fr_3fr]',
         'is-voted-on:theme-color-green',
         'is-below-threshold:theme-color-beige',
@@ -234,6 +233,8 @@ export function BidDetails({
       >
         <aside
           className={twJoin(
+            '@container/sidebar',
+            'transition-all',
             'relative',
             'transition-all',
             'col-start-1 col-end-2',
@@ -244,23 +245,29 @@ export function BidDetails({
             'flex-wrap',
             'content-start',
             'desktop:h-full',
+            'desktop:flex',
+            'desktop:flex-wrap',
+            'desktop:p-0',
+            'desktop:gap-0',
             'desktop:overflow-y-auto',
             'desktop:col-start-2',
             'desktop:col-end-3',
             'desktop:row-start-1',
             'desktop:row-end-3',
+            'desktop:**:shrink-0',
           )}
         >
           {sidebarFields.map((field) => {
             const containerClassName = twJoin(
-              'basis-1/2',
               'flex flex-col',
-              'items-start justify-center',
               'gap-tighter',
-              'p-loose',
+              'py-standard',
+              'items-start',
+              'justify-center',
               '[&:nth-child(4n+2)]:bg-darkened',
               '[&:nth-child(4n+3)]:bg-darkened',
-              'desktop:aspect-square',
+              'desktop:px-loose',
+              'desktop:basis-1/2',
               'desktop:items-center',
               'desktop:text-center',
             )
@@ -272,7 +279,6 @@ export function BidDetails({
                     'w-full',
                     'label flex items-center gap-1',
                     'desktop:justify-center',
-                    'desktop:scale-125',
                   )}
                 >
                   <span className={twJoin(field.tooltip && 'has-tooltip')}>
@@ -306,11 +312,10 @@ export function BidDetails({
           className={twJoin(
             'col-start-1 col-end-2',
             'row-start-2 row-end-3',
-            'gap-standard flex flex-col',
-            'px-loose',
-            'pb-loosest',
-            'bg-theme-color/5',
             'text-balance',
+            'md:px-loose px-0',
+            'pb-loosest',
+            'gap-standard flex flex-col',
             'desktop:overflow-y-auto',
             'desktop:row-start-2',
             'desktop:row-end-3',
@@ -338,13 +343,10 @@ export function BidDetails({
                     'relative',
                     'flex items-center',
                     'label text-palette-beige',
-                    'px-loose -mx-loose',
-                    'before:absolute',
-                    'before:inset-0',
-                    'before:bg-linear-to-r',
-                    'before:from-theme-color/10',
-                    'before:to-transparent',
-                    'is-stuck:bg-background',
+                    'bg-background',
+                    'is-stuck:before:absolute',
+                    'is-stuck:before:inset-0',
+                    'is-stuck:before:bg-theme-color/10',
                   )}
                 >
                   {label}

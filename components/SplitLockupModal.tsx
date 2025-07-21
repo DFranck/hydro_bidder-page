@@ -156,11 +156,11 @@ export function SplitLockupModal({
         <Card.Header title="Split Lockup" />
         <Card.Body>
           <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
+            <div className="flex flex-col gap-2">
               <StyledText className="text-sm font-medium">
                 Allocation Split
               </StyledText>
-              <div className="px-3">
+              <div className="flex flex-col gap-4">
                 <Slider
                   value={sliderValue}
                   onValueChange={setSliderValue}
@@ -170,7 +170,7 @@ export function SplitLockupModal({
                   className="w-full rounded-md"
                   disabled={isLoading}
                 />
-                <div className="text-muted-foreground mt-2 flex justify-between text-xs">
+                <div className="text-muted-foreground flex justify-between text-xs">
                   <span>0%</span>
                   <span className="font-medium">
                     {(100 - sliderValue[0]).toFixed(1)}% /{" "}
@@ -181,7 +181,7 @@ export function SplitLockupModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 min-h-28">
               <div className="space-y-2">
                 <StyledText className="text-sm font-medium">
                   Old Lockup Amount
@@ -230,7 +230,7 @@ export function SplitLockupModal({
 
                 {splitAmount > maxTokenAmount && (
                   <p className="text-xs text-red-500">
-                    Max: {maxTokenAmount}{" "}
+                    Max: {formatAmount(maxTokenAmount, 0)}{" "}
                     {lockup?.funds.denomInfo?.humanReadableDenom}
                   </p>
                 )}

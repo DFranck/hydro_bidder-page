@@ -115,7 +115,7 @@ export const toastMessages = {
 
   splittingLockupError: (error: Error) => ({
     variant: "error",
-    message: `Error splitting lockup: ${error.message || error}`,
+    message: `Error splitting lockup: ${error}`,
   }),
 
   unlockingExpiredLockups: (count: number) => {

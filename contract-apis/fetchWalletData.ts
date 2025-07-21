@@ -145,6 +145,7 @@ export async function fetchWalletData({
                 coin: funds,
                 roundPrices: currentRoundPrices,
                 validator: denomTrace?.validator,
+                raw: denomTrace?.baseDenom
               }),
             },
           },

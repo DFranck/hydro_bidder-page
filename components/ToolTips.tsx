@@ -463,18 +463,21 @@ export const mergeableDenomTooltip = ({
     denom?: string
   }
 }) => (
-  <div className="">
+  <div className="space-x-2">
     You can only merge lockups that use ATOM staked with the same validator and
-    tokenized together. This lockup is staked with
-    <span className="mx-0.5 font-bold break-all"> {lockup.validator}</span>
-    <span>{lockup.validator ? "Validator" : null}</span>
-    <span className="font-bold"> {lockup.denom} </span>
-    while your selected lockups are staked with
-    <span className="mx-0.5 font-bold break-all">
-      {selectedLockup.validator}{" "}
+    tokenized together. This lockup has denom
+    <span className="font-bold break-all">
+      {" "}
+      {lockup.validator ? lockup.validator : lockup.denom}
     </span>
-    <span>{selectedLockup.validator ? "Validator" : null} </span>
-    <span className="font-bold">{selectedLockup.denom} </span>.
+    while your selected lockups have denom
+    <span className="font-bold break-all">
+      {" "}
+      {selectedLockup.validator
+        ? selectedLockup.validator
+        : selectedLockup.denom}{" "}
+    </span>
+    .
   </div>
 )
 
