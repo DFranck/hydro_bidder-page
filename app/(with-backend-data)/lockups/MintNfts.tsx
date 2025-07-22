@@ -157,7 +157,7 @@ export function MintNfts({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="w-5/6 md:w-[650px]"
+      className="w-full px-8 md:w-[650px]"
     >
       <div>
         <form onSubmit={handleSubmitCreationForm}>
