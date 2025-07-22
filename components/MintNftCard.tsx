@@ -18,7 +18,6 @@ export function MintNftCard({
       queryKey: ["nft-size-query", nft.baseDenom, nft.amount, lockups.length],
       queryFn: () => findLockupsForNFT(nft.amount, nft.baseDenom, lockups),
       enabled: !!lockups && lockups.length > 0,
-      staleTime: 5 * 60 * 1000,
     })),
   })
 

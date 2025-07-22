@@ -18,6 +18,7 @@ import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimula
 import { useIsMobile } from "@/hooks/use-mobile"
 import { findLockupsForNFT, useNFTQuery } from "@/hooks/use-nft"
 import { MintNftCard } from "@/components/MintNftCard"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface MintNftsProps {
   isCreationModalOpen: boolean
@@ -41,7 +42,8 @@ export function MintNfts({
   handleCreationModalWindowClose,
   handleModalWindowCloseComplete,
 }: MintNftsProps) {
-  const { address, lockups, isLoading: contextLoading } = useBackendData()
+  const { address, lockups, isLoading: isContextLoading } = useBackendData()
+  const queryClient = useQueryClient()
 
   const [step, setStep] = useState<MintStep>("init")
 
@@ -52,7 +54,11 @@ export function MintNfts({
     displayDenom: "",
   })
 
-  const { data } = useNFTQuery(nftInfo.amount, nftInfo.baseDenom, lockups)
+  const { data, isLoading: isNFTLoading } = useNFTQuery(
+    nftInfo.amount,
+    nftInfo.baseDenom,
+    lockups
+  )
 
   const [nftDetails, setNftDetails] = useState(false)
 
@@ -62,16 +68,24 @@ export function MintNfts({
 
   const isMobile = useIsMobile()
 
-  const eligibleLockupsSizes = data
-    ? data
-    : {
-        selectedLockups: [],
-        selectedLockupsCount: 0,
-        totalAmount: 0,
-        remainder: 0,
-        totalLockupSelected: 0,
-        demon: "",
-      }
+  const eligibleLockupsSizes =
+    !isNFTLoading && data
+      ? data
+      : {
+          selectedLockups: [],
+          selectedLockupsCount: 0,
+          totalAmount: 0,
+          remainder: 0,
+          totalLockupSelected: 0,
+          denom: "",
+        }
+
+  const invalidateNFTQuery = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["nft-size-query"],
+    })
+    setStep("split")
+  }
 
   function handleCloseModal() {
     handleCreationModalWindowClose()
@@ -87,11 +101,13 @@ export function MintNfts({
   }
 
   async function handleSplit() {
+    console.log("called.........stand")
     await executeWalletSplitLockup({
       getSigningCosmWasmClient,
       address,
       amount: String(nftInfo.amount * 1e6),
-      lockId: eligibleLockupsSizes.selectedLockups[0].id,
+      lockId: findLockupsForNFT(nftInfo.amount, nftInfo.baseDenom, lockups)
+        .selectedLockups[0].id,
     })
     setIsLoading(false)
     handleCloseModal()
@@ -104,6 +120,7 @@ export function MintNfts({
       address,
       lockIds: eligibleLockupsSizes.selectedLockups.map((el) => el.id),
     })
+    await revalidateTag("backendData")
   }
 
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
@@ -115,29 +132,12 @@ export function MintNfts({
       if (eligibleLockupsSizes.selectedLockupsCount > 1) {
         await handleMerge()
 
-        await revalidateTag("backendData")
-        setStep("split")
+        invalidateNFTQuery()
       }
 
-      const newLockUpData = findLockupsForNFT(
-        nftInfo.amount,
-        nftInfo.baseDenom,
-        lockups
-      )
-
-      if (newLockUpData.selectedLockupsCount === 1 && step === "init") {
+      if (eligibleLockupsSizes.selectedLockupsCount === 1 && step === "init") {
         await handleSplit()
       }
-
-      await executeWalletSimulateLockup({
-        getSigningCosmWasmClient,
-        address,
-        lockIds: lockups
-          .filter((lockup) => !lockup.isExpired)
-          .filter((els) => els.funds.denomInfo?.humanReadableDenom === "ATOM")
-          .filter((els) => els.funds.amount < 1)
-          .map((el) => el.id),
-      })
     } catch (error) {
       console.error("Error in handleSubmitCreationForm:", error)
       setIsLoading(false)
@@ -146,12 +146,13 @@ export function MintNfts({
 
   useEffect(() => {
     async function handleStepChange() {
-      if (step === "split" && !contextLoading && lockups.length > 0) {
+      if (step === "split" && !isContextLoading && lockups.length > 0) {
         await handleSplit()
+        console.log("called.........split")
       }
     }
     handleStepChange().then(() => {})
-  }, [step, lockups])
+  }, [step, lockups, isContextLoading])
 
   return (
     <ModalWindow

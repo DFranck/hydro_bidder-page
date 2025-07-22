@@ -8,10 +8,9 @@ export function useNFTQuery(
   lockups: AugmentedLockup[]
 ) {
   return useQuery({
-    queryKey: ["nft-size-query", denom],
+    queryKey: ["nft-size-query", nftSize, denom, lockups],
     queryFn: () => findLockupsForNFT(nftSize, denom, lockups),
     enabled: !!lockups,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 

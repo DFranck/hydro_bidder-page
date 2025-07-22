@@ -1,13 +1,13 @@
 const stATOM = [
   {
-    amount: 25,
+    amount: 0.65,
     image: "/images/stATOM/25_Piranha_stATOM@4x.png",
     baseDenom:
       "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
     displayDenom: "stATOM",
   },
   {
-    amount: 50,
+    amount: 1.07,
     image: "/images/stATOM/50_Barracuda_stATOM@4x.png",
     baseDenom:
       "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
