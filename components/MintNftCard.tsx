@@ -95,9 +95,9 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
                   ? "Loading..."
                   : nft.lockupCount === 0
                     ? "Insufficient lockups"
-                    : `Created from ${nft.lockupCount} lockup${
-                        nft.lockupCount > 1 ? "s" : ""
-                      }`}
+                    : nft.lockupCount === 1
+                      ? `Created from ${nft.lockupCount} lockup`
+                      : `Merges ${nft.lockupCount} lockups`}
               </span>
             </div>
           </div>

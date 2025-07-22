@@ -200,7 +200,7 @@ export function MintNfts({
                     />
                   </div>
                   {isNFTLoading ? (
-                    <div className="flex items-center justify-center" />
+                    <div className="h-auto flex-1 animate-pulse bg-gray-200/10 rounded-md" />
                   ) : (
                     <div className="from-palette-green/0 to-palette-green/20 h-fit flex-1 bg-gradient-to-r p-3 pl-6">
                       <div className="flex items-center justify-between">
