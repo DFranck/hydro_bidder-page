@@ -213,7 +213,7 @@ export function MintNfts({
                                 {" "}
                                 {formatAmount(el.funds.amount, 0, 3)}
                               </span>
-                              <span>stATOM</span>
+                              <span>{nftInfo.displayDenom}</span>
                             </div>
                           )
                         )}
