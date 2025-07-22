@@ -176,7 +176,7 @@ export function MintNfts({
             <Card.Body
               className={cn("h-96 overflow-scroll md:h-5/12", {
                 "pr-0": nftDetails,
-                "pr-6": isMobile,
+                "pr-6": isMobile && !nftDetails,
               })}
             >
               {nftDetails ? (
