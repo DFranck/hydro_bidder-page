@@ -106,7 +106,6 @@ export function MintNfts({
 
     setIsLoading(true)
 
-
     try {
       if (eligibleLockupsSizes.selectedLockupsCount > 1) {
         await handleMerge()
@@ -204,30 +203,39 @@ export function MintNfts({
                     </div>
                     <div className="mt-2 flex flex-col items-end gap-3">
                       <div className="flex flex-wrap gap-2">
-                        {eligibleLockupsSizes.selectedLockups.map((el, index) => (
-                          <div
-                            className="border-palette-beige space-x-1 rounded-md border p-1.5 text-xs text-white"
-                            key={index}
-                          >
-                            <span> {formatAmount(el.funds.amount, 0, 3)}</span>
-                            <span>stATOM</span>
-                          </div>
-                        ))}
+                        {eligibleLockupsSizes.selectedLockups.map(
+                          (el, index) => (
+                            <div
+                              className="border-palette-beige space-x-1 rounded-md border p-1.5 text-xs text-white"
+                              key={index}
+                            >
+                              <span>
+                                {" "}
+                                {formatAmount(el.funds.amount, 0, 3)}
+                              </span>
+                              <span>stATOM</span>
+                            </div>
+                          )
+                        )}
                       </div>
 
                       <div className="flex gap-2">
                         <div className="flex items-center gap-2">
                           <Equal className="size-4 text-white" />
                           <span className="border-palette-beige bg-palette-beige rounded-md border p-1.5 text-xs text-black">
-                            {nftInfo.amount} stATOM
+                            {nftInfo.amount} {nftInfo.displayDenom}
                           </span>
                         </div>
                         {eligibleLockupsSizes.remainder ? (
                           <div className="flex items-center gap-2">
                             <Plus className="size-4 text-white" />
                             <span className="border-palette-beige  rounded-md border border-dashed p-1.5 text-xs">
-                              {formatAmount(eligibleLockupsSizes.remainder, 0, 3)}{" "}
-                              stATOM
+                              {formatAmount(
+                                eligibleLockupsSizes.remainder,
+                                0,
+                                3
+                              )}{" "}
+                              {nftInfo.displayDenom}
                             </span>
                           </div>
                         ) : null}
@@ -238,7 +246,7 @@ export function MintNfts({
                           <strong className="text-white">
                             {formatAmount(eligibleLockupsSizes.remainder, 0, 3)}
                           </strong>{" "}
-                          stATOM will be created
+                          {nftInfo.displayDenom} will be created
                         </span>
                       ) : null}
                     </div>
