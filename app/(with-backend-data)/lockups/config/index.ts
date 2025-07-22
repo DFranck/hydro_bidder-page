@@ -1,6 +1,6 @@
 const stATOM = [
   {
-    amount: 0.65,
+    amount: 0.15,
     image: "/images/stATOM/25_Piranha_stATOM@4x.png",
     baseDenom:
       "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
@@ -45,7 +45,7 @@ const stATOM = [
 
 const dATOM = [
   {
-    amount: 25,
+    amount: 0.008926,
     image: "/images/dAtom/25_Piranha_dATOM@4x.png",
     baseDenom:
       "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom",

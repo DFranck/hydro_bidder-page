@@ -22,15 +22,10 @@ export async function executeWalletSimulateLockup({
 
   const hydroClient = new HydroBaseClient(client, address, hydroContractAddress)
 
-  console.log("Simulate Lockup lockIds:", { lockIds })
-
-
   const response = await hydroClient.simulateDtokenAmounts({
     address,
     lockIds,
   })
-
-  console.log("Simulate Lockup Response:", { response })
 
   return response
 }

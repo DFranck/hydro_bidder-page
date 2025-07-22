@@ -14,12 +14,13 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { executeWalletSplitLockup } from "@/contract-apis/executeWalletSplitLockup"
 import { Equal, Plus, SquaresUnite, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimulateLockup"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { findLockupsForNFT, useNFTQuery } from "@/hooks/use-nft"
+import {
+  findLSTLockupsForNFT,
+  useFindLockupsForNFTQuery,
+} from "@/hooks/use-nft"
 import { MintNftCard } from "@/components/MintNftCard"
 import { useQueryClient } from "@tanstack/react-query"
-
 interface MintNftsProps {
   isCreationModalOpen: boolean
   setIsCreationModalOpen: (isOpen: boolean) => void
@@ -54,7 +55,7 @@ export function MintNfts({
     displayDenom: "",
   })
 
-  const { data, isLoading: isNFTLoading } = useNFTQuery(
+  const { data, isLoading: isNFTLoading } = useFindLockupsForNFTQuery(
     nftInfo.amount,
     nftInfo.baseDenom,
     lockups
@@ -106,7 +107,7 @@ export function MintNfts({
       getSigningCosmWasmClient,
       address,
       amount: String(nftInfo.amount * 1e6),
-      lockId: findLockupsForNFT(nftInfo.amount, nftInfo.baseDenom, lockups)
+      lockId: findLSTLockupsForNFT(nftInfo.amount, nftInfo.baseDenom, lockups)
         .selectedLockups[0].id,
     })
     setIsLoading(false)
@@ -118,7 +119,11 @@ export function MintNfts({
     await executeWalletMergeLockups({
       getSigningCosmWasmClient,
       address,
-      lockIds: eligibleLockupsSizes.selectedLockups.map((el) => el.id),
+      lockIds: findLSTLockupsForNFT(
+        nftInfo.amount,
+        nftInfo.baseDenom,
+        lockups
+      ).selectedLockups.map((el) => el.id),
     })
     await revalidateTag("backendData")
   }
@@ -194,69 +199,77 @@ export function MintNfts({
                       className="size-60"
                     />
                   </div>
-                  <div className="from-palette-green/0 to-palette-green/20 h-fit flex-1 bg-gradient-to-r p-3 pl-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-palette-beige flex items-center gap-2 text-sm uppercase">
-                        <SquaresUnite className="fill-palette-beige size-4" />
-                        {pluralize({
-                          count: eligibleLockupsSizes?.selectedLockupsCount,
-                          singular: "Lockup",
-                          plural: "Lockups",
-                        })}{" "}
-                        to convert
-                      </span>
-                      <span>{eligibleLockupsSizes.selectedLockupsCount}</span>
-                    </div>
-                    <div className="mt-2 flex flex-col items-end gap-3">
-                      <div className="flex flex-wrap gap-2">
-                        {eligibleLockupsSizes.selectedLockups.map(
-                          (el, index) => (
-                            <div
-                              className="border-palette-beige space-x-1 rounded-md border p-1.5 text-xs text-white"
-                              key={index}
-                            >
-                              <span>
-                                {" "}
-                                {formatAmount(el.funds.amount, 0, 3)}
-                              </span>
-                              <span>{nftInfo.displayDenom}</span>
-                            </div>
-                          )
-                        )}
+                  {isNFTLoading ? (
+                    <div className="flex items-center justify-center" />
+                  ) : (
+                    <div className="from-palette-green/0 to-palette-green/20 h-fit flex-1 bg-gradient-to-r p-3 pl-6">
+                      <div className="flex items-center justify-between">
+                        <span className="text-palette-beige flex items-center gap-2 text-sm uppercase">
+                          <SquaresUnite className="fill-palette-beige size-4" />
+                          {pluralize({
+                            count: eligibleLockupsSizes?.selectedLockupsCount,
+                            singular: "Lockup",
+                            plural: "Lockups",
+                          })}{" "}
+                          to convert
+                        </span>
+                        <span>{eligibleLockupsSizes.selectedLockupsCount}</span>
                       </div>
+                      <div className="mt-2 flex flex-col items-end gap-3">
+                        <div className="flex flex-wrap gap-2">
+                          {eligibleLockupsSizes.selectedLockups.map(
+                            (el, index) => (
+                              <div
+                                className="border-palette-beige space-x-1 rounded-md border p-1.5 text-xs text-white"
+                                key={index}
+                              >
+                                <span>
+                                  {" "}
+                                  {formatAmount(el.funds.amount, 0, 3)}
+                                </span>
+                                <span>{nftInfo.displayDenom}</span>
+                              </div>
+                            )
+                          )}
+                        </div>
 
-                      <div className="flex gap-2">
-                        <div className="flex items-center gap-2">
-                          <Equal className="size-4 text-white" />
-                          <span className="border-palette-beige bg-palette-beige rounded-md border p-1.5 text-xs text-black">
-                            {nftInfo.amount} {nftInfo.displayDenom}
-                          </span>
+                        <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
+                            <Equal className="size-4 text-white" />
+                            <span className="border-palette-beige bg-palette-beige rounded-md border p-1.5 text-xs text-black">
+                              {nftInfo.amount} {nftInfo.displayDenom}
+                            </span>
+                          </div>
+                          {eligibleLockupsSizes.remainder ? (
+                            <div className="flex items-center gap-2">
+                              <Plus className="size-4 text-white" />
+                              <span className="border-palette-beige  rounded-md border border-dashed p-1.5 text-xs">
+                                {formatAmount(
+                                  eligibleLockupsSizes.remainder,
+                                  0,
+                                  3
+                                )}{" "}
+                                {nftInfo.displayDenom}
+                              </span>
+                            </div>
+                          ) : null}
                         </div>
                         {eligibleLockupsSizes.remainder ? (
-                          <div className="flex items-center gap-2">
-                            <Plus className="size-4 text-white" />
-                            <span className="border-palette-beige  rounded-md border border-dashed p-1.5 text-xs">
+                          <span className="mt-3 text-xs text-white/80">
+                            One remainder lockup of{" "}
+                            <strong className="text-white">
                               {formatAmount(
                                 eligibleLockupsSizes.remainder,
                                 0,
                                 3
-                              )}{" "}
-                              {nftInfo.displayDenom}
-                            </span>
-                          </div>
+                              )}
+                            </strong>{" "}
+                            {nftInfo.displayDenom} will be created
+                          </span>
                         ) : null}
                       </div>
-                      {eligibleLockupsSizes.remainder ? (
-                        <span className="mt-3 text-xs text-white/80">
-                          One remainder lockup of{" "}
-                          <strong className="text-white">
-                            {formatAmount(eligibleLockupsSizes.remainder, 0, 3)}
-                          </strong>{" "}
-                          {nftInfo.displayDenom} will be created
-                        </span>
-                      ) : null}
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <MintNftCard

@@ -1,70 +1,82 @@
-import { useQueries } from "@tanstack/react-query"
-import { findLockupsForNFT } from "@/hooks/use-nft"
+"use client"
+
+import { useQuery } from "@tanstack/react-query"
+import Image from "next/image"
+import { useChain } from "@cosmos-kit/react"
+
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { findLockupsForNFtSizes } from "@/hooks/use-nft"
 import { NFT_LIST } from "@/app/(with-backend-data)/lockups/config"
 import { cn } from "@/lib/utils"
-import Image from "next/image"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { NFT_INFO } from "@/app/(with-backend-data)/lockups/MintNfts"
 
-export function MintNftCard({
-  lockups,
-  handleMintInfo,
-}: {
+interface Props {
   lockups: AugmentedLockup[]
   handleMintInfo: (nft: NFT_INFO) => void
-}) {
-  const nftQueries = useQueries({
-    queries: NFT_LIST.map((nft) => ({
-      queryKey: ["nft-size-query", nft.baseDenom, nft.amount, lockups.length],
-      queryFn: () => findLockupsForNFT(nft.amount, nft.baseDenom, lockups),
-      enabled: !!lockups && lockups.length > 0,
-    })),
+}
+
+type NFTWithLockupCount = NFT_INFO & {
+  lockupCount: number
+}
+
+export function MintNftCard({ lockups, handleMintInfo }: Props) {
+  const { address } = useBackendData()
+  const { getSigningCosmWasmClient } = useChain("neutron")
+
+  const { data: nfts, isLoading } = useQuery<NFTWithLockupCount[]>({
+    queryKey: ["lockup-counts", address, lockups],
+    enabled: !!address && lockups.length > 0,
+    queryFn: async () => {
+      return Promise.all(
+        NFT_LIST.map(async (nft) => {
+          try {
+            const result = await findLockupsForNFtSizes(
+              nft.amount,
+              nft.baseDenom,
+              lockups,
+              getSigningCosmWasmClient,
+              address
+            )
+
+            return {
+              ...nft,
+              lockupCount: result.selectedLockupsCount,
+            }
+          } catch {
+            return {
+              ...nft,
+              lockupCount: 0,
+            }
+          }
+        })
+      )
+    },
   })
 
-  // Check loading state
-  const isLoading = nftQueries.some((query) => query.isLoading)
-
-  const handleNftClick = (nft: NFT_INFO, lockupCount: number) => {
-    if (lockupCount > 0) {
-      handleMintInfo(nft)
-    }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {NFT_LIST.map((_, index) => (
-          <div
-            key={index}
-            className="flex animate-pulse flex-col items-end gap-2"
-          >
-            <div className="aspect-square size-full rounded bg-gray-200" />
-            <div className="flex flex-col items-end gap-1">
-              <div className="h-4 w-16 rounded bg-gray-200" />
-              <div className="h-3 w-20 rounded bg-gray-200" />
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
+  const renderedList: NFTWithLockupCount[] = isLoading
+    ? NFT_LIST.map((nft) => ({
+        ...nft,
+        lockupCount: 0,
+      }))
+    : nfts || []
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-      {NFT_LIST.map((nft, index) => {
-        const query = nftQueries[index]
-        const nftSizeData = query.data
-        const lockupCount = nftSizeData?.selectedLockupsCount ?? 0
-        const isAvailable = lockupCount > 0
+      {renderedList.map((nft, index) => {
+        const isAvailable = !isLoading && nft.lockupCount > 0
+        const isDisabled = !isLoading && nft.lockupCount === 0
 
         return (
           <div
             key={index}
-            className={cn("flex flex-col items-end gap-2", {
-              "cursor-pointer hover:opacity-100": isAvailable,
-              "cursor-not-allowed opacity-30": !isAvailable,
-            })}
-            onClick={() => handleNftClick(nft, lockupCount)}
+            onClick={() => isAvailable && handleMintInfo(nft)}
+            className={cn(
+              "flex flex-col items-end gap-2",
+              isAvailable && "cursor-pointer hover:opacity-100",
+              isDisabled && "cursor-not-allowed opacity-30",
+              isLoading && "opacity-60"
+            )}
           >
             <Image
               src={nft.image}
@@ -73,17 +85,19 @@ export function MintNftCard({
               height={100}
               className="size-full"
             />
-            <div className="flex flex-col items-end">
-              <div className="text-palette-green space-x-0.5 text-sm">
+            <div className="flex flex-col items-end text-sm">
+              <div className="text-palette-green space-x-1">
                 <span>{nft.amount}</span>
                 <span className="text-xs">{nft.displayDenom}</span>
               </div>
-              <span className="text-left text-sm text-gray-400">
-                {lockupCount === 0
-                  ? "Insufficient lockups"
-                  : lockupCount === 1
-                    ? "Created from 1 lockup"
-                    : `Merges ${lockupCount} lockups`}
+              <span className="text-end text-xs text-gray-400">
+                {isLoading
+                  ? "Loading..."
+                  : nft.lockupCount === 0
+                    ? "Insufficient lockups"
+                    : `Created from ${nft.lockupCount} lockup${
+                        nft.lockupCount > 1 ? "s" : ""
+                      }`}
               </span>
             </div>
           </div>
