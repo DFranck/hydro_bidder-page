@@ -52,7 +52,7 @@ export function MintNfts({
     displayDenom: "",
   })
 
-  const [showList, setShowList] = useState(false)
+  const [nftDetails, setNftDetails] = useState(false)
 
   const { getSigningCosmWasmClient } = useChain("neutron")
 
@@ -72,13 +72,13 @@ export function MintNfts({
     handleCreationModalWindowClose()
     setIsCreationModalOpen(false)
     setTimeout(() => {
-      setShowList(false)
+      setNftDetails(false)
     }, 100)
   }
 
   function handleMintInfo(nft: NFT_INFO) {
     setNftInfo(nft)
-    setShowList(true)
+    setNftDetails(true)
   }
 
   async function handleSplit() {
@@ -175,11 +175,11 @@ export function MintNfts({
 
             <Card.Body
               className={cn("h-96 overflow-scroll md:h-5/12", {
-                "pr-0": showList,
+                "pr-0": nftDetails,
                 "pr-6": isMobile,
               })}
             >
-              {showList ? (
+              {nftDetails ? (
                 <div className="flex flex-col gap-4 md:flex-row">
                   <div className="flex flex-col items-center gap-2">
                     <img
@@ -323,7 +323,7 @@ export function MintNfts({
               )}
             </Card.Body>
 
-            {!showList ? null : (
+            {!nftDetails ? null : (
               <Card.Footer className="mt-auto">
                 <StyledText
                   variant="button.primary"
@@ -345,7 +345,7 @@ export function MintNfts({
                   type="button"
                   onClick={() => {
                     setIsLoading(false)
-                    setShowList(false)
+                    setNftDetails(false)
                   }}
                 >
                   Back
