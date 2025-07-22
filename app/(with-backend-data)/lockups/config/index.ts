@@ -91,3 +91,5 @@ const dATOM = [
 export const NFT_LIST = [...stATOM, ...dATOM].sort(
   (a, b) => a.amount - b.amount
 )
+
+export const NFT_SIZES = [25, 50, 100, 200, 500, 1000]

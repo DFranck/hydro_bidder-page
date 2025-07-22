@@ -1,6 +1,19 @@
+import { useQuery } from "@tanstack/react-query"
 import { AugmentedLockup } from "@/contract-apis/types"
+import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config"
 
-const NFT_SIZES = [25, 50, 100, 200, 500, 1000]
+export function useNFTQuery(
+  nftSize: number,
+  denom: string,
+  lockups: AugmentedLockup[]
+) {
+  return useQuery({
+    queryKey: ["nft-size-query", denom],
+    queryFn: () => findLockupsForNFT(nftSize, denom, lockups),
+    enabled: !!lockups,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
 
 export function findLockupsForNFT(
   NFT_SIZE: number,

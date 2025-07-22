@@ -13,12 +13,11 @@ import { useChain } from "@cosmos-kit/react"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { executeWalletSplitLockup } from "@/contract-apis/executeWalletSplitLockup"
 import { Equal, Plus, SquaresUnite, X } from "lucide-react"
-import { NFT_LIST } from "./config"
 import { cn } from "@/lib/utils"
-import Image from "next/image"
 import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimulateLockup"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { findLockupsForNFT } from "./utils"
+import { findLockupsForNFT, useNFTQuery } from "@/hooks/use-nft"
+import { MintNftCard } from "@/components/MintNftCard"
 
 interface MintNftsProps {
   isCreationModalOpen: boolean
@@ -43,6 +42,7 @@ export function MintNfts({
   handleModalWindowCloseComplete,
 }: MintNftsProps) {
   const { address, lockups, isLoading: contextLoading } = useBackendData()
+
   const [step, setStep] = useState<MintStep>("init")
 
   const [nftInfo, setNftInfo] = useState<NFT_INFO>({
@@ -52,6 +52,8 @@ export function MintNfts({
     displayDenom: "",
   })
 
+  const { data } = useNFTQuery(nftInfo.amount, nftInfo.baseDenom, lockups)
+
   const [nftDetails, setNftDetails] = useState(false)
 
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -60,13 +62,16 @@ export function MintNfts({
 
   const isMobile = useIsMobile()
 
-  const allActiveLockups = lockups.filter((lockup) => !lockup.isExpired)
-
-  const eligibleLockupsSizes = findLockupsForNFT(
-    nftInfo.amount,
-    nftInfo.baseDenom,
-    allActiveLockups
-  )
+  const eligibleLockupsSizes = data
+    ? data
+    : {
+        selectedLockups: [],
+        selectedLockupsCount: 0,
+        totalAmount: 0,
+        remainder: 0,
+        totalLockupSelected: 0,
+        demon: "",
+      }
 
   function handleCloseModal() {
     handleCreationModalWindowClose()
@@ -117,22 +122,22 @@ export function MintNfts({
       const newLockUpData = findLockupsForNFT(
         nftInfo.amount,
         nftInfo.baseDenom,
-        allActiveLockups
+        lockups
       )
 
       if (newLockUpData.selectedLockupsCount === 1 && step === "init") {
         await handleSplit()
       }
 
-      // await executeWalletSimulateLockup({
-      //   getSigningCosmWasmClient,
-      //   address,
-      //   lockIds: lockups
-      // .filter((lockup) => !lockup.isExpired)
-      //     .filter((els) => els.funds.denomInfo?.humanReadableDenom === "ATOM")
-      // .filter((els) => els.funds.amount < 0.001)
-      //     .map((el) => el.id),
-      // })
+      await executeWalletSimulateLockup({
+        getSigningCosmWasmClient,
+        address,
+        lockIds: lockups
+          .filter((lockup) => !lockup.isExpired)
+          .filter((els) => els.funds.denomInfo?.humanReadableDenom === "ATOM")
+          .filter((els) => els.funds.amount < 1)
+          .map((el) => el.id),
+      })
     } catch (error) {
       console.error("Error in handleSubmitCreationForm:", error)
       setIsLoading(false)
@@ -193,7 +198,7 @@ export function MintNfts({
                       <span className="text-palette-beige flex items-center gap-2 text-sm uppercase">
                         <SquaresUnite className="fill-palette-beige size-4" />
                         {pluralize({
-                          count: eligibleLockupsSizes.selectedLockupsCount,
+                          count: eligibleLockupsSizes?.selectedLockupsCount,
                           singular: "Lockup",
                           plural: "Lockups",
                         })}{" "}
@@ -253,73 +258,10 @@ export function MintNfts({
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                  {NFT_LIST.map((nft, index) => (
-                    <div
-                      key={index}
-                      className={cn("flex flex-col items-end gap-2", {
-                        "cursor-pointer hover:opacity-100":
-                          findLockupsForNFT(
-                            nft.amount,
-                            nft.baseDenom,
-                            allActiveLockups
-                          ).selectedLockupsCount > 0,
-                        "cursor-not-allowed opacity-30":
-                          findLockupsForNFT(
-                            nft.amount,
-                            nft.baseDenom,
-                            allActiveLockups
-                          ).selectedLockupsCount === 0,
-                      })}
-                      onClick={() =>
-                        findLockupsForNFT(
-                          nft.amount,
-                          nft.baseDenom,
-                          allActiveLockups
-                        ).selectedLockupsCount === 0
-                          ? {}
-                          : handleMintInfo(nft)
-                      }
-                    >
-                      <Image
-                        src={nft.image}
-                        alt={`${nft.displayDenom} NFT`}
-                        width={100}
-                        height={100}
-                        className="size-full"
-                      />
-                      <div className="flex flex-col items-end">
-                        <div className="text-palette-green space-x-0.5 text-sm">
-                          <span> {nft.amount}</span>
-                          <span className="text-xs"> {nft.displayDenom}</span>
-                        </div>
-                        <span className="text-left text-sm text-gray-400">
-                          {findLockupsForNFT(
-                            nft.amount,
-                            nft.baseDenom,
-                            allActiveLockups
-                          ).selectedLockupsCount === 1
-                            ? "Created from "
-                            : findLockupsForNFT(
-                                  nft.amount,
-                                  nft.baseDenom,
-                                  allActiveLockups
-                                ).selectedLockupsCount > 1
-                              ? "Merges"
-                              : null}{" "}
-                          {
-                            findLockupsForNFT(
-                              nft.amount,
-                              nft.baseDenom,
-                              allActiveLockups
-                            ).selectedLockupsCount
-                          }{" "}
-                          lockups
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <MintNftCard
+                  lockups={lockups}
+                  handleMintInfo={handleMintInfo}
+                />
               )}
             </Card.Body>
 
