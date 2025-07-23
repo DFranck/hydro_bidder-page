@@ -54,6 +54,13 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
     },
   })
 
+  // const renderedList: NFTWithLockupCount[] = isLoading
+  //   ? NFT_LIST.map((nft) => ({
+  //       ...nft,
+  //       lockupCount: 0,
+  //     }))
+  //   : nfts?.filter((nft) => nft.lockupCount !== 0) || []
+
   const renderedList: NFTWithLockupCount[] = isLoading
     ? NFT_LIST.map((nft) => ({
         ...nft,
@@ -62,7 +69,12 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
     : nfts || []
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+    <div
+      className={cn("grid grid-cols-2 gap-4 sm:grid-cols-3", {
+        "md:grid-cols-4": renderedList.length > 3,
+        "md:grid-cols-3": renderedList.length <= 3,
+      })}
+    >
       {renderedList.map((nft, index) => {
         const isAvailable = !isLoading && nft.lockupCount > 0
         const isDisabled = !isLoading && nft.lockupCount === 0
@@ -83,7 +95,7 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
               alt={`${nft.displayDenom} NFT`}
               width={100}
               height={100}
-              className="size-full"
+              className="aspect-auto size-full"
             />
             <div className="flex flex-col items-end text-sm">
               <div className="text-palette-green space-x-1">
@@ -93,11 +105,9 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
               <span className="text-end text-xs text-gray-400">
                 {isLoading
                   ? "Loading..."
-                  : nft.lockupCount === 0
-                    ? "Insufficient lockups"
-                    : nft.lockupCount === 1
-                      ? `Created from ${nft.lockupCount} lockup`
-                      : `Merges ${nft.lockupCount} lockups`}
+                  : nft.lockupCount === 1
+                    ? `Created from ${nft.lockupCount} lockup`
+                    : `Merges ${nft.lockupCount} lockups`}
               </span>
             </div>
           </div>

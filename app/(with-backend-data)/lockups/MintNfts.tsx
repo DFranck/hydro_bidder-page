@@ -1,9 +1,7 @@
-"use client"
-
 import { Card } from "@/components/Card"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { FormEvent, useEffect, useState } from "react"
+import { FormEvent, useEffect, useRef, useState } from "react"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { pluralize } from "@/lib/pluralize"
 import { formatAmount } from "@/lib/formatAmount"
@@ -16,11 +14,15 @@ import { Equal, Plus, SquaresUnite, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import {
-  findLSTLockupsForNFT,
+  findLockupsForNFtSizes,
+  LockupsResult,
   useFindLockupsForNFTQuery,
 } from "@/hooks/use-nft"
 import { MintNftCard } from "@/components/MintNftCard"
+import { executeWalletCovertToDAtomLockups } from "@/contract-apis/executeWalletCovertToDAtomLockups"
+import { AugmentedLockup } from "@/contract-apis/types"
 import { useQueryClient } from "@tanstack/react-query"
+
 interface MintNftsProps {
   isCreationModalOpen: boolean
   setIsCreationModalOpen: (isOpen: boolean) => void
@@ -35,7 +37,13 @@ export type NFT_INFO = {
   displayDenom: string
 }
 
-type MintStep = "merge" | "split" | "init"
+type MintStep =
+  | "init"
+  | "merge"
+  | "split"
+  | "convert"
+  | "merge_after_convert"
+  | "merge_matching_denoms"
 
 export function MintNfts({
   isCreationModalOpen,
@@ -43,10 +51,7 @@ export function MintNfts({
   handleCreationModalWindowClose,
   handleModalWindowCloseComplete,
 }: MintNftsProps) {
-  const { address, lockups, isLoading: isContextLoading } = useBackendData()
   const queryClient = useQueryClient()
-
-  const [step, setStep] = useState<MintStep>("init")
 
   const [nftInfo, setNftInfo] = useState<NFT_INFO>({
     amount: 0,
@@ -55,109 +60,369 @@ export function MintNfts({
     displayDenom: "",
   })
 
-  const { data, isLoading: isNFTLoading } = useFindLockupsForNFTQuery(
-    nftInfo.amount,
-    nftInfo.baseDenom,
-    lockups
-  )
-
   const [nftDetails, setNftDetails] = useState(false)
-
   const { getSigningCosmWasmClient } = useChain("neutron")
-
   const [isLoading, setIsLoading] = useState(false)
-
   const isMobile = useIsMobile()
 
-  const eligibleLockupsSizes =
-    !isNFTLoading && data
-      ? data
-      : {
-          selectedLockups: [],
-          selectedLockupsCount: 0,
-          totalAmount: 0,
-          remainder: 0,
-          totalLockupSelected: 0,
-          denom: "",
+  const { address, lockups, isLoading: isContextLoading } = useBackendData()
+  // const [currentLockups, setCurrentLockups] = useState(lockups)
+  const [step, setStep] = useState<MintStep>("init")
+  const [operationContext, setOperationContext] = useState<{
+    isDAtom: boolean
+    eligibleLockupsSizes?: LockupsResult
+    matchingLockups?: AugmentedLockup[]
+  }>({ isDAtom: false })
+
+  const {
+    data,
+    isLoading: isNFTLoading,
+  } = useFindLockupsForNFTQuery(nftInfo.amount, nftInfo.baseDenom, lockups)
+
+  const executingStepRef = useRef<MintStep | null>(null)
+
+  function handleInvalidateNFTQuery() {
+    queryClient.invalidateQueries({
+      queryKey: ["findLockupsForNFtSizes"],
+      refetchType: "active", // only refetch active (mounted) queries
+    })
+  }
+
+
+  // Main reactive handler for all blockchain operations
+  useEffect(() => {
+    async function handleStepChange() {
+      if (!isContextLoading && lockups.length > 0 && step !== "init") {
+        if (executingStepRef.current === step) {
+          return
         }
 
-  const invalidateNFTQuery = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["nft-size-query"],
+        executingStepRef.current = step
+        try {
+          console.log(
+            `Executing step: ${step} with ${lockups.length} fresh lockups`
+          )
+
+          switch (step) {
+            case "split":
+              await executeSplit(lockups)
+              break
+
+            case "merge":
+              await executeMerge(lockups)
+              break
+
+            case "convert":
+              await executeConvert(lockups)
+              break
+
+            case "merge_after_convert":
+              await executeMergeAfterConvert(lockups)
+              break
+
+            case "merge_matching_denoms":
+              await executeMergeMatchingDenoms(lockups)
+              break
+          }
+        } catch (error) {
+          console.error(`Error in step ${step}:`, error)
+          setIsLoading(false)
+          setStep(step)
+        }
+      }
+    }
+
+    handleStepChange()
+  }, [step, lockups, isContextLoading])
+
+  const eligibleLockupsSizes = data
+    ? data
+    : {
+        selectedLockups: [],
+        selectedLockupsCount: 0,
+        totalAmount: 0,
+        remainder: 0,
+        totalLockupSelected: 0,
+        denom: "",
+        hasVirtualLockups: false,
+        hasMultipleDenoms: false,
+        sharedDenomCount: false,
+        virtualLockupsCount: 0,
+        virtualLockups: [],
+        hasMatchingDenoms: false,
+        hasDenomCombination: false,
+      }
+
+  function handleStepTimeout(step: MintStep) {
+    const timeOut = setTimeout(() => {
+      if (!isContextLoading) {
+        setStep(step)
+      }
+    }, 10000) // Wait 10 seconds before proceeding to the next step
+
+    return () => clearTimeout(timeOut)
+  }
+
+  // Individual operation executors
+  async function executeSplit(freshLockups: AugmentedLockup[]) {
+    console.log("Executing split with fresh lockups:", freshLockups.length)
+
+    const freshLockupsData = await findLockupsForNFtSizes(
+      nftInfo.amount,
+      nftInfo.baseDenom,
+      freshLockups // Use passed fresh lockups
+    )
+
+    if (freshLockupsData.selectedLockups.length !== 1) {
+      throw new Error(
+        `Expected 1 lockup for split, got ${freshLockupsData.selectedLockups.length}`
+      )
+    }
+
+    await executeWalletSplitLockup({
+      getSigningCosmWasmClient,
+      address,
+      amount: String(nftInfo.amount * 1e6),
+      lockId: freshLockupsData.selectedLockups[0].id,
     })
-    setStep("split")
+
+    console.log("Split completed successfully")
+    setIsLoading(false)
+    handleCloseModal()
+    await revalidateTag("backendData")
+    setStep("init")
+  }
+
+  async function executeMerge(freshLockups: AugmentedLockup[]) {
+    console.log("Executing merge with fresh lockups:", freshLockups.length)
+
+    const freshLockupsData = await findLockupsForNFtSizes(
+      nftInfo.amount,
+      nftInfo.baseDenom,
+      freshLockups // Use passed fresh lockups
+    )
+
+    await executeWalletMergeLockups({
+      getSigningCosmWasmClient,
+      address,
+      lockIds: freshLockupsData.selectedLockups.map((el) => el.id),
+    })
+
+    await revalidateTag("backendData")
+    console.log("Merge completed, triggering split...")
+    handleStepTimeout("split")
+  }
+
+  async function executeConvert(freshLockups: AugmentedLockup[]) {
+    console.log(
+      "Executing convert to dATOM with fresh lockups:",
+      freshLockups.length
+    )
+
+    if (!operationContext.eligibleLockupsSizes?.hasVirtualLockups) {
+      throw new Error("No virtual lockups to convert")
+    }
+
+    await executeWalletCovertToDAtomLockups({
+      getSigningCosmWasmClient,
+      address,
+      lockIds: operationContext.eligibleLockupsSizes.virtualLockups.map(
+        (v) => v.id
+      ),
+    })
+
+    await revalidateTag("backendData")
+    console.log("Convert completed, triggering merge...")
+    handleStepTimeout("merge_after_convert")
+  }
+
+  async function executeMergeAfterConvert(freshLockups: AugmentedLockup[]) {
+    console.log(
+      "Executing merge after convert with fresh lockups:",
+      freshLockups.length
+    )
+
+    const freshLockupsData = await findLockupsForNFtSizes(
+      nftInfo.amount,
+      nftInfo.baseDenom,
+      freshLockups // Use passed fresh lockups
+    )
+
+    await executeWalletMergeLockups({
+      getSigningCosmWasmClient,
+      address,
+      lockIds: freshLockupsData.selectedLockups.map((el) => el.id),
+    })
+
+    await revalidateTag("backendData")
+    console.log("Merge after convert completed, triggering split...")
+    handleStepTimeout("split")
+  }
+
+  async function executeMergeMatchingDenoms(freshLockups: AugmentedLockup[]) {
+    console.log(
+      "Executing merge matching denoms with fresh lockups:",
+      freshLockups.length
+    )
+
+    if (!operationContext.matchingLockups) {
+      throw new Error("No matching lockups to merge")
+    }
+
+    await executeWalletMergeLockups({
+      getSigningCosmWasmClient,
+      address,
+      lockIds: operationContext.matchingLockups.map((v) => v.id),
+    })
+
+    await revalidateTag("backendData")
+    console.log("Merge matching denoms completed")
+
+    const timeOut = setTimeout(async () => {
+      // After merging matching denoms, we might need to do more operations
+      // Check what's needed next based on the current state
+      const freshLockupsData = await findLockupsForNFtSizes(
+        nftInfo.amount,
+        nftInfo.baseDenom,
+        freshLockups // Use passed fresh lockups
+      )
+
+      if (
+        freshLockupsData.hasVirtualLockups &&
+        freshLockupsData.hasMultipleDenoms
+      ) {
+        handleStepTimeout("convert")
+      } else if (freshLockupsData.selectedLockupsCount > 1) {
+        handleStepTimeout("merge")
+      } else {
+        handleStepTimeout("split")
+      }
+    }, 10000)
+
+    return () => clearTimeout(timeOut)
   }
 
   function handleCloseModal() {
     handleCreationModalWindowClose()
     setIsCreationModalOpen(false)
-    setTimeout(() => {
+    handleInvalidateNFTQuery()
+    setStep("init")
+    const timeOut = setTimeout(() => {
       setNftDetails(false)
     }, 100)
+    return () => clearTimeout(timeOut)
   }
 
   function handleMintInfo(nft: NFT_INFO) {
+    handleInvalidateNFTQuery()
     setNftInfo(nft)
     setNftDetails(true)
   }
 
-  async function handleSplit() {
-    console.log("called.........stand")
-    await executeWalletSplitLockup({
-      getSigningCosmWasmClient,
-      address,
-      amount: String(nftInfo.amount * 1e6),
-      lockId: findLSTLockupsForNFT(nftInfo.amount, nftInfo.baseDenom, lockups)
-        .selectedLockups[0].id,
-    })
-    setIsLoading(false)
-    handleCloseModal()
-    await revalidateTag("backendData")
-  }
-
-  async function handleMerge() {
-    await executeWalletMergeLockups({
-      getSigningCosmWasmClient,
-      address,
-      lockIds: findLSTLockupsForNFT(
-        nftInfo.amount,
-        nftInfo.baseDenom,
-        lockups
-      ).selectedLockups.map((el) => el.id),
-    })
-    await revalidateTag("backendData")
-  }
-
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-
     setIsLoading(true)
 
     try {
-      if (eligibleLockupsSizes.selectedLockupsCount > 1) {
-        await handleMerge()
+      let eligibleLockupsSizes = await findLockupsForNFtSizes(
+        nftInfo.amount,
+        nftInfo.baseDenom,
+        lockups
+      )
 
-        invalidateNFTQuery()
+      const isDAtom = nftInfo.displayDenom === "dATOM"
+
+      // Store context for the reactive handlers
+      setOperationContext({
+        isDAtom,
+        eligibleLockupsSizes,
+      })
+
+      console.log("Starting mint process:", {
+        isDAtom,
+        selectedLockupsCount: eligibleLockupsSizes.selectedLockupsCount,
+        hasVirtualLockups: eligibleLockupsSizes.hasVirtualLockups,
+        hasMatchingDenoms: eligibleLockupsSizes.hasMatchingDenoms,
+        hasMultipleDenoms: eligibleLockupsSizes.hasMultipleDenoms,
+      })
+
+      // STEP 1: Non-dATOM, 1 lockup => Split
+      if (!isDAtom && eligibleLockupsSizes.selectedLockupsCount === 1) {
+        console.log("Non-dATOM: Single lockup, triggering split")
+        setStep("split")
+        return
       }
 
-      if (eligibleLockupsSizes.selectedLockupsCount === 1 && step === "init") {
-        await handleSplit()
+      // STEP 2: Non-dATOM, >1 lockups => Merge -> Split
+      if (!isDAtom && eligibleLockupsSizes.selectedLockupsCount > 1) {
+        console.log("Non-dATOM: Multiple lockups, triggering merge")
+        setStep("merge")
+        return
       }
+
+      // STEP 3: dATOM with no virtuals => use step 1 or 2 logic
+      if (isDAtom && !eligibleLockupsSizes.hasVirtualLockups) {
+        console.log("dATOM: No virtual lockups")
+
+        if (eligibleLockupsSizes.selectedLockupsCount > 1) {
+          console.log("dATOM: Multiple lockups, triggering merge")
+          setStep("merge")
+        } else {
+          console.log("dATOM: Single lockup, triggering split")
+          setStep("split")
+        }
+        return
+      }
+
+      // STEP 4 & 7: dATOM with virtuals + hasMatchingDenoms => merge matching
+      if (
+        isDAtom &&
+        eligibleLockupsSizes.hasVirtualLockups &&
+        eligibleLockupsSizes.hasMatchingDenoms
+      ) {
+        console.log(
+          "dATOM: Virtual lockups with matching denoms, triggering merge matching denoms"
+        )
+
+        const matchingDenom = eligibleLockupsSizes.virtualLockups[0].funds.denom
+        const matchingLockups = eligibleLockupsSizes.virtualLockups.filter(
+          (v) => v.funds.denom === matchingDenom
+        )
+
+        setOperationContext((prev) => ({
+          ...prev,
+          matchingLockups,
+        }))
+
+        setStep("merge_matching_denoms")
+        return
+      }
+
+      // STEP 5-6-8-9: dATOM → Convert virtuals → Merge → Split
+      if (
+        isDAtom &&
+        eligibleLockupsSizes.hasVirtualLockups &&
+        eligibleLockupsSizes.hasMultipleDenoms
+      ) {
+        console.log(
+          "dATOM: Virtual lockups with multiple denoms, triggering convert"
+        )
+        setStep("convert")
+        return
+      }
+
+      // If we get here, something unexpected happened
+      console.warn("Unexpected state in handleSubmitCreationForm", {
+        isDAtom,
+        eligibleLockupsSizes,
+      })
+      setIsLoading(false)
     } catch (error) {
       console.error("Error in handleSubmitCreationForm:", error)
       setIsLoading(false)
+      setStep("init")
     }
   }
-
-  useEffect(() => {
-    async function handleStepChange() {
-      if (step === "split" && !isContextLoading && lockups.length > 0) {
-        await handleSplit()
-        console.log("called.........split")
-      }
-    }
-    handleStepChange().then(() => {})
-  }, [step, lockups, isContextLoading])
 
   return (
     <ModalWindow
@@ -200,7 +465,7 @@ export function MintNfts({
                     />
                   </div>
                   {isNFTLoading ? (
-                    <div className="h-auto flex-1 animate-pulse bg-gray-200/10 rounded-md" />
+                    <div className="h-auto flex-1 animate-pulse rounded-md bg-gray-200/10" />
                   ) : (
                     <div className="from-palette-green/0 to-palette-green/20 h-fit flex-1 bg-gradient-to-r p-3 pl-6">
                       <div className="flex items-center justify-between">
@@ -224,7 +489,6 @@ export function MintNfts({
                                 key={index}
                               >
                                 <span>
-                                  {" "}
                                   {formatAmount(el.funds.amount, 0, 3)}
                                 </span>
                                 <span>{nftInfo.displayDenom}</span>
@@ -268,6 +532,14 @@ export function MintNfts({
                           </span>
                         ) : null}
                       </div>
+
+                      {/* Debug info */}
+                      {step !== "init" && (
+                        <div className="mt-4 text-xs text-white/60">
+                          Current step: {step}
+                          {isContextLoading && " (waiting for context...)"}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -302,6 +574,7 @@ export function MintNfts({
                   onClick={() => {
                     setIsLoading(false)
                     setNftDetails(false)
+                    setStep("init")
                   }}
                 >
                   Back

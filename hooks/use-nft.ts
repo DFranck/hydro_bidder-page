@@ -6,13 +6,13 @@ import { useChain } from "@cosmos-kit/react"
 import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimulateLockup"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 
-interface LockupsResult {
+export interface LockupsResult {
   selectedLockups: VirtualLockup[]
   selectedLockupsCount: number
   totalAmount: number
   remainder: number
   totalLockupSelected: number
-  demon: string
+  denom: string
   hasVirtualLockups: boolean
   hasMultipleDenoms: boolean
   sharedDenomCount: number
@@ -32,7 +32,7 @@ interface VirtualLockup extends AugmentedLockup {
   originalAmount?: number
 }
 
-export function findLSTLockupsForNFT(
+function findLSTLockupsForNFT(
   NFT_SIZE: number,
   denom: string,
   lockups: AugmentedLockup[]
@@ -51,7 +51,7 @@ export function findLSTLockupsForNFT(
       totalAmount: 0,
       remainder: 0,
       totalLockupSelected: 0,
-      demon: denom,
+      denom: denom,
     }
   }
 
@@ -83,7 +83,7 @@ export function findLSTLockupsForNFT(
       totalAmount: 0,
       remainder: 0,
       totalLockupSelected: 0,
-      demon: denom,
+      denom: denom,
     }
   }
 
@@ -94,7 +94,7 @@ export function findLSTLockupsForNFT(
     totalAmount,
     remainder: totalAmount - NFT_SIZE,
     totalLockupSelected: totalAmount,
-    demon: denom,
+    denom: denom,
   }
 }
 
@@ -129,6 +129,7 @@ export async function findLockupsForNFtSizes(
   address?: string
 ): Promise<LockupsResult> {
   const requiredAmount = NFT_SIZE + 0.0001
+  const minimumDAtomAmount = 9500000
   const isFactoryDenom = denom.startsWith("factory")
 
   const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups)
@@ -158,7 +159,7 @@ export async function findLockupsForNFtSizes(
       virtualLockups: [],
       hasMatchingDenoms: false,
       hasDenomCombination: false,
-      demon: denom,
+      denom: denom,
     }
   }
 
@@ -187,7 +188,9 @@ export async function findLockupsForNFtSizes(
 
         virtualLockupsLSM = atomLockups.map((atomLockup) => {
           const simulatedResult = simulatedResults.find(
-            (result) => result.lock_id === atomLockup.id
+            (result) =>
+              result.lock_id === atomLockup.id &&
+              parseInt(result.dtoken_amount) >= minimumDAtomAmount
           )
 
           const simulatedAmount = simulatedResult
@@ -296,7 +299,7 @@ export async function findLockupsForNFtSizes(
       totalAmount: 0,
       remainder: 0,
       totalLockupSelected: 0,
-      demon: denom,
+      denom: denom,
       hasVirtualLockups: false,
       hasMultipleDenoms,
       sharedDenomCount,
@@ -330,7 +333,7 @@ export async function findLockupsForNFtSizes(
     totalAmount: baseAmount,
     remainder: baseAmount - NFT_SIZE,
     totalLockupSelected: baseAmount,
-    demon: denom,
+    denom: denom,
     hasVirtualLockups: virtualOnly.length > 0,
     hasMultipleDenoms,
     sharedDenomCount,
