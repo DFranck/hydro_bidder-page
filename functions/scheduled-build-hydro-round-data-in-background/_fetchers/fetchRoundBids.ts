@@ -2,6 +2,7 @@ import { invariant } from "ts-invariant"
 import { HydroBaseQueryClient } from "../../../app/ts_types/HydroBase.client"
 import { Proposal } from "../../../app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export async function fetchRoundBids({
   roundId,
@@ -51,9 +52,7 @@ export async function fetchRoundBids({
     try {
       const url = `${numiaBidsEndpoint}?round_id=${roundId}&tranche_id=${trancheId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`
 
-      console.log("Fetching bids from", url)
-
-      const response = await fetch(url, {
+      const response = await fetchWithRetry(url, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
@@ -62,7 +61,7 @@ export async function fetchRoundBids({
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch numia bids data: ${response.statusText}`,
+          `Failed to fetch numia round bids data: ${response.statusText}`,
         )
       }
 
