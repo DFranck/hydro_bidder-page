@@ -136,7 +136,9 @@ export async function findLockupsForNFtSizes(
   const dAtomNativeLockup = isFactoryDenom
     ? lockups.find(
         (lockup) =>
-          lockup.funds.denom.includes("factory") && !NFT_SIZES.includes(lockup.funds.amount) && lockup.funds.amount > 0
+          lockup.funds.denom.includes("factory") &&
+          !NFT_SIZES.includes(lockup.funds.amount) &&
+          lockup.funds.amount > 0
       )
     : undefined
 
@@ -315,6 +317,10 @@ export async function findLockupsForNFtSizes(
       (!dAtomNativeLockup || l.id !== dAtomNativeLockup.id)
   )
 
+  const virtualOnlyDenoms = new Set(virtualOnly.map((l) => l.funds.denom))
+  const hasMatchingDenoms =
+    virtualOnly.length > 1 && virtualOnlyDenoms.size === 1
+
   console.log({ selectedCombination })
   console.log({ virtualOnly })
 
@@ -330,7 +336,7 @@ export async function findLockupsForNFtSizes(
     sharedDenomCount,
     virtualLockupsCount: virtualOnly.length,
     virtualLockups: virtualOnly,
-    hasMatchingDenoms: sharedDenomCount > 0,
+    hasMatchingDenoms,
     hasDenomCombination,
   }
 }
