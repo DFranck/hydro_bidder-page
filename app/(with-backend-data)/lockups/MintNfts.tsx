@@ -10,7 +10,15 @@ import { executeWalletMergeLockups } from "@/contract-apis/executeWalletMergeLoc
 import { useChain } from "@cosmos-kit/react"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { executeWalletSplitLockup } from "@/contract-apis/executeWalletSplitLockup"
-import { Equal, Plus, SquaresUnite, X } from "lucide-react"
+import {
+  AlertCircle,
+  Check,
+  Equal,
+  Loader2,
+  Plus,
+  SquaresUnite,
+  X,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import {
@@ -22,6 +30,12 @@ import { MintNftCard } from "@/components/MintNftCard"
 import { executeWalletCovertToDAtomLockups } from "@/contract-apis/executeWalletCovertToDAtomLockups"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useQueryClient } from "@tanstack/react-query"
+
+interface MintingStep {
+  id: number
+  title: string
+  status: "default" | "pending" | "error" | "success"
+}
 
 interface MintNftsProps {
   isCreationModalOpen: boolean
@@ -39,11 +53,14 @@ export type NFT_INFO = {
 
 type MintStep =
   | "init"
+  | "selected"
   | "merge"
   | "split"
   | "convert"
   | "merge_after_convert"
   | "merge_matching_denoms"
+  | "success"
+  | "error"
 
 export function MintNfts({
   isCreationModalOpen,
@@ -68,16 +85,19 @@ export function MintNfts({
   const { address, lockups, isLoading: isContextLoading } = useBackendData()
   // const [currentLockups, setCurrentLockups] = useState(lockups)
   const [step, setStep] = useState<MintStep>("init")
+  const [lastActiveStep, setLastActiveStep] = useState<number>(1)
+
   const [operationContext, setOperationContext] = useState<{
     isDAtom: boolean
     eligibleLockupsSizes?: LockupsResult
     matchingLockups?: AugmentedLockup[]
   }>({ isDAtom: false })
 
-  const {
-    data,
-    isLoading: isNFTLoading,
-  } = useFindLockupsForNFTQuery(nftInfo.amount, nftInfo.baseDenom, lockups)
+  const { data, isLoading: isNFTLoading } = useFindLockupsForNFTQuery(
+    nftInfo.amount,
+    nftInfo.baseDenom,
+    lockups
+  )
 
   const executingStepRef = useRef<MintStep | null>(null)
 
@@ -88,11 +108,15 @@ export function MintNfts({
     })
   }
 
-
   // Main reactive handler for all blockchain operations
   useEffect(() => {
     async function handleStepChange() {
-      if (!isContextLoading && lockups.length > 0 && step !== "init") {
+      if (
+        !isContextLoading &&
+        lockups.length > 0 &&
+        step !== "init" &&
+        step !== "selected"
+      ) {
         if (executingStepRef.current === step) {
           return
         }
@@ -127,13 +151,25 @@ export function MintNfts({
         } catch (error) {
           console.error(`Error in step ${step}:`, error)
           setIsLoading(false)
-          setStep(step)
+          setStep("error")
         }
       }
     }
 
     handleStepChange()
   }, [step, lockups, isContextLoading])
+
+  useEffect(() => {
+    if (step !== "error") {
+      if (step === "init") {
+        setLastActiveStep(1)
+      } else if (step === "merge" || step === "split") {
+        setLastActiveStep(2)
+      } else if (step === "success") {
+        setLastActiveStep(3)
+      }
+    }
+  }, [step])
 
   const eligibleLockupsSizes = data
     ? data
@@ -153,14 +189,15 @@ export function MintNfts({
         hasDenomCombination: false,
       }
 
-  function handleStepTimeout(step: MintStep) {
-    const timeOut = setTimeout(() => {
+  function handleStepInterval(step: MintStep) {
+    const interval = setInterval(() => {
       if (!isContextLoading) {
+        clearInterval(interval)
         setStep(step)
       }
-    }, 10000) // Wait 10 seconds before proceeding to the next step
+    }, 10000)
 
-    return () => clearTimeout(timeOut)
+    return () => clearInterval(interval)
   }
 
   // Individual operation executors
@@ -188,9 +225,9 @@ export function MintNfts({
 
     console.log("Split completed successfully")
     setIsLoading(false)
-    handleCloseModal()
+    // handleCloseModal()
     await revalidateTag("backendData")
-    setStep("init")
+    setStep("success")
   }
 
   async function executeMerge(freshLockups: AugmentedLockup[]) {
@@ -210,7 +247,7 @@ export function MintNfts({
 
     await revalidateTag("backendData")
     console.log("Merge completed, triggering split...")
-    handleStepTimeout("split")
+    handleStepInterval("split")
   }
 
   async function executeConvert(freshLockups: AugmentedLockup[]) {
@@ -233,7 +270,7 @@ export function MintNfts({
 
     await revalidateTag("backendData")
     console.log("Convert completed, triggering merge...")
-    handleStepTimeout("merge_after_convert")
+    handleStepInterval("merge_after_convert")
   }
 
   async function executeMergeAfterConvert(freshLockups: AugmentedLockup[]) {
@@ -256,7 +293,7 @@ export function MintNfts({
 
     await revalidateTag("backendData")
     console.log("Merge after convert completed, triggering split...")
-    handleStepTimeout("split")
+    handleStepInterval("split")
   }
 
   async function executeMergeMatchingDenoms(freshLockups: AugmentedLockup[]) {
@@ -291,11 +328,11 @@ export function MintNfts({
         freshLockupsData.hasVirtualLockups &&
         freshLockupsData.hasMultipleDenoms
       ) {
-        handleStepTimeout("convert")
+        handleStepInterval("convert")
       } else if (freshLockupsData.selectedLockupsCount > 1) {
-        handleStepTimeout("merge")
+        handleStepInterval("merge")
       } else {
-        handleStepTimeout("split")
+        handleStepInterval("split")
       }
     }, 10000)
 
@@ -306,6 +343,7 @@ export function MintNfts({
     handleCreationModalWindowClose()
     setIsCreationModalOpen(false)
     handleInvalidateNFTQuery()
+    setIsLoading(false)
     setStep("init")
     const timeOut = setTimeout(() => {
       setNftDetails(false)
@@ -314,6 +352,7 @@ export function MintNfts({
   }
 
   function handleMintInfo(nft: NFT_INFO) {
+    setStep("selected")
     handleInvalidateNFTQuery()
     setNftInfo(nft)
     setNftDetails(true)
@@ -424,6 +463,94 @@ export function MintNfts({
     }
   }
 
+  const getCurrentStepInfo = (): {
+    activeStep: number
+    status: "default" | "pending" | "error" | "success"
+    failedStep?: number
+  } => {
+    if (step === "success") {
+      return { activeStep: 3, status: "success" }
+    }
+
+    if (step === "init") {
+      return { activeStep: 1, status: "default" }
+    }
+
+    if (step === "selected") {
+      return { activeStep: 1, status: "success" }
+    }
+
+    if (step === "merge" || step === "split" || step === "convert") {
+      return { activeStep: 2, status: "pending" }
+    }
+
+    if (step === "error") {
+      const failedAtStep = lastActiveStep
+      return {
+        activeStep: 1,
+        status: "error",
+        failedStep: failedAtStep,
+      }
+    }
+
+    return { activeStep: 1, status: "default", failedStep: lastActiveStep }
+  }
+
+  const { activeStep, status, failedStep } = getCurrentStepInfo()
+
+  const generateSteps = (): MintingStep[] => {
+    const baseSteps = [
+      {
+        id: 1,
+        title: "Mint",
+      },
+      {
+        id: 2,
+        title:
+          step === "split"
+            ? "Splitting"
+            : step === "merge"
+              ? "Merging"
+              : "Merge/Split",
+      },
+      {
+        id: 3,
+        title: "Success",
+      },
+    ]
+
+    return baseSteps.map((stepState) => {
+      let stepStatus: "default" | "pending" | "error" | "success" = "default"
+
+      if (step === "success") {
+        stepStatus = "success"
+      } else if (step === "error" && failedStep !== undefined) {
+        if (stepState.id === failedStep) {
+          stepStatus = "error"
+        } else if (stepState.id < failedStep) {
+          stepStatus = "success"
+        } else {
+          stepStatus = "default"
+        }
+      } else if (step === "init") {
+        stepStatus = "default"
+      } else if (stepState.id === activeStep) {
+        stepStatus = status
+      } else if (stepState.id < activeStep) {
+        stepStatus = "success"
+      } else {
+        stepStatus = "default"
+      }
+
+      return {
+        ...stepState,
+        status: stepStatus,
+      }
+    })
+  }
+
+  const steps = generateSteps()
+
   return (
     <ModalWindow
       isOpen={isCreationModalOpen}
@@ -455,6 +582,61 @@ export function MintNfts({
                 "pr-6": isMobile && !nftDetails,
               })}
             >
+              <div className=" mx-auto mb-4 flex flex-row justify-center ">
+                {steps.map((el, index) => (
+                  <div key={el.id} className="flex items-center">
+                    <div className="flex w-10 flex-1 flex-col items-center gap-3 md:w-24">
+                      <div className="flex flex-row items-center justify-center">
+                        <div
+                          className={cn(
+                            "flex size-10 flex-col items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
+                            {
+                              "border-palette-green/70 bg-palette-green/70 text-white":
+                                el.status === "success",
+                              "border-red-500 bg-red-500 text-white":
+                                el.status === "error",
+                              "border-palette-blue/90 bg-palette-blue/90 text-white":
+                                el.status === "pending",
+                              "border-gray-200 bg-white text-gray-400":
+                                el.status === "default",
+                            }
+                          )}
+                        >
+                          {el.status === "success" ? (
+                            <Check size={20} />
+                          ) : el.status === "error" ? (
+                            <AlertCircle size={20} />
+                          ) : el.status === "pending" ? (
+                            <Loader2 size={20} className="animate-spin" />
+                          ) : (
+                            el.id
+                          )}
+                        </div>
+                      </div>
+                      <div className="pt-2 ">
+                        <p
+                          className={cn("text-sm font-medium", {
+                            "text-palette-green/90": el.status === "success",
+                            "text-red-600": el.status === "error",
+                            "text-palette-blue/90": el.status === "pending",
+                            "text-gray-500": el.status === "default",
+                          })}
+                        >
+                          {el.title}
+                        </p>
+                      </div>
+                    </div>
+                    {index < steps.length - 1 && (
+                      <div
+                        className={cn("-mt-10  h-0.5 w-16 bg-gray-200", {
+                          "bg-palette-green/90": el.status === "success",
+                          "bg-palette-blue/90": el.status === "pending",
+                        })}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
               {nftDetails ? (
                 <div className="flex flex-col gap-4 md:flex-row">
                   <div className="flex flex-col items-center gap-2">
@@ -553,20 +735,35 @@ export function MintNfts({
 
             {!nftDetails ? null : (
               <Card.Footer className="mt-auto">
-                <StyledText
-                  variant="button.primary"
-                  as="button"
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <div className="animate-spin text-lg">
-                      <Icon name="solid:loader" />
-                    </div>
-                  ) : (
-                    "Mint"
-                  )}
-                </StyledText>
+                {step === "success" ? (
+                  <StyledText
+                    variant="button.primary"
+                    as="button"
+                    type="button"
+                    onClick={() => {
+                      setIsLoading(false)
+                      setNftDetails(false)
+                      setStep("init")
+                    }}
+                  >
+                    Done
+                  </StyledText>
+                ) : (
+                  <StyledText
+                    variant="button.primary"
+                    as="button"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <div className="animate-spin text-lg">
+                        <Icon name="solid:loader" />
+                      </div>
+                    ) : (
+                      "Mint"
+                    )}
+                  </StyledText>
+                )}
                 <StyledText
                   variant="button.secondary"
                   as="button"
