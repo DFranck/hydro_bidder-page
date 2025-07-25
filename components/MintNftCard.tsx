@@ -54,19 +54,19 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
     },
   })
 
-  const renderedList: NFTWithLockupCount[] = isLoading
-    ? NFT_LIST.map((nft) => ({
-        ...nft,
-        lockupCount: 0,
-      }))
-    : nfts?.filter((nft) => nft.lockupCount !== 0) || []
-
   // const renderedList: NFTWithLockupCount[] = isLoading
   //   ? NFT_LIST.map((nft) => ({
   //       ...nft,
   //       lockupCount: 0,
   //     }))
-  //   : nfts || []
+  //   : nfts?.filter((nft) => nft.lockupCount !== 0) || []
+
+  const renderedList: NFTWithLockupCount[] = isLoading
+    ? NFT_LIST.map((nft) => ({
+        ...nft,
+        lockupCount: 0,
+      }))
+    : nfts || []
 
   if (isLoading) {
     return (
@@ -74,7 +74,7 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
         {Array.from({ length: 6 }).map((_, index) => (
           <div key={index} className="animate-pulse">
             <div className="h-38 w-full rounded-md bg-gray-200" />
-            <div className="mt-2 h-4 w-1/2 rounded-md bg-gray-200 ml-auto" />
+            <div className="mt-2 ml-auto h-4 w-1/2 rounded-md bg-gray-200" />
           </div>
         ))}
       </div>
