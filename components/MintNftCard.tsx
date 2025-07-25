@@ -104,7 +104,7 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
             )}
           >
             <Image
-              src={nft.image}
+              src={nft.image ?? "/images/Question_BLANK.png"}
               alt={`${nft.displayDenom} NFT`}
               width={100}
               height={100}
