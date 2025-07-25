@@ -104,7 +104,7 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
             )}
           >
             <div className="h-fit w-full ">
-              <div className="h-[140px] w-full rounded-2xl bg-gray-400/30">
+              <div className="h-[130px] w-full rounded-2xl bg-gray-400/30">
                 <Avatar
                   url={nft.image}
                   alt={`${nft.displayDenom} NFT`}
