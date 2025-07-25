@@ -120,6 +120,8 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
                   <div className="h-4 w-20 animate-pulse rounded-md bg-gray-200/90" />
                 ) : nft.lockupCount === 1 ? (
                   `Created from ${nft.lockupCount} lockup`
+                ) : nft.lockupCount === 0 ? (
+                  "Insufficient lockups"
                 ) : (
                   `Merges ${nft.lockupCount} lockups`
                 )}
