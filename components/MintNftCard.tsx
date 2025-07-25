@@ -68,6 +68,19 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
   //     }))
   //   : nfts || []
 
+  if (isLoading && renderedList.length === 0) {
+    return (
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="animate-pulse">
+            <div className="h-24 w-full rounded-md bg-gray-200" />
+            <div className="mt-2 h-4 w-1/2 rounded-md bg-gray-200" />
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn("grid grid-cols-2 gap-4 sm:grid-cols-3", {
@@ -103,11 +116,13 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
                 <span className="text-xs">{nft.displayDenom}</span>
               </div>
               <span className="text-end text-xs text-gray-400">
-                {isLoading
-                  ? <div className="h-4 w-20 bg-gray-200/90 animate-pulse rounded-md" />
-                  : nft.lockupCount === 1
-                    ? `Created from ${nft.lockupCount} lockup`
-                    : `Merges ${nft.lockupCount} lockups`}
+                {isLoading ? (
+                  <div className="h-4 w-20 animate-pulse rounded-md bg-gray-200/90" />
+                ) : nft.lockupCount === 1 ? (
+                  `Created from ${nft.lockupCount} lockup`
+                ) : (
+                  `Merges ${nft.lockupCount} lockups`
+                )}
               </span>
             </div>
           </div>

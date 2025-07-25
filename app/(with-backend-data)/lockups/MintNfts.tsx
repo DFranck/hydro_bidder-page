@@ -3,22 +3,12 @@ import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { FormEvent, useEffect, useRef, useState } from "react"
 import { revalidateTag } from "@/lib/revalidateTag"
-import { pluralize } from "@/lib/pluralize"
-import { formatAmount } from "@/lib/formatAmount"
 import { Icon } from "@/components/Icon"
 import { executeWalletMergeLockups } from "@/contract-apis/executeWalletMergeLockups"
 import { useChain } from "@cosmos-kit/react"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { executeWalletSplitLockup } from "@/contract-apis/executeWalletSplitLockup"
-import {
-  AlertCircle,
-  Check,
-  Equal,
-  Loader2,
-  Plus,
-  SquaresUnite,
-  X,
-} from "lucide-react"
+import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import {
@@ -32,8 +22,10 @@ import { AugmentedLockup } from "@/contract-apis/types"
 import { useQueryClient } from "@tanstack/react-query"
 import { useToasts } from "@/components/Toasts"
 import { toastMessages } from "@/components/ToastMessages"
+import { MintNftCardDetails } from "@/components/MintNftCardDetails"
+import { MintNftCardStepper } from "@/components/MintNftCardStepper"
 
-interface MintingStep {
+export interface MintingStep {
   id: number
   title: string
   status: "default" | "pending" | "error" | "success"
@@ -580,156 +572,24 @@ export function MintNfts({
                 "pr-6": isMobile && !nftDetails,
               })}
             >
-              <div className=" mx-auto mb-4 flex flex-row justify-center ">
-                {steps.map((el, index) => (
-                  <div key={el.id} className="flex items-center">
-                    <div className="flex w-10 flex-1 flex-col items-center gap-3 md:w-24">
-                      <div className="flex flex-row items-center justify-center">
-                        <div
-                          className={cn(
-                            "flex size-10 flex-col items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
-                            {
-                              "border-palette-green/70 bg-palette-green/70 text-white":
-                                el.status === "success",
-                              "border-red-500 bg-red-500 text-white":
-                                el.status === "error",
-                              "border-palette-blue/90 bg-palette-blue/90 text-white":
-                                el.status === "pending",
-                              "border-gray-200 bg-white text-gray-400":
-                                el.status === "default",
-                            }
-                          )}
-                        >
-                          {el.status === "success" ? (
-                            <Check size={20} />
-                          ) : el.status === "error" ? (
-                            <AlertCircle size={20} />
-                          ) : el.status === "pending" ? (
-                            <Loader2 size={20} className="animate-spin" />
-                          ) : (
-                            el.id
-                          )}
-                        </div>
-                      </div>
-                      <div className="pt-2 ">
-                        <p
-                          className={cn("text-sm font-medium", {
-                            "text-palette-green/90": el.status === "success",
-                            "text-red-600": el.status === "error",
-                            "text-palette-blue/90": el.status === "pending",
-                            "text-gray-500": el.status === "default",
-                          })}
-                        >
-                          {el.title}
-                        </p>
-                      </div>
-                    </div>
-                    {index < steps.length - 1 && (
-                      <div
-                        className={cn("-mt-10  h-0.5 w-16 bg-gray-200", {
-                          "bg-palette-green/90": el.status === "success",
-                          "bg-palette-blue/90": el.status === "pending",
-                        })}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
+              <MintNftCardStepper steps={steps} />
               {nftDetails ? (
-                <div className="flex flex-col gap-4 md:flex-row">
-                  <div className="flex flex-col items-center gap-2">
-                    <img
-                      src={nftInfo.image}
-                      alt={"nft.denom"}
-                      className="size-60"
-                    />
-                  </div>
-                  {isNFTLoading ? (
-                    <div className="h-auto flex-1 animate-pulse rounded-md bg-gray-200/10" />
-                  ) : (
-                    <div className="from-palette-green/0 to-palette-green/20 h-fit flex-1 bg-gradient-to-r p-3 pl-6">
-                      <div className="flex items-center justify-between">
-                        <span className="text-palette-beige flex items-center gap-2 text-sm uppercase">
-                          <SquaresUnite className="fill-palette-beige size-4" />
-                          {pluralize({
-                            count: eligibleLockupsSizes?.selectedLockupsCount,
-                            singular: "Lockup",
-                            plural: "Lockups",
-                          })}{" "}
-                          to convert
-                        </span>
-                        <span>{eligibleLockupsSizes.selectedLockupsCount}</span>
-                      </div>
-                      <div className="mt-2 flex flex-col items-end gap-3">
-                        <div className="flex flex-wrap gap-2">
-                          {eligibleLockupsSizes.selectedLockups.map(
-                            (el, index) => (
-                              <div
-                                className="border-palette-beige space-x-1 rounded-md border p-1.5 text-xs text-white"
-                                key={index}
-                              >
-                                <span>
-                                  {formatAmount(el.funds.amount, 0, 3)}
-                                </span>
-                                <span>{nftInfo.displayDenom}</span>
-                              </div>
-                            )
-                          )}
-                        </div>
-
-                        <div className="flex gap-2">
-                          <div className="flex items-center gap-2">
-                            <Equal className="size-4 text-white" />
-                            <span className="border-palette-beige bg-palette-beige rounded-md border p-1.5 text-xs text-black">
-                              {nftInfo.amount} {nftInfo.displayDenom}
-                            </span>
-                          </div>
-                          {eligibleLockupsSizes.remainder ? (
-                            <div className="flex items-center gap-2">
-                              <Plus className="size-4 text-white" />
-                              <span className="border-palette-beige  rounded-md border border-dashed p-1.5 text-xs">
-                                {formatAmount(
-                                  eligibleLockupsSizes.remainder,
-                                  0,
-                                  3
-                                )}{" "}
-                                {nftInfo.displayDenom}
-                              </span>
-                            </div>
-                          ) : null}
-                        </div>
-                        {eligibleLockupsSizes.remainder ? (
-                          <span className="mt-3 text-xs text-white/80">
-                            One remainder lockup of{" "}
-                            <strong className="text-white">
-                              {formatAmount(
-                                eligibleLockupsSizes.remainder,
-                                0,
-                                3
-                              )}
-                            </strong>{" "}
-                            {nftInfo.displayDenom} will be created
-                          </span>
-                        ) : null}
-                      </div>
-
-                      {/* Debug info */}
-                      {/* {step !== "init" && (
-                        <div className="mt-4 text-xs text-white/60">
-                          Current step: {step}
-                          {isContextLoading && " (waiting for context...)"}
-                        </div>
-                      )} */}
-                    </div>
-                  )}
-                </div>
+                <MintNftCardDetails
+                  nftInfo={nftInfo}
+                  eligibleLockupsSizes={eligibleLockupsSizes as LockupsResult}
+                  isNFTLoading={isNFTLoading}
+                />
               ) : (
                 <MintNftCard
                   lockups={lockups}
                   handleMintInfo={handleMintInfo}
                 />
               )}
-              {!isWalletConnected ? <p>Connect your wallet to mint </p> : null}
+              {!isWalletConnected ? (
+                <p className="text-center text-gray-400 py-6">
+                  Connect your wallet to mint an nft size{" "}
+                </p>
+              ) : null}
             </Card.Body>
 
             {!nftDetails ? null : (
