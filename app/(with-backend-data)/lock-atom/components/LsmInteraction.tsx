@@ -41,10 +41,10 @@ export function LsmInteraction({
   validatorMap: Map<string, Validator>
   validatorLiquidStakingCap: string
 }) {
-  const { lockedAtomIsAtCapacityWallet, lockedAtomMaxWallet, hasGatekeeper } =
+  const { lockedTokenIsAtCapacityWallet, lockedTokenMaxWallet, hasGatekeeper } =
     useBackendData()
   const {
-    data: { lockedAtomIsAtCapacityGlobal, lockedAtomRemainingCapacityGlobal },
+    data: { lockedTokenIsAtCapacityGlobal, lockedTokenRemainingCapacityGlobal },
   } = useGlobalLockupCapacityInfo()
   const { incompleteNotices } = useIncompleteNotices()
   const { hubChain, hubSigner, neutronChain, neutronSigner } =
@@ -52,7 +52,7 @@ export function LsmInteraction({
   const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
   const [numVisibleNotices, setVisibleNotices] = useState(2)
 
-  const notEligible = hasGatekeeper && lockedAtomMaxWallet === 0
+  const notEligible = hasGatekeeper && lockedTokenMaxWallet === 0
 
   return (
     (hubSigner && neutronSigner && (
@@ -119,7 +119,7 @@ export function LsmInteraction({
                 .slice(0, numVisibleNotices)
                 .map((notice, index) => {
                   const canFinalizeLockup =
-                    lockedAtomRemainingCapacityGlobal >=
+                    lockedTokenRemainingCapacityGlobal >=
                     Number((Number(notice.amount) / 10 ** 6).toFixed(6))
 
                   function getStepperConfigForAction(
@@ -196,7 +196,7 @@ export function LsmInteraction({
                           undefined,
                           DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
                         )}{" "}
-                        ATOM
+                        {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                       </strong>{" "}
                       staked with{" "}
                       <strong>
@@ -220,14 +220,15 @@ export function LsmInteraction({
             </>
           )}
 
-          {lockedAtomIsAtCapacityWallet ? (
+          {lockedTokenIsAtCapacityWallet ? (
             <BlurryBackdropBox className="p-6">
               <p>
-                You&rsquo;ve reached the maximum of ATOM you can lock for this
-                pilot round.
+                You&rsquo;ve reached the maximum of{" "}
+                {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} you can lock for
+                this pilot round.
               </p>
             </BlurryBackdropBox>
-          ) : lockedAtomIsAtCapacityGlobal ? (
+          ) : lockedTokenIsAtCapacityGlobal ? (
             <BlurryBackdropBox className="p-6">
               <p>
                 Hydro is currently at max capacity. Please wait for the next

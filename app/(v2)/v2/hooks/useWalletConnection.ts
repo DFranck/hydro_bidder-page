@@ -8,7 +8,7 @@ import {
   UseWalletConnectionOptions,
   UseWalletConnectionReturn,
 } from '@v2/types/hooks'
-import { MouseEventHandler, useEffect } from 'react'
+import { MouseEventHandler, useEffect, useRef } from 'react'
 
 export function useWalletConnection({
   chainName = 'neutron',
@@ -17,6 +17,7 @@ export function useWalletConnection({
 }: UseWalletConnectionOptions = {}): UseWalletConnectionReturn {
   const { addToast } = useToasts()
   const { connect, openView, status, address, message } = useChain(chainName)
+  const lastErrorRef = useRef<string | null>(null)
 
   // Events
   const onClickConnect: MouseEventHandler = async (e) => {
@@ -36,8 +37,14 @@ export function useWalletConnection({
       message &&
       [WalletStatus.Error, WalletStatus.Rejected].includes(status)
     ) {
-      addToast(toastMessages.walletConnectionError(new Error(message)))
+      // Only show error toast if it's a different error message
+      if (lastErrorRef.current !== message) {
+        lastErrorRef.current = message
+        addToast(toastMessages.walletConnectionError(new Error(message)))
+      }
     } else {
+      // Reset error tracking when status is not an error
+      lastErrorRef.current = null
       notifyConnectedCB?.(status === WalletStatus.Connected)
     }
   }, [message, status, notifyConnectedCB, ignoreStatus, addToast])

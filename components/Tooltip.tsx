@@ -51,7 +51,7 @@ export function Tooltip({
     timers.current.push(
       setTimeout(() => {
         setIsOpen(true)
-      }, mouseEnterDelay)
+      }, mouseEnterDelay),
     )
   }
 
@@ -63,7 +63,7 @@ export function Tooltip({
         setTimeout(() => {
           setShouldRender(false)
         }, 300)
-      }, mouseLeaveDelay)
+      }, mouseLeaveDelay),
     )
   }
 
@@ -82,7 +82,7 @@ export function Tooltip({
         setTimeout(() => {
           setShouldRender(false)
         }, 300)
-      }, 200)
+      }, 200),
     )
   }
 
@@ -94,8 +94,9 @@ export function Tooltip({
   return (
     <div
       className={twMerge(
-        `group/tooltip relative z-10 inline-block w-min`,
-        className
+        `group/tooltip relative z-10 inline-block`,
+        // "w-min", poly, 15/05/2025 I disable to keep lockups actions button w-full in new menu design like app\(with-backend-data)\lockups\buildExpiredRow.tsx
+        className,
       )}
       tabIndex={0}
       onMouseEnter={handleMouseEnter}
@@ -115,7 +116,8 @@ export function Tooltip({
                 left-1/2
                 z-50
                 mt-1
-                w-56
+                min-w-56
+                max-w-96
                 -translate-x-1/2
                 whitespace-normal
                 rounded-sm
@@ -138,7 +140,7 @@ export function Tooltip({
                   translate-y-0
                   opacity-100
                 `,
-              classNamesForTooltip
+              classNamesForTooltip,
             )}
             style={{
               top: coords.y,
@@ -147,7 +149,7 @@ export function Tooltip({
           >
             {tipContents}
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   )

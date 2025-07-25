@@ -1,10 +1,14 @@
 import { Tranche } from "@/app/ts_types/HydroBase.types"
+import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
 import { pluralize } from "@/lib/pluralize"
 import { LockupStatus } from "./LockupStatus"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
+import { Dropdown } from "./actions/components/Dropdown"
+import { LockupActionTrigger } from "./actions/components/LockupActionTrigger"
+import { isListedMarketplaceLockup } from "./marketplace/utils/isListedMarketplaceLockup"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -167,29 +171,45 @@ export function buildActiveRow({
     ...statusCells,
 
     actions: (
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          asChild
-          className="flex justify-start md:justify-end"
+      <>
+        <Dropdown
+          trigger={<Icon name="light:ellipsis-vertical" />}
+          className=" text-gray-500 hover:text-gray-800"
         >
-          <StyledText as={"span"} className="cursor-pointer">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal />
-          </StyledText>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="bg-black ">
-          {MENU_ITEMS.map((item) => (
-            <DropdownMenuItem
-              key={item.label}
-              onClick={() => item.cta(lockup)}
-              className="hover:bg-palette-green/70 group"
-            >
-              {item.icon}
-              {item.label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+          {isListedMarketplaceLockup(lockup) && (
+            <LockupActionTrigger lockup={lockup} action="unlist" />
+          )}
+          <LockupActionTrigger lockup={lockup} action="list" />
+          <LockupActionTrigger lockup={lockup} action="transfer" />
+          <button
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-palette-green hover:text-palette-text"
+            onClick={onClickEdit.bind(null, { lockup })}
+          >
+            <Icon name="light:rotate" />
+            Refresh
+          </button>
+        </Dropdown>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="flex justify-end">
+            <StyledText as={"span"} className="cursor-pointer">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </StyledText>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-black ">
+            {MENU_ITEMS.map((item) => (
+              <DropdownMenuItem
+                key={item.label}
+                onClick={() => item.cta(lockup)}
+                className="group hover:bg-palette-green/70"
+              >
+                {item.icon}
+                {item.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </>
     ),
   }
 

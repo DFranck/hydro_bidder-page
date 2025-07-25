@@ -17,7 +17,7 @@ import { sumBy } from "lodash"
 export function buildColumns(
   requestedPreHydro: boolean,
   currentRoundId: number,
-  requestedRoundId: number
+  requestedRoundId: number,
 ): ColumnObject<MetricsRow, keyof MetricsRow>[] {
   return [
     {

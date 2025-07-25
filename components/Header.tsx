@@ -6,7 +6,7 @@ import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useRef } from "react"
-import { twMerge } from "tailwind-merge"
+import { twJoin, twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
 export function Header() {
@@ -25,22 +25,23 @@ export function Header() {
     return () => clearInterval(interval)
   }, [])
 
+  const borderColor =
+    process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "stOSMO"
+      ? "border-tokens-stosmo"
+      : "border-tokens-atom"
+
   return (
     <>
       {/* Ghost element to affect layout despite being fixed */}
       <div ref={ghostElementRef} className="pointer-events-none" />
 
       <div
-        className="
-          fixed
-          left-0
-          right-0
-          top-0
-          z-40
-          border-b
-          border-palette-beige
-          bg-black
-        "
+        className={twJoin(
+          "fixed left-0 right-0 top-0 z-40",
+          "border-b",
+          "bg-black",
+          borderColor,
+        )}
         ref={elementRef}
       >
         <ContentContainer
@@ -55,7 +56,7 @@ export function Header() {
               transition-all
               duration-300
             `,
-            isScrolled ? `py-1` : `py-3`
+            isScrolled ? `py-1` : `py-3`,
           )}
         >
           <div
@@ -64,7 +65,7 @@ export function Header() {
                 transition-all
                 duration-300
               `,
-              isScrolled ? `h-8 w-40` : `h-12 w-56`
+              isScrolled ? `h-8 w-40` : `h-12 w-56`,
             )}
           >
             <Link href="/" className="relative block h-full w-full">

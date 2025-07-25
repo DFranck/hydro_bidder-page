@@ -21,7 +21,7 @@ export function BlurryBackdropBox({
           py-2
           backdrop-blur-md
         `,
-        className
+        className,
       )}
       {...otherProps}
     >

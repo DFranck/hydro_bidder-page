@@ -2,6 +2,7 @@ import { invariant } from "ts-invariant"
 import { TributeBaseQueryClient } from "../../../app/ts_types/TributeBase.client"
 import { Tribute } from "../../../app/ts_types/TributeBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export async function fetchRoundTributes({
   roundId,
@@ -46,35 +47,39 @@ export async function fetchRoundTributes({
 
     return tributes
   } else {
-    const response = await fetch(
-      `${numiaTributesEndpoint}?round_id=${roundId}&tribute_contract=${tributeContractAddress}&time=${new Date().getTime()}`,
-      {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
-        },
-      }
-    )
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch numia tribute data: ${response.statusText}`
-      )
-    }
-
-    // Clean up the response
-    let responseJson
     try {
-      responseJson = await response.json()
+      const response = await fetchWithRetry(
+        `${numiaTributesEndpoint}?round_id=${roundId}&tribute_contract=${tributeContractAddress}&time=${new Date().getTime()}`,
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch numia round tributes data: ${response.statusText}`
+        )
+      }
+
+      // Clean up the response
+      let responseJson
+      try {
+        responseJson = await response.json()
+      } catch (error) {
+        throw new Error(`Error converting response to JSON: ${error}`)
+      }
+
+      if (!responseJson || responseJson.length === 0) {
+        return []
+      }
+
+      const tributes = JSON.parse(responseJson[0].response).data.tributes
+      return tributes as Tribute[]
     } catch (error) {
-      throw new Error(`Error converting response to JSON: ${error}`)
+      throw new Error(`Error fetching tributes: ${error}`)
     }
-
-    if (!responseJson || responseJson.length === 0) {
-      return []
-    }
-
-    const tributes = JSON.parse(responseJson[0].response).data.tributes
-    return tributes as Tribute[]
   }
 }

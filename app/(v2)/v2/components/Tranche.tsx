@@ -83,7 +83,7 @@ export function Tranche({
           'px-standard gap-standard',
           'font-bold **:font-bold!',
           'transition-colors',
-          'from-theme-color to-theme-color/50 bg-linear-to-b',
+          'from-theme-color bg-linear-to-b to-transparent',
         )}
       >
         <MarkdownContainer

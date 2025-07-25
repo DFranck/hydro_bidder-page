@@ -1,6 +1,8 @@
 import buildExternalData from "../../../functions/scheduled-build-external-data"
 import buildHydroMetaData from "../../../functions/scheduled-build-hydro-meta-data"
 import buildHydroRoundData from "../../../functions/scheduled-build-hydro-round-data-in-background"
+import buildHydroListingsData from "../../../functions/scheduled-build-hydro-listings"
+import buildHydroLockupsData from "../../../functions/scheduled-build-hydro-lockups"
 
 export async function GET() {
   try {
@@ -8,6 +10,8 @@ export async function GET() {
       buildExternalData(),
       buildHydroMetaData(),
       buildHydroRoundData(),
+      buildHydroListingsData(),
+      buildHydroLockupsData(),
     ])
 
     return new Response("External data built and saved")

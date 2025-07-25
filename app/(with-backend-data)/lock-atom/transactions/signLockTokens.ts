@@ -24,13 +24,13 @@ export async function signLockTokens(
 
   invariant(
     hydroContractAddress,
-    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set",
   )
 
   const hydroClient = new HydroBaseClient(
     client,
     neutronChain.address,
-    hydroContractAddress
+    hydroContractAddress,
   )
 
   let proof
@@ -54,7 +54,7 @@ export async function signLockTokens(
           lock_duration: lockDuration,
           proof,
         },
-      })
+      }),
     ),
     funds: [{ amount, denom }],
   })
@@ -68,7 +68,7 @@ export async function signLockTokens(
         value: simulateMsg,
       },
     ],
-    ""
+    "",
   )
 
   // use gas from simulated message with a gas multiplier

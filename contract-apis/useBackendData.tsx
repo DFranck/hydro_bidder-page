@@ -1,5 +1,6 @@
 "use client"
 
+import { getMarketplaceLockups } from "@/app/(with-backend-data)/lockups/marketplace/utils/getMarketplaceLockups"
 import { augmentBackendDataAfterWallet } from "@/contract-apis/augmentBackendDataAfterWallet"
 import { augmentBackendDataBeforeWallet } from "@/contract-apis/augmentBackendDataBeforeWallet"
 import { fetchWalletData } from "@/contract-apis/fetchWalletData"
@@ -19,6 +20,7 @@ import {
   useEffect,
   useState,
 } from "react"
+import { getNextStateAfterWalletRefetch } from "./getNextStateAfterWalletRefetch"
 import { BackendDataTweak } from "./types"
 import { useGlobalLockupCapacityInfo } from "./useGlobalLockupCapacityInfo"
 
@@ -34,6 +36,7 @@ export interface BackendDataContextType
   isLoading: boolean
   isWalletConnected: boolean
   refetchBackendData: () => void
+  refetchWalletData: () => void
 }
 
 const initialBackendDataContext: BackendDataContextType = {
@@ -42,6 +45,7 @@ const initialBackendDataContext: BackendDataContextType = {
   atomPrice: 0,
   dAtomPrice: 0,
   stAtomPrice: 0,
+  stOsmoPrice: 0,
   bidsInfo: {},
   claimsHistorical: [],
   claimsOutstanding: [],
@@ -51,17 +55,21 @@ const initialBackendDataContext: BackendDataContextType = {
   tranches: [],
   isLoading: false,
   isWalletConnected: false,
-  lockedAtomEpochInNanos: 0,
-  lockedAtomIsAtCapacityWallet: false,
-  lockedAtomMaxWallet: 0,
-  lockedAtomPercentageWallet: 0,
+  lockedTokenEpochInNanos: 0,
+  lockedTokenIsAtCapacityWallet: false,
+  lockedTokenMaxWallet: 0,
+  lockedTokenPercentageWallet: 0,
   lockedAtomTotalWalletStat: 0,
   lockedStAtomTotalWalletStat: 0,
   lockedDAtomTotalWalletStat: 0,
   lockedTokenTotalWalletStat: 0,
-  lockedAtomTotalWallet: 0,
+  lockedTokenTotalWallet: 0,
   hasGatekeeper: false,
   lockups: [],
+  marketplaceLockups: [],
+  collections: [],
+  hydroLockups: [],
+  hydroListings: [],
   metricsForPreHydroBids: [],
   minTributeFactor: 0,
   votes: [],
@@ -93,10 +101,11 @@ const initialBackendDataContext: BackendDataContextType = {
     currentUsersAvgTokensLocked: 0,
   },
   refetchBackendData: () => {},
+  refetchWalletData: () => {},
 }
 
 const BackendDataContext = createContext<BackendDataContextType>(
-  initialBackendDataContext
+  initialBackendDataContext,
 )
 
 export function BackendDataContextProvider({
@@ -106,14 +115,39 @@ export function BackendDataContextProvider({
   rawBackendDataBeforeWallet: BackendDataBeforeWalletSlimmed
   children: ReactNode
 }) {
-  const { data: { lockedAtomRemainingCapacityGlobal }, isLoaded: isGlobalCapacityLoaded } = useGlobalLockupCapacityInfo()
+  const { data: { lockedTokenRemainingCapacityGlobal }, isLoaded: isGlobalCapacityLoaded } = useGlobalLockupCapacityInfo()
   const pathname = usePathname()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [loadedTweaks, setLoadedTweaks] = useState<BackendDataTweak[]>([])
   const [state, setState] = useState<AugmentedBackendDataAfterWallet>(
-    initialBackendDataContext
+    initialBackendDataContext,
   )
+
+  function refetchWalletData() {
+    if (!state.address) return
+    setIsLoading(true)
+    fetchWalletData({
+      address: state.address,
+      currentRoundId: state.currentRoundId,
+      tranches: state.tranches,
+      currentRoundPrices: state.currentRoundPrices
+    }).then((walletData) => {
+      const nextWalletState = getNextStateAfterWalletRefetch({
+        loadedTweaks,
+        previousState: state,
+        walletData,
+        lockedTokenRemainingCapacityGlobal
+      })
+      setState({
+        ...state,
+        ...nextWalletState,
+        isLoading: false,
+      })
+      setIsLoading(false)
+    })
+  }
+
   const {
     address,
     isWalletConnected,
@@ -123,13 +157,13 @@ export function BackendDataContextProvider({
   const isWalletForceConnected = Boolean(
     loadedTweaks
       .filter((tweak) => !tweak.disabled)
-      .find((tweak) => tweak.json.patchData?.isWalletConnected)
+      .find((tweak) => tweak.json.patchData?.isWalletConnected),
   )
   const isWalletConnectedOrForceConnected =
     isWalletConnected || isWalletForceConnected
   const wasWalletConnected = useDeferredValue(isWalletConnectedOrForceConnected)
 
-  const {  data: {lockedAtomTotalGlobal} } = useGlobalLockupCapacityInfo()
+  const {  data: {lockedTokenTotalGlobal} } = useGlobalLockupCapacityInfo()
 
   // Dependencies: [address, loadedTweaks, rawBackendDataBeforeWallet]
   useEffect(() => {
@@ -137,7 +171,7 @@ export function BackendDataContextProvider({
       {},
       ...loadedTweaks
         .filter((tweak) => !tweak.disabled)
-        .map((tweak) => tweak.json)
+        .map((tweak) => tweak.json),
     )
 
     const { patchData = {} } = enabledTweaks
@@ -146,6 +180,8 @@ export function BackendDataContextProvider({
       hydroRoundData,
       externalData,
       walletData: walletDataTweaks,
+      hydroLockups,
+      hydroListings,
       $hydroMetaData,
       $hydroRoundData,
       $externalData,
@@ -158,14 +194,16 @@ export function BackendDataContextProvider({
         ...(hydroMetaData !== undefined && { hydroMetaData }),
         ...(hydroRoundData !== undefined && { hydroRoundData }),
         ...(externalData !== undefined && { externalData }),
+        ...(hydroLockups !== undefined && { hydroLockups }),
+        ...(hydroListings !== undefined && { hydroListings }),
         ...($hydroMetaData !== undefined && { $hydroMetaData }),
         ...($hydroRoundData !== undefined && { $hydroRoundData }),
         ...($externalData !== undefined && { $externalData }),
-      }
+      },
     )
 
     const augmentedBackendDataBeforeWallet = augmentBackendDataBeforeWallet(
-      tweakedRawBackendDataBeforeWallet
+      tweakedRawBackendDataBeforeWallet,
     )
 
     const effectiveAddress = patchData?.address ?? address
@@ -175,7 +213,7 @@ export function BackendDataContextProvider({
         {},
         initialBackendDataContext,
         augmentedBackendDataBeforeWallet,
-        patchData
+        patchData,
       )
 
       logDebugData([
@@ -196,7 +234,6 @@ export function BackendDataContextProvider({
     ;(async () => {
       if (!isGlobalCapacityLoaded) return
       setIsLoading(true)
-
       const walletData = await fetchWalletData({
         address: effectiveAddress,
         currentRoundId,
@@ -207,20 +244,25 @@ export function BackendDataContextProvider({
       const tweakedWalletData = mergeWithOverwrite(
         {},
         walletData,
-        walletDataTweaks ?? {}
+        walletDataTweaks ?? {},
       )
 
       const augmentedBackendDataAfterWallet = augmentBackendDataAfterWallet({
         address: effectiveAddress,
         augmentedBackendDataBeforeWallet,
         walletData: tweakedWalletData,
-        lockedAtomRemainingCapacityGlobal,
+        lockedTokenRemainingCapacityGlobal,
       })
 
       const tweakedAugmentedBackendDataAfterWallet = mergeWithOverwrite(
         {},
         augmentedBackendDataAfterWallet,
-        patchData
+        patchData,
+      )
+
+      const marketplaceLockups = getMarketplaceLockups(
+        tweakedAugmentedBackendDataAfterWallet.lockups,
+        walletData.listings,
       )
 
       logDebugData([
@@ -235,7 +277,10 @@ export function BackendDataContextProvider({
         { finalState: tweakedAugmentedBackendDataAfterWallet },
       ])
 
-      setState(tweakedAugmentedBackendDataAfterWallet)
+      setState({
+        ...tweakedAugmentedBackendDataAfterWallet,
+        marketplaceLockups,
+      })
 
       setIsLoading(false)
     })()
@@ -260,7 +305,7 @@ export function BackendDataContextProvider({
       const isProtectedRoute =
         pathname &&
         protectedRoutes.some((protectedRoute) =>
-          pathname?.startsWith(protectedRoute)
+          pathname?.startsWith(protectedRoute),
         )
 
       // Redirect to bids if user has just connected their wallet and is on homepage
@@ -321,10 +366,10 @@ export function BackendDataContextProvider({
 
     console.log("💡 You have access to the `debugData` object in the console!")
     console.log(
-      `🖪 Server Payload Size: ${(JSON.stringify(rawBackendDataBeforeWallet).length / 1024 / 1024).toFixed(2)} MB`
+      `🖪 Server Payload Size: ${(JSON.stringify(rawBackendDataBeforeWallet).length / 1024 / 1024).toFixed(2)} MB`,
     )
     console.log(
-      `🖪 State Size: ${(JSON.stringify(finalState).length / 1024 / 1024).toFixed(2)} MB`
+      `🖪 State Size: ${(JSON.stringify(finalState).length / 1024 / 1024).toFixed(2)} MB`,
     )
   }
 
@@ -335,6 +380,7 @@ export function BackendDataContextProvider({
         isLoading,
         isWalletConnected: isWalletConnectedOrForceConnected,
         refetchBackendData,
+        refetchWalletData,
       }}
     >
       {children}
@@ -347,7 +393,7 @@ export function useBackendData() {
 
   if (context === undefined) {
     throw new Error(
-      "useBackendData must be used within a BackendDataContext Provider"
+      "useBackendData must be used within a BackendDataContext Provider",
     )
   }
 

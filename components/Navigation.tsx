@@ -43,9 +43,21 @@ export default function Navigation() {
       href: "/bids",
     },
     {
-      disabled: !isActuallyConnected,
       label: "Lockups",
-      href: "/lockups",
+
+      menuItems: [
+        {
+          label: "Marketplace",
+          href: "/lockups/marketplace",
+          iconLeft: "solid:store",
+        },
+        {
+          disabled: !isActuallyConnected,
+          label: "My Lockups",
+          href: "/lockups",
+          iconLeft: "solid:list",
+        },
+      ],
       tooltip: !isActuallyConnected ? needsWalletConnectionTooltip : undefined,
     },
     {
@@ -246,6 +258,7 @@ export default function Navigation() {
           lg:gap-6
         "
       >
+
         {menuItems.map(
           (
             { label, href, disabled, tooltip, menuItems: subMenuItems },

@@ -32,7 +32,11 @@ export function useCarouselIntersection({
     if (targets.length === 0) return
 
     // Set initial index if provided
-    if (initialIndex !== undefined && initialIndex >= 0 && initialIndex < targets.length) {
+    if (
+      initialIndex !== undefined &&
+      initialIndex >= 0 &&
+      initialIndex < targets.length
+    ) {
       onIndexChange(initialIndex)
 
       // Scroll to the initial target
@@ -82,5 +86,13 @@ export function useCarouselIntersection({
         clearTimeout(debounceTimeoutRef.current)
       }
     }
-  }, [containerSelector, targetSelector, isEnabled, onIndexChange, threshold, initialIndex, disableIntersectionObserver])
+  }, [
+    containerSelector,
+    targetSelector,
+    isEnabled,
+    onIndexChange,
+    threshold,
+    initialIndex,
+    disableIntersectionObserver,
+  ])
 }

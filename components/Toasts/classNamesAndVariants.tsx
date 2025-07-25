@@ -60,6 +60,7 @@ export const classNamesAndVariants = {
     grid
     grid-rows-subgrid
     overflow-hidden
+    whitespace-nowrap
     rounded-r-md
     border-l-2
     border-white/20

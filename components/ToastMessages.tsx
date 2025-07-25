@@ -20,7 +20,7 @@ export const toastMessages = {
   claimingRewardsError: (error: Error) => {
     return {
       variant: "error",
-      message: `Error claiming rewards: ${error}`,
+      message: `Error claiming rewards: ${error.message || error}`,
     }
   },
 
@@ -45,7 +45,7 @@ export const toastMessages = {
 
   lockingTokensError: (error: Error) => ({
     variant: "error",
-    message: `Error locking tokens: ${error}`,
+    message: `Error locking tokens: ${error.message || error}`,
   }),
 
   lockupCapacityFull: {
@@ -55,7 +55,7 @@ export const toastMessages = {
 
   lockupRequestRejected: (error: Error) => ({
     variant: "error",
-    message: `Request rejected: ${error}`,
+    message: `Request rejected: ${error.message || error}`,
   }),
 
   reloadingTheWindow: {
@@ -131,6 +131,39 @@ export const toastMessages = {
     }
   },
 
+  unlockingExpiredAtomLockupsSuccess: (count: number) => {
+    const lockupOrLockups = pluralize({
+      count,
+      prefixCount: false,
+      singular: "lockup",
+    })
+
+    return {
+      variant: "success",
+      message: `${count} ${lockupOrLockups} unlocked successfully. Continue to next step.`,
+    }
+  },
+
+  unlockingExpiredStOsmoLockupsSuccess: (count: number) => {
+    const lockupOrLockups = pluralize({
+      count,
+      prefixCount: false,
+      singular: "lockup",
+    })
+
+    return {
+      variant: "success",
+      message: `${count} ${lockupOrLockups} unlocked successfully. Reload to see changes.`,
+      isDismissible: true,
+      actionButtonPrimary: {
+        label: "Reload",
+        onClick: () => {
+          window.location.reload()
+        },
+      },
+    }
+  },
+
   unlockingExpiredLockupsError: (count: number, error: Error) => {
     const lockupOrLockups = pluralize({
       count,
@@ -140,7 +173,7 @@ export const toastMessages = {
 
     return {
       variant: "error",
-      message: `Error unlocking ${count} ${lockupOrLockups}: ${error}`,
+      message: `Error unlocking ${count} ${lockupOrLockups}: ${error.message || error}`,
     }
   },
 
@@ -168,12 +201,12 @@ export const toastMessages = {
 
   votingError: (error: Error) => ({
     variant: "error",
-    message: `Error voting: ${error}`,
+    message: `Error voting: ${error.message || error}`,
   }),
 
   walletConnectionError: (error: Error) => ({
     variant: "error",
-    message: `Error connecting wallet: ${error}`,
+    message: `Error connecting wallet: ${error.message || error}`,
   }),
 
   transactionCompleted: {
@@ -186,9 +219,9 @@ export const toastMessages = {
     message: "Searching for route to convert.",
   },
 
-  convertingToAtom: {
+  converting: {
     variant: "working",
-    message: "Converting to ATOM.",
+    message: "Converting...",
   },
 
   transactionSigned: (chainID: string) => {
@@ -222,7 +255,7 @@ export const toastMessages = {
   transactionError: (error: Error) => {
     return {
       variant: "error",
-      message: `Error during transaction: ${error}`,
+      message: `Error during transaction: ${error.message || error}`,
     }
   },
   // AddTribute
@@ -234,9 +267,66 @@ export const toastMessages = {
     variant: "success",
     message: "Tribute added successfully! Reloading...",
   },
+
   addingTributeError: (error: Error) => ({
     variant: "error",
-    message: `Error adding tribute: ${error}`,
+    message: `Error adding tribute: ${error.message || error}`,
+  }),
+
+  // Lockup - Transferring
+  transferringLockupInProgress: {
+    variant: "working",
+    message: "Transferring lockup in progress...",
+  },
+  transferringLockupSuccess: {
+    variant: "success",
+    message: "Lockup transferred successfully.",
+  },
+  transferringLockupError: (error: Error) => ({
+    variant: "error",
+    message: `Failed to transfer lockup: ${error.message}`,
+  }),
+
+  // Lockup - Transferring
+  listingLockupInProgress: {
+    variant: "working",
+    message: "Listing lockup in progress...",
+  },
+  listingLockupSuccess: {
+    variant: "success",
+    message: "Lockup listed successfully.",
+  },
+  listingLockupError: (error: Error) => ({
+    variant: "error",
+    message: `Failed to list lockup: ${error.message}`,
+  }),
+
+  // Lockup - Buying
+  buyLockupInProgress: {
+    variant: "working",
+    message: "Buying lockup in progress...",
+  },
+  buyLockupSuccess: {
+    variant: "success",
+    message: "Lockup bought successfully.",
+  },
+  buyLockupError: (error: Error) => ({
+    variant: "error",
+    message: `Failed to buy lockup: ${error.message}`,
+  }),
+
+  // Lockup - Canceling
+  cancelLockupInProgress: {
+    variant: "working",
+    message: "Canceling lockup in progress...",
+  },
+  cancelLockupSuccess: {
+    variant: "success",
+    message: "Lockup canceled successfully.",
+  },
+  cancelLockupError: (error: Error) => ({
+    variant: "error",
+    message: `Failed to cancel lockup: ${error.message}`,
   }),
 } satisfies Record<
   string,

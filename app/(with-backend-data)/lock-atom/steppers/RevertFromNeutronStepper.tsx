@@ -134,12 +134,15 @@ export const RevertFromNeutronStepper = ({
     switch (step) {
       case "Init":
         return {
-          title: `Revert ${formatAmount(amount)} ATOM`,
+          title: `Revert ${formatAmount(amount)} ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
           contents: (
             <>
               <p>
                 You&rsquo;re about to revert{" "}
-                <span className="font-bold">{formatAmount(amount)} ATOM</span>{" "}
+                <span className="font-bold">
+                  {formatAmount(amount)}{" "}
+                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                </span>{" "}
                 back to its original state, staked with{" "}
                 <strong className="break-all">
                   {getValidatorMoniker(validator, validatorMap)}
@@ -181,8 +184,9 @@ export const RevertFromNeutronStepper = ({
             <>
               <p>Approve the transaction in your wallet to continue</p>
               <p>
-                This will start the transfer of your ATOM tokens to your Cosmos
-                Hub wallet.
+                This will start the transfer of your{" "}
+                {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} tokens to your
+                Cosmos Hub wallet.
               </p>
             </>
           ),
@@ -206,7 +210,12 @@ export const RevertFromNeutronStepper = ({
               <p>Approve the transaction in your wallet to continue</p>
               <p>
                 This will restore your previous staked position with the amount
-                of <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
+                of{" "}
+                <strong>
+                  {formatAmount(amount)}{" "}
+                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                </strong>{" "}
+                staked to{" "}
                 <strong>{getValidatorMoniker(validator, validatorMap)}</strong>.
               </p>
             </>
@@ -215,7 +224,7 @@ export const RevertFromNeutronStepper = ({
       case "WaitingForRedeemBroadcast":
         return {
           isWorking: true,
-          title: "Redeeming ATOM...",
+          title: `Redeeming ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}...`,
           contents: (
             <p>
               Hang tight, we&rsquo;re restoring your previous staked position.
@@ -228,8 +237,12 @@ export const RevertFromNeutronStepper = ({
           title: "Success!",
           contents: (
             <p>
-              Your <strong>{formatAmount(amount)} ATOM</strong> has been
-              restored to your previous staked position.
+              Your{" "}
+              <strong>
+                {formatAmount(amount)}{" "}
+                {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+              </strong>{" "}
+              has been restored to your previous staked position.
             </p>
           ),
           buttons: [
@@ -250,11 +263,13 @@ export const RevertFromNeutronStepper = ({
               {!showErrorLog ? (
                 <>
                   <p>
-                    This transaction could not be completed. Your staked ATOM
+                    This transaction could not be completed. Your staked{" "}
+                    {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}
                     has not been reverted.
                   </p>
                   <p>
-                    Refresh the page to try again or recover your staked ATOM.
+                    Refresh the page to try again or recover your staked{" "}
+                    {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}.
                   </p>
                   <StyledText
                     as="button"

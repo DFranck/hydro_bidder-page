@@ -5,7 +5,7 @@ export async function fetchWithRetry(
   url: string,
   init?: RequestInit & { next?: { revalidate?: number } },
   attempts = 5,
-  initialDelay = 2000
+  initialDelay = 500
 ): Promise<Response> {
   for (let i = 0; i < attempts; i++) {
     try {

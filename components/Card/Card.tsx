@@ -18,7 +18,7 @@ export function Card({ children, className, ...otherProps }: CardProps) {
           p-6
           backdrop-blur-md
         `,
-        className
+        className,
       )}
       {...otherProps}
     >
@@ -60,7 +60,7 @@ function CardBody({ children, className, ...otherProps }: CardProps) {
           flex-col
           gap-3
         `,
-        className
+        className,
       )}
       {...otherProps}
     >
@@ -79,7 +79,7 @@ function CardFooter({ children, className, ...otherProps }: CardProps) {
           gap-3
           pt-6
         `,
-        className
+        className,
       )}
       {...otherProps}
     >

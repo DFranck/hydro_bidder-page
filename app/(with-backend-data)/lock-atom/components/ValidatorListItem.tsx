@@ -40,7 +40,7 @@ export function ValidatorListItem({
           <span className="text-sm text-gray-400">
             {isDisabled
               ? "(Insufficient validator bond)"
-              : `${formatAmount(v.delegation_balance.amount, undefined, DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS)} ATOM staked`}
+              : `${formatAmount(v.delegation_balance.amount, undefined, DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS)} ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} staked`}
           </span>
         </div>
         <StyledText

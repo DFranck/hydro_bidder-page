@@ -35,12 +35,12 @@ export function NewLockUpButton({
 }) {
   const {
     isWalletConnected,
-    lockedAtomPercentageWallet,
-    lockedAtomMaxWallet,
+    lockedTokenPercentageWallet,
+    lockedTokenMaxWallet,
     hasGatekeeper,
   } = useBackendData()
   const {
-    data: { lockedAtomPercentageGlobal, lockedAtomRemainingCapacityGlobal },
+    data: { lockedTokenPercentageGlobal, lockedTokenRemainingCapacityGlobal },
   } = useGlobalLockupCapacityInfo()
   const amountOfdAtomInWallet = useAmountOfTokenInWallet("dATOM")
   const amountOfsTAtomInWallet = useAmountOfTokenInWallet("stATOM")
@@ -49,9 +49,9 @@ export function NewLockUpButton({
 
   const tokenLimit = 0.00001
 
-  const verifyLockupCapacity = lockedAtomRemainingCapacityGlobal === 0
+  const verifyLockupCapacity = lockedTokenRemainingCapacityGlobal === 0
 
-  const notEligible = hasGatekeeper && lockedAtomMaxWallet === 0
+  const notEligible = hasGatekeeper && lockedTokenMaxWallet === 0
 
   const MENU_ITEMS = [
     {
@@ -79,8 +79,8 @@ export function NewLockUpButton({
       action: () => push("/lock-atom"),
       isDisabled:
         !isWalletConnected ||
-        lockedAtomPercentageWallet === 100 ||
-        lockedAtomPercentageGlobal === 100 ||
+        lockedTokenPercentageWallet === 100 ||
+        lockedTokenPercentageGlobal === 100 ||
         notEligible,
       cta: {
         label: "Get",
@@ -115,7 +115,7 @@ export function NewLockUpButton({
                     tipContents={
                       !isWalletConnected
                         ? needsWalletConnectionTooltip
-                        : lockedAtomPercentageWallet === 100
+                        : lockedTokenPercentageWallet === 100
                           ? lockupLimitReachedByUserTooltip
                           : !verifyLockupCapacity &&
                               (amountOfdAtomInWallet <= tokenLimit ||

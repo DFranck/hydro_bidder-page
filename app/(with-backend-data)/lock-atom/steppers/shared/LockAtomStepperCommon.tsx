@@ -33,7 +33,7 @@ export function getCommonStepContents({
   validator,
   validatorMap,
   lockDuration,
-  lockedAtomEpochInNanos,
+  lockedTokenEpochInNanos,
   errorLog,
   showErrorLog,
   setShowErrorLog,
@@ -49,7 +49,7 @@ export function getCommonStepContents({
   validator: string
   validatorMap: Map<string, Validator>
   lockDuration: number
-  lockedAtomEpochInNanos: number
+  lockedTokenEpochInNanos: number
   errorLog: string
   showErrorLog: boolean
   setShowErrorLog: (show: boolean) => void
@@ -63,18 +63,22 @@ export function getCommonStepContents({
   switch (step) {
     case "Init":
       return {
-        title: `Continue Locking ${formatAmount(amount)} ATOM`,
+        title: `Continue Locking ${formatAmount(amount)} ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
         contents: (
           <>
             <p>
               Nice! You&rsquo;re about to lock{" "}
-              <strong>{formatAmount(amount)} ATOM</strong> staked to{" "}
+              <strong>
+                {formatAmount(amount)}{" "}
+                {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+              </strong>{" "}
+              staked to{" "}
               <strong>{getValidatorMoniker(validator, validatorMap)}</strong> in
               Hydro to get{" "}
               <strong>
                 {formatAmount(
                   scaleLockupPower({
-                    lockedAtomEpochInNanos,
+                    lockedTokenEpochInNanos,
                     lockupTime: lockDuration,
                     rawPower: BigInt(amount),
                   })
@@ -115,12 +119,15 @@ export function getCommonStepContents({
         title: "Success!",
         contents: (
           <p>
-            You locked <strong>{formatAmount(amount)} ATOM</strong> in Hydro and
-            received{" "}
+            You locked{" "}
+            <strong>
+              {formatAmount(amount)} {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+            </strong>{" "}
+            in Hydro and received{" "}
             <strong>
               {formatAmount(
                 scaleLockupPower({
-                  lockedAtomEpochInNanos,
+                  lockedTokenEpochInNanos,
                   lockupTime: lockDuration,
                   rawPower: BigInt(amount),
                 })
@@ -137,7 +144,16 @@ export function getCommonStepContents({
         title: "Transaction Error",
         contents: (
           <>
-            <div className="mt-4 overflow-hidden">
+            <p>
+              This transaction could not be completed. Your{" "}
+              {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME} has not been locked in
+              Hydro.
+            </p>
+            <p>
+              Refresh the page to try again or recover your{" "}
+              {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}.
+            </p>
+            <div className="mt-4">
               {!showErrorLog ? (
                 <>
                   <p>

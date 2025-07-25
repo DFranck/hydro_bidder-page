@@ -8,22 +8,22 @@ import { twMerge } from "tailwind-merge"
 import { StatCard } from "../StatCard"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 
-export function CurrentRoundAtomLockedGlobal() {
+export function CurrentRoundTokenLockedGlobal() {
   const { isLoading } = useBackendData()
   const {
     data: {
-      lockedAtomTotalGlobal,
-      lockedAtomRemainingCapacityGlobal,
-      lockedAtomPercentageGlobal,
-      lockedAtomIsAtCapacityGlobal,
-      lockedAtomMaxGlobal,
+      lockedTokenTotalGlobal,
+      lockedTokenRemainingCapacityGlobal,
+      lockedTokenPercentageGlobal,
+      lockedTokenIsAtCapacityGlobal,
+      lockedTokenMaxGlobal,
     },
   } = useGlobalLockupCapacityInfo()
 
   return (
     <StatCard
       className={twMerge(
-        lockedAtomIsAtCapacityGlobal &&
+        lockedTokenIsAtCapacityGlobal &&
           `
             bg-linear-to-t
             from-palette-red/80
@@ -31,12 +31,12 @@ export function CurrentRoundAtomLockedGlobal() {
           `
       )}
       isLoading={isLoading}
-      value={Math.floor(lockedAtomTotalGlobal ?? 0).toLocaleString()}
+      value={Math.floor(lockedTokenTotalGlobal ?? 0).toLocaleString()}
       title={
         <Tooltip
           className="w-full"
           tipContents={globalTotalTokenLockedTooltip({
-            lockedAtomRemainingCapacityGlobal,
+            lockedTokenRemainingCapacityGlobal,
           })}
         >
           Total Tokens in{" "}
@@ -48,8 +48,8 @@ export function CurrentRoundAtomLockedGlobal() {
       }
       subTitle={
         <>
-          <strong>{lockedAtomPercentageGlobal}%</strong> of{" "}
-          <strong>{lockedAtomMaxGlobal.toLocaleString()}</strong> max
+          <strong>{lockedTokenPercentageGlobal}%</strong> of{" "}
+          <strong>{lockedTokenMaxGlobal.toLocaleString()}</strong> max
         </>
       }
     />

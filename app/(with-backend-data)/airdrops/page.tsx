@@ -4,8 +4,8 @@ import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
 import { ContentContainer } from "@/components/ContentContainer"
 import { Icon } from "@/components/Icon"
 import { MarkdownContainer } from "@/components/MarkdownContainer"
-import { AllTimeAverageAtomLockedPerWallet } from "@/components/StatCards/cards/AllTimeAverageAtomLockedPerWallet"
 import { AllTimeAverageRoundsPerWallet } from "@/components/StatCards/cards/AllTimeAverageRoundsPerWallet"
+import { AllTimeAverageTokenLockedPerWallet } from "@/components/StatCards/cards/AllTimeAverageTokenLockedPerWallet"
 import { CurrentRoundUniqueWallets } from "@/components/StatCards/cards/CurrentRoundUniqueWallets"
 import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
 import { StyledTable } from "@/components/StyledTable"
@@ -188,7 +188,8 @@ export default function AirdropsPage() {
   return (
     <>
       <StatCardsContainer>
-        <AllTimeAverageAtomLockedPerWallet />
+        <CurrentRoundUniqueWallets />
+        <AllTimeAverageTokenLockedPerWallet />
         <AllTimeAverageRoundsPerWallet />
       </StatCardsContainer>
 
@@ -305,7 +306,8 @@ export default function AirdropsPage() {
               </StyledText>
               <p className="prose prose-invert text-balance">
                 The projects listed below have been rumored (some of them
-                directly announcing it themselves) to target ATOM stakers in an
+                directly announcing it themselves) to target{" "}
+                {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} stakers in an
                 upcoming airdrop. The Hydro product team will be (or already
                 are) in contact with them to make the case for including Hydro
                 participants.

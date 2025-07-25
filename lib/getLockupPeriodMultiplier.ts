@@ -1,10 +1,10 @@
 // Ported from cosmwasm contract
 
 export function getLockupPeriodMultiplier({
-  lockedAtomEpochInNanos,
+  lockedTokenEpochInNanos,
   lockupTime,
 }: {
-  lockedAtomEpochInNanos: number
+  lockedTokenEpochInNanos: number
   lockupTime: number
 }): number {
   // Scale lockup power
@@ -13,16 +13,16 @@ export function getLockupPeriodMultiplier({
   // 1.5x if lockup is between 2 and 3 epochs
   // 2x if lockup is between 3 and 6 epochs
   // 4x if lockup is between 6 and 12 epochs
-  if (lockupTime > lockedAtomEpochInNanos * 6) {
+  if (lockupTime > lockedTokenEpochInNanos * 6) {
     // 4x if lockup is over 6 epochs
     return 4
-  } else if (lockupTime > lockedAtomEpochInNanos * 3) {
+  } else if (lockupTime > lockedTokenEpochInNanos * 3) {
     // 2x if lockup is between 3 and 6 epochs
     return 2
-  } else if (lockupTime > lockedAtomEpochInNanos * 2) {
+  } else if (lockupTime > lockedTokenEpochInNanos * 2) {
     // 1.5x if lockup is between 2 and 3 epochs
     return 1.5
-  } else if (lockupTime > lockedAtomEpochInNanos) {
+  } else if (lockupTime > lockedTokenEpochInNanos) {
     // 1.25x if lockup is between 1 and 2 epochs
     return 1.25
   } else {

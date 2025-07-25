@@ -7,9 +7,14 @@ import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
 import {
   getGatekeeperQueryClient,
   getHydroQueryClient,
+  getMarketplaceQueryClient,
   getTributeQueryClient,
 } from "@/contract-apis/getClient"
-import { MaxUserCanLockResponse, RawWalletData, RoundPrices } from "@/contract-apis/types"
+import {
+  RawWalletData,
+  RoundPrices,
+  MaxUserCanLockResponse,
+} from "@/contract-apis/types"
 import range from "lodash/range"
 import { getCoinWithRoundPrices } from "./getCoinWithRoundPrices"
 import { getMaxUserCanLock } from "./getMaxUserCanLock"
@@ -30,25 +35,36 @@ export async function fetchWalletData({
   const gatekeeperQueryClient = await getGatekeeperQueryClient()
   const { gatekeeper: gatekeeperContractAddress } =
     await hydroQueryClient.gatekeeper()
+  const marketplaceQueryClient = await getMarketplaceQueryClient()
   const allRoundIds = range(0, currentRoundId + 1)
   const trancheIds = tranches.map((tranche) => tranche.id)
   const allRoundTrancheIdPairs = allRoundIds.flatMap((roundId) =>
     trancheIds.map((trancheId) => ({ roundId, trancheId }))
   )
 
-  const [{ voting_power }, { claims: historical_tribute_claims }] =
-    await Promise.all([
-      hydroQueryClient
-        .userVotingPower({ address })
-        .catch(() => ({ voting_power: 0 })),
-      tributeQueryClient
-        .historicalTributeClaims({
-          limit: 100,
-          startFrom: 0,
-          userAddress: address,
-        })
-        .catch(() => ({ claims: [] })),
-    ])
+  const [
+    { voting_power },
+    { claims: historical_tribute_claims },
+    { listings },
+    { collections },
+  ] = await Promise.all([
+    hydroQueryClient
+      .userVotingPower({ address })
+      .catch(() => ({ voting_power: 0 })),
+    tributeQueryClient
+      .historicalTributeClaims({
+        limit: 100,
+        startFrom: 0,
+        userAddress: address,
+      })
+      .catch(() => ({ claims: [] })),
+    marketplaceQueryClient
+      .listingsByOwner({ owner: address })
+      .catch(() => ({ listings: [] })),
+    marketplaceQueryClient
+      .whitelistedCollections()
+      .catch(() => ({ collections: [] })),
+  ])
 
   // Manual pagination for lockups_with_per_tranche_infos
   const limit = SMART_CONTRACT_LOCKUPS_PAGE_LIMIT
@@ -108,13 +124,18 @@ export async function fetchWalletData({
   const votes = votesAndClaims.flatMap((o) => o.votes)
   const outstanding_tribute_claims = votesAndClaims.flatMap((o) => o.claims)
 
-  const LOCKUPS_WITH_TRANCHES_INFO = await Promise.all(
+  const LOCKUPS_WITH_TRANCHES_INFO_AND_OUTSTANDING = await Promise.all(
     accumulatedLockups.map(async (lockup) => {
+      const lockId = lockup.lock_with_power.lock_entry.lock_id
+      const outstanding = await tributeQueryClient
+        .outstandingLockupClaimableCoins({ lockId })
+        .catch(() => ({ coins: [] }))
       const funds = lockup.lock_with_power.lock_entry.funds
       const denomTrace = await fetchDenomTrace(funds)
 
       return {
         ...lockup,
+        outstanding,
         lock_with_power: {
           ...lockup.lock_with_power,
           lock_entry: {
@@ -135,12 +156,14 @@ export async function fetchWalletData({
 
   return {
     voting_power,
-    lockups_with_per_tranche_infos: LOCKUPS_WITH_TRANCHES_INFO,
+    lockups_with_per_tranche_infos: LOCKUPS_WITH_TRANCHES_INFO_AND_OUTSTANDING,
     votes,
     outstanding_tribute_claims,
     historical_tribute_claims,
     currently_locked,
     maxUserCanLock: maxUserCanLockResponse?.amount || "",
     hasGatekeeper: !!gatekeeperContractAddress,
+    listings,
+    collections,
   }
 }

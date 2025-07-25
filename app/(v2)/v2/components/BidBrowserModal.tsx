@@ -27,8 +27,7 @@ export function BidBrowserModal({
     >
       <div
         className={twJoin(
-          'h-full',
-          'inset-x-loose absolute',
+          'inset-x-loose bottom-standard absolute top-0',
           'rounded-standard',
           'overflow-hidden',
         )}
