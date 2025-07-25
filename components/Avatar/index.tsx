@@ -17,6 +17,7 @@ export function Avatar({
         className="aspect-auto"
         src={url ?? fallbackSrc}
         alt={alt}
+        loading="lazy"
       />
     </AvatarWrapper>
   )
