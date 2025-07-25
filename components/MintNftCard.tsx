@@ -23,6 +23,7 @@ type NFTWithLockupCount = NFT_INFO & {
 export function MintNftCard({ lockups, handleMintInfo }: Props) {
   const { address } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
+  const fallbackSrc = "/images/Question_BLANK.png"
 
   const { data: nfts, isLoading } = useQuery<NFTWithLockupCount[]>({
     queryKey: ["lockup-counts", address, lockups],
@@ -103,10 +104,9 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
               isLoading && "opacity-60"
             )}
           >
-
             <div className="h-fit w-full">
               <Avatar
-                url={nft.image}
+                url={isLoading ? fallbackSrc : nft.image}
                 alt={`${nft.displayDenom} NFT`}
                 className="size-full rounded-none"
               />
