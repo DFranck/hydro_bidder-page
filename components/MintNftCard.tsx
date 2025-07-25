@@ -1,7 +1,6 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import Image from "next/image"
 import { useChain } from "@cosmos-kit/react"
 
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -10,6 +9,7 @@ import { NFT_LIST } from "@/app/(with-backend-data)/lockups/config"
 import { cn } from "@/lib/utils"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { NFT_INFO } from "@/app/(with-backend-data)/lockups/MintNfts"
+import { Avatar } from "./Avatar"
 
 interface Props {
   lockups: AugmentedLockup[]
@@ -83,7 +83,7 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
 
   return (
     <div
-      className={cn("grid grid-cols-2 gap-4 sm:grid-cols-3", {
+      className={cn("grid grid-cols-2 gap-3 sm:grid-cols-3", {
         "md:grid-cols-4": renderedList.length > 3,
         "md:grid-cols-3": renderedList.length <= 3,
       })}
@@ -103,13 +103,14 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
               isLoading && "opacity-60"
             )}
           >
-            <Image
-              src={nft.image ?? "/images/Question_BLANK.png"}
-              alt={`${nft.displayDenom} NFT`}
-              width={100}
-              height={100}
-              className="aspect-auto size-full"
-            />
+
+            <div className="h-fit w-full">
+              <Avatar
+                url={nft.image}
+                alt={`${nft.displayDenom} NFT`}
+                className="size-full rounded-none"
+              />
+            </div>
             <div className="flex flex-col items-end text-sm">
               <div className="text-palette-green space-x-1">
                 <span>{nft.amount}</span>
