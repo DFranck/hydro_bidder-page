@@ -68,13 +68,13 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
   //     }))
   //   : nfts || []
 
-  if (isLoading && renderedList.length === 0) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {Array.from({ length: 6 }).map((_, index) => (
           <div key={index} className="animate-pulse">
-            <div className="h-24 w-full rounded-md bg-gray-200" />
-            <div className="mt-2 h-4 w-1/2 rounded-md bg-gray-200" />
+            <div className="h-38 w-full rounded-md bg-gray-200" />
+            <div className="mt-2 h-4 w-1/2 rounded-md bg-gray-200 ml-auto" />
           </div>
         ))}
       </div>

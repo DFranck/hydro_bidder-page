@@ -1,7 +1,7 @@
 import { Card } from "@/components/Card"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
-import { FormEvent, useEffect, useRef, useState } from "react"
+import { FormEvent, use, useEffect, useRef, useState } from "react"
 import { revalidateTag } from "@/lib/revalidateTag"
 import { Icon } from "@/components/Icon"
 import { executeWalletMergeLockups } from "@/contract-apis/executeWalletMergeLockups"
@@ -97,70 +97,6 @@ export function MintNfts({
       refetchType: "active", // only refetch active (mounted) queries
     })
   }
-
-  useEffect(() => {
-    async function handleStepChange() {
-      if (
-        !isContextLoading &&
-        lockups.length > 0 &&
-        step !== "init" &&
-        step !== "selected"
-      ) {
-        if (executingStepRef.current === step) {
-          return
-        }
-
-        executingStepRef.current = step
-        try {
-          console.log(
-            `Executing step: ${step} with ${lockups.length} fresh lockups`
-          )
-
-          switch (step) {
-            case "split":
-              await executeSplit(lockups)
-              break
-
-            case "merge":
-              await executeMerge(lockups)
-              break
-
-            case "convert":
-              await executeConvert(lockups)
-              break
-
-            case "merge_after_convert":
-              await executeMergeAfterConvert(lockups)
-              break
-
-            case "merge_matching_denoms":
-              await executeMergeMatchingDenoms(lockups)
-              break
-          }
-        } catch (error) {
-          setToasts([toastMessages.mintNftLockupsError(error as Error)])
-          setIsLoading(false)
-          setStep("error")
-        }
-      }
-    }
-
-    handleStepChange()
-  }, [step, lockups, isContextLoading])
-
-  useEffect(() => {
-    if (step !== "error") {
-      if (step === "init") {
-        setLastActiveStep(1)
-      } else if (step === "merge" || step === "split") {
-        setLastActiveStep(2)
-      } else if (step === "success") {
-        setLastActiveStep(3)
-      }
-    } else {
-      setLastActiveStep(2)
-    }
-  }, [step])
 
   const eligibleLockupsSizes = data
     ? data
@@ -541,6 +477,76 @@ export function MintNfts({
 
   const steps = generateSteps()
 
+  useEffect(() => {
+    async function handleStepChange() {
+      if (
+        !isContextLoading &&
+        lockups.length > 0 &&
+        step !== "init" &&
+        step !== "selected"
+      ) {
+        if (executingStepRef.current === step) {
+          return
+        }
+
+        executingStepRef.current = step
+        try {
+          console.log(
+            `Executing step: ${step} with ${lockups.length} fresh lockups`
+          )
+
+          switch (step) {
+            case "split":
+              await executeSplit(lockups)
+              break
+
+            case "merge":
+              await executeMerge(lockups)
+              break
+
+            case "convert":
+              await executeConvert(lockups)
+              break
+
+            case "merge_after_convert":
+              await executeMergeAfterConvert(lockups)
+              break
+
+            case "merge_matching_denoms":
+              await executeMergeMatchingDenoms(lockups)
+              break
+          }
+        } catch (error) {
+          setToasts([toastMessages.mintNftLockupsError(error as Error)])
+          setIsLoading(false)
+          setStep("error")
+        }
+      }
+    }
+
+    handleStepChange()
+  }, [step, lockups, isContextLoading])
+
+  useEffect(() => {
+    if (step !== "error") {
+      if (step === "init") {
+        setLastActiveStep(1)
+      } else if (step === "merge" || step === "split") {
+        setLastActiveStep(2)
+      } else if (step === "success") {
+        setLastActiveStep(3)
+      }
+    } else {
+      setLastActiveStep(2)
+    }
+  }, [step])
+
+  useEffect(() => {
+    if (!isWalletConnected) {
+      handleCloseModal()
+    }
+  }, [isWalletConnected])
+
   return (
     <ModalWindow
       isOpen={isCreationModalOpen}
@@ -585,13 +591,7 @@ export function MintNfts({
                   handleMintInfo={handleMintInfo}
                 />
               )}
-              {!isWalletConnected ? (
-                <p className="text-center text-gray-400 py-6">
-                  Connect your wallet to mint an nft size{" "}
-                </p>
-              ) : null}
             </Card.Body>
-
             {!nftDetails ? null : (
               <Card.Footer className="mt-auto">
                 {step === "success" ? (
