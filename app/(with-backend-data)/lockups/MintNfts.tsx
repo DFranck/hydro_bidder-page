@@ -30,6 +30,8 @@ import { MintNftCard } from "@/components/MintNftCard"
 import { executeWalletCovertToDAtomLockups } from "@/contract-apis/executeWalletCovertToDAtomLockups"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useQueryClient } from "@tanstack/react-query"
+import { useToasts } from "@/components/Toasts"
+import { toastMessages } from "@/components/ToastMessages"
 
 interface MintingStep {
   id: number
@@ -69,29 +71,25 @@ export function MintNfts({
   handleModalWindowCloseComplete,
 }: MintNftsProps) {
   const queryClient = useQueryClient()
-
+  const { setToasts } = useToasts()
+  const [nftDetails, setNftDetails] = useState(false)
+  const { getSigningCosmWasmClient } = useChain("neutron")
+  const [isLoading, setIsLoading] = useState(false)
+  const isMobile = useIsMobile()
+  const {
+    address,
+    lockups,
+    isLoading: isContextLoading,
+    isWalletConnected,
+  } = useBackendData()
   const [nftInfo, setNftInfo] = useState<NFT_INFO>({
     amount: 0,
     baseDenom: "",
     image: "",
     displayDenom: "",
   })
-
-  const [nftDetails, setNftDetails] = useState(false)
-  const { getSigningCosmWasmClient } = useChain("neutron")
-  const [isLoading, setIsLoading] = useState(false)
-  const isMobile = useIsMobile()
-
-  const { address, lockups, isLoading: isContextLoading } = useBackendData()
-  // const [currentLockups, setCurrentLockups] = useState(lockups)
   const [step, setStep] = useState<MintStep>("init")
   const [lastActiveStep, setLastActiveStep] = useState<number>(1)
-
-  const [operationContext, setOperationContext] = useState<{
-    isDAtom: boolean
-    eligibleLockupsSizes?: LockupsResult
-    matchingLockups?: AugmentedLockup[]
-  }>({ isDAtom: false })
 
   const { data, isLoading: isNFTLoading } = useFindLockupsForNFTQuery(
     nftInfo.amount,
@@ -108,7 +106,6 @@ export function MintNfts({
     })
   }
 
-  // Main reactive handler for all blockchain operations
   useEffect(() => {
     async function handleStepChange() {
       if (
@@ -149,7 +146,7 @@ export function MintNfts({
               break
           }
         } catch (error) {
-          console.error(`Error in step ${step}:`, error)
+          setToasts([toastMessages.mintNftLockupsError(error as Error)])
           setIsLoading(false)
           setStep("error")
         }
@@ -168,6 +165,8 @@ export function MintNfts({
       } else if (step === "success") {
         setLastActiveStep(3)
       }
+    } else {
+      setLastActiveStep(2)
     }
   }, [step])
 
@@ -200,7 +199,6 @@ export function MintNfts({
     return () => clearInterval(interval)
   }
 
-  // Individual operation executors
   async function executeSplit(freshLockups: AugmentedLockup[]) {
     console.log("Executing split with fresh lockups:", freshLockups.length)
 
@@ -256,16 +254,14 @@ export function MintNfts({
       freshLockups.length
     )
 
-    if (!operationContext.eligibleLockupsSizes?.hasVirtualLockups) {
+    if (!eligibleLockupsSizes?.hasVirtualLockups) {
       throw new Error("No virtual lockups to convert")
     }
 
     await executeWalletCovertToDAtomLockups({
       getSigningCosmWasmClient,
       address,
-      lockIds: operationContext.eligibleLockupsSizes.virtualLockups.map(
-        (v) => v.id
-      ),
+      lockIds: eligibleLockupsSizes.virtualLockups.map((v) => v.id),
     })
 
     await revalidateTag("backendData")
@@ -302,14 +298,19 @@ export function MintNfts({
       freshLockups.length
     )
 
-    if (!operationContext.matchingLockups) {
+    const matchingDenom = eligibleLockupsSizes.virtualLockups[0].funds.denom
+    const matchingLockups = eligibleLockupsSizes.virtualLockups.filter(
+      (v) => v.funds.denom === matchingDenom
+    )
+
+    if (!matchingLockups) {
       throw new Error("No matching lockups to merge")
     }
 
     await executeWalletMergeLockups({
       getSigningCosmWasmClient,
       address,
-      lockIds: operationContext.matchingLockups.map((v) => v.id),
+      lockIds: matchingLockups.map((v) => v.id),
     })
 
     await revalidateTag("backendData")
@@ -363,27 +364,29 @@ export function MintNfts({
     setIsLoading(true)
 
     try {
-      let eligibleLockupsSizes = await findLockupsForNFtSizes(
-        nftInfo.amount,
-        nftInfo.baseDenom,
-        lockups
-      )
+      // let eligibleLockupsSizes = await findLockupsForNFtSizes(
+      //   nftInfo.amount,
+      //   nftInfo.baseDenom,
+      //   lockups
+      // )
+
+      console.log({ eligibleLockupsSizes })
 
       const isDAtom = nftInfo.displayDenom === "dATOM"
 
-      // Store context for the reactive handlers
-      setOperationContext({
-        isDAtom,
-        eligibleLockupsSizes,
-      })
+      // // Store context for the reactive handlers
+      // setOperationContext({
+      //   isDAtom,
+      //   eligibleLockupsSizes,
+      // })
 
-      console.log("Starting mint process:", {
-        isDAtom,
-        selectedLockupsCount: eligibleLockupsSizes.selectedLockupsCount,
-        hasVirtualLockups: eligibleLockupsSizes.hasVirtualLockups,
-        hasMatchingDenoms: eligibleLockupsSizes.hasMatchingDenoms,
-        hasMultipleDenoms: eligibleLockupsSizes.hasMultipleDenoms,
-      })
+      // console.log("Starting mint process:", {
+      //   isDAtom,
+      //   selectedLockupsCount: eligibleLockupsSizes.selectedLockupsCount,
+      //   hasVirtualLockups: eligibleLockupsSizes.hasVirtualLockups,
+      //   hasMatchingDenoms: eligibleLockupsSizes.hasMatchingDenoms,
+      //   hasMultipleDenoms: eligibleLockupsSizes.hasMultipleDenoms,
+      // })
 
       // STEP 1: Non-dATOM, 1 lockup => Split
       if (!isDAtom && eligibleLockupsSizes.selectedLockupsCount === 1) {
@@ -423,15 +426,10 @@ export function MintNfts({
           "dATOM: Virtual lockups with matching denoms, triggering merge matching denoms"
         )
 
-        const matchingDenom = eligibleLockupsSizes.virtualLockups[0].funds.denom
-        const matchingLockups = eligibleLockupsSizes.virtualLockups.filter(
-          (v) => v.funds.denom === matchingDenom
-        )
-
-        setOperationContext((prev) => ({
-          ...prev,
-          matchingLockups,
-        }))
+        // setOperationContext((prev) => ({
+        //   ...prev,
+        //   matchingLockups,
+        // }))
 
         setStep("merge_matching_denoms")
         return
@@ -487,7 +485,7 @@ export function MintNfts({
     if (step === "error") {
       const failedAtStep = lastActiveStep
       return {
-        activeStep: 1,
+        activeStep: lastActiveStep,
         status: "error",
         failedStep: failedAtStep,
       }
@@ -716,12 +714,12 @@ export function MintNfts({
                       </div>
 
                       {/* Debug info */}
-                      {step !== "init" && (
+                      {/* {step !== "init" && (
                         <div className="mt-4 text-xs text-white/60">
                           Current step: {step}
                           {isContextLoading && " (waiting for context...)"}
                         </div>
-                      )}
+                      )} */}
                     </div>
                   )}
                 </div>
@@ -731,6 +729,7 @@ export function MintNfts({
                   handleMintInfo={handleMintInfo}
                 />
               )}
+              {!isWalletConnected ? <p>Connect your wallet to mint </p> : null}
             </Card.Body>
 
             {!nftDetails ? null : (

@@ -54,19 +54,19 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
     },
   })
 
-  // const renderedList: NFTWithLockupCount[] = isLoading
-  //   ? NFT_LIST.map((nft) => ({
-  //       ...nft,
-  //       lockupCount: 0,
-  //     }))
-  //   : nfts?.filter((nft) => nft.lockupCount !== 0) || []
-
   const renderedList: NFTWithLockupCount[] = isLoading
     ? NFT_LIST.map((nft) => ({
         ...nft,
         lockupCount: 0,
       }))
-    : nfts || []
+    : nfts?.filter((nft) => nft.lockupCount !== 0) || []
+
+  // const renderedList: NFTWithLockupCount[] = isLoading
+  //   ? NFT_LIST.map((nft) => ({
+  //       ...nft,
+  //       lockupCount: 0,
+  //     }))
+  //   : nfts || []
 
   return (
     <div
@@ -104,7 +104,7 @@ export function MintNftCard({ lockups, handleMintInfo }: Props) {
               </div>
               <span className="text-end text-xs text-gray-400">
                 {isLoading
-                  ? "Loading..."
+                  ? <div className="h-4 w-20 bg-gray-200/90 animate-pulse rounded-md" />
                   : nft.lockupCount === 1
                     ? `Created from ${nft.lockupCount} lockup`
                     : `Merges ${nft.lockupCount} lockups`}

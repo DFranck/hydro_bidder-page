@@ -129,7 +129,7 @@ export async function findLockupsForNFtSizes(
   address?: string
 ): Promise<LockupsResult> {
   const requiredAmount = NFT_SIZE + 0.0001
-  const minimumDAtomAmount = 9500000
+  const minimumDAtomAmount = 1000000
   const isFactoryDenom = denom.startsWith("factory")
 
   const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups)
@@ -143,7 +143,7 @@ export async function findLockupsForNFtSizes(
       )
     : undefined
 
-  // ✅ Early return if native lockups are sufficient
+  // Early return if native lockups are sufficient
   if (nativeResult.totalAmount >= requiredAmount) {
     return {
       ...nativeResult,
@@ -241,13 +241,13 @@ export async function findLockupsForNFtSizes(
 
   const selectedCombination: VirtualLockup[] = []
 
-  // ✅ Always add dATOM native lockup first (if applicable)
+  // Always add dATOM native lockup first (if applicable)
   if (dAtomNativeLockup) {
     selectedCombination.push(dAtomNativeLockup)
     baseAmount += dAtomNativeLockup.funds.amount
   }
 
-  // ✅ Add baseSelection, avoiding duplicates
+  // Add baseSelection, avoiding duplicates
   for (const base of baseSelection) {
     if (!selectedCombination.find((l) => l.id === base.id)) {
       selectedCombination.push(base)
@@ -255,7 +255,7 @@ export async function findLockupsForNFtSizes(
     }
   }
 
-  // 🧠 Try shared denom groups
+  // Try shared denom groups
   for (const group of sharedDenomGroups) {
     let groupTotal = 0
     const groupSelection: VirtualLockup[] = []
@@ -278,7 +278,7 @@ export async function findLockupsForNFtSizes(
     if (baseAmount >= requiredAmount) break
   }
 
-  // 🔁 Try greedy fallback if needed
+  // Try fallback if needed
   if (baseAmount < requiredAmount) {
     const sortedVirtual = [...virtualLockupsLSM]
       .filter((l) => !selectedCombination.some((sel) => sel.id === l.id))
@@ -291,7 +291,6 @@ export async function findLockupsForNFtSizes(
     }
   }
 
-  // ❌ Still not enough, return empty
   if (baseAmount < requiredAmount) {
     return {
       selectedLockups: [],
@@ -324,8 +323,8 @@ export async function findLockupsForNFtSizes(
   const hasMatchingDenoms =
     virtualOnly.length > 1 && virtualOnlyDenoms.size === 1
 
-  console.log({ selectedCombination })
-  console.log({ virtualOnly })
+  // console.log({ selectedCombination })
+  // console.log({ virtualOnly })
 
   return {
     selectedLockups: selectedCombination,
