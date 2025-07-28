@@ -129,7 +129,7 @@ export async function findLockupsForNFtSizes(
   address?: string
 ): Promise<LockupsResult> {
   const requiredAmount = NFT_SIZE + 0.0001
-  const minimumDAtomAmount = 1000000
+  const minimumDAtomAmount = 950000 / 1e6
   const isFactoryDenom = denom.startsWith("factory")
 
   const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups)
@@ -180,7 +180,9 @@ export async function findLockupsForNFtSizes(
         const dtokenResponse = await executeWalletSimulateLockup({
           getSigningCosmWasmClient,
           address,
-          lockIds: atomLockups.map((el) => el.id),
+          lockIds: atomLockups
+            .filter((lockup) => lockup.funds.amount >= minimumDAtomAmount)
+            .map((el) => el.id),
         })
 
         const simulatedResults: SimulatedLockup[] =
@@ -189,8 +191,7 @@ export async function findLockupsForNFtSizes(
         virtualLockupsLSM = atomLockups.map((atomLockup) => {
           const simulatedResult = simulatedResults.find(
             (result) =>
-              result.lock_id === atomLockup.id &&
-              parseInt(result.dtoken_amount) >= minimumDAtomAmount
+              result.lock_id === atomLockup.id && parseInt(result.dtoken_amount)
           )
 
           const simulatedAmount = simulatedResult
@@ -321,10 +322,10 @@ export async function findLockupsForNFtSizes(
 
   const virtualOnlyDenoms = new Set(virtualOnly.map((l) => l.funds.denom))
   const hasMatchingDenoms =
-    virtualOnly.length > 1 && virtualOnlyDenoms.size === 1
+    virtualOnly.length > 1 && virtualOnlyDenoms.size > 1
 
-  // console.log({ selectedCombination })
-  // console.log({ virtualOnly })
+  console.log({ selectedCombination })
+  console.log({ virtualOnly })
 
   return {
     selectedLockups: selectedCombination,

@@ -24,6 +24,7 @@ import { useToasts } from "@/components/Toasts"
 import { toastMessages } from "@/components/ToastMessages"
 import { MintNftCardDetails } from "@/components/MintNftCardDetails"
 import { MintNftCardStepper } from "@/components/MintNftCardStepper"
+import { executeMultipleMergeLockups } from "@/contract-apis/executeMultipleMergeLockups"
 
 export interface MintingStep {
   id: number
@@ -226,46 +227,43 @@ export function MintNfts({
       freshLockups.length
     )
 
-    const matchingDenom = eligibleLockupsSizes.virtualLockups[0].funds.denom
-    const matchingLockups = eligibleLockupsSizes.virtualLockups.filter(
-      (v) => v.funds.denom === matchingDenom
-    )
+    const matchingLockups = eligibleLockupsSizes.virtualLockups
 
     if (!matchingLockups) {
       throw new Error("No matching lockups to merge")
     }
 
-    await executeWalletMergeLockups({
+    await executeMultipleMergeLockups({
       getSigningCosmWasmClient,
       address,
-      lockIds: matchingLockups.map((v) => v.id),
+      lockups: eligibleLockupsSizes.virtualLockups,
     })
 
     await revalidateTag("backendData")
     console.log("Merge matching denoms completed")
 
-    const timeOut = setTimeout(async () => {
-      // After merging matching denoms, we might need to do more operations
-      // Check what's needed next based on the current state
-      const freshLockupsData = await findLockupsForNFtSizes(
-        nftInfo.amount,
-        nftInfo.baseDenom,
-        freshLockups // Use passed fresh lockups
-      )
+    // const timeOut = setTimeout(async () => {
+    //   // After merging matching denoms, we might need to do more operations
+    //   // Check what's needed next based on the current state
+    //   const freshLockupsData = await findLockupsForNFtSizes(
+    //     nftInfo.amount,
+    //     nftInfo.baseDenom,
+    //     freshLockups // Use passed fresh lockups
+    //   )
 
-      if (
-        freshLockupsData.hasVirtualLockups &&
-        freshLockupsData.hasMultipleDenoms
-      ) {
-        handleStepInterval("convert")
-      } else if (freshLockupsData.selectedLockupsCount > 1) {
-        handleStepInterval("merge")
-      } else {
-        handleStepInterval("split")
-      }
-    }, 10000)
+    //   if (
+    //     freshLockupsData.hasVirtualLockups &&
+    //     freshLockupsData.hasMultipleDenoms
+    //   ) {
+    //     handleStepInterval("convert")
+    //   } else if (freshLockupsData.selectedLockupsCount > 1) {
+    //     handleStepInterval("merge")
+    //   } else {
+    //     handleStepInterval("split")
+    //   }
+    // }, 10000)
 
-    return () => clearTimeout(timeOut)
+    // return () => clearTimeout(timeOut)
   }
 
   function handleCloseModal() {
@@ -573,7 +571,7 @@ export function MintNfts({
             </div>
 
             <Card.Body
-              className={cn("h-96 hide-scrollbar overflow-scroll md:h-5/12", {
+              className={cn("hide-scrollbar h-96 overflow-scroll md:h-5/12", {
                 "pr-0": nftDetails,
                 "pr-6": isMobile && !nftDetails,
               })}
