@@ -6,6 +6,8 @@ Before merging, please make sure you _and someone else_ have completed the follo
 - [ ] Extended an existing Lockup
 - [ ] Split an existing Lockup
 - [ ] Merge existing Lockups
+- [ ] Created a new NFT Lockup size stATOM
+- [ ] Created a new NFT Lockup size dATOM
 
 **Bid Tests**
 
