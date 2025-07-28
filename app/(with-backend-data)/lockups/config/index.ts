@@ -45,14 +45,14 @@ const stATOM = [
 
 const dATOM = [
   {
-    amount: 5,
+    amount: 4.3,
     image: "/images/dAtom/25_Piranha_dATOM@4x.png",
     baseDenom:
       "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom",
     displayDenom: "dATOM",
   },
   {
-    amount: 0.2,
+    amount: 50,
     image: "/images/dAtom/50_Barracuda_dATOM@4x.png",
     baseDenom:
       "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom",

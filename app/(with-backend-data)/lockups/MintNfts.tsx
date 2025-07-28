@@ -23,7 +23,6 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useToasts } from "@/components/Toasts"
 import { toastMessages } from "@/components/ToastMessages"
 import { MintNftCardDetails } from "@/components/MintNftCardDetails"
-import { MintNftCardStepper } from "@/components/MintNftCardStepper"
 import { executeMultipleMergeLockups } from "@/contract-apis/executeMultipleMergeLockups"
 
 export interface MintingStep {
@@ -402,7 +401,7 @@ export function MintNfts({
     const baseSteps = [
       {
         id: 1,
-        title: isMobile ? "Choose" : "Choose NFT",
+        title: "Choose NFT",
       },
       {
         id: 2,
@@ -549,7 +548,7 @@ export function MintNfts({
             <div className="flex items-center justify-between gap-2">
               <Card.Header
                 title={"Mint an NFT from Lockups"}
-                className="text-sm md:text-3xl"
+                variant={isMobile ? "h4" : "h3"}
               />
               <X
                 className="mb-6 inline-block size-6 cursor-pointer text-gray-300"
@@ -563,7 +562,6 @@ export function MintNfts({
                 "pr-6": isMobile && !nftDetails,
               })}
             >
-              <MintNftCardStepper steps={steps} />
               {nftDetails ? (
                 <MintNftCardDetails
                   nftInfo={nftInfo}
@@ -572,6 +570,7 @@ export function MintNfts({
                 />
               ) : (
                 <MintNftCard
+                  steps={steps}
                   lockups={lockups}
                   handleMintInfo={handleMintInfo}
                 />
