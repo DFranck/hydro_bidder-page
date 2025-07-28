@@ -12,7 +12,7 @@ interface Props {
 
 export function MintNftCardStepper({ steps }: Props) {
   return (
-    <div className=" mx-auto mb-4 flex flex-row justify-center ">
+    <div className="justify-start gap-y-4 mx-auto mb-4 flex flex-row md:justify-center md:gap-y-0 ">
       {steps.map((el, index) => (
         <div key={el.id} className="flex items-center">
           <div className="flex w-10 flex-1 flex-col items-center gap-3 md:w-24">
