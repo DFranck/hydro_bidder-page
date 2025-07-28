@@ -1,9 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import {
-  MintingStep,
-} from "@/app/(with-backend-data)/lockups/MintNfts"
+import { MintingStep } from "@/app/(with-backend-data)/lockups/MintNfts"
 import { AlertCircle, Check, Loader2 } from "lucide-react"
 
 interface Props {
@@ -12,10 +10,10 @@ interface Props {
 
 export function MintNftCardStepper({ steps }: Props) {
   return (
-    <div className="justify-start gap-y-4 mx-auto mb-4 flex flex-row md:justify-center md:gap-y-0 ">
+    <div className="mx-auto mb-4 flex flex-row justify-start gap-y-4 md:justify-center md:gap-y-0 ">
       {steps.map((el, index) => (
         <div key={el.id} className="flex items-center">
-          <div className="flex w-10 flex-1 flex-col items-center gap-3 md:w-24">
+          <div className="flex w-10 flex-1 flex-col items-center gap-3">
             <div className="flex flex-row items-center justify-center">
               <div
                 className={cn(
@@ -58,7 +56,7 @@ export function MintNftCardStepper({ steps }: Props) {
           </div>
           {index < steps.length - 1 && (
             <div
-              className={cn("-mt-10  h-0.5 w-16 bg-gray-200", {
+              className={cn("-mt-10  h-0.5 w-6 bg-gray-200 md:w-16", {
                 "bg-palette-green/90": el.status === "success",
                 "bg-palette-blue/90": el.status === "pending",
               })}

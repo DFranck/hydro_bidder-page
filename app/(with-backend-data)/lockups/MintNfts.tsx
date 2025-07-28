@@ -393,7 +393,7 @@ export function MintNfts({
     failedStep?: number
   } => {
     if (step === "success") {
-      return { activeStep: 4, status: "success" }
+      return { activeStep: 5, status: "success" }
     }
 
     if (step === "init") {
@@ -406,15 +406,18 @@ export function MintNfts({
 
     if (
       step === "merge" ||
-      step === "convert" ||
       step === "merge_after_convert" ||
       step === "merge_matching_denoms"
     ) {
       return { activeStep: 2, status: "pending" }
     }
 
-    if (step === "split") {
+    if (step === "convert") {
       return { activeStep: 3, status: "pending" }
+    }
+
+    if (step === "split") {
+      return { activeStep: 4, status: "pending" }
     }
 
     if (step === "error") {
@@ -443,10 +446,14 @@ export function MintNfts({
       },
       {
         id: 3,
-        title: step === "split" ? "Splitting" : "Split",
+        title: step === "convert" ? "Converting" : "Convert",
       },
       {
         id: 4,
+        title: step === "split" ? "Splitting" : "Split",
+      },
+      {
+        id: 5,
         title: "Success",
       },
     ]
@@ -539,15 +546,16 @@ export function MintNfts({
         setLastActiveStep(1)
       } else if (
         step === "merge" ||
-        step === "convert" ||
         step === "merge_after_convert" ||
         step === "merge_matching_denoms"
       ) {
         setLastActiveStep(2)
-      } else if (step === "split") {
+      } else if (step === "convert") {
         setLastActiveStep(3)
-      } else if (step === "success") {
+      } else if (step === "split") {
         setLastActiveStep(4)
+      } else if (step === "success") {
+        setLastActiveStep(5)
       }
     } else {
       setLastActiveStep((prev) => prev)
@@ -560,6 +568,8 @@ export function MintNfts({
     }
   }, [isWalletConnected])
 
+  console.log({ step })
+
   return (
     <ModalWindow
       isOpen={isCreationModalOpen}
@@ -569,7 +579,7 @@ export function MintNfts({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="w-full px-2 md:px-8 md:w-[650px]"
+      className="w-full px-2 md:w-[650px] md:px-8"
     >
       <div>
         <form onSubmit={handleSubmitCreationForm}>

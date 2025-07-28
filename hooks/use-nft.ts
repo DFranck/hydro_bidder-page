@@ -320,12 +320,20 @@ export async function findLockupsForNFtSizes(
       (!dAtomNativeLockup || l.id !== dAtomNativeLockup.id)
   )
 
-  const virtualOnlyDenoms = new Set(virtualOnly.map((l) => l.funds.denom))
-  const hasMatchingDenoms =
-    virtualOnly.length > 1 && virtualOnlyDenoms.size > 1
+  const hasMatchingDenoms = (() => {
+    const denomCounts = new Map<string, number>()
+
+    for (const l of virtualOnly) {
+      const denom = l.funds.denom
+      denomCounts.set(denom, (denomCounts.get(denom) || 0) + 1)
+    }
+
+    return Array.from(denomCounts.values()).some((count) => count >= 2)
+  })()
 
   console.log({ selectedCombination })
   console.log({ virtualOnly })
+  console.log({ hasMatchingDenoms })
 
   return {
     selectedLockups: selectedCombination,
