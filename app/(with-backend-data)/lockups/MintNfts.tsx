@@ -134,7 +134,7 @@ export function MintNfts({
     const freshLockupsData = await findLockupsForNFtSizes(
       nftInfo.amount,
       nftInfo.baseDenom,
-      freshLockups // Use passed fresh lockups
+      freshLockups
     )
 
     if (freshLockupsData.selectedLockups.length !== 1) {
@@ -152,7 +152,6 @@ export function MintNfts({
 
     console.log("Split completed successfully")
     setIsLoading(false)
-    // handleCloseModal()
     await revalidateTag("backendData")
     setStep("success")
   }
@@ -163,7 +162,9 @@ export function MintNfts({
     const freshLockupsData = await findLockupsForNFtSizes(
       nftInfo.amount,
       nftInfo.baseDenom,
-      freshLockups // Use passed fresh lockups
+      freshLockups,
+      getSigningCosmWasmClient,
+      address
     )
 
     await executeWalletMergeLockups({
@@ -183,14 +184,24 @@ export function MintNfts({
       freshLockups.length
     )
 
-    if (!eligibleLockupsSizes?.hasVirtualLockups) {
+    const freshLockupsData = await findLockupsForNFtSizes(
+      nftInfo.amount,
+      nftInfo.baseDenom,
+      freshLockups,
+      getSigningCosmWasmClient,
+      address
+    )
+
+    console.log({ hj: freshLockupsData })
+
+    if (!freshLockupsData?.hasVirtualLockups) {
       throw new Error("No virtual lockups to convert")
     }
 
     await executeWalletCovertToDAtomLockups({
       getSigningCosmWasmClient,
       address,
-      lockIds: eligibleLockupsSizes.virtualLockups.map((v) => v.id),
+      lockIds: freshLockupsData.virtualLockups.map((v) => v.id),
     })
 
     await revalidateTag("backendData")
@@ -207,7 +218,9 @@ export function MintNfts({
     const freshLockupsData = await findLockupsForNFtSizes(
       nftInfo.amount,
       nftInfo.baseDenom,
-      freshLockups // Use passed fresh lockups
+      freshLockups,
+      getSigningCosmWasmClient,
+      address
     )
 
     await executeWalletMergeLockups({
@@ -242,28 +255,6 @@ export function MintNfts({
     await revalidateTag("backendData")
     console.log("Merge matching denoms completed")
     handleStepInterval("convert")
-    // const timeOut = setTimeout(async () => {
-    //   // After merging matching denoms, we might need to do more operations
-    //   // Check what's needed next based on the current state
-    //   const freshLockupsData = await findLockupsForNFtSizes(
-    //     nftInfo.amount,
-    //     nftInfo.baseDenom,
-    //     freshLockups // Use passed fresh lockups
-    //   )
-
-    //   if (
-    //     freshLockupsData.hasVirtualLockups &&
-    //     freshLockupsData.hasMultipleDenoms
-    //   ) {
-    //     handleStepInterval("convert")
-    //   } else if (freshLockupsData.selectedLockupsCount > 1) {
-    //     handleStepInterval("merge")
-    //   } else {
-    //     handleStepInterval("split")
-    //   }
-    // }, 10000)
-
-    // return () => clearTimeout(timeOut)
   }
 
   function handleCloseModal() {
@@ -290,29 +281,9 @@ export function MintNfts({
     setIsLoading(true)
 
     try {
-      // let eligibleLockupsSizes = await findLockupsForNFtSizes(
-      //   nftInfo.amount,
-      //   nftInfo.baseDenom,
-      //   lockups
-      // )
-
-      console.log({ eligibleLockupsSizes })
+   
 
       const isDAtom = nftInfo.displayDenom === "dATOM"
-
-      // // Store context for the reactive handlers
-      // setOperationContext({
-      //   isDAtom,
-      //   eligibleLockupsSizes,
-      // })
-
-      // console.log("Starting mint process:", {
-      //   isDAtom,
-      //   selectedLockupsCount: eligibleLockupsSizes.selectedLockupsCount,
-      //   hasVirtualLockups: eligibleLockupsSizes.hasVirtualLockups,
-      //   hasMatchingDenoms: eligibleLockupsSizes.hasMatchingDenoms,
-      //   hasMultipleDenoms: eligibleLockupsSizes.hasMultipleDenoms,
-      // })
 
       // STEP 1: Non-dATOM, 1 lockup => Split
       if (!isDAtom && eligibleLockupsSizes.selectedLockupsCount === 1) {
@@ -438,7 +409,7 @@ export function MintNfts({
     const baseSteps = [
       {
         id: 1,
-        title: "Choose NFT",
+        title: isMobile ? "Choose" : "Choose NFT",
       },
       {
         id: 2,
@@ -567,8 +538,6 @@ export function MintNfts({
       handleCloseModal()
     }
   }, [isWalletConnected])
-
-  console.log({ step })
 
   return (
     <ModalWindow
