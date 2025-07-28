@@ -274,16 +274,18 @@ export function LockupsPageForAtom() {
               </StyledText>
             )}
 
-            <StyledText
-              as="button"
-              variant="button.primary"
-              className="flex items-center gap-2"
-              onClick={handleNftMinting}
-              disabled={lockups.length === 0 || isLoading}
-            >
-              <Store className="size-4 text-black" />
-              Mint an NFT
-            </StyledText>
+            {lockups.length > 0 ? (
+              <StyledText
+                as="button"
+                variant="button.primary"
+                className="flex items-center gap-2"
+                onClick={handleNftMinting}
+                disabled={lockups.length === 0 || isLoading}
+              >
+                <Store className="size-4 text-black" />
+                Mint an NFT
+              </StyledText>
+            ) : null}
 
             <ConditionalWrapper
               condition={!isWalletConnected || isLoading}
