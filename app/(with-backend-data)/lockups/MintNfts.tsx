@@ -241,7 +241,7 @@ export function MintNfts({
 
     await revalidateTag("backendData")
     console.log("Merge matching denoms completed")
-
+    handleStepInterval("convert")
     // const timeOut = setTimeout(async () => {
     //   // After merging matching denoms, we might need to do more operations
     //   // Check what's needed next based on the current state
@@ -393,7 +393,7 @@ export function MintNfts({
     failedStep?: number
   } => {
     if (step === "success") {
-      return { activeStep: 3, status: "success" }
+      return { activeStep: 4, status: "success" }
     }
 
     if (step === "init") {
@@ -404,8 +404,17 @@ export function MintNfts({
       return { activeStep: 1, status: "success" }
     }
 
-    if (step === "merge" || step === "split" || step === "convert") {
+    if (
+      step === "merge" ||
+      step === "convert" ||
+      step === "merge_after_convert" ||
+      step === "merge_matching_denoms"
+    ) {
       return { activeStep: 2, status: "pending" }
+    }
+
+    if (step === "split") {
+      return { activeStep: 3, status: "pending" }
     }
 
     if (step === "error") {
@@ -426,19 +435,18 @@ export function MintNfts({
     const baseSteps = [
       {
         id: 1,
-        title: "Mint",
+        title: "Choose NFT",
       },
       {
         id: 2,
-        title:
-          step === "split"
-            ? "Splitting"
-            : step === "merge"
-              ? "Merging"
-              : "Merge/Split",
+        title: step === "merge" ? "Merging" : "Merge",
       },
       {
         id: 3,
+        title: step === "split" ? "Splitting" : "Split",
+      },
+      {
+        id: 4,
         title: "Success",
       },
     ]
@@ -529,13 +537,20 @@ export function MintNfts({
     if (step !== "error") {
       if (step === "init") {
         setLastActiveStep(1)
-      } else if (step === "merge" || step === "split") {
+      } else if (
+        step === "merge" ||
+        step === "convert" ||
+        step === "merge_after_convert" ||
+        step === "merge_matching_denoms"
+      ) {
         setLastActiveStep(2)
-      } else if (step === "success") {
+      } else if (step === "split") {
         setLastActiveStep(3)
+      } else if (step === "success") {
+        setLastActiveStep(4)
       }
     } else {
-      setLastActiveStep(2)
+      setLastActiveStep((prev) => prev)
     }
   }, [step])
 

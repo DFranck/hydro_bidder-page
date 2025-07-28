@@ -45,7 +45,7 @@ export function MintNftCardStepper({ steps }: Props) {
             </div>
             <div className="pt-2 ">
               <p
-                className={cn("text-sm font-medium", {
+                className={cn("text-sm font-medium whitespace-nowrap", {
                   "text-palette-green/90": el.status === "success",
                   "text-red-600": el.status === "error",
                   "text-palette-blue/90": el.status === "pending",
