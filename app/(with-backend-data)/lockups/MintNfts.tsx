@@ -281,8 +281,6 @@ export function MintNfts({
     setIsLoading(true)
 
     try {
-   
-
       const isDAtom = nftInfo.displayDenom === "dATOM"
 
       // STEP 1: Non-dATOM, 1 lockup => Split
@@ -322,11 +320,6 @@ export function MintNfts({
         console.log(
           "dATOM: Virtual lockups with matching denoms, triggering merge matching denoms"
         )
-
-        // setOperationContext((prev) => ({
-        //   ...prev,
-        //   matchingLockups,
-        // }))
 
         setStep("merge_matching_denoms")
         return
