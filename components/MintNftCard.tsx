@@ -93,7 +93,6 @@ export function MintNftCard({ lockups, steps, handleMintInfo }: Props) {
                 variant="link"
                 href="/lockups/marketplace"
                 as={Link}
-                target="_blank"
                 className="inline-block mx-1.5 whitespace-nowrap"
               >
                 <span>marketplace</span>

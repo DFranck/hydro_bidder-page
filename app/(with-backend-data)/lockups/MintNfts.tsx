@@ -612,18 +612,20 @@ export function MintNfts({
                     )}
                   </StyledText>
                 )}
-                <StyledText
-                  variant="button.secondary"
-                  as="button"
-                  type="button"
-                  onClick={() => {
-                    setIsLoading(false)
-                    setNftDetails(false)
-                    setStep("init")
-                  }}
-                >
-                  Back
-                </StyledText>
+                {step === "success" ? null : (
+                  <StyledText
+                    variant="button.secondary"
+                    as="button"
+                    type="button"
+                    onClick={() => {
+                      setIsLoading(false)
+                      setNftDetails(false)
+                      setStep("init")
+                    }}
+                  >
+                    Back
+                  </StyledText>
+                )}
               </Card.Footer>
             )}
           </Card>

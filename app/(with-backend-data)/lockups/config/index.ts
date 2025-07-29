@@ -41,7 +41,7 @@ const stATOM = [
 
 const dATOM = [
   {
-    amount: 2.3,
+    amount: 3,
     image: "/images/dAtom/25_Piranha_dATOM@4x.png",
     baseDenom: TOKEN_DENOMS.dATOM.denom,
     displayDenom: TOKEN_DENOMS.dATOM.displayDenom,
