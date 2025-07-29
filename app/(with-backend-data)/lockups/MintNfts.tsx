@@ -207,7 +207,16 @@ export function MintNfts({
 
     await revalidateTag("backendData")
     logMintDebugData("Convert completed, triggering merge...")
-    handleStepInterval("merge_after_convert")
+    if (
+      freshLockupsData.virtualLockupsCount === 1 &&
+      freshLockupsData.selectedLockupsCount === 1 &&
+      freshLockupsData.selectedLockups[0]?.id ===
+        freshLockupsData.virtualLockups[0]?.id
+    ) {
+      handleStepInterval("split")
+    } else {
+      handleStepInterval("merge_after_convert")
+    }
   }
 
   async function executeMergeAfterConvert(freshLockups: AugmentedLockup[]) {
@@ -331,6 +340,19 @@ export function MintNfts({
         isDAtom &&
         eligibleLockupsSizes.hasVirtualLockups &&
         eligibleLockupsSizes.hasMultipleDenoms
+      ) {
+        logMintDebugData(
+          "dATOM: Virtual lockups with multiple denoms, triggering convert"
+        )
+        setStep("convert")
+        return
+      }
+
+      // STEP 5-6-8-9: dATOM → Convert virtuals → Merge → Split
+      if (
+        isDAtom &&
+        eligibleLockupsSizes.hasVirtualLockups &&
+        eligibleLockupsSizes.virtualLockupsCount === 1
       ) {
         logMintDebugData(
           "dATOM: Virtual lockups with multiple denoms, triggering convert"
