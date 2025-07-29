@@ -355,7 +355,7 @@ export function MintNfts({
         eligibleLockupsSizes.virtualLockupsCount === 1
       ) {
         logMintDebugData(
-          "dATOM: Virtual lockups with multiple denoms, triggering convert"
+          "dATOM: Virtual lockups with one denom, triggering convert"
         )
         setStep("convert")
         return
