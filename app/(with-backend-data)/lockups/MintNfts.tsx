@@ -558,7 +558,7 @@ export function MintNfts({
             </div>
 
             <Card.Body
-              className={cn("hide-scrollbar h-96 overflow-scroll md:h-5/12", {
+              className={cn("hide-scrollbar h-96 overflow-auto md:h-5/12", {
                 "pr-0": nftDetails,
                 "pr-6": isMobile && !nftDetails,
               })}
