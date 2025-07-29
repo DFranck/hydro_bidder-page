@@ -85,21 +85,23 @@ export function MintNftCard({ lockups, steps, handleMintInfo }: Props) {
   return (
     <div>
       {renderedList.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-28">
-          {" "}
-          <span className="text-gray-400">
-            You need more lockups to mint an NFT
-          </span>
-          <StyledText
-            variant="link"
-            href="#"
-            as={Link}
-            target="_blank"
-            className="flex items-center gap-1 "
-          >
-            <span>Learn More</span>
-            <Icon name="arrow-up-right-from-square" />
-          </StyledText>
+        <div className="flex flex-col  items-center justify-center p-28">
+          <div>
+            <span className=" text-gray-400">
+              You need more lockups to mint an NFT. You can also visit the
+              <StyledText
+                variant="link"
+                href="/lockups/marketplace"
+                as={Link}
+                target="_blank"
+                className="inline-block mx-1.5 whitespace-nowrap"
+              >
+                <span>marketplace</span>
+                <Icon name="arrow-up-right-from-square" />
+              </StyledText>{" "}
+              to buy a lockup.
+            </span>
+          </div>
         </div>
       ) : (
         <MintNftCardStepper steps={steps} />
