@@ -5,6 +5,7 @@ import { useBackendData } from "@/contract-apis/useBackendData"
 import { useChain } from "@cosmos-kit/react"
 import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimulateLockup"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { logMintDebugData } from "@/lib/logMintDebugData"
 
 export interface LockupsResult {
   selectedLockups: VirtualLockup[]
@@ -333,9 +334,9 @@ export async function findLockupsForNFtSizes(
     return Array.from(denomCounts.values()).some((count) => count >= 2)
   })()
 
-  console.log({ selectedCombination })
-  console.log({ virtualOnly })
-  console.log({ hasMatchingDenoms })
+  logMintDebugData({ selectedCombination })
+  logMintDebugData({ virtualOnly })
+  logMintDebugData({ hasMatchingDenoms })
 
   return {
     selectedLockups: selectedCombination,

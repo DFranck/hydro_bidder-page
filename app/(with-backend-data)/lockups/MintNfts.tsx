@@ -25,6 +25,7 @@ import { toastMessages } from "@/components/ToastMessages"
 import { MintNftCardDetails } from "@/components/MintNftCardDetails"
 import { executeMultipleMergeLockups } from "@/contract-apis/executeMultipleMergeLockups"
 import { MintNftCardStepper } from "@/components/MintNftCardStepper"
+import { logMintDebugData } from "@/lib/logMintDebugData"
 
 export interface MintingStep {
   id: number
@@ -129,7 +130,7 @@ export function MintNfts({
   }
 
   async function executeSplit(freshLockups: AugmentedLockup[]) {
-    console.log("Executing split with fresh lockups:", freshLockups.length)
+    logMintDebugData("Executing split with fresh lockups:", freshLockups.length)
 
     const freshLockupsData = await findLockupsForNFtSizes(
       nftInfo.amount,
@@ -150,14 +151,14 @@ export function MintNfts({
       lockId: freshLockupsData.selectedLockups[0].id,
     })
 
-    console.log("Split completed successfully")
+    logMintDebugData("Split completed successfully")
     setIsLoading(false)
     await revalidateTag("backendData")
     setStep("success")
   }
 
   async function executeMerge(freshLockups: AugmentedLockup[]) {
-    console.log("Executing merge with fresh lockups:", freshLockups.length)
+    logMintDebugData("Executing merge with fresh lockups:", freshLockups.length)
 
     const freshLockupsData = await findLockupsForNFtSizes(
       nftInfo.amount,
@@ -174,12 +175,12 @@ export function MintNfts({
     })
 
     await revalidateTag("backendData")
-    console.log("Merge completed, triggering split...")
+    logMintDebugData("Merge completed, triggering split...")
     handleStepInterval("split")
   }
 
   async function executeConvert(freshLockups: AugmentedLockup[]) {
-    console.log(
+    logMintDebugData(
       "Executing convert to dATOM with fresh lockups:",
       freshLockups.length
     )
@@ -192,7 +193,7 @@ export function MintNfts({
       address
     )
 
-    console.log({ hj: freshLockupsData })
+    logMintDebugData({ hj: freshLockupsData })
 
     if (!freshLockupsData?.hasVirtualLockups) {
       throw new Error("No virtual lockups to convert")
@@ -205,12 +206,12 @@ export function MintNfts({
     })
 
     await revalidateTag("backendData")
-    console.log("Convert completed, triggering merge...")
+    logMintDebugData("Convert completed, triggering merge...")
     handleStepInterval("merge_after_convert")
   }
 
   async function executeMergeAfterConvert(freshLockups: AugmentedLockup[]) {
-    console.log(
+    logMintDebugData(
       "Executing merge after convert with fresh lockups:",
       freshLockups.length
     )
@@ -230,12 +231,12 @@ export function MintNfts({
     })
 
     await revalidateTag("backendData")
-    console.log("Merge after convert completed, triggering split...")
+    logMintDebugData("Merge after convert completed, triggering split...")
     handleStepInterval("split")
   }
 
   async function executeMergeMatchingDenoms(freshLockups: AugmentedLockup[]) {
-    console.log(
+    logMintDebugData(
       "Executing merge matching denoms with fresh lockups:",
       freshLockups.length
     )
@@ -253,7 +254,7 @@ export function MintNfts({
     })
 
     await revalidateTag("backendData")
-    console.log("Merge matching denoms completed")
+    logMintDebugData("Merge matching denoms completed")
     handleStepInterval("convert")
   }
 
@@ -285,27 +286,27 @@ export function MintNfts({
 
       // STEP 1: Non-dATOM, 1 lockup => Split
       if (!isDAtom && eligibleLockupsSizes.selectedLockupsCount === 1) {
-        console.log("Non-dATOM: Single lockup, triggering split")
+        logMintDebugData("Non-dATOM: Single lockup, triggering split")
         setStep("split")
         return
       }
 
       // STEP 2: Non-dATOM, >1 lockups => Merge -> Split
       if (!isDAtom && eligibleLockupsSizes.selectedLockupsCount > 1) {
-        console.log("Non-dATOM: Multiple lockups, triggering merge")
+        logMintDebugData("Non-dATOM: Multiple lockups, triggering merge")
         setStep("merge")
         return
       }
 
       // STEP 3: dATOM with no virtuals => use step 1 or 2 logic
       if (isDAtom && !eligibleLockupsSizes.hasVirtualLockups) {
-        console.log("dATOM: No virtual lockups")
+        logMintDebugData("dATOM: No virtual lockups")
 
         if (eligibleLockupsSizes.selectedLockupsCount > 1) {
-          console.log("dATOM: Multiple lockups, triggering merge")
+          logMintDebugData("dATOM: Multiple lockups, triggering merge")
           setStep("merge")
         } else {
-          console.log("dATOM: Single lockup, triggering split")
+          logMintDebugData("dATOM: Single lockup, triggering split")
           setStep("split")
         }
         return
@@ -317,7 +318,7 @@ export function MintNfts({
         eligibleLockupsSizes.hasVirtualLockups &&
         eligibleLockupsSizes.hasMatchingDenoms
       ) {
-        console.log(
+        logMintDebugData(
           "dATOM: Virtual lockups with matching denoms, triggering merge matching denoms"
         )
 
@@ -331,7 +332,7 @@ export function MintNfts({
         eligibleLockupsSizes.hasVirtualLockups &&
         eligibleLockupsSizes.hasMultipleDenoms
       ) {
-        console.log(
+        logMintDebugData(
           "dATOM: Virtual lockups with multiple denoms, triggering convert"
         )
         setStep("convert")
@@ -468,7 +469,7 @@ export function MintNfts({
 
         executingStepRef.current = step
         try {
-          console.log(
+          logMintDebugData(
             `Executing step: ${step} with ${lockups.length} fresh lockups`
           )
 

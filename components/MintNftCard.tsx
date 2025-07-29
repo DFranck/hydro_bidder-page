@@ -69,7 +69,7 @@ export function MintNftCard({ lockups, steps, handleMintInfo }: Props) {
       }))
     : nfts?.filter((nft) => nft.lockupCount !== 0) || []
 
-  if (isLoading && renderedList.length === 0) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {Array.from({ length: 6 }).map((_, index) => (
@@ -112,7 +112,7 @@ export function MintNftCard({ lockups, steps, handleMintInfo }: Props) {
           "md:grid-cols-3": renderedList.length <= 3,
         })}
       >
-        {renderedList.map((nft, index) => {
+        {renderedList.length > 0 && renderedList.map((nft, index) => {
           const isAvailable = !isLoading && nft.lockupCount > 0
           const isDisabled = !isLoading && nft.lockupCount === 0
 
