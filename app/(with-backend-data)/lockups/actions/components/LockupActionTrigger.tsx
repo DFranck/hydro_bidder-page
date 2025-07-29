@@ -135,10 +135,10 @@ export function LockupActionTrigger<T extends LockupActionType>({
       aria-label={action}
       className={twMerge(
         className,
-        "flex w-full items-center justify-start gap-2 px-4 py-2",
+        "flex w-full items-center justify-start gap-2 px-2 py-2 text-sm",
         isDisabled
           ? "opacity-50"
-          : "hover:bg-palette-green hover:text-palette-text",
+          : "hover:bg-palette-green/70 hover:rounded-md hover:text-palette-text",
       )}
       tooltip={tooltip}
       disabled={isProcessing || isDisabled}
