@@ -18,6 +18,7 @@ import { formatAmount } from "@/lib/formatAmount"
 import { getDaysAway } from "@/lib/getDaysAway"
 import { Icon } from "@/components/Icon"
 import { executeWalletMergeLockups } from "@/contract-apis/executeWalletMergeLockups"
+import { cn } from "@/lib/utils"
 
 interface RefreshMultipleLockupsProps {
   initMerge: boolean
@@ -146,7 +147,7 @@ export function RefreshMultipleLockups({
           <Card.Body>
             <div className="flex flex-col gap-2">
               <StyledText className="font-bold">
-                {initMerge ? "Reveal Lockup details " : "New Lockup Duration"}:
+                {initMerge ? "Review Lockup details" : "New Lockup Duration"}:
               </StyledText>
 
               <InputForLockupPeriod
@@ -159,24 +160,27 @@ export function RefreshMultipleLockups({
               />
             </div>
 
-            <div className="flex items-center gap-2 opacity-60">
+            <div
+              className={cn("opacity-60")}
+            >
               {initMerge ? (
-                <p>
+                <span>
                   The new lockup amount will be {formatAmount(totalAmount, 0)}{" "}
                   <span className="pr-1">
                     {filteredLockups[0]?.funds?.denomInfo?.humanReadableDenom}
                   </span>
                   and ends at
-                </p>
+                </span>
               ) : (
-                <p>
+                <span>
                   {refreshLockups.length} lockups will be extended to end on
-                </p>
+                </span>
               )}
               {selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH ? (
                 <div className="h-5 w-24 animate-pulse rounded bg-gray-300"></div>
               ) : (
-                <div className="flex items-center gap-2">
+                <span>
+                  {" "}
                   {dateFormatter.format(newEndDate)} (
                   <>
                     {pluralize({
@@ -187,7 +191,7 @@ export function RefreshMultipleLockups({
                     {daysUntilEndDate > 0 ? "away" : "ago"}
                   </>
                   )
-                </div>
+                </span>
               )}
             </div>
 
