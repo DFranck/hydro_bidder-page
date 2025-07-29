@@ -180,7 +180,7 @@ export const toastMessages = {
   mintNftLockupsError: (error: Error) => {
     return {
       variant: "error",
-      message: `Error : ${error}`,
+      message: `${error}`,
     }
   },
 

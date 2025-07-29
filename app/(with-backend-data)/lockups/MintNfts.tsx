@@ -193,7 +193,7 @@ export function MintNfts({
       address
     )
 
-    logMintDebugData({ hj: freshLockupsData })
+    logMintDebugData({ freshLockupsData })
 
     if (!freshLockupsData?.hasVirtualLockups) {
       throw new Error("No virtual lockups to convert")
@@ -340,13 +340,13 @@ export function MintNfts({
       }
 
       // If we get here, something unexpected happened
-      console.warn("Unexpected state in handleSubmitCreationForm", {
+      logMintDebugData("Unexpected state in handleSubmitCreationForm", {
         isDAtom,
         eligibleLockupsSizes,
       })
       setIsLoading(false)
     } catch (error) {
-      console.error("Error in handleSubmitCreationForm:", error)
+      logMintDebugData("Error in handleSubmitCreationForm:", error)
       setIsLoading(false)
       setStep("init")
     }

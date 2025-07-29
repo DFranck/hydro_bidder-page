@@ -69,7 +69,7 @@ export function LockupsLST({
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const neutronTokenDenom = TOKEN_DENOMS[tokenInfo.name]
+    const neutronTokenDenom = TOKEN_DENOMS[tokenInfo.name].denom
 
     if (!neutronTokenDenom) {
       throw new Error("Denom is not set")

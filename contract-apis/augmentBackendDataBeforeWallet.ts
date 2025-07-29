@@ -66,15 +66,16 @@ export function augmentBackendDataBeforeWallet(
     .flat()
 
   const atomPrice =
-    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.ATOM]?.token_price ?? 0
+    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.ATOM.denom]
+      ?.token_price ?? 0
 
   const dAtomPrice =
-    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.dATOM]?.token_price ??
-    0
+    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.dATOM.denom]
+      ?.token_price ?? 0
 
   const stAtomPrice =
-    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.stATOM]?.token_price ??
-    0
+    hydroRoundsData[round_id]?.round_prices[TOKEN_DENOMS.stATOM.denom]
+      ?.token_price ?? 0
 
   const stOsmoPrice =
     hydroRoundsData[round_id]?.round_prices[
