@@ -24,6 +24,7 @@ import { useToasts } from "@/components/Toasts"
 import { toastMessages } from "@/components/ToastMessages"
 import { MintNftCardDetails } from "@/components/MintNftCardDetails"
 import { executeMultipleMergeLockups } from "@/contract-apis/executeMultipleMergeLockups"
+import { MintNftCardStepper } from "@/components/MintNftCardStepper"
 
 export interface MintingStep {
   id: number
@@ -563,11 +564,14 @@ export function MintNfts({
               })}
             >
               {nftDetails ? (
-                <MintNftCardDetails
-                  nftInfo={nftInfo}
-                  eligibleLockupsSizes={eligibleLockupsSizes as LockupsResult}
-                  isNFTLoading={isNFTLoading}
-                />
+                <div>
+                  <MintNftCardStepper steps={steps} />
+                  <MintNftCardDetails
+                    nftInfo={nftInfo}
+                    eligibleLockupsSizes={eligibleLockupsSizes as LockupsResult}
+                    isNFTLoading={isNFTLoading}
+                  />
+                </div>
               ) : (
                 <MintNftCard
                   steps={steps}
