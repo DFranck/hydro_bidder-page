@@ -16,7 +16,7 @@ import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { useIsMobile } from "@/hooks/use-mobile"
 import AccordionWrapper from "@/components/Accordion"
-import { NFT_SIZES } from "./config"
+import { NFT_SIZES } from "./config/nft-sizes"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean

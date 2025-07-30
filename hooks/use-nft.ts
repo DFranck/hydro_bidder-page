@@ -3,13 +3,13 @@ import { AugmentedLockup } from "@/contract-apis/types"
 import {
   MINIMUM_DATOM_AMOUNT,
   MINIMUM_SPLIT_AMOUNT,
-  NFT_SIZES,
 } from "@/app/(with-backend-data)/lockups/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useChain } from "@cosmos-kit/react"
 import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimulateLockup"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { logMintDebugData } from "@/lib/logMintDebugData"
+import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
 
 export interface LockupsResult {
   selectedLockups: VirtualLockup[]
