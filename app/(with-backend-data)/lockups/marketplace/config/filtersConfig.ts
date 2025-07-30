@@ -1,4 +1,4 @@
-import { getParsedEnvList } from "@/lib/getParsedEnvList"
+import { ALLOWED_MARKETPLACE_DENOMS } from "@/lib/tokenDenoms"
 import { getDisplayDenom } from "../../utils/getDisplayDenom"
 import { MarketplaceFilters } from "../types"
 
@@ -7,11 +7,8 @@ export const statusFilterOptions = [
   "not-for-sale",
   "isMine",
 ] as const
-const allowedMarketplaceDenoms = getParsedEnvList(
-  "NEXT_PUBLIC_ALLOWED_NFT_DENOMS",
-)
 
-export const marketPlaceDenomsFilter = allowedMarketplaceDenoms
+export const marketPlaceDenomsFilter = ALLOWED_MARKETPLACE_DENOMS
   .map((denom) => getDisplayDenom(denom))
   .filter((d): d is string => Boolean(d))
 
