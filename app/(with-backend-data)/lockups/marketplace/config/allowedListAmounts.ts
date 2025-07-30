@@ -1,5 +1,3 @@
-import { getParsedEnvNumberList } from "@/lib/getParsedEnvNumberList"
+import { getParsedNftSizesFromEnv } from "@/lib/getParsedNftSizesFromEnv"
 
-export const allowedListAmounts = getParsedEnvNumberList(
-  "NEXT_PUBLIC_NFT_SIZES"
-)
+export const allowedListAmounts = getParsedNftSizesFromEnv()

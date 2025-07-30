@@ -1,7 +1,7 @@
 "use client"
 import { Icon } from "@/components/Icon"
 import { AugmentedLockup } from "@/contract-apis/types"
-import { getParsedEnvList } from "@/lib/getParsedEnvList"
+import { getParsedNftDenomsFromEnv } from "@/lib/getParsedNftDenomsFromEnv"
 import { Coin } from "moonkittjs"
 import { allowedListAmounts } from "../../marketplace/config/allowedListAmounts"
 import { MarketplaceLockup } from "../../marketplace/types"
@@ -12,7 +12,7 @@ import executeApproveList from "../transactions/executeApproveList"
 import { ActionConfig } from "../types"
 import { SupabaseHydroListingUpdate } from "../utils/SupabaseHydroListingUpdate"
 // Denominations allowed for listing lockups
-const listAllowedDenoms = getParsedEnvList("NEXT_PUBLIC_ALLOWED_NFT_DENOMS")
+const listAllowedDenoms = getParsedNftDenomsFromEnv()
 
 // Payload for "list" action
 export type ListPayload = {

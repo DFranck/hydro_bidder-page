@@ -1,6 +1,6 @@
-export function getParsedEnvNumberList(key: string): number[] {
+export function getParsedNftSizesFromEnv(): number[] {
   try {
-    const raw = process.env[key]
+    const raw = process.env.NEXT_PUBLIC_NFT_SIZES
     if (!raw) return []
     const parsed = JSON.parse(raw)
     return Array.isArray(parsed) &&

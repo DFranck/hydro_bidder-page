@@ -4,7 +4,7 @@ import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { getParsedEnvList } from "@/lib/getParsedEnvList"
+import { getParsedNftDenomsFromEnv } from "@/lib/getParsedNftDenomsFromEnv"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
@@ -62,7 +62,7 @@ const BuyALockupButton = () => {
   }, [marketplaceLockups, myLockups, excludeTiedToDeployment, tranches])
 
   const imageEntries = useMemo(() => {
-    const allowedDenoms = getParsedEnvList("NEXT_PUBLIC_ALLOWED_NFT_DENOMS")
+    const allowedDenoms = getParsedNftDenomsFromEnv()
     const readableDenoms = allowedDenoms.map((denom) => getDisplayDenom(denom))
     const denomFolders = readableDenoms.map(
       (denom) => denom.split("/").at(-1) ?? "Blank",

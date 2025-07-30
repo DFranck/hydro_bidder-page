@@ -1,6 +1,6 @@
-export function getParsedEnvList(key: string): string[] {
+export function getParsedNftDenomsFromEnv(): string[] {
   try {
-    const raw = process.env[key]
+    const raw = process.env.NEXT_PUBLIC_ALLOWED_NFT_DENOMS
     if (!raw) return []
     const parsed = JSON.parse(raw)
     return Array.isArray(parsed) ? parsed : []

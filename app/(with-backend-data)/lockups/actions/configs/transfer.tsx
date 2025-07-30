@@ -1,7 +1,7 @@
 "use client"
 import { Icon } from "@/components/Icon"
 import { AugmentedLockup } from "@/contract-apis/types"
-import { getParsedEnvList } from "@/lib/getParsedEnvList"
+import { getParsedNftDenomsFromEnv } from "@/lib/getParsedNftDenomsFromEnv"
 import { isValidBech32 } from "@/lib/isValidBech32"
 import { MarketplaceLockup } from "../../marketplace/types"
 import { isListedMarketplaceLockup } from "../../marketplace/utils/isListedMarketplaceLockup"
@@ -12,7 +12,7 @@ import { ActionConfig } from "../types"
 import { SupabaseHydroListingUpdate } from "../utils/SupabaseHydroListingUpdate"
 
 // Token denominations supported for transfer
-const transferAllowedDenoms = getParsedEnvList("NEXT_PUBLIC_ALLOWED_NFT_DENOMS")
+const transferAllowedDenoms = getParsedNftDenomsFromEnv()
 
 // Transfer payload
 export type TransferPayload = {

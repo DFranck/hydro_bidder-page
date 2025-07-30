@@ -1,7 +1,7 @@
-import { getParsedEnvNumberList } from "@/lib/getParsedEnvNumberList"
+import { getParsedNftSizesFromEnv } from "@/lib/getParsedNftSizesFromEnv"
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
-export const NFT_SIZES = getParsedEnvNumberList("NEXT_PUBLIC_NFT_SIZES")
+export const NFT_SIZES = getParsedNftSizesFromEnv()
 
 const stATOM = [
   {
