@@ -1,7 +1,6 @@
 "use client"
 
 import { StyledText } from "@/components/StyledText"
-import { useMarketplaceData } from "../../../marketplace/context/MarketplaceDataProvider"
 import { LockupActionFormProps } from "../../types"
 import { LockupActionSubmit } from "../LockupActionSubmit"
 export default function TransferActionFields(

@@ -119,21 +119,23 @@ export function augmentBackendDataAfterWallet({
   const lockedAtomTotalWalletStat = sumBy(
     augmentedLockups.filter(
       (lockup) =>
-        ![TOKEN_DENOMS.stATOM, TOKEN_DENOMS.dATOM].includes(lockup.funds.denom)
+        ![TOKEN_DENOMS.stATOM, TOKEN_DENOMS.dATOM.denom].includes(
+          lockup.funds.denom
+        )
     ),
     "funds.amount"
   )
 
   const lockedStAtomTotalWalletStat = sumBy(
     augmentedLockups.filter(
-      (lockup) => lockup.funds.denom === TOKEN_DENOMS.stATOM
+      (lockup) => lockup.funds.denom === TOKEN_DENOMS.stATOM.denom
     ),
     "funds.amount"
   )
 
   const lockedDAtomTotalWalletStat = sumBy(
     augmentedLockups.filter(
-      (lockup) => lockup.funds.denom === TOKEN_DENOMS.dATOM
+      (lockup) => lockup.funds.denom === TOKEN_DENOMS.dATOM.denom
     ),
     "funds.amount"
   )
@@ -142,7 +144,6 @@ export function augmentBackendDataAfterWallet({
     lockedAtomTotalWalletStat +
     lockedStAtomTotalWalletStat +
     lockedDAtomTotalWalletStat
-
 
   const lockedTokenTotalWallet = Number(currently_locked) / 1e6
   const lockedTokenPercentageWallet = Math.floor(
@@ -194,7 +195,7 @@ export function augmentBackendDataAfterWallet({
   )
   const marketplaceLockups = getMarketplaceLockups(
     augmentedLockups,
-    walletData.listings,
+    walletData.listings
   )
   return {
     ...augmentedBackendDataBeforeWallet,
@@ -204,7 +205,8 @@ export function augmentBackendDataAfterWallet({
     claimsOutstanding: augmentedOutstandingClaims,
     isLoading: false,
     isWalletConnected: true,
-    lockedTokenIsAtCapacityWallet: lockedTokenTotalWallet === lockedTokenMaxWallet,
+    lockedTokenIsAtCapacityWallet:
+      lockedTokenTotalWallet === lockedTokenMaxWallet,
     lockedTokenMaxWallet,
     lockedTokenPercentageWallet,
     lockedAtomTotalWalletStat,

@@ -4,7 +4,7 @@ NEXT_PUBLIC_RELOAD_CAP_DATA_INTERVAL_SECONDS=30
 # The address of the Hydro contracts
 NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS=neutron13w6sagl4clacx4c8drhuwfl20cesn3pnllhf37e65ls8zwf6gcgq93t2lp
 NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS=neutron1zy38lczkv82c6kkv5rccpnlltjtaz5cl4wc79mwgrtchtwdsc72skwe58t
-NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS=neutron1...
+NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS=neutron1kjeyv4q8mpypgxy4qkccjh6tlcnkrf0up8ysn8zu7wpd9tp7ymjszzrldk
 
 # Numia Data
 NUMIA_COSMOS_HYDRO_APP_API_KEY=
@@ -64,6 +64,8 @@ NEXT_PUBLIC_HOST_PROJECT_NAME_FULL=Osmosis
 # - Listing on Marketplace
 # - Buying options on Marketplace
 NEXT_PUBLIC_ALLOWED_NFT_DENOMS='["ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93"]'
+
+NEXT_PUBLIC_NFT_SIZES='[25, 50, 100, 250, 500, 1000]'
 
 # TODO: Remove these notes after we move to config files
 # Assuming just "Osmosis" and "The Cosmos Hub":

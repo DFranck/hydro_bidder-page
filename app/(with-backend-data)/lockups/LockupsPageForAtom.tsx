@@ -36,11 +36,12 @@ import { useIncompleteNotices } from "@/components/IncompleteNoticesProvider"
 import { ConditionalWrapper } from "@/components/ConditionalWrapper"
 import { NewLockUpButton } from "@/components/NewLockUpButton"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
-import { RotateCw, SquaresUnite } from "lucide-react"
+import { RotateCw, SquaresUnite, Store } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { SplitLockupModal } from "@/components/SplitLockupModal"
 import { RefreshMultipleLockups } from "./RefreshMultipleLockups"
 import { cn } from "@/lib/utils"
+import { MintNfts } from "./MintNfts"
 
 export function LockupsPageForAtom() {
   const { incompleteNotices } = useIncompleteNotices()
@@ -76,6 +77,7 @@ export function LockupsPageForAtom() {
   >([])
 
   const [initMerge, setInitMerge] = useState(false)
+  const [mintNft, setMintNft] = useState(false)
 
   const refreshLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
@@ -142,6 +144,10 @@ export function LockupsPageForAtom() {
 
   function handleRefreshModal() {
     setRefreshMultipleLockups(true)
+  }
+
+  function handleNftMinting() {
+    setMintNft(true)
   }
 
   useEffect(() => {
@@ -267,6 +273,19 @@ export function LockupsPageForAtom() {
                 Unlock {expiredLockups.length} Expired
               </StyledText>
             )}
+
+            {lockups.length > 0 ? (
+              <StyledText
+                as="button"
+                variant="button.primary"
+                className="flex items-center gap-2"
+                onClick={handleNftMinting}
+                disabled={lockups.length === 0 || isLoading}
+              >
+                <Store className="size-4 text-black" />
+                Mint an NFT
+              </StyledText>
+            ) : null}
 
             <ConditionalWrapper
               condition={!isWalletConnected || isLoading}
@@ -425,6 +444,12 @@ export function LockupsPageForAtom() {
         setIsCreationModalOpen={setIsOpen}
         handleCreationModalWindowClose={handleCreationModalWindowClose}
         handleModalWindowCloseComplete={handleModalWindowCloseComplete}
+      />
+      <MintNfts
+        isCreationModalOpen={mintNft}
+        setIsCreationModalOpen={setMintNft}
+        handleCreationModalWindowClose={() => setMintNft(false)}
+        handleModalWindowCloseComplete={() => setMintNft(false)}
       />
     </>
   )

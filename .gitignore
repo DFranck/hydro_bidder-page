@@ -16,6 +16,9 @@
 # production
 /build
 .env
+.env-prod
+.env-staging
+mnemonic_file
 
 # misc
 .DS_Store

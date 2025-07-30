@@ -1,4 +1,3 @@
-import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
 import {
   DropdownMenu,
@@ -11,7 +10,6 @@ import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { formatAmount } from "@/lib/formatAmount"
 import { getTimeBetweenDates } from "@/lib/getTimeBetweenDates"
-import { Dropdown } from "./actions/components/Dropdown"
 import { LockupActionTrigger } from "./actions/components/LockupActionTrigger"
 import { isListedMarketplaceLockup } from "./marketplace/utils/isListedMarketplaceLockup"
 import {
@@ -54,18 +52,19 @@ export function buildExpiredRow({
     {
       label: "Refresh",
       icon: (
-        <RotateCw className="text-palette-red size-2 group-hover:text-white" />
+        <RotateCw className="text-palette-white group-hover:text-palette-text size-2" />
       ),
       cta: (lockup: AugmentedLockup) => onClickEdit({ lockup }),
     },
     {
       label: "Split",
       icon: (
-        <CircleSlash2 className="text-palette-red size-2 group-hover:text-white" />
+        <CircleSlash2 className="text-palette-white group-hover:text-palette-text size-2" />
       ),
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
   ]
+
   const handleCheckboxChange = (checked: boolean) => {
     if (checked) {
       if (!selectedExpiredLockups.includes(lockup.id)) {
@@ -102,8 +101,7 @@ export function buildExpiredRow({
                     findMergeableLockup(mergeableLockups).funds.denomInfo
                       ?.humanReadableDenom,
                   validator:
-                    findMergeableLockup(mergeableLockups).funds.denomInfo
-                      ?.raw,
+                    findMergeableLockup(mergeableLockups).funds.denomInfo?.raw,
                 },
               })}
             >
@@ -151,45 +149,31 @@ export function buildExpiredRow({
     expiredDaysAgo: `${Math.abs(daysLeft)} days ago`,
 
     actions: (
-      <>
-        <Dropdown
-          trigger={<Icon name="light:ellipsis-vertical" />}
-          className="text-gray-500 hover:text-gray-800"
-        >
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="flex justify-end">
+          <StyledText as={"span"} className="cursor-pointer">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </StyledText>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="flex flex-col bg-black ">
           {isListedMarketplaceLockup(lockup) && (
             <LockupActionTrigger lockup={lockup} action="unlist" />
           )}
           <LockupActionTrigger lockup={lockup} action="list" />
           <LockupActionTrigger lockup={lockup} action="transfer" />
-          <button
-            className="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-palette-green hover:text-palette-text"
-            onClick={onClickEdit.bind(null, { lockup })}
-          >
-            <Icon name="light:rotate" />
-            Refresh
-          </button>
-        </Dropdown>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild className="flex justify-end">
-            <StyledText as={"span"} className="cursor-pointer">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </StyledText>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-black ">
-            {MENU_ITEMS.map((item) => (
-              <DropdownMenuItem
-                key={item.label}
-                onClick={() => item.cta(lockup)}
-                className="group text-palette-red hover:bg-palette-red hover:text-white"
-              >
-                {item.icon}
-                {item.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </>
+          {MENU_ITEMS.map((item) => (
+            <DropdownMenuItem
+              key={item.label}
+              onClick={() => item.cta(lockup)}
+              className="group text-palette-white hover:bg-palette-green/70 hover:text-palette-text"
+            >
+              {item.icon}
+              {item.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     ),
   }
 

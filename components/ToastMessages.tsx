@@ -177,6 +177,13 @@ export const toastMessages = {
     }
   },
 
+  mintNftLockupsError: (error: Error) => {
+    return {
+      variant: "error",
+      message: `${error}`,
+    }
+  },
+
   votingInProgress: {
     variant: "working",
     message: "Your vote is processing.",
