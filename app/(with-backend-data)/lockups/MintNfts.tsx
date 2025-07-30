@@ -446,7 +446,7 @@ export function MintNfts({
       },
       {
         id: 4,
-        title: step === "merge" ? "Merging" : "Merge",
+        title: step === "merge_after_convert" ? "Merging" : "Merge",
       },
       {
         id: 5,

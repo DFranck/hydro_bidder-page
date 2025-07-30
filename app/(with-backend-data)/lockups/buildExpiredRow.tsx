@@ -24,6 +24,8 @@ import {
   mergeableDenomTooltip,
   mergeIndicatorTooltip,
 } from "@/components/ToolTips"
+import { getNftLockupImage } from "./config"
+import { Avatar } from "@/components/Avatar"
 
 export function buildExpiredRow({
   lockup,
@@ -64,6 +66,8 @@ export function buildExpiredRow({
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
   ]
+
+  const nftImage = getNftLockupImage(lockup.funds.amount, lockup.funds.denom)
 
   const handleCheckboxChange = (checked: boolean) => {
     if (checked) {
@@ -141,6 +145,13 @@ export function buildExpiredRow({
         <StyledText variant="footnote">
           {lockup.funds.denomInfo?.humanReadableDenom}
         </StyledText>
+        {nftImage ? (
+          <Avatar
+            url={nftImage.image}
+            alt={`${nftImage.displayDenom} NFT`}
+            className="size-4 rounded-sm"
+          />
+        ) : null}
       </div>
     ),
 

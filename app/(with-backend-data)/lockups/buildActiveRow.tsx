@@ -26,6 +26,8 @@ import {
   mergeableDenomTooltip,
   mergeIndicatorTooltip,
 } from "@/components/ToolTips"
+import { getNftLockupImage } from "./config"
+import { Avatar } from "@/components/Avatar"
 
 export function buildActiveRow({
   lockup,
@@ -67,18 +69,20 @@ export function buildActiveRow({
     {
       label: "Refresh",
       icon: (
-        <RotateCw className="text-palette-white size-2 group-hover:text-palette-text" />
+        <RotateCw className="text-palette-white group-hover:text-palette-text size-2" />
       ),
       cta: (lockup: AugmentedLockup) => onClickEdit({ lockup }),
     },
     {
       label: "Split",
       icon: (
-        <CircleSlash2 className="text-palette-white size-2 group-hover:text-palette-text" />
+        <CircleSlash2 className="text-palette-white group-hover:text-palette-text size-2" />
       ),
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
   ]
+
+  const nftImage = getNftLockupImage(lockup.funds.amount, lockup.funds.denom)
 
   const handleCheckboxChange = (checked: boolean) => {
     if (checked) {
@@ -156,6 +160,13 @@ export function buildActiveRow({
         <StyledText variant="footnote">
           {lockup.funds.denomInfo?.humanReadableDenom}
         </StyledText>
+        {nftImage ? (
+          <Avatar
+            url={nftImage.image}
+            alt={`${nftImage.displayDenom} NFT`}
+            className="size-4 rounded-sm"
+          />
+        ) : null}
       </div>
     ),
 
