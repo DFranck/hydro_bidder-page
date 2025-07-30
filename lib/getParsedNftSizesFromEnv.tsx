@@ -1,3 +1,5 @@
+"use client"
+
 export function getParsedNftSizesFromEnv(): number[] {
   try {
     const raw = process.env.NEXT_PUBLIC_NFT_SIZES
