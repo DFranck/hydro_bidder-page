@@ -4,7 +4,6 @@ import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { getParsedEnvList } from "@/lib/getParsedEnvList"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
@@ -23,6 +22,7 @@ import { formatDenomAmount } from "./utils/formatDenomAmount"
 import { getDenomExponent } from "./utils/getDenomExponent"
 import { getDisplayDenom } from "./utils/getDisplayDenom"
 import { getImagesWithFallback } from "./utils/getImagesForDenoms"
+import { ALLOWED_MARKETPLACE_DENOMS } from "@/lib/tokenDenoms"
 const BuyALockupButton = () => {
   const { setToasts } = useToasts()
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
@@ -62,8 +62,7 @@ const BuyALockupButton = () => {
   }, [marketplaceLockups, myLockups, excludeTiedToDeployment, tranches])
 
   const imageEntries = useMemo(() => {
-    const allowedDenoms = getParsedEnvList("NEXT_PUBLIC_ALLOWED_NFT_DENOMS")
-    const readableDenoms = allowedDenoms.map((denom) => getDisplayDenom(denom))
+    const readableDenoms = ALLOWED_MARKETPLACE_DENOMS.map((denom) => getDisplayDenom(denom))
     const denomFolders = readableDenoms.map(
       (denom) => denom.split("/").at(-1) ?? "Blank",
     )

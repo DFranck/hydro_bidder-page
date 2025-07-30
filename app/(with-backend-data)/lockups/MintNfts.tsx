@@ -623,11 +623,7 @@ export function MintNfts({
                     variant="button.primary"
                     as="button"
                     type="button"
-                    onClick={() => {
-                      setIsLoading(false)
-                      setNftDetails(false)
-                      setStep("init")
-                    }}
+                    onClick={handleCloseModal()}
                   >
                     Done
                   </StyledText>
