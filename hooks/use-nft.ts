@@ -40,13 +40,18 @@ interface VirtualLockup extends AugmentedLockup {
 function findLSTLockupsForNFT(
   NFT_SIZE: number,
   denom: string,
-  lockups: AugmentedLockup[]
+  lockups: AugmentedLockup[],
+  includeNftSizes: boolean
 ) {
   // Filter lockups by the specified denomination and exclude NFT_SIZES amounts
-  const filteredLockups = lockups.filter(
+  const allLockups = lockups.filter((lockup) => lockup.funds.denom === denom)
+
+  const filteredNftSizes = lockups.filter(
     (lockup) =>
       lockup.funds.denom === denom && !NFT_SIZES.includes(lockup.funds.amount)
   )
+
+  const filteredLockups = includeNftSizes ? allLockups : filteredNftSizes
 
   // Handle edge case - no lockups found
   if (filteredLockups.length === 0) {
@@ -106,7 +111,8 @@ function findLSTLockupsForNFT(
 export function useFindLockupsForNFTQuery(
   NFT_SIZE: number,
   denom: string,
-  lockups: AugmentedLockup[]
+  lockups: AugmentedLockup[],
+  includeNftSizes: boolean
 ) {
   const { address } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -117,8 +123,9 @@ export function useFindLockupsForNFTQuery(
         NFT_SIZE,
         denom,
         lockups,
+        includeNftSizes,
         getSigningCosmWasmClient,
-        address
+        address,
       )
     },
     enabled: !!NFT_SIZE && !!denom,
@@ -130,17 +137,25 @@ export async function findLockupsForNFtSizes(
   NFT_SIZE: number,
   denom: string,
   lockups: AugmentedLockup[],
+  includeNftSizes: boolean,
   getSigningCosmWasmClient?: () => Promise<SigningCosmWasmClient>,
-  address?: string
+  address?: string,
 ): Promise<LockupsResult> {
   const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
   const minimumDAtomAmount = MINIMUM_DATOM_AMOUNT
   const isFactoryDenom = denom.startsWith("factory")
 
-  const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups)
+  const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups, includeNftSizes)
 
   // ✅ FIXED: Find ALL dATOM native lockups, not just the first one
-  const dAtomNativeLockups = isFactoryDenom
+  const allDAtomNativeLockups = isFactoryDenom
+    ? lockups.filter(
+        (lockup) =>
+          lockup.funds.denom.includes("factory") && lockup.funds.amount > 0
+      )
+    : []
+
+  const filteredDAtomNativeLockups = isFactoryDenom
     ? lockups.filter(
         (lockup) =>
           lockup.funds.denom.includes("factory") &&
@@ -148,6 +163,10 @@ export async function findLockupsForNFtSizes(
           lockup.funds.amount > 0
       )
     : []
+
+  const dAtomNativeLockups = includeNftSizes
+    ? allDAtomNativeLockups
+    : filteredDAtomNativeLockups
 
   // Early return if native lockups are sufficient
   if (nativeResult.totalAmount >= requiredAmount) {
