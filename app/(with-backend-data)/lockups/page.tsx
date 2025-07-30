@@ -280,7 +280,7 @@ export default function LockupsPage() {
                 variant="button.secondary"
                 className="flex items-center gap-2"
                 onClick={handleRefreshModal}
-                disabled={refreshLockups.length <= 1}
+                disabled={ initMerge ? refreshLockups.length <= 1 : refreshLockups.length < 1}
               >
                 {initMerge ? (
                   <SquaresUnite className="text-palette-green size-4" />
