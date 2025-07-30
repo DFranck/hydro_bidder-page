@@ -83,3 +83,7 @@ export const NFT_LIST = [...stATOM, ...dATOM].sort(
 )
 
 export const NFT_SIZES = [25, 50, 100, 200, 500, 1000]
+
+export const MINIMUM_SPLIT_AMOUNT = 0.0001
+
+export const MINIMUM_DATOM_AMOUNT = 950000 / 1e6

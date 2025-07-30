@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { AugmentedLockup } from "@/contract-apis/types"
-import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config"
+import {
+  MINIMUM_DATOM_AMOUNT,
+  MINIMUM_SPLIT_AMOUNT,
+  NFT_SIZES,
+} from "@/app/(with-backend-data)/lockups/config"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useChain } from "@cosmos-kit/react"
 import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimulateLockup"
@@ -129,8 +133,8 @@ export async function findLockupsForNFtSizes(
   getSigningCosmWasmClient?: () => Promise<SigningCosmWasmClient>,
   address?: string
 ): Promise<LockupsResult> {
-  const requiredAmount = NFT_SIZE + 0.0001
-  const minimumDAtomAmount = 950000 / 1e6
+  const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
+  const minimumDAtomAmount = MINIMUM_DATOM_AMOUNT
   const isFactoryDenom = denom.startsWith("factory")
 
   const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups)
