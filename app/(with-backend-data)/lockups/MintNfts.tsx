@@ -380,7 +380,7 @@ export function MintNfts({
     failedStep?: number
   } => {
     if (step === "success") {
-      return { activeStep: 5, status: "success" }
+      return { activeStep: 6, status: "success" }
     }
 
     if (step === "init") {
@@ -391,11 +391,7 @@ export function MintNfts({
       return { activeStep: 1, status: "success" }
     }
 
-    if (
-      step === "merge" ||
-      step === "merge_after_convert" ||
-      step === "merge_matching_denoms"
-    ) {
+    if (step === "merge" || step === "merge_matching_denoms") {
       return { activeStep: 2, status: "pending" }
     }
 
@@ -403,8 +399,11 @@ export function MintNfts({
       return { activeStep: 3, status: "pending" }
     }
 
-    if (step === "split") {
+    if (step === "merge_after_convert") {
       return { activeStep: 4, status: "pending" }
+    }
+    if (step === "split") {
+      return { activeStep: 5, status: "pending" }
     }
 
     if (step === "error") {
@@ -425,7 +424,7 @@ export function MintNfts({
     const baseSteps = [
       {
         id: 1,
-        title: "Choose NFT",
+        title: isMobile ? "Choose" : "Choose NFT",
       },
       {
         id: 2,
@@ -437,10 +436,14 @@ export function MintNfts({
       },
       {
         id: 4,
-        title: step === "split" ? "Splitting" : "Split",
+        title: step === "merge" ? "Merging" : "Merge",
       },
       {
         id: 5,
+        title: step === "split" ? "Splitting" : "Split",
+      },
+      {
+        id: 6,
         title: "Success",
       },
     ]
@@ -531,18 +534,16 @@ export function MintNfts({
     if (step !== "error") {
       if (step === "init") {
         setLastActiveStep(1)
-      } else if (
-        step === "merge" ||
-        step === "merge_after_convert" ||
-        step === "merge_matching_denoms"
-      ) {
+      } else if (step === "merge" || step === "merge_matching_denoms") {
         setLastActiveStep(2)
       } else if (step === "convert") {
         setLastActiveStep(3)
-      } else if (step === "split") {
+      } else if (step === "merge_after_convert") {
         setLastActiveStep(4)
-      } else if (step === "success") {
+      } else if (step === "split") {
         setLastActiveStep(5)
+      } else if (step === "success") {
+        setLastActiveStep(6)
       }
     } else {
       setLastActiveStep((prev) => prev)

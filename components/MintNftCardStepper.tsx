@@ -17,7 +17,7 @@ export function MintNftCardStepper({ steps }: Props) {
             <div className="flex flex-row items-center justify-center">
               <div
                 className={cn(
-                  "flex size-10 flex-col items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors",
+                  "flex size-8 flex-col items-center justify-center rounded-full border-2 text-sm font-semibold transition-colors",
                   {
                     "border-palette-green/70 bg-palette-green/70 text-white":
                       el.status === "success",
@@ -44,7 +44,7 @@ export function MintNftCardStepper({ steps }: Props) {
             <div className="pt-2 ">
               <p
                 className={cn(
-                  "text-xs font-medium whitespace-nowrap md:text-sm",
+                  "text-xs font-medium whitespace-nowrap",
                   {
                     "text-palette-green/90": el.status === "success",
                     "text-red-600": el.status === "error",
@@ -59,7 +59,7 @@ export function MintNftCardStepper({ steps }: Props) {
           </div>
           {index < steps.length - 1 && (
             <div
-              className={cn("-mt-10  h-0.5 w-6 bg-gray-200 md:w-16", {
+              className={cn("-mt-9 h-0.5  w-5 bg-gray-200 md:-mt-10 md:w-10", {
                 "bg-palette-green/90": el.status === "success",
                 "bg-palette-blue/90": el.status === "pending",
               })}
