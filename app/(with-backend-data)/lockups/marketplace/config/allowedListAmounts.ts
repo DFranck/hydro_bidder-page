@@ -1,1 +1,5 @@
-export const allowedListAmounts = [25, 50, 100, 250, 500, 1000]
+import { getParsedEnvNumberList } from "@/lib/getParsedEnvNumberList"
+
+export const allowedListAmounts = getParsedEnvNumberList(
+  "NEXT_PUBLIC_NFT_SIZES"
+)

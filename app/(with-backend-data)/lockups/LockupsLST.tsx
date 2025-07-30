@@ -16,6 +16,7 @@ import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { useIsMobile } from "@/hooks/use-mobile"
 import AccordionWrapper from "@/components/Accordion"
+import { NFT_SIZES } from "./config"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -36,7 +37,6 @@ export function LockupsLST({
   tokenInfo,
 }: LockupsLSTProps) {
   const minTokenToBeLocked = 1 / 1e6
-  const NFT_SIZES = [25, 50, 100, 250, 500, 1000]
   const { setToasts } = useToasts()
   const {
     data: { lockedTokenRemainingCapacityGlobal },
