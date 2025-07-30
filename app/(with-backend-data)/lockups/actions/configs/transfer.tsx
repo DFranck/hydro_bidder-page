@@ -1,7 +1,6 @@
 "use client"
 import { Icon } from "@/components/Icon"
 import { AugmentedLockup } from "@/contract-apis/types"
-import { getParsedNftDenomsFromEnv } from "@/lib/getParsedNftDenomsFromEnv"
 import { isValidBech32 } from "@/lib/isValidBech32"
 import { MarketplaceLockup } from "../../marketplace/types"
 import { isListedMarketplaceLockup } from "../../marketplace/utils/isListedMarketplaceLockup"
@@ -10,22 +9,21 @@ import executeTransferNft from "../transactions/executeTransferNft"
 import executeTransferNftUnlist from "../transactions/executeTransferNftUnlist"
 import { ActionConfig } from "../types"
 import { SupabaseHydroListingUpdate } from "../utils/SupabaseHydroListingUpdate"
+import { ALLOWED_MARKETPLACE_DENOMS } from "@/lib/tokenDenoms"
 
-// Token denominations supported for transfer
-const transferAllowedDenoms = getParsedNftDenomsFromEnv()
 
 // Transfer payload
 export type TransferPayload = {
   receiverAddress: string
 }
 
-// A lockup can be transferred if the denom is in transferAllowedDenoms list.
+// A lockup can be transferred if the denom is in ALLOWED_MARKETPLACE_DENOMS list.
 // This affects whether the "Transfer" action is enabled on the lockups page or not.
 function isLockupTransferable(
   lockup?: AugmentedLockup | MarketplaceLockup,
 ): boolean {
   if (!lockup) return false
-  return transferAllowedDenoms.includes(lockup.funds.denom)
+  return ALLOWED_MARKETPLACE_DENOMS.includes(lockup.funds.denom)
 }
 
 // check if payload is valid
