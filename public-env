@@ -65,7 +65,7 @@ NEXT_PUBLIC_HOST_PROJECT_NAME_FULL=Osmosis
 # - Buying options on Marketplace
 NEXT_PUBLIC_ALLOWED_NFT_DENOMS='["ibc/75249A18DEFBEFE55F83B1C70CAD234DF164F174C6BC51682EE92C2C81C18C93"]'
 
-NEXT_PUBLIC_NFT_SIZES='[25, 50, 100, 250, 500, 1000]'
+NEXT_PUBLIC_NFT_SIZES="[25,50,100,250,500,1000]"
 
 # TODO: Remove these notes after we move to config files
 # Assuming just "Osmosis" and "The Cosmos Hub":

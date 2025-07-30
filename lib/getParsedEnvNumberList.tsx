@@ -1,12 +1,6 @@
-"use client"
-
-const ALLOWED_ENV_KEYS = {
-  NEXT_PUBLIC_NFT_SIZES: process.env.NEXT_PUBLIC_NFT_SIZES,
-}
-
-export function getParsedEnvNumberList(key: keyof typeof ALLOWED_ENV_KEYS): number[] {
+export function getParsedEnvNumberList(key: string): number[] {
   try {
-    const raw = ALLOWED_ENV_KEYS[key]
+    const raw = process.env[key]
     if (!raw) return []
     const parsed = JSON.parse(raw)
     return Array.isArray(parsed) &&
