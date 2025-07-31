@@ -91,3 +91,9 @@ export const MINIMUM_SPLIT_AMOUNT = isProd
   : MINIMUM_SPLIT_AMOUNT_STAGING
 
 export const MINIMUM_DATOM_AMOUNT = 950000 / 1e6
+
+export function getNftLockupImage(amount: number, denom: string) {
+  return NFT_LIST.find((nft) =>
+    nft.baseDenom === denom && nft.amount === amount ? nft.image : null
+  )
+}

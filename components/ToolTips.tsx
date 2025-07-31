@@ -415,6 +415,15 @@ export const extendLockupsToVoteTooltip = (
   </p>
 )
 
+export const includeNftSizesTooltip = (
+  <p>
+    If this is toggled on, your existing NFTs are taken into account, in
+    addition to other lockups, when checking which NFTs you are eligible to
+    mint. Note that when this option is enabled, some of your existing NFTs
+    might be merged or split to create new NFTs.
+  </p>
+)
+
 export const mergeIndicatorTooltip = (
   <p>
     You can merge this lockup with your selected lockups, because they use ATOM
