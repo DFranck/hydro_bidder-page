@@ -262,7 +262,7 @@ export default function VortexPage() {
               <StyledText as="label" variant="h4">
                 {amountToUSDString(currentPrice, {
                   appendUsd: false,
-                  numberOfDecimals: 5,
+                  numberOfDecimals: 7,
                   removeTrailingZeros: true,
                 })}
               </StyledText>
@@ -386,7 +386,7 @@ export default function VortexPage() {
             <StyledText as="label" variant="h4">
               {amountToUSDString(Number(lowerBoundPrice), {
                 appendUsd: false,
-                numberOfDecimals: 2,
+                numberOfDecimals: 4,
                 removeTrailingZeros: true,
               })}
             </StyledText>
