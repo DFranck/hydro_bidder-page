@@ -33,7 +33,7 @@ function isValidListPayload(payload: unknown): payload is ListPayload {
   const rawAmount = priceCandidate?.amount
   const amount =
     typeof rawAmount === "string" ? parseFloat(rawAmount) : rawAmount
-  const isAmountValid = typeof amount === "number" && amount >= 1
+  const isAmountValid = typeof amount === "number"
   return isAmountValid
 }
 
