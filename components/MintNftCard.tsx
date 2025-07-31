@@ -163,7 +163,9 @@ export function MintNftCard({
                 )}
               >
                 <div className="h-fit w-full ">
-                  <div className="h-6/6 w-full rounded-2xl bg-gray-400/30 md:h-[160px]">
+                  <div className={cn("h-6/6 w-full rounded-2xl bg-gray-400/30 md:h-[130px]", {
+                    "md:h-[160px]": renderedList.length <= 3
+                  })}>
                     <Avatar
                       url={nft.image}
                       alt={`${nft.displayDenom} NFT`}

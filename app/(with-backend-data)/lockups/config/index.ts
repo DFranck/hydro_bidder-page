@@ -90,3 +90,9 @@ export const NFT_LIST = [...stATOM, ...dATOM].sort(
 export const MINIMUM_SPLIT_AMOUNT = 0.0001
 
 export const MINIMUM_DATOM_AMOUNT = 950000 / 1e6
+
+export function getNftLockupImage(amount: number, denom: string) {
+  return NFT_LIST.find((nft) =>
+    nft.baseDenom === denom && nft.amount === amount ? nft.image : null
+  )
+}
