@@ -1,5 +1,5 @@
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
-import { isProd, NFT_SIZES } from "./nft-sizes"
+import { NFT_SIZES } from "./nft-sizes"
 
 const stATOM = [
   {
