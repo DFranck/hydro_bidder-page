@@ -1,9 +1,6 @@
 import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 import { isProd, NFT_SIZES } from "./nft-sizes"
 
-const MINIMUM_SPLIT_AMOUNT_PROD = 0.01
-const MINIMUM_SPLIT_AMOUNT_STAGING = 0.0001
-
 const stATOM = [
   {
     amount: NFT_SIZES[0],
@@ -86,9 +83,7 @@ export const NFT_LIST = [...stATOM, ...dATOM].sort(
   (a, b) => a.amount - b.amount
 )
 
-export const MINIMUM_SPLIT_AMOUNT = isProd
-  ? MINIMUM_SPLIT_AMOUNT_PROD
-  : MINIMUM_SPLIT_AMOUNT_STAGING
+export const MINIMUM_SPLIT_AMOUNT = 0.01
 
 export const MINIMUM_DATOM_AMOUNT = 950000 / 1e6
 
