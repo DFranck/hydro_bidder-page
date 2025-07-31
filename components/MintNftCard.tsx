@@ -20,6 +20,7 @@ import { Icon } from "./Icon"
 import { Tooltip } from "./Tooltip"
 import { includeNftSizesTooltip } from "./ToolTips"
 import { Switch } from "./ui/switch"
+import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
 
 interface Props {
   lockups: AugmentedLockup[]
@@ -42,6 +43,8 @@ export function MintNftCard({
 }: Props) {
   const { address } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
+
+  const lockupAmounts = lockups.map((lockup) => lockup.funds.amount)
 
   const { data: nfts, isLoading } = useQuery<NFTWithLockupCount[]>({
     queryKey: ["lockup-counts", address, lockups, includeNftSizes],
@@ -122,6 +125,7 @@ export function MintNftCard({
           <Switch
             checked={includeNftSizes}
             onCheckedChange={handleIncludeNftSizes}
+            disabled={!lockupAmounts.some((size) => NFT_SIZES.includes(size))}
             className="mx-2"
           />
           <StyledText
@@ -163,9 +167,14 @@ export function MintNftCard({
                 )}
               >
                 <div className="h-fit w-full ">
-                  <div className={cn("h-6/6 w-full rounded-2xl bg-gray-400/30 md:h-[130px]", {
-                    "md:h-[160px]": renderedList.length <= 3
-                  })}>
+                  <div
+                    className={cn(
+                      "h-6/6 w-full rounded-2xl bg-gray-400/30 md:h-[130px]",
+                      {
+                        "md:h-[160px]": renderedList.length <= 3,
+                      }
+                    )}
+                  >
                     <Avatar
                       url={nft.image}
                       alt={`${nft.displayDenom} NFT`}
