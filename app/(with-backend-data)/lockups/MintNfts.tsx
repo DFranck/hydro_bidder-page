@@ -282,6 +282,7 @@ export function MintNfts({
     setIsCreationModalOpen(false)
     handleInvalidateNFTQuery()
     setIsLoading(false)
+    setIncludeNftSizes(false)
     setStep("init")
     const timeOut = setTimeout(() => {
       setNftDetails(false)
