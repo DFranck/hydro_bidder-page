@@ -1,10 +1,4 @@
 import { StyledText } from "@/components/StyledText"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS } from "@/config"
 import { AugmentedLockup } from "@/contract-apis/types"
@@ -26,6 +20,7 @@ import {
 } from "@/components/ToolTips"
 import { getNftLockupImage } from "./config"
 import { Avatar } from "@/components/Avatar"
+import { Dropdown } from "./actions/components/Dropdown"
 
 export function buildExpiredRow({
   lockup,
@@ -53,16 +48,12 @@ export function buildExpiredRow({
   const MENU_ITEMS = [
     {
       label: "Refresh",
-      icon: (
-        <RotateCw className="text-palette-white group-hover:text-palette-text size-2" />
-      ),
+      icon: <RotateCw className="text-palette-white  size-3" />,
       cta: (lockup: AugmentedLockup) => onClickEdit({ lockup }),
     },
     {
       label: "Split",
-      icon: (
-        <CircleSlash2 className="text-palette-white group-hover:text-palette-text size-2" />
-      ),
+      icon: <CircleSlash2 className="text-palette-white size-3" />,
       cta: (lockup: AugmentedLockup) => onClickSplit({ lockup }),
     },
   ]
@@ -160,31 +151,26 @@ export function buildExpiredRow({
     expiredDaysAgo: `${Math.abs(daysLeft)} days ago`,
 
     actions: (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="flex justify-end">
-          <StyledText as={"span"} className="cursor-pointer">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal />
-          </StyledText>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="flex flex-col bg-black ">
-          {isListedMarketplaceLockup(lockup) && (
-            <LockupActionTrigger lockup={lockup} action="unlist" />
-          )}
-          <LockupActionTrigger lockup={lockup} action="list" />
-          <LockupActionTrigger lockup={lockup} action="transfer" />
-          {MENU_ITEMS.map((item) => (
-            <DropdownMenuItem
-              key={item.label}
-              onClick={() => item.cta(lockup)}
-              className="group text-palette-white hover:bg-palette-green/70 hover:text-palette-text"
-            >
-              {item.icon}
-              {item.label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Dropdown
+        trigger={<MoreHorizontal className="text-white" />}
+        className="px-2 text-gray-500 hover:text-gray-800"
+      >
+        {isListedMarketplaceLockup(lockup) && (
+          <LockupActionTrigger lockup={lockup} action="unlist" />
+        )}
+        <LockupActionTrigger lockup={lockup} action="list" />
+        <LockupActionTrigger lockup={lockup} action="transfer" />
+        {MENU_ITEMS.map((item) => (
+          <button
+            key={item.label}
+            className="text-palette-white hover:bg-palette-green/70 hover:text-palette-text relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors [&_svg]:pointer-events-none [&_svg]:size-4"
+            onClick={() => item.cta(lockup)}
+          >
+            {item.icon}
+            {item.label}
+          </button>
+        ))}
+      </Dropdown>
     ),
   }
 

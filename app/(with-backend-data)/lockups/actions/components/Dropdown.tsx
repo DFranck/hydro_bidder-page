@@ -57,7 +57,7 @@ export function Dropdown({
         <button
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className={twJoin("flex items-center gap-1 text-palette-green")}
+          className={twJoin("text-palette-green flex items-center gap-1")}
         >
           {trigger}
         </button>
@@ -65,9 +65,10 @@ export function Dropdown({
         {open && (
           <div
             className={twJoin(
-              "absolute right-0 top-full z-20 flex flex-col py-2",
-              "rounded-md border bg-palette-text shadow-2xl",
+              "absolute top-full right-0 z-20 flex flex-col py-2",
+              "bg-palette-text rounded-md border shadow-2xl",
               "text-[14px] text-white transition-opacity",
+              open && "px-1.5"
             )}
           >
             {children}
