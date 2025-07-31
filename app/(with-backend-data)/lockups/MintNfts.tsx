@@ -84,11 +84,13 @@ export function MintNfts({
   })
   const [step, setStep] = useState<MintStep>("init")
   const [lastActiveStep, setLastActiveStep] = useState<number>(1)
+  const [includeNftSizes, setIncludeNftSizes] = useState(false)
 
   const { data, isLoading: isNFTLoading } = useFindLockupsForNFTQuery(
     nftInfo.amount,
     nftInfo.baseDenom,
-    lockups
+    lockups,
+    includeNftSizes
   )
 
   const executingStepRef = useRef<MintStep | null>(null)
@@ -98,6 +100,10 @@ export function MintNfts({
       queryKey: ["findLockupsForNFtSizes"],
       refetchType: "active", // only refetch active (mounted) queries
     })
+  }
+
+  function handleIncludeNftSizes() {
+    setIncludeNftSizes(!includeNftSizes)
   }
 
   const eligibleLockupsSizes = data
@@ -135,7 +141,8 @@ export function MintNfts({
     const freshLockupsData = await findLockupsForNFtSizes(
       nftInfo.amount,
       nftInfo.baseDenom,
-      freshLockups
+      freshLockups,
+      includeNftSizes
     )
 
     if (freshLockupsData.selectedLockups.length !== 1) {
@@ -164,6 +171,7 @@ export function MintNfts({
       nftInfo.amount,
       nftInfo.baseDenom,
       freshLockups,
+      includeNftSizes,
       getSigningCosmWasmClient,
       address
     )
@@ -189,6 +197,7 @@ export function MintNfts({
       nftInfo.amount,
       nftInfo.baseDenom,
       freshLockups,
+      includeNftSizes,
       getSigningCosmWasmClient,
       address
     )
@@ -229,6 +238,7 @@ export function MintNfts({
       nftInfo.amount,
       nftInfo.baseDenom,
       freshLockups,
+      includeNftSizes,
       getSigningCosmWasmClient,
       address
     )
@@ -601,6 +611,8 @@ export function MintNfts({
                   steps={steps}
                   lockups={lockups}
                   handleMintInfo={handleMintInfo}
+                  includeNftSizes={includeNftSizes}
+                  handleIncludeNftSizes={handleIncludeNftSizes}
                 />
               )}
             </Card.Body>
