@@ -160,11 +160,9 @@ export function RefreshMultipleLockups({
               />
             </div>
 
-            <div
-              className={cn("opacity-60")}
-            >
+            <div className={cn("inline-flex items-center text-xs opacity-60")}>
               {initMerge ? (
-                <span>
+                <span className="whitespace-nowrap">
                   The new lockup amount will be {formatAmount(totalAmount, 0)}{" "}
                   <span className="pr-1">
                     {filteredLockups[0]?.funds?.denomInfo?.humanReadableDenom}
@@ -172,14 +170,14 @@ export function RefreshMultipleLockups({
                   and ends at
                 </span>
               ) : (
-                <span>
+                <span className="whitespace-nowrap">
                   {refreshLockups.length} lockups will be extended to end on
                 </span>
               )}
               {selectedDuration === AllowedLockupPeriodInEpochs.ONE_EPOCH ? (
-                <div className="h-5 w-24 animate-pulse rounded bg-gray-300"></div>
+                <div className="mx-2 inline-block h-5 w-24 animate-pulse rounded bg-gray-300" />
               ) : (
-                <span>
+                <span className="mx-1">
                   {" "}
                   {dateFormatter.format(newEndDate)} (
                   <>
