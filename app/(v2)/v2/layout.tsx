@@ -31,6 +31,7 @@ export default async function Layout({
             '**:scrollbar-thumb-palette-beige',
             '**:scrollbar-track-background',
             '**:scrollbar-thin',
+            'pb-32'
           )}
         >
           <AppHeader />
