@@ -142,7 +142,6 @@ export async function findLockupsForNFtSizes(
   address?: string,
 ): Promise<LockupsResult> {
   const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
-  const minimumDAtomAmount = MINIMUM_DATOM_AMOUNT
   const isFactoryDenom = denom.startsWith("factory")
 
   const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups, includeNftSizes)
@@ -206,7 +205,7 @@ export async function findLockupsForNFtSizes(
           getSigningCosmWasmClient,
           address,
           lockIds: atomLockups
-            .filter((lockup) => lockup.funds.amount >= minimumDAtomAmount)
+            .filter((lockup) => lockup.funds.amount >= MINIMUM_DATOM_AMOUNT)
             .map((el) => el.id),
         })
 
