@@ -118,7 +118,8 @@ export function MintNftCard({
               <span>
                 {" "}
                 To mint an NFT, you need lockups of stATOM, dATOM, or ATOM
-                liquid-staked to a validator that can be converted into dATOM.
+                liquid-staked to a validator that can be converted into dATOM. Only validators
+                that
                 <StyledText
                   variant="link"
                   href="https://app.drop.money/stake?denom=uatom"
@@ -127,10 +128,11 @@ export function MintNftCard({
                 >
                   <span>
                     {" "}
-                    See more information about which validators are eligible
+                    you can directly stake your staked balance with via Drop 
                   </span>
                   <Icon name="arrow-up-right-from-square" />
                 </StyledText>
+                are eligible.
               </span>
 
               <span>
