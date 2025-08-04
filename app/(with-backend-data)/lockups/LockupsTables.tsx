@@ -283,7 +283,7 @@ export function LockupsTables({
       </BlurryBackdropBox>
 
       <BlurryBackdropBox
-        id="active-lockups"
+        id="active-nft-lockups"
         className="group flex flex-col gap-3 overflow-visible"
       >
         <TableHeader
@@ -298,9 +298,9 @@ export function LockupsTables({
             </div>
           }
           rightSlot={
-            expiredLockupRows.length > 0 && (
+            expiredNftLockupRows.length > 0 && (
               <StyledText as={Link} variant="link" href="#nft-lockups">
-                <span>Jump to {expiredLockupRows.length} Expired</span>
+                <span>Jump to {expiredNftLockupRows.length} Expired</span>
                 <Icon name="arrow-down-long" />
               </StyledText>
             )
@@ -365,7 +365,7 @@ export function LockupsTables({
 
       {expiredNftLockupRows.length > 0 && (
         <BlurryBackdropBox
-          id="nft-lockups"
+          id="expired-nft-lockups"
           className="group flex flex-col gap-3 overflow-visible"
         >
           <TableHeader
@@ -379,7 +379,14 @@ export function LockupsTables({
                 <StyledText variant="h4">Expired NFTs</StyledText>
               </div>
             }
-            rightSlot={undefined}
+            rightSlot={
+              activeNftLockupRows.length > 0 && (
+                <StyledText as={Link} variant="link" href="#nft-lockups">
+                  <span>Jump to {activeNftLockupRows.length} Expired</span>
+                  <Icon name="arrow-down-long" />
+                </StyledText>
+              )
+            }
           />
 
           <StyledTable
