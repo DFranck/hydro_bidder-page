@@ -152,7 +152,7 @@ export function buildExpiredRow({
     amount: (
       <>
         {nftSize ? (
-          { amount }
+          amount
         ) : (
           <LockupActionTrigger lockup={lockup} action="transfer">
             {amount}
