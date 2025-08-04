@@ -21,6 +21,8 @@ import { Tooltip } from "./Tooltip"
 import { includeNftSizesTooltip } from "./ToolTips"
 import { Switch } from "./ui/switch"
 import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
+import { AlertCircleIcon } from "lucide-react"
 
 interface Props {
   lockups: AugmentedLockup[]
@@ -32,6 +34,7 @@ interface Props {
 
 type NFTWithLockupCount = NFT_INFO & {
   lockupCount: number
+  hasSimulatedErrorLSM?: boolean
 }
 
 export function MintNftCard({
@@ -65,11 +68,13 @@ export function MintNftCard({
             return {
               ...nft,
               lockupCount: result.selectedLockupsCount,
+              hasSimulatedErrorLSM: result.hasSimulatedErrorLSM,
             }
           } catch {
             return {
               ...nft,
               lockupCount: 0,
+              hasSimulatedErrorLSM: false,
             }
           }
         })
@@ -83,6 +88,13 @@ export function MintNftCard({
         lockupCount: 0,
       }))
     : nfts?.filter((nft) => nft.lockupCount !== 0) || []
+
+  const hasSimulatedErrorLSM: NFTWithLockupCount[] = isLoading
+    ? NFT_LIST.map((nft) => ({
+        ...nft,
+        lockupCount: 0,
+      }))
+    : nfts?.filter((nft) => !!nft.hasSimulatedErrorLSM) || []
 
   if (isLoading) {
     return (
@@ -100,26 +112,54 @@ export function MintNftCard({
   return (
     <div>
       {renderedList.length === 0 ? (
-        <div className="flex flex-col  items-center justify-center p-28">
+        <div className="flex flex-col  items-center justify-center p-20">
           <div>
-            <span className=" text-gray-400">
-              You need more lockups to mint an NFT. You can also visit the
-              <StyledText
-                variant="link"
-                href="/lockups/marketplace"
-                as={Link}
-                className="mx-1.5 inline-block whitespace-nowrap"
-              >
-                <span>marketplace</span>
-                <Icon name="arrow-up-right-from-square" />
-              </StyledText>{" "}
-              to buy a lockup.
-            </span>
+            <p className=" text-gray-400">
+              <span>
+                {" "}
+                To mint an NFT, you need lockups of stATOM, dATOM, or ATOM
+                liquid-staked to a validator that can be converted into dATOM.
+                <StyledText
+                  variant="link"
+                  href="https://app.drop.money/stake?denom=uatom"
+                  as={Link}
+                  className="mx-1.5"
+                >
+                  <span>
+                    {" "}
+                    See more information about which validators are eligible
+                  </span>
+                  <Icon name="arrow-up-right-from-square" />
+                </StyledText>
+              </span>
+
+              <span>
+                You can also visit the
+                <StyledText
+                  variant="link"
+                  href="/lockups/marketplace"
+                  as={Link}
+                  className="mx-1.5"
+                >
+                  <span>marketplace</span>
+                </StyledText>{" "}
+                to buy a lockup.
+              </span>
+            </p>
           </div>
         </div>
       ) : (
         <MintNftCardStepper steps={steps} />
       )}
+      {hasSimulatedErrorLSM.length > 0 && renderedList.length !== 0 ? (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircleIcon />
+          <AlertTitle>Note:</AlertTitle>
+          <AlertDescription>
+            One or more of your lockups are not eligible to mint an NFT
+          </AlertDescription>
+        </Alert>
+      ) : null}
       {renderedList.length !== 0 ? (
         <div className="mb-4 flex items-center justify-end">
           <Switch

@@ -1,4 +1,5 @@
 import { HydroBaseClient } from "@/app/ts_types/HydroBase.client"
+import { DtokenAmountResponse } from "@/app/ts_types/HydroBase.types"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { invariant } from "ts-invariant"
 
@@ -22,10 +23,26 @@ export async function executeWalletSimulateLockup({
 
   const hydroClient = new HydroBaseClient(client, address, hydroContractAddress)
 
-  const response = await hydroClient.simulateDtokenAmounts({
-    address,
-    lockIds,
-  })
+  const dtokens_response: DtokenAmountResponse[] = []
 
-  return response
+  const simulateError = []
+
+  for (const lockId of lockIds) {
+    try {
+      const res = await hydroClient.simulateDtokenAmounts({
+        address,
+        lockIds: [lockId],
+      })
+
+      if (res?.dtokens_response?.[0]) {
+        dtokens_response.push(res.dtokens_response[0])
+      }
+    } catch (err) {
+      simulateError.push(err)
+    }
+  }
+
+  const hasSimulatedError = simulateError.length > 0 ? true : false
+
+  return { dtokens_response, hasSimulatedError }
 }

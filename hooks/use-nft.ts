@@ -25,9 +25,10 @@ export interface LockupsResult {
   virtualLockups: VirtualLockup[]
   hasMatchingDenoms: boolean
   hasDenomCombination?: boolean
+  hasSimulatedErrorLSM?: boolean
 }
 
-interface SimulatedLockup {
+export interface SimulatedLockup {
   lock_id: number
   dtoken_amount: string
 }
@@ -125,7 +126,7 @@ export function useFindLockupsForNFTQuery(
         lockups,
         includeNftSizes,
         getSigningCosmWasmClient,
-        address,
+        address
       )
     },
     enabled: !!NFT_SIZE && !!denom,
@@ -139,14 +140,18 @@ export async function findLockupsForNFtSizes(
   lockups: AugmentedLockup[],
   includeNftSizes: boolean,
   getSigningCosmWasmClient?: () => Promise<SigningCosmWasmClient>,
-  address?: string,
+  address?: string
 ): Promise<LockupsResult> {
   const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
   const isFactoryDenom = denom.startsWith("factory")
 
-  const nativeResult = findLSTLockupsForNFT(requiredAmount, denom, lockups, includeNftSizes)
+  const nativeResult = findLSTLockupsForNFT(
+    requiredAmount,
+    denom,
+    lockups,
+    includeNftSizes
+  )
 
-  // ✅ FIXED: Find ALL dATOM native lockups, not just the first one
   const allDAtomNativeLockups = isFactoryDenom
     ? lockups.filter(
         (lockup) =>
@@ -188,6 +193,7 @@ export async function findLockupsForNFtSizes(
   }
 
   let virtualLockupsLSM: VirtualLockup[] = []
+  let hasSimulatedErrorLSM = false
 
   if (
     isFactoryDenom &&
@@ -211,6 +217,8 @@ export async function findLockupsForNFtSizes(
 
         const simulatedResults: SimulatedLockup[] =
           dtokenResponse.dtokens_response
+
+        hasSimulatedErrorLSM = dtokenResponse.hasSimulatedError
 
         virtualLockupsLSM = atomLockups.map((atomLockup) => {
           const simulatedResult = simulatedResults.find(
@@ -262,11 +270,11 @@ export async function findLockupsForNFtSizes(
       funds: { ...l.funds, amount: l.funds.amount / 1e6 },
     })
   )
-  let baseAmount = 0 // ✅ FIXED: Start with 0 to avoid double counting
+  let baseAmount = 0 // Start with 0 to avoid double counting
 
   const selectedCombination: VirtualLockup[] = []
 
-  // ✅ FIXED: Add ALL dATOM native lockups (if applicable)
+  // Add ALL dATOM native lockups (if applicable)
   for (const dAtomLockup of dAtomNativeLockups) {
     selectedCombination.push(dAtomLockup)
     baseAmount += dAtomLockup.funds.amount
@@ -331,6 +339,7 @@ export async function findLockupsForNFtSizes(
       virtualLockups: [],
       hasMatchingDenoms: false,
       hasDenomCombination: false,
+      hasSimulatedErrorLSM: false,
     }
   }
 
@@ -338,7 +347,7 @@ export async function findLockupsForNFtSizes(
   const hasDenomCombination =
     denomSet.size === 1 && selectedCombination.length > 1
 
-  // ✅ FIXED: Check against all dATOM lockups in virtualOnly calculation
+  // Check against all dATOM lockups in virtualOnly calculation
   const virtualOnly = selectedCombination.filter(
     (l) =>
       !nativeResult.selectedLockups.find((n) => n.id === l.id) &&
@@ -374,5 +383,6 @@ export async function findLockupsForNFtSizes(
     virtualLockups: virtualOnly,
     hasMatchingDenoms,
     hasDenomCombination,
+    hasSimulatedErrorLSM,
   }
 }
