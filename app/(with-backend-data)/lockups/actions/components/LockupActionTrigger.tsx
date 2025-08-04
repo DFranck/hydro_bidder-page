@@ -162,6 +162,7 @@ export function LockupActionTrigger<T extends LockupActionType>({
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirm}
           isProcessing={isProcessing}
+          showActionPanel={true}
         />
       )}
     </>

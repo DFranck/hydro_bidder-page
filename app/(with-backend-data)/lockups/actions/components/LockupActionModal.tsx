@@ -12,6 +12,7 @@ import {
 } from "../types"
 import { getLockupActionConfig } from "../utils/getLockupActionConfig"
 import { LockupActionCard } from "./LockupActionCard"
+import { StyledText } from "@/components/StyledText"
 
 interface LockupActionModalProps<T extends LockupActionType> {
   isOpen: boolean
@@ -21,6 +22,7 @@ interface LockupActionModalProps<T extends LockupActionType> {
   onClose: () => void
   onConfirm: (payload: LockupActionPayloadFor<T>) => Promise<void>
   isProcessing: boolean
+  showActionPanel: boolean
 }
 
 export default function LockupActionModal<T extends LockupActionType>({
@@ -31,6 +33,7 @@ export default function LockupActionModal<T extends LockupActionType>({
   onClose,
   onConfirm,
   isProcessing,
+  showActionPanel,
 }: LockupActionModalProps<T>) {
   const config = getLockupActionConfig(action)
   const [payload, setPayload] = useState<LockupActionPayloadFor<T>>(
@@ -86,29 +89,41 @@ export default function LockupActionModal<T extends LockupActionType>({
             action={action}
             onChange={handleChange}
           />
-          <form
-            className="flex flex-col gap-6"
-            onSubmit={async (e) => {
-              e.preventDefault()
-              if (!isFormValid) {
-                return
-              }
-              await onConfirm(payload)
-              setIsFormValid(false)
-            }}
-          >
-            <Component
-              isDisabled={isDisabled}
-              lockup={lockup}
-              onChange={handleChange}
-              config={config}
-              onClose={onClose}
-              isProcessing={isProcessing}
-              onConfirm={onConfirm}
-              isFormValid={isFormValid}
-              payload={payload}
-            />
-          </form>
+          {showActionPanel ? (
+            <form
+              className="flex flex-col gap-6"
+              onSubmit={async (e) => {
+                e.preventDefault()
+                if (!isFormValid) {
+                  return
+                }
+                await onConfirm(payload)
+                setIsFormValid(false)
+              }}
+            >
+              <Component
+                isDisabled={isDisabled}
+                lockup={lockup}
+                onChange={handleChange}
+                config={config}
+                onClose={onClose}
+                isProcessing={isProcessing}
+                onConfirm={onConfirm}
+                isFormValid={isFormValid}
+                payload={payload}
+              />
+            </form>
+          ) : (
+            <div className="flex justify-end">
+              <StyledText
+                as={"span"}
+                variant="button.primary"
+                onClick={onClose}
+              >
+                Close
+              </StyledText>
+            </div>
+          )}
         </div>
       </div>
     </ModalWindow>
