@@ -17,22 +17,34 @@ export async function fetchHydroLockups(): Promise<
   AllNftInfoWithOutstanding[]
 > {
   console.log(
-    `Fetching hydro meta data from contract ending ${process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS?.slice(-6)}`,
+    `Fetching hydro lockups from contract ending ${process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS?.slice(-6)}`
   )
   const hydroQueryClient = await getHydroQueryClient()
   const tributeQueryClient = await getTributeQueryClient()
 
   let tokenIds: string[] = []
-  let startAfter: string | undefined = undefined
-  const limit = 100
+  let startAfter = 0
+  let limit = 1
 
   while (true) {
-    const res = await hydroQueryClient.allTokens({ limit, startAfter })
-    tokenIds.push(...res.tokens)
+    try {
+      const res = await hydroQueryClient.allTokens({
+        limit,
+        startAfter: startAfter.toString(),
+      })
+      tokenIds.push(...res.tokens)
 
-    if (res.tokens.length < limit) break
+      if (res.tokens.length < limit) break
 
-    startAfter = res.tokens[res.tokens.length - 1]
+      limit = 100
+      startAfter = Number(res.tokens[res.tokens.length - 1])
+    } catch (err) {
+      if (err) {
+        limit = 1
+        startAfter += 100
+      }
+      console.error(`Failed to fetch tokens: ${err}`)
+    }
   }
 
   const lockups: AllNftInfoWithOutstanding[] = []
@@ -59,7 +71,7 @@ export async function fetchHydroLockups(): Promise<
     } catch (err) {
       console.error(
         `Failed to fetch info/outstanding for tokenId ${tokenId}:`,
-        err,
+        err
       )
     }
   }
