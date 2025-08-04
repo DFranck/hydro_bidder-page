@@ -28,12 +28,14 @@ export function LockupActionTrigger<T extends LockupActionType>({
   children,
   variant,
   className,
+  showActionPanel = true ,
 }: {
   lockup: LockupTypeForAction<T>
   action: T
   children?: React.ReactNode
   variant?: StyledTextVariant
   className?: string
+  showActionPanel?: boolean
 }) {
   const { setToasts } = useToasts()
   const { refetchWalletData } = useBackendData()
@@ -162,7 +164,7 @@ export function LockupActionTrigger<T extends LockupActionType>({
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirm}
           isProcessing={isProcessing}
-          showActionPanel={true}
+          showActionPanel={showActionPanel}
         />
       )}
     </>

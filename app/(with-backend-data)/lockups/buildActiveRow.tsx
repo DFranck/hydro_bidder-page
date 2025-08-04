@@ -169,7 +169,12 @@ export function buildActiveRow({
         {nftSize ? (
           amount
         ) : (
-          <LockupActionTrigger lockup={lockup} action="transfer">
+          <LockupActionTrigger
+            lockup={lockup}
+            action="transfer"
+            className="cursor-pointer hover:font-medium"
+            showActionPanel={false}
+          >
             {amount}
           </LockupActionTrigger>
         )}

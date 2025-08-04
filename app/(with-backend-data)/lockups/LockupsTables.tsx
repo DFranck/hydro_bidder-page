@@ -232,10 +232,10 @@ export function LockupsTables({
   }
 
   return (
-    <div className="flex flex-col gap-12 ">
+    <div className="flex flex-col gap-12">
       <BlurryBackdropBox
         id="active-lockups"
-        className="group z-10 flex flex-col gap-3 overflow-visible"
+        className="group flex flex-col gap-3 overflow-visible"
       >
         <TableHeader
           leftSlot={
@@ -284,7 +284,7 @@ export function LockupsTables({
 
       <BlurryBackdropBox
         id="active-lockups"
-        className="group z-10 flex flex-col gap-3 overflow-visible"
+        className="group flex flex-col gap-3 overflow-visible"
       >
         <TableHeader
           leftSlot={
