@@ -12,6 +12,7 @@ import {
 } from "../types"
 import { getLockupActionConfig } from "../utils/getLockupActionConfig"
 import { LockupActionCard } from "./LockupActionCard"
+import { StyledText } from "@/components/StyledText"
 
 interface LockupActionModalProps<T extends LockupActionType> {
   isOpen: boolean
@@ -21,6 +22,7 @@ interface LockupActionModalProps<T extends LockupActionType> {
   onClose: () => void
   onConfirm: (payload: LockupActionPayloadFor<T>) => Promise<void>
   isProcessing: boolean
+  showActionPanel: boolean
 }
 
 export default function LockupActionModal<T extends LockupActionType>({
@@ -31,12 +33,13 @@ export default function LockupActionModal<T extends LockupActionType>({
   onClose,
   onConfirm,
   isProcessing,
+  showActionPanel,
 }: LockupActionModalProps<T>) {
   const config = getLockupActionConfig(action)
   const [payload, setPayload] = useState<LockupActionPayloadFor<T>>(
     config.getInitialPayload
       ? config.getInitialPayload(lockup)
-      : ({} as LockupActionPayloadFor<T>),
+      : ({} as LockupActionPayloadFor<T>)
   )
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function LockupActionModal<T extends LockupActionType>({
       setPayload(
         config.getInitialPayload
           ? config.getInitialPayload(lockup)
-          : ({} as LockupActionPayloadFor<T>),
+          : ({} as LockupActionPayloadFor<T>)
       )
       setIsFormValid(false)
     }
@@ -57,10 +60,10 @@ export default function LockupActionModal<T extends LockupActionType>({
           ({
             ...(typeof prev === "object" && prev !== null ? prev : {}),
             ...newValues,
-          }) as LockupActionPayloadFor<T>,
+          }) as LockupActionPayloadFor<T>
       )
     },
-    [],
+    []
   )
 
   useEffect(() => {
@@ -76,7 +79,7 @@ export default function LockupActionModal<T extends LockupActionType>({
     <ModalWindow isOpen={isOpen} onClose={onClose} className="max-w-[98%]">
       <div className="rounded-xl border-2 border-white/20 bg-black p-0">
         <div className="h-[48px] gap-[10px] rounded-t-xl bg-[#FFE1B81A] px-6 py-3 text-lg">
-          <h2 className="font-inter text-[18px] font-bold leading-6">
+          <h2 className="font-inter text-[18px] leading-6 font-bold">
             Lockup Details
           </h2>
         </div>
@@ -86,29 +89,41 @@ export default function LockupActionModal<T extends LockupActionType>({
             action={action}
             onChange={handleChange}
           />
-          <form
-            className="flex flex-col gap-6"
-            onSubmit={async (e) => {
-              e.preventDefault()
-              if (!isFormValid) {
-                return
-              }
-              await onConfirm(payload)
-              setIsFormValid(false)
-            }}
-          >
-            <Component
-              isDisabled={isDisabled}
-              lockup={lockup}
-              onChange={handleChange}
-              config={config}
-              onClose={onClose}
-              isProcessing={isProcessing}
-              onConfirm={onConfirm}
-              isFormValid={isFormValid}
-              payload={payload}
-            />
-          </form>
+          {showActionPanel ? (
+            <form
+              className="flex flex-col gap-6"
+              onSubmit={async (e) => {
+                e.preventDefault()
+                if (!isFormValid) {
+                  return
+                }
+                await onConfirm(payload)
+                setIsFormValid(false)
+              }}
+            >
+              <Component
+                isDisabled={isDisabled}
+                lockup={lockup}
+                onChange={handleChange}
+                config={config}
+                onClose={onClose}
+                isProcessing={isProcessing}
+                onConfirm={onConfirm}
+                isFormValid={isFormValid}
+                payload={payload}
+              />
+            </form>
+          ) : (
+            <div className="flex justify-end">
+              <StyledText
+                as={"span"}
+                variant="button.primary"
+                onClick={onClose}
+              >
+                Close
+              </StyledText>
+            </div>
+          )}
         </div>
       </div>
     </ModalWindow>
