@@ -23,6 +23,7 @@ import {
 import { getNftLockupImage } from "./config"
 import { Avatar } from "@/components/Avatar"
 import { Dropdown } from "./actions/components/Dropdown"
+import { NFT_SIZES } from "./config/nft-sizes"
 
 export function buildActiveRow({
   lockup,
@@ -91,6 +92,30 @@ export function buildActiveRow({
     mergeableLockups.length > 0 &&
     findMergeableLockup(mergeableLockups).funds.denom === lockup.funds.denom
 
+  const nftSize = !NFT_SIZES.includes(lockup.funds.amount)
+
+  const amount = (
+    <div className="flex items-center gap-1">
+      <StyledText>
+        {formatAmount(
+          lockup.funds.amount * 1e6,
+          undefined,
+          DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
+        )}
+      </StyledText>
+      <StyledText variant="footnote">
+        {lockup.funds.denomInfo?.humanReadableDenom}
+      </StyledText>
+      {nftImage ? (
+        <Avatar
+          url={nftImage.image}
+          alt={`${nftImage.displayDenom} NFT`}
+          className="size-4 rounded-sm"
+        />
+      ) : null}
+    </div>
+  )
+
   const cells = {
     _lockup: { ...lockup, daysLeft },
 
@@ -140,25 +165,15 @@ export function buildActiveRow({
     ),
 
     amount: (
-      <div className="flex items-center gap-1">
-        <StyledText>
-          {formatAmount(
-            lockup.funds.amount * 1e6,
-            undefined,
-            DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
-          )}
-        </StyledText>
-        <StyledText variant="footnote">
-          {lockup.funds.denomInfo?.humanReadableDenom}
-        </StyledText>
-        {nftImage ? (
-          <Avatar
-            url={nftImage.image}
-            alt={`${nftImage.displayDenom} NFT`}
-            className="size-4 rounded-sm"
-          />
-        ) : null}
-      </div>
+      <>
+        {nftSize ? (
+          { amount }
+        ) : (
+          <LockupActionTrigger lockup={lockup} action="transfer">
+            {amount}
+          </LockupActionTrigger>
+        )}
+      </>
     ),
 
     timeLeft: pluralize({

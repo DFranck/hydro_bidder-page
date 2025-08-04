@@ -36,7 +36,7 @@ export default function LockupActionModal<T extends LockupActionType>({
   const [payload, setPayload] = useState<LockupActionPayloadFor<T>>(
     config.getInitialPayload
       ? config.getInitialPayload(lockup)
-      : ({} as LockupActionPayloadFor<T>),
+      : ({} as LockupActionPayloadFor<T>)
   )
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function LockupActionModal<T extends LockupActionType>({
       setPayload(
         config.getInitialPayload
           ? config.getInitialPayload(lockup)
-          : ({} as LockupActionPayloadFor<T>),
+          : ({} as LockupActionPayloadFor<T>)
       )
       setIsFormValid(false)
     }
@@ -57,10 +57,10 @@ export default function LockupActionModal<T extends LockupActionType>({
           ({
             ...(typeof prev === "object" && prev !== null ? prev : {}),
             ...newValues,
-          }) as LockupActionPayloadFor<T>,
+          }) as LockupActionPayloadFor<T>
       )
     },
-    [],
+    []
   )
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function LockupActionModal<T extends LockupActionType>({
     <ModalWindow isOpen={isOpen} onClose={onClose} className="max-w-[98%]">
       <div className="rounded-xl border-2 border-white/20 bg-black p-0">
         <div className="h-[48px] gap-[10px] rounded-t-xl bg-[#FFE1B81A] px-6 py-3 text-lg">
-          <h2 className="font-inter text-[18px] font-bold leading-6">
+          <h2 className="font-inter text-[18px] leading-6 font-bold">
             Lockup Details
           </h2>
         </div>
