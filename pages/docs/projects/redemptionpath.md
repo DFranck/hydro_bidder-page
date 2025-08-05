@@ -8,12 +8,12 @@ The “Redemption Path” can help alleviate this. For 24 hours after a voting r
 
 For example:
 
-Project A ends up with 4.5% of the voting power at the end of a round
-The highest tribute APR offered in the round was 25%, so Project A needs to offer 50%
-Project A needs to add additional tribute 
-Within 24 hours, project A decides to use the redemption path and offers a $1000 tribute
-$500 goes towards the voters that backed the bid
-$500 of that tribute goes to the Hydro treasury
-The project gets liquidity deployed equal to 5% of the voting power
+* Project A ends up with 4.5% of the voting power at the end of a round
+* The highest tribute APR offered in the round was 25%, so Project A needs to offer 50%
+* Project A needs to add additional tribute 
+* Within 24 hours, project A decides to use the redemption path and offers a $1000 tribute
+* $500 goes towards the voters that backed the bid
+* $500 of that tribute goes to the Hydro treasury
+* The project gets liquidity deployed equal to 5% of the voting power
 
 The end result is that bids don’t fail by a very small margin of votes, that liquidity doesn’t go undeployed in a round, and that voters are less likely to switch their votes away from a struggling bid during the final hours of a round.
