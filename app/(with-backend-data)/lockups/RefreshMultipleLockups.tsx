@@ -5,7 +5,7 @@ import { InputForLockupPeriod } from "@/components/InputForLockupPeriod"
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { toastMessages } from "@/components/ToastMessages"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { executeWalletExtendLockup } from "@/contract-apis/executeWalletExtendLockup"
@@ -19,6 +19,8 @@ import { getDaysAway } from "@/lib/getDaysAway"
 import { Icon } from "@/components/Icon"
 import { executeWalletMergeLockups } from "@/contract-apis/executeWalletMergeLockups"
 import { cn } from "@/lib/utils"
+import { isNumber } from "lodash"
+import { getTimeUnitFromNanos } from "@/lib/getTimeUnitFromNanos"
 
 interface RefreshMultipleLockupsProps {
   initMerge: boolean
@@ -43,7 +45,7 @@ export function RefreshMultipleLockups({
 }: RefreshMultipleLockupsProps) {
   const { setToasts } = useToasts()
 
-  const { address } = useBackendData()
+  const { address, lockedAtomEpochInNanos } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
 
   const [selectedDuration, setSelectedDuration] = useState(
@@ -72,6 +74,37 @@ export function RefreshMultipleLockups({
   const totalAmount = filteredLockups.reduce((sum, lockup) => {
     return sum + Number(lockup.funds.amount)
   }, 0)
+
+  const lockupPeriodOptionsRaw = Object.values(AllowedLockupPeriodInEpochs)
+    .filter(isNumber)
+    .map((epochCount) => {
+      const { value, unit } = getTimeUnitFromNanos(
+        epochCount * lockedAtomEpochInNanos
+      )
+      return {
+        label: `${pluralize({
+          count: value,
+          prefixCount: true,
+          singular: unit,
+        })}`,
+        duration: epochCount * lockedAtomEpochInNanos,
+      }
+    })
+    .filter((option) => {
+      const newDurationEndDate = new Date(
+        (Date.now() * 1e6 + option.duration) / 1e6
+      )
+      return !currentLockupEndDate
+        ? true
+        : currentLockupEndDate < newDurationEndDate
+    })
+
+  const lockupPeriodOptions = [
+    lockupPeriodOptionsRaw.reduce(
+      (max, o) => (o.duration > max.duration ? o : max),
+      lockupPeriodOptionsRaw[0]
+    ),
+  ]
 
   async function handleChange(newDuration: number) {
     setSelectedDuration(newDuration)
@@ -129,6 +162,16 @@ export function RefreshMultipleLockups({
     setSelectedDuration(AllowedLockupPeriodInEpochs.ONE_EPOCH)
   }
 
+  useEffect(() => {
+    if (!initMerge && !isCreationModalOpen) return
+    function handleNewDuration() {
+      return lockupPeriodOptions.map((item) =>
+        setSelectedDuration(item?.duration)
+      )
+    }
+    handleNewDuration()
+  }, [initMerge, isCreationModalOpen])
+
   return (
     <ModalWindow
       isOpen={isCreationModalOpen}
@@ -138,7 +181,7 @@ export function RefreshMultipleLockups({
       onCloseComplete={() => {
         handleModalWindowCloseComplete()
       }}
-      className="w-5/6 md:w-[550px]"
+      className="w-6/6 px-3 md:w-[550px] md:px-0"
     >
       <form onSubmit={handleSubmitCreationForm}>
         <Card>
@@ -149,18 +192,22 @@ export function RefreshMultipleLockups({
               <StyledText className="font-bold">
                 {initMerge ? "Review Lockup details" : "New Lockup Duration"}:
               </StyledText>
-
-              <InputForLockupPeriod
-                currentLockupEndDate={currentLockupEndDate}
-                selectedDuration={selectedDuration}
-                className="w-full"
-                classNamesForButtons="!w-full"
-                onChange={handleChange}
-                initMerge={initMerge}
-              />
+              {!initMerge ? (
+                <InputForLockupPeriod
+                  currentLockupEndDate={currentLockupEndDate}
+                  selectedDuration={selectedDuration}
+                  className="w-full"
+                  classNamesForButtons="!w-full"
+                  onChange={handleChange}
+                />
+              ) : null}
             </div>
 
-            <div className={cn("inline-flex items-center text-xs opacity-60")}>
+            <div
+              className={cn(
+                "flex flex-row flex-wrap items-center text-xs opacity-60 md:inline-flex"
+              )}
+            >
               {initMerge ? (
                 <span className="whitespace-nowrap">
                   The new lockup amount will be {formatAmount(totalAmount, 0)}{" "}
