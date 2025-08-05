@@ -6,7 +6,6 @@ import { fetchCurrentRoundId } from "@/contract-apis/fetchCurrentRoundId"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { formatOrdinals } from "@/lib/formatOrdinals"
-import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
@@ -32,7 +31,6 @@ export function AppBanner() {
   const [currentRoundId, setCurrentRoundId] = useState<number>(
     currentRoundIdFromBackend
   )
-  const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const activeBannerName = lockedAtomIsAtCapacityGlobal
     ? "maxCapacity"
     : "pilotRounds"
@@ -73,17 +71,17 @@ export function AppBanner() {
     <div
       className={twMerge(
         `
-          relative
-          text-balance
           bg-palette-beige
+          text-palette-text
+          relative
           px-3
           text-center
-          text-palette-text
+          text-balance
           transition-all
           duration-300
           xl:px-24
         `,
-        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm"
+        "py-2 text-sm"
       )}
     >
       {text}

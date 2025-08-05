@@ -2,7 +2,6 @@
 
 import { AppBanner } from "@/components/AppBanner"
 import { ContentContainer } from "@/components/ContentContainer"
-import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useRef } from "react"
@@ -10,7 +9,6 @@ import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
 export function Header() {
-  const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
   const elementRef = useRef<HTMLDivElement>(null)
   const ghostElementRef = useRef<HTMLDivElement>(null)
 
@@ -55,7 +53,7 @@ export function Header() {
               transition-all
               duration-300
             `,
-            isScrolled ? `py-1` : `py-3`
+            `py-3`
           )}
         >
           <div
@@ -64,7 +62,7 @@ export function Header() {
                 transition-all
                 duration-300
               `,
-              isScrolled ? `h-8 w-40` : `h-12 w-56`
+              `h-12 w-56`
             )}
           >
             <Link href="/" className="relative block h-full w-full">
