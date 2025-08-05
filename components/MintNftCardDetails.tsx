@@ -5,6 +5,7 @@ import { Equal, Plus, SquaresUnite } from "lucide-react"
 import { pluralize } from "@/lib/pluralize"
 import { formatAmount } from "@/lib/formatAmount"
 import { LockupsResult } from "@/hooks/use-nft"
+import { Avatar } from "./Avatar"
 
 interface Props {
   nftInfo: NFT_INFO
@@ -20,7 +21,7 @@ export function MintNftCardDetails({
   return (
     <div className="flex flex-col gap-4 md:flex-row">
       <div className="flex flex-col items-center gap-2">
-        <img src={nftInfo.image} alt={"nft.denom"} className="size-60" />
+        <Avatar url={nftInfo.image} alt={"nft.denom"} className="size-60 rounded-none" />
       </div>
       {isNFTLoading ? (
         <div className="h-auto flex-1 animate-pulse rounded-md bg-gray-200/10" />
