@@ -243,6 +243,7 @@ export function BidTributeApr({
         'inline-flex items-center gap-1',
         className,
       )}
+      classNamesForTooltip="-translate-y-68 min-w-[300px] md:min-w-[400px]"
       tip={tooltipContent}
     >
       <span className="@card-is-row:flex-col flex items-center gap-1">

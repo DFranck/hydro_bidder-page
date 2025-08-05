@@ -47,6 +47,7 @@ export function BidDuration({ bidId, sourceId, className }: BidDurationProps) {
         className,
       )}
       tip={polDurationTooltip}
+      classNamesForTooltip="-translate-y-44"
     >
       <span className="important-value">{durationNumber}</span>{' '}
       {pluralize({
