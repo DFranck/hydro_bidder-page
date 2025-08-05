@@ -8,6 +8,9 @@ const meta = {
    "deployments": {
     title: "Deployment process",
   },
+   "redemptionpath": {
+    title: "Redemption path",
+  },
   faq: {
     title: "FAQ",
   },
