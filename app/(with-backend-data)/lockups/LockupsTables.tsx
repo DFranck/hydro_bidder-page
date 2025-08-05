@@ -48,14 +48,20 @@ export function LockupsTables({
   )
 
   const allActiveNftLockups = lockups.filter(
-    (lockup) => !lockup.isExpired && NFT_SIZES.includes(lockup.funds.amount)
+    (lockup) =>
+      !lockup.isExpired &&
+      lockup.funds.denomInfo?.humanReadableDenom !== "ATOM" &&
+      NFT_SIZES.includes(lockup.funds.amount)
   )
 
   const allExpiredLockups = lockups.filter(
     (lockup) => lockup.isExpired && !NFT_SIZES.includes(lockup.funds.amount)
   )
   const allExpiredNftLockups = lockups.filter(
-    (lockup) => lockup.isExpired && NFT_SIZES.includes(lockup.funds.amount)
+    (lockup) =>
+      lockup.isExpired &&
+      lockup.funds.denomInfo?.humanReadableDenom !== "ATOM" &&
+      NFT_SIZES.includes(lockup.funds.amount)
   )
 
   const mergeableLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
