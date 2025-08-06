@@ -70,10 +70,6 @@ export function AppBanner() {
 
   const { href, text } = Banners[activeBannerName]
 
-  console.log({
-    isScrolled,
-  })
-
   return (
     <div
       className={twMerge(
