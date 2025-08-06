@@ -73,17 +73,19 @@ export function Step({
       if (
         currentStep === "WaitingForTokenizeSigning" ||
         currentStep === "WaitingForTokenizeBroadcast" ||
-        currentStep === "WaitingForRedeemSigning"
+        currentStep === "WaitingForIBCSigning"
       ) {
         setLastActiveStep(1)
       } else if (
-        currentStep === "WaitingForIBCSigning" ||
-        currentStep === "WaitingForIBCBroadcastAndRelay"
+        currentStep === "WaitingForIBCBroadcast" ||
+        currentStep === "WaitingForIBCBroadcastAndRelay" ||
+        currentStep === "WaitingForRedeemSigning"
       ) {
         setLastActiveStep(2)
       } else if (
         currentStep === "WaitingForLockingSigning" ||
-        currentStep === "WaitingForLockingBroadcast"
+        currentStep === "WaitingForLockingBroadcast" ||
+        currentStep === "WaitingForRedeemBroadcast"
       ) {
         setLastActiveStep(3)
       }
@@ -114,15 +116,15 @@ export function Step({
     if (
       currentStep === "WaitingForTokenizeSigning" ||
       currentStep === "WaitingForTokenizeBroadcast" ||
-      currentStep === "WaitingForRedeemSigning"
+      currentStep === "WaitingForIBCSigning"
     ) {
       return { activeStep: 1, status: "pending" }
     }
 
     if (
-      currentStep === "WaitingForIBCSigning" ||
       currentStep === "WaitingForIBCBroadcastAndRelay" ||
-      currentStep === "WaitingForRedeemBroadcast"
+      currentStep === "WaitingForRedeemSigning" ||
+      currentStep === "WaitingForIBCBroadcast"
     ) {
       return { activeStep: 2, status: "pending" }
     }
@@ -130,7 +132,7 @@ export function Step({
     if (
       currentStep === "WaitingForLockingSigning" ||
       currentStep === "WaitingForLockingBroadcast" ||
-      currentStep === "WaitingForIBCBroadcast"
+      currentStep === "WaitingForRedeemBroadcast"
     ) {
       return { activeStep: 3, status: "pending" }
     }

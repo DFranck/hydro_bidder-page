@@ -10,14 +10,12 @@ import { MouseEvent, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export function InputForLockupPeriod({
-  initMerge,
   className,
   classNamesForButtons,
   currentLockupEndDate,
   selectedDuration,
   onChange,
 }: {
-  initMerge?: boolean
   className?: string
   classNamesForButtons?: string
   currentLockupEndDate?: Date
@@ -29,7 +27,7 @@ export function InputForLockupPeriod({
     selectedDuration || lockedAtomEpochInNanos
   )
 
-  const lockupPeriodOptionsRaw = Object.values(AllowedLockupPeriodInEpochs)
+  const lockupPeriodOptions = Object.values(AllowedLockupPeriodInEpochs)
     .filter(isNumber)
     .map((epochCount) => {
       const { value, unit } = getTimeUnitFromNanos(
@@ -48,15 +46,6 @@ export function InputForLockupPeriod({
       const newEndDate = new Date((Date.now() * 1e6 + option.duration) / 1e6)
       return !currentLockupEndDate ? true : currentLockupEndDate < newEndDate
     })
-
-  const lockupPeriodOptions = initMerge
-    ? [
-        lockupPeriodOptionsRaw.reduce(
-          (max, o) => (o.duration > max.duration ? o : max),
-          lockupPeriodOptionsRaw[0]
-        ),
-      ]
-    : lockupPeriodOptionsRaw
 
   function handleClick(duration: number, event: MouseEvent) {
     event.preventDefault()

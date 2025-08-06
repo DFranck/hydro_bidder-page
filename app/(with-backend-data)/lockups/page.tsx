@@ -280,7 +280,11 @@ export default function LockupsPage() {
                 variant="button.secondary"
                 className="flex items-center gap-2"
                 onClick={handleRefreshModal}
-                disabled={ initMerge ? refreshLockups.length <= 1 : refreshLockups.length < 1}
+                disabled={
+                  initMerge
+                    ? refreshLockups.length <= 1
+                    : refreshLockups.length < 1
+                }
               >
                 {initMerge ? (
                   <SquaresUnite className="text-palette-green size-4" />
@@ -343,7 +347,7 @@ export default function LockupsPage() {
               Merge {initMerge ? "enabled" : "disabled"}
             </StyledText>
             <Tooltip
-              classNamesForTooltip="w-80  -translate-x-12/12 md:w-5/12"
+              classNamesForTooltip="w-80 md:w-5/12"
               tipContents={mergingTooltip}
             >
               <Icon name="circle-info" />
