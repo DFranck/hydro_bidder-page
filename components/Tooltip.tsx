@@ -28,7 +28,6 @@ export function Tooltip({
   const [shouldRender, setShouldRender] = useState(false)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const [isOpen, setIsOpen] = useState(false)
-  const [showAbove, setShowAbove] = useState(false)
 
   const tooltipRef = useRef<HTMLDivElement>(null)
   const targetRef = useRef<HTMLDivElement>(null)
@@ -45,43 +44,45 @@ export function Tooltip({
     if (!targetRef.current || !tooltipRef.current) return
 
     const targetRect = targetRef.current.getBoundingClientRect()
-    const tooltipHeight = tooltipRef.current.offsetHeight
+    const tooltipRect = tooltipRef.current.getBoundingClientRect()
+    const viewportWidth = window.innerWidth
     const viewportHeight = window.innerHeight
     const scrollTop = window.scrollY
 
+    const tooltipHeight = tooltipRect.height
+    const tooltipWidth = tooltipRect.width
+
+    // Check if there's space below
     const hasSpaceBelow = viewportHeight - targetRect.bottom > tooltipHeight + 8
-    const newShowAbove = !hasSpaceBelow
+    const top = scrollTop + (hasSpaceBelow
+      ? targetRect.bottom + 8
+      : targetRect.top - tooltipHeight - 8)
 
-    setShowAbove(newShowAbove)
+    // Calculate centered X
+    let left = targetRect.left + targetRect.width / 2 - tooltipWidth / 2
 
-    setCoords({
-      x: targetRect.x + targetRect.width / 2,
-      y:
-        scrollTop +
-        (newShowAbove ? targetRect.top - tooltipHeight : targetRect.bottom),
-    })
+    // Adjust to prevent overflow on left/right
+    if (left < 8) {
+      left = 8
+    } else if (left + tooltipWidth > viewportWidth - 8) {
+      left = viewportWidth - tooltipWidth - 8
+    }
+
+    setCoords({ x: left, y: top })
   }
 
   function handleMouseEnter(_e: MouseEvent<HTMLDivElement>) {
     clearTimers()
     setShouldRender(true)
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(true)
-      }, mouseEnterDelay)
-    )
+    timers.current.push(setTimeout(() => setIsOpen(true), mouseEnterDelay))
   }
 
   function handleMouseLeave() {
     clearTimers()
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(false)
-        setTimeout(() => {
-          setShouldRender(false)
-        }, 300)
-      }, mouseLeaveDelay)
-    )
+    timers.current.push(setTimeout(() => {
+      setIsOpen(false)
+      setTimeout(() => setShouldRender(false), 300)
+    }, mouseLeaveDelay))
   }
 
   function handleFocus() {
@@ -92,21 +93,15 @@ export function Tooltip({
 
   function handleBlur() {
     clearTimers()
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(false)
-        setTimeout(() => {
-          setShouldRender(false)
-        }, 300)
-      }, 200)
-    )
+    timers.current.push(setTimeout(() => {
+      setIsOpen(false)
+      setTimeout(() => setShouldRender(false), 300)
+    }, 200))
   }
 
   useLayoutEffect(() => {
     if (shouldRender) {
-      requestAnimationFrame(() => {
-        updateCoords()
-      })
+      requestAnimationFrame(updateCoords)
     }
   }, [shouldRender, isOpen])
 
@@ -134,11 +129,9 @@ export function Tooltip({
                 bg-palette-text
                 pointer-events-none
                 absolute
-                left-1/2
                 z-50
                 max-w-96
                 min-w-56
-                -translate-x-1/2
                 rounded-sm
                 border
                 px-4
@@ -153,7 +146,6 @@ export function Tooltip({
                 duration-300
               `,
               isOpen && "pointer-events-auto opacity-100",
-              showAbove ? "mb-1" : "mt-1",
               classNamesForTooltip
             )}
             style={{
