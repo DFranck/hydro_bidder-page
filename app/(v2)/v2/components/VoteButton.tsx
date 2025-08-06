@@ -397,7 +397,6 @@ export function VoteButton({
         <Tooltipped
           tip={buttonProps.tooltip}
           className="size-10"
-          classNamesForTooltip="-translate-y-40"
         >
           {renderButtonContent()}
         </Tooltipped>

@@ -61,7 +61,7 @@ export function BidVoteShare({
           className,
         )}
         tip={voteThresholdTooltip({ trancheId: bid.trancheId })}
-        classNamesForTooltip="-ml-24 -translate-y-36"
+        classNamesForTooltip="-ml-24"
       >
         <div className="math-symbol">
           <span className="important-value">{formattedPercentage}</span>
@@ -89,7 +89,7 @@ export function BidVoteShare({
             totalBidLiquidity,
             denom,
           })}
-          classNamesForTooltip="-ml-24 -translate-y-38"
+          classNamesForTooltip="-ml-24"
         >
           {children}
         </Tooltipped>
