@@ -17,8 +17,21 @@ export function Header() {
   // Update ghost element height when NOT scrolled (at its tallest)
   useEffect(() => {
     const interval = setInterval(() => {
-      if (elementRef.current && ghostElementRef.current) {
-        ghostElementRef.current.style.height = `${elementRef.current.clientHeight}px`
+      if (!elementRef.current || !ghostElementRef.current) return
+
+      // Only update ghost height when NOT scrolled
+      if (window.scrollY <= 50) {
+        requestAnimationFrame(() => {
+          const newHeight = elementRef.current!.clientHeight
+          const currentHeight = parseInt(
+            ghostElementRef.current!.style.height || "0",
+            10
+          )
+
+          if (newHeight !== currentHeight) {
+            ghostElementRef.current!.style.height = `${newHeight}px`
+          }
+        })
       }
     }, 1000)
 
@@ -32,13 +45,13 @@ export function Header() {
 
       <div
         className="
+          border-palette-beige
           fixed
-          left-0
-          right-0
           top-0
+          right-0
+          left-0
           z-40
           border-b
-          border-palette-beige
           bg-black
         "
         ref={elementRef}
