@@ -237,11 +237,32 @@ export const currentVoteShareTooltip = (
   </p>
 )
 
-export const cannotContinueLockupTooltip = (
+export const lockupLimitReachedByNetworkTooltip = (
   <p>
-    This lockup is larger than the remaining capacity. You may either revert it
-    to get back your staked ATOM, or wait and continue when there is capacity.
+    Lockup caps have been reached. Join the{" "}
+    <StyledText
+      variant="link"
+      as={Link}
+      href={HYDRO_TELEGRAM_COMMUNITY_URL}
+      target="_blank"
+      className="inline-flex items-center gap-1"
+    >
+      <span>Hydro Telegram Group</span>
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>{" "}
+    to get notified if caps increase.
   </p>
+)
+
+export const cannotContinueLockupTooltip = (
+  <div className="space-y-0.5">
+    {lockupLimitReachedByNetworkTooltip}
+
+    <p>
+      You may either revert it to get back your staked ATOM, or wait and
+      continue when there is capacity.
+    </p>
+  </div>
 )
 
 export const estimatedRewardsColumnTooltip = ({
@@ -632,23 +653,6 @@ export const notEnoughTokenInWalletTooltip = (
   <p>
     You do not have enough tokens in your wallet to complete this lockup
     transaction.
-  </p>
-)
-
-export const lockupLimitReachedByNetworkTooltip = (
-  <p>
-    Lockup caps have been reached. Join the{" "}
-    <StyledText
-      variant="link"
-      as={Link}
-      href={HYDRO_TELEGRAM_COMMUNITY_URL}
-      target="_blank"
-      className="inline-flex items-center gap-1"
-    >
-      <span>Hydro Telegram Group</span>
-      <Icon name="solid:arrow-up-right" />
-    </StyledText>{" "}
-    to get notified if caps increase.
   </p>
 )
 
