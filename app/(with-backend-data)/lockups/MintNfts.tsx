@@ -587,10 +587,10 @@ export function MintNfts({
                   <div>
                     <div className="space-y-4">
                       <div className="text-sm leading-relaxed text-gray-400">
-                        Hydro lets you turn part of your lockups into a tradable NFT. Pick the size 
-                        and token you want (e.g., 50 dATOM) and Hydro automatically does the 
-                        rest - merging the right lockups, converting them to dATOM if necessary and splitting 
-                        off the NFT. The NFT keeps the underlying lock's voting power, expiry and 
+                        Hydro lets you turn part of your lockups into a tradable NFT. Pick the size
+                        and token you want (e.g., 50 dATOM) and Hydro automatically does the
+                        rest - merging the right lockups, converting them to dATOM if necessary and splitting
+                        off the NFT. The NFT keeps the underlying lock&apos;s voting power, expiry and
                         pending rewards.
                       </div>
                       <div className="h-px w-full bg-gray-800" />
