@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
   }
 
   // redirecting touchscreen devices from /bids to /v2
-  if (pathname.startsWith("/bids")) {
+  if (pathname === "/bids" || pathname === "/bids/") {
     const userAgent = request.headers.get("user-agent") || ""
 
     if (isTouchscreen(userAgent)) {
