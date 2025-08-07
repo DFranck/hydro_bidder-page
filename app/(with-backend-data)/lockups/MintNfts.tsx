@@ -583,7 +583,21 @@ export function MintNfts({
           <Card className="overflow-hidden bg-black">
             <div className="flex items-center justify-between gap-2">
               <Card.Header
-                title={"Mint an NFT from Lockups"}
+                title={
+                  <div>
+                    <div className="space-y-4">
+                      <div className="text-sm leading-relaxed text-gray-400">
+                        Hydro lets you turn part of your lockups into a tradable NFT. Pick the size 
+                        and token you want (e.g., 50 dATOM) and Hydro automatically does the 
+                        rest - merging the right lockups, converting them to dATOM if necessary and splitting 
+                        off the NFT. The NFT keeps the underlying lock's voting power, expiry and 
+                        pending rewards.
+                      </div>
+                      <div className="h-px w-full bg-gray-800" />
+                    </div>
+                    <div className="h-px w-full bg-gray-800" /> {/* Added horizontal divider */}
+                  </div>
+                }
                 variant={isMobile ? "h4" : "h3"}
               />
               <X
