@@ -70,11 +70,11 @@ export function BidDetails({
 
   const bid = bidsInfo[bidId]
 
-  const atomicBid = bidsInfo[bid.atomic_bid_pair]
-
   if (!bid) {
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
+
+  const atomicBid = bidsInfo[bid.atomic_bid_pair]
 
   if (!bid.isWhitelisted && process.env.NODE_ENV !== "development") {
     return (

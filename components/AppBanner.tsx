@@ -89,12 +89,12 @@ export function AppBanner() {
     <div
       className={twMerge(
         `
-          relative
-          text-balance
           bg-palette-beige
+          text-palette-text
+          relative
           px-3
           text-center
-          text-palette-text
+          text-balance
           transition-all
           duration-300
           xl:px-24

@@ -67,10 +67,10 @@ export function buildRow({
           >
             <div className="flex items-center gap-1">
               <StyledText variant="mathSymbol.container">
-                <span>{(bid.vote_perc * 100).toFixed(2)}</span>
+                <span>{(bid.vote_perc * 100).toFixed(1)}</span>
                 <StyledText variant="mathSymbol">%</StyledText>
               </StyledText>
-              <Icon name="circle-info" className="text-xs text-palette-beige" />
+              <Icon name="circle-info" className="text-palette-beige text-xs" />
             </div>
           </Tooltip>
         ) : (
@@ -94,7 +94,7 @@ export function buildRow({
             )}
           >
             <StyledText variant="mathSymbol.container">
-              <span>{Math.round(bid.vote_perc * 100)}</span>
+              <span>{Math.round(bid.vote_perc * 100).toFixed(1)}</span>
               <StyledText variant="mathSymbol">%</StyledText>
             </StyledText>
           </ConditionalWrapper>

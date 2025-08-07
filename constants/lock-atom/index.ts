@@ -1,5 +1,5 @@
 export const stepLabels = {
-  labelOne: "Approve token Redemption",
+  labelOne: "Approve token redemption",
   labelTwo: "Restore your locked token",
   labelThree: "Success",
 }

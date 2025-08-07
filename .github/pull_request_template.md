@@ -3,6 +3,8 @@ Before merging, please make sure you _and someone else_ have completed the follo
 **Lockup Tests**
 
 - [ ] Created a new Lockup
+- [ ] Resume an existing Lockup
+- [ ] Revert an existing Lockup
 - [ ] Extended an existing Lockup
 - [ ] Split an existing Lockup
 - [ ] Merge existing Lockups
