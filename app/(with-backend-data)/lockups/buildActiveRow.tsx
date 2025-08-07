@@ -24,6 +24,8 @@ import { getNftLockupImage } from "./config"
 import { Avatar } from "@/components/Avatar"
 import { Dropdown } from "./actions/components/Dropdown"
 import { NFT_SIZES } from "./config/nft-sizes"
+import { Icon } from "@/components/Icon"
+import Link from "next/link"
 
 export function buildActiveRow({
   lockup,
@@ -169,14 +171,30 @@ export function buildActiveRow({
         {nftSize ? (
           amount
         ) : (
-          <LockupActionTrigger
-            lockup={lockup}
-            action="transfer"
-            className="cursor-pointer hover:font-medium"
-            showActionPanel={false}
-          >
-            {amount}
-          </LockupActionTrigger>
+          <div className="flex items-center gap-1">
+            <LockupActionTrigger
+              lockup={lockup}
+              action="transfer"
+              className="cursor-pointer hover:font-medium"
+              showActionPanel={false}
+            >
+              {amount}
+            </LockupActionTrigger>
+            {!isListedMarketplaceLockup(lockup) && (
+              <StyledText
+                variant="link"
+                href={`/lockups/marketplace/${lockup.id}`}
+                as={Link}
+                className="mx-1.5"
+                tooltip="For sale"
+              >
+                <Icon
+                  name="solid:tag"
+                  className={`hover:text-palette-green/80 mr-3 cursor-pointer text-base `}
+                />
+              </StyledText>
+            )}
+          </div>
         )}
       </>
     ),
