@@ -581,29 +581,33 @@ export function MintNfts({
       <div>
         <form onSubmit={handleSubmitCreationForm}>
           <Card className="overflow-hidden bg-black">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <Card.Header
                 title={
                   <div>
                     <div className="space-y-4">
                       <div className="text-sm leading-relaxed text-gray-400">
-                        Hydro lets you turn part of your lockups into a tradable NFT. Pick the size
-                        and token you want (e.g., 50 dATOM) and Hydro automatically does the
-                        rest - merging the right lockups, converting them to dATOM if necessary and splitting
-                        off the NFT. The NFT keeps the underlying lock&apos;s voting power, expiry and
-                        pending rewards.
+                        Hydro lets you turn part of your lockups into a tradable
+                        NFT. Pick the size and token you want (e.g., 50 dATOM)
+                        and Hydro automatically does the rest - merging the
+                        right lockups, converting them to dATOM if necessary and
+                        splitting off the NFT. The NFT keeps the underlying
+                        lock&apos;s voting power, expiry and pending rewards.
                       </div>
                       <div className="h-px w-full bg-gray-800" />
                     </div>
-                    <div className="h-px w-full bg-gray-800" /> {/* Added horizontal divider */}
+                    <div className="h-px w-full bg-gray-800" />{" "}
+                    {/* Added horizontal divider */}
                   </div>
                 }
                 variant={isMobile ? "h4" : "h3"}
               />
-              <X
-                className="mb-6 inline-block size-6 cursor-pointer text-gray-300"
-                onClick={handleCloseModal}
-              />
+              <div className="size-10">
+                <X
+                  className="mb-6 inline-block size-6 cursor-pointer text-gray-300"
+                  onClick={handleCloseModal}
+                />
+              </div>
             </div>
 
             <Card.Body
