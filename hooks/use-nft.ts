@@ -44,6 +44,8 @@ function findLSTLockupsForNFT(
   lockups: AugmentedLockup[],
   includeNftSizes: boolean
 ) {
+  const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
+
   // Filter lockups by the specified denomination and exclude NFT_SIZES amounts
   const allLockups = lockups.filter((lockup) => lockup.funds.denom === denom)
 
@@ -81,13 +83,13 @@ function findLSTLockupsForNFT(
     totalAmount += lockup.funds.amount
 
     // If we've met or exceeded the NFT_SIZE + 0.01, we can stop
-    if (totalAmount >= NFT_SIZE) {
+    if (totalAmount >= requiredAmount) {
       break
     }
   }
 
   // Return empty result if requirement is not met (needs NFT_SIZE + 0.01)
-  if (totalAmount < NFT_SIZE) {
+  if (totalAmount < requiredAmount) {
     return {
       selectedLockups: [],
       selectedLockupsCount: 0,
@@ -146,7 +148,7 @@ export async function findLockupsForNFtSizes(
   const isFactoryDenom = denom.startsWith("factory")
 
   const nativeResult = findLSTLockupsForNFT(
-    requiredAmount,
+    NFT_SIZE,
     denom,
     lockups,
     includeNftSizes
