@@ -586,18 +586,20 @@ export function MintNfts({
                 title={
                   <div>
                     <div className="space-y-4">
-                      <div className="text-sm leading-relaxed text-gray-400">
-                        Hydro lets you turn part of your lockups into a tradable
-                        NFT. Pick the size and token you want (e.g., 50 dATOM)
-                        and Hydro automatically does the rest - merging the
-                        right lockups, converting them to dATOM if necessary and
-                        splitting off the NFT. The NFT keeps the underlying
-                        lock&apos;s voting power, expiry and pending rewards.
-                      </div>
-                      <div className="h-px w-full bg-gray-800" />
+                      {nftDetails ? (
+                        "Mint NFT creation"
+                      ) : (
+                        <div className="text-sm leading-relaxed text-gray-400">
+                          Hydro lets you turn part of your lockups into a
+                          tradable NFT. Pick the size and token you want (e.g.,
+                          50 dATOM) and Hydro automatically does the rest -
+                          merging the right lockups, converting them to dATOM if
+                          necessary and splitting off the NFT. The NFT keeps the
+                          underlying lock&apos;s voting power, expiry and
+                          pending rewards.
+                        </div>
+                      )}
                     </div>
-                    <div className="h-px w-full bg-gray-800" />{" "}
-                    {/* Added horizontal divider */}
                   </div>
                 }
                 variant={isMobile ? "h4" : "h3"}
@@ -609,6 +611,7 @@ export function MintNfts({
                 />
               </div>
             </div>
+            {nftDetails ? null : <div className="h-px w-full bg-gray-800 mb-6" />}
 
             <Card.Body
               className={cn("hide-scrollbar h-96 overflow-auto md:h-5/12", {
