@@ -305,7 +305,7 @@ export function LockupsTables({
           }
           rightSlot={
             expiredNftLockupRows.length > 0 && (
-              <StyledText as={Link} variant="link" href="#nft-lockups">
+              <StyledText as={Link} variant="link" href="#expired-nft-lockups">
                 <span>Jump to {expiredNftLockupRows.length} Expired</span>
                 <Icon name="arrow-down-long" />
               </StyledText>
@@ -387,8 +387,8 @@ export function LockupsTables({
             }
             rightSlot={
               activeNftLockupRows.length > 0 && (
-                <StyledText as={Link} variant="link" href="#nft-lockups">
-                  <span>Jump to {activeNftLockupRows.length} Expired</span>
+                <StyledText as={Link} variant="link" href="#active-nft-lockups">
+                  <span>Jump to {activeNftLockupRows.length} Active</span>
                   <Icon name="arrow-down-long" />
                 </StyledText>
               )
