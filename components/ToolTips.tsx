@@ -259,8 +259,8 @@ export const cannotContinueLockupTooltip = (
     {lockupLimitReachedByNetworkTooltip}
 
     <p>
-      You may either revert it to get back your staked ATOM, or wait and
-      continue when there is capacity.
+      You may either revert this incomplete lockup to get back your staked ATOM,
+      or wait and continue when there is capacity.
     </p>
   </div>
 )
