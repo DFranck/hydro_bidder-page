@@ -611,7 +611,9 @@ export function MintNfts({
                 />
               </div>
             </div>
-            {nftDetails ? null : <div className="h-px w-full bg-gray-800 mb-6" />}
+            {nftDetails ? null : (
+              <div className="mb-6 h-px w-full bg-gray-800" />
+            )}
 
             <Card.Body
               className={cn("hide-scrollbar h-96 overflow-auto md:h-5/12", {
@@ -642,9 +644,8 @@ export function MintNfts({
               <Card.Footer className="mt-auto">
                 {step === "success" ? (
                   <StyledText
+                    as={"span"}
                     variant="button.primary"
-                    as="button"
-                    type="button"
                     onClick={handleCloseModal}
                   >
                     Done
@@ -667,9 +668,8 @@ export function MintNfts({
                 )}
                 {step === "success" ? null : (
                   <StyledText
-                    variant="button.secondary"
-                    as="button"
-                    type="button"
+                    as={"span"}
+                    variant="button.primary"
                     onClick={() => {
                       setIsLoading(false)
                       setNftDetails(false)
