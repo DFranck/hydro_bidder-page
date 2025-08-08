@@ -645,7 +645,7 @@ export function MintNfts({
                     variant="button.primary"
                     as="button"
                     type="button"
-                    onClick={handleCloseModal()}
+                    onClick={handleCloseModal}
                   >
                     Done
                   </StyledText>
