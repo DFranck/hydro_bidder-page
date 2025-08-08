@@ -329,7 +329,7 @@ export function LockupsPageForAtom() {
               Merge {initMerge ? "enabled" : "disabled"}
             </StyledText>
             <Tooltip
-              classNamesForTooltip="w-80  -translate-x-12/12 md:w-5/12"
+              classNamesForTooltip="w-80 md:w-5/12"
               tipContents={mergingTooltip}
             >
               <Icon name="circle-info" />

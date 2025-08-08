@@ -54,11 +54,9 @@ export function Tooltip({
 
     // Check if there's space below
     const hasSpaceBelow = viewportHeight - targetRect.bottom > tooltipHeight + 8
-    const top =
-      scrollTop +
-      (hasSpaceBelow
-        ? targetRect.bottom + 8
-        : targetRect.top - tooltipHeight - 8)
+    const top = scrollTop + (hasSpaceBelow
+      ? targetRect.bottom + 8
+      : targetRect.top - tooltipHeight - 8)
 
     // Calculate centered X
     let left = targetRect.left + targetRect.width / 2 - tooltipWidth / 2
@@ -81,12 +79,10 @@ export function Tooltip({
 
   function handleMouseLeave() {
     clearTimers()
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(false)
-        setTimeout(() => setShouldRender(false), 300)
-      }, mouseLeaveDelay)
-    )
+    timers.current.push(setTimeout(() => {
+      setIsOpen(false)
+      setTimeout(() => setShouldRender(false), 300)
+    }, mouseLeaveDelay))
   }
 
   function handleFocus() {
@@ -97,12 +93,10 @@ export function Tooltip({
 
   function handleBlur() {
     clearTimers()
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(false)
-        setTimeout(() => setShouldRender(false), 300)
-      }, 200)
-    )
+    timers.current.push(setTimeout(() => {
+      setIsOpen(false)
+      setTimeout(() => setShouldRender(false), 300)
+    }, 200))
   }
 
   useLayoutEffect(() => {

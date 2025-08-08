@@ -171,7 +171,7 @@ export function buildExpiredRow({
                 href={`/lockups/marketplace/${lockup.id}`}
                 as={Link}
                 className="mx-1.5"
-                tooltip="For sale"
+                tooltip="This NFT is listed for sale on the marketplace. Click to view the listing."
               >
                 <Icon
                   name="solid:tag"
