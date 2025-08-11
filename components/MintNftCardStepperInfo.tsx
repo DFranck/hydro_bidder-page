@@ -11,37 +11,30 @@ export function MintNftCardStepperInfo({ step }: Props) {
     switch (step) {
       case "merge":
         return (
-          <>
-            Hydro is combining your selected lockups to match the NFT size you
-            chose.
-          </>
+          <>Hydro is bundling your lockups to match your chosen NFT size.</>
         )
       case "split":
         return (
           <>
-            Hydro is splitting your lockup so you can mint the exact NFT
-            size you picked.
+            Hydro is splitting your lockup to create the NFT size you selected.
           </>
         )
       case "convert":
         return (
           <>
-            Hydro is converting your ATOM into dATOM so it can be included in
+            Hydro is converting your ATOM lockups into dATOM so they can go into
             your NFT.
           </>
         )
       case "merge_after_convert":
         return (
-          <>
-            Hydro is merging your newly converted dATOM into one lockup for your
-            NFT.
-          </>
+          <>Hydro is merging your new dATOM lockups into a single position.</>
         )
       case "merge_matching_denoms":
         return (
           <>
-            Hydro is merging all lockups with the same token type so they can be
-            used in your NFT.
+            Hydro is merging lockups with the same token type before converting
+            to dATOM.
           </>
         )
 
