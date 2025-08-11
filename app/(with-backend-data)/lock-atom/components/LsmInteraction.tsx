@@ -41,10 +41,14 @@ export function LsmInteraction({
   validatorMap: Map<string, Validator>
   validatorLiquidStakingCap: string
 }) {
-  const { lockedTokenIsAtCapacityWallet, lockedTokenMaxWallet, hasGatekeeper } =
-    useBackendData()
   const {
-    data: { lockedTokenIsAtCapacityGlobal, lockedTokenRemainingCapacityGlobal },
+    lockedTokenIsAtCapacityWallet,
+    lockedTokenMaxWallet,
+    lockedTokenPercentageWallet,
+    hasGatekeeper,
+  } = useBackendData()
+  const {
+    data: { lockedTokenIsAtCapacityGlobal, lockedTokenPercentageGlobal },
   } = useGlobalLockupCapacityInfo()
   const { incompleteNotices } = useIncompleteNotices()
   const { hubChain, hubSigner, neutronChain, neutronSigner } =
@@ -119,8 +123,8 @@ export function LsmInteraction({
                 .slice(0, numVisibleNotices)
                 .map((notice, index) => {
                   const canFinalizeLockup =
-                    lockedTokenRemainingCapacityGlobal >=
-                    Number((Number(notice.amount) / 10 ** 6).toFixed(6))
+                    lockedTokenPercentageWallet === 100 ||
+                    lockedTokenPercentageGlobal === 100
 
                   function getStepperConfigForAction(
                     action: "continue" | "revert"
@@ -148,7 +152,7 @@ export function LsmInteraction({
                       actionButtonPrimary={{
                         label: (
                           <ConditionalWrapper
-                            condition={notEligible || !canFinalizeLockup}
+                            condition={notEligible || canFinalizeLockup}
                             wrapper={(children) => (
                               <Tooltip
                                 tipContents={
@@ -166,7 +170,7 @@ export function LsmInteraction({
                                 "flex items-center justify-center gap-1",
                                 {
                                   "cursor-default opacity-60":
-                                    notEligible || !canFinalizeLockup,
+                                    notEligible || canFinalizeLockup,
                                 }
                               )}
                             >
@@ -175,7 +179,7 @@ export function LsmInteraction({
                           </ConditionalWrapper>
                         ),
                         onClick: () => {
-                          if (notEligible || !canFinalizeLockup) return
+                          if (notEligible || canFinalizeLockup) return
                           setStepper(getStepperConfigForAction("continue"))
                         },
                       }}
