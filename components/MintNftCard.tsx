@@ -142,7 +142,7 @@ export function MintNftCard({
           >
             Include existing NFTs
             <Tooltip
-              classNamesForTooltip="w-80  -translate-x-12/12 md:w-5/12"
+              classNamesForTooltip="w-80 md:w-5/12"
               tipContents={includeNftSizesTooltip}
             >
               <Icon name="circle-info" className="mx-1" />

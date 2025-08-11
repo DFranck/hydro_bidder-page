@@ -26,6 +26,7 @@ import { MintNftCardDetails } from "@/components/MintNftCardDetails"
 import { executeMultipleMergeLockups } from "@/contract-apis/executeMultipleMergeLockups"
 import { MintNftCardStepper } from "@/components/MintNftCardStepper"
 import { logMintDebugData } from "@/lib/logMintDebugData"
+import { MintNftCardStepperInfo } from "@/components/MintNftCardStepperInfo"
 
 export interface MintingStep {
   id: number
@@ -47,7 +48,7 @@ export type NFT_INFO = {
   displayDenom: string
 }
 
-type MintStep =
+export type MintStep =
   | "init"
   | "selected"
   | "merge"
@@ -113,11 +114,10 @@ export function MintNfts({
         selectedLockupsCount: 0,
         totalAmount: 0,
         remainder: 0,
-        totalLockupSelected: 0,
         denom: "",
         hasVirtualLockups: false,
         hasMultipleDenoms: false,
-        sharedDenomCount: false,
+        sharedDenomCount: 0,
         virtualLockupsCount: 0,
         virtualLockups: [],
         hasMatchingDenoms: false,
@@ -624,6 +624,7 @@ export function MintNfts({
               {nftDetails ? (
                 <div>
                   <MintNftCardStepper steps={steps} />
+                  <MintNftCardStepperInfo step={step} />
                   <MintNftCardDetails
                     nftInfo={nftInfo}
                     eligibleLockupsSizes={eligibleLockupsSizes as LockupsResult}
@@ -669,7 +670,7 @@ export function MintNfts({
                 {step === "success" ? null : (
                   <StyledText
                     as={"span"}
-                    variant="button.primary"
+                    variant="button.secondary"
                     onClick={() => {
                       setIsLoading(false)
                       setNftDetails(false)
