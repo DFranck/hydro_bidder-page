@@ -69,7 +69,7 @@ export function VoteButton({
 
   const { getSigningCosmWasmClient, address, isWalletConnected, connect } =
     useChain('neutron')
-
+  
   const sourceData = currentRoundDataPerSource?.[sourceId as SourceID]
   const bid = sourceData?.augmentedBids?.find((bid: any) => bid.id === bidId)
   const voteButtonData = bid?.voteButtonData

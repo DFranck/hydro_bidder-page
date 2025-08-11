@@ -35,7 +35,7 @@ export function LockupStatus({
     numRoundsLeftOnDeployment,
     votedOnBidId,
     isEligibleToChangeVote,
-  } = metadata
+  } = metadata || {}
 
   const votedOnBid = votedOnBidId ? bidsInfo[votedOnBidId] : null
 

@@ -25,7 +25,7 @@ export function Confetti({
     ? null
     : createPortal(
         <ReactConfetti
-          className="fixed inset-3 z-50"
+          className="fixed inset-0 z-50"
           colors={[
             "#FFE1B8", // beige
             "#00D1FF", // cyan

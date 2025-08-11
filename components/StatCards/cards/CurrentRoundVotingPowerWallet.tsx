@@ -18,15 +18,18 @@ export function CurrentRoundVotingPowerWallet() {
     isWalletConnected,
   } = useBackendData()
 
-  const votingEligibilityByTrancheId = Object.fromEntries(
-    tranches.map((tranche) => {
-      const hasAvailableLockupInTranche = lockups.some(
-        (lockup) => lockup.metaDataByTrancheId[tranche.id].isEligibleToVote
-      )
+ const votingEligibilityByTrancheId: Record<string, boolean> = Object.fromEntries(
+  tranches.map((tranche) => {
+    const hasAvailableLockupInTranche = lockups.some(
+      (lockup) =>
+        lockup?.metaDataByTrancheId?.[tranche.id]?.isEligibleToVote === true
+    )
 
-      return [tranche.id, hasAvailableLockupInTranche]
-    })
-  )
+    return [tranche.id, hasAvailableLockupInTranche]
+  })
+)
+
+
 
   const votingPowerByTranche = tranches.reduce(
     (acc, tranche) => {

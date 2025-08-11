@@ -15,7 +15,7 @@ export const BurgerButton = ({
   ...props
 }: BurgerButtonProps) => {
   return (
-    <button onClick={onClick} className="active:animate-spin md:hidden">
+    <button onClick={onClick} className="active:animate-spin md:hidden cursor-pointer">
       {isOpen ? (
         <Icon name="solid:xmark" />
       ) : (

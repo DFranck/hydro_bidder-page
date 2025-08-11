@@ -11,11 +11,11 @@ import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { formatAmount } from "@/lib/formatAmount"
 import { revalidateTag } from "@/lib/revalidateTag"
+import { cn } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
 import { FormEvent, useEffect, useState } from "react"
 import { Slider } from "./ui/slider"
-import { cn } from "@/lib/utils"
 
 type SplitLockupModalProps = {
   lockup: AugmentedLockup | null

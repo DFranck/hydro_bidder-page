@@ -17,6 +17,7 @@
     "@chain-registry/types": "^0.50.93",
     "@cosmjs/amino": "^0.32.4",
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
+    "@cosmjs/proto-signing": "^0.34.0",
     "@cosmjs/stargate": "^0.32.4",
     "@cosmos-kit/core": "^2.15.5",
     "@cosmos-kit/cosmostation": "^2.14.6",
@@ -39,6 +40,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "defi-sim": "^1.0.3",
+    "dotenv": "^17.2.1",
     "interchain": "^1.10.4",
     "lodash": "^4.17.21",
     "lucide-react": "^0.511.0",
@@ -88,5 +90,13 @@
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.10",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "@cosmjs/amino": "0.34.0",
+      "@cosmjs/stargate": "0.34.0",
+      "@cosmjs/cosmwasm-stargate": "0.34.0",
+      "@cosmjs/proto-signing": "0.34.0"
+    }
   }
 }

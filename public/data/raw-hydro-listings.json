@@ -1,42 +1,12 @@
 [
   {
-    "listing_id": 2,
-    "collection": "neutron1kjy0tue6zkrnmn3r4u9wugtwpgp3un7rqrpwlp0wth48v5y0tlsqtnnd4t",
-    "token_id": "9",
-    "seller": "neutron1wgvxd0y363f04ugp7r4pru74s79ajnfe4pzrew",
+    "listing_id": 0,
+    "collection": "neutron14gjkxw0wf758d8pkw074am07vm0jmvvjkvkpxdvhqmuuy2tf4fjsy3ql6z",
+    "token_id": "23",
+    "seller": "neutron164lr65s6u8equ5elqmnj5s490rvunwc69nul3c",
     "price": {
       "denom": "untrn",
-      "amount": "111000000"
-    }
-  },
-  {
-    "listing_id": 22,
-    "collection": "neutron1kjy0tue6zkrnmn3r4u9wugtwpgp3un7rqrpwlp0wth48v5y0tlsqtnnd4t",
-    "token_id": "7",
-    "seller": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
-    "price": {
-      "denom": "untrn",
-      "amount": "50000000"
-    }
-  },
-  {
-    "listing_id": 24,
-    "collection": "neutron1kjy0tue6zkrnmn3r4u9wugtwpgp3un7rqrpwlp0wth48v5y0tlsqtnnd4t",
-    "token_id": "5",
-    "seller": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
-    "price": {
-      "denom": "untrn",
-      "amount": "250000000"
-    }
-  },
-  {
-    "listing_id": 26,
-    "collection": "neutron1kjy0tue6zkrnmn3r4u9wugtwpgp3un7rqrpwlp0wth48v5y0tlsqtnnd4t",
-    "token_id": "10",
-    "seller": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
-    "price": {
-      "denom": "untrn",
-      "amount": "249000000"
+      "amount": "25000000"
     }
   }
 ]

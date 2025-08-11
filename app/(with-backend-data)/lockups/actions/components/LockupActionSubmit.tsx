@@ -10,6 +10,7 @@ import {
 } from "../types"
 import { getActionTooltip } from "../utils/getActionTooltip"
 import { getLockupActionConfig } from "../utils/getLockupActionConfig"
+import { useChain } from '@cosmos-kit/react';
 
 interface LockupActionSubmitProps<T extends LockupActionType> {
   action: T

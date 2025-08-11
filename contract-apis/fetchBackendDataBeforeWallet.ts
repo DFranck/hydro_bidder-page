@@ -18,17 +18,17 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
 
   const [
     rawHydroRoundData,
-    rawHydroMetaData,
+    // rawHydroMetaData,
     rawExternalData,
-    rawHydroLockups,
-    rawHydroListings,
+    // rawHydroLockups,
+    // rawHydroListings,
   ] = await Promise.all(
     [
       "raw-hydro-round-data.json",
-      "raw-hydro-meta-data.json",
+      // "raw-hydro-meta-data.json",
       "raw-external-data.json",
-      "raw-hydro-lockups.json",
-      "raw-hydro-listings.json",
+      // "raw-hydro-lockups.json",
+      // "raw-hydro-listings.json",
     ].map((filename) =>
       fetch(
         [
@@ -39,7 +39,24 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
       ).then((res) => res.json()),
     ),
   )
-
+  
+  // TODO : remove and uncomment them in previous promise when ready
+  const [rawHydroLockups, rawHydroListings , rawHydroMetaData] =
+    await Promise.all(
+      [
+        "raw-hydro-lockups.json",
+        "raw-hydro-listings.json",
+        "raw-hydro-meta-data.json",
+      ].map((filename) =>
+        fetch(
+          [
+            supabaseEndpoint,
+            "moonkitt-dev--" + filename,
+            `?time=${new Date().getTime()}`,
+          ].join(""),
+        ).then((res) => res.json()),
+      ),
+    )
   return {
     hydroRoundData: rawHydroRoundData,
     hydroMetaData: rawHydroMetaData,

@@ -30,44 +30,52 @@ const LockupActionCardEligibility = ({
             <Icon name="circle-dashed" className="mr-3 min-w-4 text-base" />
             voting eligibility
           </label>
-          <ul className={`${UbuntuMonoFont.className} text-[16px] font-normal`}>
-            {tranches &&
-              tranches.map((tranche) => {
-                const meta = lockup.metaDataByTrancheId[tranche.id]
-                const { icon, color } = getEligibilityIcon(meta)
-                return (
-                  <li key={tranche.id} className={color}>
-                    {icon}
-                    {tranche.name}
-                  </li>
-                )
-              })}
-          </ul>
-        </div>
-      }
+          <ul className={`${UbuntuMonoFont.className} text-sm font-normal pl-[2px]`}>
+           {tranches &&
+      tranches.map((tranche) => {
+        const meta = lockup.metaDataByTrancheId[tranche.id]
+
+        if (!meta) return 
+        
+
+        const { icon, color } = getEligibilityIcon(meta)
+        return (
+          <li key={tranche.id} className={color}>
+            {icon}
+            <span className="pl-[1px]">
+
+              {tranche.name}
+            </span>
+              
+          </li>
+        )
+      })}
+              </ul>
+            </div>
+          }
       rightContent={
         <div className="flex flex-col">
           <label className="pointer-events-none opacity-0">Eligibility</label>
           <ul>
-            {tranches &&
-              tranches.map((tranche) => {
-                const meta = lockup.metaDataByTrancheId[tranche.id]
-                const canVoteToday = !meta.isTiedToDeployment
-                return (
-                  <li key={tranche.id}>
-                    <StyledText
-                      as={"label"}
-                      variant="label.meta.faded"
-                      className={`h-full whitespace-nowrap font-inter`}
-                    >
-                      {canVoteToday
-                        ? "Can vote today"
-                        : "Can vote in round " +
-                          getDisplayRoundId(meta.nextRoundEligibleToVote || 0)}
-                    </StyledText>
-                  </li>
-                )
-              })}
+           {tranches &&
+  tranches.map((tranche) => {
+    const meta = lockup.metaDataByTrancheId[tranche.id]
+
+    if (!meta) return 
+
+    const canVoteToday = !meta.isTiedToDeployment
+
+    return (
+      <li key={tranche.id}>
+        <StyledText as="label" variant="label.meta.faded">
+          {canVoteToday
+            ? "Can vote today"
+            : "Can vote in round " + getDisplayRoundId(meta.nextRoundEligibleToVote || 0)}
+        </StyledText>
+      </li>
+    )
+  })}
+
           </ul>
         </div>
       }

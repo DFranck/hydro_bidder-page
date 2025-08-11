@@ -9,6 +9,9 @@ export default async function executeTransferNft(
   receiverAddress: string,
 ): Promise<void> {
   try {
+      console.log("[executeTransferNft] address:", address)
+    console.log("[executeTransferNft] lockup:", lockup?.id)
+    console.log("[executeTransferNft] receiverAddress:", receiverAddress)
     const hydroSigningClient = await getHydroSigningClient({
       address,
       getSigningCosmWasmClient,

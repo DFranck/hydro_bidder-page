@@ -39,7 +39,6 @@ export default async function LayoutWithContext({
     hydroLockups: rawBackendDataBeforeWallet.hydroLockups,
     hydroListings: rawBackendDataBeforeWallet.hydroListings,
   }
-
   return (
     <AppWrapper backendDataBeforeWalletSlimmed={backendDataBeforeWalletSlimmed}>
       {children}

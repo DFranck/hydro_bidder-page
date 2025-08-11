@@ -44,12 +44,12 @@ export function MarketplaceDataProvider({
     hydroListings,
     marketplaceLockups: myMarketplaceLockups,
   } = useBackendData()
+ 
   const { filters } = useMarketplaceFilters()
   const hasInitLocalListings = useRef(false)
   const hasInitLocalLockups = useRef(false)
   const [localListings, setLocalListings] = useState<Listing[]>([])
   const [localLockups, setLocalLockups] = useState<AugmentedLockup[]>([])
-
   useEffect(() => {
     if (
       !hasInitLocalListings.current &&
@@ -59,9 +59,10 @@ export function MarketplaceDataProvider({
       setLocalListings(hydroListings)
       hasInitLocalListings.current = true
     }
-  }, [hydroListings])
+  }, [hydroListings.length])
 
   useEffect(() => {
+
     if (
       !hasInitLocalLockups.current &&
       Array.isArray(hydroLockups) &&
@@ -70,7 +71,7 @@ export function MarketplaceDataProvider({
       setLocalLockups(hydroLockups)
       hasInitLocalLockups.current = true
     }
-  }, [hydroLockups])
+  }, [hydroLockups.length])
 
   const marketplaceLockups = useMemo(() => {
     const res = getMarketplaceLockups(localLockups, localListings)
