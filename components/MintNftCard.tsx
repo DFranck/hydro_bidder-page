@@ -20,9 +20,9 @@ import { Tooltip } from "./Tooltip"
 import { includeNftSizesTooltip } from "./ToolTips"
 import { Switch } from "./ui/switch"
 import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
 import { AlertCircleIcon } from "lucide-react"
 import MintNftEmptyCard from "./MintNftEmptyCard"
+import { Alert } from "./Alert"
 
 interface Props {
   lockups: AugmentedLockup[]
@@ -119,13 +119,13 @@ export function MintNftCard({
         <MintNftCardStepper steps={steps} />
       )}
       {hasSimulatedErrorLSM.length > 0 && renderedList.length !== 0 ? (
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircleIcon />
-          <AlertTitle>Note:</AlertTitle>
-          <AlertDescription>
-            One or more of your lockups are not eligible to mint an NFT
-          </AlertDescription>
-        </Alert>
+        <Alert
+          variant="destructive"
+          className="mb-4"
+          title="Note:"
+          description=" One or more of your lockups are not eligible to mint an NFT"
+          icon={<AlertCircleIcon />}
+        />
       ) : null}
       {renderedList.length !== 0 ? (
         <div className="mb-4 flex items-center justify-end">
