@@ -26,6 +26,7 @@ import { Dropdown } from "./actions/components/Dropdown"
 import { NFT_SIZES } from "./config/nft-sizes"
 import { Icon } from "@/components/Icon"
 import Link from "next/link"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function buildActiveRow({
   lockup,
@@ -94,7 +95,10 @@ export function buildActiveRow({
     mergeableLockups.length > 0 &&
     findMergeableLockup(mergeableLockups).funds.denom === lockup.funds.denom
 
-  const nftSize = !NFT_SIZES.includes(lockup.funds.amount)
+  const nftSize = !(
+    lockup.funds.denomInfo?.humanReadableDenom !==
+      TOKEN_DENOMS.ATOM.displayDenom && NFT_SIZES.includes(lockup.funds.amount)
+  )
 
   const amount = (
     <div className="flex items-center gap-1">
