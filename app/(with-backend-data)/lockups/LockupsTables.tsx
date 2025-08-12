@@ -17,6 +17,7 @@ import { RowComponent } from "./RowComponent"
 import { Checkbox } from "@/components/ui/checkbox"
 import { NFT_SIZES } from "./config/nft-sizes"
 import MintNftEmptyCard from "@/components/MintNftEmptyCard"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function LockupsTables({
   onClickEdit,
@@ -46,29 +47,31 @@ export function LockupsTables({
   const allActiveLockups = lockups.filter(
     (lockup) =>
       !lockup.isExpired &&
-      !NFT_SIZES.includes(lockup.funds.amount) &&
-      (lockup.funds.denomInfo?.humanReadableDenom === "stATOM" ||
-        lockup.funds.denomInfo?.humanReadableDenom === "dATOM")
+      (lockup.funds.denomInfo?.humanReadableDenom ===
+        TOKEN_DENOMS.ATOM.displayDenom ||
+        !NFT_SIZES.includes(lockup.funds.amount))
   )
 
   const allActiveNftLockups = lockups.filter(
     (lockup) =>
       !lockup.isExpired &&
-      lockup.funds.denomInfo?.humanReadableDenom !== "ATOM" &&
+      lockup.funds.denomInfo?.humanReadableDenom !==
+        TOKEN_DENOMS.ATOM.displayDenom &&
       NFT_SIZES.includes(lockup.funds.amount)
   )
 
   const allExpiredLockups = lockups.filter(
     (lockup) =>
       lockup.isExpired &&
-      !NFT_SIZES.includes(lockup.funds.amount) &&
-      (lockup.funds.denomInfo?.humanReadableDenom === "stATOM" ||
-        lockup.funds.denomInfo?.humanReadableDenom === "dATOM")
+      (lockup.funds.denomInfo?.humanReadableDenom ===
+        TOKEN_DENOMS.ATOM.displayDenom ||
+        !NFT_SIZES.includes(lockup.funds.amount))
   )
   const allExpiredNftLockups = lockups.filter(
     (lockup) =>
       lockup.isExpired &&
-      lockup.funds.denomInfo?.humanReadableDenom !== "ATOM" &&
+      lockup.funds.denomInfo?.humanReadableDenom !==
+        TOKEN_DENOMS.ATOM.displayDenom &&
       NFT_SIZES.includes(lockup.funds.amount)
   )
 
