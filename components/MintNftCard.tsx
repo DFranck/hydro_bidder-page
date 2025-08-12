@@ -113,23 +113,6 @@ export function MintNftCard({
 
   return (
     <div>
-      {renderedList.length === 0 ? (
-        <div className="flex flex-col  items-center justify-center p-20">
-          <MintNftEmptyCard />
-        </div>
-      ) : (
-        <MintNftCardStepper steps={steps} />
-      )}
-      {hasSimulatedErrorLSM.length > 0 && renderedList.length !== 0 ? (
-        <Alert
-          variant="destructive"
-          className="mb-4"
-          title="Note:"
-          description=" One or more of your lockups are not eligible to mint an NFT"
-          icon={<AlertCircleIcon />}
-        />
-      ) : null}
-
       <div className="mb-4 flex items-center justify-end">
         <Switch
           checked={includeNftSizes}
@@ -151,6 +134,22 @@ export function MintNftCard({
           </Tooltip>
         </StyledText>
       </div>
+      {renderedList.length === 0 ? (
+        <div className="flex flex-col  items-center justify-center p-20">
+          <MintNftEmptyCard />
+        </div>
+      ) : (
+        <MintNftCardStepper steps={steps} />
+      )}
+      {hasSimulatedErrorLSM.length > 0 && renderedList.length !== 0 ? (
+        <Alert
+          variant="destructive"
+          className="mb-4"
+          title="Note:"
+          description=" One or more of your lockups are not eligible to mint an NFT"
+          icon={<AlertCircleIcon />}
+        />
+      ) : null}
 
       <div
         className={cn("grid grid-cols-2 gap-3 sm:grid-cols-3", {
