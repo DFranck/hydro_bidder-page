@@ -47,7 +47,9 @@ export function MintNftCard({
   const { address } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
 
-  const lockupAmounts = lockups.map((lockup) => lockup.funds.amount)
+  const lockupAmounts = lockups
+    .map((lockup) => lockup.funds.amount)
+    .some((size) => NFT_SIZES.includes(size))
 
   const { data: nfts, isLoading } = useQuery<NFTWithLockupCount[]>({
     queryKey: ["lockup-counts", address, lockups, includeNftSizes],
@@ -127,29 +129,29 @@ export function MintNftCard({
           icon={<AlertCircleIcon />}
         />
       ) : null}
-      {renderedList.length !== 0 ? (
-        <div className="mb-4 flex items-center justify-end">
-          <Switch
-            checked={includeNftSizes}
-            onCheckedChange={handleIncludeNftSizes}
-            disabled={!lockupAmounts.some((size) => NFT_SIZES.includes(size))}
-            className="mx-2"
-          />
-          <StyledText
-            className={cn("w-fit text-sm", {
-              "text-gray-400": !includeNftSizes,
-            })}
+
+      <div className="mb-4 flex items-center justify-end">
+        <Switch
+          checked={includeNftSizes}
+          onCheckedChange={handleIncludeNftSizes}
+          disabled={!lockupAmounts || renderedList.length === 0}
+          className="mx-2"
+        />
+        <StyledText
+          className={cn("w-fit text-sm", {
+            "text-gray-400": !includeNftSizes,
+          })}
+        >
+          Include existing NFTs
+          <Tooltip
+            classNamesForTooltip="w-80 md:w-5/12"
+            tipContents={includeNftSizesTooltip}
           >
-            Include existing NFTs
-            <Tooltip
-              classNamesForTooltip="w-80 md:w-5/12"
-              tipContents={includeNftSizesTooltip}
-            >
-              <Icon name="circle-info" className="mx-1" />
-            </Tooltip>
-          </StyledText>
-        </div>
-      ) : null}
+            <Icon name="circle-info" className="mx-1" />
+          </Tooltip>
+        </StyledText>
+      </div>
+
       <div
         className={cn("grid grid-cols-2 gap-3 sm:grid-cols-3", {
           "md:grid-cols-4": renderedList.length > 3,
