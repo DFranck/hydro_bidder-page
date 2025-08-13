@@ -44,7 +44,7 @@ export function MintNftCardStepperInfo({ step }: Props) {
   }
 
   return (
-    <div className="mb-6 flex items-center justify-center text-center text-sm text-gray-400">
+    <div className="mb-6 flex items-center justify-center text-center text-sm text-palette-blue/90">
       {getCurrentSteps(step)}
     </div>
   )

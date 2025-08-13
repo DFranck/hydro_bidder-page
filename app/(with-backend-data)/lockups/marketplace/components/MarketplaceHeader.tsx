@@ -24,8 +24,10 @@ export default function MarketplaceHeader({
     <div className="flex w-full flex-col">
       <div className="mb-4 w-full rounded-lg border border-white/20 bg-black/40 p-6">
         <div className="flex flex-col gap-3">
-            <span className="text-lg text-white/90">
-            Hydro lockups can be minted as NFTs and transferred to other wallets. The NFTs carry several features, including locked tokens, active votes, pending rewards, and governance history, and {" "}
+          <span className="text-lg text-white/90">
+            Hydro lockups can be minted as NFTs and transferred to other
+            wallets. The NFTs carry several features, including locked tokens,
+            active votes, pending rewards, and governance history, and{" "}
             <a
               href="https://x.com/HydroTeam_/status/1912138750085247471"
               target="_blank"
@@ -33,8 +35,11 @@ export default function MarketplaceHeader({
               className="text-hydro-blue underline hover:no-underline"
             >
               more coming up
-            </a>. A 1% commission fee is applied to all NFT sales that will be redistributed to NFT holders. You can click on any of the cards below to show details.
-            </span>
+            </a>
+            . A 1% commission fee is applied to all NFT sales that will be
+            redistributed to NFT holders. You can click on any of the cards
+            below to show details.
+          </span>
         </div>
       </div>
       <div className="flex h-[44px] items-center justify-between bg-white/10 px-4">
@@ -53,12 +58,8 @@ export default function MarketplaceHeader({
               )}
             />
           </StyledText>
-          <h1 className="hidden items-center gap-2 text-[18px] font-bold whitespace-nowrap lg:flex">
-            <Icon name="light:bag-shopping" />
-            Hydro Lockup NFT Store
-          </h1>
         </div>
-        <div className="flex w-full items-center justify-between gap-4 bg-transparent md:w-fit">
+        <div className="flex w-full items-center justify-between gap-4 bg-transparent">
           <div className="flex items-center gap-2">
             <StyledText
               as={"label"}
