@@ -103,7 +103,6 @@ export function BidPolSize({ bidId, sourceId, className }: BidPolSizeProps) {
         className,
       )}
       tip={tooltipContent}
-      classNamesForTooltip="-ml-24"
     >
       <span className="@card-is-row:flex-col flex items-center gap-1">
         {renderPolSizeValue()}

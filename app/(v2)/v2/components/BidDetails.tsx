@@ -252,21 +252,20 @@ export function BidDetails({
                     <Icon name="circle-info" className="text-xs opacity-60" />
                   )}
                 </div>
-                <div className="important-value">{field.value}</div>
               </React.Fragment>
             )
 
             return field.tooltip ? (
-              <Tooltipped
-                key={String(field.label)}
-                tip={field.tooltip}
-                className={containerClassName}
-              >
-                {content}
-              </Tooltipped>
+              <div className={containerClassName}>
+                <Tooltipped key={String(field.label)} tip={field.tooltip}>
+                  {content}
+                </Tooltipped>
+                <div className="important-value">{field.value}</div>
+              </div>
             ) : (
               <div className={containerClassName} key={String(field.label)}>
                 {content}
+                <div className="important-value">{field.value}</div>
               </div>
             )
           })}

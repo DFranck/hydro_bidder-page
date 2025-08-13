@@ -63,7 +63,6 @@ export function buildRow({
         {bid.vote_perc < voteThreshold ? (
           <Tooltip
             tipContents={voteThresholdTooltip({ trancheId: bid.trancheId })}
-            classNamesForTooltip="-ml-24"
           >
             <div className="flex items-center gap-1">
               <StyledText variant="mathSymbol.container">
@@ -87,7 +86,6 @@ export function buildRow({
                   totalBidLiquidity,
                   denom,
                 })}
-                classNamesForTooltip="-ml-24"
               >
                 {children}
               </Tooltip>
