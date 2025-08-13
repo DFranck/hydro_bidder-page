@@ -2,6 +2,7 @@
 import { StyledText } from "@/components/StyledText"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useEffect, useState } from "react"
+import { formatAmount } from '../../../../../../lib/formatAmount'
 import { isListedMarketplaceLockup } from "../../../marketplace/utils/isListedMarketplaceLockup"
 import { formatDenomAmount } from "../../../utils/formatDenomAmount"
 import { getAllowedPaymentDenoms } from "../../../utils/getAllowedPaymentDenoms"
@@ -43,7 +44,8 @@ export default function ListActionFields(props: LockupActionFormProps<"list">) {
     (c) =>
       c.contract_address === process.env.NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS,
   )?.royalty_fee_bps
-
+const fees = royalties && Number(priceInput) -
+                Number(priceInput) * (royalties / 100 / 100)
   const priceDisplayDenom = getDisplayDenom(allowedPaymentDenoms[0])
 
   return (
@@ -59,8 +61,7 @@ export default function ListActionFields(props: LockupActionFormProps<"list">) {
               as="li"
             >
               Proceeds:{" "}
-              {Number(priceInput) -
-                Number(priceInput) * (royalties / 100 / 100)}{" "}
+              {formatAmount(fees ?? 0,0,2)}{" "}
               {priceDisplayDenom}
             </StyledText>
           )}

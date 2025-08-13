@@ -19,7 +19,7 @@ export default function MarketplaceSortSelect({
   return (
     <Dropdown
       trigger={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer">
           <StyledText
             as="span"
             variant="label.meta.faded"

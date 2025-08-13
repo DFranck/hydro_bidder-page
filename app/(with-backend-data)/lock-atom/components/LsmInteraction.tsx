@@ -200,7 +200,7 @@ export function LsmInteraction({
                           undefined,
                           DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
                         )}{" "}
-                        {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                        ATOM
                       </strong>{" "}
                       staked with{" "}
                       <strong>
@@ -227,9 +227,8 @@ export function LsmInteraction({
           {lockedTokenIsAtCapacityWallet ? (
             <BlurryBackdropBox className="p-6">
               <p>
-                You&rsquo;ve reached the maximum of{" "}
-                {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} you can lock for
-                this pilot round.
+                You&rsquo;ve reached the maximum of ATOM you can lock for this
+                pilot round.
               </p>
             </BlurryBackdropBox>
           ) : lockedTokenIsAtCapacityGlobal ? (

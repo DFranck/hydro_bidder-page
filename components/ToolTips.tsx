@@ -257,9 +257,7 @@ export const lockupLimitReachedByNetworkTooltip = (
 )
 
 export const cannotContinueLockupTooltip = (
-  <div className="space-y-0.5">
-    {lockupLimitReachedByNetworkTooltip}
-  </div>
+  <div className="space-y-0.5">{lockupLimitReachedByNetworkTooltip}</div>
 )
 
 export const estimatedRewardsColumnTooltip = ({

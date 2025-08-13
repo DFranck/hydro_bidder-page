@@ -1,6 +1,5 @@
 "use client"
 import { AugmentedLockup } from "@/contract-apis/types"
-import { formatAmount } from "@/lib/formatAmount"
 import { MarketplaceLockup } from "../../marketplace/types"
 import { isListedMarketplaceLockup } from "../../marketplace/utils/isListedMarketplaceLockup"
 import { formatDenomAmount } from "../../utils/formatDenomAmount"
@@ -13,6 +12,8 @@ import LockupActionCardValue from "./LockupActionCardValue"
 import { LockupActionPendingRewards } from "./LockupActionPendingRewards"
 import { LockupActionVotingHistory } from "./LockupActionVotingHistory"
 import { LockupImage } from "./LockupImage"
+import { LockupMoreDetails } from "./LockupMoreDetals"
+import { LockupValueSummary } from "./LockupValueSummary"
 
 export function LockupActionCard<
   L extends AugmentedLockup | MarketplaceLockup,
@@ -27,15 +28,18 @@ export function LockupActionCard<
   onChange?: (values: Partial<LockupActionPayloadFor<T>>) => void
 }) {
   const isListed = isListedMarketplaceLockup(lockup)
-
   return (
     <div className="flex flex-col md:flex-row">
+      <div className="pb-2">
+
       <div
         className="relative mx-auto mb-4"
         style={{ width: "200px", height: "200px" }}
       >
         <LockupImage lockup={lockup} />
       </div>
+        <LockupValueSummary lockup={lockup} />
+        </div>
       <ul className="space-y-[2px] overflow-y-auto rounded-xl">
         {action === "list" && (
           <li>
@@ -85,23 +89,7 @@ export function LockupActionCard<
         <li>
           <LockupActionCardEligibility lockup={lockup} />
         </li>
-        <li className="hidden md:block">
-          <LockupActionCardValue
-            icon="bolt"
-            leftContent="voting power"
-            leftClassName="items-center"
-            rightContent={formatAmount(lockup.currentVotingPower, 6, 2)}
-          />
-        </li>
-
-        <li className="hidden md:block">
-          <LockupActionCardValue
-            icon="fingerprint"
-            leftContent="lock id"
-            leftClassName="items-center"
-            rightContent={lockup.id}
-          />
-        </li>
+        <LockupMoreDetails lockup={lockup}/>
         <li className="hidden md:block">
           <LockupActionVotingHistory lockup={lockup} />
         </li>

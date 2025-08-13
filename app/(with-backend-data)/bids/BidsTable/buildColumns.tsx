@@ -76,7 +76,6 @@ export function buildColumns<
       key: "currentVoteShare",
       label: (
         <Tooltip
-          classNamesForTooltip="-ml-24"
           tipContents={currentVoteShareTooltip}
         >
           <div className="flex items-center gap-1">

@@ -15,13 +15,13 @@ import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts"
 
+import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 import { Tooltip } from "@/components/Tooltip"
 import { claimStakingRewardsTooltip } from "@/components/ToolTips"
 import { fetchLSMStakingRewards } from "@/contract-apis/fetchTokenizeShareRewards"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { twMerge } from "tailwind-merge"
 import { signClaimTokenizedRewards } from "./transactions/signClaimTokenizedRewards"
-import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 
 export function ClaimStakingRewards() {
   const { hubChain, hubSigner } = useChainsAndSigners()

@@ -1,7 +1,8 @@
 "use client"
 import { ModalWindow } from "@/components/ModalWindow"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
+import { StyledText } from "@/components/StyledText"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { MarketplaceLockup } from "../../marketplace/types"
 import {
@@ -12,7 +13,6 @@ import {
 } from "../types"
 import { getLockupActionConfig } from "../utils/getLockupActionConfig"
 import { LockupActionCard } from "./LockupActionCard"
-import { StyledText } from "@/components/StyledText"
 
 interface LockupActionModalProps<T extends LockupActionType> {
   isOpen: boolean
@@ -35,45 +35,41 @@ export default function LockupActionModal<T extends LockupActionType>({
   isProcessing,
   showActionPanel,
 }: LockupActionModalProps<T>) {
-  const config = getLockupActionConfig(action)
+  
+  const config = useMemo(() => getLockupActionConfig(action), [action]);
+
+  const getInitial = useMemo(() => config.getInitialPayload, [config]);
+
   const [payload, setPayload] = useState<LockupActionPayloadFor<T>>(
-    config.getInitialPayload
-      ? config.getInitialPayload(lockup)
-      : ({} as LockupActionPayloadFor<T>)
-  )
-  const [isFormValid, setIsFormValid] = useState<boolean>(false)
+    getInitial ? getInitial(lockup) : ({} as LockupActionPayloadFor<T>)
+  );
+
+  const [isFormValid, setIsFormValid] = useState(false);
+
   useEffect(() => {
     if (!isOpen) {
-      setPayload(
-        config.getInitialPayload
-          ? config.getInitialPayload(lockup)
-          : ({} as LockupActionPayloadFor<T>)
-      )
-      setIsFormValid(false)
+      setPayload(getInitial ? getInitial(lockup) : ({} as LockupActionPayloadFor<T>));
+      setIsFormValid(false);
     }
-  }, [isOpen, config, lockup])
+  }, [isOpen, lockup, getInitial]);
 
-  const handleChange = useCallback(
-    (newValues: Partial<LockupActionPayloadFor<T>>) => {
-      setPayload(
-        (prev) =>
-          ({
-            ...(typeof prev === "object" && prev !== null ? prev : {}),
-            ...newValues,
-          }) as LockupActionPayloadFor<T>
-      )
-    },
-    []
-  )
+  const handleChange = useCallback((patch: Partial<LockupActionPayloadFor<T>>) => {
+    setPayload(prev => {
+      const merged = { ...(prev ?? {}), ...patch } as LockupActionPayloadFor<T>;
+      return JSON.stringify(merged) === JSON.stringify(prev) ? prev : merged;
+    });
+  }, []);
 
   useEffect(() => {
-    if (action && payload) {
-      const valid = config?.isValid?.(payload) ?? false
-      setIsFormValid(valid)
-    }
-  }, [action, payload])
+    if (!action) return;
+    const valid = config?.isValid?.(payload) ?? false;
+    setIsFormValid(prev => (prev === valid ? prev : valid));
+  }, [action, payload, config]);
 
-  const Component = config?.FormComponent as React.FC<LockupActionFormProps<T>>
+  const Component = useMemo(
+    () => config?.FormComponent as React.FC<LockupActionFormProps<T>>,
+    [config]
+  );
 
   return (
     <ModalWindow isOpen={isOpen} onClose={onClose} className="max-w-[98%]">

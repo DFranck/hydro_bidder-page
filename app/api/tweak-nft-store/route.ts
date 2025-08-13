@@ -4,7 +4,6 @@ import { ListingMutationAPIResponse } from "@/app/(with-backend-data)/lockups/ma
 import { Listing } from "@/app/ts_types/MarketplaceBase.types"
 import { getMarketplaceQueryClient } from "@/contract-apis/getClient"
 import { revalidateTag } from "@/lib/revalidateTag"
-import { getSupabaseNamespacedFilename } from "@/lib/getSupabaseNamespacedFilename"
 import { supabase } from "@/lib/supabase"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -31,8 +30,9 @@ export async function POST(req: NextRequest) {
     }
 
     let listings: Listing[] = []
-
-    const filename = getSupabaseNamespacedFilename(LISTINGS_FILE)
+// TODO : Replace with the correct filename beor PR
+    // const filename = getSupabaseNamespacedFilename(LISTINGS_FILE)
+    const filename = "moonkitt-dev--" + LISTINGS_FILE
     try {
       const { data, error } = await supabase.storage
         .from(STORAGE_BUCKET)

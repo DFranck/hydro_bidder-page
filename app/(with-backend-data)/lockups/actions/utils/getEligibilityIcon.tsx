@@ -9,7 +9,7 @@ export function getEligibilityIcon(meta: {
       icon: (
         <Icon
           name="solid:circle-check"
-          className="mr-3 min-w-4 text-base text-palette-green "
+          className="mr-3 min-w-4 text-sm text-palette-green "
         />
       ),
       color: "text-palette-green",
@@ -19,7 +19,7 @@ export function getEligibilityIcon(meta: {
       icon: (
         <Icon
           name="solid:lock"
-          className="mr-3 min-w-4 text-base text-palette-beige "
+          className="mr-3 min-w-4 text-sm text-palette-beige "
         />
       ),
       color: "text-palette-beige",
@@ -28,7 +28,7 @@ export function getEligibilityIcon(meta: {
     icon: (
       <Icon
         name="solid:circle-dashed"
-        className="mr-3 min-w-4 text-base text-palette-beige "
+        className="mr-3 min-w-4 text-sm text-palette-beige "
       />
     ),
     color: "text-palette-beige",

@@ -4,6 +4,7 @@ import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { useToasts } from "@/components/Toasts"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { ALLOWED_MARKETPLACE_DENOMS } from "@/lib/tokenDenoms"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
@@ -22,7 +23,6 @@ import { formatDenomAmount } from "./utils/formatDenomAmount"
 import { getDenomExponent } from "./utils/getDenomExponent"
 import { getDisplayDenom } from "./utils/getDisplayDenom"
 import { getImagesWithFallback } from "./utils/getImagesForDenoms"
-import { ALLOWED_MARKETPLACE_DENOMS } from "@/lib/tokenDenoms"
 const BuyALockupButton = () => {
   const { setToasts } = useToasts()
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)

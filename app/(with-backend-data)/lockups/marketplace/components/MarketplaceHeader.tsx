@@ -1,6 +1,7 @@
 import { BurgerButton } from "@/components/BurgerButton"
 import { Icon } from "@/components/Icon"
 import { StyledText } from "@/components/StyledText"
+import { twMerge } from "tailwind-merge"
 import { MarketplaceSortBy, MarketplaceView } from "../types"
 import MarketplaceSortSelect from "./MarketplaceSortSelect"
 
@@ -20,50 +21,73 @@ export default function MarketplaceHeader({
   results,
 }: MarketplaceHeaderProps) {
   return (
-    <div className="flex flex-col w-full">
-  {/* Info box */}
-  <div className="w-full bg-black/40 p-6 border border-white/20 rounded-lg mb-4">
-    <div className="flex flex-col gap-3 max-w-[800px]">
-      <span className="text-white/90 text-lg">
-        Trade Hydro lockups as NFTs backed by dATOM or stATOM.<br></br>
-        Cards show the locked amount and asking price. Click one to see the details.<br></br>
-        Buy an NFT to gain its voting power and rewards; sell anytime to pass both on.
-      </span>
-    </div>
-  </div>
-
-  {/* Original header content */}
-  <div className="flex h-[44px] items-center justify-between bg-white/10 px-4">
-    <div className="flex w-full items-center justify-between gap-4 bg-transparent lg:w-fit">
-      <MarketplaceSortSelect setSortBy={setSortBy} />
-      <div className="flex items-center gap-2">
-        <StyledText
-          as={"label"}
-          variant="label.meta.faded"
-          className="hidden md:flex"
-        >
-          showing
-        </StyledText>
-        <StyledText
-          as="output"
-          className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-black text-black"
-        >
-          {results}
-        </StyledText>
-        <StyledText
-          as={"label"}
-          aria-label={`${results} results`}
-          variant="label.meta.faded"
-        >
-          results
-        </StyledText>
+    <div className="flex w-full flex-col">
+      <div className="mb-4 w-full rounded-lg border border-white/20 bg-black/40 p-6">
+        <div className="flex max-w-[800px] flex-col gap-3">
+          <span className="text-lg text-white/90">
+            Trade Hydro lockups as NFTs backed by dATOM or stATOM.<br></br>
+            Cards show the locked amount and asking price. Click one to see the
+            details.<br></br>
+            Buy an NFT to gain its voting power and rewards; sell anytime to
+            pass both on.
+          </span>
+        </div>
       </div>
-      <BurgerButton
-        onClick={() => setIsAsideOpen(!isAsideOpen)}
-        isOpen={isAsideOpen}
-      />
+      <div className="flex h-[44px] items-center justify-between bg-white/10 px-4">
+        <div className="flex items-center">
+          <StyledText
+            as="button"
+            variant={"button.neutral.small"}
+            onClick={() => setIsAsideOpen(!isAsideOpen)}
+            className="mr-2 hidden md:flex "
+          >
+            <Icon
+              name="chevron-right"
+              className={twMerge(
+                "transition-all duration-200 ease-in-out",
+                isAsideOpen ? "rotate-180" : ""
+              )}
+            />
+          </StyledText>
+          <h1 className="hidden items-center gap-2 text-[18px] font-bold whitespace-nowrap lg:flex">
+            <Icon name="light:bag-shopping" />
+            Hydro Lockup NFT Store
+          </h1>
+        </div>
+        <div className="flex w-full items-center justify-between gap-4 bg-transparent md:w-fit">
+          <div className="flex items-center gap-2">
+            <StyledText
+              as={"label"}
+              variant="label.meta.faded"
+              className="hidden md:flex"
+            >
+              showing
+            </StyledText>
+            <StyledText
+              as="output"
+              className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-black text-black"
+            >
+              {results}
+            </StyledText>
+            <StyledText
+              as={"label"}
+              aria-label={`${results} results`}
+              variant="label.meta.faded"
+            >
+              results
+            </StyledText>
+          </div>
+          <MarketplaceSortSelect setSortBy={setSortBy} />
+          <BurgerButton
+            onClick={() => setIsAsideOpen(!isAsideOpen)}
+            isOpen={isAsideOpen}
+          />
+          {/* Add when you have more views */}
+          {/* <div className="flex gap-2">
+          <button onClick={() => setView("grid")}>Card</button>
+        </div> */}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   )
 }

@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
-import { twMerge } from "tailwind-merge"
 
 type EditLockupDurationProps = {
   lockup: AugmentedLockup | null

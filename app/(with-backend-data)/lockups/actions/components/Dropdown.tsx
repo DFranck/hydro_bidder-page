@@ -11,18 +11,33 @@ export const DropdownContext = createContext<{
   setDisableClickAway: () => {},
 })
 
+type DropdownProps = {
+  trigger: ReactNode
+  className?: string
+  children: ReactNode
+  onOpenChange?: (open: boolean) => void
+  panelClassName?: string
+}
+
 export function Dropdown({
   trigger,
   className,
   children,
-}: {
-  trigger: ReactNode
-  className?: string
-  children: ReactNode
-}) {
-  const [open, setOpen] = useState(false)
+  onOpenChange,
+  panelClassName,
+}: DropdownProps) {
+  const [open, _setOpen] = useState(false)
   const [disableClickAway, setDisableClickAway] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  const setOpen = (next: boolean | ((v: boolean) => boolean)) => {
+    _setOpen(prev => {
+      const v = typeof next === "function" ? (next as (p: boolean) => boolean)(prev) : next
+      if (v !== prev) onOpenChange?.(v) 
+      return v
+    })
+  }
+
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
       if (
@@ -50,14 +65,12 @@ export function Dropdown({
     <DropdownContext.Provider
       value={{ close: () => setOpen(false), setDisableClickAway }}
     >
-      <div
-        ref={ref}
-        className={twJoin("relative inline-block text-left", className)}
-      >
+      <div ref={ref} className={twJoin("relative inline-block text-left", className)}>
         <button
-          onClick={() => setOpen((v) => !v)}
+          type="button" 
+          onClick={() => setOpen(v => !v)}
           aria-expanded={open}
-          className={twJoin("text-palette-green flex items-center gap-1")}
+          className="text-palette-green flex items-center gap-1"
         >
           {trigger}
         </button>
@@ -68,8 +81,10 @@ export function Dropdown({
               "absolute top-full right-0 z-20 flex flex-col py-2",
               "bg-palette-text rounded-md border shadow-2xl",
               "text-[14px] text-white transition-opacity",
-              open && "px-1.5"
+              "px-1.5",
+              panelClassName
             )}
+            role="menu"
           >
             {children}
           </div>

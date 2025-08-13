@@ -1,27 +1,27 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
 import { useChain } from "@cosmos-kit/react"
+import { useQuery } from "@tanstack/react-query"
 
-import { useBackendData } from "@/contract-apis/useBackendData"
-import { findLockupsForNFtSizes } from "@/hooks/use-nft"
 import { NFT_LIST } from "@/app/(with-backend-data)/lockups/config"
-import { cn } from "@/lib/utils"
-import { AugmentedLockup } from "@/contract-apis/types"
+import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
 import {
   MintingStep,
   NFT_INFO,
 } from "@/app/(with-backend-data)/lockups/MintNfts"
+import { AugmentedLockup } from "@/contract-apis/types"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { findLockupsForNFtSizes } from "@/hooks/use-nft"
+import { cn } from "@/lib/utils"
+import { AlertCircleIcon } from "lucide-react"
 import { Avatar } from "./Avatar"
-import { MintNftCardStepper } from "./MintNftCardStepper"
-import { StyledText } from "./StyledText"
 import { Icon } from "./Icon"
+import { MintNftCardStepper } from "./MintNftCardStepper"
+import MintNftEmptyCard from "./MintNftEmptyCard"
+import { StyledText } from "./StyledText"
 import { Tooltip } from "./Tooltip"
 import { includeNftSizesTooltip } from "./ToolTips"
 import { Switch } from "./ui/switch"
-import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
-import { AlertCircleIcon } from "lucide-react"
-import MintNftEmptyCard from "./MintNftEmptyCard"
 import { Alert } from "./Alert"
 
 interface Props {

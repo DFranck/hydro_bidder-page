@@ -6,7 +6,7 @@ import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useRef } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
 export function Header() {
@@ -37,11 +37,6 @@ export function Header() {
 
     return () => clearInterval(interval)
   }, [])
-
-  const borderColor =
-    process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "stOSMO"
-      ? "border-tokens-stosmo"
-      : "border-tokens-atom"
 
   return (
     <>

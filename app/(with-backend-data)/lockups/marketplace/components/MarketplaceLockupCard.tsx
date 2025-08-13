@@ -24,7 +24,7 @@ export default function MarketplaceLockupCard({
   return (
     <div
       className={twMerge(
-        " box-border grid max-w-[358.5px] grid-cols-2 rounded-2xl border-2 backdrop-blur-sm",
+        " box-border grid max-w-[358.5px] grid-cols-2 rounded-2xl border-2 backdrop-blur-sm cursor-pointer",
         isMine
           ? "border-palette-beige"
           : isListed
