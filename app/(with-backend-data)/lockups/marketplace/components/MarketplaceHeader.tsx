@@ -23,10 +23,19 @@ export default function MarketplaceHeader({
   return (
     <div className="flex w-full flex-col">
       <div className="mb-4 w-full rounded-lg border border-white/20 bg-black/40 p-6">
-        <div className="flex max-w-[800px] flex-col gap-3">
-          <span className="text-lg text-white/90">
-            Hydro lockups can be minted as NFTs and transferred to other wallets. The NFTs carry several features, including locked tokens, active votes, pending rewards, and governance history, and more coming up. Click on any of the cards below to show details. 
-          </span>
+        <div className="flex flex-col gap-3">
+            <span className="text-lg text-white/90">
+            Hydro lockups can be minted as NFTs and transferred to other wallets. The NFTs carry several features, including locked tokens, active votes, pending rewards, and governance history, and{" "}
+            <a
+              href="https://x.com/HydroTeam_/status/1912138750085247471"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-hydro-blue hover:underline"
+            >
+              more coming up
+            </a>
+            . Click on any of the cards below to show details. 
+            </span>
         </div>
       </div>
       <div className="flex h-[44px] items-center justify-between bg-white/10 px-4">
