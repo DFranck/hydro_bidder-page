@@ -30,7 +30,7 @@ export default function MarketplaceHeader({
               href="https://x.com/HydroTeam_/status/1912138750085247471"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-hydro-blue hover:underline"
+              className="text-hydro-blue underline hover:no-underline"
             >
               more coming up
             </a>
