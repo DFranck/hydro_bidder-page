@@ -1,13 +1,18 @@
 'use client'
 
 import { Icon } from '@/components/Icon'
+import { StyledText } from '@/components/StyledText'
 import { useChain } from '@cosmos-kit/react'
 import { Tooltipped } from '@v2/components/Tooltipped'
 import { useWalletConnection } from '@v2/hooks/useWalletConnection'
 import { useEffect, useRef } from 'react'
 import { twJoin } from 'tailwind-merge'
 
-export function WalletButton() {
+type WalletButtonProps = {
+  inline?: boolean
+}
+
+export function WalletButton({ inline }: WalletButtonProps) {
   const { address, isWalletConnected } = useChain('neutron')
 
   const lastRefetchedAddressRef = useRef<string | null>(null)
@@ -46,7 +51,19 @@ export function WalletButton() {
   })
 
   const buttonProps = getButtonProps()
-
+if (inline) {
+    return (
+      <StyledText
+      as='button'
+        onClick={buttonProps.onClick}
+        disabled={buttonProps.disabled}
+        variant="button.primary.small"
+      >
+        <Icon name="solid:wallet" className="size-5" />
+        <span className="font-medium">{buttonProps.children}</span>
+      </StyledText>
+    )
+  }
   if (!isWalletConnected) {
     // When not connected, render the full-screen overlay button
     return (

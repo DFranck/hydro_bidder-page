@@ -45,7 +45,7 @@ export function RefreshMultipleLockups({
 }: RefreshMultipleLockupsProps) {
   const { setToasts } = useToasts()
 
-  const { address, lockedAtomEpochInNanos } = useBackendData()
+  const { address, lockedTokenEpochInNanos } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
 
   const [selectedDuration, setSelectedDuration] = useState(
@@ -79,7 +79,7 @@ export function RefreshMultipleLockups({
     .filter(isNumber)
     .map((epochCount) => {
       const { value, unit } = getTimeUnitFromNanos(
-        epochCount * lockedAtomEpochInNanos
+        epochCount * lockedTokenEpochInNanos
       )
       return {
         label: `${pluralize({
@@ -87,7 +87,7 @@ export function RefreshMultipleLockups({
           prefixCount: true,
           singular: unit,
         })}`,
-        duration: epochCount * lockedAtomEpochInNanos,
+        duration: epochCount * lockedTokenEpochInNanos,
       }
     })
     .filter((option) => {

@@ -19,9 +19,9 @@ export function BlurryBackdropBox({
           bg-palette-text/80
           px-3
           py-2
-          backdrop-blur-md
+          bg-black/90
         `,
-        className
+        className,
       )}
       {...otherProps}
     >

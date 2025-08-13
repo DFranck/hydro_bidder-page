@@ -1,8 +1,10 @@
 "use client"
 
+import { GetStOsmoButtons, skipUrl } from "@/components/GetStOsmoButtons"
 import { Icon } from "@/components/Icon"
 import { HYDRO_TELEGRAM_COMMUNITY_URL } from "@/config"
 import { fetchCurrentRoundId } from "@/contract-apis/fetchCurrentRoundId"
+import { useAmountOfStOsmoInWallet } from "@/contract-apis/useAmountOfStOsmoInWallet"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { formatOrdinals } from "@/lib/formatOrdinals"
@@ -27,16 +29,20 @@ export function AppBanner() {
   const backendData = useBackendData()
   const { currentRoundId: currentRoundIdFromBackend } = backendData
   const {
-    data: { lockedAtomIsAtCapacityGlobal },
+    data: { lockedTokenIsAtCapacityGlobal },
   } = useGlobalLockupCapacityInfo()
   const [currentRoundId, setCurrentRoundId] = useState<number>(
     currentRoundIdFromBackend
   )
+  const amountOfStOsmoInWallet = useAmountOfStOsmoInWallet()
   const { isDocumentScrolled: isScrolled } = useIsDocumentScrolled()
 
-  const activeBannerName = lockedAtomIsAtCapacityGlobal
+  const activeBannerName = lockedTokenIsAtCapacityGlobal
     ? "maxCapacity"
-    : "pilotRounds"
+    : process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "stOSMO" &&
+        amountOfStOsmoInWallet === 0
+      ? "getStOsmo"
+      : "pilotRounds"
 
   useEffect(() => {
     if (!currentRoundId) {
@@ -47,6 +53,7 @@ export function AppBanner() {
   const Banners = {
     maxCapacity: {
       href: HYDRO_TELEGRAM_COMMUNITY_URL,
+      className: "bg-palette-beige text-palette-text",
       text: (
         <>
           Hydro&rsquo;s current cap has been reached.{" "}
@@ -54,8 +61,10 @@ export function AppBanner() {
         </>
       ),
     },
+
     pilotRounds: {
       href: HYDRO_TELEGRAM_COMMUNITY_URL,
+      className: "bg-palette-beige text-palette-text",
       text: !currentRoundId ? (
         "Loading..."
       ) : (
@@ -66,9 +75,15 @@ export function AppBanner() {
         </>
       ),
     },
+
+    getStOsmo: {
+      href: skipUrl,
+      className: "bg-tokens-stosmo text-white",
+      text: <GetStOsmoButtons />,
+    },
   }
 
-  const { href, text } = Banners[activeBannerName]
+  const { href, text, className } = Banners[activeBannerName]
 
   return (
     <div
@@ -84,7 +99,8 @@ export function AppBanner() {
           duration-300
           xl:px-24
         `,
-        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm"
+        isScrolled ? "py-1.5 text-xs" : "py-2 text-sm",
+        className
       )}
     >
       {text}

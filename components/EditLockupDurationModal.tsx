@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils"
 import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
-import { twMerge } from "tailwind-merge"
 
 type EditLockupDurationProps = {
   lockup: AugmentedLockup | null
@@ -41,7 +40,7 @@ export function EditLockupDurationModal({
   onCloseComplete: outerOnCloseComplete,
 }: EditLockupDurationProps) {
   const router = useRouter()
-  const { address, lockedAtomEpochInNanos, currentRoundId } = useBackendData()
+  const { address, lockedTokenEpochInNanos, currentRoundId } = useBackendData()
   const [hasChanged, setHasChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { setToasts } = useToasts()
@@ -54,7 +53,7 @@ export function EditLockupDurationModal({
   const newPower =
     calculateLockupVotingPower(
       (lockup?.funds.amount ?? 0) * 1e6,
-      selectedDuration / lockedAtomEpochInNanos
+      selectedDuration / lockedTokenEpochInNanos
     ) * ratio
   const currentLockupEndDate = lockup?.dateEnd ?? new Date()
   const daysUntilEndDate = getDaysAway(currentLockupEndDate)

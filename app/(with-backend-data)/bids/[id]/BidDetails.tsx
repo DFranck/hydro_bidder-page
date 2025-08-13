@@ -44,8 +44,14 @@ export function BidDetails({
 }) {
   const backendData = useBackendData()
 
-  const { atomPrice, bidsInfo, currentRoundId, votes, minTributeFactor } =
-    backendData
+  const {
+    atomPrice,
+    bidsInfo,
+    currentRoundId,
+    votes,
+    minTributeFactor,
+    stOsmoPrice,
+  } = backendData
 
   const {
     aboutProject,
@@ -92,9 +98,14 @@ export function BidDetails({
 
   const hasVotedForBid = votes.some((vote) => vote.bidId === bidId)
 
-  const totalTributeValueInAtom = bid.totalTokenBasedTributeValue / atomPrice
+  const totalTributeValueInVotingToken =
+    bid.totalTokenBasedTributeValue /
+    (process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+      ? atomPrice
+      : stOsmoPrice)
 
-  const maxDeploymentAmountInAtom = totalTributeValueInAtom / minTributeFactor
+  const maxDeploymentAmountInVotingToken =
+    totalTributeValueInVotingToken / minTributeFactor
 
   const isTokenBased = points.length === 0
 
@@ -415,8 +426,13 @@ export function BidDetails({
                   <Icon name="circle-info" />
                 </StyledText>
                 <div className="max-w-64 overflow-x-auto text-xl font-bold">
-                  ~{formatAmount(maxDeploymentAmountInAtom * 1e6, undefined, 0)}{" "}
-                  ATOM
+                  ~
+                  {formatAmount(
+                    maxDeploymentAmountInVotingToken * 1e6,
+                    undefined,
+                    0
+                  )}{" "}
+                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                 </div>
               </Tooltip>
             )} */}

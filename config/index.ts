@@ -5,7 +5,8 @@ export enum AllowedLockupPeriodInEpochs {
 }
 
 export const HYDRO_TELEGRAM_COMMUNITY_URL = "https://t.me/hydro_community"
-export const HYDRO_TELEGRAM_ANNOUNCEMENTS_URL = "https://t.me/hydro_announcements"
+export const HYDRO_TELEGRAM_ANNOUNCEMENTS_URL =
+  "https://t.me/hydro_announcements"
 
 export const DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS = 3
 
@@ -27,7 +28,7 @@ export const voteThresholdByTrancheId = {
   2: 0.35,
 } as const
 
-export const SMART_CONTRACT_LOCKUPS_PAGE_LIMIT = 7
+export const SMART_CONTRACT_LOCKUPS_PAGE_LIMIT = 5
 
 export const sharedEndpoints = {
   neutron: {

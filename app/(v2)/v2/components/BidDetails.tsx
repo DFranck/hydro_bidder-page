@@ -1,5 +1,6 @@
 'use client'
 
+import { ConditionalWrapper } from '@/components/ConditionalWrapper'
 import { Icon } from '@/components/Icon'
 import { MarkdownContainer } from '@/components/MarkdownContainer'
 import {
@@ -24,6 +25,7 @@ import { VoteButton } from '@v2/components/VoteButton'
 import { SourceID } from '@v2/environments'
 import { useAppState } from '@v2/state/DataProviderOnClient'
 import { sumBy } from 'lodash'
+import Link from 'next/link'
 import React from 'react'
 import { twJoin, twMerge } from 'tailwind-merge'
 
@@ -31,12 +33,10 @@ export function BidDetails({
   sourceId,
   bidId,
   className,
-  isModal = false,
 }: {
   sourceId: SourceID
   bidId: number
   className?: string
-  isModal?: boolean
 }) {
   const { state } = useAppState()
   const { currentRoundDataPerSource, bidDescriptionsById } = state
@@ -64,7 +64,6 @@ export function BidDetails({
 
   const sidebarFields = [
     // No tooltip for basic fields
-    { label: 'Project Name', value: bidDescription?.projectName },
     { label: 'Bid in Round', value: bid.roundId + 1 },
 
     // Amount - only show if has liquidity deployment
@@ -147,11 +146,47 @@ export function BidDetails({
           'flex items-center justify-between',
           'px-loose',
           'pt-bar-height-large',
-          'pb-standard',
+          'pb-loose',
           'bg-background',
         )}
       >
-        <h1 className="title-1 relative z-10">{bidDescription?.title}</h1>
+        <div className="gap-tight relative z-10 flex flex-col">
+          <h1 className="title-1">{bidDescription?.title}</h1>
+          <h2 className="label">
+            <ConditionalWrapper
+              condition={!!bidDescription?.projectUrl}
+              wrapper={(children) => (
+                <Link
+                  href={bidDescription.projectUrl}
+                  target="_blank"
+                  className="group/link gap-tightest inline-flex items-center"
+                >
+                  <span
+                    className={twJoin(
+                      'link h-min',
+                      'group-hover/link:text-palette-beige',
+                    )}
+                  >
+                    {children}
+                  </span>
+                  <Icon
+                    name="arrow-up-right"
+                    className={twJoin(
+                      'link h-min',
+                      'text-xs no-underline',
+                      'transition-transform',
+                      'group-hover/link:text-palette-beige',
+                      'group-hover/link:scale-110',
+                      'group-hover/link:translate-x-1',
+                    )}
+                  />
+                </Link>
+              )}
+            >
+              {bidDescription?.projectName}
+            </ConditionalWrapper>
+          </h2>
+        </div>
 
         <VoteButton
           bidId={bidId}
@@ -170,6 +205,7 @@ export function BidDetails({
           )}
         />
 
+        {/* Black gradient to ensure text is legible on logo */}
         <div
           className={twJoin(
             'absolute inset-x-0 bottom-0 h-3/4',
@@ -177,6 +213,7 @@ export function BidDetails({
           )}
         />
 
+        {/* Green glow on vote button hover */}
         <div
           className={twJoin(
             'absolute inset-x-0 bottom-0 h-1/2',
@@ -199,15 +236,14 @@ export function BidDetails({
             '@container/sidebar',
             'transition-all',
             'relative',
+            'transition-all',
             'col-start-1 col-end-2',
             'row-start-1 row-end-2',
-            'bg-theme-color/20',
-            'grid grid-cols-2',
-            'px-loose',
-            'py-standard',
-            'gap-x-loose',
-            'gap-y-standard',
+            'from-theme-color/20 bg-linear-to-b to-transparent',
             'text-foreground',
+            'flex',
+            'flex-wrap',
+            'content-start',
             'desktop:h-full',
             'desktop:flex',
             'desktop:flex-wrap',

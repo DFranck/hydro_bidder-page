@@ -7,7 +7,7 @@ import { TableHeader } from "@/components/TableHeader"
 import { AugmentedLockup } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import Link from "next/link"
-import { Fragment, useMemo, useState } from "react"
+import { Fragment, useMemo } from "react"
 import { twMerge } from "tailwind-merge"
 import { buildActiveColumns } from "./buildActiveColumns"
 import { buildActiveRow } from "./buildActiveRow"
@@ -15,6 +15,9 @@ import { buildExpiredColumns } from "./buildExpiredColumns"
 import { buildExpiredRow } from "./buildExpiredRow"
 import { RowComponent } from "./RowComponent"
 import { Checkbox } from "@/components/ui/checkbox"
+import { NFT_SIZES } from "./config/nft-sizes"
+import MintNftEmptyCard from "@/components/MintNftEmptyCard"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function LockupsTables({
   onClickEdit,
@@ -33,23 +36,62 @@ export function LockupsTables({
   setSelectedActiveLockups: (lockups: number[]) => void
   setSelectedExpiredLockups: (lockups: number[]) => void
 }) {
-  const { lockups, tranches } = useBackendData()
-
+  const { lockups, tranches, marketplaceLockups } = useBackendData()
+  const marketplaceLockupById = useMemo(
+    () => new Map(marketplaceLockups.map((l) => [l.id, l])),
+    [marketplaceLockups]
+  )
   type ActiveRow = (typeof activeLockupRows)[number]
   type ExpiredRow = (typeof expiredLockupRows)[number]
 
-  const allActiveLockups = lockups.filter((lockup) => !lockup.isExpired)
-  const allExpiredLockups = lockups.filter((lockup) => lockup.isExpired)
+  const allActiveLockups = lockups.filter(
+    (lockup) =>
+      !lockup.isExpired &&
+      (!NFT_SIZES.includes(lockup.funds.amount) ||
+        ![
+          TOKEN_DENOMS.dATOM.displayDenom,
+          TOKEN_DENOMS.stATOM.displayDenom,
+        ].includes(lockup.funds.denomInfo?.humanReadableDenom ?? ""))
+  )
+
+  const allActiveNftLockups = lockups.filter(
+    (lockup) =>
+      !lockup.isExpired &&
+      lockup.funds.denomInfo?.humanReadableDenom !==
+        TOKEN_DENOMS.ATOM.displayDenom &&
+      NFT_SIZES.includes(lockup.funds.amount)
+  )
+
+  const allExpiredLockups = lockups.filter(
+    (lockup) =>
+      lockup.isExpired &&
+      (!NFT_SIZES.includes(lockup.funds.amount) ||
+        ![
+          TOKEN_DENOMS.dATOM.displayDenom,
+          TOKEN_DENOMS.stATOM.displayDenom,
+        ].includes(lockup.funds.denomInfo?.humanReadableDenom ?? ""))
+  )
+  const allExpiredNftLockups = lockups.filter(
+    (lockup) =>
+      lockup.isExpired &&
+      lockup.funds.denomInfo?.humanReadableDenom !==
+        TOKEN_DENOMS.ATOM.displayDenom &&
+      NFT_SIZES.includes(lockup.funds.amount)
+  )
 
   const mergeableLockups = [...selectedActiveLockups, ...selectedExpiredLockups]
 
-  const allSelectedActive =
-    selectedActiveLockups?.length === allActiveLockups.length &&
-    selectedActiveLockups?.length > 0
+  const active =
+    selectedActiveLockups?.length ===
+    allActiveLockups.length + allActiveNftLockups.length
 
-  const allSelectedExpired =
-    selectedExpiredLockups?.length === allExpiredLockups.length &&
-    selectedExpiredLockups?.length > 0
+  const allSelectedActive = active && selectedActiveLockups?.length > 0
+
+  const expired =
+    selectedExpiredLockups?.length ===
+    allExpiredLockups.length + allExpiredNftLockups.length
+
+  const allSelectedExpired = expired && selectedExpiredLockups?.length > 0
 
   function findMergeableLockup(find: number[]) {
     const merger = lockups.filter((lockup) => lockup.id === find[0])
@@ -57,9 +99,37 @@ export function LockupsTables({
     return merger[0]
   }
 
-  const [activeLockupRows, expiredLockupRows] = useMemo(() => {
+  const [
+    activeLockupRows,
+    activeNftLockupRows,
+    expiredLockupRows,
+    expiredNftLockupRows,
+  ] = useMemo(() => {
+    const getLockup = (lockup: AugmentedLockup) =>
+      marketplaceLockupById.get(lockup.id) || lockup
+
+    const activeLockups = lockups
+      .filter((lockup) => !lockup.isExpired)
+      .map(getLockup)
+    const expiredLockups = lockups
+      .filter((lockup) => lockup.isExpired)
+      .map(getLockup)
+
     return [
       allActiveLockups.map((lockup) =>
+        buildActiveRow({
+          lockup,
+          mergeableLockups,
+          selectedActiveLockups,
+          initMerge,
+          tranches,
+          onClickEdit,
+          onClickSplit,
+          setSelectedActiveLockups,
+          findMergeableLockup,
+        })
+      ),
+      allActiveNftLockups.map((lockup) =>
         buildActiveRow({
           lockup,
           mergeableLockups,
@@ -84,11 +154,25 @@ export function LockupsTables({
           findMergeableLockup,
         })
       ),
+      allExpiredNftLockups.map((lockup) =>
+        buildExpiredRow({
+          lockup,
+          mergeableLockups,
+          initMerge,
+          selectedExpiredLockups,
+          onClickEdit,
+          onClickSplit,
+          setSelectedExpiredLockups,
+          findMergeableLockup,
+        })
+      ),
     ]
   }, [
     lockups,
     allActiveLockups,
+    allActiveNftLockups,
     allExpiredLockups,
+    allExpiredNftLockups,
     selectedActiveLockups,
     selectedExpiredLockups,
     tranches,
@@ -148,7 +232,10 @@ export function LockupsTables({
 
   const handleSelectAllActiveChange = (checked: boolean) => {
     if (checked) {
-      setSelectedActiveLockups([...allActiveLockups.map((lockup) => lockup.id)])
+      setSelectedActiveLockups([
+        ...allActiveLockups.map((lockup) => lockup.id),
+        ...allActiveNftLockups.map((lockup) => lockup.id),
+      ])
     } else {
       setSelectedActiveLockups([])
     }
@@ -158,6 +245,7 @@ export function LockupsTables({
     if (checked) {
       setSelectedExpiredLockups([
         ...allExpiredLockups.map((lockup) => lockup.id),
+        ...allExpiredNftLockups.map((lockup) => lockup.id),
       ])
     } else {
       setSelectedExpiredLockups([])
@@ -168,7 +256,7 @@ export function LockupsTables({
     <div className="flex flex-col gap-12">
       <BlurryBackdropBox
         id="active-lockups"
-        className="group flex flex-col gap-3"
+        className="group flex flex-col gap-3 overflow-visible"
       >
         <TableHeader
           leftSlot={
@@ -194,7 +282,7 @@ export function LockupsTables({
         />
 
         {activeLockupRows.length === 0 ? (
-          <EmptyBox className="flex flex-col gap-1">
+          <EmptyBox className="flex flex-col gap-1 overflow-visible">
             <div>
               You don&rsquo;t have any active lockups. To create one, click the
               &ldquo;New Lockup&rdquo; button&nbsp;
@@ -215,10 +303,53 @@ export function LockupsTables({
         )}
       </BlurryBackdropBox>
 
+      <BlurryBackdropBox
+        id="active-nft-lockups"
+        className="group flex flex-col gap-3 overflow-visible"
+      >
+        <TableHeader
+          leftSlot={
+            <div className="flex items-center justify-between gap-4">
+              <Checkbox
+                checked={allSelectedActive}
+                disabled={allActiveNftLockups.length === 0 || initMerge}
+                onCheckedChange={handleSelectAllActiveChange}
+              />
+              <StyledText variant="h4">Active NFTs</StyledText>
+            </div>
+          }
+          rightSlot={
+            expiredNftLockupRows.length > 0 && (
+              <StyledText as={Link} variant="link" href="#expired-nft-lockups">
+                <span>Jump to {expiredNftLockupRows.length} Expired</span>
+                <Icon name="arrow-down-long" />
+              </StyledText>
+            )
+          }
+        />
+
+        {activeNftLockupRows.length === 0 ? (
+          <EmptyBox className="flex flex-col gap-1 overflow-visible">
+            <MintNftEmptyCard />
+          </EmptyBox>
+        ) : (
+          <StyledTable
+            className="border-collapse"
+            columns={activeColumnDescriptors}
+            rows={activeNftLockupRows}
+            initialSortedColumnKey="timeLeft"
+            renderCells={activeCellRenderers}
+            renderRow={(props) => (
+              <RowComponent key={props.row._lockup.id} {...props} />
+            )}
+          />
+        )}
+      </BlurryBackdropBox>
+
       {expiredLockupRows.length > 0 && (
         <BlurryBackdropBox
           id="expired-lockups"
-          className="group flex flex-col gap-3"
+          className="group flex flex-col gap-3 overflow-visible"
         >
           <TableHeader
             leftSlot={
@@ -245,6 +376,44 @@ export function LockupsTables({
             className="border-collapse"
             columns={expiredColumnDescriptors}
             rows={expiredLockupRows}
+            initialSortedColumnKey="expiredDaysAgo"
+            renderRow={(props) => (
+              <RowComponent key={props.row._lockup.id} {...props} />
+            )}
+          />
+        </BlurryBackdropBox>
+      )}
+
+      {expiredNftLockupRows.length > 0 && (
+        <BlurryBackdropBox
+          id="expired-nft-lockups"
+          className="group flex flex-col gap-3 overflow-visible"
+        >
+          <TableHeader
+            leftSlot={
+              <div className="flex items-center justify-between gap-4">
+                <Checkbox
+                  checked={allSelectedExpired}
+                  disabled={allExpiredNftLockups.length === 0 || initMerge}
+                  onCheckedChange={handleSelectAllExpiredChange}
+                />
+                <StyledText variant="h4">Expired NFTs</StyledText>
+              </div>
+            }
+            rightSlot={
+              activeNftLockupRows.length > 0 && (
+                <StyledText as={Link} variant="link" href="#active-nft-lockups">
+                  <span>Jump to {activeNftLockupRows.length} Active</span>
+                  <Icon name="arrow-down-long" />
+                </StyledText>
+              )
+            }
+          />
+
+          <StyledTable
+            className="border-collapse"
+            columns={expiredColumnDescriptors}
+            rows={expiredNftLockupRows}
             initialSortedColumnKey="expiredDaysAgo"
             renderRow={(props) => (
               <RowComponent key={props.row._lockup.id} {...props} />

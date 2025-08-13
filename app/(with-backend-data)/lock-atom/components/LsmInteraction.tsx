@@ -42,16 +42,13 @@ export function LsmInteraction({
   validatorLiquidStakingCap: string
 }) {
   const {
-    lockedAtomIsAtCapacityWallet,
-    lockedAtomMaxWallet,
-    lockedAtomPercentageWallet,
+    lockedTokenIsAtCapacityWallet,
+    lockedTokenMaxWallet,
+    lockedTokenPercentageWallet,
     hasGatekeeper,
   } = useBackendData()
   const {
-    data: {
-      lockedAtomIsAtCapacityGlobal,
-      lockedAtomPercentageGlobal,
-    },
+    data: { lockedTokenIsAtCapacityGlobal, lockedTokenPercentageGlobal },
   } = useGlobalLockupCapacityInfo()
   const { incompleteNotices } = useIncompleteNotices()
   const { hubChain, hubSigner, neutronChain, neutronSigner } =
@@ -59,7 +56,7 @@ export function LsmInteraction({
   const [stepper, setStepper] = useState<Stepper | undefined>(undefined)
   const [numVisibleNotices, setVisibleNotices] = useState(2)
 
-  const notEligible = hasGatekeeper && lockedAtomMaxWallet === 0
+  const notEligible = hasGatekeeper && lockedTokenMaxWallet === 0
 
   return (
     (hubSigner && neutronSigner && (
@@ -126,8 +123,8 @@ export function LsmInteraction({
                 .slice(0, numVisibleNotices)
                 .map((notice, index) => {
                   const canFinalizeLockup =
-                    lockedAtomPercentageWallet === 100 ||
-                    lockedAtomPercentageGlobal === 100
+                    lockedTokenPercentageWallet === 100 ||
+                    lockedTokenPercentageGlobal === 100
 
                   function getStepperConfigForAction(
                     action: "continue" | "revert"
@@ -227,14 +224,14 @@ export function LsmInteraction({
             </>
           )}
 
-          {lockedAtomIsAtCapacityWallet ? (
+          {lockedTokenIsAtCapacityWallet ? (
             <BlurryBackdropBox className="p-6">
               <p>
                 You&rsquo;ve reached the maximum of ATOM you can lock for this
                 pilot round.
               </p>
             </BlurryBackdropBox>
-          ) : lockedAtomIsAtCapacityGlobal ? (
+          ) : lockedTokenIsAtCapacityGlobal ? (
             <BlurryBackdropBox className="p-6">
               <p>
                 Hydro is currently at max capacity. Please wait for the next

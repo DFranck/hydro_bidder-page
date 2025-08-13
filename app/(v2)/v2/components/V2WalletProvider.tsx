@@ -25,7 +25,7 @@ import {
   gaiaAminoConverters,
   gaiaProtoRegistry,
   ibcAminoConverters,
-  ibcProtoRegistry,
+  ibcProtoRegistry
 } from 'moonkittjs'
 
 function gasPrices(chain: Chain | ChainName) {

@@ -2,11 +2,11 @@ import { GlobalLockupCapacityInfo } from "@/contract-apis/types"
 import { createContext, ReactNode, useEffect, useState } from "react"
 
 const defaultValue: GlobalLockupCapacityInfo = {
-  lockedAtomTotalGlobal: 0,
-  lockedAtomMaxGlobal: 0,
-  lockedAtomRemainingCapacityGlobal: 0,
-  lockedAtomPercentageGlobal: 0,
-  lockedAtomIsAtCapacityGlobal: false,
+  lockedTokenTotalGlobal: 0,
+  lockedTokenMaxGlobal: 0,
+  lockedTokenRemainingCapacityGlobal: 0,
+  lockedTokenPercentageGlobal: 0,
+  lockedTokenIsAtCapacityGlobal: false,
 }
 
 export const GlobalLockupInfoContext = createContext<{
@@ -49,31 +49,31 @@ export const GlobalLockupInfoProvider = ({
 
         const rawLockedAtomMaxGlobal = Number(data.rawLockedAtomMaxGlobal)
         const totalLockedRaw = Number(data.rawTotalLockedTokens)
-        const lockedAtomMaxGlobal = rawLockedAtomMaxGlobal / 1e6
-        let lockedAtomTotalGlobal = totalLockedRaw / 1e6
-        let lockedAtomRemainingCapacityGlobal = Number(
-          (lockedAtomMaxGlobal - lockedAtomTotalGlobal).toFixed(6)
+        const lockedTokenMaxGlobal = rawLockedAtomMaxGlobal / 1e6
+        let lockedTokenTotalGlobal = totalLockedRaw / 1e6
+        let lockedTokenRemainingCapacityGlobal = Number(
+          (lockedTokenMaxGlobal - lockedTokenTotalGlobal).toFixed(6)
         )
 
-        if (lockedAtomRemainingCapacityGlobal < 0.001) {
-          lockedAtomRemainingCapacityGlobal = 0
-          lockedAtomTotalGlobal = lockedAtomMaxGlobal
+        if (lockedTokenRemainingCapacityGlobal < 0.001) {
+          lockedTokenRemainingCapacityGlobal = 0
+          lockedTokenTotalGlobal = lockedTokenMaxGlobal
         }
 
-        const lockedAtomPercentageGlobal =
-          lockedAtomRemainingCapacityGlobal === 0
+        const lockedTokenPercentageGlobal =
+          lockedTokenRemainingCapacityGlobal === 0
             ? 100
-            : Math.floor((lockedAtomTotalGlobal / lockedAtomMaxGlobal) * 100)
+            : Math.floor((lockedTokenTotalGlobal / lockedTokenMaxGlobal) * 100)
 
-        const lockedAtomIsAtCapacityGlobal = lockedAtomPercentageGlobal >= 100
+        const lockedTokenIsAtCapacityGlobal = lockedTokenPercentageGlobal >= 100
 
         if (isMounted) {
           setGlobalCapacityInfo({
-            lockedAtomTotalGlobal,
-            lockedAtomMaxGlobal,
-            lockedAtomRemainingCapacityGlobal,
-            lockedAtomPercentageGlobal,
-            lockedAtomIsAtCapacityGlobal,
+            lockedTokenTotalGlobal,
+            lockedTokenMaxGlobal,
+            lockedTokenRemainingCapacityGlobal,
+            lockedTokenPercentageGlobal,
+            lockedTokenIsAtCapacityGlobal,
           })
           setIsLoaded(true)
         }

@@ -2,6 +2,7 @@ import { invariant } from "ts-invariant"
 import { HydroBaseQueryClient } from "../../../app/ts_types/HydroBase.client"
 import { Proposal } from "../../../app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export async function fetchRoundBids({
   roundId,
@@ -22,19 +23,19 @@ export async function fetchRoundBids({
 
   invariant(
     numiaCosmosHydroAppApiKey,
-    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set"
+    "NUMIA_COSMOS_HYDRO_APP_API_KEY is not set",
   )
 
   invariant(
     hydroContractAddress,
-    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set"
+    "NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS is not set",
   )
 
   if (currentRoundId === roundId) {
     const client = await getCosmWasmClient()
     const hydroQueryClient = new HydroBaseQueryClient(
       client,
-      hydroContractAddress
+      hydroContractAddress,
     )
 
     const query = {
@@ -51,9 +52,7 @@ export async function fetchRoundBids({
     try {
       const url = `${numiaBidsEndpoint}?round_id=${roundId}&tranche_id=${trancheId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`
 
-      console.log(url)
-
-      const response = await fetch(url, {
+      const response = await fetchWithRetry(url, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
@@ -62,16 +61,15 @@ export async function fetchRoundBids({
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch numia bids data: ${response.statusText}`
+          `Failed to fetch numia round bids data: ${response.statusText}`,
         )
       }
 
       // Clean up the response
-      let responseJson
-      try {
-        responseJson = await response.json()
-      } catch (error) {
-        throw new Error(`Error converting response to JSON: ${error}`)
+      const responseJson = await response.json()
+
+      if (!Array.isArray(responseJson) || responseJson.length === 0) {
+        return []
       }
 
       if (!responseJson || responseJson.length === 0) {

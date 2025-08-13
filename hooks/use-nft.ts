@@ -1,0 +1,392 @@
+import {
+  MINIMUM_DATOM_AMOUNT,
+  MINIMUM_SPLIT_AMOUNT,
+} from "@/app/(with-backend-data)/lockups/config"
+import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
+import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimulateLockup"
+import { AugmentedLockup } from "@/contract-apis/types"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { logMintDebugData } from "@/lib/logMintDebugData"
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { useChain } from "@cosmos-kit/react"
+import { useQuery } from "@tanstack/react-query"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
+
+export interface LockupsResult {
+  selectedLockups: VirtualLockup[]
+  selectedLockupsCount: number
+  totalAmount: number
+  remainder: number
+  denom: string
+  hasVirtualLockups: boolean
+  hasMultipleDenoms: boolean
+  sharedDenomCount: number
+  virtualLockupsCount: number
+  virtualLockups: VirtualLockup[]
+  hasMatchingDenoms: boolean
+  hasDenomCombination?: boolean
+  hasSimulatedErrorLSM?: boolean
+}
+
+export interface SimulatedLockup {
+  lock_id: number
+  dtoken_amount: string
+}
+
+interface VirtualLockup extends Omit<AugmentedLockup, "funds"> {
+  funds: AugmentedLockup["funds"] & {
+    simulatedAmount?: number
+  }
+}
+
+function findLSTLockupsForNFT(
+  NFT_SIZE: number,
+  denom: string,
+  lockups: AugmentedLockup[],
+  includeNftSizes: boolean
+) {
+  const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
+
+  // Filter lockups by the specified denomination and exclude NFT_SIZES amounts
+  const allLockups = lockups.filter((lockup) => lockup.funds.denom === denom)
+
+  const filteredNftSizes = lockups.filter(
+    (lockup) =>
+      lockup.funds.denom === denom && !NFT_SIZES.includes(lockup.funds.amount)
+  )
+
+  const filteredLockups = includeNftSizes ? allLockups : filteredNftSizes
+
+  // Handle edge case - no lockups found
+  if (filteredLockups.length === 0) {
+    return {
+      selectedLockups: [],
+      selectedLockupsCount: 0,
+      totalAmount: 0,
+      remainder: 0,
+      denom,
+    }
+  }
+
+  // Sort by funds.amount in descending order (biggest first)
+  const sortedLockups = filteredLockups.sort(
+    (a, b) => b.funds.amount - a.funds.amount
+  )
+
+  // Find the minimum combination of lockups that meets or exceeds NFT_SIZE
+  let totalAmount = 0
+  let selectedLockups = []
+
+  for (let i = 0; i < sortedLockups.length; i++) {
+    const lockup = sortedLockups[i]
+    selectedLockups.push(lockup)
+    totalAmount += lockup.funds.amount
+
+    // If we've met or exceeded the NFT_SIZE + 0.01, we can stop
+    if (totalAmount >= requiredAmount) {
+      break
+    }
+  }
+
+  // Return empty result if requirement is not met (needs NFT_SIZE + 0.01)
+  if (totalAmount < requiredAmount) {
+    return {
+      selectedLockups: [],
+      selectedLockupsCount: 0,
+      totalAmount: 0,
+      remainder: 0,
+      denom,
+    }
+  }
+
+  // Return the result with all requested properties
+  return {
+    selectedLockups,
+    selectedLockupsCount: selectedLockups.length,
+    totalAmount,
+    remainder: totalAmount - NFT_SIZE,
+    denom,
+  }
+}
+
+export function useFindLockupsForNFTQuery(
+  NFT_SIZE: number,
+  denom: string,
+  lockups: AugmentedLockup[],
+  includeNftSizes: boolean
+) {
+  const { address } = useBackendData()
+  const { getSigningCosmWasmClient } = useChain("neutron")
+  return useQuery({
+    queryKey: ["findLockupsForNFtSizes", NFT_SIZE, denom],
+    queryFn: async () => {
+      return findLockupsForNFtSizes(
+        NFT_SIZE,
+        denom,
+        lockups,
+        includeNftSizes,
+        getSigningCosmWasmClient,
+        address
+      )
+    },
+    enabled: !!NFT_SIZE && !!denom,
+    staleTime: 30 * 1000, // 30 seconds
+  })
+}
+
+export async function findLockupsForNFtSizes(
+  NFT_SIZE: number,
+  denom: string,
+  lockups: AugmentedLockup[],
+  includeNftSizes: boolean,
+  getSigningCosmWasmClient?: () => Promise<SigningCosmWasmClient>,
+  address?: string
+): Promise<LockupsResult> {
+  const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
+  const isFactoryDenom = denom.startsWith("factory")
+
+  const nativeResult = findLSTLockupsForNFT(
+    NFT_SIZE,
+    denom,
+    lockups,
+    includeNftSizes
+  )
+
+  const allDAtomNativeLockups = isFactoryDenom
+    ? lockups.filter(
+        (lockup) =>
+          lockup.funds.denom.includes("factory") && lockup.funds.amount > 0
+      )
+    : []
+
+  const filteredDAtomNativeLockups = isFactoryDenom
+    ? lockups.filter(
+        (lockup) =>
+          lockup.funds.denom.includes("factory") &&
+          !NFT_SIZES.includes(lockup.funds.amount) &&
+          lockup.funds.amount > 0
+      )
+    : []
+
+  const dAtomNativeLockups = includeNftSizes
+    ? allDAtomNativeLockups
+    : filteredDAtomNativeLockups
+
+  // Early return if native lockups are sufficient
+  if (nativeResult.totalAmount >= requiredAmount) {
+    return {
+      ...nativeResult,
+      selectedLockups: nativeResult.selectedLockups,
+      selectedLockupsCount: nativeResult.selectedLockups.length,
+      totalAmount: nativeResult.totalAmount,
+      remainder: nativeResult.remainder,
+      hasVirtualLockups: false,
+      hasMultipleDenoms: false,
+      sharedDenomCount: 0,
+      virtualLockupsCount: 0,
+      virtualLockups: [],
+      hasMatchingDenoms: false,
+      hasDenomCombination: false,
+      denom,
+    }
+  }
+
+  let virtualLockupsLSM: VirtualLockup[] = []
+  let hasSimulatedErrorLSM = false
+
+  if (
+    isFactoryDenom &&
+    executeWalletSimulateLockup &&
+    getSigningCosmWasmClient &&
+    address
+  ) {
+    const atomLockups = lockups.filter(
+      (lockup) =>
+        lockup.funds.denomInfo?.humanReadableDenom ===
+        TOKEN_DENOMS.ATOM.displayDenom
+    )
+
+    if (atomLockups.length > 0) {
+      try {
+        const dtokenResponse = await executeWalletSimulateLockup({
+          getSigningCosmWasmClient,
+          address,
+          lockIds: atomLockups
+            .filter((lockup) => lockup.funds.amount >= MINIMUM_DATOM_AMOUNT)
+            .map((el) => el.id),
+        })
+
+        const simulatedResults: SimulatedLockup[] =
+          dtokenResponse.dtokens_response
+
+        hasSimulatedErrorLSM = dtokenResponse.hasSimulatedError
+
+        virtualLockupsLSM = atomLockups.map((atomLockup) => {
+          const simulatedResult = simulatedResults.find(
+            (result) =>
+              result.lock_id === atomLockup.id && parseInt(result.dtoken_amount)
+          )
+
+          const simulatedAmount = simulatedResult
+            ? parseInt(simulatedResult.dtoken_amount) / 1e6
+            : atomLockup.funds.amount / 1e6
+
+          return {
+            ...atomLockup,
+            funds: {
+              ...atomLockup.funds,
+              simulatedAmount,
+            },
+          }
+        })
+      } catch (error) {
+        console.warn("Failed to simulate ATOM lockups:", error)
+      }
+    }
+  }
+
+  const denomGroups = virtualLockupsLSM.reduce(
+    (groups, lockup) => {
+      const key = lockup.funds.denom
+      if (!groups[key]) groups[key] = []
+      groups[key].push(lockup)
+      return groups
+    },
+    {} as Record<string, VirtualLockup[]>
+  )
+
+  Object.keys(denomGroups).forEach((denom) => {
+    denomGroups[denom].sort(
+      (a, b) => (b.funds.simulatedAmount ?? 0) - (a.funds.simulatedAmount ?? 0)
+    )
+  })
+
+  const hasMultipleDenoms = Object.keys(denomGroups).length > 1
+  const sharedDenomGroups = Object.values(denomGroups).filter(
+    (group) => group.length > 1
+  )
+  const sharedDenomCount = sharedDenomGroups.length
+
+  let baseSelection: VirtualLockup[] = nativeResult.selectedLockups.map(
+    (l) => ({
+      ...l,
+      funds: { ...l.funds, amount: l.funds.amount / 1e6 },
+    })
+  )
+  let baseAmount = 0 // Start with 0 to avoid double counting
+
+  const selectedCombination: VirtualLockup[] = []
+
+  // Add ALL dATOM native lockups (if applicable)
+  for (const dAtomLockup of dAtomNativeLockups) {
+    selectedCombination.push(dAtomLockup)
+    baseAmount += dAtomLockup.funds.amount
+  }
+
+  // Add baseSelection, avoiding duplicates
+  for (const base of baseSelection) {
+    if (!selectedCombination.find((l) => l.id === base.id)) {
+      selectedCombination.push(base)
+      baseAmount += base.funds.amount
+    }
+  }
+
+  // Try shared denom groups
+  for (const group of sharedDenomGroups) {
+    let groupTotal = 0
+    const groupSelection: VirtualLockup[] = []
+
+    for (const lockup of group) {
+      if (selectedCombination.some((l) => l.id === lockup.id)) continue
+
+      groupSelection.push(lockup)
+      groupTotal += lockup.funds.simulatedAmount ?? 0
+
+      if (baseAmount + groupTotal >= requiredAmount) {
+        for (const g of groupSelection) {
+          selectedCombination.push(g)
+          baseAmount += g.funds.simulatedAmount ?? 0
+        }
+        break
+      }
+    }
+
+    if (baseAmount >= requiredAmount) break
+  }
+
+  // Try fallback if needed
+  if (baseAmount < requiredAmount) {
+    const sortedVirtual = [...virtualLockupsLSM]
+      .filter((l) => !selectedCombination.some((sel) => sel.id === l.id))
+      .sort(
+        (a, b) =>
+          (b.funds.simulatedAmount ?? 0) - (a.funds.simulatedAmount ?? 0)
+      )
+
+    for (const lockup of sortedVirtual) {
+      selectedCombination.push(lockup)
+      baseAmount += lockup.funds.simulatedAmount ?? 0
+      if (baseAmount >= requiredAmount) break
+    }
+  }
+
+  if (baseAmount < requiredAmount) {
+    return {
+      selectedLockups: [],
+      selectedLockupsCount: 0,
+      totalAmount: 0,
+      remainder: 0,
+      denom,
+      hasVirtualLockups: false,
+      hasMultipleDenoms,
+      sharedDenomCount,
+      virtualLockupsCount: 0,
+      virtualLockups: [],
+      hasMatchingDenoms: false,
+      hasDenomCombination: false,
+      hasSimulatedErrorLSM: false,
+    }
+  }
+
+  const denomSet = new Set(selectedCombination.map((l) => l.funds.denom))
+  const hasDenomCombination =
+    denomSet.size === 1 && selectedCombination.length > 1
+
+  // Check against all dATOM lockups in virtualOnly calculation
+  const virtualOnly = selectedCombination.filter(
+    (l) =>
+      !nativeResult.selectedLockups.find((n) => n.id === l.id) &&
+      !dAtomNativeLockups.find((d) => d.id === l.id)
+  )
+
+  const hasMatchingDenoms = (() => {
+    const denomCounts = new Map<string, number>()
+
+    for (const l of virtualOnly) {
+      const denom = l.funds.denom
+      denomCounts.set(denom, (denomCounts.get(denom) || 0) + 1)
+    }
+
+    return Array.from(denomCounts.values()).some((count) => count >= 2)
+  })()
+
+  logMintDebugData({ selectedCombination })
+  logMintDebugData({ virtualOnly })
+  logMintDebugData({ hasMatchingDenoms })
+
+  return {
+    selectedLockups: selectedCombination,
+    selectedLockupsCount: selectedCombination.length,
+    totalAmount: baseAmount,
+    remainder: baseAmount - NFT_SIZE,
+    denom,
+    hasVirtualLockups: virtualOnly.length > 0,
+    hasMultipleDenoms,
+    sharedDenomCount,
+    virtualLockupsCount: virtualOnly.length,
+    virtualLockups: virtualOnly,
+    hasMatchingDenoms,
+    hasDenomCombination,
+    hasSimulatedErrorLSM,
+  }
+}

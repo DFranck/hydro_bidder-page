@@ -769,7 +769,7 @@
         ]
       }
     },
-    "numiaBids": [
+    "preHydroBids": [
       {
         "round": "Pre-Hydro",
         "tranche": "",

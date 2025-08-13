@@ -4,6 +4,7 @@ import { LockupWithPerTrancheInfo } from "../../../app/ts_types/HydroBase.types"
 import { getCosmWasmClient } from "../../../contract-apis/getCosmWasmClient"
 import { fetchHistoricUsers } from "./fetchHistoricUsers"
 import { SMART_CONTRACT_LOCKUPS_PAGE_LIMIT } from "@/config"
+import { fetchWithRetry } from "@/contract-apis/fetchWithRetry"
 
 export async function fetchRoundLockups({
   roundId,
@@ -34,6 +35,7 @@ export async function fetchRoundLockups({
     const { users = [] } = await fetchHistoricUsers()
 
     const client = await getCosmWasmClient()
+
     const hydroQueryClient = new HydroBaseQueryClient(
       client,
       hydroContractAddress
@@ -72,33 +74,39 @@ export async function fetchRoundLockups({
 
     return allUserLockupsWithTrancheInfos
   } else {
-    const response = await fetch(
-      `${numiaLockupsEndpoint}?round_id=${roundId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`,
-      {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
-        },
+    try {
+      const response = await fetchWithRetry(
+        `${numiaLockupsEndpoint}?round_id=${roundId}&hydro_contract=${hydroContractAddress}&time=${new Date().getTime()}`,
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${numiaCosmosHydroAppApiKey}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch numia round lockups data: ${response.statusText}`
+        )
       }
-    )
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch numia lockups data: ${response.statusText}`
-      )
+      // Clean up the response
+      const responseJson = await response.json()
+
+      if (!Array.isArray(responseJson) || responseJson.length === 0) {
+        return []
+      }
+
+      const tributes = responseJson.map((response: { response: string }) => {
+        return (
+          JSON.parse(response?.response ?? "{}").data
+            ?.lockups_with_per_tranche_infos ?? []
+        )
+      })
+      return tributes as LockupWithPerTrancheInfo[][]
+    } catch (error) {
+      throw new Error(`Error fetching round lockups: ${error}`)
     }
-
-    // Clean up the response
-    const responseJson = await response.json()
-    if (responseJson.length == 0) {
-      return []
-    }
-
-    const tributes = responseJson.map((response: { response: string }) => {
-      return (
-        JSON.parse(response.response).data?.lockups_with_per_tranche_infos ?? []
-      )
-    })
-    return tributes as LockupWithPerTrancheInfo[][]
   }
 }

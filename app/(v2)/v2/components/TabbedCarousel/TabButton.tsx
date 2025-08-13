@@ -30,18 +30,21 @@ export function TabButton({
   ...dataProps
 }: TabButtonProps) {
   return (
-    <div className="@container/tab flex min-w-0 flex-1 flex-col">
+    <div
+      data-is-active={isActive ? 'true' : undefined}
+      className="@container/tab flex min-w-0 flex-1 flex-col"
+    >
       <button
         id={id}
-        data-is-active={isActive ? 'true' : undefined}
         className={twMerge(
           // Base styles
-          'relative w-full overflow-hidden',
+          'relative z-10 w-full overflow-hidden',
           'btn-essentials',
           'rounded-small',
           'flex items-center',
           'transition-all',
           'px-loose',
+          'hover:bg-theme-color/80',
 
           // Color and state styles
           'border-theme-color',
@@ -54,8 +57,9 @@ export function TabButton({
 
           // Active state
           'is-active:cursor-default',
-          'is-active:rounded-b-none',
           'is-active:bg-theme-color',
+          'is-active:hover:bg-theme-color',
+          'is-active:rounded-b-none',
 
           '@4xs/tab:justify-between',
 
@@ -98,38 +102,30 @@ export function TabButton({
           className={twJoin(
             'has-voted-within:block hidden',
             'absolute inset-y-0 right-0 left-1/2 z-0',
-            'from-palette-green/80 bg-linear-to-l to-transparent',
-            'rounded-small',
-            'is-active:rounded-b-none',
+            'from-palette-green/80 bg-linear-to-bl via-transparent to-transparent',
           )}
         />
       </button>
 
+      {/* The animated "bridging" element that connects the tab to the content */}
       <div
         className={twJoin(
-          'relative w-full',
-          'bg-theme-color text-foreground',
+          'relative z-0 w-full',
+          'bg-theme-color',
           'origin-bottom',
           'scale-x-0',
           'transition-all',
           'duration-200 ease-in',
-          isActive && 'scale-x-100',
-          isActive && 'duration-500',
-          isActive && 'ease-out',
+          'is-active:scale-x-100',
+          'is-active:duration-500',
+          'is-active:ease-out',
         )}
         style={{
-          height: 'var(--spacing-tight)',
+          height: 'calc(var(--spacing-tight) + var(--radius-small))',
           transform: 'translateZ(0)',
+          marginTop: 'calc(var(--radius-small) * -1)',
         }}
-      >
-        <div
-          className={twJoin(
-            'has-voted-within:block hidden',
-            'absolute inset-y-0 right-0 left-1/2 z-0',
-            'from-palette-green/80 bg-linear-to-l to-transparent',
-          )}
-        />
-      </div>
+      />
     </div>
   )
 }

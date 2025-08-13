@@ -46,11 +46,11 @@ export function VoteButton({
     lockups,
     votesByRoundId,
     votingPowerAvailableByTrancheId,
-    lockedAtomEpochInNanos,
+    lockedTokenEpochInNanos,
   } = useBackendData()
 
   const {
-    data: { lockedAtomTotalGlobal, lockedAtomMaxGlobal },
+    data: { lockedTokenTotalGlobal, lockedTokenMaxGlobal },
   } = useGlobalLockupCapacityInfo()
 
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -60,7 +60,7 @@ export function VoteButton({
     if (!bid || lockup.isExpired) return false
 
     const nextRoundEligibleToVote = Number(
-      lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote
+      lockup.metaDataByTrancheId[bid.trancheId].nextRoundEligibleToVote,
     )
 
     if (nextRoundEligibleToVote > currentRoundId) return false
@@ -70,7 +70,7 @@ export function VoteButton({
 
     // Calculate round end time in nanoseconds
     const currentRoundEndTime = currentRoundEndDate.getTime() * 1e6 // convert to nanoseconds
-    const roundLength = lockedAtomEpochInNanos // Using epoch length as round length
+    const roundLength = lockedTokenEpochInNanos // Using epoch length as round length
     const powerRequiredRoundEnd =
       currentRoundEndTime +
       (powerRequiredRoundId - currentRoundId) * roundLength
@@ -83,17 +83,17 @@ export function VoteButton({
 
   const votesThisRound = votesByRoundId[currentRoundId] ?? []
   const votesThisTranche = votesThisRound.filter(
-    (vote) => bidsInfo[vote.bidId]?.trancheId === bid?.trancheId
+    (vote) => bidsInfo[vote.bidId]?.trancheId === bid?.trancheId,
   )
   const hasVotedInThisTranche = votesThisTranche.length > 0
   const hasVotedForThisBid = votesThisTranche.some(
-    (vote) => vote.bidId === bidId
+    (vote) => vote.bidId === bidId,
   )
   const isLoading = toasts.some((toast) => toast.variant === "working")
   const validLockups = lockups.filter(
     (lockup) =>
       (lockup.metaDataByTrancheId[bid?.trancheId]?.nextRoundEligibleToVote ??
-        Infinity) <= currentRoundId
+        Infinity) <= currentRoundId,
   )
 
   async function handleClickVote() {
@@ -148,7 +148,7 @@ export function VoteButton({
   } else if (votingPowerAvailableByTrancheId[bid.trancheId] === 0) {
     Button = (
       <ConditionalWrapper
-        condition={lockedAtomTotalGlobal >= lockedAtomMaxGlobal}
+        condition={lockedTokenTotalGlobal >= lockedTokenMaxGlobal}
         wrapper={(children) => (
           <Tooltip tipContents={lockupLimitReachedByNetworkTooltip}>
             <div className="pointer-events-none opacity-60">{children}</div>
@@ -162,7 +162,7 @@ export function VoteButton({
             `button.primary${size ? `.${size}` : ""}` as StyledTextVariant
           }
         >
-          Lock ATOM to Vote
+          Lock {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to Vote
         </StyledText>
       </ConditionalWrapper>
     )
@@ -193,7 +193,7 @@ export function VoteButton({
           onClick={() => setIsTryingToVoteWithExpiredLockups(true)}
         >
           <Icon name="solid:rotate-right" />
-          <span>Lock ATOM to Vote</span>
+          <span>Lock {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to Vote</span>
           <Icon name="circle-info" />
         </StyledText>
       </Tooltip>

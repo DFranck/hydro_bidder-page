@@ -8,6 +8,7 @@ NETLIFY_SITE_ID="f4b41b58-6e2b-426c-9678-dab77a7caf83"
 # The address of the Hydro contracts
 NEXT_PUBLIC_HYDRO_CONTRACT_ADDRESS='neutron1la84jn93j6qv3lmayrc7mvr3zp0vsmxhy9uhqzmnnevhxuev72uspf7da4'
 NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS='neutron1e90z4vpxufxvskz3fc80wrz0g57xg4u7zda7dsuwnwm5jp7635dsrt9r4t'
+NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS=neutron1q2x0xsz2ge393k3gjxq05ft3yrmfv0ln4cvtnrq7d9px5dmrzpjqkjx8hj
 
 # Numia Data
 NUMIA_COSMOS_HYDRO_APP_API_KEY=

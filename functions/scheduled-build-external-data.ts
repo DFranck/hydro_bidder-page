@@ -1,10 +1,10 @@
 import { Config } from "@netlify/functions"
 import { fetchBidMetaDataById } from "../contract-apis/fetchBidMetaDataById"
 import { fetchNumiaMetricsData } from "../contract-apis/fetchNumiaMetricsData"
+import { fetchPreHydroBidData } from "../contract-apis/fetchPreHydroBidData"
 import { RawExternalData } from "../contract-apis/types"
 import { getSupabaseNamespacedFilename } from "../lib/getSupabaseNamespacedFilename"
 import { supabase } from "../lib/supabase"
-import { fetchPreHydroBidData } from "@/contract-apis/fetchPreHydroBidData"
 
 export const config: Config = {
   schedule: "* * * * *", // every minute

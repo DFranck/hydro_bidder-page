@@ -19,7 +19,7 @@ export function useAmountOfTokenInWallet(denom: "stATOM" | "dATOM") {
       const client = await getStargateClient()
       const balance = await client.getBalance(
         address,
-        TOKEN_DENOMS[denom]
+        TOKEN_DENOMS[denom].denom
       )
 
       setAmountOfTokenInWallet(Number(balance.amount) / 1e6)

@@ -41,16 +41,17 @@ export function TrancheTabbedCarousel({
 
   return (
     <TabbedCarousel
+      activeIndex={finalActiveIndex}
+      className={className}
+      classNameForContent="rounded-small"
       containerId={containerId}
+      disableIntersectionObserver={disableIntersectionObserver}
+      renderContent={renderContent}
+      slotOnRight={slotOnRight}
+      tabs={tabs}
       targetSelector={targetSelector}
       threshold={threshold}
-      tabs={tabs}
-      activeIndex={finalActiveIndex}
       onActiveIndexChange={finalHandleActiveIndexChange}
-      className={className}
-      slotOnRight={slotOnRight}
-      renderContent={renderContent}
-      disableIntersectionObserver={disableIntersectionObserver}
     />
   )
 }

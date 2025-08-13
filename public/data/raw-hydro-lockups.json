@@ -1,0 +1,635 @@
+[
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 10,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666667"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753807135570126147"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 17,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": [
+              {
+                "round_id": 15,
+                "proposal_id": 6,
+                "round_end": "1753776000000000000"
+              }
+            ]
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 16,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": [
+              {
+                "round_id": 15,
+                "proposal_id": 8,
+                "round_end": "1753776000000000000"
+              }
+            ]
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 11,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666667"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753837155167302612"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 18,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": [
+              {
+                "round_id": 15,
+                "proposal_id": 7,
+                "round_end": "1753776000000000000"
+              }
+            ]
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 16,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": [
+              {
+                "round_id": 15,
+                "proposal_id": 8,
+                "round_end": "1753776000000000000"
+              }
+            ]
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 12,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666667"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1754414868689698697"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 15,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666667"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753777943251659893"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 16,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666667"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1754652514986417059"
+          },
+          "current_voting_power": "66666668"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 17,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666667"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753777943251659893"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 18,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666666"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753777943251659893"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 19,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666666"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753777943251659893"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 20,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666666"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753777943251659893"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 21,
+            "owner": "neutron1p4w6rqy7lan94e0p2ltwdkyl7slrmncprxz7npdx83y0fmq0fxnqeam2gk",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "41666666"
+            },
+            "lock_start": "1753756343251659893",
+            "lock_end": "1753777943251659893"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 22,
+            "owner": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
+            "funds": {
+              "denom": "ibc/B7864B03E1B9FD4F049243E92ABD691586F682137037A9F3FCA5222815620B3C",
+              "amount": "10000000"
+            },
+            "lock_start": "1754544861824609427",
+            "lock_end": "1754566461824609427"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron164lr65s6u8equ5elqmnj5s490rvunwc69nul3c",
+      "approvals": [
+        {
+          "spender": "neutron138pq9nmkx4d78p2aqh7445wg5xg5tprg6r9dwyj6zl97mycu3j9q8zhllf",
+          "expires": {
+            "never": {}
+          }
+        }
+      ]
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 23,
+            "owner": "neutron164lr65s6u8equ5elqmnj5s490rvunwc69nul3c",
+            "funds": {
+              "denom": "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom",
+              "amount": "25000000"
+            },
+            "lock_start": "1754546346050247786",
+            "lock_end": "1754567946050247786"
+          },
+          "current_voting_power": "0"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 24,
+            "owner": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
+            "funds": {
+              "denom": "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom",
+              "amount": "25000000"
+            },
+            "lock_start": "1754622982172723444",
+            "lock_end": "1754644582172723444"
+          },
+          "current_voting_power": "32500000"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  },
+  {
+    "access": {
+      "owner": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": null,
+      "extension": {
+        "lock_with_power": {
+          "lock_entry": {
+            "lock_id": 25,
+            "owner": "neutron1gvvrwda4dydvqa2fvapepv3su0wueyncju8ymm",
+            "funds": {
+              "denom": "factory/neutron1k6hr0f83e7un2wjf29cspk7j69jrnskk65k3ek2nj9dztrlzpj6q00rtsa/udatom",
+              "amount": "50000000"
+            },
+            "lock_start": "1754626960128684083",
+            "lock_end": "1754648560128684083"
+          },
+          "current_voting_power": "65000000"
+        },
+        "per_tranche_info": [
+          {
+            "tranche_id": 1,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          },
+          {
+            "tranche_id": 2,
+            "next_round_lockup_can_vote": 55,
+            "current_voted_on_proposal": null,
+            "tied_to_proposal": null,
+            "historic_voted_on_proposals": []
+          }
+        ],
+        "outstanding": {
+          "coins": []
+        }
+      }
+    }
+  }
+]

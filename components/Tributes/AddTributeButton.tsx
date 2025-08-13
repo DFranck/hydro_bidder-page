@@ -35,7 +35,7 @@ export function AddTributeButton({
   const onCloseComplete = async (
     amount: string,
     denom: string,
-    description: string
+    description: string,
   ) => {
     setToasts([toastMessages.addingTributeInProgress])
 

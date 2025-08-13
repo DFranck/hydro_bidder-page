@@ -16,27 +16,36 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
     console.log(decorativeCharacter.repeat(message.length))
   }
 
-  const [rawHydroRoundData, rawHydroMetaData, rawExternalData] =
-    await Promise.all(
-      [
-        "raw-hydro-round-data.json",
-        "raw-hydro-meta-data.json",
-        "raw-external-data.json",
-      ].map((filename) =>
-        fetch(
-          [
-            supabaseEndpoint,
-            getSupabaseNamespacedFilename(filename),
-            `?time=${new Date().getTime()}`,
-          ].join("")
-        ).then((res) => res.json())
-      )
+  const [
+    rawHydroRoundData,
+    rawHydroMetaData,
+    rawExternalData,
+    rawHydroLockups,
+    rawHydroListings,
+  ] = await Promise.all(
+    [
+      "raw-hydro-round-data.json",
+      "raw-hydro-meta-data.json",
+      "raw-external-data.json",
+      "raw-hydro-lockups.json",
+      "raw-hydro-listings.json",
+    ].map((filename) =>
+      fetch(
+        [
+          supabaseEndpoint,
+          getSupabaseNamespacedFilename(filename),
+          `?time=${new Date().getTime()}`,
+        ].join("")
+      ).then((res) => res.json())
     )
+  )
 
   return {
     hydroRoundData: rawHydroRoundData,
     hydroMetaData: rawHydroMetaData,
     externalData: rawExternalData,
+    hydroLockups: rawHydroLockups,
+    hydroListings: rawHydroListings,
   }
 }
 

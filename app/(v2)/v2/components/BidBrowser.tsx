@@ -30,7 +30,6 @@ export function BidBrowser({
         <BidDetails
           sourceId={sourceId}
           bidId={bidId}
-          isModal={isModal}
           className="h-full overflow-hidden"
         />
       </div>

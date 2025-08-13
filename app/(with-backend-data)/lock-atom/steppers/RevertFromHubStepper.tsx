@@ -107,13 +107,14 @@ export const RevertFromHubStepper = ({
     switch (step) {
       case "Init":
         return {
-          title: `Revert ${formatAmount(amount)} ATOM`,
+          title: `Revert ${formatAmount(amount)} ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
           contents: (
             <>
               <p>
                 You&rsquo;re about to revert{" "}
                 <strong className="text-white">
-                  {formatAmount(amount)} ATOM
+                  {formatAmount(amount)}{" "}
+                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                 </strong>{" "}
                 back to its original state, staked with{" "}
                 <strong className="break-all text-white">
@@ -159,7 +160,8 @@ export const RevertFromHubStepper = ({
                 This will restore your previous staked position with the amount
                 of{" "}
                 <strong className="text-white">
-                  {formatAmount(amount)} ATOM
+                  {formatAmount(amount)}{" "}
+                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                 </strong>{" "}
                 staked to{" "}
                 <strong className="break-all text-white">
@@ -173,10 +175,10 @@ export const RevertFromHubStepper = ({
       case "WaitingForRedeemBroadcast":
         return {
           isWorking: true,
-          title: "Redeeming ATOM",
+          title: `Redeeming ${process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}`,
           contents: (
             <>
-              <p>Redeeming ATOM...</p>
+              <p>Redeeming {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}...</p>
               <p>
                 Hang tight, we&rsquo;re restoring your previous staked position.
               </p>
@@ -192,7 +194,8 @@ export const RevertFromHubStepper = ({
               <p>
                 Your{" "}
                 <strong className="text-white">
-                  {formatAmount(amount)} ATOM
+                  {formatAmount(amount)}{" "}
+                  {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                 </strong>{" "}
                 has been restored to your previous staked position.
               </p>
@@ -216,11 +219,13 @@ export const RevertFromHubStepper = ({
               {!showErrorLog ? (
                 <>
                   <p>
-                    This transaction could not be completed. Your staked ATOM
+                    This transaction could not be completed. Your staked{" "}
+                    {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}
                     has not been reverted.
                   </p>
                   <p>
-                    Refresh the page to try again or recover your staked ATOM.
+                    Refresh the page to try again or recover your staked{" "}
+                    {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}.
                   </p>
 
                   <StyledText

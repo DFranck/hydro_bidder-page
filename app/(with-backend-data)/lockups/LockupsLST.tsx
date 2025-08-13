@@ -16,6 +16,7 @@ import { useChainsAndSigners } from "@/components/ChainsAndSignersProvider"
 import { useGlobalLockupCapacityInfo } from "@/contract-apis/useGlobalLockupCapacityInfo"
 import { useIsMobile } from "@/hooks/use-mobile"
 import AccordionWrapper from "@/components/Accordion"
+import { NFT_SIZES } from "./config/nft-sizes"
 
 interface LockupsLSTProps {
   isCreationModalOpen: boolean
@@ -36,23 +37,22 @@ export function LockupsLST({
   tokenInfo,
 }: LockupsLSTProps) {
   const minTokenToBeLocked = 1 / 1e6
-  const NFT_SIZES = [25, 50, 100, 250, 500, 1000]
   const { setToasts } = useToasts()
   const {
-    data: { lockedAtomRemainingCapacityGlobal },
+    data: { lockedTokenRemainingCapacityGlobal },
   } = useGlobalLockupCapacityInfo()
   const [selectedLockDurationInEpochs, setSelectedLockDurationInEpochs] =
     useState(3)
 
-  const { hasGatekeeper, lockedAtomMaxWallet, lockedAtomTotalWallet } =
+  const { hasGatekeeper, lockedTokenMaxWallet, lockedTokenTotalWallet } =
     useBackendData()
   const { neutronSigner, neutronChain } = useChainsAndSigners()
   const isMobile = useIsMobile()
 
-  const usersLimitRemainder = lockedAtomMaxWallet - lockedAtomTotalWallet
+  const usersLimitRemainder = lockedTokenMaxWallet - lockedTokenTotalWallet
 
   const maxTokenToBeLocked = Math.min(
-    lockedAtomRemainingCapacityGlobal, // no more than the global limit
+    lockedTokenRemainingCapacityGlobal, // no more than the global limit
     tokenInfo.amount, // no more than they have
     usersLimitRemainder // no more than their limit
   )
@@ -69,7 +69,7 @@ export function LockupsLST({
   async function handleSubmitCreationForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const neutronTokenDenom = TOKEN_DENOMS[tokenInfo.name]
+    const neutronTokenDenom = TOKEN_DENOMS[tokenInfo.name].denom
 
     if (!neutronTokenDenom) {
       throw new Error("Denom is not set")

@@ -32,15 +32,18 @@ export function LockForm({
   validatorMap: Map<string, Validator>
   validatorLiquidStakingCap: string
 }) {
-  const { lockedAtomEpochInNanos, lockedAtomMaxWallet, lockedAtomTotalWallet } =
-    useBackendData()
   const {
-    data: { lockedAtomTotalGlobal, lockedAtomRemainingCapacityGlobal },
+    lockedTokenEpochInNanos,
+    lockedTokenMaxWallet,
+    lockedTokenTotalWallet,
+  } = useBackendData()
+  const {
+    data: { lockedTokenTotalGlobal, lockedTokenRemainingCapacityGlobal },
   } = useGlobalLockupCapacityInfo()
   const { setToasts } = useToasts()
   const [validator, setValidator] = useState("")
   const [selectedDuration, setSelectedDuration] = useState(
-    lockedAtomEpochInNanos
+    lockedTokenEpochInNanos
   )
   const { data: validators } = useWalletValidators(
     hubChain,
@@ -52,7 +55,7 @@ export function LockForm({
   )
   const usersLimitRemainder = Math.max(
     0,
-    lockedAtomMaxWallet - lockedAtomTotalWallet
+    lockedTokenMaxWallet - lockedTokenTotalWallet
   )
   const minAtomToBeLocked = floor(
     1 / 1e6,
@@ -62,7 +65,7 @@ export function LockForm({
     Math.min(
       delegationBalance ? delegationBalance / 1e6 : Infinity, // no more than they have
       usersLimitRemainder, // no more than their limit
-      lockedAtomRemainingCapacityGlobal // no more than the global limit
+      lockedTokenRemainingCapacityGlobal // no more than the global limit
     ),
     DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS
   )
@@ -70,16 +73,16 @@ export function LockForm({
   const [amount, setAmount] = useState<string>("")
 
   useEffect(() => {
-    if (maxAtomToBeLocked > 0 && lockedAtomRemainingCapacityGlobal > 0) {
+    if (maxAtomToBeLocked > 0 && lockedTokenRemainingCapacityGlobal > 0) {
       setAmount(String(maxAtomToBeLocked))
     } else if (
-      lockedAtomTotalGlobal &&
-      (maxAtomToBeLocked === 0 || lockedAtomRemainingCapacityGlobal === 0)
+      lockedTokenTotalGlobal &&
+      (maxAtomToBeLocked === 0 || lockedTokenRemainingCapacityGlobal === 0)
     ) {
       setAmount(String(0))
       setToasts([toastMessages.lockupCapacityFull])
     }
-  }, [maxAtomToBeLocked, lockedAtomRemainingCapacityGlobal])
+  }, [maxAtomToBeLocked, lockedTokenRemainingCapacityGlobal])
 
   useEffect(() => {
     const numericAmount = parseFloat(amount)
@@ -144,8 +147,10 @@ export function LockForm({
       {validators?.length === 0 ? (
         <Card.Body className={classNames.cardContent}>
           <p>
-            You need some staked ATOM to participate in Hydro. You can go to
-            Keplr staking interface and stake some ATOM to any active validator
+            You need some {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME} to
+            participate in Hydro. You can go to Keplr staking interface and
+            stake some {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} to any active
+            validator
           </p>
           <p>
             Stake now:{" "}
@@ -180,7 +185,8 @@ export function LockForm({
 
                     <ol className="list-inside list-decimal">
                       <li>
-                        Your ATOM staked to a validator can be locked in Hydro
+                        Your {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME} staked
+                        to a validator can be locked in Hydro
                       </li>
                       <li>You get voting power</li>
                       <li>You continue to earn staking rewards</li>
@@ -189,8 +195,9 @@ export function LockForm({
                     {validators.length > 1 && (
                       <p>
                         Since you have multiple validators, you will need to
-                        select one with staked ATOM to use for your voting
-                        power.
+                        select one with{" "}
+                        {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME} to use for
+                        your voting power.
                       </p>
                     )}
                   </div>
@@ -268,7 +275,8 @@ export function LockForm({
 
                         <div className="flex items-center gap-1">
                           <StyledText as="span" variant="footnote">
-                            Max: <strong>{maxAtomToBeLocked}</strong> ATOM
+                            Max: <strong>{maxAtomToBeLocked}</strong>{" "}
+                            {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                           </StyledText>
                         </div>
 
@@ -286,7 +294,8 @@ export function LockForm({
                       </div>
 
                       <StyledText as="p" variant="footnote" className="text-xs">
-                        Available capacity: {maxAtomToBeLocked} ATOM
+                        Available capacity: {maxAtomToBeLocked}{" "}
+                        {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                       </StyledText>
                     </div>
                   </div>
@@ -312,7 +321,7 @@ export function LockForm({
                           Math.round(parseFloat(amount) * 1e6 || 0)
                         )
                         const lockupPower = scaleLockupPower({
-                          lockedAtomEpochInNanos: lockedAtomEpochInNanos,
+                          lockedTokenEpochInNanos: lockedTokenEpochInNanos,
                           lockupTime: selectedDuration,
                           rawPower: amountInUatom,
                         })
@@ -334,7 +343,7 @@ export function LockForm({
                       variant="button.primary"
                       type="submit"
                     >
-                      Lock ATOM
+                      Lock {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
                     </StyledText>
 
                     <StyledText as={Link} href="/lockups" variant="link">

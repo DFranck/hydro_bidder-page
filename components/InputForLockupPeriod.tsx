@@ -22,16 +22,16 @@ export function InputForLockupPeriod({
   selectedDuration: number
   onChange?: (value: number) => void
 }) {
-  const { lockedAtomEpochInNanos } = useBackendData()
+  const { lockedTokenEpochInNanos } = useBackendData()
   const [innerSelectedDuration, setInnerSelectedDuration] = useState(
-    selectedDuration || lockedAtomEpochInNanos
+    selectedDuration || lockedTokenEpochInNanos,
   )
 
   const lockupPeriodOptions = Object.values(AllowedLockupPeriodInEpochs)
     .filter(isNumber)
     .map((epochCount) => {
       const { value, unit } = getTimeUnitFromNanos(
-        epochCount * lockedAtomEpochInNanos
+        epochCount * lockedTokenEpochInNanos,
       )
       return {
         label: `${pluralize({
@@ -39,7 +39,7 @@ export function InputForLockupPeriod({
           prefixCount: true,
           singular: unit,
         })}`,
-        duration: epochCount * lockedAtomEpochInNanos,
+        duration: epochCount * lockedTokenEpochInNanos,
       }
     })
     .filter((option) => {
@@ -76,13 +76,13 @@ export function InputForLockupPeriod({
                     `flex flex-col items-center justify-center gap-0`,
                     `rounded-none border-r-0 backdrop-blur-none`,
                     `first:rounded-l-md last:rounded-r-md last:border-r-2`,
-                    classNamesForButtons
+                    classNamesForButtons,
                   )}
                 >
                   <span>{label}</span>
                   <StyledText className="text-xs opacity-60">
                     {getLockupPeriodMultiplier({
-                      lockedAtomEpochInNanos,
+                      lockedTokenEpochInNanos,
                       lockupTime: duration,
                     })}
                     &thinsp;&times;
