@@ -47,16 +47,16 @@ export default function Navigation() {
 
       menuItems: [
         {
-          label: "Marketplace",
-          href: "/lockups/marketplace",
-          iconLeft: "solid:store",
-        },
-        {
           disabled: !isActuallyConnected,
           label: "My Lockups",
           href: "/lockups",
           iconLeft: "solid:list",
         },
+        {
+          label: "Marketplace",
+          href: "/lockups/marketplace",
+          iconLeft: "solid:store",
+        }
       ],
       tooltip: !isActuallyConnected ? needsWalletConnectionTooltip : undefined,
     },

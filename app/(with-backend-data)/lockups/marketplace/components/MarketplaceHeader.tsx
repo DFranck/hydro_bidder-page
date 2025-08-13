@@ -25,11 +25,7 @@ export default function MarketplaceHeader({
       <div className="mb-4 w-full rounded-lg border border-white/20 bg-black/40 p-6">
         <div className="flex max-w-[800px] flex-col gap-3">
           <span className="text-lg text-white/90">
-            Trade Hydro lockups as NFTs backed by dATOM or stATOM.<br></br>
-            Cards show the locked amount and asking price. Click one to see the
-            details.<br></br>
-            Buy an NFT to gain its voting power and rewards; sell anytime to
-            pass both on.
+            Hydro lockups can be minted as NFTs and transferred to other wallets. The NFTs carry several features, including locked tokens, active votes, pending rewards, and governance history, and more coming up. Click on any of the cards below to show details. 
           </span>
         </div>
       </div>

@@ -586,19 +586,9 @@ export function MintNfts({
                 title={
                   <div>
                     <div className="space-y-4">
-                      {nftDetails ? (
-                        "Mint NFT creation"
-                      ) : (
                         <div className="text-sm leading-relaxed text-gray-400">
-                          Hydro lets you turn part of your lockups into a
-                          tradable NFT. Pick the size and token you want (e.g.,
-                          50 dATOM) and Hydro automatically does the rest -
-                          merging the right lockups, converting them to dATOM if
-                          necessary and splitting off the NFT. The NFT keeps the
-                          underlying lock&apos;s voting power, expiry and
-                          pending rewards.
+                          Hydro lets you turn part of your lockups into a tradable NFT. Pick the size and token you want (e.g., 50 dATOM) and Hydro will automatically merge or split the lockups. The NFT keeps the underlying voting power, expiry, pending rewards and so on.
                         </div>
-                      )}
                     </div>
                   </div>
                 }
