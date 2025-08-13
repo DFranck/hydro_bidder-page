@@ -35,51 +35,62 @@ export default function LockupActionModal<T extends LockupActionType>({
   isProcessing,
   showActionPanel,
 }: LockupActionModalProps<T>) {
-  
-  const config = useMemo(() => getLockupActionConfig(action), [action]);
+  const config = useMemo(() => getLockupActionConfig(action), [action])
 
-  const getInitial = useMemo(() => config.getInitialPayload, [config]);
+  const getInitial = useMemo(() => config.getInitialPayload, [config])
 
   const [payload, setPayload] = useState<LockupActionPayloadFor<T>>(
     getInitial ? getInitial(lockup) : ({} as LockupActionPayloadFor<T>)
-  );
+  )
 
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false)
 
   useEffect(() => {
     if (!isOpen) {
-      setPayload(getInitial ? getInitial(lockup) : ({} as LockupActionPayloadFor<T>));
-      setIsFormValid(false);
+      setPayload(
+        getInitial ? getInitial(lockup) : ({} as LockupActionPayloadFor<T>)
+      )
+      setIsFormValid(false)
     }
-  }, [isOpen, lockup, getInitial]);
+  }, [isOpen, lockup, getInitial])
 
-  const handleChange = useCallback((patch: Partial<LockupActionPayloadFor<T>>) => {
-    setPayload(prev => {
-      const merged = { ...(prev ?? {}), ...patch } as LockupActionPayloadFor<T>;
-      return JSON.stringify(merged) === JSON.stringify(prev) ? prev : merged;
-    });
-  }, []);
+  const handleChange = useCallback(
+    (patch: Partial<LockupActionPayloadFor<T>>) => {
+      setPayload((prev) => {
+        const merged = {
+          ...(prev ?? {}),
+          ...patch,
+        } as LockupActionPayloadFor<T>
+        return JSON.stringify(merged) === JSON.stringify(prev) ? prev : merged
+      })
+    },
+    []
+  )
 
   useEffect(() => {
-    if (!action) return;
-    const valid = config?.isValid?.(payload) ?? false;
-    setIsFormValid(prev => (prev === valid ? prev : valid));
-  }, [action, payload, config]);
+    if (!action) return
+    const valid = config?.isValid?.(payload) ?? false
+    setIsFormValid((prev) => (prev === valid ? prev : valid))
+  }, [action, payload, config])
 
   const Component = useMemo(
     () => config?.FormComponent as React.FC<LockupActionFormProps<T>>,
     [config]
-  );
+  )
 
   return (
-    <ModalWindow isOpen={isOpen} onClose={onClose} className="max-w-[98%]">
-      <div className="rounded-xl border-2 border-white/20 bg-black p-0">
-        <div className="h-[48px] gap-[10px] rounded-t-xl bg-[#FFE1B81A] px-6 py-3 text-lg">
-          <h2 className="font-inter text-[18px] leading-6 font-bold">
+    <ModalWindow
+      isOpen={isOpen}
+      onClose={onClose}
+      className="max-w-[98%] sm:max-w-lg md:max-w-xl lg:max-w-2xl"
+    >
+      <div className="flex max-h-[95vh] flex-col overflow-hidden rounded-xl border-2 border-white/20 bg-black p-0">
+        <div className="min-h-[48px] shrink-0 gap-[10px] rounded-t-xl bg-[#FFE1B81A] px-3 py-3 sm:h-[48px] sm:px-6">
+          <h2 className="font-inter text-base leading-5 font-bold sm:text-[18px] sm:leading-6">
             Lockup Details
           </h2>
         </div>
-        <div className="space-y-6 p-[24px]">
+        <div className="hide-scrollbar flex-1 space-y-4 overflow-y-auto p-3 sm:space-y-6 sm:p-[24px]">
           <LockupActionCard
             lockup={lockup as AugmentedLockup | MarketplaceLockup}
             action={action}
@@ -87,7 +98,7 @@ export default function LockupActionModal<T extends LockupActionType>({
           />
           {showActionPanel ? (
             <form
-              className="flex flex-col gap-6"
+              className="flex flex-col gap-4 sm:gap-6"
               onSubmit={async (e) => {
                 e.preventDefault()
                 if (!isFormValid) {
