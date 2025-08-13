@@ -169,7 +169,7 @@ export function buildExpiredRow({
             >
               {amount}
             </LockupActionTrigger>
-            {!isListedMarketplaceLockup(lockup) && (
+            {isListedMarketplaceLockup(lockup) && (
               <StyledText
                 variant="link"
                 href={`/lockups/marketplace/${lockup.id}`}

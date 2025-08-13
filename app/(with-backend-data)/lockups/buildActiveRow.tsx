@@ -184,7 +184,7 @@ export function buildActiveRow({
             >
               {amount}
             </LockupActionTrigger>
-            {!isListedMarketplaceLockup(lockup) && (
+            {isListedMarketplaceLockup(lockup) && (
               <StyledText
                 variant="link"
                 href={`/lockups/marketplace/${lockup.id}`}
