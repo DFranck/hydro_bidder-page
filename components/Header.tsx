@@ -6,7 +6,7 @@ import { useIsDocumentScrolled } from "@/lib/useIsDocumentScrolled"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useRef } from "react"
-import { twJoin, twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge"
 import Navigation from "./Navigation"
 
 export function Header() {
@@ -17,18 +17,26 @@ export function Header() {
   // Update ghost element height when NOT scrolled (at its tallest)
   useEffect(() => {
     const interval = setInterval(() => {
-      if (elementRef.current && ghostElementRef.current) {
-        ghostElementRef.current.style.height = `${elementRef.current.clientHeight}px`
+      if (!elementRef.current || !ghostElementRef.current) return
+
+      // Only update ghost height when NOT scrolled
+      if (window.scrollY <= 50) {
+        requestAnimationFrame(() => {
+          const newHeight = elementRef.current!.clientHeight
+          const currentHeight = parseInt(
+            ghostElementRef.current!.style.height || "0",
+            10
+          )
+
+          if (newHeight !== currentHeight) {
+            ghostElementRef.current!.style.height = `${newHeight}px`
+          }
+        })
       }
     }, 1000)
 
     return () => clearInterval(interval)
   }, [])
-
-  const borderColor =
-    process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "stOSMO"
-      ? "border-tokens-stosmo"
-      : "border-tokens-atom"
 
   return (
     <>
@@ -36,12 +44,16 @@ export function Header() {
       <div ref={ghostElementRef} className="pointer-events-none" />
 
       <div
-        className={twJoin(
-          "fixed left-0 right-0 top-0 z-40",
-          "border-b",
-          "bg-black",
-          borderColor,
-        )}
+        className="
+          border-palette-beige
+          fixed
+          top-0
+          right-0
+          left-0
+          z-40
+          border-b
+          bg-black
+        "
         ref={elementRef}
       >
         <ContentContainer
@@ -56,7 +68,7 @@ export function Header() {
               transition-all
               duration-300
             `,
-            isScrolled ? `py-1` : `py-3`,
+            isScrolled ? `py-1` : `py-3`
           )}
         >
           <div
@@ -65,7 +77,7 @@ export function Header() {
                 transition-all
                 duration-300
               `,
-              isScrolled ? `h-8 w-40` : `h-12 w-56`,
+              isScrolled ? `h-8 w-40` : `h-12 w-56`
             )}
           >
             <Link href="/" className="relative block h-full w-full">

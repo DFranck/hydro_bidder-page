@@ -53,7 +53,7 @@ export function AtomicBidPairIcon({
           bidTitle: projectTitle || title,
           isBelowThreshold
         })}
-        classNamesForTooltip="w-64 md:-ml-24 md:w-96"
+        classNamesForTooltip="w-64 md:w-96"
       >
         <Link2 className="mt-1 size-4 text-palette-green" />
       </Tooltip>

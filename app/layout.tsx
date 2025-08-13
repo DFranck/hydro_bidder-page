@@ -7,6 +7,7 @@ import { headers } from "next/headers"
 import Script from "next/script"
 import { twJoin } from "tailwind-merge"
 import "./globals.css"
+import ClarityScript from "@/components/ClarityScript"
 
 const InterFont = Inter({ subsets: ["latin"], preload: true })
 
@@ -43,6 +44,7 @@ export default async function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"
         />
+        <ClarityScript />
         <Script
           crossOrigin="anonymous"
           src="https://kit.fontawesome.com/401fb1e734.js"

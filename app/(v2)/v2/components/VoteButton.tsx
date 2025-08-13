@@ -414,7 +414,10 @@ export function VoteButton({
   return (
     <>
       <div className="relative size-10">
-        <Tooltipped tip={buttonProps.tooltip} className="size-10">
+        <Tooltipped
+          tip={buttonProps.tooltip}
+          className="size-10"
+        >
           {renderButtonContent()}
         </Tooltipped>
       </div>

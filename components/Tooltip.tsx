@@ -2,11 +2,11 @@
 
 import {
   ComponentProps,
-  FocusEvent,
   MouseEvent,
   ReactNode,
   useRef,
   useState,
+  useLayoutEffect,
 } from "react"
 import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
@@ -25,79 +25,92 @@ export function Tooltip({
   mouseEnterDelay?: number
   mouseLeaveDelay?: number
 }) {
-  const isClient = useIsClient()
   const [shouldRender, setShouldRender] = useState(false)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const [isOpen, setIsOpen] = useState(false)
+
+  const tooltipRef = useRef<HTMLDivElement>(null)
+  const targetRef = useRef<HTMLDivElement>(null)
   const timers = useRef<NodeJS.Timeout[]>([])
 
-  if (!isClient) return null
-
-  function updateCoords(element: HTMLDivElement) {
-    const targetCoords = element.getBoundingClientRect()
-    setCoords({
-      x: targetCoords.x + targetCoords.width / 2,
-      y:
-        targetCoords.y +
-        targetCoords.height +
-        document.documentElement.scrollTop,
-    })
-  }
-
-  function handleMouseEnter(event: MouseEvent<HTMLDivElement>) {
-    clearTimers()
-    setShouldRender(true)
-    updateCoords(event.currentTarget)
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(true)
-      }, mouseEnterDelay),
-    )
-  }
-
-  function handleMouseLeave() {
-    clearTimers()
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(false)
-        setTimeout(() => {
-          setShouldRender(false)
-        }, 300)
-      }, mouseLeaveDelay),
-    )
-  }
-
-  function handleFocus(event: FocusEvent<HTMLDivElement>) {
-    clearTimers()
-    updateCoords(event.currentTarget)
-    setIsOpen(true)
-    setShouldRender(true)
-  }
-
-  function handleBlur() {
-    clearTimers()
-    timers.current.push(
-      setTimeout(() => {
-        setIsOpen(false)
-        setTimeout(() => {
-          setShouldRender(false)
-        }, 300)
-      }, 200),
-    )
-  }
+  const isClient = useIsClient()
 
   function clearTimers() {
     timers.current.forEach((timer) => clearTimeout(timer))
     timers.current = []
   }
 
+  function updateCoords() {
+    if (!targetRef.current || !tooltipRef.current) return
+
+    const targetRect = targetRef.current.getBoundingClientRect()
+    const tooltipRect = tooltipRef.current.getBoundingClientRect()
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+    const scrollTop = window.scrollY
+
+    const tooltipHeight = tooltipRect.height
+    const tooltipWidth = tooltipRect.width
+
+    // Check if there's space below
+    const hasSpaceBelow = viewportHeight - targetRect.bottom > tooltipHeight + 8
+    const top = scrollTop + (hasSpaceBelow
+      ? targetRect.bottom + 8
+      : targetRect.top - tooltipHeight - 8)
+
+    // Calculate centered X
+    let left = targetRect.left + targetRect.width / 2 - tooltipWidth / 2
+
+    // Adjust to prevent overflow on left/right
+    if (left < 8) {
+      left = 8
+    } else if (left + tooltipWidth > viewportWidth - 8) {
+      left = viewportWidth - tooltipWidth - 8
+    }
+
+    setCoords({ x: left, y: top })
+  }
+
+  function handleMouseEnter(_e: MouseEvent<HTMLDivElement>) {
+    clearTimers()
+    setShouldRender(true)
+    timers.current.push(setTimeout(() => setIsOpen(true), mouseEnterDelay))
+  }
+
+  function handleMouseLeave() {
+    clearTimers()
+    timers.current.push(setTimeout(() => {
+      setIsOpen(false)
+      setTimeout(() => setShouldRender(false), 300)
+    }, mouseLeaveDelay))
+  }
+
+  function handleFocus() {
+    clearTimers()
+    setShouldRender(true)
+    setIsOpen(true)
+  }
+
+  function handleBlur() {
+    clearTimers()
+    timers.current.push(setTimeout(() => {
+      setIsOpen(false)
+      setTimeout(() => setShouldRender(false), 300)
+    }, 200))
+  }
+
+  useLayoutEffect(() => {
+    if (shouldRender) {
+      requestAnimationFrame(updateCoords)
+    }
+  }, [shouldRender, isOpen])
+
+  if (!isClient) return null
+
   return (
     <div
-      className={twMerge(
-        `group/tooltip relative z-10 inline-block`,
-        // "w-min", poly, 15/05/2025 I disable to keep lockups actions button w-full in new menu design like app\(with-backend-data)\lockups\buildExpiredRow.tsx
-        className,
-      )}
+      ref={targetRef}
+      className={twMerge("group/tooltip relative z-10 inline-block", className)}
       tabIndex={0}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -109,38 +122,31 @@ export function Tooltip({
       {shouldRender &&
         createPortal(
           <div
+            ref={tooltipRef}
             className={twMerge(
               `
-                pointer-events-none
-                absolute
-                left-1/2
-                z-50
-                mt-1
-                min-w-56
-                max-w-96
-                -translate-x-1/2
-                whitespace-normal
-                rounded-sm
-                border
                 border-palette-beige
                 bg-palette-text
+                pointer-events-none
+                absolute
+                z-50
+                max-w-96
+                min-w-56
+                rounded-sm
+                border
                 px-4
                 py-2
                 text-left
                 text-sm
                 font-normal
+                whitespace-normal
                 text-white
                 opacity-0
                 transition-opacity
                 duration-300
               `,
-              isOpen &&
-                `
-                  pointer-events-auto
-                  translate-y-0
-                  opacity-100
-                `,
-              classNamesForTooltip,
+              isOpen && "pointer-events-auto opacity-100",
+              classNamesForTooltip
             )}
             style={{
               top: coords.y,
@@ -149,7 +155,7 @@ export function Tooltip({
           >
             {tipContents}
           </div>,
-          document.body,
+          document.body
         )}
     </div>
   )

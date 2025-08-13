@@ -61,10 +61,11 @@ export function BidVoteShare({
           className,
         )}
         tip={voteThresholdTooltip({ trancheId: bid.trancheId })}
-        classNamesForTooltip="-ml-24"
       >
         <div className="math-symbol">
-          <span className="important-value">{formattedPercentage}</span>
+          <span className="important-value">
+            {Number(formattedPercentage).toFixed(1)}
+          </span>
           <span className="math-symbol-text">%</span>
         </div>
       </Tooltipped>
@@ -89,14 +90,15 @@ export function BidVoteShare({
             totalBidLiquidity,
             denom,
           })}
-          classNamesForTooltip="-ml-24"
         >
           {children}
         </Tooltipped>
       )}
     >
       <div className={twJoin('math-symbol', className)}>
-        <span className="important-value">{formattedPercentage}</span>
+        <span className="important-value">
+          {Number(formattedPercentage).toFixed(1)}
+        </span>
         <span className="math-symbol-text">%</span>
       </div>
     </ConditionalWrapper>

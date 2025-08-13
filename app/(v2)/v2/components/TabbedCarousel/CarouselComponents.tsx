@@ -22,7 +22,7 @@ export function CarouselContainer({
       className={twMerge(
         'relative h-full',
         'snap-x snap-proximity',
-        'flex overflow-x-auto',
+        'flex overflow-x-hidden',
         'overflow-y-hidden',
         'scroll-smooth',
         className,
