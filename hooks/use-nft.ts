@@ -10,13 +10,13 @@ import { logMintDebugData } from "@/lib/logMintDebugData"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { useChain } from "@cosmos-kit/react"
 import { useQuery } from "@tanstack/react-query"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export interface LockupsResult {
   selectedLockups: VirtualLockup[]
   selectedLockupsCount: number
   totalAmount: number
   remainder: number
-  totalLockupSelected: number
   denom: string
   hasVirtualLockups: boolean
   hasMultipleDenoms: boolean
@@ -33,9 +33,10 @@ export interface SimulatedLockup {
   dtoken_amount: string
 }
 
-interface VirtualLockup extends AugmentedLockup {
-  isVirtual?: boolean
-  originalAmount?: number
+interface VirtualLockup extends Omit<AugmentedLockup, "funds"> {
+  funds: AugmentedLockup["funds"] & {
+    simulatedAmount?: number
+  }
 }
 
 function findLSTLockupsForNFT(
@@ -44,6 +45,8 @@ function findLSTLockupsForNFT(
   lockups: AugmentedLockup[],
   includeNftSizes: boolean
 ) {
+  const requiredAmount = NFT_SIZE + MINIMUM_SPLIT_AMOUNT
+
   // Filter lockups by the specified denomination and exclude NFT_SIZES amounts
   const allLockups = lockups.filter((lockup) => lockup.funds.denom === denom)
 
@@ -61,8 +64,7 @@ function findLSTLockupsForNFT(
       selectedLockupsCount: 0,
       totalAmount: 0,
       remainder: 0,
-      totalLockupSelected: 0,
-      denom: denom,
+      denom,
     }
   }
 
@@ -81,20 +83,19 @@ function findLSTLockupsForNFT(
     totalAmount += lockup.funds.amount
 
     // If we've met or exceeded the NFT_SIZE + 0.01, we can stop
-    if (totalAmount >= NFT_SIZE) {
+    if (totalAmount >= requiredAmount) {
       break
     }
   }
 
   // Return empty result if requirement is not met (needs NFT_SIZE + 0.01)
-  if (totalAmount < NFT_SIZE) {
+  if (totalAmount < requiredAmount) {
     return {
       selectedLockups: [],
       selectedLockupsCount: 0,
       totalAmount: 0,
       remainder: 0,
-      totalLockupSelected: 0,
-      denom: denom,
+      denom,
     }
   }
 
@@ -104,8 +105,7 @@ function findLSTLockupsForNFT(
     selectedLockupsCount: selectedLockups.length,
     totalAmount,
     remainder: totalAmount - NFT_SIZE,
-    totalLockupSelected: totalAmount,
-    denom: denom,
+    denom,
   }
 }
 
@@ -146,7 +146,7 @@ export async function findLockupsForNFtSizes(
   const isFactoryDenom = denom.startsWith("factory")
 
   const nativeResult = findLSTLockupsForNFT(
-    requiredAmount,
+    NFT_SIZE,
     denom,
     lockups,
     includeNftSizes
@@ -180,7 +180,6 @@ export async function findLockupsForNFtSizes(
       selectedLockupsCount: nativeResult.selectedLockups.length,
       totalAmount: nativeResult.totalAmount,
       remainder: nativeResult.remainder,
-      totalLockupSelected: 0,
       hasVirtualLockups: false,
       hasMultipleDenoms: false,
       sharedDenomCount: 0,
@@ -188,7 +187,7 @@ export async function findLockupsForNFtSizes(
       virtualLockups: [],
       hasMatchingDenoms: false,
       hasDenomCombination: false,
-      denom: denom,
+      denom,
     }
   }
 
@@ -202,7 +201,9 @@ export async function findLockupsForNFtSizes(
     address
   ) {
     const atomLockups = lockups.filter(
-      (lockup) => lockup.funds.denomInfo?.humanReadableDenom === "ATOM"
+      (lockup) =>
+        lockup.funds.denomInfo?.humanReadableDenom ===
+        TOKEN_DENOMS.ATOM.displayDenom
     )
 
     if (atomLockups.length > 0) {
@@ -234,7 +235,7 @@ export async function findLockupsForNFtSizes(
             ...atomLockup,
             funds: {
               ...atomLockup.funds,
-              amount: simulatedAmount,
+              simulatedAmount,
             },
           }
         })
@@ -255,7 +256,9 @@ export async function findLockupsForNFtSizes(
   )
 
   Object.keys(denomGroups).forEach((denom) => {
-    denomGroups[denom].sort((a, b) => b.funds.amount - a.funds.amount)
+    denomGroups[denom].sort(
+      (a, b) => (b.funds.simulatedAmount ?? 0) - (a.funds.simulatedAmount ?? 0)
+    )
   })
 
   const hasMultipleDenoms = Object.keys(denomGroups).length > 1
@@ -297,12 +300,12 @@ export async function findLockupsForNFtSizes(
       if (selectedCombination.some((l) => l.id === lockup.id)) continue
 
       groupSelection.push(lockup)
-      groupTotal += lockup.funds.amount
+      groupTotal += lockup.funds.simulatedAmount ?? 0
 
       if (baseAmount + groupTotal >= requiredAmount) {
         for (const g of groupSelection) {
           selectedCombination.push(g)
-          baseAmount += g.funds.amount
+          baseAmount += g.funds.simulatedAmount ?? 0
         }
         break
       }
@@ -315,11 +318,14 @@ export async function findLockupsForNFtSizes(
   if (baseAmount < requiredAmount) {
     const sortedVirtual = [...virtualLockupsLSM]
       .filter((l) => !selectedCombination.some((sel) => sel.id === l.id))
-      .sort((a, b) => b.funds.amount - a.funds.amount)
+      .sort(
+        (a, b) =>
+          (b.funds.simulatedAmount ?? 0) - (a.funds.simulatedAmount ?? 0)
+      )
 
     for (const lockup of sortedVirtual) {
       selectedCombination.push(lockup)
-      baseAmount += lockup.funds.amount
+      baseAmount += lockup.funds.simulatedAmount ?? 0
       if (baseAmount >= requiredAmount) break
     }
   }
@@ -330,8 +336,7 @@ export async function findLockupsForNFtSizes(
       selectedLockupsCount: 0,
       totalAmount: 0,
       remainder: 0,
-      totalLockupSelected: 0,
-      denom: denom,
+      denom,
       hasVirtualLockups: false,
       hasMultipleDenoms,
       sharedDenomCount,
@@ -374,8 +379,7 @@ export async function findLockupsForNFtSizes(
     selectedLockupsCount: selectedCombination.length,
     totalAmount: baseAmount,
     remainder: baseAmount - NFT_SIZE,
-    totalLockupSelected: baseAmount,
-    denom: denom,
+    denom,
     hasVirtualLockups: virtualOnly.length > 0,
     hasMultipleDenoms,
     sharedDenomCount,

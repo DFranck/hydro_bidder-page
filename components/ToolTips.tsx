@@ -241,8 +241,7 @@ export const lockupLimitReachedByNetworkTooltip = (
   <p>
     This lockup is larger than the remaining capacity. You may either revert it
     to get back your {process.env.NEXT_PUBLIC_STAKED_TOKEN_NAME}, or wait and
-    continue when there is capacity.
-    Lockup caps have been reached. Join the{" "}
+    continue when there is capacity. Lockup caps have been reached. Join the{" "}
     <StyledText
       variant="link"
       as={Link}
@@ -258,14 +257,7 @@ export const lockupLimitReachedByNetworkTooltip = (
 )
 
 export const cannotContinueLockupTooltip = (
-  <div className="space-y-0.5">
-    {lockupLimitReachedByNetworkTooltip}
-
-    <p>
-      You may either revert this incomplete lockup to get back your staked ATOM,
-      or wait and continue when there is capacity.
-    </p>
-  </div>
+  <div className="space-y-0.5">{lockupLimitReachedByNetworkTooltip}</div>
 )
 
 export const estimatedRewardsColumnTooltip = ({

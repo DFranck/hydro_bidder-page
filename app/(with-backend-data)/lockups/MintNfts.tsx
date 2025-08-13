@@ -26,6 +26,7 @@ import { MintNftCardDetails } from "@/components/MintNftCardDetails"
 import { executeMultipleMergeLockups } from "@/contract-apis/executeMultipleMergeLockups"
 import { MintNftCardStepper } from "@/components/MintNftCardStepper"
 import { logMintDebugData } from "@/lib/logMintDebugData"
+import { MintNftCardStepperInfo } from "@/components/MintNftCardStepperInfo"
 
 export interface MintingStep {
   id: number
@@ -47,7 +48,7 @@ export type NFT_INFO = {
   displayDenom: string
 }
 
-type MintStep =
+export type MintStep =
   | "init"
   | "selected"
   | "merge"
@@ -113,11 +114,10 @@ export function MintNfts({
         selectedLockupsCount: 0,
         totalAmount: 0,
         remainder: 0,
-        totalLockupSelected: 0,
         denom: "",
         hasVirtualLockups: false,
         hasMultipleDenoms: false,
-        sharedDenomCount: false,
+        sharedDenomCount: 0,
         virtualLockupsCount: 0,
         virtualLockups: [],
         hasMatchingDenoms: false,
@@ -581,16 +581,39 @@ export function MintNfts({
       <div>
         <form onSubmit={handleSubmitCreationForm}>
           <Card className="overflow-hidden bg-black">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <Card.Header
-                title={"Mint an NFT from Lockups"}
+                title={
+                  <div>
+                    <div className="space-y-4">
+                      {nftDetails ? (
+                        "Mint NFT creation"
+                      ) : (
+                        <div className="text-sm leading-relaxed text-gray-400">
+                          Hydro lets you turn part of your lockups into a
+                          tradable NFT. Pick the size and token you want (e.g.,
+                          50 dATOM) and Hydro automatically does the rest -
+                          merging the right lockups, converting them to dATOM if
+                          necessary and splitting off the NFT. The NFT keeps the
+                          underlying lock&apos;s voting power, expiry and
+                          pending rewards.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                }
                 variant={isMobile ? "h4" : "h3"}
               />
-              <X
-                className="mb-6 inline-block size-6 cursor-pointer text-gray-300"
-                onClick={handleCloseModal}
-              />
+              <div className="size-10">
+                <X
+                  className="mb-6 inline-block size-6 cursor-pointer text-gray-300"
+                  onClick={handleCloseModal}
+                />
+              </div>
             </div>
+            {nftDetails ? null : (
+              <div className="mb-6 h-px w-full bg-gray-800" />
+            )}
 
             <Card.Body
               className={cn("hide-scrollbar h-96 overflow-auto md:h-5/12", {
@@ -601,6 +624,7 @@ export function MintNfts({
               {nftDetails ? (
                 <div>
                   <MintNftCardStepper steps={steps} />
+                  <MintNftCardStepperInfo step={step} />
                   <MintNftCardDetails
                     nftInfo={nftInfo}
                     eligibleLockupsSizes={eligibleLockupsSizes as LockupsResult}
@@ -621,10 +645,9 @@ export function MintNfts({
               <Card.Footer className="mt-auto">
                 {step === "success" ? (
                   <StyledText
+                    as={"span"}
                     variant="button.primary"
-                    as="button"
-                    type="button"
-                    onClick={handleCloseModal()}
+                    onClick={handleCloseModal}
                   >
                     Done
                   </StyledText>
@@ -646,9 +669,8 @@ export function MintNfts({
                 )}
                 {step === "success" ? null : (
                   <StyledText
+                    as={"span"}
                     variant="button.secondary"
-                    as="button"
-                    type="button"
                     onClick={() => {
                       setIsLoading(false)
                       setNftDetails(false)

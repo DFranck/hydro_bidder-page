@@ -17,6 +17,7 @@ import { RowComponent } from "./RowComponent"
 import { Checkbox } from "@/components/ui/checkbox"
 import { NFT_SIZES } from "./config/nft-sizes"
 import MintNftEmptyCard from "@/components/MintNftEmptyCard"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function LockupsTables({
   onClickEdit,
@@ -44,23 +45,37 @@ export function LockupsTables({
   type ExpiredRow = (typeof expiredLockupRows)[number]
 
   const allActiveLockups = lockups.filter(
-    (lockup) => !lockup.isExpired && !NFT_SIZES.includes(lockup.funds.amount)
+    (lockup) =>
+      !lockup.isExpired &&
+      (!NFT_SIZES.includes(lockup.funds.amount) ||
+        ![
+          TOKEN_DENOMS.dATOM.displayDenom,
+          TOKEN_DENOMS.stATOM.displayDenom,
+        ].includes(lockup.funds.denomInfo?.humanReadableDenom ?? ""))
   )
 
   const allActiveNftLockups = lockups.filter(
     (lockup) =>
       !lockup.isExpired &&
-      lockup.funds.denomInfo?.humanReadableDenom !== "ATOM" &&
+      lockup.funds.denomInfo?.humanReadableDenom !==
+        TOKEN_DENOMS.ATOM.displayDenom &&
       NFT_SIZES.includes(lockup.funds.amount)
   )
 
   const allExpiredLockups = lockups.filter(
-    (lockup) => lockup.isExpired && !NFT_SIZES.includes(lockup.funds.amount)
+    (lockup) =>
+      lockup.isExpired &&
+      (!NFT_SIZES.includes(lockup.funds.amount) ||
+        ![
+          TOKEN_DENOMS.dATOM.displayDenom,
+          TOKEN_DENOMS.stATOM.displayDenom,
+        ].includes(lockup.funds.denomInfo?.humanReadableDenom ?? ""))
   )
   const allExpiredNftLockups = lockups.filter(
     (lockup) =>
       lockup.isExpired &&
-      lockup.funds.denomInfo?.humanReadableDenom !== "ATOM" &&
+      lockup.funds.denomInfo?.humanReadableDenom !==
+        TOKEN_DENOMS.ATOM.displayDenom &&
       NFT_SIZES.includes(lockup.funds.amount)
   )
 
@@ -305,7 +320,7 @@ export function LockupsTables({
           }
           rightSlot={
             expiredNftLockupRows.length > 0 && (
-              <StyledText as={Link} variant="link" href="#nft-lockups">
+              <StyledText as={Link} variant="link" href="#expired-nft-lockups">
                 <span>Jump to {expiredNftLockupRows.length} Expired</span>
                 <Icon name="arrow-down-long" />
               </StyledText>
@@ -387,8 +402,8 @@ export function LockupsTables({
             }
             rightSlot={
               activeNftLockupRows.length > 0 && (
-                <StyledText as={Link} variant="link" href="#nft-lockups">
-                  <span>Jump to {activeNftLockupRows.length} Expired</span>
+                <StyledText as={Link} variant="link" href="#active-nft-lockups">
+                  <span>Jump to {activeNftLockupRows.length} Active</span>
                   <Icon name="arrow-down-long" />
                 </StyledText>
               )

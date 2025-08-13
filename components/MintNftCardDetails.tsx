@@ -21,7 +21,11 @@ export function MintNftCardDetails({
   return (
     <div className="flex flex-col gap-4 md:flex-row">
       <div className="flex flex-col items-center gap-2">
-        <Avatar url={nftInfo.image} alt={"nft.denom"} className="size-60 rounded-none" />
+        <Avatar
+          url={nftInfo.image}
+          alt={"nft.denom"}
+          className="size-60 rounded-none"
+        />
       </div>
       {isNFTLoading ? (
         <div className="h-auto flex-1 animate-pulse rounded-md bg-gray-200/10" />
@@ -47,7 +51,7 @@ export function MintNftCardDetails({
                   key={index}
                 >
                   <span>{formatAmount(el.funds.amount, 0, 3)}</span>
-                  <span>{nftInfo.displayDenom}</span>
+                  <span>{el.funds.denomInfo?.humanReadableDenom}</span>
                 </div>
               ))}
             </div>

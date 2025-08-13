@@ -24,6 +24,9 @@ import { getNftLockupImage } from "./config"
 import { Avatar } from "@/components/Avatar"
 import { Dropdown } from "./actions/components/Dropdown"
 import { NFT_SIZES } from "./config/nft-sizes"
+import { Icon } from "@/components/Icon"
+import Link from "next/link"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export function buildActiveRow({
   lockup,
@@ -92,7 +95,10 @@ export function buildActiveRow({
     mergeableLockups.length > 0 &&
     findMergeableLockup(mergeableLockups).funds.denom === lockup.funds.denom
 
-  const nftSize = !NFT_SIZES.includes(lockup.funds.amount)
+  const nftSize = !(
+    lockup.funds.denomInfo?.humanReadableDenom !==
+      TOKEN_DENOMS.ATOM.displayDenom && NFT_SIZES.includes(lockup.funds.amount)
+  )
 
   const amount = (
     <div className="flex items-center gap-1">
@@ -169,14 +175,30 @@ export function buildActiveRow({
         {nftSize ? (
           amount
         ) : (
-          <LockupActionTrigger
-            lockup={lockup}
-            action="transfer"
-            className="cursor-pointer hover:font-medium"
-            showActionPanel={false}
-          >
-            {amount}
-          </LockupActionTrigger>
+          <div className="flex items-center gap-1">
+            <LockupActionTrigger
+              lockup={lockup}
+              action="transfer"
+              className="cursor-pointer hover:font-medium"
+              showActionPanel={false}
+            >
+              {amount}
+            </LockupActionTrigger>
+            {!isListedMarketplaceLockup(lockup) && (
+              <StyledText
+                variant="link"
+                href={`/lockups/marketplace/${lockup.id}`}
+                as={Link}
+                className="mx-1.5"
+                tooltip="This NFT is listed for sale on the marketplace. Click to view the listing"
+              >
+                <Icon
+                  name="solid:tag"
+                  className={`hover:text-palette-green/80 mr-3 cursor-pointer text-base `}
+                />
+              </StyledText>
+            )}
+          </div>
         )}
       </>
     ),

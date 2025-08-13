@@ -48,10 +48,7 @@ export function LsmInteraction({
     hasGatekeeper,
   } = useBackendData()
   const {
-    data: {
-      lockedTokenIsAtCapacityGlobal,
-      lockedTokenPercentageGlobal,
-    },
+    data: { lockedTokenIsAtCapacityGlobal, lockedTokenPercentageGlobal },
   } = useGlobalLockupCapacityInfo()
   const { incompleteNotices } = useIncompleteNotices()
   const { hubChain, hubSigner, neutronChain, neutronSigner } =

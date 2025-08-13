@@ -21,8 +21,8 @@ import MintNftEmptyCard from "./MintNftEmptyCard"
 import { StyledText } from "./StyledText"
 import { Tooltip } from "./Tooltip"
 import { includeNftSizesTooltip } from "./ToolTips"
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
 import { Switch } from "./ui/switch"
+import { Alert } from "./Alert"
 
 interface Props {
   lockups: AugmentedLockup[]
@@ -47,7 +47,9 @@ export function MintNftCard({
   const { address } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
 
-  const lockupAmounts = lockups.map((lockup) => lockup.funds.amount)
+  const lockupAmounts = lockups
+    .map((lockup) => lockup.funds.amount)
+    .some((size) => NFT_SIZES.includes(size))
 
   const { data: nfts, isLoading } = useQuery<NFTWithLockupCount[]>({
     queryKey: ["lockup-counts", address, lockups, includeNftSizes],
@@ -111,45 +113,46 @@ export function MintNftCard({
 
   return (
     <div>
+      {renderedList.length !== 0 ? <MintNftCardStepper steps={steps} /> : null}
+
+      <div className="mb-4 flex items-center justify-end">
+        <Switch
+          checked={includeNftSizes}
+          onCheckedChange={handleIncludeNftSizes}
+          disabled={!lockupAmounts || renderedList.length === 0}
+          className="mx-2"
+        />
+        <StyledText
+          className={cn("w-fit text-sm", {
+            "text-gray-400": !includeNftSizes,
+          })}
+        >
+          Include existing NFTs
+          <Tooltip
+            classNamesForTooltip="w-80 md:w-5/12"
+            tipContents={includeNftSizesTooltip}
+          >
+            <Icon name="circle-info" className="mx-1" />
+          </Tooltip>
+        </StyledText>
+      </div>
+
       {renderedList.length === 0 ? (
         <div className="flex flex-col  items-center justify-center p-20">
           <MintNftEmptyCard />
         </div>
-      ) : (
-        <MintNftCardStepper steps={steps} />
-      )}
+      ) : null}
+
       {hasSimulatedErrorLSM.length > 0 && renderedList.length !== 0 ? (
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircleIcon />
-          <AlertTitle>Note:</AlertTitle>
-          <AlertDescription>
-            One or more of your lockups are not eligible to mint an NFT
-          </AlertDescription>
-        </Alert>
+        <Alert
+          variant="destructive"
+          className="mb-4"
+          title="Note:"
+          description=" One or more of your lockups are not eligible to mint an NFT"
+          icon={<AlertCircleIcon />}
+        />
       ) : null}
-      {renderedList.length !== 0 ? (
-        <div className="mb-4 flex items-center justify-end">
-          <Switch
-            checked={includeNftSizes}
-            onCheckedChange={handleIncludeNftSizes}
-            disabled={!lockupAmounts.some((size) => NFT_SIZES.includes(size))}
-            className="mx-2"
-          />
-          <StyledText
-            className={cn("w-fit text-sm", {
-              "text-gray-400": !includeNftSizes,
-            })}
-          >
-            Include existing NFTs
-            <Tooltip
-              classNamesForTooltip="w-80  -translate-x-12/12 md:w-5/12"
-              tipContents={includeNftSizesTooltip}
-            >
-              <Icon name="circle-info" className="mx-1" />
-            </Tooltip>
-          </StyledText>
-        </div>
-      ) : null}
+
       <div
         className={cn("grid grid-cols-2 gap-3 sm:grid-cols-3", {
           "md:grid-cols-4": renderedList.length > 3,
