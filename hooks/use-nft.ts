@@ -10,6 +10,7 @@ import { executeWalletSimulateLockup } from "@/contract-apis/executeWalletSimula
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { logMintDebugData } from "@/lib/logMintDebugData"
 import { NFT_SIZES } from "@/app/(with-backend-data)/lockups/config/nft-sizes"
+import { TOKEN_DENOMS } from "@/lib/tokenDenoms"
 
 export interface LockupsResult {
   selectedLockups: VirtualLockup[]
@@ -200,7 +201,9 @@ export async function findLockupsForNFtSizes(
     address
   ) {
     const atomLockups = lockups.filter(
-      (lockup) => lockup.funds.denomInfo?.humanReadableDenom === "ATOM"
+      (lockup) =>
+        lockup.funds.denomInfo?.humanReadableDenom ===
+        TOKEN_DENOMS.ATOM.displayDenom
     )
 
     if (atomLockups.length > 0) {
@@ -253,7 +256,9 @@ export async function findLockupsForNFtSizes(
   )
 
   Object.keys(denomGroups).forEach((denom) => {
-    denomGroups[denom].sort((a, b) => (b.funds.simulatedAmount ?? 0) - (a.funds.simulatedAmount ?? 0))
+    denomGroups[denom].sort(
+      (a, b) => (b.funds.simulatedAmount ?? 0) - (a.funds.simulatedAmount ?? 0)
+    )
   })
 
   const hasMultipleDenoms = Object.keys(denomGroups).length > 1
