@@ -20,6 +20,8 @@ import {
   rewardsTotalTributeColumnTooltip,
   rewardsYourTributeColumnTooltip,
   rewardsYourTributeTooltip,
+  pointProgramUrlBasedTributeAmountTooltip,
+  pointBasedTributeRewardAmountTooltip,
 } from "@/components/ToolTips"
 import { AugmentedClaim, TokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -29,6 +31,9 @@ import Image from "next/image"
 import { MouseEvent, useState } from "react"
 import ClaimRewardsStepper from "./ClaimRewardsStepper"
 import { ClaimStakingRewards } from "./ClaimStakingRewards"
+import { AmountAndUnitPair } from "@/components/AmountAndUnitPair"
+import { simplifyBigNumbers } from "@/lib/simplifyBigNumbers"
+import { formatAmount } from "@/lib/formatAmount"
 
 export default function RewardsPage() {
   const [isCelebrating, setIsCelebrating] = useState(false)
@@ -46,11 +51,18 @@ export default function RewardsPage() {
     (vote) => bidsInfo[vote.bidId]?.roundId < currentRoundId
   )
 
-  const bidsToRender = bids.filter(
+  const bidsToRenderTokenBased = bids.filter(
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
       bid.tokenBasedTributes.length > 0 // has token-based tribute
+  )
+
+  const bidsToRenderPointBased = bids.filter(
+    (bid) =>
+      votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
+      bid.roundId < currentRoundId && // previous rounds
+      bid.points && bid.points.length > 0 // has point-based tribute
   )
 
   const [selectedTribute, setSelectedTribute] =
@@ -77,7 +89,7 @@ export default function RewardsPage() {
     : null
 
   // Bids can have multiple tributes, so this turns each into a row
-  const rows = bidsToRender
+  const rowsTokenBasedTributes = bidsToRenderTokenBased
     .map((bid) => {
       const bidUrl = `/bids/${bid.id}`
       const { projectLogoUrl, projectName, projectTitle } = bid
@@ -209,6 +221,127 @@ export default function RewardsPage() {
       })
     })
     .flat()
+
+  const rowsPointBasedTributes = bidsToRenderPointBased
+    .filter((bid) => !["pending", "rejected"].includes(bid.status))
+    .map((bid) => {
+      const bidUrl = `/bids/${bid.id}`
+
+      const {
+        projectLogoUrl,
+        projectName,
+        projectTitle,
+        pointProgramUrl,
+        points = [],
+      } = bid
+
+      const userVotePower = votesFromPreviousRounds.filter(
+        (vote) => vote.bidId === bid.id
+      )
+
+      const totalAmountOfPoints = !points.length ? 0 : points[0]
+
+      const userTotalPowerVotedOnBid = sumBy(userVotePower, "power")
+
+      const totalVotingPowerOnBid = bid.power
+
+      const yourTribute =
+        (totalAmountOfPoints * userTotalPowerVotedOnBid) / totalVotingPowerOnBid
+
+      const tribute = {
+        power: totalAmountOfPoints,
+        unit: points[1],
+      }
+
+      return {
+        _bid: bid,
+
+        _tribute: tribute,
+
+        roundNumber: (
+          <InvisibleLink href={bidUrl}>{bid.roundId + 1}</InvisibleLink>
+        ),
+
+        bidTitleAndProjectName: (
+          <InvisibleLink href={bidUrl}>
+            <div className="flex items-center gap-6">
+              {projectLogoUrl ? (
+                <div className="relative size-12">
+                  <Image
+                    className="object-contain"
+                    src={projectLogoUrl}
+                    alt={projectName}
+                    fill={true}
+                    sizes="48px"
+                  />
+                </div>
+              ) : null}
+              <div className="flex flex-col">
+                <StyledText variant="h4">{projectTitle}</StyledText>
+                <StyledText variant="footnote">{projectName}</StyledText>
+              </div>
+            </div>
+          </InvisibleLink>
+        ),
+
+        totalTribute: (
+          <InvisibleLink href={bidUrl}>
+            {bid.status === "rejected" ? (
+              <div>&ndash;</div>
+            ) : (
+              <BidTribute bidId={bid.id} textAlign="right" />
+            )}
+          </InvisibleLink>
+        ),
+
+        yourTribute: (
+          <InvisibleLink href={bidUrl}>
+            {!yourTribute || bid.status === "rejected" ? (
+              <div>&ndash;</div>
+            ) : (
+              <Tooltip
+                tipContents={pointBasedTributeRewardAmountTooltip({
+                  tribute: {
+                    power: formatAmount(yourTribute, 0, 2),
+                    unit: tribute.unit,
+                  },
+                })}
+              >
+                <div className="flex items-center gap-1">
+                  <Icon name="solid:gem" />
+                  <AmountAndUnitPair
+                    amount={simplifyBigNumbers(yourTribute)}
+                    unit={tribute.unit}
+                  />
+                  <Icon name="circle-info" />
+                </div>
+              </Tooltip>
+            )}
+          </InvisibleLink>
+        ),
+
+        claimStatus: (
+          <InvisibleLink href={bidUrl}>
+            <Tooltip
+              tipContents={pointProgramUrlBasedTributeAmountTooltip({
+                pointProgramUrl,
+              })}
+              className="flex items-center justify-center gap-1"
+            >
+              <div>&ndash;</div>
+              <Icon name="circle-info" />
+            </Tooltip>
+          </InvisibleLink>
+        ),
+      }
+    })
+    .flat()
+
+  const rows = [...rowsTokenBasedTributes, ...rowsPointBasedTributes].sort(
+    (a, b) => {
+      return a._bid.roundId - b._bid.roundId
+    }
+  )
 
   type Row = (typeof rows)[number]
 
