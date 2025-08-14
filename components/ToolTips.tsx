@@ -200,7 +200,8 @@ export const pointBasedTributeRewardAmountTooltip = ({
       to points not having a monetary value.
     </p>
     <p>
-      If you vote on this bid, you will receive {tribute.power} {tribute.unit}
+      The estimated value you’ve received from this bid is {tribute.power}{" "}
+      {tribute.unit}
     </p>
   </div>
 )
