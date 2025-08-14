@@ -293,7 +293,7 @@ export default function RewardsPage() {
 
         yourTribute: (
           <InvisibleLink href={bidUrl}>
-            {!yourTribute || bid.status === "rejected" ? (
+            {!yourTribute ? (
               <div>&ndash;</div>
             ) : (
               <Tooltip
