@@ -62,7 +62,8 @@ export default function RewardsPage() {
     (bid) =>
       votesFromPreviousRounds.some((vote) => vote.bidId === bid.id) && // user voted
       bid.roundId < currentRoundId && // previous rounds
-      bid.points && bid.points.length > 0 // has point-based tribute
+      bid.points &&
+      bid.points.length > 0 // has point-based tribute
   )
 
   const [selectedTribute, setSelectedTribute] =
@@ -286,11 +287,7 @@ export default function RewardsPage() {
 
         totalTribute: (
           <InvisibleLink href={bidUrl}>
-            {bid.status === "rejected" ? (
-              <div>&ndash;</div>
-            ) : (
-              <BidTribute bidId={bid.id} textAlign="right" />
-            )}
+            <BidTribute bidId={bid.id} textAlign="right" />
           </InvisibleLink>
         ),
 
