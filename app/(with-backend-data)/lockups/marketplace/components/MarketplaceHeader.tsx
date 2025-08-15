@@ -29,7 +29,7 @@ export default function MarketplaceHeader({
             wallets. The NFTs carry several features, including locked tokens,
             active votes, pending rewards, and governance history, and{" "}
             <a
-              href="https://x.com/HydroTeam_/status/1912138750085247471"
+              href="https://x.com/hydromarkets/status/1912138750085247471"
               target="_blank"
               rel="noopener noreferrer"
               className="text-hydro-blue underline hover:no-underline"

@@ -82,7 +82,7 @@ export default function Navigation() {
         },
         {
           label: "Blog",
-          href: "https://x.com/HydroTeam_/articles",
+          href: "https://x.com/hydromarkets/articles",
           iconLeft: "solid:newspaper",
           iconRight: "arrow-up-right-from-square",
           target: "_blank",
@@ -109,7 +109,7 @@ export default function Navigation() {
           target: "_blank",
         },
         {
-          href: "https://x.com/HydroTeam_",
+          href: "https://x.com/hydromarkets",
           iconLeft: "brands:x-twitter",
           iconRight: "arrow-up-right-from-square",
           label: "Twitter",

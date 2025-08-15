@@ -13,7 +13,7 @@ export const DECIMAL_PRECISION_FOR_LOCKING_AMOUNTS = 3
 export const SOCIAL_MEDIA_LINKS = [
   {
     name: "Twitter",
-    url: "https://x.com/HydroTeam_",
+    url: "https://x.com/hydromarkets",
     icon: "brands:x-twitter",
   },
   {

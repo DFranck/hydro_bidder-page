@@ -66,7 +66,7 @@ function getMenuItems(isWalletConnected: boolean): MenuItem[] {
           target: '_blank',
         },
         {
-          href: 'https://x.com/HydroTeam_',
+          href: 'https://x.com/hydromarkets',
           iconLeft: 'brands:x-twitter',
           iconRight: 'arrow-up-right-from-square',
           label: 'Twitter',

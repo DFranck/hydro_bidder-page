@@ -4,7 +4,7 @@ Dungeon Chain	Dungeon Chain (DGN) revolutionizes gaming with fast, low-cost bloc
 Drop	Drop, a liquid staking protocol backed by Lido, turns idle assets into economic flows to empower sovereign blockchains.	Confirmed	Text	Pending		FALSE
 Demex	Demex is a seamless, omni-chain DEX for trading perpetuals, spot, and earning yield across chains.	Confirmed	Text	Pending		FALSE
 Symphony	The first self-balancing stablecoin blockchain	Confirmed	Text	Pending		FALSE
-OmniFlix	The p2p network for creators, DAOs, dApps & appchains to engage and educate their communities with media IP.	Confirmed	Button	More Info	https://x.com/HydroTeam_/status/1869803133519704077	FALSE
+OmniFlix	The p2p network for creators, DAOs, dApps & appchains to engage and educate their communities with media IP.	Confirmed	Button	More Info	https://x.com/hydromarkets/status/1869803133519704077	FALSE
 Tribbles	Tribbles is a groundbreaking multi-chain meme coin with real utility. Launching on Agoric and powered by the people.	Confirmed	Button	More Info	https://x.com/Airdrops_one/status/1869892003464651067	FALSE
 Namada	Asset-agnostic privacy Layer 1 blockchain enabling shielded transfers with zero-knowledge proofs.	Rumored	Text	Pending		FALSE
 Soarchain	A DePIN project that incorporates AI and modularity, focusing on the mobility ecosystem.	Rumored	Text	Pending		FALSE
