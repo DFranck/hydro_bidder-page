@@ -7,16 +7,22 @@ import MarketplaceHeader from "./components/MarketplaceHeader"
 import MarketplaceLockupGrid from "./components/MarketplaceLockupGrid"
 import { useMarketplaceData } from "./context/MarketplaceDataProvider"
 import { MarketplaceSortBy, MarketplaceView } from "./types"
-
+import { MintNfts } from "../MintNfts"
 
 export default function MarketplacePage() {
   const [view, setView] = useState<MarketplaceView>("grid")
   const [sortBy, setSortBy] = useState<MarketplaceSortBy>("price-asc")
   const [isAsideOpen, setIsAsideOpen] = useState(false)
+  const [mintNft, setMintNft] = useState(false)
+
   const { marketplaceLockups, filteredLockups } = useMarketplaceData()
 
   const isLoading =
     marketplaceLockups.length === 0 && filteredLockups.length === 0
+
+  function handleNftMint() {
+    setMintNft(true)
+  }
 
   return (
     <>
@@ -26,19 +32,19 @@ export default function MarketplacePage() {
             "relative  shrink-0 border-r-2 border-black bg-white/10 ",
             "transition-all duration-300 ease-in-out",
             // "md:w-64 md:translate-x-0 md:p-4 md:opacity-100",
-            `${!isAsideOpen ? "w-0 -translate-x-64 p-0 opacity-100" : "w-64 translate-x-0 p-4 opacity-100"}`,
+            `${!isAsideOpen ? "w-0 -translate-x-64 p-0 opacity-100" : "w-64 translate-x-0 p-4 opacity-100"}`
           )}
         >
           <MarketplaceFilters lockups={marketplaceLockups} />
-        
-  </aside>
-        <main className={`flex-1 relative`}>
+        </aside>
+        <main className={`relative flex-1`}>
           <MarketplaceHeader
             setView={setView}
             setSortBy={setSortBy}
             isAsideOpen={isAsideOpen}
             setIsAsideOpen={setIsAsideOpen}
             results={filteredLockups.length}
+            handleNftMint={handleNftMint}
           />
           {isLoading ? (
             <div className="flex h-full w-full -translate-y-20 items-center justify-center text-sm text-white/60">
@@ -60,13 +66,14 @@ export default function MarketplacePage() {
           isAsideOpen={isAsideOpen}
           setIsAsideOpen={setIsAsideOpen}
           results={filteredLockups.length}
+          handleNftMint={handleNftMint}
         />
         <div className="flex flex-1">
           <aside
             className={twMerge(
               "w-full shrink-0 border-r-2 border-black bg-white/10 p-4",
               "transition-all duration-300 ease-in-out",
-              `${!isAsideOpen ? "w-0 -translate-x-full p-0 opacity-0" : "translate-x-0 p-4 opacity-100"}`,
+              `${!isAsideOpen ? "w-0 -translate-x-full p-0 opacity-0" : "translate-x-0 p-4 opacity-100"}`
             )}
           >
             <MarketplaceFilters lockups={marketplaceLockups} />
@@ -90,6 +97,12 @@ export default function MarketplacePage() {
           </main>
         </div>
       </div>
+      <MintNfts
+        isCreationModalOpen={mintNft}
+        setIsCreationModalOpen={setMintNft}
+        handleCreationModalWindowClose={() => setMintNft(false)}
+        handleModalWindowCloseComplete={() => setMintNft(false)}
+      />
     </>
   )
 }

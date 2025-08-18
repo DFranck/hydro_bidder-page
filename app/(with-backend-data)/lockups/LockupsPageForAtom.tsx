@@ -146,7 +146,7 @@ export function LockupsPageForAtom() {
     setRefreshMultipleLockups(true)
   }
 
-  function handleNftMinting() {
+  function handleNftMint() {
     setMintNft(true)
   }
 
@@ -279,7 +279,7 @@ export function LockupsPageForAtom() {
                 as="button"
                 variant="button.primary"
                 className="flex items-center gap-2"
-                onClick={handleNftMinting}
+                onClick={handleNftMint}
                 disabled={lockups.length === 0 || isLoading}
               >
                 <Store className="size-4 text-black" />

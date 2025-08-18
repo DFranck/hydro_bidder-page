@@ -4,6 +4,8 @@ import { StyledText } from "@/components/StyledText"
 import { twMerge } from "tailwind-merge"
 import { MarketplaceSortBy, MarketplaceView } from "../types"
 import MarketplaceSortSelect from "./MarketplaceSortSelect"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { Store } from "lucide-react"
 
 interface MarketplaceHeaderProps {
   setView: (view: MarketplaceView) => void
@@ -11,6 +13,7 @@ interface MarketplaceHeaderProps {
   isAsideOpen: boolean
   setIsAsideOpen: (isOpen: boolean) => void
   results: number
+  handleNftMint: () => void
 }
 
 export default function MarketplaceHeader({
@@ -19,7 +22,9 @@ export default function MarketplaceHeader({
   isAsideOpen,
   setIsAsideOpen,
   results,
+  handleNftMint,
 }: MarketplaceHeaderProps) {
+  const { lockups, isLoading } = useBackendData()
   return (
     <div className="flex w-full flex-col">
       <div className="mb-4 w-full rounded-lg border border-white/20 bg-black/40 p-6">
@@ -80,6 +85,17 @@ export default function MarketplaceHeader({
               variant="label.meta.faded"
             >
               results
+            </StyledText>
+
+            <StyledText
+              as="button"
+              variant="button.primary"
+              className="flex items-center gap-2 p-2 whitespace-nowrap md:ml-6"
+              onClick={handleNftMint}
+              disabled={lockups.length === 0 || isLoading}
+            >
+              <Store className="size-4 text-black" />
+              Mint an NFT
             </StyledText>
           </div>
           <MarketplaceSortSelect setSortBy={setSortBy} />
