@@ -24,7 +24,7 @@ export default function MarketplaceLockupGrid({
   return (
     <div className="mt-16">
       <div className="flex items-center gap-3 px-4">
-        <h4 className="text-2xl font-bold">Listings</h4>
+        <h4 className="text-2xl font-bold">Others</h4>
         <div className="bg-palette-green/80 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-black">
           {generalLockups.length}
         </div>
