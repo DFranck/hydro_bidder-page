@@ -31,7 +31,7 @@ export function buildColumns(
     },
     {
   key: "tributeCount",
-  label: "Tributes Count",
+  label:  "Tribute Count",
   textAlign: "right",
   isSortable: true,
   initialSortDirection: "DESC",
@@ -60,7 +60,17 @@ export function buildColumns(
       customValueGetter: (row) => ("status" in row._bid ? row._bid.status : ""),
     },{
       key: "action",
-      label: "Action",
+      label: (
+        <Tooltip
+          tipContents={"TODO add tooltip"}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Action
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
       textAlign: "right",
       propsForCells: {
         className: "text-balance",

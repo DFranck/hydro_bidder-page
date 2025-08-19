@@ -122,7 +122,7 @@ export function BidderPage({
           <h2 className="sr-only">PoL Bidder by Round</h2>
 
           <StyledText variant="footnote">
-            Bidder can be refound at the end of it round, and can be add tribute at any time during and after the round.
+           A bidder can be refunded at the end of its round, and tributes can be added at any time during or after the round.
           </StyledText>
 
           <div className="flex items-center backdrop-blur-sm">

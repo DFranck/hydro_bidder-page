@@ -31,7 +31,7 @@ export function AddTributeButton({
     return <ErrorBox>The requested bid could not be found.</ErrorBox>
   }
 
- const onCloseComplete = async (amountBase: string, denom: string, description: string) => {
+ const onCloseComplete = async (amountBase: string, denom: string, description?: string) => {
     setToasts([toastMessages.addingTributeInProgress])
     try {
       await executeAddTribute({
@@ -41,7 +41,6 @@ export function AddTributeButton({
         trancheId: Number(bid.trancheId),
         amount: amountBase,
         denom,
-        description,
         getSigningCosmWasmClient,
       })
 

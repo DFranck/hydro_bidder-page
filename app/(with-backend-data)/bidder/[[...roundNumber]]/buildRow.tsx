@@ -1,6 +1,7 @@
 
 
 import { BidLogoAndTitle, BidLogoAndTitleLayout } from "@/components/BidLogoAndTitle"
+import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
@@ -8,13 +9,12 @@ import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
 import { AddTributeButton } from "./components/AddTributeButton"
 import RefundTrubuteButton from "./components/RefundTrubuteButton"
 
-
 export function buildRow(
   passedBid: BidRevampMetrics | PreHydroBid,
   requestedPreHydro: boolean
 ) {
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
-const {address}=useBackendData()
+const {address, currentRoundId}=useBackendData()
   if (requestedPreHydro) {
     const bid = passedBid as PreHydroBid
     rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
@@ -41,33 +41,72 @@ const {address}=useBackendData()
       <table className="w-full text-sm">
         <thead>
           <tr className="text-left text-white/70">
-            <th className="py-2 pr-4">Token</th>
-            <th className="py-2 pr-4 text-right">created at</th>
-            <th className="py-2 pr-0 text-right">status</th>
-            <th className="py-2 pr-0 text-right">action</th>
+            <th className="py-2 pr-4">Tribute</th>
+            <th className="py-2 pr-4 text-right">Created at</th>
+            <th className="py-2 pr-0 text-right">
+              <Tooltip
+  tipContents={
+    <div className="space-y-2 text-sm">
+      <div>
+        <strong>Voting period</strong>:  
+        The bid is still active in the current round.  
+        Refunds are not available during this stage.
+      </div>
+      <div>
+        <strong>Refundable</strong>:  
+        The bid’s round has ended.  
+        If you are the depositor, you can refund your tribute.
+      </div>
+      <div>
+        <strong>Claimable</strong>:  
+        This tribute has already been refunded.  
+        Voters may now claim the funds.
+      </div>
+    </div>
+  }
+  classNamesForTooltip="-ml-12"
+>
+  <div className="flex items-center gap-1">
+    Status
+    <Icon name="circle-info" />
+  </div>
+</Tooltip>
+            </th>
+            <th className="py-2 pr-0 text-right"> <Tooltip
+                      tipContents={"TODO add tooltip"}
+                      classNamesForTooltip="-ml-12"
+                    >
+                      <div className="flex items-center gap-1">
+                        Action
+                        <Icon name="circle-info" />
+                      </div>
+                    </Tooltip></th>
           </tr>
         </thead>
         <tbody>
        {tokenTributes.map((t: any, i: number) => {
         // for disabling
+        let status: string
         const connectedAddress = (address ?? "").trim().toLowerCase()
-        console.log("connectedAddress", connectedAddress)
         const depositor = String(t.depositor ?? "").trim().toLowerCase()
-        console.log("depositor", depositor)
         const isDepositor = connectedAddress === depositor
-        console.log("isDepositor", isDepositor)
+        const isOngoing = (passedBid as BidRevampMetrics).roundId === currentRoundId;
         const isRefunded = !!t.refunded
-        // TODO find the real status
-        const isActionableStatus = (passedBid as any).status === "Approved"
-
-        const disabled = !isDepositor || isRefunded || !isActionableStatus
+        if(isOngoing){
+          status = "Voting period"
+        } else {
+          status = "Refundable"
+        }
+        if(isRefunded){
+          status = "Claimable"
+        }
+        const disabled = !isDepositor || isRefunded || isOngoing
 
           let reason: string | undefined
           if (!isDepositor) reason = "Only the depositor can refund this tribute."
-          else if (isRefunded) reason = "This tribute has already been refunded."
-          else if (!isActionableStatus) reason = "Refunds are only available while the proposal is Approved."
+          else if (isRefunded) reason = "This tribute is already refunded (claimable)."
+          else if (isOngoing) reason = "Refunds are unavailable during the current voting period."
 
-        // pour l’id du tribute : selon tes données tu as parfois t.id et parfois t.tributeId
         const tributeId = Number(t.tributeId ?? t.id)
         // for rendering
           const name = t.denom ?? t.funds?.denom;
@@ -101,13 +140,13 @@ const {address}=useBackendData()
                         {name}
                         </span>
            
-                </span>
+                </span><Icon name="circle-info" className="ml-1"/>
                   </Tooltip>
               </td>
 
               <td className="py-2 pr-4 text-right whitespace-nowrap">{createdAt}</td>
               <td className="py-2 pr-0 text-right whitespace-nowrap">
-                {isRefunded ? "refunded" : "active"}
+                {status}
               </td>
                <td className="py-2 pr-1 text-right whitespace-nowrap">
                 <RefundTrubuteButton

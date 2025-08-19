@@ -1,75 +1,21 @@
-// FILE: AddTributeModal.tsx
+// path: app/(with-backend-data)/bidder/[[...roundNumber]]/components/AddTributeModal.tsx
 "use client"
 
 import { ModalWindow } from "@/components/ModalWindow"
 import { StyledText } from "@/components/StyledText"
 import { AugmentedBidAfterWallet } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
+import { formatAmount } from "@/lib/formatAmount"
+import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
-import { useEffect, useId, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { buildDenomOptions } from "../buildDenomOptions"
+import { useAccountBalances } from "../hooks/useAccountBalances"
+import { useDenomOptionsWithBalances } from "../hooks/useDenomOptionsWithBalances"
+import { gtIntStr, isPositiveDecimalString, toBaseUnitsStr, toDisplayRawFromBaseStr } from "../utils/toBaseUnits"
+import { AmountField } from "./AmountField"
+import { AssetSelectField } from "./AssetSelectField"
 
-// ---- UI sous-composant (1 seule ligne) ----
-function TributeRow({
-  denom, setDenom,
-  amount, setAmount,
-  options,
-}: {
-  denom: string
-  setDenom: (v: string) => void
-  amount: string
-  setAmount: (v: string) => void
-  options: Array<{ name: string; value: string }>
-}) {
-  const assetId = useId()
-  const amountId = useId()
-  return (
-    <>
-    <fieldset className="rounded-lg border border-white/20 bg-black/40">
-      <div className="grid grid-cols-[minmax(10rem,1fr)_minmax(8rem,1fr)] items-stretch">
-        {/* Asset */}
-        <div className="relative p-3">
-          <label htmlFor={assetId} className="absolute -top-2 left-3 bg-black px-1 text-[11px] leading-none text-white/60">
-            Asset
-          </label>
-          <select
-            id={assetId}
-            value={denom}
-            onChange={(e) => setDenom(e.target.value)}
-            className="w-full bg-black outline-none border-0 focus:ring-0 cursor-pointer"
-          >
-            {options.map((o) => (
-              <option key={o.value} value={o.value}>{o.name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-    </fieldset>
-    <fieldset className="rounded-lg border border-white/20 bg-black/40">
-      <div className="grid grid-cols-[minmax(10rem,1fr)_minmax(8rem,1fr)] items-stretch">
-        {/* Amount */}
-        <div className="relative p-3 border-l border-white/10">
-          <label htmlFor={amountId} className="absolute -top-2 left-3 bg-black px-1 text-[11px] leading-none text-white/60">
-            Amount
-          </label>
-          <input
-            id={amountId}
-            type="number"
-            inputMode="decimal"
-            step="any"
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full bg-transparent outline-none border-0 focus:ring-0"
-          />
-        </div>
-      </div>
-    </fieldset>
-
-    </>
-  )
-}
-
-// ---- Modal principal (1 tribute) ----
 export function AddTributeModal({
   bid,
   isOpened,
@@ -79,85 +25,72 @@ export function AddTributeModal({
   bid: AugmentedBidAfterWallet
   isOpened: boolean
   onCloseAction: () => void
-  onCloseCompleteAction: (
-    amount: string,   // base units
-    denom: string,
-    description: string
-  ) => void
+  onCloseCompleteAction: (amountBase: string, denom: string, description?: string) => void
 }) {
   const { currentRoundPrices } = useBackendData()
+  const denomOptionsAll = useMemo(() => buildDenomOptions(currentRoundPrices), [currentRoundPrices])
 
-  // options sûres même si currentRoundPrices est vide/incomplet
-  const denomList = useMemo(() => {
-    const entries = Object.entries(currentRoundPrices ?? {})
-    if (entries.length === 0) {
-      // fallback dev (optionnel)
-      return [
-        { name: "NTRN", value: "untrn" },
-        { name: "ATOM", value: "uatom" },
-      ]
-    }
-    return entries.map(([value, asset]) => {
-      const raw = asset?.token_symbol ?? value
-      return {
-        name: typeof raw === "string" ? raw.replace(".", " ") : String(raw),
-        value,
-      }
-    })
-  }, [currentRoundPrices])
+  const neutron = useChain("neutron")
 
-  const [denom, setDenom] = useState<string>(denomList[0]?.value ?? "untrn")
+  const { balances } = useAccountBalances({
+    isOpened,
+    address: neutron.address,
+    getStargateClient: neutron.getStargateClient,
+  })
+
+  const [denom, setDenom] = useState<string>("")
   const [amount, setAmount] = useState<string>("")
-  const [description, setDescription] = useState<string>("")
 
-  // si la liste change (API/tweak), on ajuste le denom si nécessaire
+  // Filter options to those with non-zero balance when connected (your existing hook)
+  const { withBal } = useDenomOptionsWithBalances({
+    denomOptions: denomOptionsAll,
+    balances,
+    isConnected: Boolean(neutron.address),
+  })
+
+  // If the selected denom disappears from options, reset it
   useEffect(() => {
-    if (!denomList.find(o => o.value === denom)) {
-      setDenom(denomList[0]?.value ?? "untrn")
-    }
-  }, [denomList, denom])
+    if (denom && !withBal.find((o) => o.value === denom)) setDenom("")
+  }, [withBal, denom])
 
-  // helpers de conversion robustes
-  const pow10 = (exp: number) => (BigInt(10) ** BigInt(exp))
-  const toBaseUnits = (displayAmount: string, exp: number) => {
-    const norm = (displayAmount ?? "").trim().replace(",", ".")
-    if (!/^\d*\.?\d*$/.test(norm) || norm === "" || norm === ".") return "0"
-    const [i, f = ""] = norm.split(".")
-    const iSafe = i === "" ? "0" : i
-    const fPadded = (f + "0".repeat(exp)).slice(0, exp)
-    const total =
-      BigInt(iSafe || "0") * pow10(exp) +
-      BigInt(fPadded === "" ? "0" : fPadded)
-    return total.toString()
-  }
+  // Selected meta
+  const selected = useMemo(() => withBal.find(o => o.value === denom), [withBal, denom])
+  const exponent = selected?.exponent ?? 6
+  const balanceBaseStr = String(balances[denom] ?? "0")
 
-  // validation minimaliste : denom valide + amount > 0
-  const exp = currentRoundPrices?.[denom]?.token_exponent ?? 6
-  const amountBase = toBaseUnits(amount, exp)
-  const amountOk = (() => {
-    const n = Number(amount)
-    return Number.isFinite(n) && n > 0
-  })()
-  const denomOk = Boolean(denomList.find(o => o.value === denom))
-  const canSubmit = denomOk && amountOk
+  // Convert input → base units (string math)
+  const amountBase = useMemo(() => toBaseUnitsStr(amount, exponent), [amount, exponent])
+
+  // Validation
+  const denomOk = !!selected
+  const amountOk = isPositiveDecimalString(amount) && Number(amount) > 0
+  const notEnough = useMemo(() => gtIntStr(amountBase, balanceBaseStr), [amountBase, balanceBaseStr])
+  const canSubmit = denomOk && amountOk && !notEnough
+
+  // UI labels
+  const availableLabel = useMemo(
+    () => formatAmount(balanceBaseStr, exponent, 4),
+    [balanceBaseStr, exponent]
+  )
+  const maxRaw = useMemo(
+    () => toDisplayRawFromBaseStr(balanceBaseStr, exponent),
+    [balanceBaseStr, exponent]
+  )
 
   const submit = () => {
     if (!canSubmit) return
-    onCloseCompleteAction(amountBase, denom, description)
+    onCloseCompleteAction(amountBase, denom)
   }
 
-  useEffect(() => {
-    if (isOpened) console.log("[AddTributeModal] bid opened:", bid)
-  }, [isOpened, bid])
+  const assetsForSelect = useMemo(
+    () => withBal.map(o => ({ name: o.name, value: o.value, price: o.price })),
+    [withBal]
+  )
 
   return (
-    <ModalWindow
-      isOpen={isOpened}
-      onClose={onCloseAction}
-      onCloseComplete={submit}
-    >
-      <div className="rounded-xl border-2 border-white/20 bg-black p-0">
-        <div className="h-[48px] gap-[10px] rounded-t-xl bg-[#FFE1B81A] px-6 py-3 text-lg">
+    <ModalWindow isOpen={isOpened} onClose={onCloseAction} onCloseComplete={submit}>
+      <div className="rounded-xl border-2 border-white/20 bg-black p-0 max-w-[95%]">
+        <div className="h-[48px] gap-[10px] rounded-t-xl bg-[rgba(255,225,184,0.1)] px-6 py-3 text-lg">
           <h2 className="font-inter text-[18px] font-bold leading-6 flex items-center gap-2 min-w-0">
             {bid.projectLogoUrl ? (
               <Image
@@ -168,11 +101,11 @@ export function AddTributeModal({
                 height={18}
               />
             ) : null}
-            <span className="inline-flex items-end gap-2 min-w-0">
-              <span className="truncate">Add Tribute</span>
+            <span className="whitespace-nowrap inline-flex items-end gap-2 min-w-0">
+              <span >Add Tribute</span>
               <span className="font-extralight text-sm text-white/80">
                 to&nbsp;
-                <span className="truncate max-w-[14rem] align-bottom">
+                <span >
                   {bid.projectTitle || bid.title}
                 </span>
               </span>
@@ -186,36 +119,32 @@ export function AddTributeModal({
           </StyledText>
 
           <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
-            <TributeRow
-              denom={denom}
-              setDenom={setDenom}
-              amount={amount}
-              setAmount={setAmount}
-              options={denomList}
+        
+
+            {/* Asset */}
+            <AssetSelectField
+              value={denom}
+              onChange={setDenom}
+              options={assetsForSelect}
+              disabled={assetsForSelect.length === 0}
             />
 
-            {/* <div className="flex flex-col gap-1">
-              <StyledText as="label" variant="label">
-                Description (optional)
-              </StyledText>
-              <StyledText
-                as="textarea"
-                className="w-full"
-                rows={2}
-                variant="input.text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Add a note about this tribute..."
-              />
-            </div> */}
+            {/* Amount */}
+            <AmountField
+              amount={amount}
+              onAmountChange={setAmount}
+              disabled={withBal.length === 0 || !denomOk}
+              availableText={denomOk ? `${availableLabel} ${selected?.name ?? ""}` : ""}
+              onMax={() => denomOk && setAmount(maxRaw)}
+              showOverBalanceError={Boolean(amount && notEnough)}
+              usdApprox={selected?.price && Number(amount) > 0 ? Number(amount) * selected.price : null}
+            />
 
+              
+
+            {/* Actions */}
             <div className="flex justify-end gap-2 pt-2">
-              <StyledText
-                as="button"
-                variant="button.secondary"
-                type="button"
-                onClick={onCloseAction}
-              >
+              <StyledText as="button" variant="button.secondary" type="button" onClick={onCloseAction}>
                 Cancel
               </StyledText>
               <StyledText
@@ -225,11 +154,15 @@ export function AddTributeModal({
                 onClick={submit}
                 disabled={!canSubmit}
                 tooltip={
-                  !denomOk
-                    ? "Select an asset"
-                    : !amountOk
-                      ? "Enter a valid amount"
-                      : undefined
+                  assetsForSelect.length === 0
+                    ? "You have no balance that can be used as tribute, please add funds"
+                    : !denomOk
+                      ? "Select an asset"
+                      : !amountOk
+                        ? "Enter a valid amount"
+                        : notEnough
+                          ? "Amount exceeds your available balance"
+                          : undefined
                 }
               >
                 Add

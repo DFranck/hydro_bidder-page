@@ -31,6 +31,8 @@ export interface BidderRow {
   status: ReactNode
   hasTributes: boolean
   additionalTributes?: ReactNode
+   tributeCount: number   
+   action?: ReactNode 
 }
 
 export function BidderPage({
@@ -39,9 +41,8 @@ export function BidderPage({
   requestedRoundNumber: number | string | null
 }) {
   const { bidsInfo, currentRoundId, tranches } = useBackendData()
-
   const bids = Object.values(bidsInfo)
-
+ 
   const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
 
   const highestRoundIdWithData =
@@ -56,7 +57,7 @@ export function BidderPage({
             requestedRoundNumber === "experimental"
           ? EXPERIMENTAL_ROUND_ID
           : PRE_HYDRO_ROUND_ID
-
+          
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
   const requestedExperimental = requestedRoundId === EXPERIMENTAL_ROUND_ID
   const allRoundIds = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
@@ -122,7 +123,7 @@ export function BidderPage({
           <h2 className="sr-only">PoL Bidder by Round</h2>
 
           <StyledText variant="footnote">
-            Bidder are updated at the end of each round.
+            Bidder can be refound at the end of it round, and can be add tribute at any time during and after the round.
           </StyledText>
 
           <div className="flex items-center backdrop-blur-sm">
@@ -243,27 +244,44 @@ export function BidderTable({
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
 
-  const rowsInTranche = useMemo<BidderRow[]>(() => {
-    const bidsToRender = requestedPreHydro
-      ? metricsForPreHydroBids
-      : bids.filter((bid) => bid.roundId === requestedRoundId)
+ const rowsInTranche = useMemo<BidderRow[]>(() => {
+  const bidsToRender = requestedPreHydro
+    ? metricsForPreHydroBids
+    : bids.filter((bid) => bid.roundId === requestedRoundId)
 
-    const bidsInTranche = requestedPreHydro
-      ? bidsToRender
-      : bidsToRender.filter(
-          (bid) => (bid as BidRevampMetrics).trancheId === trancheId
-        )
+  const bidsInTranche = requestedPreHydro
+    ? bidsToRender
+    : bidsToRender.filter((bid) => (bid as BidRevampMetrics).trancheId === trancheId)
 
-    const filtered = bidsInTranche.filter((x) => {
-      if (requestedPreHydro || showBidsWithoutTributes) return true
-      const bid = x as BidRevampMetrics
-      const hasPoints = bid.points?.length > 0
-      const hasTokenTributes = bid.tokenBasedTributes.length > 0
-      return hasPoints || hasTokenTributes
-    })
+  const filtered = bidsInTranche.filter((x) => {
+    if (requestedPreHydro || showBidsWithoutTributes) return true
+    const bid = x as BidRevampMetrics
+    const hasPoints = bid.points?.length > 0
+    const hasTokenTributes = bid.tokenBasedTributes.length > 0
+    return hasPoints || hasTokenTributes
+  })
 
-    return filtered.map((bid) => buildRow(bid, requestedPreHydro))
-  }, [bidsInfo, currentRoundId, trancheId, showBidsWithoutTributes])
+  return filtered.map((bid) => {
+    const base = buildRow(bid, requestedPreHydro)
+
+    if (requestedPreHydro) {
+      // Pre-hydro : pas de tributes
+      return { ...base, tributeCount: 0, tributeUsdTotal: 0 }
+    }
+
+    const b = bid as BidRevampMetrics
+    const tributeCount = b.tokenBasedTributes?.length ?? 0
+
+    return { ...base, tributeCount }
+  })
+}, [
+  bidsInfo,
+  currentRoundId,
+  trancheId,
+  showBidsWithoutTributes,
+  requestedPreHydro,
+  requestedRoundId,
+])
 
   const columns = useMemo<ColumnObject<BidderRow, keyof BidderRow>[]>(() => {
     return buildColumns(requestedPreHydro, currentRoundId, requestedRoundId)
@@ -340,7 +358,6 @@ export function BidderTableItem({
   onToggle,
 }: Props) {
   const bidId = (row._bid as any).id
-
   const handleClick: React.MouseEventHandler<HTMLTableRowElement> = (e) => {
     // ne pas toggler si on clique sur un lien/bouton/inputs
     const el = e.target as HTMLElement
@@ -711,6 +728,23 @@ export function buildColumns(
       customValueGetter: (row) => row._bid.title,
     },
     {
+  key: "tributeCount",
+  label:  <Tooltip
+          tipContents={"TODO add tooltip, I think this tooltip is not necessary"}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Tribute Count
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>,
+  textAlign: "right",
+  isSortable: true,
+  initialSortDirection: "DESC",
+  customValueGetter: (row) => row.tributeCount ?? 0,
+  propsForCells: { className: "tabular-nums text-right" },
+},
+    {
       key: "status",
       label: (
         <Tooltip
@@ -730,34 +764,74 @@ export function buildColumns(
       isSortable: true,
       initialSortDirection: "ASC",
       customValueGetter: (row) => ("status" in row._bid ? row._bid.status : ""),
-    },
+    },{
+      key: "action",
+      label: (
+        <Tooltip
+          tipContents={"TODO add tooltip, this action is disabled if wallet is not connected"}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Action
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
+      textAlign: "right",
+      propsForCells: {
+        className: "text-balance",
+      },
+      isSortable: true,
+      initialSortDirection: "ASC",
+      
+
+      }
   ]
 }
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/buildDenomOptions.ts (ts) <<< */
+
+import type { PriceDetails } from "@/contract-apis/types";
+
+export type DenomOption = {
+  name: string
+  value: string
+  price?: number
+  exponent?: number
+}
+
+export function buildDenomOptions(currentRoundPrices: Record<string, PriceDetails> | undefined): DenomOption[] {
+  if (!currentRoundPrices) return []
+  return Object.entries(currentRoundPrices).map(([value, asset]) => ({
+    name: (asset?.token_symbol ?? value).replace(".", " "),
+    value,
+    price: asset?.token_price,
+    exponent: asset?.token_exponent,
+  }))
+}
+
 
 /* --- end file --- */
 
 /* >>> [[...roundNumber]]/buildRow.tsx (tsx) <<< */
 
 import { BidLogoAndTitle, BidLogoAndTitleLayout } from "@/components/BidLogoAndTitle"
+import { Icon } from "@/components/Icon"
+import { Tooltip } from "@/components/Tooltip"
 import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
-
-function safeNum(v: unknown): number | null {
-  if (v == null) return null
-  const n = Number(v as any)
-  return Number.isFinite(n) ? n : null
-}
-
-function fmt(n: number | null, digits = 2): string {
-  if (n == null) return "—"
-  return n.toLocaleString(undefined, { maximumFractionDigits: digits })
-}
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
+import { AddTributeButton } from "./components/AddTributeButton"
+import RefundTrubuteButton from "./components/RefundTrubuteButton"
 
 export function buildRow(
   passedBid: BidRevampMetrics | PreHydroBid,
   requestedPreHydro: boolean
 ) {
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
-
+const {address}=useBackendData()
   if (requestedPreHydro) {
     const bid = passedBid as PreHydroBid
     rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
@@ -772,37 +846,113 @@ export function buildRow(
     title = regularBid?.projectTitle ?? ""
   }
 
-  // === Expansion content (post-hydro seulement) ===
+  // === Expansion content (post-hydro only) ===
   const tokenTributes = !requestedPreHydro
     ? (passedBid as BidRevampMetrics).tokenBasedTributes ?? []
     : []
 
   const hasTributes = !requestedPreHydro && tokenTributes.length > 0
-
+  const tributeCount = tokenTributes.length;
   const additionalTributes = hasTributes ? (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="text-left text-white/70">
             <th className="py-2 pr-4">Token</th>
-            <th className="py-2 pr-4 text-right">Amount</th>
-            <th className="py-2 pr-0 text-right">USD</th>
+            <th className="py-2 pr-4 text-right">Created at</th>
+            <th className="py-2 pr-0 text-right"> <Tooltip
+          tipContents={"TODO add tooltip, Where to find the status?, is it bid status?"}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Status
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip></th>
+            <th className="py-2 pr-0 text-right"> <Tooltip
+                      tipContents={"TODO add tooltip, this action is disabled if the user is not the depositor, the tribute.refunded === true, the tribute.creationRound >= currentRound, or wallet is not connected"}
+                      classNamesForTooltip="-ml-12"
+                    >
+                      <div className="flex items-center gap-1">
+                        Action
+                        <Icon name="circle-info" />
+                      </div>
+                    </Tooltip></th>
           </tr>
         </thead>
         <tbody>
-          {tokenTributes.map((t: any, i: number) => {
-            const name =
-              t.display_name ?? t.symbol ?? t.denom ?? t.token ?? "—"
-            const amt = safeNum(t.amount ?? t.value ?? t.quantity)
-            const usd = safeNum(t.usd_value ?? t.usd ?? t.value_usd)
-            return (
-              <tr key={`tribute_${(passedBid as any).id}_${i}`} className="border-t border-white/10">
-                <td className="py-2 pr-4">{name}</td>
-                <td className="py-2 pr-4 text-right">{fmt(amt)}</td>
-                <td className="py-2 pr-0 text-right">{fmt(usd)}</td>
-              </tr>
-            )
-          })}
+       {tokenTributes.map((t: any, i: number) => {
+        // for disabling
+        const connectedAddress = (address ?? "").trim().toLowerCase()
+        const depositor = String(t.depositor ?? "").trim().toLowerCase()
+        const isDepositor = connectedAddress === depositor
+        const isRefunded = !!t.refunded
+        // TODO find the real status
+        const isActionableStatus = (passedBid as any).status === "Approved"
+
+        const disabled = !isDepositor || isRefunded 
+        // || !isActionableStatus
+
+          let reason: string | undefined
+          if (!isDepositor) reason = "Only the depositor can refund this tribute."
+          else if (isRefunded) reason = "This tribute has already been refunded."
+          // else if (!isActionableStatus) reason = "Refunds are only available while the proposal is Approved."
+
+        const tributeId = Number(t.tributeId ?? t.id)
+        // for rendering
+          const name = t.denom ?? t.funds?.denom;
+          const amount = t.funds?.amount;
+          const originalName = t.denomOriginal ?? t.funds?.denom;
+          const createdAt = getFormatedDateFromNanos(t.creationTime);
+          
+          return (
+            <tr
+              key={`tribute_${(passedBid as any).id}_${i}`}
+              className="border-t border-white/10"
+            >
+              <td className="py-2 pr-4">
+               
+                  <Tooltip
+
+                  tipContents={
+                <div>
+                  <div className="text-xs opacity-70">Original denom:</div>
+                  <code className="text-xs break-all select-all">{originalName}</code>
+                </div>
+              }
+                    className="inline-block cursor-help max-w-fit"
+                     classNamesForTooltip="max-w-[min(90vw,28rem)] break-words sm:max-w-96"
+                  > <span
+                  className="inline-flex items-baseline gap-2 whitespace-nowrap"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span className="tabular-nums">{amount}</span>
+                      <span>
+                        {name}
+                        </span>
+           
+                </span>
+                  </Tooltip>
+              </td>
+
+              <td className="py-2 pr-4 text-right whitespace-nowrap">{createdAt}</td>
+              <td className="py-2 pr-0 text-right whitespace-nowrap">
+                {isRefunded ? "refunded" : "active"}
+              </td>
+               <td className="py-2 pr-1 text-right whitespace-nowrap">
+                <RefundTrubuteButton
+                disabled={disabled}
+                reason={reason}
+                tributeId={tributeId}
+                proposalId={Number((passedBid as any).id)}
+                roundId={Number((passedBid as any).roundId)}
+                trancheId={Number((passedBid as any).trancheId)}
+              />              
+              </td>
+            </tr>
+          );
+        }
+        )}
         </tbody>
       </table>
     </div>
@@ -810,7 +960,6 @@ export function buildRow(
 
   return {
     _bid: passedBid,
-
     logoAndTitle: (
       <>
         {requestedPreHydro ? (
@@ -824,11 +973,11 @@ export function buildRow(
         )}
       </>
     ),
-
     status: <>{(passedBid as any).status ?? "—"}</>,
-
+    action:<><AddTributeButton bidId={Number(passedBid.id)} size="small"/></>,
     hasTributes,
     additionalTributes,
+     tributeCount,
   }
 }
 
@@ -867,6 +1016,423 @@ export const classNames = {
     align-top
   `),
 }
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/components/AddTributeButton.tsx (tsx) <<< */
+"use client"
+
+import { ErrorBox } from "@/components/ErrorBox"
+import { StyledText, StyledTextVariant } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
+import { useToasts } from "@/components/Toasts/useToasts"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { revalidateTag } from "@/lib/revalidateTag"
+import { useChain } from "@cosmos-kit/react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { executeAddTribute } from "../transactions/executeAddTribute"
+import { AddTributeModal } from "./AddTributeModal"
+
+export function AddTributeButton({
+  bidId,
+  size,
+}: {
+  bidId: number
+  size?: "large" | "small"
+}) {
+  const router = useRouter()
+  const { getSigningCosmWasmClient } = useChain("neutron")
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false)
+  const { address, bidsInfo, isWalletConnected } = useBackendData()
+  const { setToasts } = useToasts()
+
+  const bid = bidsInfo[bidId]
+
+  if (!bid) {
+    return <ErrorBox>The requested bid could not be found.</ErrorBox>
+  }
+
+ const onCloseComplete = async (amountBase: string, denom: string, description: string) => {
+    setToasts([toastMessages.addingTributeInProgress])
+    try {
+      await executeAddTribute({
+        address: address!,
+        proposalId: Number(bidId),
+        roundId: Number(bid.roundId),
+        trancheId: Number(bid.trancheId),
+        amount: amountBase,
+        denom,
+        description,
+        getSigningCosmWasmClient,
+      })
+
+      setToasts([toastMessages.addingTributeSuccess])
+      await revalidateTag("backendData")
+      setTimeout(() => router.refresh(), 3000)
+    } catch (error: any) {
+      setToasts([toastMessages.addingTributeError(error as Error)])
+    }
+  }
+
+  return (
+    <>
+        <StyledText
+          as="button"
+          variant={
+            `button.primary${size ? "." + size : ""}` as StyledTextVariant
+          }
+          type="button"
+          onClick={() => setIsModalOpened(true)}
+          disabled={!isWalletConnected}
+          tooltip={!isWalletConnected ? "Please connect your wallet to add a tribute" : undefined}
+        >
+          Add Tribute
+        </StyledText>
+     
+      {isModalOpened && ( 
+      <AddTributeModal
+        bid={bid}
+        isOpened
+        onCloseAction={() => setIsModalOpened(false)}
+        onCloseCompleteAction={onCloseComplete}
+      />
+    )}
+    </>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/components/AddTributeModal.tsx (tsx) <<< */
+"use client"
+
+import { ModalWindow } from "@/components/ModalWindow"
+import { StyledText } from "@/components/StyledText"
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
+import { AugmentedBidAfterWallet } from "@/contract-apis/types"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { useChain } from "@cosmos-kit/react"
+import Image from "next/image"
+import { useEffect, useMemo, useState } from "react"
+import { twMerge } from "tailwind-merge"
+import { buildDenomOptions } from "../buildDenomOptions"
+import { useAccountBalances } from "../hooks/useAccountBalances"
+import { useDenomOptionsWithBalances } from "../hooks/useDenomOptionsWithBalances"
+import { toBaseUnits } from "../utils/toBaseUnits"
+
+export function AddTributeModal({
+  bid,
+  isOpened,
+  onCloseAction,
+  onCloseCompleteAction,
+}: {
+  bid: AugmentedBidAfterWallet
+  isOpened: boolean
+  onCloseAction: () => void
+  onCloseCompleteAction: (
+    amountBase: string,
+    denom: string,
+    description: string
+  ) => void
+}) {
+  const { currentRoundPrices } = useBackendData()
+  const denomOptions = useMemo(() => buildDenomOptions(currentRoundPrices), [currentRoundPrices])
+
+  const neutron = useChain("neutron")
+
+  const { balances } = useAccountBalances({
+    isOpened,
+    address: neutron.address,
+    getStargateClient: neutron.getStargateClient,
+  })
+
+  const [denom, setDenom] = useState<string>(denomOptions[0]?.value ?? "untrn")
+  const [amount, setAmount] = useState<string>("")
+  const [description, setDescription] = useState<string>("")
+
+  // Ensure selected denom always valid vs dynamic options
+  useEffect(() => {
+    if (!denomOptions.find((o) => o.value === denom)) {
+      setDenom(denomOptions[0]?.value ?? "untrn")
+    }
+  }, [denomOptions, denom])
+
+  // Split options by wallet balance (for visual grouping in the dropdown)
+  const { withBal, withoutBal } = useDenomOptionsWithBalances({
+    denomOptions,
+    balances,
+    isConnected: Boolean(neutron.address),
+  })
+
+  // Selected meta
+  const selected = denomOptions.find((o) => o.value === denom)
+  const exponent = selected?.exponent ?? 6
+
+  // Validation
+  const amountOk = Number.isFinite(Number(amount)) && Number(amount) > 0
+  const denomOk = !!selected
+  const canSubmit = amountOk && denomOk
+  const amountBase = toBaseUnits(amount, exponent)
+
+  const submit = () => {
+    if (!canSubmit) return
+    onCloseCompleteAction(amountBase, denom, description)
+  }
+
+  useEffect(() => {
+    if (isOpened) console.log("[AddTributeModal] bid opened:", bid)
+  }, [isOpened, bid])
+
+  return (
+    <ModalWindow isOpen={isOpened} onClose={onCloseAction} onCloseComplete={submit}>
+      <div className="rounded-xl border-2 border-white/20 bg-black p-0">
+        <div className="h-[48px] gap-[10px] rounded-t-xl bg-[#FFE1B81A] px-6 py-3 text-lg">
+          <h2 className="font-inter text-[18px] font-bold leading-6 flex items-center gap-2 min-w-0">
+            {bid.projectLogoUrl ? (
+              <Image
+                className="object-contain shrink-0"
+                src={bid.projectLogoUrl}
+                alt={bid.projectTitle || bid.title}
+                width={18}
+                height={18}
+              />
+            ) : null}
+            <span className="inline-flex items-end gap-2 min-w-0">
+              <span className="truncate">Add Tribute</span>
+              <span className="font-extralight text-sm text-white/80">
+                to&nbsp;
+                <span className="truncate max-w-[14rem] align-bottom">
+                  {bid.projectTitle || bid.title}
+                </span>
+              </span>
+            </span>
+          </h2>
+        </div>
+
+        <div className="space-y-6 p-[24px]">
+          <StyledText as="div" variant="label">
+            Select asset and fill amount
+          </StyledText>
+
+          <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
+            {/* Asset (select) */}
+            <fieldset className="rounded-lg border border-white/20 bg-black/40">
+              <div className="relative py-1">
+                <label className="absolute -top-2 left-3 bg-black px-1 text-[11px] leading-none text-white/60">
+                  Asset
+                </label>
+
+                <div className="flex items-center gap-3">
+                  <Select value={denom} onValueChange={setDenom}>
+                    <SelectTrigger className="w-full rounded-md bg-black border-0 ring-0 cursor-pointer">
+                      <div className="flex w-full items-center justify-between">
+                        <span>{selected?.name ?? "Select asset"}</span>
+                        <span className="text-white/70">
+                          {selected?.price != null
+                            ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(selected.price)
+                            : "—"}
+                        </span>
+                      </div>
+                    </SelectTrigger>
+
+                    <SelectContent className="min-w-[16rem] bg-black">
+                      {/* Group: assets with balance */}
+                      {withBal.length > 0 && (
+                        <div className="py-1">
+                          {withBal.map((o) => (
+                            <SelectItem
+                              key={o.value}
+                              value={o.value}
+                              className={twMerge(
+                                "[&>span:nth-of-type(2)]:flex",
+                                "[&>span:nth-of-type(2)]:w-full",
+                                "[&>span:nth-of-type(2)]:justify-between",
+                                "[&>span:nth-of-type(2)]:gap-2",
+                                "hover:bg-palette-green hover:text-palette-text"
+                              )}
+                            >
+                              <span>{o.name}</span>
+                              <span>
+                                {o.price != null
+                                  ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(o.price)
+                                  : "—"}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Separator if both groups exist */}
+                      {withBal.length > 0 && withoutBal.length > 0 && <div className="my-1 h-px bg-white/10" />}
+
+                      {/* Group: assets without balance */}
+                      {withoutBal.length > 0 && (
+                        <div className="py-1">
+                          {withoutBal.map((o) => (
+                            <SelectItem
+                              key={o.value}
+                              value={o.value}
+                              className={twMerge(
+                                "[&>span:nth-of-type(2)]:flex",
+                                "[&>span:nth-of-type(2)]:w-full",
+                                "[&>span:nth-of-type(2)]:justify-between",
+                                "[&>span:nth-of-type(2)]:gap-2",
+                                "hover:bg-palette-green hover:text-palette-text"
+                              )}
+                              title="No balance for this asset"
+                            >
+                              <span>{o.name}</span>
+                              <span>
+                                {o.price != null
+                                  ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(o.price)
+                                  : "—"}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </fieldset>
+
+            {/* Amount */}
+            <fieldset className="rounded-lg border border-white/20 bg-black/40">
+              <div className="relative p-3">
+                <label className="absolute -top-2 left-3 bg-black px-1 text-[11px] leading-none text-white/60">
+                  Amount
+                </label>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  step="any"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full bg-transparent outline-none border-0 focus:ring-0"
+                />
+              </div>
+            </fieldset>
+
+            {/* Optional description (kept commented to preserve original UI) */}
+            {/**
+            <div className="flex flex-col gap-1">
+              <StyledText as="label" variant="label">Description (optional)</StyledText>
+              <StyledText
+                as="textarea"
+                rows={2}
+                variant="input.text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Add a note..."
+              />
+            </div>
+            */}
+
+            <div className="flex justify-end gap-2 pt-2">
+              <StyledText as="button" variant="button.secondary" type="button" onClick={onCloseAction}>
+                Cancel
+              </StyledText>
+              <StyledText
+                as="button"
+                variant="button.primary"
+                type="button"
+                onClick={submit}
+                disabled={!canSubmit}
+                tooltip={!denomOk ? "Select an asset" : !amountOk ? "Enter a valid amount" : undefined}
+              >
+                Add
+              </StyledText>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ModalWindow>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/components/RefundTrubuteButton.tsx (tsx) <<< */
+"use client"
+
+import { StyledText } from "@/components/StyledText"
+import { toastMessages } from "@/components/ToastMessages"
+import { useToasts } from "@/components/Toasts/useToasts"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { revalidateTag } from "@/lib/revalidateTag"
+import { useChain } from "@cosmos-kit/react"
+import { useRouter } from "next/navigation"
+import { executeRefundTribute } from "../transactions/executeRefundTribute"
+
+type Props = {
+  disabled: boolean
+  tributeId: number
+  proposalId: number
+  roundId: number
+  trancheId: number
+  reason?: string           
+}
+
+const RefundTrubuteButton = ({
+  disabled,
+  tributeId,
+  proposalId,
+  roundId,
+  trancheId,
+  reason,
+}: Props) => {
+  const router = useRouter()
+  const { isWalletConnected, address } = useBackendData()
+  const { getSigningCosmWasmClient } = useChain("neutron")
+  const { setToasts } = useToasts()
+
+  const effectiveDisabled = disabled || !isWalletConnected
+
+  const tooltip =
+    !isWalletConnected
+      ? "Please connect your wallet to refund."
+      : disabled
+        ? (reason ?? "You cannot refund this tribute.")
+        : undefined
+
+  const onRefund = async () => {
+    try {
+      setToasts([toastMessages.refundingTributeInProgress])
+      await executeRefundTribute({
+        address: address!,
+        proposalId: Number(proposalId),
+        roundId: Number(roundId),
+        trancheId: Number(trancheId),
+        tributeId: Number(tributeId),
+        getSigningCosmWasmClient,
+      })
+      setToasts([toastMessages.refundingTributeSuccess])
+      await revalidateTag("backendData")
+      router.refresh()
+    } catch (error: any) {
+      setToasts([toastMessages.refundingTributeError(error as Error)])
+    }
+  }
+
+  return (
+    <StyledText
+      as="button"
+      type="button"
+      disabled={effectiveDisabled}
+      aria-disabled={effectiveDisabled}
+      variant={"button.primary.small"}
+      tooltip={tooltip}
+      onClick={effectiveDisabled ? undefined : onRefund}
+    >
+      Refund
+    </StyledText>
+  )
+}
+
+export default RefundTrubuteButton
 
 /* --- end file --- */
 
@@ -1118,6 +1684,83 @@ export function getExperimentalTableRows(
 
 /* --- end file --- */
 
+/* >>> [[...roundNumber]]/hooks/useAccountBalances.ts (ts) <<< */
+import { StargateClient } from "@cosmjs/stargate"
+import { useEffect, useState } from "react"
+
+export type UseAccountBalancesParams = {
+  isOpened: boolean
+  address?: string
+  getStargateClient: () => Promise<Pick<StargateClient, "getAllBalances">>
+}
+
+export function useAccountBalances({ isOpened, address, getStargateClient }: UseAccountBalancesParams) {
+  const [balances, setBalances] = useState<Record<string, string>>({})
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      if (!isOpened || !address) return
+      setLoading(true)
+      try {
+        const client = await getStargateClient()
+        const all = await client.getAllBalances(address)
+        if (cancelled) return
+        const map: Record<string, string> = {}
+        for (const c of all) map[c.denom] = c.amount
+        setBalances(map)
+      } catch (e) {
+        console.error("[useAccountBalances] balances error:", e)
+        if (!cancelled) setBalances({})
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [isOpened, address, getStargateClient])
+
+  return { balances, loading }
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/hooks/useDenomOptionsWithBalances.ts (ts) <<< */
+import { useMemo } from "react"
+import { DenomOption } from "../buildDenomOptions"
+
+export function useDenomOptionsWithBalances({
+  denomOptions,
+  balances,
+  isConnected,
+}: {
+  denomOptions: DenomOption[]
+  balances: Record<string, string>
+  isConnected: boolean
+}) {
+  return useMemo(() => {
+    if (!isConnected) {
+      return { withBal: denomOptions, withoutBal: [] as DenomOption[], zeroSet: new Set<string>() }
+    }
+    const yes: DenomOption[] = []
+    const no: DenomOption[] = []
+    const zero = new Set<string>()
+    for (const o of denomOptions) {
+      const amt = balances[o.value] ?? "0"
+      if (amt !== "0") yes.push(o)
+      else {
+        no.push(o)
+        zero.add(o.value)
+      }
+    }
+    return { withBal: yes, withoutBal: no, zeroSet: zero }
+  }, [denomOptions, balances, isConnected])
+}
+/* --- end file --- */
+
 /* >>> [[...roundNumber]]/page.tsx (tsx) <<< */
 import { BidderPage } from "./BidderPage"
 
@@ -1135,6 +1778,121 @@ export default async function Page({
         : Number(roundNumberParam)
 
   return <BidderPage requestedRoundNumber={requestedRoundNumber} />
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/transactions/executeAddTribute.ts (ts) <<< */
+import { TributeBaseClient } from "@/app/ts_types/TributeBase.client"
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { invariant } from "ts-invariant"
+
+export async function executeAddTribute({
+  address,
+  roundId,
+  trancheId,
+  proposalId,
+  amount,
+  denom,
+  description,
+  getSigningCosmWasmClient,
+}: {
+  address: string
+  roundId: number
+  trancheId: number
+  proposalId: number
+  amount: string
+  denom: string
+  description: string
+  getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
+}) {
+  const tributeContractAddress =
+    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
+
+  invariant(
+    tributeContractAddress,
+    "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set"
+  )
+
+  const query = {
+    proposalId,
+    roundId,
+    trancheId,
+  }
+
+  const client = await getSigningCosmWasmClient()
+
+  const tributeClient = new TributeBaseClient(
+    client,
+    address,
+    tributeContractAddress
+  )
+
+  return tributeClient.addTribute(query, "auto", description, [
+    { amount, denom },
+  ])
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/transactions/executeRefundTribute.ts (ts) <<< */
+import { TributeBaseClient } from "@/app/ts_types/TributeBase.client"
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
+import { invariant } from "ts-invariant"
+
+export async function executeRefundTribute({
+  address,
+  proposalId,
+  roundId,
+  trancheId,
+  tributeId,
+  getSigningCosmWasmClient,
+  memo,
+}: {
+  address: string
+  proposalId: number
+  roundId: number
+  trancheId: number
+  tributeId: number
+  memo?: string
+  getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
+}) {
+  const tributeContractAddress = process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
+  invariant(tributeContractAddress, "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set")
+
+  const client = await getSigningCosmWasmClient()
+  const tributeClient = new TributeBaseClient(client, address, tributeContractAddress)
+
+  return tributeClient.refundTribute(
+    { proposalId, roundId, trancheId, tributeId },
+    "auto",
+    memo
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/types/denom.ts (ts) <<< */
+import { buildDenomOptions } from "../buildDenomOptions";
+
+export type DenomOption = ReturnType<typeof buildDenomOptions>[number]
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/utils/toBaseUnits.ts (ts) <<< */
+export const pow10 = (exp: number) => BigInt(10) ** BigInt(exp)
+
+/**
+ * Convert a display amount (e.g. "1.23") to base units string using exponent.
+ * - Keeps original behavior: invalid/empty -> "0".
+ */
+export function toBaseUnits(displayAmount: string, exp: number): string {
+  const norm = (displayAmount ?? "").trim().replace(",", ".")
+  if (!/^\d*\.?\d*$/.test(norm) || norm === "" || norm === ".") return "0"
+  const [i, f = ""] = norm.split(".")
+  const iSafe = i === "" ? "0" : i
+  const fPadded = (f + "0".repeat(exp)).slice(0, exp)
+  const total = BigInt(iSafe || "0") * pow10(exp) + BigInt(fPadded === "" ? "0" : fPadded)
+  return total.toString()
 }
 
 /* --- end file --- */

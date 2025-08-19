@@ -18,7 +18,7 @@ export async function executeAddTribute({
   proposalId: number
   amount: string
   denom: string
-  description: string
+  description?: string
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
 }) {
   const tributeContractAddress =
