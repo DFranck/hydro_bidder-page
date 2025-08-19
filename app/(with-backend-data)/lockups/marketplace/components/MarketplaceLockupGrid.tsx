@@ -22,7 +22,13 @@ export default function MarketplaceLockupGrid({
   )
 
   return (
-    <>
+    <div className="mt-16">
+      <div className="flex items-center gap-3 px-4">
+        <h4 className="text-2xl font-bold">Listings</h4>
+        <div className="bg-palette-green/80 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-black">
+          {generalLockups.length}
+        </div>
+      </div>
       <div className=" flex flex-wrap justify-center gap-4 p-4 md:justify-start">
         {generalLockups.map((lockup) => {
           return (
@@ -32,6 +38,6 @@ export default function MarketplaceLockupGrid({
           )
         })}
       </div>
-    </>
+    </div>
   )
 }

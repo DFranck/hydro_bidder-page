@@ -8,7 +8,7 @@ import { MarketplaceLockup } from "../types"
 import { isListedMarketplaceLockup } from "../utils/isListedMarketplaceLockup"
 import { isMyLockup } from "../utils/isMyLockup"
 import MarketplaceLockupCard from "./MarketplaceLockupCard"
-import { Droplet, MoveDown } from "lucide-react"
+import { MoveDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface MarketplaceMyNftsSectionProps {
@@ -37,7 +37,7 @@ export default function MarketplaceMyNftsSection({
         className="flex w-auto items-center justify-between gap-1 p-4 text-left transition-colors hover:bg-white/5"
       >
         <div className="flex items-center gap-3">
-          <StyledText as="h3" variant="h4" className="text-white">
+          <StyledText as="h3" className="text-2xl font-bold text-white">
             My NFTs
           </StyledText>
           <div className="bg-palette-green/80 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-black">
@@ -82,30 +82,6 @@ export default function MarketplaceMyNftsSection({
                 )
               }
             })}
-          </div>
-          <div className="@card-is-row:table-row">
-            <div
-              className={cn(
-                "@card-is-row:relative @card-is-row:table-cell",
-                "h-bar-height-standard"
-              )}
-            >
-              <div
-                className={cn(
-                  "h-full w-[100cqw]",
-                  "flex items-center justify-between",
-                  "gap-2",
-                  "text-palette-white text-xs whitespace-nowrap",
-                  "@card-is-row:absolute",
-                  "@card-is-row:top-1/2",
-                  "@card-is-row:-translate-y-1/2"
-                )}
-              >
-                <div className="border-white/20 w-full border-t-2" />
-                  <Droplet className="size-8" />
-                <div className="border-white/20 w-full border-t-2" />
-              </div>
-            </div>
           </div>
         </div>
       )}
