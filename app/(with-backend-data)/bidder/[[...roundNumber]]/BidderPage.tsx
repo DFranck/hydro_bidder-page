@@ -28,6 +28,10 @@ export interface BidderRow {
   _bid: BidRevampMetrics | PreHydroBid
   logoAndTitle: ReactNode
   status: ReactNode
+  hasTributes: boolean
+  additionalTributes?: ReactNode
+   tributeCount: number   
+   action?: ReactNode 
 }
 
 export function BidderPage({
@@ -36,9 +40,8 @@ export function BidderPage({
   requestedRoundNumber: number | string | null
 }) {
   const { bidsInfo, currentRoundId, tranches } = useBackendData()
-
   const bids = Object.values(bidsInfo)
-
+ 
   const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
 
   const highestRoundIdWithData =
@@ -53,7 +56,7 @@ export function BidderPage({
             requestedRoundNumber === "experimental"
           ? EXPERIMENTAL_ROUND_ID
           : PRE_HYDRO_ROUND_ID
-
+          
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
   const requestedExperimental = requestedRoundId === EXPERIMENTAL_ROUND_ID
   const allRoundIds = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
@@ -119,7 +122,7 @@ export function BidderPage({
           <h2 className="sr-only">PoL Bidder by Round</h2>
 
           <StyledText variant="footnote">
-            Bidder are updated at the end of each round.
+            Bidder can be refound at the end of it round, and can be add tribute at any time during and after the round.
           </StyledText>
 
           <div className="flex items-center backdrop-blur-sm">

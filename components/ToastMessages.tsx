@@ -221,7 +221,7 @@ export const toastMessages = {
   // AddTribute
   addingTributeInProgress: {
     variant: "working",
-    message: "Processing your tribute...",
+    message: "Adding tribute...",
   },
   addingTributeSuccess: {
     variant: "success",
@@ -231,6 +231,9 @@ export const toastMessages = {
     variant: "error",
     message: `Error adding tribute: ${error}`,
   }),
+  refundingTributeInProgress: { variant: "working", message: "Refund in progress..." },
+  refundingTributeSuccess:    { variant: "success", message: "Tribute refunded successfully!", isDismissible: false, actionButtonPrimary: { label: "Close", onClick: () => {} } },
+  refundingTributeError:      (error: Error) => ({ variant: "error", message: `Refund failed: ${error.message}` }),
 } satisfies Record<
   string,
   DismissibleToastDescriptor | ((...args: any[]) => DismissibleToastDescriptor)

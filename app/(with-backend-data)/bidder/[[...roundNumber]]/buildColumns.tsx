@@ -30,6 +30,15 @@ export function buildColumns(
       customValueGetter: (row) => row._bid.title,
     },
     {
+  key: "tributeCount",
+  label: "Tributes Count",
+  textAlign: "right",
+  isSortable: true,
+  initialSortDirection: "DESC",
+  customValueGetter: (row) => row.tributeCount ?? 0,
+  propsForCells: { className: "tabular-nums text-right" },
+},
+    {
       key: "status",
       label: (
         <Tooltip
@@ -49,6 +58,17 @@ export function buildColumns(
       isSortable: true,
       initialSortDirection: "ASC",
       customValueGetter: (row) => ("status" in row._bid ? row._bid.status : ""),
-    },
+    },{
+      key: "action",
+      label: "Action",
+      textAlign: "right",
+      propsForCells: {
+        className: "text-balance",
+      },
+      isSortable: true,
+      initialSortDirection: "ASC",
+      
+
+      }
   ]
 }

@@ -4,9 +4,9 @@
 * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
 */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { InstantiateMsg, ExecuteMsg, QueryMsg, Addr, ConfigResponse, Config, Uint128, HistoricalTributeClaimsResponse, TributeClaim, Coin, OutstandingLockupClaimableCoinsResponse, OutstandingTributeClaimsResponse, Timestamp, Uint64, ProposalTributesResponse, Tribute, RoundTributesResponse } from "./TributeBase.types";
+import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { Coin, ConfigResponse, HistoricalTributeClaimsResponse, OutstandingLockupClaimableCoinsResponse, OutstandingTributeClaimsResponse, ProposalTributesResponse, RoundTributesResponse } from "./TributeBase.types";
 export interface TributeBaseReadOnlyInterface {
   contractAddress: string;
   config: () => Promise<ConfigResponse>;

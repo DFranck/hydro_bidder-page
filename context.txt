@@ -1,0 +1,1141 @@
+/* >>> [[...roundNumber]]/BidderPage.tsx (tsx) <<< */
+"use client"
+
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { ContentContainer } from "@/components/ContentContainer"
+import { Icon } from "@/components/Icon"
+import { Menu, MenuItem } from "@/components/Menu"
+import { AllTimeBidCount } from "@/components/StatCards/cards/AllTimeBidCount"
+import { AllTimePoLDeployed } from "@/components/StatCards/cards/AllTimePoLDeployed"
+import { AllTimeRevenue } from "@/components/StatCards/cards/AllTimeRevenue"
+import { StatCardsContainer } from "@/components/StatCards/StatCardsContainer"
+import { StyledText } from "@/components/StyledText"
+import { Tooltip } from "@/components/Tooltip"
+import { bidderPageNoDataTooltip } from "@/components/ToolTips"
+import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import max from "lodash/max"
+import range from "lodash/range"
+import uniq from "lodash/uniq"
+import { Fragment, ReactNode } from "react"
+import { twJoin } from "tailwind-merge"
+import { BidderTable } from "./BidderTable"
+import ExperimentalTable from "./ExperimentalTable"
+
+export const PRE_HYDRO_ROUND_ID = -1
+export const EXPERIMENTAL_ROUND_ID = -2
+
+export interface BidderRow {
+  _bid: BidRevampMetrics | PreHydroBid
+  logoAndTitle: ReactNode
+  status: ReactNode
+  hasTributes: boolean
+  additionalTributes?: ReactNode
+}
+
+export function BidderPage({
+  requestedRoundNumber,
+}: {
+  requestedRoundNumber: number | string | null
+}) {
+  const { bidsInfo, currentRoundId, tranches } = useBackendData()
+
+  const bids = Object.values(bidsInfo)
+
+  const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
+
+  const highestRoundIdWithData =
+    max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
+
+  const requestedRoundId =
+    requestedRoundNumber === null
+      ? Math.min(highestRoundIdWithData, currentRoundId - 1)
+      : typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
+        ? Math.min(requestedRoundNumber - 1, highestRoundIdWithData)
+        : typeof requestedRoundNumber === "string" &&
+            requestedRoundNumber === "experimental"
+          ? EXPERIMENTAL_ROUND_ID
+          : PRE_HYDRO_ROUND_ID
+
+  const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
+  const requestedExperimental = requestedRoundId === EXPERIMENTAL_ROUND_ID
+  const allRoundIds = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
+
+  const displayTranches = tranches.map((x) => {
+    const displayTrancheFromRound = x.id === 2 ? 4 : 0
+    return { ...x, displayTrancheFromRound }
+  })
+
+  const menuItems: MenuItem[] = allRoundIds.map((roundId) => {
+    const isActive = roundId === requestedRoundId
+    const hasData = roundId <= highestRoundIdWithData
+
+    return {
+      icon: isActive ? "solid:check" : undefined,
+      isActive,
+      label: (
+        <ConditionalWrapper
+          condition={!hasData}
+          wrapper={(children) => (
+            <Tooltip tipContents={bidderPageNoDataTooltip}>{children}</Tooltip>
+          )}
+        >
+          {roundId === PRE_HYDRO_ROUND_ID
+            ? "Pre-Hydro"
+            : `Round ${roundId + 1}`}
+          {roundId === currentRoundId && (
+            <StyledText variant="badge">Current</StyledText>
+          )}
+        </ConditionalWrapper>
+      ),
+      href: hasData ? `/bidder/${roundId + 1}` : "#",
+    }
+  })
+
+  const isExperimentalActive = requestedRoundId === EXPERIMENTAL_ROUND_ID
+
+  menuItems.push({
+    href: "/bidder/experimental",
+    icon: "solid:flask",
+    isActive: isExperimentalActive,
+    label: "Experimental",
+    className: twJoin(
+      isExperimentalActive
+        ? "bg-palette-cyan hover:bg-palette-cyan/80"
+        : "text-palette-cyan"
+    ),
+  })
+
+  return (
+    <>
+      <StatCardsContainer>
+        <AllTimePoLDeployed />
+        <AllTimeRevenue />
+        <AllTimeBidCount />
+      </StatCardsContainer>
+
+      <ContentContainer className="gap-6 py-6">
+        <div
+          data-testid="bidder-page-round-navigation"
+          className="relative z-20 flex flex-col items-center justify-between gap-6 sm:flex-row"
+        >
+          <h2 className="sr-only">PoL Bidder by Round</h2>
+
+          <StyledText variant="footnote">
+            Bidder are updated at the end of each round.
+          </StyledText>
+
+          <div className="flex items-center backdrop-blur-sm">
+            <Menu
+              className="relative z-100"
+              items={menuItems}
+              classNameForPopup="left-auto -right-10 max-h-80 overflow-y-auto"
+            >
+              <StyledText
+                variant="button.secondary"
+                as="button"
+                tabIndex={0}
+                className={twJoin(
+                  isExperimentalActive &&
+                    "border-palette-cyan text-palette-cyan"
+                )}
+              >
+                {isExperimentalActive ? (
+                  <>
+                    <Icon name="solid:flask" /> Experimental
+                  </>
+                ) : requestedPreHydro ? (
+                  "Pre-Hydro"
+                ) : (
+                  <>
+                    Round {requestedRoundId + 1}
+                    {requestedRoundId === currentRoundId && (
+                      <StyledText variant="badge">Current</StyledText>
+                    )}
+                  </>
+                )}
+
+                <Icon name="solid:caret-down" />
+              </StyledText>
+            </Menu>
+          </div>
+        </div>
+        {requestedExperimental ? (
+          <ExperimentalTable />
+        ) : (
+          <>
+            {requestedPreHydro ? (
+              <BidderTable
+                key={`tranche_0`}
+                trancheId={0}
+                requestedRoundNumber={requestedRoundNumber as number | null}
+              />
+            ) : (
+              displayTranches.map(
+                ({ id: trancheId, displayTrancheFromRound }) => {
+                  if (requestedRoundId < displayTrancheFromRound) {
+                    return <Fragment key={`empty_tranche_${trancheId}`} />
+                  }
+
+                  return (
+                    <BidderTable
+                      key={`tranche_${trancheId}`}
+                      trancheId={trancheId}
+                      requestedRoundNumber={
+                        requestedRoundNumber as number | null
+                      }
+                    />
+                  )
+                }
+              )
+            )}
+          </>
+        )}
+      </ContentContainer>
+    </>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/BidderTable.tsx (tsx) <<< */
+
+"use client"
+
+import { CollapsibleTable } from "@/components/CollapsibleTable"
+import { StyledTable } from "@/components/StyledTable"
+import { ColumnObject, RowRenderFunction } from "@/components/StyledTable/types"
+import { TrancheTitle } from "@/components/TrancheTitle"
+import { BidRevampMetrics } from "@/contract-apis/types"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import max from "lodash/max"
+import uniq from "lodash/uniq"
+import { useCallback, useMemo, useState } from "react"
+import { BidderRow, PRE_HYDRO_ROUND_ID } from "./BidderPage"
+import { BidderTableItem } from "./BidderTableItem"
+import { buildColumns } from "./buildColumns"
+import { buildRow } from "./buildRow"
+
+export function BidderTable({
+  trancheId,
+  requestedRoundNumber,
+}: {
+  trancheId: number
+  requestedRoundNumber: number | null
+}) {
+  const [showBidsWithoutTributes, setShowBidsWithoutTributes] = useState(false)
+  const [openedRows, setOpenedRows] = useState<Array<string | number>>([])
+
+  const { bidsInfo, currentRoundId, metricsForPreHydroBids } = useBackendData()
+
+  const tableId = `bidder-table-${trancheId}`
+  const bids = Object.values(bidsInfo)
+  const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
+  const highestRoundIdWithData =
+    max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
+
+  const requestedRoundId =
+    requestedRoundNumber === null
+      ? Math.min(highestRoundIdWithData, currentRoundId - 1)
+      : typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
+        ? Math.min(requestedRoundNumber - 1, highestRoundIdWithData)
+        : PRE_HYDRO_ROUND_ID
+
+  const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
+
+  const rowsInTranche = useMemo<BidderRow[]>(() => {
+    const bidsToRender = requestedPreHydro
+      ? metricsForPreHydroBids
+      : bids.filter((bid) => bid.roundId === requestedRoundId)
+
+    const bidsInTranche = requestedPreHydro
+      ? bidsToRender
+      : bidsToRender.filter(
+          (bid) => (bid as BidRevampMetrics).trancheId === trancheId
+        )
+
+    const filtered = bidsInTranche.filter((x) => {
+      if (requestedPreHydro || showBidsWithoutTributes) return true
+      const bid = x as BidRevampMetrics
+      const hasPoints = bid.points?.length > 0
+      const hasTokenTributes = bid.tokenBasedTributes.length > 0
+      return hasPoints || hasTokenTributes
+    })
+
+    return filtered.map((bid) => buildRow(bid, requestedPreHydro))
+  }, [bidsInfo, currentRoundId, trancheId, showBidsWithoutTributes])
+
+  const columns = useMemo<ColumnObject<BidderRow, keyof BidderRow>[]>(() => {
+    return buildColumns(requestedPreHydro, currentRoundId, requestedRoundId)
+  }, [requestedPreHydro, currentRoundId, requestedRoundId])
+
+  const toggleRow = (bidId: string | number) => {
+    setOpenedRows((prev) =>
+      prev.includes(bidId) ? prev.filter((id) => id !== bidId) : [...prev, bidId]
+    )
+  }
+
+  const renderRow = useCallback<
+    RowRenderFunction<BidderRow, keyof BidderRow>
+  >(
+    (props) => {
+      const bidId = (props.row._bid as any).id as string | number
+      const isOpened = openedRows.includes(bidId)
+      const canOpen = props.row.hasTributes
+      return (
+        <BidderTableItem
+          key={`bidder_row_${bidId}_${props.rowIndex}`}
+          {...props}
+          isOpened={isOpened}
+          canOpen={canOpen}
+          onToggle={toggleRow}
+        />
+      )
+    },
+    [openedRows]
+  )
+
+  const secondPassSortFunction = (sortedRows: BidderRow[]) => sortedRows
+
+  return (
+    <CollapsibleTable
+      id={tableId}
+      title={<TrancheTitle trancheId={trancheId} roundId={requestedRoundId} />}
+      numRows={rowsInTranche.length}
+      showBidsWithoutTributes={showBidsWithoutTributes}
+      setShowBidsWithoutTributes={setShowBidsWithoutTributes}
+    >
+      <StyledTable
+        initialSortedColumnKey="status"
+        columns={columns}
+        rows={rowsInTranche}
+        renderRow={renderRow}
+        secondPassSortFunction={secondPassSortFunction}
+      />
+    </CollapsibleTable>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/BidderTableItem.tsx (tsx) <<< */
+"use client"
+
+import { TD, TR } from "@/components/StyledTable"
+import { RowRenderProps } from "@/components/StyledTable/types"
+import { twMerge } from "tailwind-merge"
+import { BidderRow } from "./BidderPage"
+type Props = RowRenderProps<BidderRow, keyof BidderRow> & {
+  isOpened: boolean
+  canOpen: boolean
+  onToggle: (bidId: string | number) => void
+}
+
+export function BidderTableItem({
+  children,
+  row,
+  rowProps,
+  isOpened,
+  canOpen,
+  onToggle,
+}: Props) {
+  const bidId = (row._bid as any).id
+
+  const handleClick: React.MouseEventHandler<HTMLTableRowElement> = (e) => {
+    // ne pas toggler si on clique sur un lien/bouton/inputs
+    const el = e.target as HTMLElement
+    if (el.closest("a,button,[role=button],input,select,textarea")) return
+    if (canOpen) onToggle(bidId)
+  }
+  return (
+    <>
+      <TR
+        {...rowProps}
+        onClick={(e) => {
+          rowProps?.onClick?.(e as any)
+          handleClick(e as any)
+        }}
+        aria-expanded={isOpened}
+        data-opened={isOpened}
+        data-can-open={canOpen}
+        className={twMerge(
+          rowProps.className,
+          canOpen ? "cursor-pointer hover:bg-white/5" : "cursor-default",
+        )}
+      >
+        {children}
+      </TR>
+
+      {isOpened && row.additionalTributes ? (
+        <tr>
+          <TD colSpan={Object.keys(row).length} className="bg-palette-green/5 p-4">
+            {row.additionalTributes}
+          </TD>
+        </tr>
+      ) : null}
+
+      {/* petit spacer visuel entre les groupes */}
+      <tr aria-hidden>
+        <td className="h-1" colSpan={Object.keys(row).length} />
+      </tr>
+    </>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/ExperimentalTable.tsx (tsx) <<< */
+"use client"
+
+import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
+import { EmptyBox } from "@/components/EmptyBox"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
+import { StyledTable } from "@/components/StyledTable"
+import { ColumnObject } from "@/components/StyledTable/types"
+import { fetchExperimentalDeployments } from "@/contract-apis/fetchExperimental"
+import { ExperimentalItem, ExperimentalRow } from "@/contract-apis/types"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { useEffect, useState } from "react"
+import { ExperimentalTableItem } from "./ExperimentalTableItem"
+import { getExperimentalTableRows } from "./getExperimentalTableRows"
+import { classNames } from "./classNames"
+
+export default function ExperimentalTable() {
+  const [isLoadingExperimental, setIsLoadingExperimental] = useState(false)
+  const [experimentalItems, setExperimentalItems] = useState<
+    ExperimentalItem[]
+  >([])
+  const [openedRows, setOpenedRows] = useState<number[]>([])
+  const { isLoading } = useBackendData()
+
+  const toggleRow = (experimentalId: number) => {
+    setOpenedRows((prev) =>
+      prev.includes(experimentalId)
+        ? prev.filter((id) => id !== experimentalId)
+        : [...prev, experimentalId],
+    )
+  }
+
+  const columns: ColumnObject<ExperimentalRow, keyof ExperimentalRow>[] = [
+    {
+      key: "logoAndName",
+      label: "Deployment",
+      textAlign: "left",
+      isSortable: true,
+      propsForCells: {
+        className: classNames.classNamesForCells,
+      },
+      customValueGetter: (row) => row._experimental.name,
+    },
+    {
+      key: "startDate",
+      label: "Start Date",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      propsForCells: {
+        className: classNames.classNamesForCells,
+      },
+      customValueGetter: (row) => row._experimental.start_timestamp,
+    },
+    {
+      key: "status",
+      label: "Status",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      propsForCells: {
+        className: classNames.classNamesForCells,
+      },
+      customValueGetter: (row) => row._experimental.end_timestamp,
+    },
+    {
+      key: "initialAddressHoldings",
+      label: "Initial Position Size",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      textAlign: "right",
+      propsForCells: {
+        className: classNames.classNamesForCells,
+      },
+      customValueGetter: (row) =>
+        row._experimental.initial_address_holdings.total_atom,
+    },
+    {
+      key: "deploymentAPR",
+      label: "Deployment APR",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      textAlign: "right",
+      propsForCells: {
+        className: classNames.classNamesForCells,
+      },
+      customValueGetter: (row) =>
+        row._experimental.current_address_holdings.total_atom,
+    },
+    {
+      key: "actions",
+      label: "",
+      isSortable: false,
+      textAlign: "right",
+      propsForCells: {
+        className: classNames.classNamesForCells,
+      },
+    },
+  ]
+
+  const experimentalRows = getExperimentalTableRows(
+    openedRows,
+    toggleRow,
+    experimentalItems,
+  )
+
+  useEffect(() => {
+    const getExperimentalDeployments = async () => {
+      setIsLoadingExperimental(true)
+      const experimentalResponseItems = await fetchExperimentalDeployments()
+      setExperimentalItems(experimentalResponseItems || [])
+      setIsLoadingExperimental(false)
+    }
+    getExperimentalDeployments()
+  }, [])
+
+  return (
+    <>
+      <LoadingSpinner isLoading={isLoading || isLoadingExperimental} />
+
+      {!isLoading && !isLoadingExperimental && !experimentalItems.length && (
+        <BlurryBackdropBox>
+          <EmptyBox>
+            There are no experimental items available at this moment.
+          </EmptyBox>
+        </BlurryBackdropBox>
+      )}
+
+      {!isLoading && !isLoadingExperimental && experimentalItems.length > 0 && (
+        <BlurryBackdropBox>
+          <StyledTable
+            className="border-collapse border-spacing-y-0 [&>tbody]:gap-0 [&>tbody]:max-sm:gap-1"
+            initialSortedColumnKey="logoAndName"
+            columns={columns}
+            rows={experimentalRows}
+            renderRow={(props) => (
+              <ExperimentalTableItem
+                key={props.row._experimental.experimental_id}
+                {...props}
+              />
+            )}
+          />
+        </BlurryBackdropBox>
+      )}
+    </>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/ExperimentalTableItem.tsx (tsx) <<< */
+import { TD, TR } from "@/components/StyledTable"
+import { RowRenderProps } from "@/components/StyledTable/types"
+import { ExperimentalRow } from "@/contract-apis/types"
+import { classNames } from "./classNames"
+
+type ExperimentalTableItemProps = RowRenderProps<
+  ExperimentalRow,
+  keyof ExperimentalRow
+>
+
+export function ExperimentalTableItem({
+  children,
+  row,
+  rowProps,
+}: ExperimentalTableItemProps) {
+  return (
+    <>
+      <TR
+        key={row._experimental.experimental_id}
+        className={classNames.openedRow}
+        {...rowProps}
+      >
+        {children}
+      </TR>
+      {row.additionalDescription ? (
+        <tr
+          key={row._experimental.experimental_id + "_additional"}
+          className={classNames.additionalRow}
+        >
+          <TD className={classNames.additionalCell} colSpan={1}>
+            {row.additionalDescription}
+          </TD>
+          <TD className={classNames.additionalCell} colSpan={1} />
+          <TD className={classNames.additionalCell} colSpan={1}>
+            {row.additionalStatus}
+          </TD>
+          <TD className={classNames.additionalCell} colSpan={1}>
+            {row.additionalInitialAdressHoldings}
+          </TD>
+          <TD className={classNames.additionalCell} colSpan={1}>
+            {row.additionalDeploymentAPR}
+          </TD>
+          <TD className={classNames.additionalCell} colSpan={1} />
+        </tr>
+      ) : (
+        <tr>
+          <td className="h-0" colSpan={Object.keys(row).length - 2}>
+            {" "}
+          </td>
+        </tr>
+      )}
+      <tr>
+        <td className="h-1" colSpan={Object.keys(row).length - 2}>
+          {" "}
+        </td>
+      </tr>
+    </>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/RowComponent.tsx (tsx) <<< */
+import { Icon } from "@/components/Icon"
+import { TD, TR } from "@/components/StyledTable"
+import { BaseRowObject, RowRenderProps } from "@/components/StyledTable/types"
+import { Tooltip } from "@/components/Tooltip"
+import { voteThresholdTooltip } from "@/components/ToolTips"
+import { BidRevampMetrics } from "@/contract-apis/types"
+import { Fragment } from "react"
+import { twJoin, twMerge } from "tailwind-merge"
+
+export function RowComponent<
+  Row extends BaseRowObject & {
+    _bid: BidRevampMetrics
+  },
+>({
+  children,
+  requestedPreHydro,
+  row,
+  rowIndex,
+  rowProps,
+  sortDirection,
+  sortedColumnKey,
+  trancheId,
+  voteThreshold,
+}: RowRenderProps<Row, keyof Row> & {
+  requestedPreHydro: boolean
+  voteThreshold: number
+  trancheId: number
+}) {
+  const shouldShowVoteThresholdLine =
+    !requestedPreHydro &&
+    sortDirection === "DESC" &&
+    sortedColumnKey === "tributeApr" &&
+    row._bid.vote_perc !== null &&
+    row._bid.vote_perc < voteThreshold
+
+  return (
+    <Fragment key={row._bid.id}>
+      {!!shouldShowVoteThresholdLine && (
+        <TR className="js-vote-threshold-line bg-none [&~&]:hidden">
+          <TD colSpan={99} className="p-0!">
+            <div
+              className={twJoin(
+                "flex items-center justify-between gap-3",
+                "text-palette-beige text-xs whitespace-nowrap"
+              )}
+            >
+              <div className="border-palette-beige w-full border-t-2" />
+
+              <Tooltip tipContents={voteThresholdTooltip({ trancheId })}>
+                <div className="flex items-center gap-1">
+                  <Icon name="solid:circle" />
+                  <span>
+                    These bids are below the{" "}
+                    <strong>{voteThreshold * 100}% vote share threshold</strong>
+                  </span>
+                  <Icon name="circle-info" />
+                </div>
+              </Tooltip>
+
+              <div className="border-palette-beige w-full border-t-2" />
+            </div>
+          </TD>
+        </TR>
+      )}
+
+      <TR
+        {...rowProps}
+        key={row._bid.id}
+        className={twMerge(
+          rowProps.className,
+          "bg-none!",
+          rowIndex % 2 === 0 && "bg-palette-beige/5!"
+        )}
+      >
+        {children}
+      </TR>
+    </Fragment>
+  )
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/buildColumns.tsx (tsx) <<< */
+import { Icon } from "@/components/Icon"
+import { ColumnObject } from "@/components/StyledTable/types"
+import {
+  bidTablesFirstColumnTooltips,
+  metricsStatusColumnTooltip
+} from "@/components/ToolTips"
+import { Tooltip } from "@/components/Tooltip"
+import { BidderRow } from "./BidderPage"
+
+export function buildColumns(
+  requestedPreHydro: boolean,
+  currentRoundId: number,
+  requestedRoundId: number
+): ColumnObject<BidderRow, keyof BidderRow>[] {
+  return [
+    {
+      key: "logoAndTitle",
+      label: (
+        <Tooltip
+          tipContents={bidTablesFirstColumnTooltips.metricsTable.tokenBased}
+        >
+          <div className="flex items-center gap-1">
+            Bid Title
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
+      isSortable: true,
+      initialSortDirection: "ASC",
+      customValueGetter: (row) => row._bid.title,
+    },
+    {
+      key: "status",
+      label: (
+        <Tooltip
+          tipContents={metricsStatusColumnTooltip}
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Status
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
+      textAlign: "right",
+      propsForCells: {
+        className: "text-balance",
+      },
+      isSortable: true,
+      initialSortDirection: "ASC",
+      customValueGetter: (row) => ("status" in row._bid ? row._bid.status : ""),
+    },
+  ]
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/buildRow.tsx (tsx) <<< */
+
+import { BidLogoAndTitle, BidLogoAndTitleLayout } from "@/components/BidLogoAndTitle"
+import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
+
+function safeNum(v: unknown): number | null {
+  if (v == null) return null
+  const n = Number(v as any)
+  return Number.isFinite(n) ? n : null
+}
+
+function fmt(n: number | null, digits = 2): string {
+  if (n == null) return "—"
+  return n.toLocaleString(undefined, { maximumFractionDigits: digits })
+}
+
+export function buildRow(
+  passedBid: BidRevampMetrics | PreHydroBid,
+  requestedPreHydro: boolean
+) {
+  let rowURL: string, projectLogoUrl: string, projectName: string, title: string
+
+  if (requestedPreHydro) {
+    const bid = passedBid as PreHydroBid
+    rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
+    projectLogoUrl = bid.project_logo_url
+    projectName = bid.project
+    title = bid.title
+  } else {
+    const regularBid = passedBid as BidRevampMetrics
+    rowURL = `/bids/${passedBid.id}`
+    projectLogoUrl = regularBid?.projectLogoUrl ?? ""
+    projectName = regularBid?.projectName ?? ""
+    title = regularBid?.projectTitle ?? ""
+  }
+
+  // === Expansion content (post-hydro seulement) ===
+  const tokenTributes = !requestedPreHydro
+    ? (passedBid as BidRevampMetrics).tokenBasedTributes ?? []
+    : []
+
+  const hasTributes = !requestedPreHydro && tokenTributes.length > 0
+
+  const additionalTributes = hasTributes ? (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-white/70">
+            <th className="py-2 pr-4">Token</th>
+            <th className="py-2 pr-4 text-right">Amount</th>
+            <th className="py-2 pr-0 text-right">USD</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tokenTributes.map((t: any, i: number) => {
+            const name =
+              t.display_name ?? t.symbol ?? t.denom ?? t.token ?? "—"
+            const amt = safeNum(t.amount ?? t.value ?? t.quantity)
+            const usd = safeNum(t.usd_value ?? t.usd ?? t.value_usd)
+            return (
+              <tr key={`tribute_${(passedBid as any).id}_${i}`} className="border-t border-white/10">
+                <td className="py-2 pr-4">{name}</td>
+                <td className="py-2 pr-4 text-right">{fmt(amt)}</td>
+                <td className="py-2 pr-0 text-right">{fmt(usd)}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  ) : null
+
+  return {
+    _bid: passedBid,
+
+    logoAndTitle: (
+      <>
+        {requestedPreHydro ? (
+          <BidLogoAndTitleLayout
+            projectLogoUrl={projectLogoUrl}
+            projectName={projectName}
+            title={title}
+          />
+        ) : (
+          <BidLogoAndTitle bidId={Number(passedBid.id)} />
+        )}
+      </>
+    ),
+
+    status: <>{(passedBid as any).status ?? "—"}</>,
+
+    hasTributes,
+    additionalTributes,
+  }
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/classNames.ts (ts) <<< */
+import { twJoin } from "tailwind-merge"
+
+export const classNames = {
+  classNamesForCells: twJoin(`
+    relative
+    group-hover/table-row:text-palette-green
+  `),
+  openedRow: twJoin(`
+    border-0! 
+    bg-palette-green/5! 
+    max-sm:rounded-bl-none! 
+    max-sm:rounded-br-none! 
+    [&>td]:rounded-bl-none! 
+    [&>td]:rounded-br-none!  
+    [&>td]:border-0! 
+    [&>td]:sm:bg-palette-green/5!
+  `),
+  additionalRow: twJoin(`
+    -mt-1 
+    bg-palette-green/5! 
+    max-sm:rounded-tl-none! 
+    max-sm:rounded-tr-none!
+  `),
+  additionalCell: twJoin(`
+    rounded-tl-none! 
+    rounded-tr-none! 
+    border-0! 
+    p-6 
+    sm:bg-palette-green/5!
+    align-top
+  `),
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/getExperimentalTableRows.tsx (tsx) <<< */
+import { Icon } from "@/components/Icon"
+import { MarkdownContainer } from "@/components/MarkdownContainer"
+import { StyledText } from "@/components/StyledText"
+import { Tooltip } from "@/components/Tooltip"
+import { experimentalTableDeploymentAprTooltip } from "@/components/ToolTips"
+import { ExperimentalItem, ExperimentalRow } from "@/contract-apis/types"
+import { amountToUSDString } from "@/lib/amountToUSDString"
+import { calculateDurationAndUnit } from "@/lib/calculateDurationAndUnit"
+import { formatAmount } from "@/lib/formatAmount"
+import { pluralize } from "@/lib/pluralize"
+import Image from "next/image"
+import { twJoin } from "tailwind-merge"
+
+export function getExperimentalTableRows(
+  openedRows: number[],
+  onToggleRow: (experimentalId: number) => void,
+  experimentalItems?: ExperimentalItem[],
+): ExperimentalRow[] {
+  if (!experimentalItems || !experimentalItems.length) return []
+
+  const rows = experimentalItems.map((item) => {
+    const isOpened = openedRows.includes(item.experimental_id)
+    const currentTimestamp = new Date().getTime()
+    const startDate = new Date(item.start_timestamp * 1000).toLocaleDateString()
+    const startTimestamp = new Date(item.start_timestamp * 1000).getTime()
+    const endTimestamp =
+      item.end_timestamp === 0
+        ? currentTimestamp
+        : new Date(item.end_timestamp * 1000).getTime()
+    const status = item.end_timestamp === 0 ? "Ongoing" : "Completed"
+    
+    const daysBetween = Math.ceil(
+      (endTimestamp - startTimestamp) / (1000 * 60 * 60 * 24),
+    )
+
+    console.log("Days Between:", daysBetween)
+
+    console.log("item.end timestamp:", item.end_timestamp)
+    console.log("Start timestamp:", item.start_timestamp)
+    console.log("End timestamp:", endTimestamp)
+
+    const additionalStatus =
+      item.end_timestamp === 0
+        ? ""
+        : new Date(item.end_timestamp * 1000).toLocaleDateString()
+
+    const deploymentAPR =
+      (((item.current_address_holdings.total_atom -
+        item.initial_address_holdings.total_atom) /
+        item.initial_address_holdings.total_atom) *
+        365) /
+      daysBetween
+
+    return {
+      _experimental: item,
+
+      logoAndName: (
+        <StyledText
+          as="button"
+          className="flex items-center gap-6"
+          onClick={() => onToggleRow(item.experimental_id)}
+        >
+          <div className="relative size-12 shrink-0 rounded-full border text-[0]">
+            <Image
+              className="rounded-full object-contain"
+              src={item.logo}
+              alt={item.name}
+              fill={true}
+              sizes="48px"
+            />
+          </div>
+          <StyledText variant="h4" className="text-left">
+            {item.name}
+          </StyledText>
+        </StyledText>
+      ),
+
+      startDate: (
+        <StyledText
+          as="button"
+          onClick={() => onToggleRow(item.experimental_id)}
+        >
+          {startDate}
+        </StyledText>
+      ),
+
+      status: (
+        <StyledText
+          as="button"
+          onClick={() => onToggleRow(item.experimental_id)}
+        >
+          {status}
+        </StyledText>
+      ),
+
+      initialAddressHoldings: (
+        <div className="flex flex-col items-end">
+          <StyledText
+            as="button"
+            onClick={() => onToggleRow(item.experimental_id)}
+          >
+            {formatAmount(item.initial_address_holdings.total_atom, 0, 2)}&nbsp;
+            <StyledText variant="footnote">ATOM</StyledText>
+          </StyledText>
+          <StyledText
+            as="button"
+            variant="footnote"
+            onClick={() => onToggleRow(item.experimental_id)}
+          >
+            (
+            {amountToUSDString(item.initial_address_holdings.total_usdc, {
+              appendUsd: false,
+              numberOfDecimals: 2,
+              removeTrailingZeros: true,
+            })}
+            )
+          </StyledText>
+        </div>
+      ),
+
+      deploymentAPR: (
+        <Tooltip
+          className={twJoin(
+            "inline-flex items-center gap-1",
+            "border-b-2 border-dotted border-white/50 hover:border-white",
+          )}
+          tipContents={experimentalTableDeploymentAprTooltip({
+            hasEnded: item.end_timestamp !== 0,
+            totalAtom: item.current_address_holdings.total_atom,
+            totalUsd: item.current_address_holdings.total_usdc,
+            deploymentLasted: pluralize({
+              count: daysBetween,
+              singular: "day",
+              prefixCount: true,
+            }),
+          })}
+        >
+          <StyledText
+            variant="mathSymbol.container"
+            as="button"
+            onClick={() => onToggleRow(item.experimental_id)}
+          >
+            {(deploymentAPR * 100).toFixed(2)}
+            <StyledText variant="mathSymbol">%</StyledText>
+          </StyledText>
+        </Tooltip>
+      ),
+
+      actions: (
+        <div className="flex items-center justify-end gap-3">
+          <StyledText
+            as="button"
+            onClick={() => onToggleRow(item.experimental_id)}
+          >
+            <Icon name={isOpened ? "chevron-up" : "chevron-down"} />
+          </StyledText>
+        </div>
+      ),
+
+      additionalDescription: isOpened && (
+        <MarkdownContainer content={item.description} />
+      ),
+
+      additionalStatus: isOpened && (
+        <StyledText className="whitespace-nowrap">
+          {additionalStatus && (
+            <>
+              Ends:&nbsp;
+              <StyledText variant="label">{additionalStatus}</StyledText>
+            </>
+          )}
+        </StyledText>
+      ),
+
+      additionalInitialAdressHoldings: isOpened && (
+        <div className="flex flex-col gap-2">
+          <StyledText variant="label" className="underline">
+            Initial Breakdown
+          </StyledText>
+          {item.initial_address_holdings.balances.map(
+            (balance, balanceIndex) => (
+              <div
+                className="flex flex-col text-right"
+                key={`initial_balance_${balanceIndex}`}
+              >
+                <StyledText className="text-right">
+                  {formatAmount(balance.amount, 0, 2)}&nbsp;
+                  <StyledText variant="footnote">
+                    {balance.display_name}&nbsp;
+                  </StyledText>
+                </StyledText>
+                <StyledText variant="footnote">
+                  (
+                  {amountToUSDString(balance.usd_value, {
+                    appendUsd: false,
+                    numberOfDecimals: 2,
+                    removeTrailingZeros: true,
+                  })}
+                  )
+                </StyledText>
+              </div>
+            ),
+          )}
+        </div>
+      ),
+
+      additionalDeploymentAPR: isOpened && (
+        <div className="flex flex-col gap-2">
+          <StyledText variant="label" className="underline">
+            {item.end_timestamp !== 0
+              ? "Final Position Breakdown"
+              : "Current Position Breakdown"}
+          </StyledText>
+          {item.current_address_holdings.balances.map(
+            (balance, balanceIndex) => (
+              <div
+                className="flex flex-col text-right"
+                key={`current_balance_${balanceIndex}`}
+              >
+                <StyledText className="text-right">
+                  {formatAmount(balance.amount, 0, 2)}&nbsp;
+                  <StyledText variant="footnote">
+                    {balance.display_name}&nbsp;
+                  </StyledText>
+                </StyledText>
+                <StyledText variant="footnote">
+                  (
+                  {amountToUSDString(balance.usd_value, {
+                    appendUsd: false,
+                    numberOfDecimals: 2,
+                    removeTrailingZeros: true,
+                  })}
+                  )
+                </StyledText>
+              </div>
+            ),
+          )}
+        </div>
+      ),
+    }
+  })
+
+  return rows
+}
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/page.tsx (tsx) <<< */
+import { BidderPage } from "./BidderPage"
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ roundNumber?: string }>
+}) {
+  const roundNumberParam = (await params).roundNumber
+  const requestedRoundNumber =
+    typeof roundNumberParam === "undefined"
+      ? null
+      : String(roundNumberParam) === "experimental"
+        ? String(roundNumberParam)
+        : Number(roundNumberParam)
+
+  return <BidderPage requestedRoundNumber={requestedRoundNumber} />
+}
+
+/* --- end file --- */
+
