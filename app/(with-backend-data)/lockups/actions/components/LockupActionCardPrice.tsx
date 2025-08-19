@@ -104,7 +104,7 @@ const LockupActionCardPrice = <L extends AugmentedLockup | MarketplaceLockup>({
       }
       leftClassName="opacity-100 text-palette-green"
       rightContent={
-        <div className="text-palette-green flex flex-col gap-4 text-[24px] font-bold">
+        <div className="text-palette-green flex flex-1 flex-col gap-4 text-[24px] font-bold">
           <span className="relative flex items-center self-end">
             <LockupPremiumSelect
               value={premium}
