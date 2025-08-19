@@ -11,6 +11,7 @@ import { getLockupStatus } from "../utils/getLockupStatus"
 import { isListedMarketplaceLockup } from "../utils/isListedMarketplaceLockup"
 import MarketplaceLockupCardEligibility from "./MarketplaceLockupCardEligibility"
 import MarketplaceLockupCardRewards from "./MarketplaceLockupCardRewards"
+import { Crown } from "lucide-react"
 
 export default function MarketplaceLockupCard({
   lockup,
@@ -24,25 +25,24 @@ export default function MarketplaceLockupCard({
   return (
     <div
       className={twMerge(
-        " box-border grid max-w-[358.5px] grid-cols-2 rounded-2xl border-2 backdrop-blur-sm cursor-pointer",
-        isMine
-          ? "border-palette-beige"
-          : isListed
-            ? "border-palette-green"
-            : "border-transparent",
+        " box-border grid max-w-[358.5px] cursor-pointer grid-cols-2 rounded-2xl border-2 backdrop-blur-sm",
+        isListed ? "border-palette-green" : "border-transparent"
       )}
     >
       <div
         className={twMerge(
           "relative",
-          isMine
-            ? "h-[198px] w-[198px]"
-            : isListed
-              ? "h-[198px] w-[198px]"
-              : "h-[200px] w-[200px]",
+          isListed ? "h-[198px] w-[198px]" : "h-[200px] w-[200px]"
         )}
       >
         <LockupImage lockup={lockup} />
+        {isMine && (
+          <div className="absolute top-2 right-2 z-10">
+            <div className="bg-palette-green/90 rounded-full px-2 py-1 text-xs text-black italic shadow-lg">
+              <Crown className="size-3" />
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex flex-col justify-between gap-[2px]">
         <LockupActionCardValue
@@ -76,13 +76,13 @@ export default function MarketplaceLockupCard({
                 ) : undefined
               }
             >
-              <span className="space-x-1 font-inter text-[10px] font-bold uppercase">
+              <span className="font-inter space-x-1 text-[10px] font-bold uppercase">
                 {getLockupStatus(lockup) === "for-sale" ? (
                   <>
                     <span className="text-base">
                       {formatDenomAmount(
                         lockup.listing.price.amount,
-                        getDenomExponent(lockup.listing.price.denom),
+                        getDenomExponent(lockup.listing.price.denom)
                       )}
                     </span>{" "}
                     <span className=" opacity-60">
@@ -96,17 +96,17 @@ export default function MarketplaceLockupCard({
               {isMine && isListed ? (
                 <Icon
                   name="light:ellipsis-vertical"
-                  className="ml-1 text-palette-beige"
+                  className="text-palette-beige ml-1"
                 />
               ) : getLockupStatus(lockup) === "for-sale" ? (
                 <Icon
                   name="solid:tags"
-                  className="ml-2 text-base text-palette-green"
+                  className="text-palette-green ml-2 text-base"
                 />
               ) : (
                 <Icon
                   name="light:ban"
-                  className="ml-2 text-base text-palette-beige"
+                  className="text-palette-beige ml-2 text-base"
                 />
               )}
             </StyledText>

@@ -5,7 +5,6 @@ import { MarketplaceFilters } from "../types"
 export const statusFilterOptions = [
   "for-sale",
   "not-for-sale",
-  "isMine",
 ] as const
 
 export const marketPlaceDenomsFilter = ALLOWED_MARKETPLACE_DENOMS
