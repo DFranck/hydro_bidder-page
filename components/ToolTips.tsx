@@ -1305,3 +1305,33 @@ export const alreadyVotedForBidTooltip = (
 )
 
 export const castVoteForBidTooltip = <p>Cast your vote for this bid.</p>
+
+export const routeUnavailableTooltip = (
+  <p>
+    You cannot automatically convert this tribute to ATOM. However, you can
+    still claim it as its native token and swap it outside of Hydro. For
+    example, through{" "}
+    <StyledText
+      as={Link}
+      href="https://go.skip.build/"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      go.skip
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
+    or{" "}
+    <StyledText
+      as={Link}
+      href="https://app.squidrouter.com/"
+      variant="link"
+      className="inline-flex items-center gap-1"
+      target="_blank"
+    >
+      squidRouter
+      <Icon name="solid:arrow-up-right" />
+    </StyledText>
+    .
+  </p>
+)

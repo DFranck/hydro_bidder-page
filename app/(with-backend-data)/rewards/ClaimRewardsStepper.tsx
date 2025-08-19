@@ -26,6 +26,9 @@ import {
 import { assets as strideAssets } from "chain-registry/mainnet/stride"
 import { ReactNode, useEffect, useState } from "react"
 import { Step } from "../lock-atom/steppers/Step"
+import { ConditionalWrapper } from "@/components/ConditionalWrapper"
+import { Tooltip } from "@/components/Tooltip"
+import { routeUnavailableTooltip } from "@/components/ToolTips"
 
 export type ClaimRewardsStep = "Init" | "Convert"
 
@@ -41,6 +44,7 @@ export default function ClaimRewardsStepper({
   onExit: (success?: boolean) => void
 }) {
   const [isLoading, setIsLoading] = useState(false)
+  const [canConvert, setCanConvert] = useState(false)
   const [step, setStep] = useState<ClaimRewardsStep>("Init")
   const [claimType, setClaimType] = useState<"native" | "convert">("native")
   const [skipApiRoute, setSkipApiRoute] = useState<RouteResponse | null>(null)
@@ -64,6 +68,51 @@ export default function ClaimRewardsStepper({
     setSkipApiRoute(null)
     setStep("Init")
   }
+
+  async function handleSkipClient() {
+    if (!bid || !tribute || !address || !claimAmount) {
+      return
+    }
+
+    if (
+      !process.env.NEXT_PUBLIC_ATOM_DENOM ||
+      !process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM
+    ) {
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setToasts([toastMessages.searchingConvertRoute])
+
+      await skipClient.route({
+        amountIn: claimAmount.amount,
+        sourceAssetDenom: claimAmount.denom || tribute.denomOriginal,
+        sourceAssetChainID: neutronChainId,
+        destAssetDenom:
+          process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+            ? process.env.NEXT_PUBLIC_ATOM_DENOM
+            : process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM,
+        destAssetChainID:
+          process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+            ? cosmosHubChainId
+            : neutronChainId,
+      })
+
+      setCanConvert(true)
+
+      setToasts([])
+    } catch (error) {
+      setCanConvert(false)
+      setToasts([toastMessages.claimingRewardsError(error as Error)])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    handleSkipClient()
+  }, [])
 
   useEffect(() => {
     if (!bid || !tribute || !claimAmount) {
@@ -141,7 +190,7 @@ export default function ClaimRewardsStepper({
       skipApiRoute.requiredChainAddresses.map(async (chainID) => ({
         chainID,
         address: await getAddress(chainID),
-      })),
+      }))
     )
 
     try {
@@ -219,39 +268,59 @@ export default function ClaimRewardsStepper({
                     </StyledText>
                   </StyledText>
                 </StyledText>
-                <StyledText
-                  as="label"
-                  variant="label"
-                  className="flex items-center gap-2"
+                <ConditionalWrapper
+                  condition={!canConvert || isLoading}
+                  wrapper={(children) => (
+                    <Tooltip
+                      className="w-auto"
+                      classNamesForTooltip="sm:-ml-12"
+                      tipContents={
+                        !canConvert
+                          ? routeUnavailableTooltip
+                          : "Loading, please wait..."
+                      }
+                    >
+                      <div className="pointer-events-none cursor-not-allowed opacity-50">
+                        {children}
+                      </div>
+                    </Tooltip>
+                  )}
                 >
                   <StyledText
-                    variant="input.radio"
-                    as="input"
-                    type="radio"
-                    name="claimType"
-                    checked={claimType === "convert"}
-                    onChange={() => setClaimType("convert")}
-                    disabled={
-                      !process.env.NEXT_PUBLIC_ATOM_DENOM ||
-                      !process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM
-                    }
-                  />
-                  <StyledText>
-                    {(
-                      (claimAmount?.valueUsd || 0) /
-                      (process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
-                        ? atomPrice
-                        : stOsmoPrice)
-                    ).toLocaleString("en-US", {
-                      maximumFractionDigits: 4,
-                      trailingZeroDisplay: "stripIfInteger",
-                    })}
-                    &nbsp;
-                    <StyledText variant="footnote">
-                      {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                    as="label"
+                    variant="label"
+                    className="flex items-center gap-2"
+                  >
+                    <StyledText
+                      variant="input.radio"
+                      as="input"
+                      type="radio"
+                      name="claimType"
+                      checked={claimType === "convert"}
+                      onChange={() => setClaimType("convert")}
+                      disabled={
+                        !process.env.NEXT_PUBLIC_ATOM_DENOM ||
+                        !process.env.NEXT_PUBLIC_NEUTRON_STOSMO_DENOM ||
+                        !canConvert
+                      }
+                    />
+                    <StyledText>
+                      {(
+                        (claimAmount?.valueUsd || 0) /
+                        (process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME === "ATOM"
+                          ? atomPrice
+                          : stOsmoPrice)
+                      ).toLocaleString("en-US", {
+                        maximumFractionDigits: 4,
+                        trailingZeroDisplay: "stripIfInteger",
+                      })}
+                      &nbsp;
+                      <StyledText variant="footnote">
+                        {process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME}
+                      </StyledText>
                     </StyledText>
                   </StyledText>
-                </StyledText>
+                </ConditionalWrapper>
               </div>
             </>
           ),
@@ -265,7 +334,7 @@ export default function ClaimRewardsStepper({
                 claimRewards(claimType === "convert")
               },
               className: "bg-palette-green",
-              disabled: isLoading,
+              disabled: isLoading || !claimAmount || claimAmount.amount === "0",
             },
             {
               label: "Cancel",
@@ -285,16 +354,15 @@ export default function ClaimRewardsStepper({
         }
 
         const tributeAsset = neutronAssets.assets.find(
-          (x: { base: string }) => x.base === tribute!.denomOriginal,
+          (x: { base: string }) => x.base === tribute!.denomOriginal
         )
         const srcTokenImgUrl = tributeAsset?.logo_URIs?.svg
 
         const atomAsset = hubAssets.assets.find(
-          (x: { base: string }) =>
-            x.base === process.env.NEXT_PUBLIC_ATOM_DENOM,
+          (x: { base: string }) => x.base === process.env.NEXT_PUBLIC_ATOM_DENOM
         )
         const strideAsset = strideAssets.assets.find(
-          (x: { base: string }) => x.base === "stuosmo",
+          (x: { base: string }) => x.base === "stuosmo"
         )
 
         const destTokenImgUrl =
@@ -303,15 +371,15 @@ export default function ClaimRewardsStepper({
             : strideAsset?.logo_URIs?.svg
 
         const srcExplorer = neutronChain?.explorers?.find(
-          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan",
+          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan"
         )
         const srcAddressUrl = srcExplorer?.account_page?.replace(
           "${accountAddress}",
-          address,
+          address
         )
 
         const destExplorer = hubChain?.explorers?.find(
-          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan",
+          (x: { kind?: string }) => x.kind?.toLocaleLowerCase() === "mintscan"
         )
         const destAddressUrl =
           process.env.NEXT_PUBLIC_VOTING_TOKEN_NAME !== "ATOM"
@@ -319,7 +387,7 @@ export default function ClaimRewardsStepper({
             : cosmosHubAddress
               ? destExplorer?.account_page?.replace(
                   "${accountAddress}",
-                  cosmosHubAddress,
+                  cosmosHubAddress
                 )
               : ""
 
