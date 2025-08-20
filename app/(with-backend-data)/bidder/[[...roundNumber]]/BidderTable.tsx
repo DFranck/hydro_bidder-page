@@ -1,4 +1,4 @@
-
+// app/(with-backend-data)/bidder/[[...roundNumber]]/BidderTable.tsx
 "use client"
 
 import { CollapsibleTable } from "@/components/CollapsibleTable"
@@ -14,6 +14,8 @@ import { BidderRow, PRE_HYDRO_ROUND_ID } from "./BidderPage"
 import { BidderTableItem } from "./BidderTableItem"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
+import { useLateTributes } from "./hooks/useLateTributes"
+import { mapTributeToTokenBased } from "./utils/mapTributeToTokenBased"
 
 export function BidderTable({
   trancheId,
@@ -24,14 +26,16 @@ export function BidderTable({
 }) {
   const [showBidsWithoutTributes, setShowBidsWithoutTributes] = useState(false)
   const [openedRows, setOpenedRows] = useState<Array<string | number>>([])
+  const [lateKey, setLateKey] = useState(0);
+  const bumpLateKey = useCallback(() => setLateKey(k => k + 1), []);
 
-  const { bidsInfo, currentRoundId, metricsForPreHydroBids } = useBackendData()
+  const tributeContractAddress = process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS!
+  const { bidsInfo, currentRoundId, metricsForPreHydroBids,currentRoundPrices } = useBackendData()
 
   const tableId = `bidder-table-${trancheId}`
   const bids = Object.values(bidsInfo)
   const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
-  const highestRoundIdWithData =
-    max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
+  const highestRoundIdWithData = max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
 
   const requestedRoundId =
     requestedRoundNumber === null
@@ -42,45 +46,64 @@ export function BidderTable({
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
 
- const rowsInTranche = useMemo<BidderRow[]>(() => {
-  const bidsToRender = requestedPreHydro
-    ? metricsForPreHydroBids
-    : bids.filter((bid) => bid.roundId === requestedRoundId)
 
-  const bidsInTranche = requestedPreHydro
-    ? bidsToRender
-    : bidsToRender.filter((bid) => (bid as BidRevampMetrics).trancheId === trancheId)
+  const { lateByProposal } = useLateTributes(
+    tributeContractAddress,
+    Math.max(0, requestedRoundId),
+    currentRoundId,
+    lateKey
+  )
 
-  const filtered = bidsInTranche.filter((x) => {
-    if (requestedPreHydro || showBidsWithoutTributes) return true
-    const bid = x as BidRevampMetrics
-    const hasPoints = bid.points?.length > 0
-    const hasTokenTributes = bid.tokenBasedTributes.length > 0
-    return hasPoints || hasTokenTributes
-  })
+  const rowsInTranche = useMemo<BidderRow[]>(() => {
+    const bidsToRender = requestedPreHydro
+      ? metricsForPreHydroBids
+      : bids.filter((bid) => bid.roundId === requestedRoundId)
 
-  return filtered.map((bid) => {
-    const base = buildRow(bid, requestedPreHydro)
+    const bidsInTranche = requestedPreHydro
+      ? bidsToRender
+      : bidsToRender.filter((bid) => (bid as BidRevampMetrics).trancheId === trancheId)
 
-    if (requestedPreHydro) {
-      // Pre-hydro : pas de tributes
-      return { ...base, tributeCount: 0, tributeUsdTotal: 0 }
-    }
+    const filtered = bidsInTranche.filter((x) => {
+      if (requestedPreHydro || showBidsWithoutTributes) return true
+      const bid = x as BidRevampMetrics
+      const hasPoints = bid.points?.length > 0
+      const hasTokenTributes = (bid.tokenBasedTributes?.length ?? 0) > 0
+      const hasLate = (lateByProposal[Number(bid.id)]?.length ?? 0) > 0
+      return hasPoints || hasTokenTributes || hasLate
+    })
 
-    const b = bid as BidRevampMetrics
-    const tributeCount = b.tokenBasedTributes?.length ?? 0
+    return filtered.map((bid) => {
+      const base = buildRow(
+        requestedPreHydro
+          ? bid
+          : (() => {
+              const b = bid as BidRevampMetrics
+              const lateRaw = lateByProposal[Number(b.id)] ?? []
+              const lateNormalized = lateRaw.map((t) => mapTributeToTokenBased(t, currentRoundPrices))
+              const merged = [...(b.tokenBasedTributes ?? []), ...lateNormalized]
+              return { ...b, tokenBasedTributes: merged }
+            })(),
+        requestedPreHydro,
+        { onAfterSuccess: bumpLateKey }
+      )
 
-    return { ...base, tributeCount }
-  })
-}, [
-  bidsInfo,
-  currentRoundId,
-  trancheId,
-  showBidsWithoutTributes,
-  requestedPreHydro,
-  requestedRoundId,
-])
+      if (requestedPreHydro) return { ...base, tributeCount: 0 }
 
+      const b = base._bid as BidRevampMetrics
+      const tributeCount = b.tokenBasedTributes?.length ?? 0
+      return { ...base, tributeCount }
+    })
+  }, [
+    bidsInfo,
+    metricsForPreHydroBids,
+    currentRoundId,
+    trancheId,
+    showBidsWithoutTributes,
+    requestedPreHydro,
+    requestedRoundId,
+    lateByProposal,
+    currentRoundPrices, 
+  ])
 
   const columns = useMemo<ColumnObject<BidderRow, keyof BidderRow>[]>(() => {
     return buildColumns(requestedPreHydro, currentRoundId, requestedRoundId)
@@ -92,9 +115,7 @@ export function BidderTable({
     )
   }
 
-  const renderRow = useCallback<
-    RowRenderFunction<BidderRow, keyof BidderRow>
-  >(
+  const renderRow = useCallback<RowRenderFunction<BidderRow, keyof BidderRow>>(
     (props) => {
       const bidId = (props.row._bid as any).id as string | number
       const isOpened = openedRows.includes(bidId)
@@ -112,8 +133,6 @@ export function BidderTable({
     [openedRows]
   )
 
-  const secondPassSortFunction = (sortedRows: BidderRow[]) => sortedRows
-
   return (
     <CollapsibleTable
       id={tableId}
@@ -127,7 +146,7 @@ export function BidderTable({
         columns={columns}
         rows={rowsInTranche}
         renderRow={renderRow}
-        secondPassSortFunction={secondPassSortFunction}
+        secondPassSortFunction={(x) => x}
       />
     </CollapsibleTable>
   )

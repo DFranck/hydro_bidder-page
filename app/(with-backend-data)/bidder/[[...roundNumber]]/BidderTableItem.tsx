@@ -20,7 +20,6 @@ export function BidderTableItem({
 }: Props) {
   const bidId = (row._bid as any).id
   const handleClick: React.MouseEventHandler<HTMLTableRowElement> = (e) => {
-    // ne pas toggler si on clique sur un lien/bouton/inputs
     const el = e.target as HTMLElement
     if (el.closest("a,button,[role=button],input,select,textarea")) return
     if (canOpen) onToggle(bidId)

@@ -3,16 +3,23 @@
 import { BidLogoAndTitle, BidLogoAndTitleLayout } from "@/components/BidLogoAndTitle"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
-import { BidRevampMetrics, PreHydroBid } from "@/contract-apis/types"
+import { BidRevampMetrics, PreHydroBid, TokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
 import { AddTributeButton } from "./components/AddTributeButton"
 import RefundTrubuteButton from "./components/RefundTrubuteButton"
+import { computeTributeUiStatus, uiStatusLabel, uiStatusTooltip } from "./utils/tributeRules"
+
+type RowOptions = {
+  onAfterSuccess?: () => void; 
+}
 
 export function buildRow(
   passedBid: BidRevampMetrics | PreHydroBid,
-  requestedPreHydro: boolean
+  requestedPreHydro: boolean,
+  options: RowOptions = {} 
 ) {
+  const { onAfterSuccess } = options
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
 const {address, currentRoundId}=useBackendData()
   if (requestedPreHydro) {
@@ -84,84 +91,49 @@ const {address, currentRoundId}=useBackendData()
           </tr>
         </thead>
         <tbody>
-       {tokenTributes.map((t: any, i: number) => {
-        // for disabling
-        let status: string
-        const connectedAddress = (address ?? "").trim().toLowerCase()
-        const depositor = String(t.depositor ?? "").trim().toLowerCase()
-        const isDepositor = connectedAddress === depositor
-        const isOngoing = (passedBid as BidRevampMetrics).roundId === currentRoundId;
-        const isRefunded = !!t.refunded
-        if(isOngoing){
-          status = "Voting period"
-        } else {
-          status = "Refundable"
-        }
-        if(isRefunded){
-          status = "Claimable"
-        }
-        const disabled = !isDepositor || isRefunded || isOngoing
+      
+{tokenTributes.map((t: TokenBasedTribute, i: number) => {
+  const bid = passedBid as BidRevampMetrics
+  const s = computeTributeUiStatus(bid, t, currentRoundId)
+  const statusText = uiStatusLabel[s]
+  const statusTip  = uiStatusTooltip(s)
 
-          let reason: string | undefined
-          if (!isDepositor) reason = "Only the depositor can refund this tribute."
-          else if (isRefunded) reason = "This tribute is already refunded (claimable)."
-          else if (isOngoing) reason = "Refunds are unavailable during the current voting period."
+  const name      = t.denom ?? (t as any).funds?.denom
+  const amount    = (t as any).funds?.amount ?? t.amount
+  const original  = t.denomOriginal ?? (t as any).funds?.denom
+  const createdAt = getFormatedDateFromNanos(t.creationTime)
 
-        const tributeId = Number(t.tributeId ?? t.id)
-        // for rendering
-          const name = t.denom ?? t.funds?.denom;
-          const amount = t.funds?.amount;
-          const originalName = t.denomOriginal ?? t.funds?.denom;
-          const createdAt = getFormatedDateFromNanos(t.creationTime);
-          
-          return (
-            <tr
-              key={`tribute_${(passedBid as any).id}_${i}`}
-              className="border-t border-white/10"
-            >
-              <td className="py-2 pr-4">
-               
-                  <Tooltip
+  return (
+    <tr key={`tribute_${(passedBid as any).id}_${i}`} className="border-t border-white/10">
+      <td className="py-2 pr-4">
+        <Tooltip
+          tipContents={
+            <div>
+              <div className="text-xs opacity-70">Original denom:</div>
+              <code className="text-xs break-all select-all">{original}</code>
+            </div>
+          }
+          className="inline-block cursor-help max-w-fit"
+          classNamesForTooltip="max-w-[min(90vw,28rem)] break-words sm:max-w-96"
+        >
+          <span className="inline-flex items-baseline gap-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+            <span className="tabular-nums">{amount}</span>
+            <span>{name}</span>
+          </span>
+          <Icon name="circle-info" className="ml-1" />
+        </Tooltip>
+      </td>
 
-                  tipContents={
-                <div>
-                  <div className="text-xs opacity-70">Original denom:</div>
-                  <code className="text-xs break-all select-all">{originalName}</code>
-                </div>
-              }
-                    className="inline-block cursor-help max-w-fit"
-                     classNamesForTooltip="max-w-[min(90vw,28rem)] break-words sm:max-w-96"
-                  > <span
-                  className="inline-flex items-baseline gap-2 whitespace-nowrap"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <span className="tabular-nums">{amount}</span>
-                      <span>
-                        {name}
-                        </span>
-           
-                </span><Icon name="circle-info" className="ml-1"/>
-                  </Tooltip>
-              </td>
-
-              <td className="py-2 pr-4 text-right whitespace-nowrap">{createdAt}</td>
-              <td className="py-2 pr-0 text-right whitespace-nowrap">
-                {status}
-              </td>
-               <td className="py-2 pr-1 text-right whitespace-nowrap">
-                <RefundTrubuteButton
-                disabled={disabled}
-                reason={reason}
-                tributeId={tributeId}
-                proposalId={Number((passedBid as any).id)}
-                roundId={Number((passedBid as any).roundId)}
-                trancheId={Number((passedBid as any).trancheId)}
-              />              
-              </td>
-            </tr>
-          );
-        }
-        )}
+      <td className="py-2 pr-4 text-right whitespace-nowrap">{createdAt}</td>
+      <td className="py-2 pr-0 text-right whitespace-nowrap">
+        <Tooltip tipContents={statusTip}><span>{statusText}</span></Tooltip>
+      </td>
+      <td className="py-2 pr-1 text-right whitespace-nowrap">
+        <RefundTrubuteButton bid={bid} tribute={t} onAfterSuccess={onAfterSuccess}/>
+      </td>
+    </tr>
+  )
+})}
         </tbody>
       </table>
     </div>
@@ -183,7 +155,7 @@ const {address, currentRoundId}=useBackendData()
       </>
     ),
     status: <>{(passedBid as any).status ?? "—"}</>,
-    action:<><AddTributeButton bidId={Number(passedBid.id)} size="small"/></>,
+    action:<><AddTributeButton bidId={Number(passedBid.id)} size="small" onAfterSuccess={onAfterSuccess}/></>,
     hasTributes,
     additionalTributes,
      tributeCount,

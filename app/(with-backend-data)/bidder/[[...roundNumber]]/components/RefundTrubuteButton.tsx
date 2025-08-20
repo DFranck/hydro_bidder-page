@@ -1,59 +1,57 @@
+// components/RefundTrubuteButton.tsx
 "use client"
 
 import { StyledText } from "@/components/StyledText"
 import { toastMessages } from "@/components/ToastMessages"
 import { useToasts } from "@/components/Toasts/useToasts"
+import type { BidRevampMetrics, TokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { revalidateTag } from "@/lib/revalidateTag"
 import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
 import { executeRefundTribute } from "../transactions/executeRefundTribute"
+import { canRefund } from "../utils/tributeRules"
 
 type Props = {
-  disabled: boolean
-  tributeId: number
-  proposalId: number
-  roundId: number
-  trancheId: number
-  reason?: string           
+  bid: BidRevampMetrics
+  tribute: TokenBasedTribute
+  onAfterSuccess?: () => void
 }
 
-const RefundTrubuteButton = ({
-  disabled,
-  tributeId,
-  proposalId,
-  roundId,
-  trancheId,
-  reason,
-}: Props) => {
+const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
   const router = useRouter()
-  const { isWalletConnected, address } = useBackendData()
+  const { address, currentRoundId, isWalletConnected } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
 
-  const effectiveDisabled = disabled || !isWalletConnected
-
-  const tooltip =
-    !isWalletConnected
-      ? "Please connect your wallet to refund."
-      : disabled
-        ? (reason ?? "You cannot refund this tribute.")
-        : undefined
+  const verdict = canRefund(bid, tribute, currentRoundId, address ?? undefined)
+  const disabled = !isWalletConnected || !verdict.ok
+  const tooltip = !isWalletConnected
+    ? "Please connect your wallet to refund."
+    : verdict.ok
+      ? undefined
+      : verdict.reason
 
   const onRefund = async () => {
     try {
       setToasts([toastMessages.refundingTributeInProgress])
       await executeRefundTribute({
         address: address!,
-        proposalId: Number(proposalId),
-        roundId: Number(roundId),
-        trancheId: Number(trancheId),
-        tributeId: Number(tributeId),
+        proposalId: Number(bid.id),
+        roundId: Number(bid.roundId),
+        trancheId: Number(bid.trancheId),
+        tributeId: Number(tribute.id),
         getSigningCosmWasmClient,
       })
-      setToasts([toastMessages.refundingTributeSuccess])
-      await revalidateTag("backendData")
+      const res = await fetch("/api/refresh-hydro-rounds-data", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ roundIds: [Number(bid.roundId)] }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+        
+        setToasts([toastMessages.refundingTributeSuccess])
       router.refresh()
+      onAfterSuccess?.()
     } catch (error: any) {
       setToasts([toastMessages.refundingTributeError(error as Error)])
     }
@@ -63,13 +61,13 @@ const RefundTrubuteButton = ({
     <StyledText
       as="button"
       type="button"
-      disabled={effectiveDisabled}
-      aria-disabled={effectiveDisabled}
-      variant={"button.primary.small"}
+      disabled={disabled}
+      aria-disabled={disabled}
+      variant="button.primary.small"
       tooltip={tooltip}
-      onClick={effectiveDisabled ? undefined : onRefund}
+      onClick={disabled ? undefined : onRefund}
     >
-      Refund
+      {tribute.refunded ? "Refunded" : "Refund"}
     </StyledText>
   )
 }

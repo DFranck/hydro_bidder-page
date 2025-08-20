@@ -28,7 +28,8 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
             supabaseEndpoint,
             getSupabaseNamespacedFilename(filename),
             `?time=${new Date().getTime()}`,
-          ].join("")
+          ].join(""),
+          { cache: "no-store" }
         ).then((res) => res.json())
       )
     )
@@ -40,11 +41,18 @@ async function uncachedFetchBackendDataBeforeWallet(): Promise<BackendDataBefore
   }
 }
 
-export const fetchBackendDataBeforeWallet = unstable_cache(
-  uncachedFetchBackendDataBeforeWallet,
-  ["fetchBackendDataBeforeWallet"],
-  {
-    revalidate: 60 * 5,
-    tags: ["backendData"],
-  }
-)
+// export const fetchBackendDataBeforeWallet = unstable_cache(
+//   uncachedFetchBackendDataBeforeWallet,
+//   ["fetchBackendDataBeforeWallet"],
+//   {
+//     revalidate: 60 * 5,
+//     tags: ["backendData"],
+//   }
+// )
+export const fetchBackendDataBeforeWallet =
+  process.env.NODE_ENV === "development"
+    ? uncachedFetchBackendDataBeforeWallet 
+    : unstable_cache(uncachedFetchBackendDataBeforeWallet, ["fetchBackendDataBeforeWallet"], {
+        revalidate: 60 * 5,
+        tags: ["backendData"],
+      })
