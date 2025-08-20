@@ -40,6 +40,7 @@
     "chain-registry": "^1.69.152",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cosmjs-types": "^0.10.1",
     "defi-sim": "^1.0.3",
     "dotenv": "^17.2.1",
     "interchain": "^1.10.4",

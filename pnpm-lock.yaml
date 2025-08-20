@@ -40,7 +40,7 @@ importers:
         version: 2.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(@walletconnect/sign-client@2.21.6(@netlify/blobs@8.2.0)(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))(@walletconnect/types@2.21.6(@netlify/blobs@8.2.0))(bufferutil@4.0.9)(starknet@7.6.4)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@cosmos-kit/leap':
         specifier: ^2.14.7
-        version: 2.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(@walletconnect/types@2.21.6(@netlify/blobs@8.2.0))(bufferutil@4.0.9)(cosmjs-types@0.9.0)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 2.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(@walletconnect/types@2.21.6(@netlify/blobs@8.2.0))(bufferutil@4.0.9)(cosmjs-types@0.10.1)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@cosmos-kit/react':
         specifier: ^2.21.7
         version: 2.22.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@interchain-ui/react@1.26.3(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@netlify/blobs@8.2.0)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(utf-8-validate@5.0.10)
@@ -92,6 +92,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      cosmjs-types:
+        specifier: ^0.10.1
+        version: 0.10.1
       defi-sim:
         specifier: ^1.0.3
         version: 1.0.3
@@ -4261,6 +4264,9 @@ packages:
 
   cose-base@2.2.0:
     resolution: {integrity: sha512-AzlgcsCbUMymkADOJtQm3wO9S3ltPfYOFD5033keQn9NJzIbtnZj+UdBJe7DYml/8TdbtHJW3j58SOnKhWY/5g==}
+
+  cosmjs-types@0.10.1:
+    resolution: {integrity: sha512-CENXb4O5GN+VyB68HYXFT2SOhv126Z59631rZC56m8uMWa6/cSlFeai8BwZGT1NMepw0Ecf+U8XSOnBzZUWh9Q==}
 
   cosmjs-types@0.7.2:
     resolution: {integrity: sha512-vf2uLyktjr/XVAgEq0DjMxeAWh1yYREe7AMHDKd7EiHVqxBPCaBS+qEEQUkXbR9ndnckqr1sUG8BQhazh4X5lA==}
@@ -9368,7 +9374,7 @@ snapshots:
       - uploadthing
       - utf-8-validate
 
-  '@cosmos-kit/leap-metamask-cosmos-snap@0.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(bufferutil@4.0.9)(cosmjs-types@0.9.0)(utf-8-validate@5.0.10)':
+  '@cosmos-kit/leap-metamask-cosmos-snap@0.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(bufferutil@4.0.9)(cosmjs-types@0.10.1)(utf-8-validate@5.0.10)':
     dependencies:
       '@chain-registry/keplr': 1.74.300
       '@cosmjs/amino': 0.34.0
@@ -9376,7 +9382,7 @@ snapshots:
       '@cosmos-kit/core': 2.16.2(@netlify/blobs@8.2.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@leapwallet/cosmos-snap-provider': 0.1.26
       '@metamask/providers': 11.1.2
-      cosmjs-types: 0.9.0
+      cosmjs-types: 0.10.1
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -9434,10 +9440,10 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@cosmos-kit/leap@2.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(@walletconnect/types@2.21.6(@netlify/blobs@8.2.0))(bufferutil@4.0.9)(cosmjs-types@0.9.0)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)':
+  '@cosmos-kit/leap@2.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(@walletconnect/types@2.21.6(@netlify/blobs@8.2.0))(bufferutil@4.0.9)(cosmjs-types@0.10.1)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)':
     dependencies:
       '@cosmos-kit/leap-extension': 2.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@cosmos-kit/leap-metamask-cosmos-snap': 0.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(bufferutil@4.0.9)(cosmjs-types@0.9.0)(utf-8-validate@5.0.10)
+      '@cosmos-kit/leap-metamask-cosmos-snap': 0.15.2(@cosmjs/amino@0.34.0)(@cosmjs/proto-signing@0.34.0)(@netlify/blobs@8.2.0)(bufferutil@4.0.9)(cosmjs-types@0.10.1)(utf-8-validate@5.0.10)
       '@cosmos-kit/leap-mobile': 2.14.2(@cosmjs/amino@0.34.0)(@netlify/blobs@8.2.0)(@walletconnect/types@2.21.6(@netlify/blobs@8.2.0))(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -15078,6 +15084,8 @@ snapshots:
   cose-base@2.2.0:
     dependencies:
       layout-base: 2.0.1
+
+  cosmjs-types@0.10.1: {}
 
   cosmjs-types@0.7.2:
     dependencies:
