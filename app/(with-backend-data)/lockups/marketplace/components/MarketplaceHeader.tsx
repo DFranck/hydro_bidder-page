@@ -4,9 +4,10 @@ import { StyledText } from "@/components/StyledText"
 import { twMerge } from "tailwind-merge"
 import { MarketplaceSortBy, MarketplaceView } from "../types"
 import MarketplaceSortSelect from "./MarketplaceSortSelect"
+import { useBackendData } from "@/contract-apis/useBackendData"
+import { Store } from "lucide-react"
 import { isMyLockup } from "../utils/isMyLockup"
 import { useMarketplaceData } from "../context/MarketplaceDataProvider"
-import { useBackendData } from "@/contract-apis/useBackendData"
 
 interface MarketplaceHeaderProps {
   setView: (view: MarketplaceView) => void
@@ -14,6 +15,7 @@ interface MarketplaceHeaderProps {
   isAsideOpen: boolean
   setIsAsideOpen: (isOpen: boolean) => void
   results: number
+  handleNftMint: () => void
 }
 
 export default function MarketplaceHeader({
@@ -22,9 +24,11 @@ export default function MarketplaceHeader({
   isAsideOpen,
   setIsAsideOpen,
   results,
+  handleNftMint,
 }: MarketplaceHeaderProps) {
+  const {} = useBackendData()
   const { marketplaceLockups } = useMarketplaceData()
-  const { marketplaceLockups: myMarketplaceLockups } = useBackendData()
+  const { lockups, isLoading , marketplaceLockups: myMarketplaceLockups } = useBackendData()
 
   const myLockups = marketplaceLockups.filter((lockup) =>
     isMyLockup(lockup, myMarketplaceLockups)
@@ -89,6 +93,17 @@ export default function MarketplaceHeader({
               variant="label.meta.faded"
             >
               results
+            </StyledText>
+
+            <StyledText
+              as="button"
+              variant="button.primary"
+              className="flex items-center gap-2 p-2 whitespace-nowrap md:ml-6"
+              onClick={handleNftMint}
+              disabled={lockups.length === 0 || isLoading}
+            >
+              <Store className="size-4 text-black" />
+              Mint an NFT
             </StyledText>
           </div>
           <MarketplaceSortSelect setSortBy={setSortBy} />

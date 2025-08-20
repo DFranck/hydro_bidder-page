@@ -9,12 +9,15 @@ import MarketplaceLockupGrid from "./components/MarketplaceLockupGrid"
 import MarketplaceMyNftsSection from "./components/MarketplaceMyNftsSection"
 import { useMarketplaceData } from "./context/MarketplaceDataProvider"
 import { MarketplaceSortBy, MarketplaceView } from "./types"
+import { MintNfts } from "../MintNfts"
 import { isMyLockup } from "./utils/isMyLockup"
 
 export default function MarketplacePage() {
   const [view, setView] = useState<MarketplaceView>("grid")
   const [sortBy, setSortBy] = useState<MarketplaceSortBy>("price-asc")
   const [isAsideOpen, setIsAsideOpen] = useState(false)
+  const [mintNft, setMintNft] = useState(false)
+
   const { marketplaceLockups, filteredLockups } = useMarketplaceData()
   const { marketplaceLockups: myMarketplaceLockups } = useBackendData()
 
@@ -24,6 +27,10 @@ export default function MarketplacePage() {
 
   const isLoading =
     marketplaceLockups.length === 0 && filteredLockups.length === 0
+
+  function handleNftMint() {
+    setMintNft(true)
+  }
 
   return (
     <>
@@ -44,6 +51,7 @@ export default function MarketplacePage() {
             setSortBy={setSortBy}
             isAsideOpen={isAsideOpen}
             setIsAsideOpen={setIsAsideOpen}
+            handleNftMint={handleNftMint}
             results={generalLockupsCount}
           />
           {isLoading ? (
@@ -77,6 +85,7 @@ export default function MarketplacePage() {
           setSortBy={setSortBy}
           isAsideOpen={isAsideOpen}
           setIsAsideOpen={setIsAsideOpen}
+          handleNftMint={handleNftMint}
           results={generalLockupsCount}
         />
         <div className="flex flex-1">
@@ -117,6 +126,12 @@ export default function MarketplacePage() {
           </main>
         </div>
       </div>
+      <MintNfts
+        isCreationModalOpen={mintNft}
+        setIsCreationModalOpen={setMintNft}
+        handleCreationModalWindowClose={() => setMintNft(false)}
+        handleModalWindowCloseComplete={() => setMintNft(false)}
+      />
     </>
   )
 }
