@@ -186,6 +186,46 @@ export const tokenBasedTributeAmountTooltip = (
   </p>
 )
 
+export const pointBasedTributeRewardAmountTooltip = ({
+  tribute,
+}: {
+  tribute: {
+    power: string
+    unit?: string
+  }
+}) => (
+  <div className="space-y-2">
+    <p>
+      The estimated value of this bid&rsquo;s rewards cannot be determined due
+      to points not having a monetary value.
+    </p>
+    <p>
+      The estimated value you’ve received from this bid is {tribute.power}{" "}
+      {tribute.unit}
+    </p>
+  </div>
+)
+
+export const pointProgramUrlBasedTributeAmountTooltip = ({
+  pointProgramUrl,
+}: {
+  pointProgramUrl?: string
+}) =>
+  pointProgramUrl && (
+    <p>
+      Points don&rsquo;t need to be claimed. They are instead distributed by the
+      project team.{" "}
+      <StyledText
+        as={Link}
+        href={pointProgramUrl}
+        variant="link"
+        className="inline-flex items-center gap-1"
+      >
+        Learn More <Icon name="solid:arrow-up-right" />
+      </StyledText>
+    </p>
+  )
+
 export const pointBasedTributeAmountTooltip = ({
   pointProgramUrl,
 }: {
