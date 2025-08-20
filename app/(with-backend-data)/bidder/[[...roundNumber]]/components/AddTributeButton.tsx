@@ -25,6 +25,7 @@ export function AddTributeButton({
   const router = useRouter()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const [isModalOpened, setIsModalOpened] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const { address, bidsInfo, isWalletConnected, currentRoundId } = useBackendData()
   const { setToasts } = useToasts()
 
@@ -36,7 +37,7 @@ export function AddTributeButton({
 
   if (!bid) return <ErrorBox>The requested bid could not be found.</ErrorBox>
 
-  const disabled = !isWalletConnected || !verdict.ok
+  const disabled = !isWalletConnected || !verdict.ok || submitting
   const tooltip =
     !isWalletConnected
       ? "Please connect your wallet to add a tribute."
@@ -46,6 +47,7 @@ export function AddTributeButton({
 
   const onCloseComplete = async (amountBase: string, denom: string, description?: string) => {
     setToasts([toastMessages.addingTributeInProgress])
+    setSubmitting(true)
     try {
       await executeAddTribute({
         address: address!,
@@ -71,6 +73,8 @@ export function AddTributeButton({
       onAfterSuccess?.()
     } catch (error) {
       setToasts([toastMessages.addingTributeError(error as Error)])
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -94,6 +98,7 @@ export function AddTributeButton({
           warnings={verdict.ok ? verdict.warnings : []}
           onCloseAction={() => setIsModalOpened(false)}
           onCloseCompleteAction={onCloseComplete}
+          submitting={submitting}
         />
       )}
     </>

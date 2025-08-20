@@ -8,6 +8,7 @@ import type { BidRevampMetrics, TokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { useChain } from "@cosmos-kit/react"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { executeRefundTribute } from "../transactions/executeRefundTribute"
 import { canRefund } from "../utils/tributeRules"
 
@@ -22,9 +23,9 @@ const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
   const { address, currentRoundId, isWalletConnected } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
-
+const [submitting, setSubmitting] = useState(false)
   const verdict = canRefund(bid, tribute, currentRoundId, address ?? undefined)
-  const disabled = !isWalletConnected || !verdict.ok
+  const disabled = !isWalletConnected || !verdict.ok || submitting
   const tooltip = !isWalletConnected
     ? "Please connect your wallet to refund."
     : verdict.ok
@@ -32,6 +33,8 @@ const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
       : verdict.reason
 
   const onRefund = async () => {
+    if (submitting) return
+    setSubmitting(true)
     try {
       setToasts([toastMessages.refundingTributeInProgress])
       await executeRefundTribute({
@@ -54,6 +57,8 @@ const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
       onAfterSuccess?.()
     } catch (error: any) {
       setToasts([toastMessages.refundingTributeError(error as Error)])
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -67,7 +72,7 @@ const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
       tooltip={tooltip}
       onClick={disabled ? undefined : onRefund}
     >
-      {tribute.refunded ? "Refunded" : "Refund"}
+      {submitting ? "Refunding..." : tribute.refunded ? "Refunded" : "Refund"}
     </StyledText>
   )
 }

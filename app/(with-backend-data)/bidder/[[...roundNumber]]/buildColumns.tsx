@@ -62,14 +62,30 @@ export function buildColumns(
       key: "action",
       label: (
         <Tooltip
-          tipContents={"TODO add tooltip"}
-          classNamesForTooltip="-ml-12"
-        >
-          <div className="flex items-center gap-1">
-            Action
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
+  tipContents={
+    <div className="space-y-2 text-sm">
+      <div>
+        <strong>Add Tribute</strong>:
+      </div>
+      <ul className="list-disc pl-5">
+        <li>During the round: contributes to the pool.</li>
+        <li>After the round: does not affect voting.</li>
+        <li>Minimum: 1 base unit of the selected token.</li>
+        <li>Refundable as long as <em>no</em> liquidity has been deployed.</li>
+      </ul>
+      <div className="text-white/70">
+        The button is disabled if the wallet isn’t connected or liquidity has already been deployed.
+      </div>
+    </div>
+  }
+  classNamesForTooltip="-ml-12"
+>
+  <div className="flex items-center gap-1">
+    Action
+    <Icon name="circle-info" />
+  </div>
+</Tooltip>
+
       ),
       textAlign: "right",
       propsForCells: {

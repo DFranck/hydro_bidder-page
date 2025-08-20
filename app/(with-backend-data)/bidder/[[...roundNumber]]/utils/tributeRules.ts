@@ -1,4 +1,4 @@
-// utils/tributeRules.ts
+
 import type { BidRevampMetrics, TokenBasedTribute } from "@/contract-apis/types"
 
 export function hasNonZeroDeployment(bid: any) {
@@ -46,7 +46,7 @@ export function canAddTribute(bid: any, currentRoundId: number) {
   return { ok: true as const, warnings }
 }
 
-// ---------- UI status (pour l'affichage dans la table) ----------
+// ---------- UI status ----------
 export type TributeUiStatus = "voting-period" | "refundable" | "claimable" | "not-refundable"
 
 export function computeTributeUiStatus(

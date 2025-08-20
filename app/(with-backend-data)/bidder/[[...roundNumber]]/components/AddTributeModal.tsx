@@ -22,12 +22,14 @@ export function AddTributeModal({
   onCloseAction,
   onCloseCompleteAction,
   warnings = [],
+  submitting = false,
 }: {
   bid: AugmentedBidAfterWallet
   isOpened: boolean
   onCloseAction: () => void
   onCloseCompleteAction: (amountBase: string, denom: string, description?: string) => void
   warnings?: string[]
+  submitting?: boolean
 }) {
   const { currentRoundPrices } = useBackendData()
   const denomOptionsAll = useMemo(() => buildDenomOptions(currentRoundPrices), [currentRoundPrices])
@@ -76,7 +78,7 @@ export function AddTributeModal({
     [exponent]
   )
   const submit = () => {
-    if (!canSubmit) return
+    if (!canSubmit || isFetchingAssets || submitting) return 
     onCloseCompleteAction(amountBase, denom)
   }
 
@@ -149,7 +151,7 @@ export function AddTributeModal({
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
-            <StyledText as="button" variant="button.secondary" type="button" onClick={onCloseAction}>
+            <StyledText as="button" variant="button.secondary" type="button" onClick={onCloseAction} disabled={submitting}>
               Cancel
             </StyledText>
             <StyledText
@@ -157,24 +159,19 @@ export function AddTributeModal({
               variant="button.primary"
               type="button"
               onClick={submit}
-              disabled={!canSubmit}
+              disabled={!canSubmit || isFetchingAssets || submitting}
               tooltip={
-                assetsForSelect.length === 0
-                  ? "You have no balance that can be used as tribute, please add funds"
-                  : !denomOk
-                    ? "Select an asset"
-                    : !amountOk
-                      ? "Enter a valid amount"
-                      : notEnough
-                        ? "Amount exceeds your available balance"
-                        : belowOneBase
-                          ? `Amount is below 1 base unit. Minimum is ${minDisplay} ${selected?.name ?? ""}`
-                          : undefined
-              }
-            >
-              Add
-            </StyledText>
-
+            submitting ? "Submitting…" :
+            assetsForSelect.length === 0 ? "You have no balance that can be used as tribute, please add funds"
+            : !denomOk ? "Select an asset"
+            : !amountOk ? "Enter a valid amount"
+            : notEnough ? "Amount exceeds your available balance"
+            : belowOneBase ? `Amount is below 1 base unit. Minimum is ${minDisplay} ${selected?.name ?? ""}`
+            : undefined
+          }
+        >
+          {submitting ? "Adding…" : "Add"}
+        </StyledText>
           </div>
         </div>
       </div>

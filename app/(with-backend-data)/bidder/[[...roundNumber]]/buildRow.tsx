@@ -21,7 +21,7 @@ export function buildRow(
 ) {
   const { onAfterSuccess } = options
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
-const {address, currentRoundId}=useBackendData()
+const {currentRoundId}=useBackendData()
   if (requestedPreHydro) {
     const bid = passedBid as PreHydroBid
     rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
@@ -69,6 +69,11 @@ const {address, currentRoundId}=useBackendData()
         This tribute has already been refunded.  
         Voters may now claim the funds.
       </div>
+      <div>
+        <strong>Not refundable</strong>:  
+        Liquidity was deployed for this bid;  
+        refund is blocked by the contract.
+      </div>
     </div>
   }
   classNamesForTooltip="-ml-12"
@@ -79,15 +84,32 @@ const {address, currentRoundId}=useBackendData()
   </div>
 </Tooltip>
             </th>
-            <th className="py-2 pr-0 text-right"> <Tooltip
-                      tipContents={"TODO add tooltip"}
-                      classNamesForTooltip="-ml-12"
-                    >
-                      <div className="flex items-center gap-1">
-                        Action
-                        <Icon name="circle-info" />
-                      </div>
-                    </Tooltip></th>
+            <th className="py-2 pr-0 text-right"><Tooltip
+  tipContents={
+    <div className="space-y-2 text-sm">
+      <div>
+        <strong>Refund</strong>:
+      </div>
+      <ul className="list-disc pl-5">
+        <li>Only the tribute’s <em>depositor</em> can refund.</li>
+        <li>Allowed <em>after</em> the round ends.</li>
+        <li>Blocked during the voting period.</li>
+        <li>Blocked once liquidity has been deployed.</li>
+        <li>After refund: the tribute becomes <em>Claimable</em> for voters.</li>
+      </ul>
+      <div className="text-white/70">
+        The button is disabled if you’re not the depositor, it’s already refunded, we’re in the voting period, or liquidity was deployed.
+      </div>
+    </div>
+  }
+  classNamesForTooltip="-ml-12"
+>
+  <div className="flex items-center gap-1">
+    Action
+    <Icon name="circle-info" />
+  </div>
+</Tooltip>
+</th>
           </tr>
         </thead>
         <tbody>
