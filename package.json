@@ -24,6 +24,7 @@
     "@cosmos-kit/keplr": "^2.14.7",
     "@cosmos-kit/leap": "^2.14.7",
     "@cosmos-kit/react": "^2.21.7",
+    "@floating-ui/react": "^0.27.15",
     "@interchain-ui/react": "^1.26.3",
     "@netlify/blobs": "^8.2.0",
     "@netlify/functions": "^3.1.10",
