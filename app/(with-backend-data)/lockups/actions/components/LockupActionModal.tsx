@@ -82,7 +82,7 @@ export default function LockupActionModal<T extends LockupActionType>({
     <ModalWindow
       isOpen={isOpen}
       onClose={onClose}
-      className="max-w-[98%] sm:max-w-lg md:max-w-xl lg:max-w-2xl"
+      className="max-w-[98%] sm:max-w-lg md:max-w-3xl"
     >
       <div className="flex max-h-[95vh] flex-col overflow-hidden rounded-xl border-2 border-white/20 bg-black p-0">
         <div className="min-h-[48px] shrink-0 gap-[10px] rounded-t-xl bg-[#FFE1B81A] px-3 py-3 sm:h-[48px] sm:px-6">

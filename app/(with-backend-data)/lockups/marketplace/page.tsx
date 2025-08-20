@@ -1,13 +1,16 @@
 "use client"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
+import { useBackendData } from "@/contract-apis/useBackendData"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 import MarketplaceFilters from "./components/MarketplaceFilters"
 import MarketplaceHeader from "./components/MarketplaceHeader"
 import MarketplaceLockupGrid from "./components/MarketplaceLockupGrid"
+import MarketplaceMyNftsSection from "./components/MarketplaceMyNftsSection"
 import { useMarketplaceData } from "./context/MarketplaceDataProvider"
 import { MarketplaceSortBy, MarketplaceView } from "./types"
 import { MintNfts } from "../MintNfts"
+import { isMyLockup } from "./utils/isMyLockup"
 
 export default function MarketplacePage() {
   const [view, setView] = useState<MarketplaceView>("grid")
@@ -16,6 +19,11 @@ export default function MarketplacePage() {
   const [mintNft, setMintNft] = useState(false)
 
   const { marketplaceLockups, filteredLockups } = useMarketplaceData()
+  const { marketplaceLockups: myMarketplaceLockups } = useBackendData()
+
+  const generalLockupsCount = filteredLockups.filter(
+    (lockup) => !isMyLockup(lockup, myMarketplaceLockups)
+  ).length
 
   const isLoading =
     marketplaceLockups.length === 0 && filteredLockups.length === 0
@@ -43,15 +51,27 @@ export default function MarketplacePage() {
             setSortBy={setSortBy}
             isAsideOpen={isAsideOpen}
             setIsAsideOpen={setIsAsideOpen}
-            results={filteredLockups.length}
             handleNftMint={handleNftMint}
+            results={generalLockupsCount}
           />
           {isLoading ? (
             <div className="flex h-full w-full -translate-y-20 items-center justify-center text-sm text-white/60">
               <LoadingSpinner isLoading={isLoading} />
             </div>
-          ) : view === "grid" && filteredLockups.length > 0 ? (
-            <MarketplaceLockupGrid lockups={filteredLockups} sortBy={sortBy} />
+          ) : view === "grid" ? (
+            <>
+              <MarketplaceMyNftsSection allLockups={marketplaceLockups} />
+              {generalLockupsCount > 0 ? (
+                <MarketplaceLockupGrid
+                  lockups={filteredLockups}
+                  sortBy={sortBy}
+                />
+              ) : (
+                <div className="flex h-full w-full -translate-y-20 items-center justify-center text-sm text-white/40">
+                  No other lockups found with current filters.
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex h-full w-full -translate-y-20 items-center justify-center text-sm text-white/40">
               No lockups found with current filters.
@@ -65,8 +85,8 @@ export default function MarketplacePage() {
           setSortBy={setSortBy}
           isAsideOpen={isAsideOpen}
           setIsAsideOpen={setIsAsideOpen}
-          results={filteredLockups.length}
           handleNftMint={handleNftMint}
+          results={generalLockupsCount}
         />
         <div className="flex flex-1">
           <aside
@@ -84,11 +104,20 @@ export default function MarketplacePage() {
               <div className="flex h-full w-full -translate-y-20 items-center justify-center text-sm text-white/60">
                 <LoadingSpinner isLoading={isLoading} />
               </div>
-            ) : view === "grid" && filteredLockups.length > 0 ? (
-              <MarketplaceLockupGrid
-                lockups={filteredLockups}
-                sortBy={sortBy}
-              />
+            ) : view === "grid" ? (
+              <>
+                <MarketplaceMyNftsSection allLockups={marketplaceLockups} />
+                {generalLockupsCount > 0 ? (
+                  <MarketplaceLockupGrid
+                    lockups={filteredLockups}
+                    sortBy={sortBy}
+                  />
+                ) : (
+                  <div className="flex h-full w-full -translate-y-20 items-center justify-center text-sm text-white/40">
+                    No other lockups found with current filters.
+                  </div>
+                )}
+              </>
             ) : (
               <div className="flex h-full w-full -translate-y-20 items-center justify-center text-sm text-white/40">
                 No lockups found with current filters.

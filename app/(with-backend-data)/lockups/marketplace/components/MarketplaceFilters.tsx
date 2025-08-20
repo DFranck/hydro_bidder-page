@@ -38,9 +38,8 @@ export default function MarketplaceFilters({
       const status = getLockupStatus(lockup)
       const isMine = isMyLockup(lockup, marketplaceLockups)
 
-      if (isMine) {
-        acc["isMine"] = (acc["isMine"] || 0) + 1
-      } else {
+      // Only count non-user lockups for the status filters
+      if (!isMine) {
         if (status === "for-sale") {
           acc["for-sale"] = (acc["for-sale"] || 0) + 1
         }
@@ -84,14 +83,11 @@ export default function MarketplaceFilters({
                     "border-palette-green bg-palette-green/20",
                   status === "not-for-sale" &&
                     "border-transparent bg-palette-beige/20",
-                  status === "isMine" && "border-palette-beige ",
                 )}
               >
                 {status === "for-sale"
                   ? "For Sale"
-                  : status === "not-for-sale"
-                    ? "Not For Sale"
-                    : "My Lockups"}
+                  : "Not For Sale"}
               </StyledText>
               <div className="flex gap-2">
                 {filters.status.includes(status) && (

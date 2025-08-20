@@ -6,6 +6,8 @@ import { MarketplaceSortBy, MarketplaceView } from "../types"
 import MarketplaceSortSelect from "./MarketplaceSortSelect"
 import { useBackendData } from "@/contract-apis/useBackendData"
 import { Store } from "lucide-react"
+import { isMyLockup } from "../utils/isMyLockup"
+import { useMarketplaceData } from "../context/MarketplaceDataProvider"
 
 interface MarketplaceHeaderProps {
   setView: (view: MarketplaceView) => void
@@ -24,7 +26,13 @@ export default function MarketplaceHeader({
   results,
   handleNftMint,
 }: MarketplaceHeaderProps) {
-  const { lockups, isLoading } = useBackendData()
+  const {} = useBackendData()
+  const { marketplaceLockups } = useMarketplaceData()
+  const { lockups, isLoading , marketplaceLockups: myMarketplaceLockups } = useBackendData()
+
+  const myLockups = marketplaceLockups.filter((lockup) =>
+    isMyLockup(lockup, myMarketplaceLockups)
+  )
   return (
     <div className="flex w-full flex-col">
       <div className="mb-4 w-full rounded-lg border border-white/20 bg-black/40 p-6">
@@ -77,11 +85,11 @@ export default function MarketplaceHeader({
               as="output"
               className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-black text-black"
             >
-              {results}
+              {results + myLockups.length}
             </StyledText>
             <StyledText
               as={"label"}
-              aria-label={`${results} results`}
+              aria-label={`${results + myLockups.length} results`}
               variant="label.meta.faded"
             >
               results

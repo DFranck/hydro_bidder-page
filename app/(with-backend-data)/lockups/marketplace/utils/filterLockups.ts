@@ -25,15 +25,14 @@ export function filterLockups(
         ? Number(filters.maxPrice) * Math.pow(10, exponent)
         : undefined
 
-    // Exclusive status filtering
-    if (filters.status.length > 0) {
+    // Status filtering - only apply to non-user lockups
+    if (filters.status.length > 0 && !isMine) {
       const isForSale = status === "for-sale"
       const isNotForSale = status === "not-for-sale"
 
       const shouldInclude =
-        (filters.status.includes("for-sale") && isForSale && !isMine) ||
-        (filters.status.includes("not-for-sale") && isNotForSale && !isMine) ||
-        (filters.status.includes("isMine") && isMine)
+        (filters.status.includes("for-sale") && isForSale) ||
+        (filters.status.includes("not-for-sale") && isNotForSale)
 
       if (!shouldInclude) {
         return false
