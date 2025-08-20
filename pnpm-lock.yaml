@@ -23,6 +23,9 @@ importers:
       '@cosmjs/cosmwasm-stargate':
         specifier: 0.34.0
         version: 0.34.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@cosmjs/encoding':
+        specifier: ^0.36.0
+        version: 0.36.0
       '@cosmjs/proto-signing':
         specifier: 0.34.0
         version: 0.34.0
@@ -475,6 +478,9 @@ packages:
 
   '@cosmjs/encoding@0.34.0':
     resolution: {integrity: sha512-oWUA9VTnr74GHMdMCvaaCfP0g66Y9iT7TA8vkWB1sfd+fO5FznAcMACEiF+sBE0TBoKGr02tYCJDCe9XNp2gOg==}
+
+  '@cosmjs/encoding@0.36.0':
+    resolution: {integrity: sha512-xFJNd1096EqNxTsdOJN+DODC5HxKmqY0L2iWEnvPFq9UD/W2olYnv0bxV0S+XTs5tF/8/NAZHU3KXxeHTZ97DA==}
 
   '@cosmjs/json-rpc@0.32.4':
     resolution: {integrity: sha512-/jt4mBl7nYzfJ2J/VJ+r19c92mUKF0Lt0JxM3MXEJl7wlwW5haHAWtzRujHkyYMXOwIR+gBqT2S0vntXVBRyhQ==}
@@ -8910,6 +8916,12 @@ snapshots:
       readonly-date: 1.0.0
 
   '@cosmjs/encoding@0.34.0':
+    dependencies:
+      base64-js: 1.5.1
+      bech32: 1.1.4
+      readonly-date: 1.0.0
+
+  '@cosmjs/encoding@0.36.0':
     dependencies:
       base64-js: 1.5.1
       bech32: 1.1.4
