@@ -19,11 +19,19 @@ export async function executeRefundTribute({
   memo?: string
   getSigningCosmWasmClient: () => Promise<SigningCosmWasmClient>
 }) {
-  const tributeContractAddress = process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
-  invariant(tributeContractAddress, "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set")
+  const tributeContractAddress =
+    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS
+  invariant(
+    tributeContractAddress,
+    "NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS is not set"
+  )
 
   const client = await getSigningCosmWasmClient()
-  const tributeClient = new TributeBaseClient(client, address, tributeContractAddress)
+  const tributeClient = new TributeBaseClient(
+    client,
+    address,
+    tributeContractAddress
+  )
 
   return tributeClient.refundTribute(
     { proposalId, roundId, trancheId, tributeId },

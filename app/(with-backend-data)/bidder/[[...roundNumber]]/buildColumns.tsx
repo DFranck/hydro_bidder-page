@@ -4,7 +4,7 @@ import {
   bidTablesFirstColumnTooltips,
   liveBidTributeAprColumnTooltip,
   metricsStatusColumnTooltip,
-  pastBidTributeAprMetricsPageColumnTooltip
+  pastBidTributeAprMetricsPageColumnTooltip,
 } from "@/components/ToolTips"
 import { Tooltip } from "@/components/Tooltip"
 import { BidRevampMetrics } from "@/contract-apis/types"
@@ -32,40 +32,40 @@ export function buildColumns(
       initialSortDirection: "ASC",
       customValueGetter: (row) => row._bid.title,
     },
-     {
-          key: "tributeApr",
-          label: (
-            <Tooltip
-              tipContents={
-                requestedRoundId === currentRoundId
-                  ? liveBidTributeAprColumnTooltip
-                  : pastBidTributeAprMetricsPageColumnTooltip
-              }
-              classNamesForTooltip="-ml-12"
-            >
-              <div className="flex items-center gap-1">
-                Voter APR
-                <Icon name="circle-info" />
-              </div>
-            </Tooltip>
-          ),
-          textAlign: "right",
-          isSortable: true,
-          initialSortDirection: "DESC",
-          customValueGetter: (row) =>
-            requestedPreHydro
-              ? 0
-              : ((row._bid as BidRevampMetrics)?.apr_tribute ?? 0),
-        },
     {
-  key: "tributeCount",
-  label:  "Tribute Count",
-  textAlign: "right",
-  isSortable: true,
-  initialSortDirection: "DESC",
-  customValueGetter: (row) => row.tributeCount ?? 0,
-  propsForCells: { className: "tabular-nums text-right" },
-},
+      key: "tributeApr",
+      label: (
+        <Tooltip
+          tipContents={
+            requestedRoundId === currentRoundId
+              ? liveBidTributeAprColumnTooltip
+              : pastBidTributeAprMetricsPageColumnTooltip
+          }
+          classNamesForTooltip="-ml-12"
+        >
+          <div className="flex items-center gap-1">
+            Voter APR
+            <Icon name="circle-info" />
+          </div>
+        </Tooltip>
+      ),
+      textAlign: "right",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      customValueGetter: (row) =>
+        requestedPreHydro
+          ? 0
+          : ((row._bid as BidRevampMetrics)?.apr_tribute ?? 0),
+    },
+    {
+      key: "tributeCount",
+      label: "Tribute Count",
+      textAlign: "right",
+      isSortable: true,
+      initialSortDirection: "DESC",
+      customValueGetter: (row) => row.tributeCount ?? 0,
+      propsForCells: { className: "tabular-nums text-right" },
+    },
     {
       key: "status",
       label: (
@@ -85,7 +85,8 @@ export function buildColumns(
       },
       isSortable: true,
       customValueGetter: (row) => ("status" in row._bid ? row._bid.status : ""),
-    },{
+    },
+    {
       key: "action",
       label: "Action",
       textAlign: "right",
@@ -94,8 +95,6 @@ export function buildColumns(
       },
       isSortable: true,
       initialSortDirection: "ASC",
-      
-
-      }
+    },
   ]
 }

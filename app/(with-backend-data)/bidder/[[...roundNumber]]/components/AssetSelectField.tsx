@@ -1,8 +1,11 @@
-// File: app/(with-backend-data)/shared/AssetSelectField.tsx
-
 "use client"
 
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select"
 import { useMemo } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -23,7 +26,11 @@ type Props = {
 
 function InlineSpinner({ label = "Loading…" }: { label?: string }) {
   return (
-    <span className="inline-flex items-center gap-2" aria-live="polite" aria-busy="true">
+    <span
+      className="inline-flex items-center gap-2"
+      aria-live="polite"
+      aria-busy="true"
+    >
       <span
         className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
         aria-hidden="true"
@@ -41,7 +48,10 @@ export function AssetSelectField({
   loadingLabel = "Loading assets…",
   onChange,
 }: Props) {
-  const selected = useMemo(() => options.find((o) => o.value === value), [options, value])
+  const selected = useMemo(
+    () => options.find((o) => o.value === value),
+    [options, value]
+  )
   const isDisabled = disabled || loading || options.length === 0
 
   return (
@@ -54,7 +64,7 @@ export function AssetSelectField({
         <div className="flex items-center">
           <Select value={value} onValueChange={onChange} disabled={isDisabled}>
             <SelectTrigger
-              className="w-full rounded-md bg-black border-0 ring-0 cursor-pointer disabled:cursor-not-allowed"
+              className="w-full cursor-pointer rounded-md border-0 bg-black ring-0 disabled:cursor-not-allowed"
               aria-busy={loading ? "true" : "false"}
               aria-live="polite"
             >
@@ -65,13 +75,16 @@ export function AssetSelectField({
                   ) : isDisabled && options.length === 0 ? (
                     "No available assets"
                   ) : (
-                    selected?.name ?? "Select asset"
+                    (selected?.name ?? "Select asset")
                   )}
                 </span>
 
                 <span className="text-white/70">
                   {selected?.price != null
-                    ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(selected.price)
+                    ? new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      }).format(selected.price)
                     : "—"}{" "}
                   / token
                 </span>
@@ -94,7 +107,10 @@ export function AssetSelectField({
                   <span>{o.name}</span>
                   <span>
                     {o.price != null
-                      ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(o.price)
+                      ? new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(o.price)
                       : "—"}{" "}
                     / token
                   </span>

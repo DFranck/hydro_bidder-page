@@ -71,7 +71,13 @@ export function useLateTributes(
     return () => {
       mounted = false
     }
-  }, [tributeContractAddress, requestedRoundId, currentRoundId, getCosmWasmClient, refreshKey])
+  }, [
+    tributeContractAddress,
+    requestedRoundId,
+    currentRoundId,
+    getCosmWasmClient,
+    refreshKey,
+  ])
 
   return { lateByProposal: byProposal, loading, error }
 }

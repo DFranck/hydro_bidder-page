@@ -1,4 +1,3 @@
-// components/RefundTrubuteButton.tsx
 "use client"
 
 import { StyledText } from "@/components/StyledText"
@@ -23,7 +22,7 @@ const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
   const { address, currentRoundId, isWalletConnected } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
   const { setToasts } = useToasts()
-const [submitting, setSubmitting] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const verdict = canRefund(bid, tribute, currentRoundId, address ?? undefined)
   const disabled = !isWalletConnected || !verdict.ok || submitting
   const tooltip = !isWalletConnected
@@ -51,8 +50,8 @@ const [submitting, setSubmitting] = useState(false)
         body: JSON.stringify({ roundIds: [Number(bid.roundId)] }),
       })
       if (!res.ok) throw new Error(await res.text())
-        
-        setToasts([toastMessages.refundingTributeSuccess])
+
+      setToasts([toastMessages.refundingTributeSuccess])
       router.refresh()
       onAfterSuccess?.()
     } catch (error: any) {

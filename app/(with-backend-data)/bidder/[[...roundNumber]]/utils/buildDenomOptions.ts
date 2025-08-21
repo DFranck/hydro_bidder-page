@@ -1,5 +1,4 @@
-
-import type { PriceDetails } from "@/contract-apis/types";
+import type { PriceDetails } from "@/contract-apis/types"
 
 export type DenomOption = {
   name: string
@@ -8,7 +7,9 @@ export type DenomOption = {
   exponent?: number
 }
 
-export function buildDenomOptions(currentRoundPrices: Record<string, PriceDetails> | undefined): DenomOption[] {
+export function buildDenomOptions(
+  currentRoundPrices: Record<string, PriceDetails> | undefined
+): DenomOption[] {
   if (!currentRoundPrices) return []
   return Object.entries(currentRoundPrices).map(([value, asset]) => ({
     name: (asset?.token_symbol ?? value).replace(".", " "),
@@ -17,4 +18,3 @@ export function buildDenomOptions(currentRoundPrices: Record<string, PriceDetail
     exponent: asset?.token_exponent,
   }))
 }
-

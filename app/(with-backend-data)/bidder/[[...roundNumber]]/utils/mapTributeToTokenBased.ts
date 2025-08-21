@@ -1,4 +1,3 @@
-
 import type { Tribute } from "@/app/ts_types/TributeBase.types"
 import { getCoinWithRoundPrices } from "@/contract-apis/getCoinWithRoundPrices"
 import type { RoundPrices, TokenBasedTribute } from "@/contract-apis/types"
@@ -11,9 +10,7 @@ export function mapTributeToTokenBased(
 ): TokenBasedTribute {
   const priced = getCoinWithRoundPrices({ coin: t.funds, roundPrices })
   return {
-    // raw (camelCase)
     ...keysFromSnakeToCamelCase(omit(t, "proposal_id")),
-    // UI fields aligned with augmentRoundDeploymentMetrics
     id: t.tribute_id,
     bidId: Number(t.proposal_id),
     amount: priced.printableAmount,

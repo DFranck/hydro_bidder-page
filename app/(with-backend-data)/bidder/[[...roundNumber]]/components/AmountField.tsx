@@ -22,7 +22,10 @@ export function AmountField({
   usdApprox,
 }: Props) {
   const formatUSD = (n: number) =>
-    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(n)
 
   return (
     <div>
@@ -35,7 +38,7 @@ export function AmountField({
           {/* End-adornment: ≈ $… (se décale à droite) */}
           {usdApprox != null && Number.isFinite(usdApprox) && (
             <span
-              className="pointer-events-none absolute right-9 top-1/2 -translate-y-1/2 text-sm text-white/70"
+              className="pointer-events-none absolute top-1/2 right-9 -translate-y-1/2 text-sm text-white/70"
               aria-hidden="true"
             >
               ≈ {formatUSD(usdApprox)}
@@ -52,7 +55,7 @@ export function AmountField({
             placeholder="0.00"
             value={amount}
             onChange={(e) => onAmountChange(e.target.value)}
-            className="w-full bg-transparent outline-none border-0 focus:ring-0 "
+            className="w-full border-0 bg-transparent outline-none focus:ring-0 "
           />
         </div>
       </fieldset>
@@ -60,7 +63,8 @@ export function AmountField({
       {availableText && (
         <div className="mt-2 flex items-center justify-between text-xs text-white/60">
           <span>
-            Available:&nbsp;<span className="text-white/80">{availableText}</span>
+            Available:&nbsp;
+            <span className="text-white/80">{availableText}</span>
           </span>
           <button
             type="button"

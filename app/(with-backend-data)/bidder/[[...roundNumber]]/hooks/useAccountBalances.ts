@@ -7,7 +7,11 @@ export type UseAccountBalancesParams = {
   getStargateClient: () => Promise<Pick<StargateClient, "getAllBalances">>
 }
 
-export function useAccountBalances({ isOpened, address, getStargateClient }: UseAccountBalancesParams) {
+export function useAccountBalances({
+  isOpened,
+  address,
+  getStargateClient,
+}: UseAccountBalancesParams) {
   const [balances, setBalances] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 

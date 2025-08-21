@@ -12,7 +12,11 @@ export function useDenomOptionsWithBalances({
 }) {
   return useMemo(() => {
     if (!isConnected) {
-      return { withBal: denomOptions, withoutBal: [] as DenomOption[], zeroSet: new Set<string>() }
+      return {
+        withBal: denomOptions,
+        withoutBal: [] as DenomOption[],
+        zeroSet: new Set<string>(),
+      }
     }
     const yes: DenomOption[] = []
     const no: DenomOption[] = []

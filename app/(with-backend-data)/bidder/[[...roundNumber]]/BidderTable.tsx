@@ -1,4 +1,3 @@
-// app/(with-backend-data)/bidder/[[...roundNumber]]/BidderTable.tsx
 "use client"
 
 import { CollapsibleTable } from "@/components/CollapsibleTable"
@@ -26,16 +25,23 @@ export function BidderTable({
 }) {
   const [showBidsWithoutTributes, setShowBidsWithoutTributes] = useState(false)
   const [openedRows, setOpenedRows] = useState<Array<string | number>>([])
-  const [lateKey, setLateKey] = useState(0);
-  const bumpLateKey = useCallback(() => setLateKey(k => k + 1), []);
+  const [lateKey, setLateKey] = useState(0)
+  const bumpLateKey = useCallback(() => setLateKey((k) => k + 1), [])
 
-  const tributeContractAddress = process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS!
-  const { bidsInfo, currentRoundId, metricsForPreHydroBids,currentRoundPrices } = useBackendData()
+  const tributeContractAddress =
+    process.env.NEXT_PUBLIC_TRIBUTE_CONTRACT_ADDRESS!
+  const {
+    bidsInfo,
+    currentRoundId,
+    metricsForPreHydroBids,
+    currentRoundPrices,
+  } = useBackendData()
 
   const tableId = `bidder-table-${trancheId}`
   const bids = Object.values(bidsInfo)
   const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
-  const highestRoundIdWithData = max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
+  const highestRoundIdWithData =
+    max(postHydroRoundIdsWithBidData) ?? PRE_HYDRO_ROUND_ID
 
   const requestedRoundId =
     requestedRoundNumber === null
@@ -45,7 +51,6 @@ export function BidderTable({
         : PRE_HYDRO_ROUND_ID
 
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
-
 
   const { lateByProposal } = useLateTributes(
     tributeContractAddress,
@@ -61,7 +66,9 @@ export function BidderTable({
 
     const bidsInTranche = requestedPreHydro
       ? bidsToRender
-      : bidsToRender.filter((bid) => (bid as BidRevampMetrics).trancheId === trancheId)
+      : bidsToRender.filter(
+          (bid) => (bid as BidRevampMetrics).trancheId === trancheId
+        )
 
     const filtered = bidsInTranche.filter((x) => {
       if (requestedPreHydro || showBidsWithoutTributes) return true
@@ -79,8 +86,13 @@ export function BidderTable({
           : (() => {
               const b = bid as BidRevampMetrics
               const lateRaw = lateByProposal[Number(b.id)] ?? []
-              const lateNormalized = lateRaw.map((t) => mapTributeToTokenBased(t, currentRoundPrices))
-              const merged = [...(b.tokenBasedTributes ?? []), ...lateNormalized]
+              const lateNormalized = lateRaw.map((t) =>
+                mapTributeToTokenBased(t, currentRoundPrices)
+              )
+              const merged = [
+                ...(b.tokenBasedTributes ?? []),
+                ...lateNormalized,
+              ]
               return { ...b, tokenBasedTributes: merged }
             })(),
         requestedPreHydro,
@@ -102,7 +114,7 @@ export function BidderTable({
     requestedPreHydro,
     requestedRoundId,
     lateByProposal,
-    currentRoundPrices, 
+    currentRoundPrices,
   ])
 
   const columns = useMemo<ColumnObject<BidderRow, keyof BidderRow>[]>(() => {
@@ -111,7 +123,9 @@ export function BidderTable({
 
   const toggleRow = (bidId: string | number) => {
     setOpenedRows((prev) =>
-      prev.includes(bidId) ? prev.filter((id) => id !== bidId) : [...prev, bidId]
+      prev.includes(bidId)
+        ? prev.filter((id) => id !== bidId)
+        : [...prev, bidId]
     )
   }
 
@@ -127,7 +141,6 @@ export function BidderTable({
           isOpened={isOpened}
           canOpen={canOpen}
           onToggle={toggleRow}
-          
         />
       )
     },

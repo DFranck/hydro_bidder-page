@@ -1,4 +1,3 @@
-
 "use client"
 
 import { ErrorBox } from "@/components/ErrorBox"
@@ -26,26 +25,37 @@ export function AddTributeButton({
   const { getSigningCosmWasmClient } = useChain("neutron")
   const [isModalOpened, setIsModalOpened] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const { address, bidsInfo, isWalletConnected, currentRoundId } = useBackendData()
+  const { address, bidsInfo, isWalletConnected, currentRoundId } =
+    useBackendData()
   const { setToasts } = useToasts()
 
   const bid = bidsInfo[bidId]
   const verdict = useMemo(
-    () => (bid ? canAddTribute(bid, currentRoundId) : { ok: false as const, reason: "Bid not found", warnings: [] as string[] }),
+    () =>
+      bid
+        ? canAddTribute(bid, currentRoundId)
+        : {
+            ok: false as const,
+            reason: "Bid not found",
+            warnings: [] as string[],
+          },
     [bid, currentRoundId]
   )
 
   if (!bid) return <ErrorBox>The requested bid could not be found.</ErrorBox>
 
   const disabled = !isWalletConnected || !verdict.ok || submitting
-  const tooltip =
-    !isWalletConnected
-      ? "Please connect your wallet to add a tribute."
-      : verdict.ok
-        ? undefined
-        : verdict.reason
+  const tooltip = !isWalletConnected
+    ? "Please connect your wallet to add a tribute."
+    : verdict.ok
+      ? undefined
+      : verdict.reason
 
-  const onCloseComplete = async (amountBase: string, denom: string, description?: string) => {
+  const onCloseComplete = async (
+    amountBase: string,
+    denom: string,
+    description?: string
+  ) => {
     setToasts([toastMessages.addingTributeInProgress])
     setSubmitting(true)
     try {
