@@ -81,6 +81,13 @@ export default function Navigation() {
           target: "_blank",
         },
         {
+          label: "Bidder",
+          href: "/bidder",
+          iconLeft: "solid:user",
+          iconRight: "arrow-up-right-from-square",
+          target: "",
+        },
+        {
           label: "Blog",
           href: "https://x.com/hydromarkets/articles",
           iconLeft: "solid:newspaper",
