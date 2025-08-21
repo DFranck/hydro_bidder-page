@@ -1,9 +1,11 @@
 "use client"
 
+import { Icon } from "@/components/Icon"
 import { TD, TR } from "@/components/StyledTable"
 import { RowRenderProps } from "@/components/StyledTable/types"
 import { twMerge } from "tailwind-merge"
 import { BidderRow } from "./BidderPage"
+import { MiniCollapsible } from "./components/MiniCollapsible"
 type Props = RowRenderProps<BidderRow, keyof BidderRow> & {
   isOpened: boolean
   canOpen: boolean
@@ -44,14 +46,24 @@ export function BidderTableItem({
       </TR>
 
       {isOpened && row.additionalTributes ? (
-        <tr>
-          <TD colSpan={Object.keys(row).length} className="bg-palette-green/5 p-4">
-            {row.additionalTributes}
+  <tr>
+    <TD colSpan={Object.keys(row).length} className="p-0 bg-transparent">
+      <MiniCollapsible
+        title={
+          <div className="flex items-center gap-2">
+            <Icon name="solid:gift" />
+            <span>Tributes</span>
+            <span className="opacity-70">({row.tributeCount ?? 0})</span>
+          </div>
+        }
+      >
+              {row.additionalTributes}
+            </MiniCollapsible>
           </TD>
         </tr>
       ) : null}
 
-      {/* petit spacer visuel entre les groupes */}
+
       <tr aria-hidden>
         <td className="h-1" colSpan={Object.keys(row).length} />
       </tr>

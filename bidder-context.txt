@@ -18,12 +18,9 @@ import max from "lodash/max"
 import range from "lodash/range"
 import uniq from "lodash/uniq"
 import { Fragment, ReactNode } from "react"
-import { twJoin } from "tailwind-merge"
 import { BidderTable } from "./BidderTable"
-import ExperimentalTable from "./ExperimentalTable"
 
 export const PRE_HYDRO_ROUND_ID = -1
-export const EXPERIMENTAL_ROUND_ID = -2
 
 export interface BidderRow {
   _bid: BidRevampMetrics | PreHydroBid
@@ -31,8 +28,8 @@ export interface BidderRow {
   status: ReactNode
   hasTributes: boolean
   additionalTributes?: ReactNode
-   tributeCount: number   
-   action?: ReactNode 
+  tributeCount: number
+  action?: ReactNode
 }
 
 export function BidderPage({
@@ -42,7 +39,7 @@ export function BidderPage({
 }) {
   const { bidsInfo, currentRoundId, tranches } = useBackendData()
   const bids = Object.values(bidsInfo)
- 
+
   const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
 
   const highestRoundIdWithData =
@@ -53,13 +50,9 @@ export function BidderPage({
       ? Math.min(highestRoundIdWithData, currentRoundId - 1)
       : typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
         ? Math.min(requestedRoundNumber - 1, highestRoundIdWithData)
-        : typeof requestedRoundNumber === "string" &&
-            requestedRoundNumber === "experimental"
-          ? EXPERIMENTAL_ROUND_ID
-          : PRE_HYDRO_ROUND_ID
-          
+        : PRE_HYDRO_ROUND_ID
+
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
-  const requestedExperimental = requestedRoundId === EXPERIMENTAL_ROUND_ID
   const allRoundIds = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
 
   const displayTranches = tranches.map((x) => {
@@ -93,20 +86,6 @@ export function BidderPage({
     }
   })
 
-  const isExperimentalActive = requestedRoundId === EXPERIMENTAL_ROUND_ID
-
-  menuItems.push({
-    href: "/bidder/experimental",
-    icon: "solid:flask",
-    isActive: isExperimentalActive,
-    label: "Experimental",
-    className: twJoin(
-      isExperimentalActive
-        ? "bg-palette-cyan hover:bg-palette-cyan/80"
-        : "text-palette-cyan"
-    ),
-  })
-
   return (
     <>
       <StatCardsContainer>
@@ -123,7 +102,8 @@ export function BidderPage({
           <h2 className="sr-only">PoL Bidder by Round</h2>
 
           <StyledText variant="footnote">
-           A bidder can be refunded at the end of its round, and tributes can be added at any time during or after the round.
+            A bidder can be refunded at the end of its round, and tributes can be
+            added at any time during or after the round.
           </StyledText>
 
           <div className="flex items-center backdrop-blur-sm">
@@ -136,61 +116,43 @@ export function BidderPage({
                 variant="button.secondary"
                 as="button"
                 tabIndex={0}
-                className={twJoin(
-                  isExperimentalActive &&
-                    "border-palette-cyan text-palette-cyan"
-                )}
               >
-                {isExperimentalActive ? (
-                  <>
-                    <Icon name="solid:flask" /> Experimental
-                  </>
-                ) : requestedPreHydro ? (
-                  "Pre-Hydro"
-                ) : (
-                  <>
-                    Round {requestedRoundId + 1}
-                    {requestedRoundId === currentRoundId && (
-                      <StyledText variant="badge">Current</StyledText>
-                    )}
-                  </>
-                )}
-
+                {requestedPreHydro
+                  ? "Pre-Hydro"
+                  : (
+                    <>
+                      Round {requestedRoundId + 1}
+                      {requestedRoundId === currentRoundId && (
+                        <StyledText variant="badge">Current</StyledText>
+                      )}
+                    </>
+                  )}
                 <Icon name="solid:caret-down" />
               </StyledText>
             </Menu>
           </div>
         </div>
-        {requestedExperimental ? (
-          <ExperimentalTable />
+
+        {requestedPreHydro ? (
+          <BidderTable
+            key={`tranche_0`}
+            trancheId={0}
+            requestedRoundNumber={requestedRoundNumber as number | null}
+          />
         ) : (
-          <>
-            {requestedPreHydro ? (
+          displayTranches.map(({ id: trancheId, displayTrancheFromRound }) => {
+            if (requestedRoundId < displayTrancheFromRound) {
+              return <Fragment key={`empty_tranche_${trancheId}`} />
+            }
+
+            return (
               <BidderTable
-                key={`tranche_0`}
-                trancheId={0}
+                key={`tranche_${trancheId}`}
+                trancheId={trancheId}
                 requestedRoundNumber={requestedRoundNumber as number | null}
               />
-            ) : (
-              displayTranches.map(
-                ({ id: trancheId, displayTrancheFromRound }) => {
-                  if (requestedRoundId < displayTrancheFromRound) {
-                    return <Fragment key={`empty_tranche_${trancheId}`} />
-                  }
-
-                  return (
-                    <BidderTable
-                      key={`tranche_${trancheId}`}
-                      trancheId={trancheId}
-                      requestedRoundNumber={
-                        requestedRoundNumber as number | null
-                      }
-                    />
-                  )
-                }
-              )
-            )}
-          </>
+            )
+          })
         )}
       </ContentContainer>
     </>
@@ -217,8 +179,6 @@ import { BidderTableItem } from "./BidderTableItem"
 import { buildColumns } from "./buildColumns"
 import { buildRow } from "./buildRow"
 import { useLateTributes } from "./hooks/useLateTributes"
-import { useLiveRoundTributes } from "./hooks/useLiveRoundTributes"
-import { dedupeByTributeId } from "./utils/dedupeByTributeId"
 import { mapTributeToTokenBased } from "./utils/mapTributeToTokenBased"
 
 export function BidderTable({
@@ -257,11 +217,6 @@ export function BidderTable({
     lateKey
   )
 
-const { liveByProposal } =
-  requestedRoundId === currentRoundId
-    ? useLiveRoundTributes(tributeContractAddress, requestedRoundId, lateKey)
-    : { liveByProposal: {} as Record<number, any[]> }
-
   const rowsInTranche = useMemo<BidderRow[]>(() => {
     const bidsToRender = requestedPreHydro
       ? metricsForPreHydroBids
@@ -281,33 +236,19 @@ const { liveByProposal } =
     })
 
     return filtered.map((bid) => {
-  const base = buildRow(
-    requestedPreHydro
-      ? bid
-      : (() => {
-          const b = bid as BidRevampMetrics
-
-          const lateRaw = lateByProposal[Number(b.id)] ?? []
-          const lateNormalized = lateRaw.map(t =>
-            mapTributeToTokenBased(t, currentRoundPrices)
-          )
-
-          const liveRaw = liveByProposal[Number(b.id)] ?? []
-          const liveNormalized = liveRaw.map(t =>
-            mapTributeToTokenBased(t, currentRoundPrices)
-          )
-
-          const merged = dedupeByTributeId([
-            ...(b.tokenBasedTributes ?? []),
-            ...lateNormalized,
-            ...liveNormalized,
-          ])
-
-          return { ...b, tokenBasedTributes: merged }
-        })(),
-    requestedPreHydro,
-    { onAfterSuccess: bumpLateKey } // <— IMPORTANT
-  )
+      const base = buildRow(
+        requestedPreHydro
+          ? bid
+          : (() => {
+              const b = bid as BidRevampMetrics
+              const lateRaw = lateByProposal[Number(b.id)] ?? []
+              const lateNormalized = lateRaw.map((t) => mapTributeToTokenBased(t, currentRoundPrices))
+              const merged = [...(b.tokenBasedTributes ?? []), ...lateNormalized]
+              return { ...b, tokenBasedTributes: merged }
+            })(),
+        requestedPreHydro,
+        { onAfterSuccess: bumpLateKey }
+      )
 
       if (requestedPreHydro) return { ...base, tributeCount: 0 }
 
@@ -379,10 +320,12 @@ const { liveByProposal } =
 /* >>> [[...roundNumber]]/BidderTableItem.tsx (tsx) <<< */
 "use client"
 
+import { Icon } from "@/components/Icon"
 import { TD, TR } from "@/components/StyledTable"
 import { RowRenderProps } from "@/components/StyledTable/types"
 import { twMerge } from "tailwind-merge"
 import { BidderRow } from "./BidderPage"
+import { MiniCollapsible } from "./components/MiniCollapsible"
 type Props = RowRenderProps<BidderRow, keyof BidderRow> & {
   isOpened: boolean
   canOpen: boolean
@@ -423,227 +366,26 @@ export function BidderTableItem({
       </TR>
 
       {isOpened && row.additionalTributes ? (
-        <tr>
-          <TD colSpan={Object.keys(row).length} className="bg-palette-green/5 p-4">
-            {row.additionalTributes}
+  <tr>
+    <TD colSpan={Object.keys(row).length} className="p-0 bg-transparent">
+      <MiniCollapsible
+        title={
+          <div className="flex items-center gap-2">
+            <Icon name="solid:gift" />
+            <span>Tributes</span>
+            <span className="opacity-70">({row.tributeCount ?? 0})</span>
+          </div>
+        }
+      >
+              {row.additionalTributes}
+            </MiniCollapsible>
           </TD>
         </tr>
       ) : null}
 
-      {/* petit spacer visuel entre les groupes */}
+
       <tr aria-hidden>
         <td className="h-1" colSpan={Object.keys(row).length} />
-      </tr>
-    </>
-  )
-}
-
-/* --- end file --- */
-
-/* >>> [[...roundNumber]]/ExperimentalTable.tsx (tsx) <<< */
-"use client"
-
-import { BlurryBackdropBox } from "@/components/BlurryBackdropBox"
-import { EmptyBox } from "@/components/EmptyBox"
-import { LoadingSpinner } from "@/components/LoadingSpinner"
-import { StyledTable } from "@/components/StyledTable"
-import { ColumnObject } from "@/components/StyledTable/types"
-import { fetchExperimentalDeployments } from "@/contract-apis/fetchExperimental"
-import { ExperimentalItem, ExperimentalRow } from "@/contract-apis/types"
-import { useBackendData } from "@/contract-apis/useBackendData"
-import { useEffect, useState } from "react"
-import { ExperimentalTableItem } from "./ExperimentalTableItem"
-import { getExperimentalTableRows } from "./getExperimentalTableRows"
-import { classNames } from "./classNames"
-
-export default function ExperimentalTable() {
-  const [isLoadingExperimental, setIsLoadingExperimental] = useState(false)
-  const [experimentalItems, setExperimentalItems] = useState<
-    ExperimentalItem[]
-  >([])
-  const [openedRows, setOpenedRows] = useState<number[]>([])
-  const { isLoading } = useBackendData()
-
-  const toggleRow = (experimentalId: number) => {
-    setOpenedRows((prev) =>
-      prev.includes(experimentalId)
-        ? prev.filter((id) => id !== experimentalId)
-        : [...prev, experimentalId],
-    )
-  }
-
-  const columns: ColumnObject<ExperimentalRow, keyof ExperimentalRow>[] = [
-    {
-      key: "logoAndName",
-      label: "Deployment",
-      textAlign: "left",
-      isSortable: true,
-      propsForCells: {
-        className: classNames.classNamesForCells,
-      },
-      customValueGetter: (row) => row._experimental.name,
-    },
-    {
-      key: "startDate",
-      label: "Start Date",
-      isSortable: true,
-      initialSortDirection: "DESC",
-      propsForCells: {
-        className: classNames.classNamesForCells,
-      },
-      customValueGetter: (row) => row._experimental.start_timestamp,
-    },
-    {
-      key: "status",
-      label: "Status",
-      isSortable: true,
-      initialSortDirection: "DESC",
-      propsForCells: {
-        className: classNames.classNamesForCells,
-      },
-      customValueGetter: (row) => row._experimental.end_timestamp,
-    },
-    {
-      key: "initialAddressHoldings",
-      label: "Initial Position Size",
-      isSortable: true,
-      initialSortDirection: "DESC",
-      textAlign: "right",
-      propsForCells: {
-        className: classNames.classNamesForCells,
-      },
-      customValueGetter: (row) =>
-        row._experimental.initial_address_holdings.total_atom,
-    },
-    {
-      key: "deploymentAPR",
-      label: "Deployment APR",
-      isSortable: true,
-      initialSortDirection: "DESC",
-      textAlign: "right",
-      propsForCells: {
-        className: classNames.classNamesForCells,
-      },
-      customValueGetter: (row) =>
-        row._experimental.current_address_holdings.total_atom,
-    },
-    {
-      key: "actions",
-      label: "",
-      isSortable: false,
-      textAlign: "right",
-      propsForCells: {
-        className: classNames.classNamesForCells,
-      },
-    },
-  ]
-
-  const experimentalRows = getExperimentalTableRows(
-    openedRows,
-    toggleRow,
-    experimentalItems,
-  )
-
-  useEffect(() => {
-    const getExperimentalDeployments = async () => {
-      setIsLoadingExperimental(true)
-      const experimentalResponseItems = await fetchExperimentalDeployments()
-      setExperimentalItems(experimentalResponseItems || [])
-      setIsLoadingExperimental(false)
-    }
-    getExperimentalDeployments()
-  }, [])
-
-  return (
-    <>
-      <LoadingSpinner isLoading={isLoading || isLoadingExperimental} />
-
-      {!isLoading && !isLoadingExperimental && !experimentalItems.length && (
-        <BlurryBackdropBox>
-          <EmptyBox>
-            There are no experimental items available at this moment.
-          </EmptyBox>
-        </BlurryBackdropBox>
-      )}
-
-      {!isLoading && !isLoadingExperimental && experimentalItems.length > 0 && (
-        <BlurryBackdropBox>
-          <StyledTable
-            className="border-collapse border-spacing-y-0 [&>tbody]:gap-0 [&>tbody]:max-sm:gap-1"
-            initialSortedColumnKey="logoAndName"
-            columns={columns}
-            rows={experimentalRows}
-            renderRow={(props) => (
-              <ExperimentalTableItem
-                key={props.row._experimental.experimental_id}
-                {...props}
-              />
-            )}
-          />
-        </BlurryBackdropBox>
-      )}
-    </>
-  )
-}
-
-/* --- end file --- */
-
-/* >>> [[...roundNumber]]/ExperimentalTableItem.tsx (tsx) <<< */
-import { TD, TR } from "@/components/StyledTable"
-import { RowRenderProps } from "@/components/StyledTable/types"
-import { ExperimentalRow } from "@/contract-apis/types"
-import { classNames } from "./classNames"
-
-type ExperimentalTableItemProps = RowRenderProps<
-  ExperimentalRow,
-  keyof ExperimentalRow
->
-
-export function ExperimentalTableItem({
-  children,
-  row,
-  rowProps,
-}: ExperimentalTableItemProps) {
-  return (
-    <>
-      <TR
-        key={row._experimental.experimental_id}
-        className={classNames.openedRow}
-        {...rowProps}
-      >
-        {children}
-      </TR>
-      {row.additionalDescription ? (
-        <tr
-          key={row._experimental.experimental_id + "_additional"}
-          className={classNames.additionalRow}
-        >
-          <TD className={classNames.additionalCell} colSpan={1}>
-            {row.additionalDescription}
-          </TD>
-          <TD className={classNames.additionalCell} colSpan={1} />
-          <TD className={classNames.additionalCell} colSpan={1}>
-            {row.additionalStatus}
-          </TD>
-          <TD className={classNames.additionalCell} colSpan={1}>
-            {row.additionalInitialAdressHoldings}
-          </TD>
-          <TD className={classNames.additionalCell} colSpan={1}>
-            {row.additionalDeploymentAPR}
-          </TD>
-          <TD className={classNames.additionalCell} colSpan={1} />
-        </tr>
-      ) : (
-        <tr>
-          <td className="h-0" colSpan={Object.keys(row).length - 2}>
-            {" "}
-          </td>
-        </tr>
-      )}
-      <tr>
-        <td className="h-1" colSpan={Object.keys(row).length - 2}>
-          {" "}
-        </td>
       </tr>
     </>
   )
@@ -799,14 +541,30 @@ export function buildColumns(
       key: "action",
       label: (
         <Tooltip
-          tipContents={"TODO add tooltip"}
-          classNamesForTooltip="-ml-12"
-        >
-          <div className="flex items-center gap-1">
-            Action
-            <Icon name="circle-info" />
-          </div>
-        </Tooltip>
+  tipContents={
+    <div className="space-y-2 text-sm">
+      <div>
+        <strong>Add Tribute</strong>:
+      </div>
+      <ul className="list-disc pl-5">
+        <li>During the round: contributes to the pool.</li>
+        <li>After the round: does not affect voting.</li>
+        <li>Minimum: 1 base unit of the selected token.</li>
+        <li>Refundable as long as <em>no</em> liquidity has been deployed.</li>
+      </ul>
+      <div className="text-white/70">
+        The button is disabled if the wallet isn’t connected or liquidity has already been deployed.
+      </div>
+    </div>
+  }
+  classNamesForTooltip="-ml-12"
+>
+  <div className="flex items-center gap-1">
+    Action
+    <Icon name="circle-info" />
+  </div>
+</Tooltip>
+
       ),
       textAlign: "right",
       propsForCells: {
@@ -822,30 +580,6 @@ export function buildColumns(
 
 /* --- end file --- */
 
-/* >>> [[...roundNumber]]/buildDenomOptions.ts (ts) <<< */
-
-import type { PriceDetails } from "@/contract-apis/types";
-
-export type DenomOption = {
-  name: string
-  value: string
-  price?: number
-  exponent?: number
-}
-
-export function buildDenomOptions(currentRoundPrices: Record<string, PriceDetails> | undefined): DenomOption[] {
-  if (!currentRoundPrices) return []
-  return Object.entries(currentRoundPrices).map(([value, asset]) => ({
-    name: (asset?.token_symbol ?? value).replace(".", " "),
-    value,
-    price: asset?.token_price,
-    exponent: asset?.token_exponent,
-  }))
-}
-
-
-/* --- end file --- */
-
 /* >>> [[...roundNumber]]/buildRow.tsx (tsx) <<< */
 
 import { BidLogoAndTitle, BidLogoAndTitleLayout } from "@/components/BidLogoAndTitle"
@@ -853,9 +587,9 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { BidRevampMetrics, PreHydroBid, TokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
 import { AddTributeButton } from "./components/AddTributeButton"
 import RefundTrubuteButton from "./components/RefundTrubuteButton"
+import { formatTimestamp } from "./utils/formatTimestamp"
 import { computeTributeUiStatus, uiStatusLabel, uiStatusTooltip } from "./utils/tributeRules"
 
 type RowOptions = {
@@ -869,7 +603,7 @@ export function buildRow(
 ) {
   const { onAfterSuccess } = options
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
-const {address, currentRoundId}=useBackendData()
+const {currentRoundId}=useBackendData()
   if (requestedPreHydro) {
     const bid = passedBid as PreHydroBid
     rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
@@ -917,6 +651,11 @@ const {address, currentRoundId}=useBackendData()
         This tribute has already been refunded.  
         Voters may now claim the funds.
       </div>
+      <div>
+        <strong>Not refundable</strong>:  
+        Liquidity was deployed for this bid;  
+        refund is blocked by the contract.
+      </div>
     </div>
   }
   classNamesForTooltip="-ml-12"
@@ -927,15 +666,32 @@ const {address, currentRoundId}=useBackendData()
   </div>
 </Tooltip>
             </th>
-            <th className="py-2 pr-0 text-right"> <Tooltip
-                      tipContents={"TODO add tooltip"}
-                      classNamesForTooltip="-ml-12"
-                    >
-                      <div className="flex items-center gap-1">
-                        Action
-                        <Icon name="circle-info" />
-                      </div>
-                    </Tooltip></th>
+            <th className="py-2 pr-0 text-right"><Tooltip
+  tipContents={
+    <div className="space-y-2 text-sm">
+      <div>
+        <strong>Refund</strong>:
+      </div>
+      <ul className="list-disc pl-5">
+        <li>Only the tribute’s <em>depositor</em> can refund.</li>
+        <li>Allowed <em>after</em> the round ends.</li>
+        <li>Blocked during the voting period.</li>
+        <li>Blocked once liquidity has been deployed.</li>
+        <li>After refund: the tribute becomes <em>Claimable</em> for voters.</li>
+      </ul>
+      <div className="text-white/70">
+        The button is disabled if you’re not the depositor, it’s already refunded, we’re in the voting period, or liquidity was deployed.
+      </div>
+    </div>
+  }
+  classNamesForTooltip="-ml-12"
+>
+  <div className="flex items-center gap-1">
+    Action
+    <Icon name="circle-info" />
+  </div>
+</Tooltip>
+</th>
           </tr>
         </thead>
         <tbody>
@@ -949,8 +705,8 @@ const {address, currentRoundId}=useBackendData()
   const name      = t.denom ?? (t as any).funds?.denom
   const amount    = (t as any).funds?.amount ?? t.amount
   const original  = t.denomOriginal ?? (t as any).funds?.denom
-  const createdAt = getFormatedDateFromNanos(t.creationTime)
-
+  const createdAt = formatTimestamp(t.creationTime)
+const {display, full}= createdAt
   return (
     <tr key={`tribute_${(passedBid as any).id}_${i}`} className="border-t border-white/10">
       <td className="py-2 pr-4">
@@ -972,7 +728,12 @@ const {address, currentRoundId}=useBackendData()
         </Tooltip>
       </td>
 
-      <td className="py-2 pr-4 text-right whitespace-nowrap">{createdAt}</td>
+     <td
+  className="py-2 pr-4 text-right whitespace-nowrap"
+  title={full}
+>
+  {display}
+</td>
       <td className="py-2 pr-0 text-right whitespace-nowrap">
         <Tooltip tipContents={statusTip}><span>{statusText}</span></Tooltip>
       </td>
@@ -1088,7 +849,7 @@ export function AddTributeButton({
 
   if (!bid) return <ErrorBox>The requested bid could not be found.</ErrorBox>
 
-  const disabled = !isWalletConnected || !verdict.ok
+  const disabled = !isWalletConnected || !verdict.ok || submitting
   const tooltip =
     !isWalletConnected
       ? "Please connect your wallet to add a tribute."
@@ -1170,9 +931,9 @@ import { formatAmount } from "@/lib/formatAmount"
 import { useChain } from "@cosmos-kit/react"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
-import { buildDenomOptions } from "../buildDenomOptions"
 import { useAccountBalances } from "../hooks/useAccountBalances"
 import { useDenomOptionsWithBalances } from "../hooks/useDenomOptionsWithBalances"
+import { buildDenomOptions } from "../utils/buildDenomOptions"
 import { gtIntStr, isPositiveDecimalString, toBaseUnitsStr, toDisplayRawFromBaseStr } from "../utils/toBaseUnits"
 import { AmountField } from "./AmountField"
 import { AssetSelectField } from "./AssetSelectField"
@@ -1312,7 +1073,7 @@ export function AddTributeModal({
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
-            <StyledText as="button" variant="button.secondary" type="button" onClick={onCloseAction}>
+            <StyledText as="button" variant="button.secondary" type="button" onClick={onCloseAction} disabled={submitting}>
               Cancel
             </StyledText>
             <StyledText
@@ -1320,7 +1081,7 @@ export function AddTributeModal({
               variant="button.primary"
               type="button"
               onClick={submit}
-              disabled={!canSubmit || isFetchingAssets }
+              disabled={!canSubmit || isFetchingAssets || submitting}
               tooltip={
             submitting ? "Submitting…" :
             assetsForSelect.length === 0 ? "You have no balance that can be used as tribute, please add funds"
@@ -1542,6 +1303,28 @@ export function AssetSelectField({
 
 /* --- end file --- */
 
+/* >>> [[...roundNumber]]/components/MiniCollapsible.tsx (tsx) <<< */
+import { ReactNode } from "react"
+
+export function MiniCollapsible({
+  title,
+  children,
+}: {
+  title: ReactNode
+  children: ReactNode
+}) {
+  return (
+    <div className="rounded-lg border border-white/10 overflow-hidden">
+      <div className="px-4 py-2 text-sm font-medium bg-white/5">
+        {title}
+      </div>
+      <div className="p-4">{children}</div>
+    </div>
+  )
+}
+
+/* --- end file --- */
+
 /* >>> [[...roundNumber]]/components/RefundTrubuteButton.tsx (tsx) <<< */
 // components/RefundTrubuteButton.tsx
 "use client"
@@ -1626,254 +1409,6 @@ export default RefundTrubuteButton
 
 /* --- end file --- */
 
-/* >>> [[...roundNumber]]/getExperimentalTableRows.tsx (tsx) <<< */
-import { Icon } from "@/components/Icon"
-import { MarkdownContainer } from "@/components/MarkdownContainer"
-import { StyledText } from "@/components/StyledText"
-import { Tooltip } from "@/components/Tooltip"
-import { experimentalTableDeploymentAprTooltip } from "@/components/ToolTips"
-import { ExperimentalItem, ExperimentalRow } from "@/contract-apis/types"
-import { amountToUSDString } from "@/lib/amountToUSDString"
-import { calculateDurationAndUnit } from "@/lib/calculateDurationAndUnit"
-import { formatAmount } from "@/lib/formatAmount"
-import { pluralize } from "@/lib/pluralize"
-import Image from "next/image"
-import { twJoin } from "tailwind-merge"
-
-export function getExperimentalTableRows(
-  openedRows: number[],
-  onToggleRow: (experimentalId: number) => void,
-  experimentalItems?: ExperimentalItem[],
-): ExperimentalRow[] {
-  if (!experimentalItems || !experimentalItems.length) return []
-
-  const rows = experimentalItems.map((item) => {
-    const isOpened = openedRows.includes(item.experimental_id)
-    const currentTimestamp = new Date().getTime()
-    const startDate = new Date(item.start_timestamp * 1000).toLocaleDateString()
-    const startTimestamp = new Date(item.start_timestamp * 1000).getTime()
-    const endTimestamp =
-      item.end_timestamp === 0
-        ? currentTimestamp
-        : new Date(item.end_timestamp * 1000).getTime()
-    const status = item.end_timestamp === 0 ? "Ongoing" : "Completed"
-    
-    const daysBetween = Math.ceil(
-      (endTimestamp - startTimestamp) / (1000 * 60 * 60 * 24),
-    )
-
-    console.log("Days Between:", daysBetween)
-
-    console.log("item.end timestamp:", item.end_timestamp)
-    console.log("Start timestamp:", item.start_timestamp)
-    console.log("End timestamp:", endTimestamp)
-
-    const additionalStatus =
-      item.end_timestamp === 0
-        ? ""
-        : new Date(item.end_timestamp * 1000).toLocaleDateString()
-
-    const deploymentAPR =
-      (((item.current_address_holdings.total_atom -
-        item.initial_address_holdings.total_atom) /
-        item.initial_address_holdings.total_atom) *
-        365) /
-      daysBetween
-
-    return {
-      _experimental: item,
-
-      logoAndName: (
-        <StyledText
-          as="button"
-          className="flex items-center gap-6"
-          onClick={() => onToggleRow(item.experimental_id)}
-        >
-          <div className="relative size-12 shrink-0 rounded-full border text-[0]">
-            <Image
-              className="rounded-full object-contain"
-              src={item.logo}
-              alt={item.name}
-              fill={true}
-              sizes="48px"
-            />
-          </div>
-          <StyledText variant="h4" className="text-left">
-            {item.name}
-          </StyledText>
-        </StyledText>
-      ),
-
-      startDate: (
-        <StyledText
-          as="button"
-          onClick={() => onToggleRow(item.experimental_id)}
-        >
-          {startDate}
-        </StyledText>
-      ),
-
-      status: (
-        <StyledText
-          as="button"
-          onClick={() => onToggleRow(item.experimental_id)}
-        >
-          {status}
-        </StyledText>
-      ),
-
-      initialAddressHoldings: (
-        <div className="flex flex-col items-end">
-          <StyledText
-            as="button"
-            onClick={() => onToggleRow(item.experimental_id)}
-          >
-            {formatAmount(item.initial_address_holdings.total_atom, 0, 2)}&nbsp;
-            <StyledText variant="footnote">ATOM</StyledText>
-          </StyledText>
-          <StyledText
-            as="button"
-            variant="footnote"
-            onClick={() => onToggleRow(item.experimental_id)}
-          >
-            (
-            {amountToUSDString(item.initial_address_holdings.total_usdc, {
-              appendUsd: false,
-              numberOfDecimals: 2,
-              removeTrailingZeros: true,
-            })}
-            )
-          </StyledText>
-        </div>
-      ),
-
-      deploymentAPR: (
-        <Tooltip
-          className={twJoin(
-            "inline-flex items-center gap-1",
-            "border-b-2 border-dotted border-white/50 hover:border-white",
-          )}
-          tipContents={experimentalTableDeploymentAprTooltip({
-            hasEnded: item.end_timestamp !== 0,
-            totalAtom: item.current_address_holdings.total_atom,
-            totalUsd: item.current_address_holdings.total_usdc,
-            deploymentLasted: pluralize({
-              count: daysBetween,
-              singular: "day",
-              prefixCount: true,
-            }),
-          })}
-        >
-          <StyledText
-            variant="mathSymbol.container"
-            as="button"
-            onClick={() => onToggleRow(item.experimental_id)}
-          >
-            {(deploymentAPR * 100).toFixed(2)}
-            <StyledText variant="mathSymbol">%</StyledText>
-          </StyledText>
-        </Tooltip>
-      ),
-
-      actions: (
-        <div className="flex items-center justify-end gap-3">
-          <StyledText
-            as="button"
-            onClick={() => onToggleRow(item.experimental_id)}
-          >
-            <Icon name={isOpened ? "chevron-up" : "chevron-down"} />
-          </StyledText>
-        </div>
-      ),
-
-      additionalDescription: isOpened && (
-        <MarkdownContainer content={item.description} />
-      ),
-
-      additionalStatus: isOpened && (
-        <StyledText className="whitespace-nowrap">
-          {additionalStatus && (
-            <>
-              Ends:&nbsp;
-              <StyledText variant="label">{additionalStatus}</StyledText>
-            </>
-          )}
-        </StyledText>
-      ),
-
-      additionalInitialAdressHoldings: isOpened && (
-        <div className="flex flex-col gap-2">
-          <StyledText variant="label" className="underline">
-            Initial Breakdown
-          </StyledText>
-          {item.initial_address_holdings.balances.map(
-            (balance, balanceIndex) => (
-              <div
-                className="flex flex-col text-right"
-                key={`initial_balance_${balanceIndex}`}
-              >
-                <StyledText className="text-right">
-                  {formatAmount(balance.amount, 0, 2)}&nbsp;
-                  <StyledText variant="footnote">
-                    {balance.display_name}&nbsp;
-                  </StyledText>
-                </StyledText>
-                <StyledText variant="footnote">
-                  (
-                  {amountToUSDString(balance.usd_value, {
-                    appendUsd: false,
-                    numberOfDecimals: 2,
-                    removeTrailingZeros: true,
-                  })}
-                  )
-                </StyledText>
-              </div>
-            ),
-          )}
-        </div>
-      ),
-
-      additionalDeploymentAPR: isOpened && (
-        <div className="flex flex-col gap-2">
-          <StyledText variant="label" className="underline">
-            {item.end_timestamp !== 0
-              ? "Final Position Breakdown"
-              : "Current Position Breakdown"}
-          </StyledText>
-          {item.current_address_holdings.balances.map(
-            (balance, balanceIndex) => (
-              <div
-                className="flex flex-col text-right"
-                key={`current_balance_${balanceIndex}`}
-              >
-                <StyledText className="text-right">
-                  {formatAmount(balance.amount, 0, 2)}&nbsp;
-                  <StyledText variant="footnote">
-                    {balance.display_name}&nbsp;
-                  </StyledText>
-                </StyledText>
-                <StyledText variant="footnote">
-                  (
-                  {amountToUSDString(balance.usd_value, {
-                    appendUsd: false,
-                    numberOfDecimals: 2,
-                    removeTrailingZeros: true,
-                  })}
-                  )
-                </StyledText>
-              </div>
-            ),
-          )}
-        </div>
-      ),
-    }
-  })
-
-  return rows
-}
-
-/* --- end file --- */
-
 /* >>> [[...roundNumber]]/hooks/useAccountBalances.ts (ts) <<< */
 import { StargateClient } from "@cosmjs/stargate"
 import { useEffect, useState } from "react"
@@ -1920,7 +1455,7 @@ export function useAccountBalances({ isOpened, address, getStargateClient }: Use
 
 /* >>> [[...roundNumber]]/hooks/useDenomOptionsWithBalances.ts (ts) <<< */
 import { useMemo } from "react"
-import { DenomOption } from "../buildDenomOptions"
+import { DenomOption } from "../utils/buildDenomOptions"
 
 export function useDenomOptionsWithBalances({
   denomOptions,
@@ -2028,48 +1563,6 @@ export function useLateTributes(
   }, [tributeContractAddress, requestedRoundId, currentRoundId, getCosmWasmClient, refreshKey])
 
   return { lateByProposal: byProposal, loading, error }
-}
-
-/* --- end file --- */
-
-/* >>> [[...roundNumber]]/hooks/useLiveRoundTributes.ts (ts) <<< */
-"use client"
-import { TributeBaseQueryClient } from "@/app/ts_types/TributeBase.client"
-import type { Tribute } from "@/app/ts_types/TributeBase.types"
-import { useChain } from "@cosmos-kit/react"
-import { useEffect, useState } from "react"
-
-type MapByProposal = Record<number, Tribute[]>
-
-export function useLiveRoundTributes(
-  tributeContract: string,
-  roundId: number,
-  refreshKey = 0
-) {
-  const { getCosmWasmClient } = useChain("neutron")
-  const [byProposal, setByProposal] = useState<MapByProposal>({})
-
-  useEffect(() => {
-    let mounted = true
-    ;(async () => {
-      try {
-        const cw = await getCosmWasmClient()
-        const qc = new TributeBaseQueryClient(cw, tributeContract)
-        const res = await qc.roundTributes({ roundId, limit: 1000, startFrom: 0 })
-        const grouped: MapByProposal = {}
-        for (const t of res?.tributes ?? []) {
-          const pid = Number(t.proposal_id)
-          ;(grouped[pid] ||= []).push(t)
-        }
-        if (mounted) setByProposal(grouped)
-      } catch (e) {
-        // no-op
-      }
-    })()
-    return () => { mounted = false }
-  }, [tributeContract, roundId, getCosmWasmClient, refreshKey])
-
-  return { liveByProposal: byProposal }
 }
 
 /* --- end file --- */
@@ -2186,21 +1679,54 @@ export async function executeRefundTribute({
 /* --- end file --- */
 
 /* >>> [[...roundNumber]]/types/denom.ts (ts) <<< */
-import { buildDenomOptions } from "../buildDenomOptions";
+import { buildDenomOptions } from "../utils/buildDenomOptions";
 
 export type DenomOption = ReturnType<typeof buildDenomOptions>[number]
 /* --- end file --- */
 
-/* >>> [[...roundNumber]]/utils/dedupeByTributeId.ts (ts) <<< */
+/* >>> [[...roundNumber]]/utils/buildDenomOptions.ts (ts) <<< */
 
-export function dedupeByTributeId<T extends { id?: number; tributeId?: number }>(arr: T[]) {
-  const seen = new Set<number>()
-  return arr.filter(x => {
-    const id = Number((x as any).id ?? (x as any).tributeId)
-    if (!id || seen.has(id)) return false
-    seen.add(id)
-    return true
-  })
+import type { PriceDetails } from "@/contract-apis/types";
+
+export type DenomOption = {
+  name: string
+  value: string
+  price?: number
+  exponent?: number
+}
+
+export function buildDenomOptions(currentRoundPrices: Record<string, PriceDetails> | undefined): DenomOption[] {
+  if (!currentRoundPrices) return []
+  return Object.entries(currentRoundPrices).map(([value, asset]) => ({
+    name: (asset?.token_symbol ?? value).replace(".", " "),
+    value,
+    price: asset?.token_price,
+    exponent: asset?.token_exponent,
+  }))
+}
+
+
+/* --- end file --- */
+
+/* >>> [[...roundNumber]]/utils/formatTimestamp.ts (ts) <<< */
+import { Timestamp } from "@/app/ts_types/HydroBase.types"
+
+export function formatTimestamp(nanos: Timestamp): { display: string; full: string } {
+  const millis = Number(nanos) / 1_000_000
+  const date = new Date(millis)
+
+  return {
+    // Affiche YYYY-MM-DD HH:mm
+    display: date.toLocaleString(undefined, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    // Full ISO pour hover
+    full: date.toISOString(),
+  }
 }
 
 /* --- end file --- */
@@ -2287,29 +1813,26 @@ import type { TokenBasedTribute } from "@/contract-apis/types"
 
 export function toTokenBased(t: Tribute): TokenBasedTribute {
   return {
-    // requis par TokenBasedTribute
-    id: Number(t.tribute_id),                 // identifiant d’affichage
-    bidId: Number(t.proposal_id),             // proposal ciblée
-    denom: t.funds?.denom ?? "",              // libellé “humain” (on met le même)
+    id: Number(t.tribute_id),               
+    bidId: Number(t.proposal_id),             
+    denom: t.funds?.denom ?? "",              
     denomOriginal: t.funds?.denom ?? "",
-    amount: Number(t.funds?.amount ?? "0"),   // on met la valeur en base units, l’UI sait la rendre
-    valueUsd: 0,                              // pas de pricing ici → 0
-    // facultatifs mais présents dans le type (via CamelCase)
+    amount: Number(t.funds?.amount ?? "0"),  
+    valueUsd: 0,                              
+   
     roundId: Number(t.round_id),
     trancheId: Number(t.tranche_id),
     depositor: t.depositor,
     refunded: Boolean(t.refunded),
     creationTime: t.creation_time,
     creationRound: Number(t.creation_round),
-    // priceUsd n’est pas forcément requis ; si ton type le demande:
-    // priceUsd: 0,
   } as TokenBasedTribute
 }
 
 /* --- end file --- */
 
 /* >>> [[...roundNumber]]/utils/tributeRules.ts (ts) <<< */
-// utils/tributeRules.ts
+
 import type { BidRevampMetrics, TokenBasedTribute } from "@/contract-apis/types"
 
 export function hasNonZeroDeployment(bid: any) {
@@ -2357,7 +1880,7 @@ export function canAddTribute(bid: any, currentRoundId: number) {
   return { ok: true as const, warnings }
 }
 
-// ---------- UI status (pour l'affichage dans la table) ----------
+// ---------- UI status ----------
 export type TributeUiStatus = "voting-period" | "refundable" | "claimable" | "not-refundable"
 
 export function computeTributeUiStatus(

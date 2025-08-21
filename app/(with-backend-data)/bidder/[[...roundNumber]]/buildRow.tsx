@@ -5,9 +5,9 @@ import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { BidRevampMetrics, PreHydroBid, TokenBasedTribute } from "@/contract-apis/types"
 import { useBackendData } from "@/contract-apis/useBackendData"
-import { getFormatedDateFromNanos } from "@/lib/getFormatedDateFromNanos"
 import { AddTributeButton } from "./components/AddTributeButton"
 import RefundTrubuteButton from "./components/RefundTrubuteButton"
+import { formatTimestamp } from "./utils/formatTimestamp"
 import { computeTributeUiStatus, uiStatusLabel, uiStatusTooltip } from "./utils/tributeRules"
 
 type RowOptions = {
@@ -123,8 +123,8 @@ const {currentRoundId}=useBackendData()
   const name      = t.denom ?? (t as any).funds?.denom
   const amount    = (t as any).funds?.amount ?? t.amount
   const original  = t.denomOriginal ?? (t as any).funds?.denom
-  const createdAt = getFormatedDateFromNanos(t.creationTime)
-
+  const createdAt = formatTimestamp(t.creationTime)
+const {display, full}= createdAt
   return (
     <tr key={`tribute_${(passedBid as any).id}_${i}`} className="border-t border-white/10">
       <td className="py-2 pr-4">
@@ -146,7 +146,12 @@ const {currentRoundId}=useBackendData()
         </Tooltip>
       </td>
 
-      <td className="py-2 pr-4 text-right whitespace-nowrap">{createdAt}</td>
+     <td
+  className="py-2 pr-4 text-right whitespace-nowrap"
+  title={full}
+>
+  {display}
+</td>
       <td className="py-2 pr-0 text-right whitespace-nowrap">
         <Tooltip tipContents={statusTip}><span>{statusText}</span></Tooltip>
       </td>

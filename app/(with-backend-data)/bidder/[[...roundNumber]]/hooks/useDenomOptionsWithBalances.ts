@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { DenomOption } from "../buildDenomOptions"
+import { DenomOption } from "../utils/buildDenomOptions"
 
 export function useDenomOptionsWithBalances({
   denomOptions,

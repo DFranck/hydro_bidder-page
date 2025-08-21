@@ -17,12 +17,9 @@ import max from "lodash/max"
 import range from "lodash/range"
 import uniq from "lodash/uniq"
 import { Fragment, ReactNode } from "react"
-import { twJoin } from "tailwind-merge"
 import { BidderTable } from "./BidderTable"
-import ExperimentalTable from "./ExperimentalTable"
 
 export const PRE_HYDRO_ROUND_ID = -1
-export const EXPERIMENTAL_ROUND_ID = -2
 
 export interface BidderRow {
   _bid: BidRevampMetrics | PreHydroBid
@@ -30,8 +27,8 @@ export interface BidderRow {
   status: ReactNode
   hasTributes: boolean
   additionalTributes?: ReactNode
-   tributeCount: number   
-   action?: ReactNode 
+  tributeCount: number
+  action?: ReactNode
 }
 
 export function BidderPage({
@@ -41,7 +38,7 @@ export function BidderPage({
 }) {
   const { bidsInfo, currentRoundId, tranches } = useBackendData()
   const bids = Object.values(bidsInfo)
- 
+
   const postHydroRoundIdsWithBidData = uniq(bids.map((bid) => bid.roundId))
 
   const highestRoundIdWithData =
@@ -52,13 +49,9 @@ export function BidderPage({
       ? Math.min(highestRoundIdWithData, currentRoundId - 1)
       : typeof requestedRoundNumber === "number" && requestedRoundNumber >= 1
         ? Math.min(requestedRoundNumber - 1, highestRoundIdWithData)
-        : typeof requestedRoundNumber === "string" &&
-            requestedRoundNumber === "experimental"
-          ? EXPERIMENTAL_ROUND_ID
-          : PRE_HYDRO_ROUND_ID
-          
+        : PRE_HYDRO_ROUND_ID
+
   const requestedPreHydro = requestedRoundId === PRE_HYDRO_ROUND_ID
-  const requestedExperimental = requestedRoundId === EXPERIMENTAL_ROUND_ID
   const allRoundIds = [PRE_HYDRO_ROUND_ID, ...range(currentRoundId + 1)]
 
   const displayTranches = tranches.map((x) => {
@@ -92,20 +85,6 @@ export function BidderPage({
     }
   })
 
-  const isExperimentalActive = requestedRoundId === EXPERIMENTAL_ROUND_ID
-
-  menuItems.push({
-    href: "/bidder/experimental",
-    icon: "solid:flask",
-    isActive: isExperimentalActive,
-    label: "Experimental",
-    className: twJoin(
-      isExperimentalActive
-        ? "bg-palette-cyan hover:bg-palette-cyan/80"
-        : "text-palette-cyan"
-    ),
-  })
-
   return (
     <>
       <StatCardsContainer>
@@ -122,7 +101,8 @@ export function BidderPage({
           <h2 className="sr-only">PoL Bidder by Round</h2>
 
           <StyledText variant="footnote">
-           A bidder can be refunded at the end of its round, and tributes can be added at any time during or after the round.
+            A bidder can be refunded at the end of its round, and tributes can be
+            added at any time during or after the round.
           </StyledText>
 
           <div className="flex items-center backdrop-blur-sm">
@@ -135,61 +115,43 @@ export function BidderPage({
                 variant="button.secondary"
                 as="button"
                 tabIndex={0}
-                className={twJoin(
-                  isExperimentalActive &&
-                    "border-palette-cyan text-palette-cyan"
-                )}
               >
-                {isExperimentalActive ? (
-                  <>
-                    <Icon name="solid:flask" /> Experimental
-                  </>
-                ) : requestedPreHydro ? (
-                  "Pre-Hydro"
-                ) : (
-                  <>
-                    Round {requestedRoundId + 1}
-                    {requestedRoundId === currentRoundId && (
-                      <StyledText variant="badge">Current</StyledText>
-                    )}
-                  </>
-                )}
-
+                {requestedPreHydro
+                  ? "Pre-Hydro"
+                  : (
+                    <>
+                      Round {requestedRoundId + 1}
+                      {requestedRoundId === currentRoundId && (
+                        <StyledText variant="badge">Current</StyledText>
+                      )}
+                    </>
+                  )}
                 <Icon name="solid:caret-down" />
               </StyledText>
             </Menu>
           </div>
         </div>
-        {requestedExperimental ? (
-          <ExperimentalTable />
+
+        {requestedPreHydro ? (
+          <BidderTable
+            key={`tranche_0`}
+            trancheId={0}
+            requestedRoundNumber={requestedRoundNumber as number | null}
+          />
         ) : (
-          <>
-            {requestedPreHydro ? (
+          displayTranches.map(({ id: trancheId, displayTrancheFromRound }) => {
+            if (requestedRoundId < displayTrancheFromRound) {
+              return <Fragment key={`empty_tranche_${trancheId}`} />
+            }
+
+            return (
               <BidderTable
-                key={`tranche_0`}
-                trancheId={0}
+                key={`tranche_${trancheId}`}
+                trancheId={trancheId}
                 requestedRoundNumber={requestedRoundNumber as number | null}
               />
-            ) : (
-              displayTranches.map(
-                ({ id: trancheId, displayTrancheFromRound }) => {
-                  if (requestedRoundId < displayTrancheFromRound) {
-                    return <Fragment key={`empty_tranche_${trancheId}`} />
-                  }
-
-                  return (
-                    <BidderTable
-                      key={`tranche_${trancheId}`}
-                      trancheId={trancheId}
-                      requestedRoundNumber={
-                        requestedRoundNumber as number | null
-                      }
-                    />
-                  )
-                }
-              )
-            )}
-          </>
+            )
+          })
         )}
       </ContentContainer>
     </>
