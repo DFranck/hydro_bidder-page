@@ -10,7 +10,6 @@ import {
   PreHydroBid,
   TokenBasedTribute,
 } from "@/contract-apis/types"
-import { useBackendData } from "@/contract-apis/useBackendData"
 import { AddTributeButton } from "./components/AddTributeButton"
 import RefundTrubuteButton from "./components/RefundTrubuteButton"
 import { formatTimestamp } from "./utils/formatTimestamp"
@@ -27,11 +26,11 @@ type RowOptions = {
 export function buildRow(
   passedBid: BidRevampMetrics | PreHydroBid,
   requestedPreHydro: boolean,
-  options: RowOptions = {}
+  options: RowOptions = {},
+  currentRoundId: number
 ) {
   const { onAfterSuccess } = options
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
-  const { currentRoundId, atomPrice } = useBackendData()
   if (requestedPreHydro) {
     const bid = passedBid as PreHydroBid
     rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
@@ -101,11 +100,6 @@ export function buildRow(
             const s = computeTributeUiStatus(bid, t, currentRoundId)
             const statusText = uiStatusLabel[s]
             const statusTip = uiStatusTooltip(s)
-            const atomUsd = Number(atomPrice) || 0
-            const tokenUsd = Number(t.valueUsd) || 0
-            const amountDisplay = Number(t.amount) || 0
-
-            const tributeInAtom = (t as any).amount * atomPrice
             const name = t.denom ?? (t as any).funds?.denom
             const amount = (t as any).funds?.amount ?? t.amount
             const original = t.denomOriginal ?? (t as any).funds?.denom

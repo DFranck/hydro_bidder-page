@@ -96,7 +96,8 @@ export function BidderTable({
               return { ...b, tokenBasedTributes: merged }
             })(),
         requestedPreHydro,
-        { onAfterSuccess: bumpLateKey }
+        { onAfterSuccess: bumpLateKey },
+        currentRoundId
       )
 
       if (requestedPreHydro) return { ...base, tributeCount: 0 }
