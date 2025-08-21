@@ -127,6 +127,7 @@ export function BidderTable({
           isOpened={isOpened}
           canOpen={canOpen}
           onToggle={toggleRow}
+          
         />
       )
     },

@@ -1,18 +1,44 @@
+// utils/formatTimestamp.ts
 import { Timestamp } from "@/app/ts_types/HydroBase.types";
 
-export function formatTimestamp(nanos: Timestamp): { display: string; full: string } {
-  const millis = Number(nanos) / 1_000_000
-  const date = new Date(millis)
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
+// Accepts seconds(10), ms(13), µs(16), ns(19+)
+function anyTsToMillis(nanosLike: Timestamp): number {
+  const s = String(nanosLike).trim();
+  const neg = s.startsWith("-");
+  const digits = neg ? s.slice(1).replace(/\D/g, "") : s.replace(/\D/g, "");
+  let ms = 0;
+
+  if (digits.length >= 19) {
+    // ns -> ms
+    ms = Number(digits.slice(0, -6));
+  } else if (digits.length >= 16) {
+    // µs -> ms
+    ms = Number(digits.slice(0, -3));
+  } else if (digits.length >= 13) {
+    // ms
+    ms = Number(digits);
+  } else if (digits.length >= 10) {
+    // s -> ms
+    ms = Number(digits + "000");
+  } else {
+    ms = 0;
+  }
+  return neg ? -ms : ms;
+}
+
+export function formatTimestamp(nanosLike: Timestamp): { display: string; full: string } {
+  const date = new Date(anyTsToMillis(nanosLike));
+
+  const y = date.getFullYear();
+  const m = pad2(date.getMonth() + 1);
+  const d = pad2(date.getDate());
+  const hh = pad2(date.getHours());
+  const mm = pad2(date.getMinutes());
 
   return {
-    // YYYY-MM-DD HH:mm
-    display: date.toLocaleString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-    full: date.toISOString(),
-  }
+    display: `${y}-${m}-${d} ${hh}:${mm}`, // minutes guaranteed
+    full: date.toISOString(),              // full precise timestamp for hover
+  };
 }

@@ -5,7 +5,6 @@ import { TD, TR } from "@/components/StyledTable"
 import { RowRenderProps } from "@/components/StyledTable/types"
 import { twMerge } from "tailwind-merge"
 import { BidderRow } from "./BidderPage"
-import { MiniCollapsible } from "./components/MiniCollapsible"
 type Props = RowRenderProps<BidderRow, keyof BidderRow> & {
   isOpened: boolean
   canOpen: boolean
@@ -22,6 +21,7 @@ export function BidderTableItem({
 }: Props) {
   const bidId = (row._bid as any).id
   const handleClick: React.MouseEventHandler<HTMLTableRowElement> = (e) => {
+    console.log("CLICK")
     const el = e.target as HTMLElement
     if (el.closest("a,button,[role=button],input,select,textarea")) return
     if (canOpen) onToggle(bidId)
@@ -39,30 +39,35 @@ export function BidderTableItem({
         data-can-open={canOpen}
         className={twMerge(
           rowProps.className,
-          canOpen ? "cursor-pointer hover:bg-white/5" : "cursor-default",
         )}
       >
         {children}
+   <TD className="text-right">
+    <span className="md:hidden mr-2 md:mr-0">{isOpened ? "Collapse" : "Expand"}</span>
+  {canOpen ? (
+    <span
+      className={twMerge(
+        "inline-block origin-center transform-gpu transition-transform duration-200 ",
+        isOpened ? "rotate-180" : "rotate-0"
+      )}
+      aria-hidden
+    >
+      
+      <Icon name="chevron-down" className="size-4" />
+    </span>
+  ) : (<></>
+  )}
+</TD>
+
       </TR>
 
       {isOpened && row.additionalTributes ? (
-  <tr>
-    <TD colSpan={Object.keys(row).length} className="p-0 bg-transparent">
-      <MiniCollapsible
-        title={
-          <div className="flex items-center gap-2">
-            <Icon name="solid:gift" />
-            <span>Tributes</span>
-            <span className="opacity-70">({row.tributeCount ?? 0})</span>
-          </div>
-        }
-      >
-              {row.additionalTributes}
-            </MiniCollapsible>
+        <tr>
+          <TD colSpan={Object.keys(row).length} className="bg-palette-green/5 p-4">
+            {row.additionalTributes}
           </TD>
         </tr>
       ) : null}
-
 
       <tr aria-hidden>
         <td className="h-1" colSpan={Object.keys(row).length} />

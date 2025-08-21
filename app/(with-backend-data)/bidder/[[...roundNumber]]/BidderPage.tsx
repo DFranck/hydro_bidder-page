@@ -27,6 +27,7 @@ export interface BidderRow {
   status: ReactNode
   hasTributes: boolean
   additionalTributes?: ReactNode
+  tributeApr: ReactNode
   tributeCount: number
   action?: ReactNode
 }

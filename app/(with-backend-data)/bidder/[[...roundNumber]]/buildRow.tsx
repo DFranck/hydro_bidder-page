@@ -1,6 +1,7 @@
 
 
 import { BidLogoAndTitle, BidLogoAndTitleLayout } from "@/components/BidLogoAndTitle"
+import { BidTributeApr } from "@/components/BidTributeApr"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
 import { BidRevampMetrics, PreHydroBid, TokenBasedTribute } from "@/contract-apis/types"
@@ -21,7 +22,7 @@ export function buildRow(
 ) {
   const { onAfterSuccess } = options
   let rowURL: string, projectLogoUrl: string, projectName: string, title: string
-const {currentRoundId}=useBackendData()
+const {currentRoundId,atomPrice}=useBackendData()
   if (requestedPreHydro) {
     const bid = passedBid as PreHydroBid
     rowURL = `https://www.mintscan.io/cosmos/proposals/${bid.id.replace("#", "")}`
@@ -49,7 +50,7 @@ const {currentRoundId}=useBackendData()
         <thead>
           <tr className="text-left text-white/70">
             <th className="py-2 pr-4">Tribute</th>
-            <th className="py-2 pr-4 text-right">Created at</th>
+            <th className="py-2 pr-4 text-right hidden sm:table-cell">Created at</th>
             <th className="py-2 pr-0 text-right">
               <Tooltip
   tipContents={
@@ -84,31 +85,8 @@ const {currentRoundId}=useBackendData()
   </div>
 </Tooltip>
             </th>
-            <th className="py-2 pr-0 text-right"><Tooltip
-  tipContents={
-    <div className="space-y-2 text-sm">
-      <div>
-        <strong>Refund</strong>:
-      </div>
-      <ul className="list-disc pl-5">
-        <li>Only the tribute’s <em>depositor</em> can refund.</li>
-        <li>Allowed <em>after</em> the round ends.</li>
-        <li>Blocked during the voting period.</li>
-        <li>Blocked once liquidity has been deployed.</li>
-        <li>After refund: the tribute becomes <em>Claimable</em> for voters.</li>
-      </ul>
-      <div className="text-white/70">
-        The button is disabled if you’re not the depositor, it’s already refunded, we’re in the voting period, or liquidity was deployed.
-      </div>
-    </div>
-  }
-  classNamesForTooltip="-ml-12"
->
-  <div className="flex items-center gap-1">
-    Action
-    <Icon name="circle-info" />
-  </div>
-</Tooltip>
+            <th className="py-2 pr-0 text-right">
+  Action
 </th>
           </tr>
         </thead>
@@ -119,7 +97,11 @@ const {currentRoundId}=useBackendData()
   const s = computeTributeUiStatus(bid, t, currentRoundId)
   const statusText = uiStatusLabel[s]
   const statusTip  = uiStatusTooltip(s)
+  const atomUsd = Number(atomPrice) || 0;
+const tokenUsd = Number(t.valueUsd) || 0;
+const amountDisplay = Number(t.amount) || 0;
 
+const tributeInAtom = (t as any).amount * atomPrice
   const name      = t.denom ?? (t as any).funds?.denom
   const amount    = (t as any).funds?.amount ?? t.amount
   const original  = t.denomOriginal ?? (t as any).funds?.denom
@@ -128,31 +110,36 @@ const {display, full}= createdAt
   return (
     <tr key={`tribute_${(passedBid as any).id}_${i}`} className="border-t border-white/10">
       <td className="py-2 pr-4">
-        <Tooltip
-          tipContents={
-            <div>
-              <div className="text-xs opacity-70">Original denom:</div>
-              <code className="text-xs break-all select-all">{original}</code>
-            </div>
-          }
-          className="inline-block cursor-help max-w-fit"
-          classNamesForTooltip="max-w-[min(90vw,28rem)] break-words sm:max-w-96"
-        >
-          <span className="inline-flex items-baseline gap-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-            <span className="tabular-nums">{amount}</span>
-            <span>{name}</span>
-          </span>
-          <Icon name="circle-info" className="ml-1" />
-        </Tooltip>
+         <Tooltip
+    tipContents={
+      <div className="space-y-1">
+        <div className="text-xs opacity-70">Original amount & denom:</div>
+        <code className="text-xs break-all select-all">{(t as any).amount} {original} </code>
+      </div>
+    }
+    className="inline-block cursor-help max-w-fit"
+    classNamesForTooltip="max-w-[min(90vw,28rem)] break-words sm:max-w-96"
+  >
+    <span
+      className="inline-flex items-baseline gap-2 whitespace-nowrap"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <span className="tabular-nums">{amount}</span>
+      <span>{name}</span>
+    </span>
+    <Icon name="circle-info" className="ml-1" />
+  </Tooltip>
+
       </td>
 
      <td
-  className="py-2 pr-4 text-right whitespace-nowrap"
-  title={full}
->
+  className="py-2 pr-4 text-right whitespace-nowrap hidden sm:table-cell"
+  
+><Tooltip tipContents={"created at: " + t.creationTime}>
   {display}
+</Tooltip>
 </td>
-      <td className="py-2 pr-0 text-right whitespace-nowrap">
+      <td className="py-2 pr-0 text-center md:text-right whitespace-nowrap">
         <Tooltip tipContents={statusTip}><span>{statusText}</span></Tooltip>
       </td>
       <td className="py-2 pr-1 text-right whitespace-nowrap">
@@ -170,6 +157,7 @@ const {display, full}= createdAt
     _bid: passedBid,
     logoAndTitle: (
       <>
+      
         {requestedPreHydro ? (
           <BidLogoAndTitleLayout
             projectLogoUrl={projectLogoUrl}
@@ -181,6 +169,11 @@ const {display, full}= createdAt
         )}
       </>
     ),
+     tributeApr: (<>
+            {requestedPreHydro ? 0 : <BidTributeApr bidId={Number(passedBid.id)} />}
+     </>
+         
+        ),
     status: <>{(passedBid as any).status ?? "—"}</>,
     action:<><AddTributeButton bidId={Number(passedBid.id)} size="small" onAfterSuccess={onAfterSuccess}/></>,
     hasTributes,
