@@ -17,7 +17,7 @@ type Props = {
   onAfterSuccess?: () => void
 }
 
-const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
+const RefundTributeButton = ({ bid, tribute, onAfterSuccess }: Props) => {
   const router = useRouter()
   const { address, currentRoundId, isWalletConnected } = useBackendData()
   const { getSigningCosmWasmClient } = useChain("neutron")
@@ -76,4 +76,4 @@ const RefundTrubuteButton = ({ bid, tribute, onAfterSuccess }: Props) => {
   )
 }
 
-export default RefundTrubuteButton
+export default RefundTributeButton

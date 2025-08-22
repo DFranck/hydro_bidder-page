@@ -117,7 +117,6 @@ export function AddTributeModal({
     <ModalWindow
       isOpen={isOpened}
       onClose={onCloseAction}
-      onCloseComplete={submit}
     >
       <div className="max-w-[95%] rounded-xl border-2 border-white/20 bg-black p-0">
         <div className="h-[48px] gap-[10px] rounded-t-xl bg-[rgba(255,225,184,0.1)] px-6 py-3 text-lg">
@@ -142,7 +141,7 @@ export function AddTributeModal({
 
         <div className="space-y-6 p-[24px]">
           {warnings.length > 0 && (
-            <div className="rounded-lg border border-yellow-400/30 bg-yellow-400/10 p-3 text-sm">
+            <div  id="add-tribute-warnings" role="status" data-warning="ongoing-no-voter-impact" className="rounded-lg border border-yellow-400/30 bg-yellow-400/10 p-3 text-sm">
               <div className="mb-1 font-medium">Heads up</div>
               <ul className="list-disc space-y-1 pl-5">
                 {warnings.map((w, i) => (
@@ -156,7 +155,6 @@ export function AddTributeModal({
             Select asset and fill amount
           </StyledText>
 
-          {/* ... reste du formulaire inchangé ... */}
           {/* Asset */}
           <AssetSelectField
             value={denom}
@@ -199,6 +197,7 @@ export function AddTributeModal({
               type="button"
               onClick={submit}
               disabled={!canSubmit || isFetchingAssets || submitting}
+              aria-describedby={warnings.length ? "add-tribute-warnings" : undefined}
               tooltip={
                 submitting
                   ? "Submitting…"

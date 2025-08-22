@@ -2,86 +2,71 @@ import type { BidRevampMetrics, TokenBasedTribute } from "@/contract-apis/types"
 
 export function hasNonZeroDeployment(bid: any) {
   const funds = bid?.liquidityDeployment?.deployedFunds ?? []
-  return (
-    Array.isArray(funds) && funds.some((f: any) => Number(f?.amount ?? 0) > 0)
-  )
+  return Array.isArray(funds) && funds.some((f: any) => Number(f?.amount ?? 0) > 0)
 }
 
 export function canRefund(
-  bid: any,
-  tribute: any,
+  bid: BidRevampMetrics | any,
+  tribute: TokenBasedTribute | any,
   currentRoundId: number,
   me?: string
 ) {
-  const isVotingPeriod =
-    bid.roundId === currentRoundId || bid.status === "Voting Period"
-  const nonZeroDeployment = hasNonZeroDeployment(bid)
-  const isDepositor =
-    !!me && tribute.depositor?.toLowerCase() === me.toLowerCase()
+  const isDepositor = !!me && tribute.depositor?.toLowerCase() === me.toLowerCase()
+  if (!isDepositor) {
+    return { ok: false as const, reason: "Only the depositor can refund this tribute." }
+  }
+  if (tribute.refunded) {
+    return { ok: false as const, reason: "This tribute is already refunded (claimable)." }
+  }
 
-  if (!isDepositor)
-    return {
-      ok: false as const,
-      reason: "Only the depositor can refund this tribute.",
-    }
-  if (tribute.refunded)
-    return {
-      ok: false as const,
-      reason: "This tribute is already refunded (claimable).",
-    }
-  if (isVotingPeriod)
-    return {
-      ok: false as const,
-      reason: "Refunds are unavailable during the current voting period.",
-    }
-  if (nonZeroDeployment)
-    return {
-      ok: false as const,
-      reason: "Liquidity was deployed; refund is not allowed.",
-    }
+  const inVotingPeriod = bid.roundId === currentRoundId || bid.status === "Voting Period"
 
-  return { ok: true as const }
+  // Client rules: only Rejected is refundable
+  if (bid.status === "Rejected") {
+    return { ok: true as const }
+  }
+  if (inVotingPeriod) {
+    return { ok: false as const, reason: "Refunds are unavailable during the voting period." }
+  }
+  if (bid.status === "Ongoing" || bid.status === "Completed") {
+    return { ok: false as const, reason: "Refunds are not available for this bid." }
+  }
+
+  // Fallback (if any other status appears)
+  return { ok: false as const, reason: "Refund is not available for this bid status." }
 }
 
-export function canAddTribute(bid: any, currentRoundId: number) {
-  const nonZeroDeployment = hasNonZeroDeployment(bid)
-  if (nonZeroDeployment) {
+export function canAddTribute(bid: BidRevampMetrics | any, currentRoundId: number) {
+  const warnings: string[] = []
+  const inVotingPeriod = bid.roundId === currentRoundId || bid.status === "Voting Period"
+  const hasDeployment = hasNonZeroDeployment(bid)
+
+  // Rejected → should NOT be added
+  if (bid.status === "Rejected") {
     return {
       ok: false as const,
-      reason:
-        "Liquidity was already deployed for this proposal. A new tribute would not be refundable.",
-      warnings: [] as string[],
+      reason: "The proposal was rejected; you should not add a tribute.",
+      warnings,
     }
   }
 
-  const warnings: string[] = []
-  if (bid.roundId !== currentRoundId && bid.status !== "Voting Period") {
-    warnings.push(
-      "This proposal is not in the current voting round; your tribute won't affect voting."
-    )
+  // Allow adds in all other listed statuses, but warn as per rules
+   if (bid.status === "Ongoing") {
+    warnings.push("This is after the voting period, so your tribute will not affect voter behaviour.")
+    warnings.push("Tributes are not refundable in 'Ongoing' status.")
+  } else if (bid.status === "Completed") {
+    warnings.push("This proposal is completed; tributes are not refundable.")
   }
-  if (bid.status === "Ongoing") {
-    warnings.push(
-      "Voting ended; refund stays possible until liquidity is deployed."
-    )
-  }
-  if (bid.status === "Rejected") {
-    warnings.push(
-      "The proposal was rejected; you can still add a tribute and refund later."
-    )
-  }
-  if (bid.status === "Completed") {
-    warnings.push("This proposal is completed; ensure funds won't be stuck.")
+
+  // If liquidity is already deployed, reinforce the non-refundability (but do NOT block add)
+  if (hasDeployment) {
+    warnings.push("Liquidity has been deployed; tributes are not refundable.")
   }
 
   return { ok: true as const, warnings }
 }
 
-export type TributeUiStatus =
-  | "voting-period"
-  | "refundable"
-  | "claimable"
-  | "not-refundable"
+export type TributeUiStatus = "voting-period" | "refundable" | "claimable" | "not-refundable"
 
 export function computeTributeUiStatus(
   bid: BidRevampMetrics,
@@ -89,10 +74,15 @@ export function computeTributeUiStatus(
   currentRoundId: number
 ): TributeUiStatus {
   if (tribute.refunded) return "claimable"
-  if (bid.roundId === currentRoundId || bid.status === "Voting Period")
-    return "voting-period"
-  if (hasNonZeroDeployment(bid)) return "not-refundable"
-  return "refundable"
+
+  const inVotingPeriod = bid.roundId === currentRoundId || bid.status === "Voting Period"
+  if (inVotingPeriod) return "voting-period"
+
+  // Client rule: only Rejected is refundable
+  if (bid.status === "Rejected") return "refundable"
+
+  // Ongoing / Completed → not refundable
+  return "not-refundable"
 }
 
 export const uiStatusLabel: Record<TributeUiStatus, string> = {
@@ -107,10 +97,10 @@ export function uiStatusTooltip(s: TributeUiStatus): string | undefined {
     case "voting-period":
       return "The bid is still active in the current round. Refunds are not available."
     case "refundable":
-      return "Round has ended and no liquidity was deployed. Depositor can refund."
+      return "The bid was rejected. The depositor can refund this tribute."
     case "claimable":
       return "This tribute has been refunded. Voters can now claim."
     case "not-refundable":
-      return "Liquidity was deployed for this bid; refund is blocked by the contract."
+      return "Refund is not available for this bid (e.g., Ongoing or Completed)."
   }
 }

@@ -11,7 +11,7 @@ import {
   TokenBasedTribute,
 } from "@/contract-apis/types"
 import { AddTributeButton } from "./components/AddTributeButton"
-import RefundTrubuteButton from "./components/RefundTrubuteButton"
+import RefundTributeButton from "./components/RefundTributeButton"
 import { formatTimestamp } from "./utils/formatTimestamp"
 import {
   computeTributeUiStatus,
@@ -118,7 +118,7 @@ export function buildRow(
                           Original amount & denom:
                         </div>
                         <code className="text-xs break-all select-all">
-                          {(t as any).amount} {original}{" "}
+                          {amount} {original}{" "}
                         </code>
                       </div>
                     }
@@ -129,7 +129,7 @@ export function buildRow(
                       className="inline-flex items-baseline gap-2 whitespace-nowrap"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="tabular-nums">{amount}</span>
+                      <span className="tabular-nums">{(t as any).amount}</span>
                       <span>{name}</span>
                     </span>
                     <Icon name="circle-info" className="ml-1" />
@@ -147,7 +147,7 @@ export function buildRow(
                   </Tooltip>
                 </td>
                 <td className="py-2 pr-1 text-right whitespace-nowrap">
-                  <RefundTrubuteButton
+                  <RefundTributeButton
                     bid={bid}
                     tribute={t}
                     onAfterSuccess={onAfterSuccess}

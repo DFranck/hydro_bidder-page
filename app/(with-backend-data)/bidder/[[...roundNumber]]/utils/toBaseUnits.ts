@@ -1,6 +1,6 @@
 export function isPositiveDecimalString(v: string): boolean {
   const s = (v ?? "").trim()
-  return s !== "" && /^(\d+(\.\d*)?|\.\d+)$/.test(s) && Number(s) >= 0
+  return s !== "" && /^(\d+(\.\d*)?|\.\d+)$/.test(s) && Number(s) > 0
 }
 
 /** Compare two unsigned integer strings ("0012" vs "12") */
